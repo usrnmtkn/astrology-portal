@@ -1,0 +1,1484 @@
+{
+  "_meta": {
+    "title": "Reviewed Chiron placements + Chiron -> personal aspects (the wounded healer)",
+    "placements": "Chiron x 12 signs + x 12 houses",
+    "aspects": "Chiron to Sun/Moon/Mercury/Venus/Mars",
+    "render_placement": "{the_wound}. {the_gift}. {lived_practice}.",
+    "render_aspect": "{wound_scene}. {recurring_pattern}. {healing_move}.",
+    "count": 49,
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/chiron/chiron-in-aries",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Aries",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around your right to exist and assert: a sense that stepping forward invites rejection",
+        "the_gift": "It makes you the one who can give other people permission to want things out loud, because you know what it costs",
+        "lived_practice": "Do one small brave thing before you feel ready, and let it count"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "People who call you difficult are the ones who benefit from your lack of boundaries.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-taurus",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Taurus",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around worth and security: a nagging sense you're not enough as you are",
+        "the_gift": "You help others feel their own value without earning it, because you've had to rebuild yours",
+        "lived_practice": "Name one thing you're worth that has nothing to do with what you produce"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop equating your worth with how much you own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A promotion, a new apartment, a better title, or another impressive achievement can give you a good week. Then the excitement wears off and you are alone with the same dissatisfaction. If every milestone leaves you immediately searching for the next one, the problem may be somewhere your résumé cannot reach.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-gemini",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Gemini",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around your mind and voice: a fear you're not smart enough, or that what you say won't land",
+        "the_gift": "You listen and explain in a way that helps others feel heard, because you know the ache of not being",
+        "lived_practice": "Say the half-formed thought out loud once, before you edit it into silence"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Trust that your voice is enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A strong opinion can harden quickly when it earns you attention. Soon you are defending something you barely believe because changing your mind would feel embarrassing. Keep enough distance from your own conclusions to notice when the facts have moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-cancer",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Cancer",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around belonging and care: a sense that home wasn't safe, or that your needs were too much",
+        "the_gift": "You can make others feel held, because you know exactly what it's like not to be",
+        "lived_practice": "Let someone care for you before you've earned it by caring for them first"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Your needs are not too much.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A hard period can become so familiar that feeling better makes you uneasy. You may miss the music you listened to, the people who understood you then, or the excuse to expect very little from life. You can remember what those years taught you without continuing to live inside them.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-leo",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Leo",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around being seen: a fear that your real self isn't special enough to love",
+        "the_gift": "You help others shine without shame, because you know the fear of being too much and not enough at once",
+        "lived_practice": "Share one thing you made without pre-apologizing for it"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re allowed to make things that don’t impress anyone but you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "When something succeeds, it is easy to remember every decision you made and forget the timing, help, luck, and access that carried it forward. Your effort mattered. So did the people who answered, opened a door, covered a shift, or gave you another chance. Knowing what helped you get here makes you a better leader once you arrive.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-virgo",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Virgo",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around never being good enough: a voice that says you're broken or not yet ready",
+        "the_gift": "You can offer others real acceptance and useful help, because you know that voice intimately",
+        "lived_practice": "Leave one thing imperfect on purpose and notice your entire world doesn't fall apart"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A system can save time until maintaining it becomes another job. You color-code the calendar, rebuild the tracker, adjust the routine, and spend the afternoon preparing to begin. Use the structure that helps you move. Retire the parts that only make you feel temporarily in control.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-libra",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Libra",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around relationship and being wanted: a fear that love requires you to disappear",
+        "the_gift": "You help others find fairness and real connection, because you've felt the cost of one-sided love",
+        "lived_practice": "State one preference in a relationship instead of managing theirs"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop fearing that boundaries mean you don't love enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some relationships survive because one person keeps leaving the door cracked. You answer the late message, agree to one more conversation, and call it kindness even though every contact unsettles your life again. If leaving was necessary, finish leaving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-scorpio",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around trust and power: a betrayal or loss that taught you closeness isn't safe",
+        "the_gift": "You can go to the depths with others without flinching, because you've been there",
+        "lived_practice": "Let one person a little further in than feels safe"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop calling it stress when it's actually rage being suppressed.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can feel when a room has turned strange. The conversation becomes mean, the questions get invasive, or your body starts looking for the nearest exit before your mind has explained why. You do not need to remain there long enough to collect evidence. Go.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-sagittarius",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around meaning and faith: a sense that the story you were given failed you",
+        "the_gift": "You help others find their own meaning, because you had to rebuild yours from scratch",
+        "lived_practice": "Act on one belief you've tested yourself, not one you were handed"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You don’t need to fix everything to deserve love.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can spend years waiting for the opportunity, person, or sudden break that will finally make movement possible. Meanwhile, the smaller exits keep appearing: one application, one phone call, one uncomfortable decision, one day of work. Take the next available step. A way out is often built while you are already moving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-capricorn",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around achievement and authority: a sense you only matter when you produce",
+        "the_gift": "You can show others their worth isn't their output, because you're still learning it",
+        "lived_practice": "Rest once without earning it, and let that be allowed"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Shortcuts become especially persuasive when the real work is repetitive. That is when people start buying tools they do not need, changing direction again, or talking about the work more than they do it. Return to the part that requires practice. Skill still grows the old-fashioned way.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-aquarius",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around belonging: a lifelong sense of being the outsider who doesn't quite fit",
+        "the_gift": "You make room for other outsiders, because you know how it feels to stand at the edge",
+        "lived_practice": "Let yourself belong somewhere before you decide you don't fit"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Every new idea arrives with a crowd insisting that it changes everything. A week later, the crowd has moved on and everyone pretends they were never impressed. You can watch the excitement without reorganizing your life around it. Let an idea survive its first round of applause before you follow it anywhere.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-pisces",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in Pisces",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your oldest wound is around boundaries and disillusion: a longing for something ideal that reality keeps puncturing",
+        "the_gift": "You meet others' pain with rare compassion, because you feel it so directly",
+        "lived_practice": "Protect one boundary today without guilt for having it"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You don’t need to fix everything to deserve love.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some days you answer the messages, make the food, finish the shift, and feel almost nothing while doing it. That does not make the day meaningless. Keeping your life going during a low period is work, even when nobody sees anything dramatic happen.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-1-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 1st house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on your very identity and how you meet the world, so you may feel fundamentally not-okay in your own skin",
+        "the_gift": "You help others accept themselves as they are",
+        "lived_practice": "Show up as yourself once without adjusting for the room"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Let yourself want what you want.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "The day will fill itself if you let it. Other people's requests arrive, small problems become urgent, and suddenly it is evening without anything important moving forward. Decide what you are doing before the noise begins. Give your own life the first hour.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-2-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 2nd house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on worth and resources, so you rarely feel quite secure or valuable enough",
+        "the_gift": "You help others feel their own value",
+        "lived_practice": "Claim one thing you're worth beyond your bank balance"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop equating your worth with how much you own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A promotion, a new apartment, a better title, or another impressive achievement can give you a good week. Then the excitement wears off and you are alone with the same dissatisfaction. If every milestone leaves you immediately searching for the next one, the problem may be somewhere your résumé cannot reach.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-3-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 3rd house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on your voice and mind, so you carry a fear of not being understood",
+        "the_gift": "You help others feel heard",
+        "lived_practice": "Say the thing you'd usually swallow"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Trust that your voice is enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-4-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 4th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on home and belonging, so the foundation felt unsafe",
+        "the_gift": "You make others feel at home",
+        "lived_practice": "Build one small piece of the safety you didn't get"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Your needs are not too much.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-5-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 5th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on self-expression and being seen, so creating can feel unworthy",
+        "the_gift": "You free others to create and play",
+        "lived_practice": "Make one thing just for you and share it anyway"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re allowed to make things that don’t impress anyone but you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Confidence rarely needs a long introduction. You can see it in the person who knows their material, answers the question, and does not scramble when somebody remains unimpressed. Let the work speak before you start raising your voice on its behalf.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-6-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 6th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on health, usefulness, and never-good-enough daily work",
+        "the_gift": "You help others heal and accept their limits",
+        "lived_practice": "Do the ordinary task without punishing yourself for how it went"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "The day will fill itself if you let it. Other people's requests arrive, small problems become urgent, and suddenly it is evening without anything important moving forward. Decide what you are doing before the noise begins. Give your own life the first hour.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-7-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 7th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on partnership, so you fear being unwanted or losing yourself in love",
+        "the_gift": "You help others find real, fair connection",
+        "lived_practice": "Stay yourself inside one close relationship"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Over-giving is not generosity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some relationships survive because one person keeps leaving the door cracked. You answer the late message, agree to one more conversation, and call it kindness even though every contact unsettles your life again. If leaving was necessary, finish leaving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-8-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 8th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on trust, intimacy, and shared power, so depth can feel dangerous",
+        "the_gift": "You can hold others through their darkest material",
+        "lived_practice": "Let one person see the part you keep hidden"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Your worth isn’t defined by what you have, but by what you give and receive.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can feel when a room has turned strange. The conversation becomes mean, the questions get invasive, or your body starts looking for the nearest exit before your mind has explained why. You do not need to remain there long enough to collect evidence. Go.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-9-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 9th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on meaning and belief, so an old story failed you",
+        "the_gift": "You help others build their own faith",
+        "lived_practice": "Live one belief you actually tested"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can spend years waiting for the opportunity, person, or sudden break that will finally make movement possible. Meanwhile, the smaller exits keep appearing: one application, one phone call, one uncomfortable decision, one day of work. Take the next available step. A way out is often built while you are already moving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-10-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 10th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on achievement and public worth, so you feel you only matter when you succeed",
+        "the_gift": "You show others their worth beyond status",
+        "lived_practice": "Let your value stand without the résumé for one day"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "When something succeeds, it is easy to remember every decision you made and forget the timing, help, luck, and access that carried it forward. Your effort mattered. So did the people who answered, opened a door, covered a shift, or gave you another chance. Knowing what helped you get here makes you a better leader once you arrive.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-11-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 11th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on community and belonging, so you feel like the perpetual outsider",
+        "the_gift": "You make space for other outsiders",
+        "lived_practice": "Let yourself belong to one group without keeping the exit in view"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Every new idea arrives with a crowd insisting that it changes everything. A week later, the crowd has moved on and everyone pretends they were never impressed. You can watch the excitement without reorganizing your life around it. Let an idea survive its first round of applause before you follow it anywhere.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/chiron/chiron-in-12-house",
+      "surface": "me.natal_placement",
+      "kind": "chiron_placement",
+      "title": "Chiron in the 12th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "the_wound": "Your core wound sits on the unseen and hidden pain, an ache you can't quite locate",
+        "the_gift": "You meet others' invisible suffering with compassion",
+        "lived_practice": "Tend one quiet, private ache instead of ignoring it"
+      },
+      "source_keys": [
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some days you answer the messages, make the food, finish the shift, and feel almost nothing while doing it. That does not make the day meaningless. Keeping your life going during a low period is work, even when nobody sees anything dramatic happen.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-sun",
+      "pair": "chiron conjunction sun",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "sun",
+      "slots": {
+        "wound_scene": "your core identity sits right on an old wound about being seen or worthy, often a father wound",
+        "recurring_pattern": "you overcompensate to prove yourself, or dim yourself to stay safe",
+        "healing_move": "Let yourself be seen as you're in one small way, wound and all"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Fear is not the enemy.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-sun",
+      "pair": "chiron square sun",
+      "aspect": "square",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "sun",
+      "slots": {
+        "wound_scene": "an old wound about who you're keeps getting pressed, and confidence feels hard-won",
+        "recurring_pattern": "you read every setback as proof of the old inadequacy",
+        "healing_move": "Do the thing anyway; the wound doesn't get the final say"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-sun",
+      "pair": "chiron opposition sun",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "sun",
+      "slots": {
+        "wound_scene": "an old wound about who you're keeps getting pressed, and confidence feels hard-won",
+        "recurring_pattern": "you read every setback as proof of the old inadequacy",
+        "healing_move": "Do the thing anyway; the wound doesn't get the final say"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the wound met through other people",
+      "pull_quote": {
+        "text": "Some of our most courageous people are also the most scared.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-sun",
+      "pair": "chiron trine sun",
+      "aspect": "trine",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "sun",
+      "slots": {
+        "wound_scene": "you can reach the old identity wound without being swamped, and turn it into wisdom",
+        "recurring_pattern": "the pain is close enough to feel and steady enough to use",
+        "healing_move": "Offer someone the courage you had to learn"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-sun",
+      "pair": "chiron sextile sun",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "sun",
+      "slots": {
+        "wound_scene": "you can reach the old identity wound without being swamped, and turn it into wisdom",
+        "recurring_pattern": "the pain is close enough to feel and steady enough to use",
+        "healing_move": "Offer someone the courage you had to learn"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the accessible-wound opening that only helps when acted on"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-moon",
+      "pair": "chiron conjunction moon",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "moon",
+      "slots": {
+        "wound_scene": "your emotional needs sit on an old wound about nurture or safety, often a mother wound",
+        "recurring_pattern": "you tend everyone else's feelings to avoid your own unmet need",
+        "healing_move": "Let yourself need something, and let someone meet it"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you've been sitting on your feelings, they're about to stand up.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-moon",
+      "pair": "chiron square moon",
+      "aspect": "square",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "moon",
+      "slots": {
+        "wound_scene": "an old wound about care and belonging keeps aching, and comfort feels unreliable",
+        "recurring_pattern": "you assume your needs are too much and hide them",
+        "healing_move": "Name one need out loud instead of managing it alone"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you've been sitting on your feelings, they're about to stand up.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-moon",
+      "pair": "chiron opposition moon",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "moon",
+      "slots": {
+        "wound_scene": "an old wound about care and belonging keeps aching, and comfort feels unreliable",
+        "recurring_pattern": "you assume your needs are too much and hide them",
+        "healing_move": "Name one need out loud instead of managing it alone"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the wound met through other people",
+      "pull_quote": {
+        "text": "If you've been sitting on your feelings, they're about to stand up.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-moon",
+      "pair": "chiron trine moon",
+      "aspect": "trine",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "moon",
+      "slots": {
+        "wound_scene": "you can feel the old emotional wound gently and offer real care from it",
+        "recurring_pattern": "tenderness and healing are close to the surface",
+        "healing_move": "Comfort someone the way you needed to be comforted"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Grief is so physical that it takes on its own shape.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-moon",
+      "pair": "chiron sextile moon",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "moon",
+      "slots": {
+        "wound_scene": "you can feel the old emotional wound gently and offer real care from it",
+        "recurring_pattern": "tenderness and healing are close to the surface",
+        "healing_move": "Comfort someone the way you needed to be comforted"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the accessible-wound opening that only helps when acted on",
+      "pull_quote": {
+        "text": "If you've been sitting on your feelings, they're about to stand up.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-mercury",
+      "pair": "chiron conjunction mercury",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mercury",
+      "slots": {
+        "wound_scene": "your mind and voice are tied to an old wound about being heard or smart enough",
+        "recurring_pattern": "you over-explain to prove yourself, or go silent to avoid being wrong",
+        "healing_move": "Say the imperfect thought and let it be enough"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop believing that speed equals intelligence.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-mercury",
+      "pair": "chiron square mercury",
+      "aspect": "square",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mercury",
+      "slots": {
+        "wound_scene": "an old wound about your intelligence or voice keeps getting poked",
+        "recurring_pattern": "you brace for being dismissed before anyone dismisses you",
+        "healing_move": "Speak once without armoring the sentence first"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop believing that speed equals intelligence.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-mercury",
+      "pair": "chiron opposition mercury",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mercury",
+      "slots": {
+        "wound_scene": "an old wound about your intelligence or voice keeps getting poked",
+        "recurring_pattern": "you brace for being dismissed before anyone dismisses you",
+        "healing_move": "Speak once without armoring the sentence first"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the wound met through other people",
+      "pull_quote": {
+        "text": "Stop believing that speed equals intelligence.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-mercury",
+      "pair": "chiron trine mercury",
+      "aspect": "trine",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mercury",
+      "slots": {
+        "wound_scene": "you can speak from the old wound in a way that helps others feel understood",
+        "recurring_pattern": "honest words come more easily than usual",
+        "healing_move": "Say the true thing that would have helped you to hear"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Let clarity be more important than charisma.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-mercury",
+      "pair": "chiron sextile mercury",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mercury",
+      "slots": {
+        "wound_scene": "you can speak from the old wound in a way that helps others feel understood",
+        "recurring_pattern": "honest words come more easily than usual",
+        "healing_move": "Say the true thing that would have helped you to hear"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the accessible-wound opening that only helps when acted on",
+      "pull_quote": {
+        "text": "Stop believing that speed equals intelligence.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-venus",
+      "pair": "chiron conjunction venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "venus",
+      "slots": {
+        "wound_scene": "your sense of worth and desirability sits on an old wound about being wanted or lovable",
+        "recurring_pattern": "you earn love by over-giving, or expect rejection and pull away first",
+        "healing_move": "Let one person value you without you paying for it first"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Over-giving is not generosity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-venus",
+      "pair": "chiron square venus",
+      "aspect": "square",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "venus",
+      "slots": {
+        "wound_scene": "an old wound about love and worth keeps getting tender",
+        "recurring_pattern": "you read distance as proof you're unlovable and over-function to fix it",
+        "healing_move": "Receive one kindness without immediately returning it"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-venus",
+      "pair": "chiron opposition venus",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "venus",
+      "slots": {
+        "wound_scene": "an old wound about love and worth keeps getting tender",
+        "recurring_pattern": "you read distance as proof you're unlovable and over-function to fix it",
+        "healing_move": "Receive one kindness without immediately returning it"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the wound met through other people",
+      "pull_quote": {
+        "text": "Over-giving is not generosity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-venus",
+      "pair": "chiron trine venus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "venus",
+      "slots": {
+        "wound_scene": "you can feel the old love-wound gently and help others feel worthy",
+        "recurring_pattern": "warmth and self-acceptance are within reach",
+        "healing_move": "Give someone the acceptance you're still learning to give yourself"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-venus",
+      "pair": "chiron sextile venus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "venus",
+      "slots": {
+        "wound_scene": "you can feel the old love-wound gently and help others feel worthy",
+        "recurring_pattern": "warmth and self-acceptance are within reach",
+        "healing_move": "Give someone the acceptance you're still learning to give yourself"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the accessible-wound opening that only helps when acted on"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-mars",
+      "pair": "chiron conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mars",
+      "slots": {
+        "wound_scene": "your drive and anger are wired to an old wound about power or the right to assert",
+        "recurring_pattern": "you suppress your anger until it leaks, or overassert to cover the wound",
+        "healing_move": "Say the direct, angry-enough thing cleanly, once"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You don't know what can happen until you try.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-mars",
+      "pair": "chiron square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mars",
+      "slots": {
+        "wound_scene": "an old wound about your potency or right to act keeps getting struck",
+        "recurring_pattern": "you flinch from conflict, then resent yourself for it",
+        "healing_move": "Take one clean action you'd normally talk yourself out of"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You don't know what can happen until you try.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-mars",
+      "pair": "chiron opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mars",
+      "slots": {
+        "wound_scene": "an old wound about your potency or right to act keeps getting struck",
+        "recurring_pattern": "you flinch from conflict, then resent yourself for it",
+        "healing_move": "Take one clean action you'd normally talk yourself out of"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the wound met through other people",
+      "pull_quote": {
+        "text": "You don't know what can happen until you try.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-mars",
+      "pair": "chiron trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mars",
+      "slots": {
+        "wound_scene": "you can act from the old wound without being ruled by it, and help others find their fight",
+        "recurring_pattern": "healthy assertion is unusually available",
+        "healing_move": "Stand up for someone the way you needed someone to stand up for you"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-mars",
+      "pair": "chiron sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "surface": "me.natal_aspect",
+      "kind": "chiron_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "transiting_body": "chiron",
+      "natal_body": "mars",
+      "slots": {
+        "wound_scene": "you can act from the old wound without being ruled by it, and help others find their fight",
+        "recurring_pattern": "healthy assertion is unusually available",
+        "healing_move": "Stand up for someone the way you needed someone to stand up for you"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), per reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the accessible-wound opening that only helps when acted on",
+      "pull_quote": {
+        "text": "You don't know what can happen until you try.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    }
+  ]
+}

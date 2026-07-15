@@ -1,0 +1,329 @@
+{
+  "_meta": {
+    "title": "TLDR Astro reviewed reader-ready clauses",
+    "version": "1.0",
+    "format": "Follows sources/source-derived-clause-exemplars.json: id, surface, templateFamily, mode, slots (keyed by RENDER-FIELD-CONTRACT field names), source_keys (evidence provenance), fact_fields_required, status, originalityCheck.",
+    "voice": "Marie Satori house voice (tldr-astro-voice-spec.md): warm, plain, second person, present tense, name the astrology once, one recognizable behavior, close on a body/script/release. No em dashes. No keyword stacks.",
+    "status_ladder": "READER_READY = authored + reviewed here; SOURCE_GAP = no reviewed exact source exists in corpus (do NOT compose from keywords).",
+    "note": "These are voiced ON TOP of the cited cc/*/ms/* reference logic. The reader never meets the raw source. compact (card) copy differs from expanded (detail) copy per EXECUTABLE-TEMPLATE-CONTRACT."
+  },
+
+  "reviewed": [
+    {
+      "id": "transit.saturn-square-venus.long",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "editorialHeadline": "THE HONEST LIMIT",
+        "factualEventTitle": "Saturn square your natal Venus",
+        "timingDisplay": "Active through the window · exact {exactDate} · long-term",
+        "expandedNarrative": "A relationship, an expense, or a commitment you have been carrying starts asking for a more honest limit. Warmth cools right where you most want reassurance, and it is tempting to read that chill as proof you are not wanted. More often it is Saturn asking whether the connection holds up when you stop over-giving to keep the peace. Notice where keeping everyone comfortable has quietly cost you more than saying what is actually sustainable.",
+        "practicalResponse": "Name one need directly instead of withdrawing, and make one agreement clearer before you take on another obligation. Let people show you through what they do, not what you hope.",
+        "passContext": "Because Saturn is slow and stations, this contact can perfect more than once. Each pass tests the same limit from a slightly different angle rather than starting a new story.",
+        "astroFooter": "The astro: transiting Saturn square your natal Venus. Orb: {orb}."
+      },
+      "compactCardSlots": {
+        "factualEventTitle": "Saturn square your natal Venus",
+        "timingDisplay": "exact {exactDate} · long-term",
+        "compactSummary": "A relationship or commitment asks for a more honest limit than you have wanted to set."
+      },
+      "source_keys": ["cc/aspect-pair/venus-square-saturn", "ms/chart-comparison/verdict/saturn/square", "ms/chart-comparison/planet/venus", "cc/planet/saturn/function", "cc/ref/aspect-psychology/square"],
+      "fact_fields_required": ["transitingPlanet", "natalPoint", "aspect", "orb", "activeWindow", "exactDate"],
+      "originalityCheck": "voiced; not raw from any source string"
+    },
+
+    {
+      "id": "transit.sun-square-saturn.short",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "editorialHeadline": "DO THE UNGLAMOROUS PART",
+        "factualEventTitle": "Sun square your natal Saturn",
+        "timingDisplay": "A day or two · exact {exactDate}",
+        "expandedNarrative": "Your momentum runs into a limit today: a duty, a delay, or someone with authority saying not yet. It can land as being blocked or quietly doubted. It is not a verdict on you, it is a test of commitment.",
+        "practicalResponse": "Do the boring, load-bearing part instead of arguing with the wall. Confidence built this way is real rather than borrowed.",
+        "astroFooter": "The astro: transiting Sun square your natal Saturn. Orb: {orb}."
+      },
+      "compactCardSlots": {
+        "factualEventTitle": "Sun square your natal Saturn",
+        "timingDisplay": "exact {exactDate}",
+        "compactSummary": "A limit or delay tests your commitment today. Do the unglamorous part."
+      },
+      "source_keys": ["cc/aspect-pair/sun-square-saturn", "cc/planet/saturn/function", "cc/ref/aspect-psychology/square"],
+      "fact_fields_required": ["transitingPlanet", "natalPoint", "aspect", "orb", "exactDate"],
+      "originalityCheck": "voiced"
+    },
+
+    {
+      "id": "transit.moon-square-saturn.short",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "editorialHeadline": "HEAVY, NOT PERMANENT",
+        "factualEventTitle": "Moon square your natal Saturn",
+        "timingDisplay": "A few hours · exact {exactDate}",
+        "expandedNarrative": "A passing heaviness settles in, the kind where you assume you are on your own with it. Your mood is briefly wearing Saturn's coat. It reads as more final than it is.",
+        "practicalResponse": "Lower the bar for the next few hours and let one small comfort in rather than toughing it out alone.",
+        "astroFooter": "The astro: transiting Moon square your natal Saturn. Orb: {orb}."
+      },
+      "compactCardSlots": {
+        "factualEventTitle": "Moon square your natal Saturn",
+        "timingDisplay": "exact {exactDate}",
+        "compactSummary": "A short, heavy mood that feels more final than it is. Let one comfort in."
+      },
+      "source_keys": ["cc/aspect-pair/moon-square-saturn", "cc/planet/saturn/function", "cc/ref/aspect-psychology/square"],
+      "fact_fields_required": ["transitingPlanet", "natalPoint", "aspect", "orb", "exactDate"],
+      "originalityCheck": "voiced"
+    },
+
+    {
+      "id": "transit.mars-conjunction-ascendant.short",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "status": "SOURCE_GAP",
+      "gapReason": "No reviewed exact Mars-conjunction-Ascendant lived-situation clause exists in the corpus. Mars and Ascendant keyword metadata cannot be combined to fill it.",
+      "slots": {},
+      "source_keys": [],
+      "fact_fields_required": ["transitingPlanet", "natalPoint", "aspect", "orb", "exactDate"],
+      "originalityCheck": "n/a"
+    },
+
+    {
+      "id": "sky.sun-in-cancer.collective",
+      "surface": "sky.planet_sign",
+      "templateFamily": "sky_planet_sign",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "factualPlacementTitle": "Sun in Cancer",
+        "timingDisplay": "{activeWindow}",
+        "recognizableCollectiveSituation": "Feeling runs closer to the surface for everyone right now. Small things land harder, and the pull toward home, family, and whoever feels like safety gets stronger.",
+        "expandedNarrative": "While the Sun moves through Cancer, care becomes the currency in the room. People soften, get more protective, and pay more attention to who remembers the small things. The shadow side is taking the weather personally and retreating into your shell when a real conversation would do more.",
+        "proportionateResponse": "Tend to the people and the space that actually restore you, and say the tender thing out loud instead of guarding it."
+      },
+      "compactCardSlots": {
+        "factualPlacementTitle": "Sun in Cancer",
+        "timingDisplay": "{activeWindow}",
+        "compactSummary": "Feeling runs closer to the surface for everyone. Care becomes the currency."
+      },
+      "source_keys": ["cc/planet-in-sign/sun-in-cancer", "cc/planet/sun/function", "cc/sign/cancer/lived-behaviors"],
+      "fact_fields_required": ["currentBody", "currentSign", "activeWindow"],
+      "originalityCheck": "voiced; NOT the raw seasonal cc/planet-in-sign string",
+      "divergence_note": "COLLECTIVE. No personal house. Contrast with home.sun-in-cancer.gemini-rising below."
+    },
+
+    {
+      "id": "home.sun-in-cancer.gemini-rising",
+      "surface": "home.planetary_horoscope",
+      "templateFamily": "home_planetary_horoscope",
+      "mode": "detail",
+      "status": "READER_READY",
+      "resolver": "Gemini rising + Sun in Cancer -> Cancer = 2nd house (whole-sign).",
+      "slots": {
+        "factualPlacementTitle": "Sun in Cancer, in your 2nd house",
+        "timingDisplay": "{activeWindow}",
+        "openingClaim": "For you, this Cancer light lands on what you own and what you feel you are worth.",
+        "expandedNarrative": "You may notice your sense of security getting tangled up with how loved you feel, so a slow week for money or a small unappreciated gesture can quietly bruise more than it should. This is a good stretch to tend to your actual resources: what you earn, what you keep, and the comfort you let yourself have without guilt.",
+        "focusedQuestions": "Where have you been measuring your worth by your bank balance? What would feel like enough?",
+        "compassionateAgency": "Do one concrete thing that steadies your base: name your rate, spend on one real comfort, or put a little aside. Let worth and money be two different questions today."
+      },
+      "compactCardSlots": {
+        "factualPlacementTitle": "Sun in Cancer, 2nd house",
+        "timingDisplay": "{activeWindow}",
+        "compactSummary": "Security and self-worth are tender right now. Tend to what you own and value."
+      },
+      "source_keys": ["cc/planet-in-sign/sun-in-cancer", "cc/house/2", "cc/house/2/worth", "cc/house/2/security", "cc/planet/sun/function"],
+      "fact_fields_required": ["currentBody", "currentSign", "risingSign", "resolvedWholeSignHouse", "activeWindow"],
+      "originalityCheck": "voiced; one 2nd-house subject, house SELECTS the scene (not a keyword list)",
+      "divergence_note": "PERSONALIZED through rising-sign house. Same Sun in Cancer, entirely different copy from the Sky collective version."
+    },
+
+    {
+      "id": "home.moon-in-cancer.gemini-rising",
+      "surface": "home.planetary_horoscope",
+      "templateFamily": "home_planetary_horoscope",
+      "mode": "detail",
+      "status": "READER_READY",
+      "resolver": "Gemini rising + Moon in Cancer -> 2nd house.",
+      "slots": {
+        "factualPlacementTitle": "Moon in Cancer, in your 2nd house",
+        "timingDisplay": "{activeWindow}",
+        "openingClaim": "Your feelings and your livelihood are running on the same wire right now.",
+        "expandedNarrative": "When money or material support feels shaky, the whole day can tip; when it feels handled, you soften. You may want to replenish, to stock the cupboard, to make your immediate world a little safer to be in.",
+        "compassionateAgency": "Feed the need practically: restock one thing, handle one small bill, or let someone support you instead of carrying it solo."
+      },
+      "compactCardSlots": {
+        "factualPlacementTitle": "Moon in Cancer, 2nd house",
+        "timingDisplay": "{activeWindow}",
+        "compactSummary": "Mood and material security are linked today. Replenish something."
+      },
+      "source_keys": ["cc/house/2", "cc/house/2/security", "cc/planet/moon/function", "cc/sign/cancer/lived-behaviors"],
+      "fact_fields_required": ["currentBody", "currentSign", "risingSign", "resolvedWholeSignHouse", "activeWindow"],
+      "originalityCheck": "voiced"
+    },
+
+    {
+      "id": "home.moon-forecast.phase.balsamic",
+      "surface": "home.moon_forecast.phase",
+      "templateFamily": "moon_phase",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "phaseTitle": "Balsamic Moon",
+        "timingDisplay": "{timestamp}",
+        "cycleRole": "This is the last stretch of the lunar cycle, the dark before the New Moon. The month's story is winding down and asking to be composted rather than pushed.",
+        "phaseAppropriateAction": "Rest, clear, and let things end. Don't start the new thing yet. Notice what you are ready to stop carrying into the next cycle."
+      },
+      "source_keys": ["cc/event-action/mercury-retrograde"],
+      "fact_fields_required": ["moonPhase", "timestamp"],
+      "originalityCheck": "voiced; phase only, no Moon-sign copy"
+    },
+
+    {
+      "id": "home.moon-forecast.phase.full",
+      "surface": "home.moon_forecast.phase",
+      "templateFamily": "moon_phase",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "phaseTitle": "Full Moon",
+        "timingDisplay": "{timestamp}",
+        "cycleRole": "The cycle reaches its peak. Whatever was seeded at the New Moon is now lit up and visible, for better or worse.",
+        "phaseAppropriateAction": "Witness it honestly and let something culminate or release. This is a time to see clearly, not to start over."
+      },
+      "source_keys": [],
+      "fact_fields_required": ["moonPhase", "timestamp"],
+      "originalityCheck": "voiced; phase only"
+    },
+
+    {
+      "id": "home.moon-forecast.sign.cancer",
+      "surface": "home.moon_forecast.sign",
+      "templateFamily": "moon_sign",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "signTitle": "Moon in Cancer",
+        "timingDisplay": "{activeWindow}",
+        "embodiedGuidance": "Go gentle and go home. Cook something, call the person who feels safe, let yourself need what you need.",
+        "boundaryOrCarePrompt": "You don't have to host everyone's feelings today. Tend to your own first."
+      },
+      "source_keys": ["cc/sign/cancer/lived-behaviors", "cc/sign/cancer/actions"],
+      "fact_fields_required": ["moonSign", "activeWindow"],
+      "originalityCheck": "voiced; short imperatives, no phase copy"
+    },
+
+    {
+      "id": "natal.sun-aquarius-9h.day",
+      "surface": "me.natal_placement",
+      "templateFamily": "natal_placement",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "factualPlacementTitle": "Sun in Aquarius, 9th house",
+        "integratedSignHouseStory": "Your sense of direction strengthens when you can think for yourself and put it toward something bigger: a belief, a body of study, a cause, a horizon past your own street. You are often the one questioning a rule everyone else stopped noticing, and you feel most yourself when a idea can travel.",
+        "sectClause": "Born in the day, the Sun is your light leader, so its condition sets the tone for the whole chart, with Jupiter and Saturn as its team to watch.",
+        "rulerBridge": "Aquarius answers to Saturn, so where your Saturn sits shows the structure that either grounds this independence or makes it prove itself."
+      },
+      "source_keys": ["ms/midheaven/aquarius", "cc/house/9", "cc/planet/sun/function", "ms/chart-comparison/planet/saturn"],
+      "fact_fields_required": ["natalBody", "natalSign", "natalHouse", "sect", "rulerPlacement"],
+      "sect_gated": true,
+      "originalityCheck": "voiced; integrated, not stacked definitions",
+      "note": "sectClause rendered ONLY because day/night + horizon are reliable."
+    },
+
+    {
+      "id": "natal.placement.sect-suppressed",
+      "surface": "me.natal_placement",
+      "templateFamily": "natal_placement",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "factualPlacementTitle": "{Body} in {Sign}, {house} house",
+        "integratedSignHouseStory": "{integrated sign+house story renders normally}"
+      },
+      "suppressed": ["sectClause"],
+      "suppression_reason": "Birth time / horizon unreliable. Sect-dependent copy is suppressed; the placement still renders without it.",
+      "source_keys": [],
+      "fact_fields_required": ["natalBody", "natalSign", "natalHouse"],
+      "sect_gated": true,
+      "originalityCheck": "n/a"
+    },
+
+    {
+      "id": "sky.aspect.moon-conjunction-north-node",
+      "surface": "sky.aspect",
+      "templateFamily": "sky_aspect",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "factualEventTitle": "Moon conjunct the North Node",
+        "timingDisplay": "{activeWindow} · exact {exactDate}",
+        "expandedNarrative": "An emotional response today may be pointing you toward something you are actually trying to grow into. The feeling is information, not just weather.",
+        "proportionateResponse": "Notice what feels easier to approach while this is open, then take one concrete step toward it."
+      },
+      "source_keys": ["cc/aspect-pair/moon-conjunction-north-node", "cc/aspect/conjunction", "ms/chart-comparison/planet/moon"],
+      "fact_fields_required": ["pointA", "pointB", "aspect", "orb", "activeWindow"],
+      "originalityCheck": "voiced"
+    },
+
+    {
+      "id": "sky.retrograde.mercury.cancer",
+      "surface": "sky.retrograde_station",
+      "templateFamily": "sky_retrograde",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "phaseTitle": "Mercury retrograde in Cancer",
+        "timingDisplay": "Rx {start} to {end} · station {stationDate}",
+        "recognizableMoment": "A family conversation, a household plan, or a message with a long history may need another pass. Old feelings can resurface mid-sentence.",
+        "practicalResponse": "Check what was actually said, confirm the practical details, and decide what needs to be put in writing now. Reflect and repair rather than launch."
+      },
+      "source_keys": ["cc/event-action/mercury-retrograde", "ms/mercury-rx/sign/cancer", "ms/retro-phase/retrograde"],
+      "fact_fields_required": ["planet", "sign", "direction", "phase", "start", "end"],
+      "originalityCheck": "voiced"
+    },
+
+    {
+      "id": "sky.retro-phase.pre-shadow",
+      "surface": "sky.retrograde_station",
+      "templateFamily": "sky_retrograde",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "phaseTitle": "Pre-retrograde shadow",
+        "timingDisplay": "About two weeks before the station",
+        "recognizableMoment": "The planet slows through the ground it will soon retrace. You can still begin things, but the theme it will later review is already previewing itself.",
+        "practicalResponse": "Act with clear purpose and a little extra care. Note what starts feeling sticky now; that is the thread the retrograde will pull."
+      },
+      "source_keys": ["ms/retro-phase/pre-retrograde-shadow"],
+      "fact_fields_required": ["planet", "sign", "phase", "start", "end"],
+      "originalityCheck": "voiced; distinct record from the retrograde-passage phase"
+    },
+
+    {
+      "id": "daily.gemini-rising.example",
+      "surface": "home.daily_horoscope",
+      "templateFamily": "daily_horoscope",
+      "mode": "detail",
+      "status": "READER_READY",
+      "slots": {
+        "dateDisplay": "{date}",
+        "editorialHeadline": "SAY THE ACTUAL THING",
+        "livedScenario": "A conversation you have been rehearsing keeps getting edited down to something safer than what you mean. You may catch yourself agreeing to keep the peace and resenting it an hour later.",
+        "reflectiveTurn": "What do you actually want to say, before you soften it?",
+        "proportionateSuggestion": "Send the plainer version. One clear sentence now saves three careful ones later."
+      },
+      "source_keys": ["cc/sign/gemini/lived-behaviors", "cc/sign/virgo/hook/alt6"],
+      "fact_fields_required": ["date", "risingSign", "selectedDailyFactors"],
+      "originalityCheck": "voiced; one scene, one proportionate action"
+    }
+  ]
+}

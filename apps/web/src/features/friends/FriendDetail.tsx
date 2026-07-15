@@ -2,7 +2,7 @@ import { MoreVertical } from "lucide-react";
 import type { ReactNode } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 
-export type FriendDetailTab = "natal" | "synastry" | "composite";
+export type FriendDetailTab = "natal" | "transits" | "synastry" | "composite";
 
 type FriendDetailProps = {
   activeTab: FriendDetailTab;
@@ -60,6 +60,7 @@ export function FriendDetail({
             value={activeTab}
             options={[
               { value: "natal", label: "Natal" },
+              { value: "transits", label: "Transits" },
               { value: "synastry", label: "Synastry" },
               { value: "composite", label: "Composite" }
             ]}

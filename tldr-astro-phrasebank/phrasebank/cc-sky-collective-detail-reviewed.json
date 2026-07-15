@@ -1,0 +1,1044 @@
+{
+  "_meta": {
+    "title": "Collective Sky — expanded detail (sky.collective.detail)",
+    "templateVersion": "2.2.1",
+    "count": 21,
+    "tier": "REVIEWED_CLAUSE",
+    "voice": "collective we/us/our",
+    "variants": [
+      "aspect",
+      "ingress",
+      "lunation",
+      "moon-sign",
+      "planet-sign",
+      "retrograde",
+      "station"
+    ],
+    "note": "semantic slots composed into 1-2 paragraphs; never one <p> per slot",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "sky/detail/sun-cancer",
+      "event": "sun-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "sun",
+          "cancer"
+        ]
+      },
+      "title": "Sun in Cancer",
+      "dateRange": "June 21 – July 22",
+      "clauses": {
+        "anchor": "For a few weeks the collective attention turns toward home, family, and the people we feel responsible for.",
+        "manifestation": "Conversations that started about work or logistics keep circling back to who is being looked after and who is quietly carrying too much, and many of us feel the pull to check on someone before we check the next thing off a list.",
+        "tension": "The warmth is real, and so is the risk of mistaking worry for closeness, or letting our own need for reassurance decide how much room anyone else gets.",
+        "invitation": "It helps to say the tender thing out loud rather than hovering around it,",
+        "closing": "since care lands most when it is offered in the open instead of managed quietly from a distance."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "sun"
+        ],
+        "sign": "cancer"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/planet-sign/sun-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/moon-cancer",
+      "event": "moon-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.moon-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "moon-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "moon",
+          "cancer"
+        ]
+      },
+      "title": "Moon in Cancer",
+      "dateRange": "July 14 – July 16",
+      "clauses": {
+        "embodiedAtmosphere": "Feelings sit closer to the surface than usual for the day or two the Moon spends in Cancer.",
+        "careOrProtectionNeed": "Many of us want something familiar nearby, a known voice, a home-cooked meal, a little cover from noise we would shrug off on a busier day.",
+        "recognizableCollectiveScene": "Small slights land harder and small comforts land deeper, and people reach for the people who already know them.",
+        "directInvitation": "Let the softer mood set a slower pace,",
+        "closingReplenishment": "and give the day one genuinely nourishing thing rather than powering through as if feelings were an interruption."
+      },
+      "paragraphsPlan": [
+        [
+          "embodiedAtmosphere",
+          "careOrProtectionNeed",
+          "recognizableCollectiveScene",
+          "directInvitation",
+          "closingReplenishment"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "moon-in-sign",
+        "bodies": [
+          "moon"
+        ],
+        "sign": "cancer"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/moon-sign/moon-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/mercury-retrograde-cancer",
+      "event": "mercury-retrograde-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.retrograde.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "retrograde",
+      "eyebrow": {
+        "label": "Retrograde",
+        "glyphs": [
+          "mercury",
+          "cancer"
+        ]
+      },
+      "title": "Mercury Retrograde in Cancer",
+      "dateRange": "August 2 – August 26",
+      "clauses": {
+        "reviewSituation": "Something we thought was settled in our closest relationships comes back up for another look while Mercury moves backward through Cancer.",
+        "whatReturnsOrComplicates": "An old message we never answered, a family misunderstanding, a feeling we filed away too quickly, all of it turns strangely present again.",
+        "recognizableCollectiveScene": "Group threads resurface conversations from months ago, people half-apologize for things we had forgotten, and plans made in a hurry turn out to need a second pass.",
+        "revisionInvitation": "This is the stretch for going back and saying the clearer version of what we meant, for checking the detail before assuming, and for letting a misread message be a question rather than a verdict.",
+        "phaseContext": "The pull to reopen the past eases once Mercury steadies, so treat these weeks as time to mend and confirm rather than to sign, send, or announce the new thing."
+      },
+      "paragraphsPlan": [
+        [
+          "reviewSituation",
+          "whatReturnsOrComplicates",
+          "recognizableCollectiveScene",
+          "revisionInvitation"
+        ],
+        [
+          "phaseContext"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "retrograde",
+        "bodies": [
+          "mercury"
+        ],
+        "sign": "cancer",
+        "direction": "retrograde"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/retrograde/mercury-retrograde-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/venus-virgo",
+      "event": "venus-virgo",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "venus",
+          "virgo"
+        ]
+      },
+      "title": "Venus in Virgo",
+      "dateRange": "August 8 – September 2",
+      "clauses": {
+        "anchor": "Affection gets quieter and more practical while Venus moves through Virgo, less the love that sweeps us off our feet and more love as a daily practice of care.",
+        "manifestation": "We show we care by fixing the broken thing, remembering the appointment, and doing the dishes without being asked, and many of us feel most loved this month not by grand gestures but by the thousand small ways someone tends to what we actually need.",
+        "tension": "The same eye for detail can tip into fault-finding, where helpful feedback edges into criticism that wounds and the running list of what is not quite right crowds out the pleasure of what is already good.",
+        "invitation": "It is worth letting some things be good enough,",
+        "closing": "and letting a small, well-timed gesture count as the real affection it already is."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "venus"
+        ],
+        "sign": "virgo"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/venus-in-virgo-2025",
+        "cc/planet-sign/venus-virgo"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/mars-gemini",
+      "event": "mars-gemini",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "mars",
+          "gemini"
+        ]
+      },
+      "title": "Mars in Gemini",
+      "dateRange": "June 28 – August 11",
+      "clauses": {
+        "anchor": "Conversations carry more voltage while Mars moves through Gemini.",
+        "manifestation": "Ideas arrive quickly, replies come even faster, and many of us may feel pressure to act on the first version of a plan before the useful questions have been asked.",
+        "tension": "That speed can sharpen an argument or give a stalled project the momentum it needed; the difference is whether motion has somewhere clear to go.",
+        "invitation": "Give the restless energy a channel.",
+        "closing": "Name the decision, verify the essential detail, and let curiosity improve the plan before urgency takes over."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "mars"
+        ],
+        "sign": "gemini"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/planet-sign/mars-gemini"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/jupiter-leo",
+      "event": "jupiter-leo",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "jupiter",
+          "leo"
+        ]
+      },
+      "title": "Jupiter in Leo",
+      "dateRange": "June 30, 2026 – July 25, 2027",
+      "clauses": {
+        "anchor": "There is more room for warmth, confidence, and outright play in the collective mood while Jupiter moves through Leo.",
+        "manifestation": "People take bigger creative swings, celebrate more openly, and hand out praise more freely, and many of us feel encouraged to want something out loud instead of keeping it modest and small.",
+        "tension": "Generosity and showmanship share a border, and the same expansiveness that lifts a room can tip into performance, where being seen starts to matter more than what is actually being made.",
+        "invitation": "The move is to let the confidence serve the work,",
+        "closing": "so the boldness leaves something real behind and not just a good entrance."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "jupiter"
+        ],
+        "sign": "leo"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/planet-sign/jupiter-leo"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/saturn-aries",
+      "event": "saturn-aries",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "saturn",
+          "aries"
+        ]
+      },
+      "title": "Saturn in Aries",
+      "dateRange": "May 24, 2025 – April 12, 2028",
+      "clauses": {
+        "anchor": "After years of Saturn in Pisces asking us to grieve and surrender what was only ever held together by belief, the collective is being asked to move and grow up about initiative while Saturn crosses into Aries.",
+        "manifestation": "Starting things, standing alone, and claiming what we want stop feeling optional and start carrying weight, and many of us notice that the courage we used to admire in other people is now being asked of us directly.",
+        "tension": "Independence gets tested against its limits here, where the drive to do it all alone can harden into isolation, and impatience runs into the slow truth that real self-reliance takes time to build.",
+        "invitation": "It helps to pick the one thing worth standing behind,",
+        "closing": "and to remember that freedom here does not come from avoiding limits but from choosing which ones actually matter."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "saturn"
+        ],
+        "sign": "aries"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/saturn-enters-aries-2025",
+        "cc/planet-sign/saturn-aries"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/chiron-taurus",
+      "event": "chiron-taurus",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "chiron",
+          "taurus"
+        ]
+      },
+      "title": "Chiron in Taurus",
+      "dateRange": "April 2018 – 2027",
+      "clauses": {
+        "anchor": "A sore spot around worth, safety, and having enough sits close to the surface while Chiron moves through Taurus.",
+        "manifestation": "Conversations about money, bodies, and basic security carry more ache than the practical facts alone would explain, and many of us run into an old belief that our worth has to be earned or proven before we are allowed to rest.",
+        "tension": "The wound and the medicine look almost the same here, because the reassurance we reach for outside, more savings, more proof, more solidity, rarely reaches the place that actually feels unsteady.",
+        "invitation": "The gentler move is to let worth be something we practice rather than something we qualify for,",
+        "closing": "and to notice the ordinary, already-present enough that fear tends to talk us out of seeing."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "chiron"
+        ],
+        "sign": "taurus"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/planet-sign/chiron-taurus"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/saturn-station-retrograde-aries",
+      "event": "saturn-station-retrograde-aries",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.station.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "station",
+      "eyebrow": {
+        "label": "Station",
+        "glyphs": [
+          "saturn",
+          "aries"
+        ]
+      },
+      "title": "Saturn Stations Retrograde in Aries",
+      "dateRange": "July 13, 2026",
+      "clauses": {
+        "pressureBecomesNoticeable": "Saturn slows almost to a stop before turning backward, and the commitments we have been white-knuckling get quietly heavier for a few days.",
+        "collectiveSlowdownOrTurn": "Forward push gives way to concentration, and then to review, as the collective is asked to stop proving it can carry the load and start asking whether the load is built right.",
+        "recognizableScene": "Projects that were all momentum hit a natural pause, deadlines feel less like enemies and more like questions, and the thing we kept postponing finally has to be looked at.",
+        "stationResponse": "Rather than forcing the next step, this is the moment to reexamine the structure itself, tighten what is sound, and set down the effort that was only holding up something we no longer believe in."
+      },
+      "paragraphsPlan": [
+        [
+          "pressureBecomesNoticeable",
+          "collectiveSlowdownOrTurn",
+          "recognizableScene",
+          "stationResponse"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "station",
+        "bodies": [
+          "saturn"
+        ],
+        "sign": "aries",
+        "direction": "retrograde"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/station/saturn-station-retrograde-aries"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/mercury-station-direct-cancer",
+      "event": "mercury-station-direct-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.station.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "station",
+      "eyebrow": {
+        "label": "Station",
+        "glyphs": [
+          "mercury",
+          "cancer"
+        ]
+      },
+      "title": "Mercury Stations Direct in Cancer",
+      "dateRange": "August 26, 2026",
+      "clauses": {
+        "pressureBecomesNoticeable": "After weeks of doubling back, Mercury stands still and then turns forward again in Cancer.",
+        "collectiveSlowdownOrTurn": "The long stretch of review gives way to concentration and, gradually, to motion, as the questions we kept reopening about home and belonging finally settle enough to act on.",
+        "recognizableScene": "Stuck conversations loosen, a delayed answer arrives at last, and plans that felt frozen begin, slowly, to thaw.",
+        "stationResponse": "Momentum returns unevenly, so it is worth confirming the important detail one more time before committing, and letting the first few days set direction rather than demanding full speed."
+      },
+      "paragraphsPlan": [
+        [
+          "pressureBecomesNoticeable",
+          "collectiveSlowdownOrTurn",
+          "recognizableScene",
+          "stationResponse"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "station",
+        "bodies": [
+          "mercury"
+        ],
+        "sign": "cancer",
+        "direction": "direct"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/station/mercury-station-direct-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/sun-conjunct-mercury-cancer",
+      "event": "sun-conjunct-mercury-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.aspect.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "aspect",
+      "eyebrow": {
+        "label": "Aspect",
+        "glyphs": [
+          "sun",
+          "mercury"
+        ]
+      },
+      "title": "Sun Conjunct Mercury in Cancer",
+      "dateRange": "July 15, 2026",
+      "clauses": {
+        "interactionAnchor": "Thought and attention travel together for a day or so as the Sun and Mercury align in Cancer.",
+        "recognizableCollectiveSituation": "Whatever the collective is focused on is also what it wants to talk about, so feelings about home, safety, and belonging find unusually direct words, and a message many of us have been circling finally gets sent.",
+        "aspectTensionOrOpening": "The closeness is clarifying and a little blinding at once, because when what we think and what we notice line up this neatly, it gets harder to tell a clear insight from a story we simply like.",
+        "proportionateResponse": "It is a good day to say the honest, simple thing,",
+        "closingSynthesis": "and to leave a small margin for the possibility that being articulate is not the same as being right."
+      },
+      "paragraphsPlan": [
+        [
+          "interactionAnchor",
+          "recognizableCollectiveSituation",
+          "aspectTensionOrOpening",
+          "proportionateResponse",
+          "closingSynthesis"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "aspect-cycle",
+        "bodies": [
+          "sun",
+          "mercury"
+        ],
+        "sign": "cancer",
+        "aspect": "conjunction"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/aspect/sun-conjunct-mercury-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/mars-square-saturn",
+      "event": "mars-square-saturn",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.aspect.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "aspect",
+      "eyebrow": {
+        "label": "Aspect",
+        "glyphs": [
+          "mars",
+          "saturn"
+        ]
+      },
+      "title": "Mars Square Saturn",
+      "dateRange": "July 20, 2026",
+      "clauses": {
+        "interactionAnchor": "Effort and limitation grind against each other for a couple of days as Mars squares Saturn.",
+        "recognizableCollectiveSituation": "The collective wants to move and something keeps saying not yet, so plans stall at the last step, effort runs into friction, and frustration builds where drive hits a wall it cannot simply push through.",
+        "aspectTensionOrOpening": "This is speed against structure, and the square does not have to end in a standoff, because the same resistance that blocks a reckless move can also force a stronger, better-built one.",
+        "proportionateResponse": "The workable response is to slow down without stopping and pick the obstacle that is actually load-bearing,",
+        "closingSynthesis": "then spend the friction on the one thing worth the effort instead of burning it on everything at once."
+      },
+      "paragraphsPlan": [
+        [
+          "interactionAnchor",
+          "recognizableCollectiveSituation",
+          "aspectTensionOrOpening",
+          "proportionateResponse",
+          "closingSynthesis"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "aspect-cycle",
+        "bodies": [
+          "mars",
+          "saturn"
+        ],
+        "aspect": "square"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/aspect/mars-square-saturn"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/venus-trine-jupiter",
+      "event": "venus-trine-jupiter",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.aspect.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "aspect",
+      "eyebrow": {
+        "label": "Aspect",
+        "glyphs": [
+          "venus",
+          "jupiter"
+        ]
+      },
+      "title": "Venus Trine Jupiter",
+      "dateRange": "August 18, 2026",
+      "clauses": {
+        "interactionAnchor": "Goodwill flows with unusual ease for a day or two as Venus trines Jupiter.",
+        "recognizableCollectiveSituation": "People are quicker to say yes, to praise, and to extend the invitation, and the collective mood tips toward generosity, celebration, and a genuine wish to share whatever feels good.",
+        "aspectTensionOrOpening": "Soft aspects open a door rather than do the walking, so the ease is real but passive, and a warm mood on its own does not turn into anything lasting unless someone actually reaches out.",
+        "proportionateResponse": "That makes it a good moment to send the kind message, make the generous offer, or say yes to the connection,",
+        "closingSynthesis": "so the goodwill becomes an actual gesture instead of a pleasant afternoon that quietly passes."
+      },
+      "paragraphsPlan": [
+        [
+          "interactionAnchor",
+          "recognizableCollectiveSituation",
+          "aspectTensionOrOpening",
+          "proportionateResponse",
+          "closingSynthesis"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "aspect-cycle",
+        "bodies": [
+          "venus",
+          "jupiter"
+        ],
+        "aspect": "trine"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/aspect/venus-trine-jupiter"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/uranus-gemini",
+      "event": "uranus-gemini",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "uranus",
+          "gemini"
+        ]
+      },
+      "title": "Uranus in Gemini",
+      "dateRange": "2026 – 2033",
+      "clauses": {
+        "anchor": "Communication itself enters a more restless, experimental period while Uranus moves through Gemini.",
+        "manifestation": "Ideas jump across new channels faster than customs or institutions can absorb them, and many of us feel both freed and overwhelmed by the sheer number of voices competing to define what is true.",
+        "tension": "Freedom and disruption arrive together here, because every tool that opens a new way to speak also opens a new way to distort, and more access does not automatically mean more understanding.",
+        "invitation": "The invitation is not simply to move faster but to get deliberate about which networks deserve our attention,",
+        "closing": "and about what kind of freedom our tools are actually building."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "uranus"
+        ],
+        "sign": "gemini"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/uranus-rx-gemini",
+        "cc/planet-sign/uranus-gemini"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/jupiter-cancer",
+      "event": "jupiter-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.planet-sign.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "planet-sign",
+      "eyebrow": {
+        "label": "Placement",
+        "glyphs": [
+          "jupiter",
+          "cancer"
+        ]
+      },
+      "title": "Jupiter in Cancer",
+      "dateRange": "June 9, 2025 – June 30, 2026",
+      "clauses": {
+        "anchor": "After its restless stretch through Gemini, Jupiter turns inward in Cancer, and questions of care, belonging, and shelter expand beyond the private household.",
+        "manifestation": "There is more collective appetite for safety, roots, and looking after one another, and conversations about housing, family, and who gets to feel at home grow louder and more public.",
+        "tension": "Jupiter does not only bless, it amplifies, so the wish to keep everyone safe can inflate an old family wound and overshoot into an over-protection that quietly decides who counts as one of us and who is left outside.",
+        "invitation": "The useful move is to let the widened care open the circle rather than fortify it,",
+        "closing": "and to notice which forms of support have quietly become necessities rather than comforts."
+      },
+      "paragraphsPlan": [
+        [
+          "anchor",
+          "manifestation",
+          "tension",
+          "invitation",
+          "closing"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "planet-in-sign",
+        "bodies": [
+          "jupiter"
+        ],
+        "sign": "cancer"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/jupiter-in-cancer",
+        "cc/planet-sign/jupiter-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/libra-season",
+      "event": "libra-season",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.ingress.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "ingress",
+      "eyebrow": {
+        "label": "Season",
+        "glyphs": [
+          "sun",
+          "libra"
+        ]
+      },
+      "title": "Libra Season Begins",
+      "dateRange": "September 22 – October 23",
+      "clauses": {
+        "thresholdClaim": "The season turns as the Sun crosses into Libra, and the collective attention shifts from getting things right on our own toward the Aries–Libra balance of self and other.",
+        "whatChangesNow": "The heads-down, fix-the-details focus of the last few weeks softens into a pull toward fairness, cooperation, and how our choices land on the people around us.",
+        "collectiveScene": "Negotiations reopen, old agreements come back onto the table, and the quiet question in a lot of rooms changes from what do I want into whether the give and take is actually fair.",
+        "seasonQuestionOrInvitation": "It is worth treating the other side of a disagreement as information rather than an obstacle,",
+        "closingDirection": "since the balance this season asks for is a matter of reading the give and take honestly, then staying in the room long enough to settle it."
+      },
+      "paragraphsPlan": [
+        [
+          "thresholdClaim",
+          "whatChangesNow",
+          "collectiveScene",
+          "seasonQuestionOrInvitation",
+          "closingDirection"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "ingress",
+        "bodies": [
+          "sun"
+        ],
+        "sign": "libra"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/libra-season-ritual",
+        "ms/ratm/libra-season",
+        "cc/ingress/libra-season"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/mars-enters-cancer",
+      "event": "mars-enters-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.ingress.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "ingress",
+      "eyebrow": {
+        "label": "Ingress",
+        "glyphs": [
+          "mars",
+          "cancer"
+        ]
+      },
+      "title": "Mars Enters Cancer",
+      "dateRange": "August 12 – September 24",
+      "clauses": {
+        "thresholdClaim": "Collective drive changes character as Mars crosses from Gemini into Cancer.",
+        "whatChangesNow": "The scattered, talk-it-out energy of the last several weeks gives way to something more protective and personal, where action follows feeling and people move to defend what and whom they care about.",
+        "collectiveScene": "Arguments get less about winning the point and more about who felt hurt, and a lot of effort quietly redirects toward home, family, and keeping our own people safe.",
+        "seasonQuestionOrInvitation": "Because this drive works sideways rather than head-on, it helps to name what we actually want instead of getting moody and defending it in code,",
+        "closingDirection": "so the protectiveness becomes real care rather than a slow burn nobody is allowed to mention."
+      },
+      "paragraphsPlan": [
+        [
+          "thresholdClaim",
+          "whatChangesNow",
+          "collectiveScene",
+          "seasonQuestionOrInvitation",
+          "closingDirection"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "ingress",
+        "bodies": [
+          "mars"
+        ],
+        "sign": "cancer"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/ingress/mars-enters-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/new-moon-cancer",
+      "event": "new-moon-cancer",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.lunation.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "lunation",
+      "eyebrow": {
+        "label": "Lunation",
+        "glyphs": [
+          "moon",
+          "cancer"
+        ]
+      },
+      "title": "New Moon in Cancer",
+      "dateRange": "July 24, 2026",
+      "clauses": {
+        "lunationAtmosphere": "The month resets in the dark of a Cancer New Moon, when the story of the next cycle has not been written yet.",
+        "whatCulminatesOrBegins": "This is a beginning we feel before we can see it, a quiet pull to plant something around home, family, and the need to belong, with no proof yet that it will grow.",
+        "recognizableCollectiveScene": "People start a conversation they have been putting off with the ones they live among, set a small intention about how they want to be cared for, or simply admit what they need.",
+        "lunationInvitation": "It is a good moment to name one honest wish about safety or belonging and take the first unglamorous step toward it,",
+        "closingRelease": "trusting that seeds planted in the dark still count, even when there is nothing yet to show anyone."
+      },
+      "paragraphsPlan": [
+        [
+          "lunationAtmosphere",
+          "whatCulminatesOrBegins",
+          "recognizableCollectiveScene",
+          "lunationInvitation",
+          "closingRelease"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "lunation",
+        "bodies": [
+          "sun",
+          "moon"
+        ],
+        "sign": "cancer",
+        "aspect": "new-moon"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/lunation/new-moon-cancer"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/full-moon-capricorn",
+      "event": "full-moon-capricorn",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.lunation.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "lunation",
+      "eyebrow": {
+        "label": "Lunation",
+        "glyphs": [
+          "moon",
+          "capricorn"
+        ]
+      },
+      "title": "Full Moon in Capricorn",
+      "dateRange": "July 9, 2026",
+      "clauses": {
+        "lunationAtmosphere": "A Full Moon peaks in Capricorn while the Sun sits opposite in Cancer, lighting the whole Cancer–Capricorn axis, the pull between private life and public duty.",
+        "whatCulminatesOrBegins": "What was seeded weeks or months ago reaches its peak here, where private effort runs up against public consequence and the results of our discipline, or our avoidance, finally show.",
+        "recognizableCollectiveScene": "A long project ships or stalls in front of everyone, a status we chased either arrives or clearly will not, and the gap between what we perform and what we have actually built gets hard to hide.",
+        "lunationInvitation": "Rather than starting something new, this is the time to acknowledge what is genuinely complete and let it go,",
+        "closingRelease": "because a full lunation rewards honesty about what is finished far more than it rewards one more push."
+      },
+      "paragraphsPlan": [
+        [
+          "lunationAtmosphere",
+          "whatCulminatesOrBegins",
+          "recognizableCollectiveScene",
+          "lunationInvitation",
+          "closingRelease"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "lunation",
+        "bodies": [
+          "sun",
+          "moon"
+        ],
+        "sign": "capricorn",
+        "aspect": "full-moon"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "cc/lunation/full-moon-capricorn"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "A release of something that was never truly yours.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (CONFIRMED)",
+        "use": "optional serve-verbatim closer"
+      },
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/solar-eclipse-aries",
+      "event": "solar-eclipse-aries",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.lunation.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "lunation",
+      "eyebrow": {
+        "label": "Eclipse",
+        "glyphs": [
+          "moon",
+          "aries"
+        ]
+      },
+      "title": "Solar Eclipse in Aries",
+      "dateRange": "March 2027",
+      "clauses": {
+        "lunationAtmosphere": "A solar eclipse is a New Moon with the volume turned up, laying down new foundations, landing this time in Aries on the Aries–Libra axis of the lunar nodes, where standing on our own and answering to others are always in question together.",
+        "whatCulminatesOrBegins": "Beginnings that might normally take months to declare themselves can arrive suddenly, pushing questions of independence, nerve, and acting for ourselves to a turning point.",
+        "recognizableCollectiveScene": "A decision we kept postponing gets made almost on its own, a door opens or closes faster than expected, and the collective conversation tilts toward who is willing to go first.",
+        "lunationInvitation": "Eclipses reward staying awake over forcing outcomes, so it helps to notice what is genuinely shifting and let it, instead of grabbing the wheel out of anxiety,",
+        "closingRelease": "The eclipse marks a turning point, not a verdict, and what begins here still has to be lived out in the ordinary weeks that follow."
+      },
+      "paragraphsPlan": [
+        [
+          "lunationAtmosphere",
+          "whatCulminatesOrBegins",
+          "recognizableCollectiveScene",
+          "lunationInvitation",
+          "closingRelease"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "eclipse-cycle",
+        "bodies": [
+          "sun",
+          "moon"
+        ],
+        "sign": "aries",
+        "aspect": "solar-eclipse"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/pisces-total-lunar-eclipse",
+        "ms/article/lunar-nodes-eclipses-2025",
+        "cc/lunation/solar-eclipse-aries"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/detail/lunar-eclipse-libra",
+      "event": "lunar-eclipse-libra",
+      "surface": "sky.collective.detail",
+      "templateId": "sky.collective.lunation.detail.v1",
+      "templateVersion": "2.2.1",
+      "variant": "lunation",
+      "eyebrow": {
+        "label": "Eclipse",
+        "glyphs": [
+          "moon",
+          "libra"
+        ]
+      },
+      "title": "Lunar Eclipse in Libra",
+      "dateRange": "September 2027",
+      "clauses": {
+        "lunationAtmosphere": "A lunar eclipse is a Full Moon at full intensity, a moment of release and revelation, and this one falls in Libra, across the axis of self and other.",
+        "whatCulminatesOrBegins": "Things that have been quietly out of balance in our relationships come to a head faster than usual, and what felt avoidable last week arrives like water that has been pressing against a dam for months.",
+        "recognizableCollectiveScene": "A partnership tips one way or the other, a fairness we let slide gets named out loud, and endings that were already underway simply finish.",
+        "lunationInvitation": "Eclipses ask us to observe more than to push, so the useful move is to tell the truth about where a balance has quietly broken and to let go of what is genuinely over,",
+        "closingRelease": "trusting that what leaves under an eclipse is usually something we kept postponing until life finally did the letting go for us."
+      },
+      "paragraphsPlan": [
+        [
+          "lunationAtmosphere",
+          "whatCulminatesOrBegins",
+          "recognizableCollectiveScene",
+          "lunationInvitation",
+          "closingRelease"
+        ]
+      ],
+      "eventIdentity": {
+        "eventType": "eclipse-cycle",
+        "bodies": [
+          "sun",
+          "moon"
+        ],
+        "sign": "libra",
+        "aspect": "lunar-eclipse"
+      },
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "sourceIds": [
+        "ms/article/pisces-total-lunar-eclipse",
+        "ms/article/lunar-nodes-eclipses-2025",
+        "cc/lunation/lunar-eclipse-libra"
+      ],
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "A release of something that was never truly yours.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (CONFIRMED)",
+        "use": "optional serve-verbatim closer"
+      },
+      "tone_version": "marie-calibrated-v1"
+    }
+  ]
+}

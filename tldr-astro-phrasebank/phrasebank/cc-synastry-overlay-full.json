@@ -1,0 +1,2525 @@
+{
+ "tier": "REVIEWED",
+ "reviewed": [
+  {
+   "id": "cc/synastry/overlay/sun-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 1,
+   "title": "Their Sun in your 1st house",
+   "paragraphs": [
+    "With their Sun in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 2,
+   "title": "Their Sun in your 2nd house",
+   "paragraphs": [
+    "With their Sun in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 3,
+   "title": "Their Sun in your 3rd house",
+   "paragraphs": [
+    "With their Sun in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 4,
+   "title": "Their Sun in your 4th house",
+   "paragraphs": [
+    "With their Sun in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 5,
+   "title": "Their Sun in your 5th house",
+   "paragraphs": [
+    "With their Sun in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 6,
+   "title": "Their Sun in your 6th house",
+   "paragraphs": [
+    "With their Sun in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 7,
+   "title": "Their Sun in your 7th house",
+   "paragraphs": [
+    "With their Sun in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 8,
+   "title": "Their Sun in your 8th house",
+   "paragraphs": [
+    "With their Sun in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 9,
+   "title": "Their Sun in your 9th house",
+   "paragraphs": [
+    "With their Sun in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 10,
+   "title": "Their Sun in your 10th house",
+   "paragraphs": [
+    "With their Sun in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 11,
+   "title": "Their Sun in your 11th house",
+   "paragraphs": [
+    "With their Sun in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/sun-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "sun",
+   "house": 12,
+   "title": "Their Sun in your 12th house",
+   "paragraphs": [
+    "With their Sun in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is warmth, vitality, and a strong sense of self.",
+    "At its best, they can energize and affirm this part of your life, so you feel more alive and seen here. The catch is that their ego and yours can clash here, or their presence can start to overshadow your own.",
+    "Let them light this area up without letting it become all about them."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/sun"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 1,
+   "title": "Their Moon in your 1st house",
+   "paragraphs": [
+    "With their Moon in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 2,
+   "title": "Their Moon in your 2nd house",
+   "paragraphs": [
+    "With their Moon in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 3,
+   "title": "Their Moon in your 3rd house",
+   "paragraphs": [
+    "With their Moon in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 4,
+   "title": "Their Moon in your 4th house",
+   "paragraphs": [
+    "With their Moon in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 5,
+   "title": "Their Moon in your 5th house",
+   "paragraphs": [
+    "With their Moon in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 6,
+   "title": "Their Moon in your 6th house",
+   "paragraphs": [
+    "With their Moon in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 7,
+   "title": "Their Moon in your 7th house",
+   "paragraphs": [
+    "With their Moon in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 8,
+   "title": "Their Moon in your 8th house",
+   "paragraphs": [
+    "With their Moon in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 9,
+   "title": "Their Moon in your 9th house",
+   "paragraphs": [
+    "With their Moon in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 10,
+   "title": "Their Moon in your 10th house",
+   "paragraphs": [
+    "With their Moon in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 11,
+   "title": "Their Moon in your 11th house",
+   "paragraphs": [
+    "With their Moon in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/moon-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "moon",
+   "house": 12,
+   "title": "Their Moon in your 12th house",
+   "paragraphs": [
+    "With their Moon in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is feeling, care, and emotional attunement.",
+    "At its best, they can make this part of your life feel safe, nurtured, and understood. The catch is that moods and old sensitivities can flare here, and you may soak up each other's feelings.",
+    "Let the care flow both ways, and name a feeling before it hardens into a mood."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/moon"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 1,
+   "title": "Their Mercury in your 1st house",
+   "paragraphs": [
+    "With their Mercury in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 2,
+   "title": "Their Mercury in your 2nd house",
+   "paragraphs": [
+    "With their Mercury in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 3,
+   "title": "Their Mercury in your 3rd house",
+   "paragraphs": [
+    "With their Mercury in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 4,
+   "title": "Their Mercury in your 4th house",
+   "paragraphs": [
+    "With their Mercury in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 5,
+   "title": "Their Mercury in your 5th house",
+   "paragraphs": [
+    "With their Mercury in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 6,
+   "title": "Their Mercury in your 6th house",
+   "paragraphs": [
+    "With their Mercury in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 7,
+   "title": "Their Mercury in your 7th house",
+   "paragraphs": [
+    "With their Mercury in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 8,
+   "title": "Their Mercury in your 8th house",
+   "paragraphs": [
+    "With their Mercury in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 9,
+   "title": "Their Mercury in your 9th house",
+   "paragraphs": [
+    "With their Mercury in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 10,
+   "title": "Their Mercury in your 10th house",
+   "paragraphs": [
+    "With their Mercury in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 11,
+   "title": "Their Mercury in your 11th house",
+   "paragraphs": [
+    "With their Mercury in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mercury-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mercury",
+   "house": 12,
+   "title": "Their Mercury in your 12th house",
+   "paragraphs": [
+    "With their Mercury in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is talk, curiosity, and mental connection.",
+    "At its best, conversation flows here and you think each other's thoughts, so this area is easy to coordinate. The catch is that nitpicking, overthinking, or talking past each other can crop up here.",
+    "Keep the exchange curious rather than corrective."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/mercury"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 1,
+   "title": "Their Venus in your 1st house",
+   "paragraphs": [
+    "With their Venus in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 2,
+   "title": "Their Venus in your 2nd house",
+   "paragraphs": [
+    "With their Venus in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 3,
+   "title": "Their Venus in your 3rd house",
+   "paragraphs": [
+    "With their Venus in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 4,
+   "title": "Their Venus in your 4th house",
+   "paragraphs": [
+    "With their Venus in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 5,
+   "title": "Their Venus in your 5th house",
+   "paragraphs": [
+    "With their Venus in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 6,
+   "title": "Their Venus in your 6th house",
+   "paragraphs": [
+    "With their Venus in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 7,
+   "title": "Their Venus in your 7th house",
+   "paragraphs": [
+    "With their Venus in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 8,
+   "title": "Their Venus in your 8th house",
+   "paragraphs": [
+    "With their Venus in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 9,
+   "title": "Their Venus in your 9th house",
+   "paragraphs": [
+    "With their Venus in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 10,
+   "title": "Their Venus in your 10th house",
+   "paragraphs": [
+    "With their Venus in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 11,
+   "title": "Their Venus in your 11th house",
+   "paragraphs": [
+    "With their Venus in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/venus-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "venus",
+   "house": 12,
+   "title": "Their Venus in your 12th house",
+   "paragraphs": [
+    "With their Venus in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is affection, pleasure, and a sense of what is lovely.",
+    "At its best, this part of your life feels warmer, more attractive, and more enjoyable together. The catch is that indulgence, jealousy, or a rush to smooth things over can show up here.",
+    "Enjoy the sweetness, and let honesty share the space with harmony."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/venus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 1,
+   "title": "Their Mars in your 1st house",
+   "paragraphs": [
+    "With their Mars in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 2,
+   "title": "Their Mars in your 2nd house",
+   "paragraphs": [
+    "With their Mars in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 3,
+   "title": "Their Mars in your 3rd house",
+   "paragraphs": [
+    "With their Mars in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 4,
+   "title": "Their Mars in your 4th house",
+   "paragraphs": [
+    "With their Mars in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 5,
+   "title": "Their Mars in your 5th house",
+   "paragraphs": [
+    "With their Mars in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 6,
+   "title": "Their Mars in your 6th house",
+   "paragraphs": [
+    "With their Mars in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 7,
+   "title": "Their Mars in your 7th house",
+   "paragraphs": [
+    "With their Mars in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 8,
+   "title": "Their Mars in your 8th house",
+   "paragraphs": [
+    "With their Mars in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 9,
+   "title": "Their Mars in your 9th house",
+   "paragraphs": [
+    "With their Mars in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 10,
+   "title": "Their Mars in your 10th house",
+   "paragraphs": [
+    "With their Mars in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 11,
+   "title": "Their Mars in your 11th house",
+   "paragraphs": [
+    "With their Mars in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/mars-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "mars",
+   "house": 12,
+   "title": "Their Mars in your 12th house",
+   "paragraphs": [
+    "With their Mars in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is drive, heat, and the urge to act.",
+    "At its best, they can energize and motivate this area, and the spark between you can be strong here. The catch is that friction, competition, or plain irritation can flare here more easily.",
+    "Aim the heat at a shared goal rather than at each other."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/mars"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 1,
+   "title": "Their Jupiter in your 1st house",
+   "paragraphs": [
+    "With their Jupiter in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 2,
+   "title": "Their Jupiter in your 2nd house",
+   "paragraphs": [
+    "With their Jupiter in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 3,
+   "title": "Their Jupiter in your 3rd house",
+   "paragraphs": [
+    "With their Jupiter in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 4,
+   "title": "Their Jupiter in your 4th house",
+   "paragraphs": [
+    "With their Jupiter in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 5,
+   "title": "Their Jupiter in your 5th house",
+   "paragraphs": [
+    "With their Jupiter in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 6,
+   "title": "Their Jupiter in your 6th house",
+   "paragraphs": [
+    "With their Jupiter in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 7,
+   "title": "Their Jupiter in your 7th house",
+   "paragraphs": [
+    "With their Jupiter in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 8,
+   "title": "Their Jupiter in your 8th house",
+   "paragraphs": [
+    "With their Jupiter in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 9,
+   "title": "Their Jupiter in your 9th house",
+   "paragraphs": [
+    "With their Jupiter in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 10,
+   "title": "Their Jupiter in your 10th house",
+   "paragraphs": [
+    "With their Jupiter in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 11,
+   "title": "Their Jupiter in your 11th house",
+   "paragraphs": [
+    "With their Jupiter in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/jupiter-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "jupiter",
+   "house": 12,
+   "title": "Their Jupiter in your 12th house",
+   "paragraphs": [
+    "With their Jupiter in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is generosity, optimism, and room to grow.",
+    "At its best, they can expand this part of your life, opening it up and making it feel more possible. The catch is that overpromising, excess, or taking this area for granted can creep in.",
+    "Let the growth be real, and keep one foot on the ground."
+   ],
+   "trace": {
+    "planet": "jupiter",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/jupiter"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 1,
+   "title": "Their Saturn in your 1st house",
+   "paragraphs": [
+    "With their Saturn in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 2,
+   "title": "Their Saturn in your 2nd house",
+   "paragraphs": [
+    "With their Saturn in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 3,
+   "title": "Their Saturn in your 3rd house",
+   "paragraphs": [
+    "With their Saturn in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 4,
+   "title": "Their Saturn in your 4th house",
+   "paragraphs": [
+    "With their Saturn in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 5,
+   "title": "Their Saturn in your 5th house",
+   "paragraphs": [
+    "With their Saturn in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 6,
+   "title": "Their Saturn in your 6th house",
+   "paragraphs": [
+    "With their Saturn in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 7,
+   "title": "Their Saturn in your 7th house",
+   "paragraphs": [
+    "With their Saturn in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 8,
+   "title": "Their Saturn in your 8th house",
+   "paragraphs": [
+    "With their Saturn in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 9,
+   "title": "Their Saturn in your 9th house",
+   "paragraphs": [
+    "With their Saturn in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 10,
+   "title": "Their Saturn in your 10th house",
+   "paragraphs": [
+    "With their Saturn in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 11,
+   "title": "Their Saturn in your 11th house",
+   "paragraphs": [
+    "With their Saturn in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/saturn-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "saturn",
+   "house": 12,
+   "title": "Their Saturn in your 12th house",
+   "paragraphs": [
+    "With their Saturn in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is structure, seriousness, and staying power.",
+    "At its best, they can steady and commit to this area, giving it real weight and durability. The catch is that they can also feel restrictive, critical, or heavy here.",
+    "Let the commitment be a foundation rather than a cage."
+   ],
+   "trace": {
+    "planet": "saturn",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/saturn"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 1,
+   "title": "Their Uranus in your 1st house",
+   "paragraphs": [
+    "With their Uranus in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 2,
+   "title": "Their Uranus in your 2nd house",
+   "paragraphs": [
+    "With their Uranus in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 3,
+   "title": "Their Uranus in your 3rd house",
+   "paragraphs": [
+    "With their Uranus in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 4,
+   "title": "Their Uranus in your 4th house",
+   "paragraphs": [
+    "With their Uranus in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 5,
+   "title": "Their Uranus in your 5th house",
+   "paragraphs": [
+    "With their Uranus in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 6,
+   "title": "Their Uranus in your 6th house",
+   "paragraphs": [
+    "With their Uranus in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 7,
+   "title": "Their Uranus in your 7th house",
+   "paragraphs": [
+    "With their Uranus in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 8,
+   "title": "Their Uranus in your 8th house",
+   "paragraphs": [
+    "With their Uranus in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 9,
+   "title": "Their Uranus in your 9th house",
+   "paragraphs": [
+    "With their Uranus in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 10,
+   "title": "Their Uranus in your 10th house",
+   "paragraphs": [
+    "With their Uranus in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 11,
+   "title": "Their Uranus in your 11th house",
+   "paragraphs": [
+    "With their Uranus in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/uranus-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "uranus",
+   "house": 12,
+   "title": "Their Uranus in your 12th house",
+   "paragraphs": [
+    "With their Uranus in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is excitement, freedom, and the unexpected.",
+    "At its best, they can wake this area up, so it feels alive, novel, and free. The catch is that instability, unpredictability, or sudden distance can unsettle this area.",
+    "Enjoy the spark, and ask for the consistency you also need."
+   ],
+   "trace": {
+    "planet": "uranus",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/uranus"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 1,
+   "title": "Their Neptune in your 1st house",
+   "paragraphs": [
+    "With their Neptune in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 2,
+   "title": "Their Neptune in your 2nd house",
+   "paragraphs": [
+    "With their Neptune in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 3,
+   "title": "Their Neptune in your 3rd house",
+   "paragraphs": [
+    "With their Neptune in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 4,
+   "title": "Their Neptune in your 4th house",
+   "paragraphs": [
+    "With their Neptune in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 5,
+   "title": "Their Neptune in your 5th house",
+   "paragraphs": [
+    "With their Neptune in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 6,
+   "title": "Their Neptune in your 6th house",
+   "paragraphs": [
+    "With their Neptune in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 7,
+   "title": "Their Neptune in your 7th house",
+   "paragraphs": [
+    "With their Neptune in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 8,
+   "title": "Their Neptune in your 8th house",
+   "paragraphs": [
+    "With their Neptune in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 9,
+   "title": "Their Neptune in your 9th house",
+   "paragraphs": [
+    "With their Neptune in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 10,
+   "title": "Their Neptune in your 10th house",
+   "paragraphs": [
+    "With their Neptune in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 11,
+   "title": "Their Neptune in your 11th house",
+   "paragraphs": [
+    "With their Neptune in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/neptune-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "neptune",
+   "house": 12,
+   "title": "Their Neptune in your 12th house",
+   "paragraphs": [
+    "With their Neptune in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is romance, imagination, and a dreamy softness.",
+    "At its best, this part of your life can feel magical, tender, and deeply connected. The catch is that idealization, confusion, or quiet disappointment can cloud this area.",
+    "Enjoy the enchantment while keeping your eyes open."
+   ],
+   "trace": {
+    "planet": "neptune",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/neptune"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-1",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 1,
+   "title": "Their Pluto in your 1st house",
+   "paragraphs": [
+    "With their Pluto in your 1st house, they light up how you present and move: your appearance, energy, and first moves. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 1,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-1",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-2",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 2,
+   "title": "Their Pluto in your 2nd house",
+   "paragraphs": [
+    "With their Pluto in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 2,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-2",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-3",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 3,
+   "title": "Their Pluto in your 3rd house",
+   "paragraphs": [
+    "With their Pluto in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 3,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-3",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-4",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 4,
+   "title": "Their Pluto in your 4th house",
+   "paragraphs": [
+    "With their Pluto in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 4,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-4",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-5",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 5,
+   "title": "Their Pluto in your 5th house",
+   "paragraphs": [
+    "With their Pluto in your 5th house, they light up dating, play, creativity, attention, and pleasure between you. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 5,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-5",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-6",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 6,
+   "title": "Their Pluto in your 6th house",
+   "paragraphs": [
+    "With their Pluto in your 6th house, they light up your routines, chores, schedules, and who does what. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 6,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-6",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-7",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 7,
+   "title": "Their Pluto in your 7th house",
+   "paragraphs": [
+    "With their Pluto in your 7th house, they light up agreements, cooperation, and direct negotiation between you. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 7,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-7",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-8",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 8,
+   "title": "Their Pluto in your 8th house",
+   "paragraphs": [
+    "With their Pluto in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 8,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-8",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-9",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 9,
+   "title": "Their Pluto in your 9th house",
+   "paragraphs": [
+    "With their Pluto in your 9th house, they light up your beliefs, travel, learning, and what you each think is right. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 9,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-9",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-10",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 10,
+   "title": "Their Pluto in your 10th house",
+   "paragraphs": [
+    "With their Pluto in your 10th house, they light up your ambition, reputation, and public direction. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 10,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-10",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-11",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 11,
+   "title": "Their Pluto in your 11th house",
+   "paragraphs": [
+    "With their Pluto in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 11,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-11",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  },
+  {
+   "id": "cc/synastry/overlay/pluto-12",
+   "kind": "synastry_house_overlay_full",
+   "planet": "pluto",
+   "house": 12,
+   "title": "Their Pluto in your 12th house",
+   "paragraphs": [
+    "With their Pluto in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation. What they add to it is intensity, depth, and transformative power.",
+    "At its best, they can profoundly deepen this area and change you through it. The catch is that control, obsession, or a power struggle can concentrate here.",
+    "Let the depth transform you without letting it become a grip."
+   ],
+   "trace": {
+    "planet": "pluto",
+    "house": 12,
+    "sourceKeys": [
+     "cc/synastry/house-overlay-12",
+     "cc/planet/pluto"
+    ],
+    "readerAuthority": "composed-reviewed"
+   }
+  }
+ ]
+}

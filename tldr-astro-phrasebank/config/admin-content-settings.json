@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "title": "Admin / content configuration (application scope)",
+    "note": "Persisted application-level content settings. NOT user preferences, NOT localStorage. Changing a setting appends an audit entry and bumps configVersion (used in the reader cache key)."
+  },
+  "configVersion": 1,
+  "settings": {
+    "skyHistoricalLookbackEnabled": {
+      "settingId": "skyHistoricalLookbackEnabled",
+      "label": "Historical lookbacks in expanded Sky",
+      "description": "Show reviewed historical context beneath eligible collective Sky interpretations. This setting affects all readers.",
+      "control": "on/off",
+      "value": false,
+      "default": false,
+      "scope": "application",
+      "userConfigurable": false,
+      "updatedAt": "2026-07-13T00:00:00Z",
+      "updatedBy": "system:default"
+    }
+  },
+  "audit": [
+    {
+      "settingId": "skyHistoricalLookbackEnabled",
+      "value": false,
+      "updatedAt": "2026-07-13T00:00:00Z",
+      "updatedBy": "system:default",
+      "scope": "application",
+      "userConfigurable": false,
+      "note": "Off until the historical records and browser fixtures are approved."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "_meta": {
+    "lane": "context",
+    "kind": "house",
+    "role": "locate / refine only",
+    "rule": "A house LOCATES a scene or REFINES an exact reading. It may never generate an independent keyword-list sentence. `scene` is the lived arena the house points to; `refine` is a clause fragment that only attaches to an exact-lane situation."
+  },
+  "cc/house/1": {
+    "lane": "context", "kind": "house",
+    "scene": "how you show up, your body, the first move you make",
+    "refine": "and it lands in how you carry yourself into the room"
+  },
+  "cc/house/2": {
+    "lane": "context", "kind": "house",
+    "scene": "what you earn, own, and value, and the felt sense of your own worth",
+    "refine": "and it settles into what you own and what you feel you're worth"
+  },
+  "cc/house/3": {
+    "lane": "context", "kind": "house",
+    "scene": "the daily back-and-forth: messages, errands, siblings, the near streets",
+    "refine": "and it plays out in the small exchanges of an ordinary day"
+  },
+  "cc/house/4": {
+    "lane": "context", "kind": "house",
+    "scene": "home, family, and the ground you retreat to",
+    "refine": "and it reaches all the way back to home and family"
+  },
+  "cc/house/5": {
+    "lane": "context", "kind": "house",
+    "scene": "what you make for the joy of it: play, romance, children, creative risk",
+    "refine": "and it shows up in what you make and who you flirt with"
+  },
+  "cc/house/6": {
+    "lane": "context", "kind": "house",
+    "scene": "the work, the routine, the body's upkeep, the daily fixing of things",
+    "refine": "and it lands in the day's work and how your body holds up"
+  },
+  "cc/house/7": {
+    "lane": "context", "kind": "house",
+    "scene": "the one across from you: partners, close others, open rivals",
+    "refine": "and it turns toward the person across the table from you"
+  },
+  "cc/house/8": {
+    "lane": "context", "kind": "house",
+    "scene": "what you share and can't fully control: joint money, deep trust, other people's power",
+    "refine": "and it goes where money, trust, and control are shared rather than yours alone"
+  },
+  "cc/house/9": {
+    "lane": "context", "kind": "house",
+    "scene": "the wider view: travel, study, belief, the meaning you reach for",
+    "refine": "and it opens onto the bigger picture you're trying to make sense of"
+  },
+  "cc/house/10": {
+    "lane": "context", "kind": "house",
+    "scene": "your public standing, career, and what you're known for",
+    "refine": "and it shows up out in the open, in your work and reputation"
+  },
+  "cc/house/11": {
+    "lane": "context", "kind": "house",
+    "scene": "the crowd you belong to: friends, networks, the future you're building toward",
+    "refine": "and it moves through your friendships and the future you're aiming at"
+  },
+  "cc/house/12": {
+    "lane": "context", "kind": "house",
+    "scene": "the private, the unseen, rest, and what you keep behind closed doors",
+    "refine": "and it happens quietly, out of view, in your own inner rooms"
+  }
+}

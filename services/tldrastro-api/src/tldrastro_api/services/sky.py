@@ -14,6 +14,7 @@ from tldrastro_api.models import (
     Zodiac,
 )
 from tldrastro_api.services.chart import (
+    CANONICAL_HOUSE_SYSTEM,
     angle_positions,
     calculate_aspects,
     calculate_positions,
@@ -240,7 +241,7 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
 
     return SkyCurrentResponse(
         metadata=ChartMetadata(
-            houseSystem=subject.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=subject.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,

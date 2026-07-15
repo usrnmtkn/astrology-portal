@@ -628,7 +628,7 @@
 
 .friend-chart-page {
   --friend-detail-content-max: 720px;
-  --friend-detail-chart-max: 680px;
+  --friend-detail-chart-max: var(--shared-chart-size);
   --friend-wheel-stack-gap: 22px;
   --friend-detail-no-chart-max: 760px;
   --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
@@ -700,6 +700,10 @@
 
 .relationship-detail-no-chart > .friend-detail-content-column {
   max-width: var(--friend-detail-no-chart-max);
+}
+
+.friend-chart-page--transits.relationship-detail-no-chart {
+  --friend-detail-no-chart-max: min(980px, calc(100vw - clamp(32px, 8vw, 144px)));
 }
 
 .relationship-detail-no-chart > .friend-detail-chart-column {
@@ -1089,7 +1093,7 @@
   gap: 10px 24px;
   flex-wrap: wrap;
   width: min(100%, var(--relationship-wheel-size));
-  max-width: 560px;
+  max-width: var(--shared-chart-size);
   margin: 0 auto;
   color: var(--ink);
   font-size: var(--text-section-label-size);
@@ -1166,6 +1170,9 @@
 
 .synastry-placement-column {
   align-self: start;
+  display: grid;
+  min-width: 0;
+  gap: 12px;
 }
 
 .synastry-placement-column-inner {
@@ -1199,20 +1206,12 @@
   position: relative;
   overflow: visible;
   grid-template-columns: 1fr;
-  gap: 0;
-  margin-top: 12px;
+  gap: var(--friend-placement-row-gap);
+  margin-top: 0;
   border: 0;
   border-radius: var(--card-radius);
   background: transparent;
   box-shadow: none;
-}
-
-.synastry-placement-paired-table {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-  gap: var(--friend-placement-row-gap) 18px;
-  margin-top: 12px;
 }
 
 .synastry-placement-column-inner .synastry-placement-table {
@@ -1239,15 +1238,14 @@
   background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
 }
 
-.synastry-placement-paired-table > .synastry-placement-row {
-  height: 100%;
+.synastry-placement-table > .synastry-placement-row {
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
 
-.synastry-placement-paired-table > .synastry-placement-row-inner {
+.synastry-placement-table > .synastry-placement-row-inner {
   background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
 }
 
@@ -1260,10 +1258,6 @@
 .friend-chart-page .synastry-placement-meta {
   color: var(--card-meta-color);
   font-size: var(--type-meta-size);
-}
-
-.synastry-placement-row:last-child {
-  border-bottom: 1px solid var(--card-border);
 }
 
 .synastry-placement-lead {
@@ -1558,8 +1552,7 @@
   padding: var(--friend-placement-compact-padding);
 }
 
-.synastry-placement-table,
-.synastry-placement-paired-table {
+.synastry-placement-table {
   display: grid;
   gap: var(--friend-placement-row-gap);
   overflow: visible;
@@ -1571,11 +1564,6 @@
 
 .synastry-placement-table {
   grid-template-columns: minmax(0, 1fr);
-}
-
-.synastry-placement-paired-table {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 18px;
 }
 
 .synastry-placement-table .planet-placement-row {
@@ -2147,7 +2135,7 @@
   .app-shell.mode-friends .friend-detail-chart-rail {
     grid-column: 1;
     justify-self: center;
-    max-width: min(560px, 42vw);
+    max-width: var(--shared-chart-size);
     position: sticky;
     top: var(--friend-detail-top-clearance);
   }
@@ -2156,7 +2144,7 @@
   .app-shell.mode-friends .friend-detail-chart-rail .friend-wheel,
   .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel,
   .app-shell.mode-friends .friend-detail-chart-rail svg {
-    max-width: min(560px, 42vw);
+    max-width: var(--shared-chart-size);
     width: 100%;
   }
 

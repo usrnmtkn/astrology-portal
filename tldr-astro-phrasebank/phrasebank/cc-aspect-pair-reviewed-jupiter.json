@@ -1,0 +1,842 @@
+{
+  "_meta": {
+    "title": "Reviewed Jupiter -> personal long transits",
+    "transiting": "jupiter",
+    "natal": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "mars"
+    ],
+    "template": "4F opening/expansion",
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+    "count": 25,
+    "note": "Jupiter expands the natal function; hard aspects carry the overreach/overindulgence shadow. Keyed transiting-Jupiter-first.",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/jupiter-conjunction-sun",
+      "pair": "jupiter conjunction sun",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "sun",
+      "slots": {
+        "recurring_opportunity_scene": "Confidence and opportunity open up around who you are, and doors you'd stopped knocking on start to give",
+        "trust_or_capacity_pattern": "You can afford to aim higher than usual right now",
+        "capacity_being_developed": "What grows here is a bigger, more generous version of yourself that can hold the growth",
+        "deliberate_participation": "Say yes to the opportunity, sized to what you can actually honor",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "Because Jupiter's openings come in passes, take them as they arrive rather than all at once."
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Confidence and opportunity open up around who you are, and doors you'd stopped knocking on start to give. You can afford to aim higher than usual right now. What grows here is a bigger, more generous version of yourself that can hold the growth. Say yes to the opportunity, sized to what you can actually honor. Because Jupiter's openings come in passes, take them as they arrive rather than all at once.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-sun",
+      "pair": "jupiter square sun",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "sun",
+      "slots": {
+        "recurring_opportunity_scene": "A wave of confidence swells, and the temptation is to promise or take on more than you can carry",
+        "trust_or_capacity_pattern": "The optimism is real; the scale is the thing to watch",
+        "capacity_being_developed": "What grows here is the judgment to grow without overreaching",
+        "deliberate_participation": "Take the big swing, but keep it one honest size",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The overreach urge returns across the passes; each one is a chance to right-size the ambition."
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A wave of confidence swells, and the temptation is to promise or take on more than you can carry. The optimism is real; the scale is the thing to watch. What grows here is the judgment to grow without overreaching. Take the big swing, but keep it one honest size. The overreach urge returns across the passes; each one is a chance to right-size the ambition.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-opposition-sun",
+      "pair": "jupiter opposition sun",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "sun",
+      "slots": {
+        "recurring_opportunity_scene": "A wave of confidence swells, and the temptation is to promise or take on more than you can carry",
+        "trust_or_capacity_pattern": "The optimism is real; the scale is the thing to watch",
+        "capacity_being_developed": "What grows here is the judgment to grow without overreaching",
+        "deliberate_participation": "Take the big swing, but keep it one honest size",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The overreach urge returns across the passes; each one is a chance to right-size the ambition."
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the expansion felt through other people / the outer world",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A wave of confidence swells, and the temptation is to promise or take on more than you can carry. The optimism is real; the scale is the thing to watch. What grows here is the judgment to grow without overreaching. Take the big swing, but keep it one honest size. The overreach urge returns across the passes; each one is a chance to right-size the ambition.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-trine-sun",
+      "pair": "jupiter trine sun",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "sun",
+      "slots": {
+        "recurring_opportunity_scene": "Growth and good fortune come easily to who you are, and expansion feels natural rather than forced",
+        "trust_or_capacity_pattern": "Doors open through simply showing up as yourself",
+        "capacity_being_developed": "What grows here is an ease with being seen and backed",
+        "deliberate_participation": "Step into the opportunity while it's this available",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Growth and good fortune come easily to who you are, and expansion feels natural rather than forced. Doors open through simply showing up as yourself. What grows here is an ease with being seen and backed. Step into the opportunity while it's this available.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-sextile-sun",
+      "pair": "jupiter sextile sun",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "sun",
+      "slots": {
+        "recurring_opportunity_scene": "Growth and good fortune come easily to who you are, and expansion feels natural rather than forced",
+        "trust_or_capacity_pattern": "Doors open through simply showing up as yourself",
+        "capacity_being_developed": "What grows here is an ease with being seen and backed",
+        "deliberate_participation": "Step into the opportunity while it's this available",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the opening as an opportunity that only pays off when acted on",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Growth and good fortune come easily to who you are, and expansion feels natural rather than forced. Doors open through simply showing up as yourself. What grows here is an ease with being seen and backed. Step into the opportunity while it's this available.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-conjunction-moon",
+      "pair": "jupiter conjunction moon",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "moon",
+      "slots": {
+        "recurring_opportunity_scene": "A warm, generous, hopeful feeling expands your emotional life, and you want to nurture and be nurtured",
+        "trust_or_capacity_pattern": "Well-being and optimism are actually available",
+        "capacity_being_developed": "What grows here is a bigger emotional generosity toward yourself and others",
+        "deliberate_participation": "Let the warmth in and share it, without overdoing the comfort",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "Take the good feeling in waves rather than trying to make it permanent."
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A warm, generous, hopeful feeling expands your emotional life, and you want to nurture and be nurtured. Well-being and optimism are actually available. What grows here is a bigger emotional generosity toward yourself and others. Let the warmth in and share it, without overdoing the comfort. Take the good feeling in waves rather than trying to make it permanent.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Grief is so physical that it takes on its own shape.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-moon",
+      "pair": "jupiter square moon",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "moon",
+      "slots": {
+        "recurring_opportunity_scene": "Your feelings swell, and you promise the world on a good mood or overdo the comfort to feel full",
+        "trust_or_capacity_pattern": "The generosity is real; the excess is the risk",
+        "capacity_being_developed": "What grows here is the ability to feel abundant without overindulging",
+        "deliberate_participation": "Enjoy the lift and keep the emotional commitments realistic",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The urge to overdo returns; each pass, feel the fullness without inflating it."
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your feelings swell, and you promise the world on a good mood or overdo the comfort to feel full. The generosity is real; the excess is the risk. What grows here is the ability to feel abundant without overindulging. Enjoy the lift and keep the emotional commitments realistic. The urge to overdo returns; each pass, feel the fullness without inflating it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-opposition-moon",
+      "pair": "jupiter opposition moon",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "moon",
+      "slots": {
+        "recurring_opportunity_scene": "Your feelings swell, and you promise the world on a good mood or overdo the comfort to feel full",
+        "trust_or_capacity_pattern": "The generosity is real; the excess is the risk",
+        "capacity_being_developed": "What grows here is the ability to feel abundant without overindulging",
+        "deliberate_participation": "Enjoy the lift and keep the emotional commitments realistic",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The urge to overdo returns; each pass, feel the fullness without inflating it."
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the expansion felt through other people / the outer world",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your feelings swell, and you promise the world on a good mood or overdo the comfort to feel full. The generosity is real; the excess is the risk. What grows here is the ability to feel abundant without overindulging. Enjoy the lift and keep the emotional commitments realistic. The urge to overdo returns; each pass, feel the fullness without inflating it.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Grief is so physical that it takes on its own shape.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-trine-moon",
+      "pair": "jupiter trine moon",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "moon",
+      "slots": {
+        "recurring_opportunity_scene": "A hopeful, feel-good warmth flows easily and is easy to share",
+        "trust_or_capacity_pattern": "Emotional generosity comes without effort",
+        "capacity_being_developed": "What grows here is a settled sense of enough",
+        "deliberate_participation": "Spread the warmth around while it's flowing",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A hopeful, feel-good warmth flows easily and is easy to share. Emotional generosity comes without effort. What grows here is a settled sense of enough. Spread the warmth around while it's flowing.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-sextile-moon",
+      "pair": "jupiter sextile moon",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "moon",
+      "slots": {
+        "recurring_opportunity_scene": "A hopeful, feel-good warmth flows easily and is easy to share",
+        "trust_or_capacity_pattern": "Emotional generosity comes without effort",
+        "capacity_being_developed": "What grows here is a settled sense of enough",
+        "deliberate_participation": "Spread the warmth around while it's flowing",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the opening as an opportunity that only pays off when acted on",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A hopeful, feel-good warmth flows easily and is easy to share. Emotional generosity comes without effort. What grows here is a settled sense of enough. Spread the warmth around while it's flowing.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Grief is so physical that it takes on its own shape.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-conjunction-mercury",
+      "pair": "jupiter conjunction mercury",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mercury",
+      "slots": {
+        "recurring_opportunity_scene": "Your thinking expands and ideas connect, and you can see the bigger picture and explain it well",
+        "trust_or_capacity_pattern": "Optimism and mental reach are high",
+        "capacity_being_developed": "What grows here is a broader, more confident mind",
+        "deliberate_participation": "Aim the mental energy at a real question and say the idea before it's perfect",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "Take the insights as they come across the passes."
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your thinking expands and ideas connect, and you can see the bigger picture and explain it well. Optimism and mental reach are high. What grows here is a broader, more confident mind. Aim the mental energy at a real question and say the idea before it's perfect. Take the insights as they come across the passes.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Let clarity be more important than charisma.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-mercury",
+      "pair": "jupiter square mercury",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mercury",
+      "slots": {
+        "recurring_opportunity_scene": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver by Friday",
+        "trust_or_capacity_pattern": "The vision is real; the follow-through is the gap",
+        "capacity_being_developed": "What grows here is the discernment to dream big and still deliver",
+        "deliberate_participation": "Make the bold claim real by keeping it to what you can back up",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The exaggeration urge recurs; each pass, ground the big idea in one fact."
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver by Friday. The vision is real; the follow-through is the gap. What grows here is the discernment to dream big and still deliver. Make the bold claim real by keeping it to what you can back up. The exaggeration urge recurs; each pass, ground the big idea in one fact.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-opposition-mercury",
+      "pair": "jupiter opposition mercury",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mercury",
+      "slots": {
+        "recurring_opportunity_scene": "Big ideas and optimism run ahead of the details, and you exaggerate or overpromise on a confident hunch",
+        "trust_or_capacity_pattern": "The vision is real; the follow-through is the gap",
+        "capacity_being_developed": "What grows here is the discernment to dream big and still deliver",
+        "deliberate_participation": "Make the bold claim real by keeping it to what you can back up",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The exaggeration urge recurs; each pass, ground the big idea in one fact."
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the expansion felt through other people / the outer world",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Big ideas and optimism run ahead of the details, and you exaggerate or overpromise on a confident hunch. The vision is real; the follow-through is the gap. What grows here is the discernment to dream big and still deliver. Make the bold claim real by keeping it to what you can back up. The exaggeration urge recurs; each pass, ground the big idea in one fact.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Let clarity be more important than charisma.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-trine-mercury",
+      "pair": "jupiter trine mercury",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mercury",
+      "slots": {
+        "recurring_opportunity_scene": "Ideas flow and explaining things feels natural and expansive",
+        "trust_or_capacity_pattern": "Mental growth comes easily now",
+        "capacity_being_developed": "What grows here is a wider, more generous way of thinking",
+        "deliberate_participation": "Pitch the idea or start the study while the mind is this open",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Ideas flow and explaining things feels natural and expansive. Mental growth comes easily now. What grows here is a wider, more generous way of thinking. Pitch the idea or start the study while the mind is this open.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-sextile-mercury",
+      "pair": "jupiter sextile mercury",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mercury",
+      "slots": {
+        "recurring_opportunity_scene": "Ideas flow and explaining things feels natural and expansive",
+        "trust_or_capacity_pattern": "Mental growth comes easily now",
+        "capacity_being_developed": "What grows here is a wider, more generous way of thinking",
+        "deliberate_participation": "Pitch the idea or start the study while the mind is this open",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the opening as an opportunity that only pays off when acted on",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Ideas flow and explaining things feels natural and expansive. Mental growth comes easily now. What grows here is a wider, more generous way of thinking. Pitch the idea or start the study while the mind is this open.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Let clarity be more important than charisma.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-conjunction-venus",
+      "pair": "jupiter conjunction venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "venus",
+      "slots": {
+        "recurring_opportunity_scene": "Warmth, generosity, and a little luck open up in love and money, and social life gets easy and pleasant",
+        "trust_or_capacity_pattern": "Good feeling and goodwill are actually available",
+        "capacity_being_developed": "What grows here is a more generous, open-hearted way of relating",
+        "deliberate_participation": "Enjoy it. Just don't overspend or overpromise the warmth you can't keep up",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "Take the pleasures and connections as they come across the passes."
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Warmth and goodwill open up in love and money, and social life gets easy and pleasant. It's genuinely a generous stretch, so enjoy it, be generous back, and let yourself be liked. Just keep an eye on the urge to overspend or to promise more warmth than you can keep up.",
+      "revoice_version": "chani-quality-v1-authored"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-venus",
+      "pair": "jupiter square venus",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "venus",
+      "slots": {
+        "recurring_opportunity_scene": "Affection and appetite swell, and the temptation is to overindulge, overspend, or promise more warmth than you can sustain",
+        "trust_or_capacity_pattern": "The generosity is real; the excess is the trap",
+        "capacity_being_developed": "What grows here is the ability to enjoy abundance without overdoing it",
+        "deliberate_participation": "Enjoy the pleasure and keep it to a size you won't regret",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The overindulgence urge recurs; each pass, savor without overreaching."
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Affection and appetite swell, and the temptation is to overindulge, overspend, or promise more warmth than you can sustain. The generosity is real; the excess is the trap. What grows here is the ability to enjoy abundance without overdoing it. Enjoy the pleasure and keep it to a size you won't regret. The overindulgence urge recurs; each pass, savor without overreaching.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-opposition-venus",
+      "pair": "jupiter opposition venus",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "venus",
+      "slots": {
+        "recurring_opportunity_scene": "Affection and appetite swell, and the temptation is to overindulge, overspend, or promise more warmth than you can sustain",
+        "trust_or_capacity_pattern": "The generosity is real; the excess is the trap",
+        "capacity_being_developed": "What grows here is the ability to enjoy abundance without overdoing it",
+        "deliberate_participation": "Enjoy the pleasure and keep it to a size you won't regret",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The overindulgence urge recurs; each pass, savor without overreaching."
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the expansion felt through other people / the outer world",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Affection and appetite swell, and the temptation is to overindulge, overspend, or promise more warmth than you can sustain. The generosity is real; the excess is the trap. What grows here is the ability to enjoy abundance without overdoing it. Enjoy the pleasure and keep it to a size you won't regret. The overindulgence urge recurs; each pass, savor without overreaching.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-trine-venus",
+      "pair": "jupiter trine venus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "venus",
+      "slots": {
+        "recurring_opportunity_scene": "Warmth, social ease, and a little luck in love and money flow without effort",
+        "trust_or_capacity_pattern": "Connection and pleasure come easily",
+        "capacity_being_developed": "What grows here is a natural generosity that draws good things in",
+        "deliberate_participation": "Say yes to the pleasant, well-aligned opportunity",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Warmth, social ease, and a little luck in love and money flow without effort. Connection and pleasure come easily. What grows here is a natural generosity that draws good things in. Say yes to the pleasant, well-aligned opportunity.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-sextile-venus",
+      "pair": "jupiter sextile venus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "venus",
+      "slots": {
+        "recurring_opportunity_scene": "Warmth, social ease, and a little luck in love and money flow without effort",
+        "trust_or_capacity_pattern": "Connection and pleasure come easily",
+        "capacity_being_developed": "What grows here is a natural generosity that draws good things in",
+        "deliberate_participation": "Say yes to the pleasant, well-aligned opportunity",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the opening as an opportunity that only pays off when acted on",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Warmth, social ease, and a little luck in love and money flow without effort. Connection and pleasure come easily. What grows here is a natural generosity that draws good things in. Say yes to the pleasant, well-aligned opportunity.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-conjunction-mars",
+      "pair": "jupiter conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mars",
+      "slots": {
+        "recurring_opportunity_scene": "Confident, enterprising energy expands your drive, and bold moves feel not just possible but easy",
+        "trust_or_capacity_pattern": "The appetite for more and the energy to chase it are both high",
+        "capacity_being_developed": "What grows here is the ability to take a big swing and follow through",
+        "deliberate_participation": "Take the ambitious action, sized to what you can actually complete",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "Take the openings to move as they come rather than all at once."
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Confident, enterprising energy expands your drive, and bold moves feel not just possible but easy. The appetite for more and the energy to chase it are both high. What grows here is the ability to take a big swing and follow through. Take the ambitious action, sized to what you can actually complete. Take the openings to move as they come rather than all at once.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-mars",
+      "pair": "jupiter square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mars",
+      "slots": {
+        "recurring_opportunity_scene": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew",
+        "trust_or_capacity_pattern": "The enthusiasm is real; the overreach is the danger",
+        "capacity_being_developed": "What grows here is the judgment to be bold without being reckless",
+        "deliberate_participation": "Take the big swing, but scale it to what you can follow through on",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The urge to overreach recurs; each pass, match the ambition to the capacity."
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew. The enthusiasm is real; the overreach is the danger. What grows here is the judgment to be bold without being reckless. Take the big swing, but scale it to what you can follow through on. The urge to overreach recurs; each pass, match the ambition to the capacity.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-opposition-mars",
+      "pair": "jupiter opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mars",
+      "slots": {
+        "recurring_opportunity_scene": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew",
+        "trust_or_capacity_pattern": "The enthusiasm is real; the overreach is the danger",
+        "capacity_being_developed": "What grows here is the judgment to be bold without being reckless",
+        "deliberate_participation": "Take the big swing, but scale it to what you can follow through on",
+        "has_practical_action": true,
+        "has_pass_context": true,
+        "pass_context": "The urge to overreach recurs; each pass, match the ambition to the capacity."
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "opposition read as the expansion felt through other people / the outer world",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew. The enthusiasm is real; the overreach is the danger. What grows here is the judgment to be bold without being reckless. Take the big swing, but scale it to what you can follow through on. The urge to overreach recurs; each pass, match the ambition to the capacity.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-trine-mars",
+      "pair": "jupiter trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mars",
+      "slots": {
+        "recurring_opportunity_scene": "Confident, well-aimed energy flows and enterprising action comes off smoothly",
+        "trust_or_capacity_pattern": "Effort turns into progress without a fight",
+        "capacity_being_developed": "What grows here is an easy, generous confidence in action",
+        "deliberate_participation": "Spend the energy on the ambitious thing while the timing supports it",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Confident, well-aimed energy flows and enterprising action comes off smoothly. Effort turns into progress without a fight. What grows here is an easy, generous confidence in action. Spend the energy on the ambitious thing while the timing supports it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-sextile-mars",
+      "pair": "jupiter sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_long_template": "4F",
+      "transiting_body": "jupiter",
+      "natal_body": "mars",
+      "slots": {
+        "recurring_opportunity_scene": "Confident, well-aimed energy flows and enterprising action comes off smoothly",
+        "trust_or_capacity_pattern": "Effort turns into progress without a fight",
+        "capacity_being_developed": "What grows here is an easy, generous confidence in action",
+        "deliberate_participation": "Spend the energy on the ambitious thing while the timing supports it",
+        "has_practical_action": true,
+        "has_pass_context": false,
+        "pass_context": ""
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/jupiter-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit (Jupiter sections; doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derivation_note": "sextile = the opening as an opportunity that only pays off when acted on",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Confident, well-aimed energy flows and enterprising action comes off smoothly. Effort turns into progress without a fight. What grows here is an easy, generous confidence in action. Spend the energy on the ambitious thing while the timing supports it.",
+      "revoice_version": "chani-quality-v1-composed"
+    }
+  ]
+}

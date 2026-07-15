@@ -1,0 +1,2626 @@
+{
+  "_meta": {
+    "title": "Reviewed planet-in-sign (natal sign layer + Sky collective 'we' voice)",
+    "count": 120,
+    "bodies": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto"
+    ],
+    "signs": [
+      "aries",
+      "taurus",
+      "gemini",
+      "cancer",
+      "leo",
+      "virgo",
+      "libra",
+      "scorpio",
+      "sagittarius",
+      "capricorn",
+      "aquarius",
+      "pisces"
+    ],
+    "serves": {
+      "me.natal_placement": "natal_sign_story ('you'); house layer composed on top",
+      "sky.planet_sign": "collective_shift (Marie's 'we/us/our' collective voice)"
+    },
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/planet-in-sign/sun-in-aries",
+      "body": "sun",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your identity comes through bold and direct: you'd rather start something than wait to be asked.",
+      "collective_shift": "We're all quicker to act and assert, ready to start before we're sure.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-taurus",
+      "body": "sun",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You know who you are slowly and solidly, and you don't move until it feels worth it.",
+      "collective_shift": "We slow down and reach for comfort and steadiness, and none of us wants to be rushed.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-gemini",
+      "body": "sun",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your sense of self runs on curiosity and talk; you try on ideas the way others try on clothes.",
+      "collective_shift": "Our attention scatters and the chatter picks up, and we're all juggling more at once.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-cancer",
+      "body": "sun",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You're most yourself when you're caring for something, and you lead with feeling.",
+      "collective_shift": "We feel closer to the surface, and home and belonging pull at all of us.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-leo",
+      "body": "sun",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You come alive when you're seen; your identity wants warmth, play, and something to create.",
+      "collective_shift": "We want to be seen and to celebrate, and generosity spreads easily between us.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-virgo",
+      "body": "sun",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You know yourself through what you refine and improve; being useful is how you shine.",
+      "collective_shift": "We get more discerning and practical, and the urge to fix and refine rises in us.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-libra",
+      "body": "sun",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your identity forms in relationship; you find yourself in the space between you and another.",
+      "collective_shift": "We turn toward fairness and each other, weighing both sides before we move.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-scorpio",
+      "body": "sun",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You're most yourself in the deep end, where things are real, private, and intense.",
+      "collective_shift": "We go deeper, and surface answers stop satisfying any of us.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-sagittarius",
+      "body": "sun",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your sense of self needs room to roam: a bigger view, a truth to chase, a horizon.",
+      "collective_shift": "We get restless and hopeful, wanting somewhere bigger to aim.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-capricorn",
+      "body": "sun",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You know who you are by what you build and take responsibility for.",
+      "collective_shift": "We get serious and goal-minded, and we start counting the real cost of things.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-aquarius",
+      "body": "sun",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your identity is a little outside the norm; you want to build things that shift the status quo.",
+      "collective_shift": "We turn future-facing and independent, and the group starts to matter more than standing out as an individual.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/sun-in-pisces",
+      "body": "sun",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You're most yourself at the edges, where feeling, imagination, and compassion blur the lines.",
+      "collective_shift": "We get dreamier and more porous, and the lines between us soften.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-aries",
+      "body": "moon",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You feel things fast and hot, and you need to act on a mood before it cools.",
+      "collective_shift": "Our moods run quick and hot, with short fuses and fast recoveries.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-taurus",
+      "body": "moon",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You settle when life is calm and physical; comfort, food, and steadiness soothe you.",
+      "collective_shift": "We want comfort and calm, and slow, sensory ease feels best to all of us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-gemini",
+      "body": "moon",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You process feelings by talking them out, and your mood shifts with the conversation.",
+      "collective_shift": "Our feelings get chatty and changeable, and naming them helps us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-cancer",
+      "body": "moon",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your feelings run the show, and safety comes from home and the people who feel like yours.",
+      "collective_shift": "We get tender and protective, and the pull toward home is strong for all of us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-leo",
+      "body": "moon",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You need warmth and a little spotlight to feel okay; affection lands loudest for you.",
+      "collective_shift": "Our moods want warmth and recognition, and a generous gesture goes far between us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-virgo",
+      "body": "moon",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You feel safest when things are handled; a tidy detail can settle your whole mood.",
+      "collective_shift": "We soothe ourselves by sorting and fixing, and small order calms our big feelings.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop obsessing over the small details of daily life and focus instead on stability.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-libra",
+      "body": "moon",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You feel steady when things are fair and harmonious, and conflict unsettles you fast.",
+      "collective_shift": "We crave peace and balance, and friction feels louder than usual to all of us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Invitation, availability, and trust are also actions. Connection is an action.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-scorpio",
+      "body": "moon",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your feelings run deep and private, and you don't do shallow reassurance.",
+      "collective_shift": "Our moods intensify and go underground, and honesty means more to us than comfort.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-sagittarius",
+      "body": "moon",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You feel best with room to breathe and something to look forward to.",
+      "collective_shift": "We want freedom and something to look forward to, and being fenced in chafes.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-capricorn",
+      "body": "moon",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You steady yourself with structure, and you'd rather handle a feeling than sit in it.",
+      "collective_shift": "We toughen up emotionally, and comfort comes to us through competence, not coddling.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-aquarius",
+      "body": "moon",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You need space to feel from a little distance; you process feelings by understanding them.",
+      "collective_shift": "Our moods cool and detach, and room to think steadies us.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/moon-in-pisces",
+      "body": "moon",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You soak up the emotional weather around you and feel everything at the edges.",
+      "collective_shift": "We get porous and impressionable, and the room's mood becomes our own.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-aries",
+      "body": "mercury",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think fast and say it faster; your mind moves in quick, direct bursts.",
+      "collective_shift": "Our talk gets blunt and quick, and patience for long explanations drops.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-taurus",
+      "body": "mercury",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think slowly and thoroughly, and once you've decided, you don't budge easily.",
+      "collective_shift": "We think slower and steadier, and none of us wants to be rushed to a conclusion.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-gemini",
+      "body": "mercury",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your mind is quick, curious, and everywhere at once; you learn by talking and linking ideas.",
+      "collective_shift": "Our chatter and cross-talk spike, and our minds jump between tabs.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-cancer",
+      "body": "mercury",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think with your feelings, and memory and mood color how you take things in.",
+      "collective_shift": "Our talk gets personal and tender, and old memories thread into what we say.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-leo",
+      "body": "mercury",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think in big, confident strokes, and you speak to be heard and to inspire.",
+      "collective_shift": "We communicate warmer and more dramatically, and we all want the mic.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-virgo",
+      "body": "mercury",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your mind is precise and analytical; you notice the error everyone else missed.",
+      "collective_shift": "Our thinking sharpens and the details matter, and we want things spelled out right.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop obsessing over the small details of daily life and focus instead on stability.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-libra",
+      "body": "mercury",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think in comparisons and both-sides, weighing every option before you commit.",
+      "collective_shift": "We weigh and second-guess, and decisions take all of us longer.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Invitation, availability, and trust are also actions. Connection is an action.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-scorpio",
+      "body": "mercury",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your mind digs; you're not satisfied until you've found what's really going on.",
+      "collective_shift": "Our thinking goes investigative, and we start questioning the surface story.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-sagittarius",
+      "body": "mercury",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think in big pictures and possibilities, sometimes past the inconvenient details.",
+      "collective_shift": "Our ideas get big and a little sloppy on specifics, and we're all philosophizing.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-capricorn",
+      "body": "mercury",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your thinking is structured and practical; you want the plan, not the brainstorm.",
+      "collective_shift": "Our talk gets serious and results-focused, and we want the bottom line.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-aquarius",
+      "body": "mercury",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your mind runs on the unexpected angle; you think in systems and against the grain.",
+      "collective_shift": "Our ideas get inventive and contrarian, and the obvious answer bores us.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mercury-in-pisces",
+      "body": "mercury",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You think in images and intuition, and facts blur into what feels true.",
+      "collective_shift": "Our thinking gets dreamy and impressionable, and it's easy for us to hear what we hope for.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-aries",
+      "body": "venus",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love fast and direct, and you'd rather chase than be kept guessing.",
+      "collective_shift": "We flirt first and think later, and attraction gets bold and impatient.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-taurus",
+      "body": "venus",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love steadily and sensually; loyalty, touch, and the good things say it best.",
+      "collective_shift": "We want comfort, beauty, and slow pleasure, and loyalty feels attractive to us.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-gemini",
+      "body": "venus",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love through words and wit, and a good conversation is your love language.",
+      "collective_shift": "Connection gets playful and talkative, and banter is the whole flirtation for us.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-cancer",
+      "body": "venus",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love by caring and being cared for; closeness means feeling safe with someone.",
+      "collective_shift": "Our affection turns tender and protective, and we all want to be looked after.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-leo",
+      "body": "venus",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love generously and out loud; you want romance with a little grandeur.",
+      "collective_shift": "Our love gets warm and dramatic, and big gestures land for all of us.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-virgo",
+      "body": "venus",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love through the practical: showing up, fixing, remembering the small things.",
+      "collective_shift": "We show love through small useful acts, and we pack a lunch instead of writing a poem.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-libra",
+      "body": "venus",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love beauty, balance, and partnership itself; harmony is the point.",
+      "collective_shift": "We want fairness and grace in connection, and ugliness grates on us.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-scorpio",
+      "body": "venus",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love all the way in: intense, loyal, and allergic to anything halfway.",
+      "collective_shift": "Our attraction deepens and gets possessive, and none of us wants a lukewarm bond.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-sagittarius",
+      "body": "venus",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love freedom and adventure in a partner; keep it honest and keep it moving.",
+      "collective_shift": "We want room and fun in connection, and commitment talk feels heavy.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-capricorn",
+      "body": "venus",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love with commitment and staying power; you invest where it can last.",
+      "collective_shift": "We get more serious about worth and commitment, and effort reads as love to us.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-aquarius",
+      "body": "venus",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love as a friend first, and you need freedom inside the closeness.",
+      "collective_shift": "Our attractions get unconventional and a little cool, and we connect on our own terms.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/venus-in-pisces",
+      "body": "venus",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You love romantically and boundlessly, seeing the best in whoever you fall for.",
+      "collective_shift": "We get dreamy and idealizing in love, so we all keep one foot on the ground.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-aries",
+      "body": "mars",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You go after what you want head-on, and sitting still is the hardest thing you do.",
+      "collective_shift": "We're all quicker to act and argue, and the energy runs high while the patience runs low.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-taurus",
+      "body": "mars",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You move slowly but you don't stop; your drive is stubborn and built to last.",
+      "collective_shift": "Our effort gets steady and immovable, and pushing anyone faster just digs us in.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-gemini",
+      "body": "mars",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your energy goes into words and quick moves; you fight and flirt with your wit.",
+      "collective_shift": "Our action scatters into talk and errands, and we're all busy and a little scattered.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-cancer",
+      "body": "mars",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You act to protect what's yours, and your drive runs on feeling, not logic.",
+      "collective_shift": "Our energy turns protective and moody, and we act from the gut.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-leo",
+      "body": "mars",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You act with flair and pride; you want your effort seen and your courage recognized.",
+      "collective_shift": "Our drive gets bold and showy, and we all want to make a statement.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-virgo",
+      "body": "mars",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your energy goes into doing it right; you work hard and sweat the details.",
+      "collective_shift": "Our effort turns precise and industrious, and we grind on the fine print.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop obsessing over the small details of daily life and focus instead on stability.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-libra",
+      "body": "mars",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You act through others and hate a fight, so you push by persuading, not shoving.",
+      "collective_shift": "We push by persuading, not shoving, and open conflict feels especially costly to us.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Invitation, availability, and trust are also actions. Connection is an action.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-scorpio",
+      "body": "mars",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your drive is intense and strategic; you go quiet, then you go all the way.",
+      "collective_shift": "Our energy goes deep and controlled, and the power moves happen under the surface.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-sagittarius",
+      "body": "mars",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You chase the big goal with enthusiasm, sometimes overshooting the practical part.",
+      "collective_shift": "We get restless and want to bolt toward something bigger.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-capricorn",
+      "body": "mars",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You work with discipline toward a real result; your ambition is patient and relentless.",
+      "collective_shift": "Our effort gets strategic and patient, and we play the long game.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-aquarius",
+      "body": "mars",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You act on principle and your own timing, and you resist being told how to move.",
+      "collective_shift": "Our energy gets independent and unpredictable, and we rebel against the usual way.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/mars-in-pisces",
+      "body": "mars",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your drive ebbs and flows with your mood; you move best toward something you believe in.",
+      "collective_shift": "Our motivation gets diffuse and inspired, and direct action feels harder for all of us.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-aries",
+      "body": "jupiter",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow by going first and betting on yourself; boldness tends to pay off for you.",
+      "collective_shift": "Our optimism gets brave and impulsive, and big swings feel possible to us.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-taurus",
+      "body": "jupiter",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through patience and building; abundance comes to you slowly and stays.",
+      "collective_shift": "We favor steady growth and real comfort, and slow money and simple pleasures expand.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-gemini",
+      "body": "jupiter",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through learning and connecting; your luck runs through ideas and people.",
+      "collective_shift": "Our curiosity and opportunities multiply, and we're all collecting ideas and contacts.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-cancer",
+      "body": "jupiter",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through care and roots; your good fortune lives in home and belonging.",
+      "collective_shift": "We grow around home, family, and emotional generosity.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-leo",
+      "body": "jupiter",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow by expressing yourself fully; confidence and creativity open your doors.",
+      "collective_shift": "We hunger for expression and play, and permission to be big is in the air.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-virgo",
+      "body": "jupiter",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through craft and usefulness; small, careful improvements compound for you.",
+      "collective_shift": "We grow through refinement and service, and getting the details right pays off for us.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop obsessing over the small details of daily life and focus instead on stability.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-libra",
+      "body": "jupiter",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through relationship and fairness; partnership expands your world.",
+      "collective_shift": "We grow through cooperation and beauty, and win-win feels available to us.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop saying yes before you've thought it through.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-scorpio",
+      "body": "jupiter",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through depth and transformation; you gain by letting the shallow things go.",
+      "collective_shift": "Our growth goes deep and intense, and we grow by facing what's buried.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-sagittarius",
+      "body": "jupiter",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow by reaching for meaning and horizon; faith and adventure are your fuel.",
+      "collective_shift": "Our optimism and wanderlust surge, and we all want to believe in something bigger.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-capricorn",
+      "body": "jupiter",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through discipline and structure; you earn your expansion the real way.",
+      "collective_shift": "Our growth gets serious and earned, and we build rather than gamble.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-aquarius",
+      "body": "jupiter",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through vision and community; your luck runs through the unconventional.",
+      "collective_shift": "Our expansion gets progressive and collective, and the future feels wide open.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/jupiter-in-pisces",
+      "body": "jupiter",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You grow through faith, art, and compassion; you gain by trusting the current.",
+      "collective_shift": "We grow through imagination and generosity, and our boundaries dissolve.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-aries",
+      "body": "saturn",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You build discipline around action: learning to start wisely, not just fast.",
+      "collective_shift": "Our lesson is patient courage, and reckless starts get corrected for all of us.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-taurus",
+      "body": "saturn",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your structure is around worth and security; you learn what's truly enough.",
+      "collective_shift": "Our lesson is real value and patience, and shortcuts around security fail us.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-gemini",
+      "body": "saturn",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You build discipline around your mind and voice: say less, mean more.",
+      "collective_shift": "We learn to speak with care, and loose talk carries a cost now.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-cancer",
+      "body": "saturn",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your work is around emotional security: building a foundation you didn't inherit.",
+      "collective_shift": "We grow up about what we actually need, and the lesson is honest care.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-leo",
+      "body": "saturn",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You learn to earn recognition rather than demand it; real confidence takes time.",
+      "collective_shift": "Our lesson is earned authority, and hollow performance gets exposed.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-virgo",
+      "body": "saturn",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your discipline is around service and standards: useful, not perfect.",
+      "collective_shift": "Our lesson is doing the real work, and over-perfecting becomes its own avoidance.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-libra",
+      "body": "saturn",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You build structure around commitment and fairness; you learn what you owe and are owed.",
+      "collective_shift": "We learn durable fairness, and flimsy agreements get tested.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-scorpio",
+      "body": "saturn",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your work is around trust and control: learning what's safe to depend on.",
+      "collective_shift": "We reckon with what's been hidden, and the lesson is honest power.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-sagittarius",
+      "body": "saturn",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You build discipline around belief: testing your faith instead of borrowing it.",
+      "collective_shift": "We question borrowed dogma, and the lesson is earned conviction.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-capricorn",
+      "body": "saturn",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your structure is around authority and time; you become your own hard-won authority.",
+      "collective_shift": "Our lesson is mature responsibility, and the long game is the only game.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-aquarius",
+      "body": "saturn",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "You build discipline around vision: turning ideals into things that actually hold.",
+      "collective_shift": "Our lesson is grounded reform, and big ideas have to be built, not just declared.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/saturn-in-pisces",
+      "body": "saturn",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your work is around faith and boundaries: giving form to the formless.",
+      "collective_shift": "We learn to structure compassion, and dissolving without a shape drains us all.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-aries",
+      "body": "uranus",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation disrupts how people assert and begin; independence runs in your wiring.",
+      "collective_shift": "We're jolted toward bolder, more individual action, and sudden starts feel electric.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-taurus",
+      "body": "uranus",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation upends money, value, and the body; you rethink what security even means.",
+      "collective_shift": "We're shaken around money, land, and what counts as stable.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-gemini",
+      "body": "uranus",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation reinvents how people think and talk; the channels of communication mutate.",
+      "collective_shift": "We're reinventing how we think, talk, and move information.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-cancer",
+      "body": "uranus",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation redefines home and family; the old shape of belonging breaks open.",
+      "collective_shift": "We're rethinking home, roots, and what family is allowed to look like.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-leo",
+      "body": "uranus",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation reinvents self-expression and what it means to be seen.",
+      "collective_shift": "We break toward radical individuality and new kinds of visibility.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-virgo",
+      "body": "uranus",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation overhauls work, health, and systems; you disrupt the daily machine.",
+      "collective_shift": "We're shaking up work, health, and how things get done.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-libra",
+      "body": "uranus",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation reinvents relationship and fairness; old contracts get rewritten.",
+      "collective_shift": "We're rewriting partnership, equality, and what's fair.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-scorpio",
+      "body": "uranus",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation cracks open taboo, power, and shared resources.",
+      "collective_shift": "We're cracking open power, shared money, and what was kept hidden.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-sagittarius",
+      "body": "uranus",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation disrupts belief and truth; the old certainties get exploded.",
+      "collective_shift": "We break toward new beliefs and freer horizons.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-capricorn",
+      "body": "uranus",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dismantles and rebuilds institutions; the structures themselves change.",
+      "collective_shift": "We're overhauling institutions, systems, and authority.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-aquarius",
+      "body": "uranus",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation is the disruptor archetype itself; you reinvent the collective.",
+      "collective_shift": "We leap toward technology, networks, and the new.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/uranus-in-pisces",
+      "body": "uranus",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dissolves and reimagines faith and imagination.",
+      "collective_shift": "Our spirituality, art, and felt sense of reality shift under us.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-aries",
+      "body": "neptune",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams of the heroic and the new self; ideals wear armor.",
+      "collective_shift": "We long for bold new ideals, easily blurred into illusion.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-taurus",
+      "body": "neptune",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation romanticizes the earth, money, and the body; you dream of real abundance.",
+      "collective_shift": "We dream around value and nature, prone to material illusion.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-gemini",
+      "body": "neptune",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation idealizes information and connection; truth and story blur.",
+      "collective_shift": "A haze settles over our media and facts, and enchantment and misinformation both rise.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-cancer",
+      "body": "neptune",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams of home and belonging, and grieves what never was.",
+      "collective_shift": "We long for home and roots, tender and easily idealized.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-leo",
+      "body": "neptune",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation romanticizes self-expression and glamour; the dream is to be luminous.",
+      "collective_shift": "We're enchanted by fame and creativity, dazzling and deceiving us.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-virgo",
+      "body": "neptune",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams of the perfect system and pure service; ideals meet the details.",
+      "collective_shift": "We idealize health and work, then meet disillusion in the fine print.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-libra",
+      "body": "neptune",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation romanticizes love and fairness; the dream is perfect union.",
+      "collective_shift": "We long for ideal relationship, prone to rose-colored glasses.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Invitation, availability, and trust are also actions. Connection is an action.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-scorpio",
+      "body": "neptune",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams into the depths, power, and the unseen; intensity and illusion mix.",
+      "collective_shift": "We're drawn to the hidden and taboo, which both reveals and misleads us.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-sagittarius",
+      "body": "neptune",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation romanticizes belief and the far horizon; faith can inspire or delude.",
+      "collective_shift": "We long for meaning and escape, visionary and easily lost.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-capricorn",
+      "body": "neptune",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams of ideal structures and dissolves brittle ones.",
+      "collective_shift": "We grow disillusioned with institutions, and long for something truer.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-aquarius",
+      "body": "neptune",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation dreams of utopia and universal connection.",
+      "collective_shift": "We share a vision of a connected future, inspiring and slippery.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/neptune-in-pisces",
+      "body": "neptune",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation is the dreamer archetype itself; the veil is thinnest here.",
+      "collective_shift": "A spiritual tide rises in us, and compassion and confusion both run high.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-aries",
+      "body": "pluto",
+      "sign": "aries",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms through raw will and the birth of the new self.",
+      "collective_shift": "We purge and rebuild how power and identity begin.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-taurus",
+      "body": "pluto",
+      "sign": "taurus",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms money, value, and the body from the roots.",
+      "collective_shift": "We transform wealth, land, and security from the roots.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-gemini",
+      "body": "pluto",
+      "sign": "gemini",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms thought and communication at the deepest level.",
+      "collective_shift": "We transform how we think and communicate.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-cancer",
+      "body": "pluto",
+      "sign": "cancer",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms home, family, and belonging through upheaval.",
+      "collective_shift": "We transform home, nation, and roots through upheaval.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-leo",
+      "body": "pluto",
+      "sign": "leo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms self-expression and the ego's power.",
+      "collective_shift": "We transform fame, leadership, and the self.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-virgo",
+      "body": "pluto",
+      "sign": "virgo",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms work, health, and the systems of daily life.",
+      "collective_shift": "We transform labor, health, and how things function.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-libra",
+      "body": "pluto",
+      "sign": "libra",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms relationship, justice, and the terms of fairness.",
+      "collective_shift": "We transform partnership, justice, and the terms of fairness.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-scorpio",
+      "body": "pluto",
+      "sign": "scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation is the transformer archetype itself; you regenerate through the depths.",
+      "collective_shift": "We descend and regenerate around power, intimacy, and shared resources.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-sagittarius",
+      "body": "pluto",
+      "sign": "sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms belief, truth, and the reach of the mind.",
+      "collective_shift": "We transform belief, meaning, and how far our reach extends.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-capricorn",
+      "body": "pluto",
+      "sign": "capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms institutions and authority from the foundation.",
+      "collective_shift": "We transform governments, systems, and power itself.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-aquarius",
+      "body": "pluto",
+      "sign": "aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms the collective, technology, and who holds power.",
+      "collective_shift": "We transform networks, technology, and who holds power.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-sign/pluto-in-pisces",
+      "body": "pluto",
+      "sign": "pisces",
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "sky.planet_sign"
+      ],
+      "kind": "planet_in_sign",
+      "natal_sign_story": "Your generation transforms faith, imagination, and the dissolving of old worlds.",
+      "collective_shift": "We transform spirituality and the felt boundaries of reality.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "doctrine_source": "Standard planet-function x sign-style (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; Sky in first-person-plural per Marie's articles",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    }
+  ]
+}

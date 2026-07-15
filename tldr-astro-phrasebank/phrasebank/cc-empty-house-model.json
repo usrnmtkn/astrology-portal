@@ -1,0 +1,178 @@
+{
+  "_meta": {
+    "title": "Empty house composition model (Me/Natal)",
+    "surface": "me.empty_house",
+    "register": "natal second-person",
+    "structure": [
+      "boilerplate",
+      "cusp clause (sign x house)",
+      "ruler clause (sign -> ruler)",
+      "ruler placement (composed from planet-in-sign + planet-in-house banks)",
+      "activation clause"
+    ],
+    "reuses": [
+      "cc-planet-in-sign-reviewed.json (natal_sign_story)",
+      "cc-planet-in-house-reviewed.json (house_domain)",
+      "houses.json"
+    ],
+    "fixes_vs_prior": [
+      "no keyword stacks (lists capped at 3 concrete items)",
+      "no subject-verb agreement slips on plural house labels",
+      "dropped filler ('a birth chart can describe a pattern before it feels obvious')",
+      "ruler placement reused from banks instead of re-authored"
+    ],
+    "inputs": "house, cuspSign, rulerSign, rulerHouse (from the reader's chart)"
+  },
+  "boilerplate": "Everyone has all twelve houses. An empty house just means no natal planet sits there. The area still works; it may simply run quietly instead of being a constant focus. You read it through the sign on its cusp and the planet that rules that sign, then follow that planet to see where the theme actually lives.",
+  "sign_ruler": {
+    "aries": "mars",
+    "taurus": "venus",
+    "gemini": "mercury",
+    "cancer": "moon",
+    "leo": "sun",
+    "virgo": "mercury",
+    "libra": "venus",
+    "scorpio": "mars",
+    "sagittarius": "jupiter",
+    "capricorn": "saturn",
+    "aquarius": "saturn",
+    "pisces": "jupiter"
+  },
+  "house_theme": {
+    "1": "how you come across",
+    "2": "your money and self-worth",
+    "3": "your everyday thinking and talking",
+    "4": "your home and roots",
+    "5": "your creativity and pleasure",
+    "6": "your daily work and health",
+    "7": "your close partnerships",
+    "8": "your intimacy and shared resources",
+    "9": "your beliefs and horizons",
+    "10": "your public life and ambition",
+    "11": "your friendships and future",
+    "12": "your private, inner life"
+  },
+  "house_short": {
+    "1": "how you show up",
+    "2": "your money and worth",
+    "3": "your everyday mind",
+    "4": "home and family",
+    "5": "your creativity and pleasure",
+    "6": "your daily life",
+    "7": "your relationships",
+    "8": "your closeness with others",
+    "9": "your search for meaning",
+    "10": "your public life",
+    "11": "your friendships",
+    "12": "your inner life"
+  },
+  "house_rich": {
+    "1": "how you present yourself, your body, and the first move you make",
+    "2": "money, possessions, and your felt sense of your own worth",
+    "3": "communication, learning, siblings, and the daily back-and-forth",
+    "4": "home, family, and your emotional foundation",
+    "5": "creativity, romance, play, and self-expression",
+    "6": "work, health, routines, and the daily fixing of things",
+    "7": "partnership, close others, and the agreements between you",
+    "8": "trust, shared money, debt, intimacy, and the obligations that come with relying on someone else",
+    "9": "belief, study, travel, and the meaning you reach for",
+    "10": "career, reputation, and your public standing",
+    "11": "friendships, groups, and the future you're building toward",
+    "12": "solitude, rest, the unconscious, and what you keep private"
+  },
+  "house_behavior": {
+    "1": "manage the impression you make and stay alert to how you are being read, before you have had time to register how you feel",
+    "2": "hold tightly to money or possessions and use what you earn as proof of your worth, before you ask whether any of it helps you feel secure",
+    "3": "rehearse what to say and work to keep the conversation moving, leaving little room to hear your own thoughts",
+    "4": "retreat into familiar roles at home and guard your private space, even when what feels familiar no longer helps you feel safe",
+    "5": "look for proof that other people like what you make, until their response matters more than your enjoyment",
+    "6": "take on every task, tighten your routine, and keep going through exhaustion, until your body has to interrupt you",
+    "7": "give generously and hope your partner understands what you need without being told, then swallow what bothers you to preserve the bond. Over time, the relationship can have room for them but very little room for you",
+    "8": "hold back trust, keep a private tally of what each person owes, and prepare for betrayal before intimacy has had a chance to deepen",
+    "9": "look for answers in another trip, course, or teacher before trusting what your own experience has already taught you",
+    "10": "work harder to protect your reputation and control how others see you, until maintaining the role costs more than admitting it no longer fits",
+    "11": "make yourself useful to the group and call it belonging, even when every gathering leaves you feeling depleted",
+    "12": "withdraw, carry your worry in private, and tell yourself you can handle it alone, before you let anyone know how much it is costing you"
+  },
+  "house_about": {
+    "1": "who you are, how you get to show up, and whether you feel like yourself doing it",
+    "2": "what you can earn and own, and whether you believe you are worth having enough",
+    "3": "needing the right explanation, keeping up with what you do not know, and wondering whether you understand enough to trust your own conclusions",
+    "4": "home, family, and whether you have a place that actually feels safe",
+    "5": "being seen, having fun, and whether you are allowed to enjoy it without earning it",
+    "6": "your health, your work, and whether you can keep it together without running yourself down",
+    "7": "a close partnership, how decisions and responsibilities are shared, and whether both people have an equal say",
+    "8": "trust, shared money and obligations, and whether you can depend on someone to follow through",
+    "9": "whether you share the same values, have room to keep growing, and are building a life that still feels meaningful to you",
+    "10": "your work, your reputation, and whether you measure up to what is expected",
+    "11": "your friendships, where you belong, and whether these are really your people",
+    "12": "what you carry privately, what you have not said out loud, and whether you can let anyone in"
+  },
+  "ruler_sign_clause_source": "cc-ruler-sign-clauses.json (built from planet-in-sign bank; planet=function, sign=manner)",
+  "layer_roles": {
+    "cusp_sign": "names which planet rules the house (chain)",
+    "ruler_sign": "HOW: the ruling planet's function + the sign's manner (from planet-in-sign bank)",
+    "ruler_house": "WHERE: the arena the ruler connects this area to",
+    "empty_house": "the coping behavior within this area",
+    "close": "WHY: the deeper concern underneath, brought back toward this area"
+  },
+  "templates": {
+    "chain": "{Sign} is on the cusp of your empty {ord} house, so {ruler} rules {houseTheme[emptyHouse]}.",
+    "placement": "Your {Ruler} is in {RulerSign} in the {rulerOrd} house, connecting {houseShort[emptyHouse]} with {houseRich[rulerHouse]}. {rulerSignClause[ruler|rulerSign]}",
+    "close": "You may {houseBehavior[emptyHouse]}. Underneath, it's usually about {houseAbout[rulerHouse]}."
+  },
+  "worked_examples": [
+    {
+      "title": "Empty 12th House in Taurus",
+      "eyebrow": {
+        "label": "Placement",
+        "house": 12,
+        "cuspSign": "taurus",
+        "ruler": "venus"
+      },
+      "mode": "standard",
+      "boilerplate": "Everyone has all twelve houses. An empty house just means no natal planet sits there. The area still works; it may simply run quietly instead of being a constant focus. You read it through the sign on its cusp and the planet that rules that sign, then follow that planet to see where the theme actually lives.",
+      "paragraphs": [
+        "Taurus is on the cusp of your empty 12th house, so Venus rules your private, inner life.",
+        "Your Venus is in Capricorn in the 8th house, connecting your inner life with trust, shared money, debt, intimacy, and the obligations that come with relying on someone else. With Venus in Capricorn, you love with commitment and staying power; you invest where it can last.",
+        "You may withdraw, carry your worry in private, and tell yourself you can handle it alone, before you let anyone know how much it is costing you. Underneath, it's usually about trust, shared money and obligations, and whether you can depend on someone to follow through."
+      ],
+      "coRuler": null,
+      "trace": {
+        "house": 12,
+        "cuspSign": "taurus",
+        "ruler": "venus",
+        "rulerSign": "capricorn",
+        "rulerHouse": 8,
+        "modernCoRuler": null,
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Empty 11th House in Aries",
+      "eyebrow": {
+        "label": "Placement",
+        "house": 11,
+        "cuspSign": "aries",
+        "ruler": "mars"
+      },
+      "mode": "standard",
+      "boilerplate": "Everyone has all twelve houses. An empty house just means no natal planet sits there. The area still works; it may simply run quietly instead of being a constant focus. You read it through the sign on its cusp and the planet that rules that sign, then follow that planet to see where the theme actually lives.",
+      "paragraphs": [
+        "Aries is on the cusp of your empty 11th house, so Mars rules your friendships and future.",
+        "Your Mars is in Aquarius in the 9th house, connecting your friendships with belief, study, travel, and the meaning you reach for. With Mars in Aquarius, you act on principle and your own timing, and you resist being told how to move.",
+        "You may make yourself useful to the group and call it belonging, even when every gathering leaves you feeling depleted. Underneath, it's usually about whether you share the same values, have room to keep growing, and are building a life that still feels meaningful to you."
+      ],
+      "coRuler": null,
+      "trace": {
+        "house": 11,
+        "cuspSign": "aries",
+        "ruler": "mars",
+        "rulerSign": "aquarius",
+        "rulerHouse": 9,
+        "modernCoRuler": null,
+        "readerAuthority": "composed-reviewed"
+      }
+    }
+  ]
+}

@@ -632,7 +632,7 @@
 .app-shell.mode-friends {
   --friends-content-width: 1040px;
   --friends-detail-width: min(1380px, calc(100vw - clamp(112px, 10vw, 176px)));
-  --friends-wheel-size: clamp(420px, 31vw, 560px);
+  --friends-wheel-size: var(--shared-chart-size);
   padding: 0;
   overflow-x: clip;
 }

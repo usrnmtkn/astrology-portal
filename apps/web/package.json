@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "generate:emergency-copy": "node ../../scripts/generate-emergency-copy.mjs",
+    "prebuild": "npm run generate:emergency-copy",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"

@@ -1,0 +1,355 @@
+{
+  "_meta": {
+    "title": "Reviewed cc/aspect-pair clauses — batch 2 (gap fill)",
+    "purpose": "Fills the Sun-family + Jupiter-Chiron aspect gaps the live app was composing generically.",
+    "count": 13,
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+    "note": "These pairs are absent from cc-source-phrases.json; authored from reference doctrine in original voice.",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/sun-square-uranus",
+      "pair": "sun square uranus",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4G",
+      "slots": {
+        "lived_scene": "a pull to break from who you're supposed to be turns sharp and sudden",
+        "habitual_response": "Bolting or blowing something up just to feel free",
+        "specific_cost": "a rupture you didn't think through",
+        "meaning_bridge": "the restlessness is marking where you've outgrown one role, not proof the whole life is wrong",
+        "practical_action": "Change one real thing you can undo. You don't have to blow up the whole life to feel free"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A pull to break from who you're supposed to be turns sharp and sudden. It's easy to fall into bolting or blowing something up just to feel free, which can cost you a rupture you didn't think through. But the restlessness is marking where you've outgrown one role, not proof the whole life is wrong. Change one real thing you can undo. You don't have to blow up the whole life to feel free.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-square-mars",
+      "pair": "sun square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "your drive and your sense of self get crossed, and everything starts feeling like a fight to win",
+        "habitual_response": "Flaring up and acting before you think it through",
+        "specific_cost": "a clash with someone you didn't actually mean to make",
+        "meaning_bridge": "there's real power here, it just needs a target that's the work rather than the person",
+        "practical_action": "Spend the heat on the task and slow down before you swing"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your drive and your sense of self get crossed, and everything starts feeling like a fight to win. It's easy to fall into flaring up and acting before you think it through, which can cost you a clash with someone you didn't actually mean to make. But there's real power here, it just needs a target that's the work rather than the person. Spend the heat on the task and slow down before you swing.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-opposition-mars",
+      "pair": "sun opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "your push to act keeps landing against someone else's, and the friction is constant",
+        "habitual_response": "Meeting force with force until it becomes a standoff",
+        "specific_cost": "energy burned on the contest instead of the goal",
+        "meaning_bridge": "the drive is usable once it stops needing an opponent",
+        "practical_action": "Name what you're actually trying to build and put the energy there"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your push to act keeps landing against someone else's, and the friction is constant. It's easy to fall into meeting force with force until it becomes a standoff, which can cost you energy burned on the contest instead of the goal. But the drive is usable once it stops needing an opponent. Name what you're actually trying to build and put the energy there.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/jupiter-square-chiron",
+      "pair": "jupiter square chiron",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4F",
+      "slots": {
+        "lived_scene": "your faith or optimism scrapes against an old sore spot about whether you're allowed to want more",
+        "habitual_response": "Overpromising to outrun the doubt, or talking the hope down to avoid the wound",
+        "specific_cost": "a belief inflated past what it can hold, or a real chance talked down",
+        "meaning_bridge": "the tender place is where the growth actually has to pass through, not around",
+        "practical_action": "Name the limit honestly and let the hope stay real but sized"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your faith or optimism scrapes against an old sore spot about whether you're allowed to want more. It's easy to fall into overpromising to outrun the doubt, or talking the hope down to avoid the wound, which can cost you a belief inflated past what it can hold, or a real chance talked down. But the tender place is where the growth actually has to pass through, not around. Name the limit honestly and let the hope stay real but sized.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-sextile-neptune",
+      "pair": "sun sextile neptune",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "a softer, more imaginative sense of yourself is available and inspiration comes easily",
+        "underuse_pattern": "you drift into the daydream instead of making anything with it",
+        "deliberate_participation": "Make one real thing with the inspiration before it evaporates",
+        "meaning_bridge": "the sensitivity becomes a gift the moment it lands in something concrete"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A softer, more imaginative sense of yourself is available and inspiration comes easily, and the sensitivity becomes a gift the moment it lands in something concrete. What's easy to miss is that you drift into the daydream instead of making anything with it, so make one real thing with the inspiration before it evaporates.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-neptune",
+      "pair": "sun trine neptune",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "imagination, compassion, and a gentler self-image flow without effort",
+        "underuse_pattern": "you float in the ideal and let it stay a mood",
+        "deliberate_participation": "Give the vision one tangible form today",
+        "meaning_bridge": "the dreaminess is fuel when you keep one foot on the ground"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Imagination, compassion, and a gentler self-image flow without effort, and the dreaminess is fuel when you keep one foot on the ground. What's easy to miss is that you float in the ideal and let it stay a mood, so give the vision one tangible form today.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-sextile-pluto",
+      "pair": "sun sextile pluto",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4I",
+      "slots": {
+        "available_opening": "you can be deep and honest about who you're without a fight",
+        "underuse_pattern": "you stay on the surface to avoid the intensity",
+        "deliberate_participation": "Let one real thing change and use the depth on purpose",
+        "meaning_bridge": "the power transforms you when you aim it inward rather than at controlling others"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "You can be deep and honest about who you're without a fight, and the power transforms you when you aim it inward rather than at controlling others. What's easy to miss is that you stay on the surface to avoid the intensity, so let one real thing change and use the depth on purpose.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-pluto",
+      "pair": "sun trine pluto",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4I",
+      "slots": {
+        "available_opening": "a steady, intense sense of purpose is available and people feel your influence without a struggle",
+        "underuse_pattern": "you let the drive idle or turn it into quiet control",
+        "deliberate_participation": "Point the intensity at one real change you want to lead, before it turns into control",
+        "meaning_bridge": "depth and leadership come easily now, the only risk is getting dogmatic"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A steady, intense sense of purpose is available and people feel your influence without a struggle, and depth and leadership come easily now, the only risk is getting dogmatic. What's easy to miss is that you let the drive idle or turn it into quiet control, so point the intensity at one real change you want to lead, before it turns into control.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-sextile-uranus",
+      "pair": "sun sextile uranus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4G",
+      "slots": {
+        "available_opening": "a fresh, original version of yourself is easy to try on",
+        "underuse_pattern": "you default to the expected version out of habit",
+        "deliberate_participation": "Try the unconventional approach that actually appeals to you",
+        "meaning_bridge": "your individuality is an asset here, not a liability"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A fresh, original version of yourself is easy to try on, and your individuality is an asset here, not a liability. What's easy to miss is that you default to the expected version out of habit, so try the unconventional approach that actually appeals to you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-uranus",
+      "pair": "sun trine uranus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4G",
+      "slots": {
+        "available_opening": "change feels natural and you can be yourself in your own unusual way",
+        "underuse_pattern": "you cling to the familiar when the freer option is right there",
+        "deliberate_participation": "Take the original route while it's this easy",
+        "meaning_bridge": "freedom and identity are cooperating rather than pulling apart"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Change feels natural and you can be yourself in your own unusual way, and freedom and identity are cooperating rather than pulling apart. What's easy to miss is that you cling to the familiar when the freer option is right there, so take the original route while it's this easy.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-conjunction-mercury",
+      "pair": "sun conjunction mercury",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "who you are and how you think and talk run as one, so your opinions feel like your identity",
+        "function_a_lived": "the need to be seen and to matter",
+        "function_b_lived": "a fast, restless mind that wants to say what it thinks",
+        "concentration_action": "Say the idea, then actually shut up and hear the reply"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Who you are and how you think and talk run as one, so your opinions feel like your identity. It can be hard to separate the need to be seen and to matter from a fast, restless mind that wants to say what it thinks right now, so say the idea, then actually shut up and hear the reply.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-conjunction-venus",
+      "pair": "sun conjunction venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "who you are and what you find lovely blend, so charm and warmth come easily and you want things pleasant",
+        "function_a_lived": "the need to shine",
+        "function_b_lived": "the pull toward harmony and pleasure",
+        "concentration_action": "Enjoy the ease, and let one honest hard thing be said under the charm"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Who you are and what you find lovely blend, so charm and warmth come easily and you want things pleasant. It can be hard to separate the need to shine from the pull toward harmony and pleasure right now, so enjoy the ease, and let one honest hard thing be said under the charm.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-conjunction-mars",
+      "pair": "sun conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "who you are and your drive to act become the same push, so wanting something and going after it stop being separate",
+        "function_a_lived": "the need to be yourself out loud",
+        "function_b_lived": "raw drive that wants to move now",
+        "concentration_action": "Aim the force before you spend it, and give the heat a physical outlet"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "doctrine_source": "Hamaker-Zondag, Aspects (natal); doctrine only, voiced original",
+      "originalityCheck": "voiced original; doctrine-grounded; prohibited seams cleared",
+      "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Who you are and your drive to act become the same push, so wanting something and going after it stop being separate. It can be hard to separate the need to be yourself out loud from raw drive that wants to move now right now, so aim the force before you spend it, and give the heat a physical outlet.",
+      "revoice_version": "chani-quality-v1-composed"
+    }
+  ]
+}

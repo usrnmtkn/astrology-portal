@@ -40,7 +40,8 @@ function placementAliases(planet: string, sign: string) {
     `natal-${planetPart}-in-${signPart}`,
     `sky-${planetPart}-in-${signPart}`,
     `library-natal-placement-${planetPart}-${signPart}`,
-    `natal.sign.${moduleKeyPart(planetPart)}.${moduleKeyPart(signPart)}`
+    `natal.sign.${moduleKeyPart(planetPart)}.${moduleKeyPart(signPart)}`,
+    `sky.placement.${moduleKeyPart(planetPart)}.${moduleKeyPart(signPart)}`
   ];
 }
 
@@ -97,6 +98,111 @@ export function equivalentAstroContentKeys(key: string) {
   let matchedStructuredAspect = false;
   addAlias(aliases, normalized);
   addAlias(aliases, dashKey);
+
+  const ccFallbackHook = normalized.match(/^cc\/fallback-hook\/(.+)$/);
+  if (ccFallbackHook) {
+    addAlias(aliases, `fallback-hook/${ccFallbackHook[1]}`);
+  }
+
+  const ccPlanetInSign = normalized.match(/^cc\/planet-in-sign\/(.+?)-in-([a-z-]+)$/);
+  if (ccPlanetInSign && ccPlanetInSign[2] !== "sign") {
+    placementAliases(ccPlanetInSign[1], ccPlanetInSign[2]).forEach((alias) => addAlias(aliases, alias));
+  }
+
+  const ccTransitHouse = normalized.match(/^cc\/transit\/([^/]+)\/house-([0-9]{1,2})$/);
+  if (ccTransitHouse) {
+    const planet = aliasKeyPart(ccTransitHouse[1]);
+    const house = aliasKeyPart(ccTransitHouse[2]);
+    addAlias(aliases, `transit.house.${moduleKeyPart(planet)}.${moduleKeyPart(house)}`);
+    addAlias(aliases, `transit-${planet}-house-${house}`);
+    addAlias(aliases, `fallback-hook/you.transit-through-house/${planet}/house-${house}`);
+  }
+
+  const ccAspectPair = normalized.match(/^cc\/aspect-pair\/(.+?)-(conjunction|opposition|square|trine|sextile)-(.+)$/);
+  if (ccAspectPair) {
+    aspectAliases(ccAspectPair[1], ccAspectPair[2], ccAspectPair[3]).forEach((alias) => addAlias(aliases, alias));
+  }
+
+  const midheaven = normalized.match(/^ms\/midheaven\/([a-z-]+)$/);
+  if (midheaven) {
+    addAlias(aliases, `midheaven-in-${aliasKeyPart(midheaven[1])}`);
+    addAlias(aliases, `natal.angle.midheaven.${moduleKeyPart(midheaven[1])}`);
+  }
+
+  const retrograde = normalized.match(/^ms\/retrograde\/([a-z-]+)$/);
+  if (retrograde) {
+    const planet = aliasKeyPart(retrograde[1]);
+    addAlias(aliases, `sky-retrograde-${planet}`);
+    addAlias(aliases, `sky.retrograde.${moduleKeyPart(planet)}`);
+    addAlias(aliases, `fallback-hook/sky.retrograde/${planet}`);
+  }
+
+  const ingress = normalized.match(/^ms\/ingress\/([a-z-]+)$/);
+  if (ingress) {
+    const planet = aliasKeyPart(ingress[1]);
+    addAlias(aliases, `fallback-hook/sky.ingress.${planet}`);
+    addAlias(aliases, `fallback-hook/sky.ingress/${planet}`);
+  }
+
+  if (normalized === "cc/fallback/retrograde/collective-mercury-flavor") {
+    addAlias(aliases, "fallback-hook/sky.retrograde");
+    addAlias(aliases, "fallback-hook/sky.retrograde/mercury");
+  }
+
+  if (normalized.startsWith("cc/fallback/ingress/")) {
+    addAlias(aliases, "fallback-hook/sky.ingress");
+  }
+
+  if (normalized === "cc/fallback/cazimi/collective") {
+    addAlias(aliases, "fallback-hook/sky.cazimi");
+  }
+
+  if (normalized === "cc/fallback/daily/house-personalized-cc-motif-set") {
+    addAlias(aliases, "fallback-hook/you.daily-timing");
+  }
+
+  const slotTemplateAliases: Record<string, string[]> = {
+    "slot-template/3A": ["fallback-hook/sky.planetary-placement", "fallback-hook/sky.planetary-placement-retrograde"],
+    "slot-template/3B": ["fallback-hook/you.transit-through-house"],
+    "slot-template/3C": ["fallback-hook/you.transit-through-house"],
+    "slot-template/3D": ["fallback-hook/you.transit-through-house"],
+    "slot-template/3E": ["fallback-hook/you.transit-through-house"],
+    "slot-template/4A": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4B": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4C": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4D": ["fallback-hook/you.transit-to-angle"],
+    "slot-template/4E": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4F": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4G": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4H": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/4I": ["fallback-hook/you.transit-to-natal"],
+    "slot-template/5K": ["fallback-hook/you.natal-placement", "fallback-hook/you.natal-synthesis"],
+    "slot-template/5L": ["fallback-hook/you.natal-angle-placement"],
+    "slot-template/5M": ["fallback-hook/you.natal-angle-placement"],
+    "slot-template/5N": ["fallback-hook/you.natal-angle-placement"],
+    "slot-template/5O": ["fallback-hook/you.natal-angle-placement"],
+    "slot-template/5P": ["fallback-hook/you.natal-aspect"],
+    "slot-template/5Q": ["fallback-hook/you.natal-aspect"],
+    "slot-template/5R": ["fallback-hook/you.natal-aspect"],
+    "slot-template/5S": ["fallback-hook/you.natal-aspect"],
+    "slot-template/6A": ["fallback-hook/sky.planetary-placement", "fallback-hook/sky.planetary-placement-retrograde"],
+    "slot-template/6B": ["fallback-hook/sky.planetary-placement"],
+    "slot-template/6C": ["fallback-hook/sky.planetary-placement"],
+    "slot-template/6D": ["fallback-hook/sky.planetary-placement"],
+    "slot-template/6E": ["fallback-hook/sky.aspect-detail", "fallback-hook/sky.aspect-row"],
+    "slot-template/6F": ["fallback-hook/sky.aspect-detail", "fallback-hook/sky.aspect-row"],
+    "slot-template/6G": ["fallback-hook/sky.retrograde-section"],
+    "slot-template/6H": ["fallback-hook/sky.station", "fallback-hook/sky.retrograde-section"],
+    "slot-template/6I": ["fallback-hook/sky.retrograde"],
+    "slot-template/6J": ["fallback-hook/sky.cazimi", "fallback-hook/sky.retrograde-section"],
+    "slot-template/6K": ["fallback-hook/sky.station", "fallback-hook/sky.retrograde-section"],
+    "slot-template/6L": ["fallback-hook/sky.retrograde-section"],
+    "slot-template/6M": ["fallback-hook/sky.ingress"],
+    "slot-template/6N": ["fallback-hook/sky.aspect-detail"],
+    "slot-template/6O": ["fallback-hook/sky.aspect-row"]
+  };
+
+  (slotTemplateAliases[normalized] ?? []).forEach((alias) => addAlias(aliases, alias));
 
   const libraryPlacement = dashKey.match(/^library-natal-placement-(.+?)-([a-z]+)$/);
   if (libraryPlacement) {

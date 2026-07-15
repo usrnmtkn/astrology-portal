@@ -1,4 +1,4 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Search, Server, Sparkles, Trash2, TreePine, Upload, X } from "lucide-react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, EyeOff, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Search, Server, Sparkles, Trash2, TreePine, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type FallbackHookDefinition, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
@@ -7,9 +7,23 @@ import { findMetaphorPhraseFlags, metaphorFamilies, metaphorGuidanceSummary, met
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../content/readerSafety";
 import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
-import type { GeneratedContentMode } from "../services/generatedContent";
+import { contentSystemWorkstreams } from "./contentSystemPlan";
+import sourceGroundedDashboardRecords from "../content/finalSourceGroundedDashboardRecords.json" with { type: "json" };
+import sourceGroundedReviewCandidates from "../content/sourceGroundedReviewCandidates.json";
+import {
+  SOURCE_GROUNDED_V2_TEMPLATE_VERSION
+} from "../content/sourceGroundedV2";
+import { skyHistoricalLookbackSettingId, skyHistoricalLookbackSettingKey } from "../content/skyHistoricalLookback";
+import skyContentSnapshot from "../content/skyContentSnapshot.json";
+import {
+  readGeneratedContentPreviewMode,
+  writeGeneratedContentPreviewMode,
+  type GeneratedContentMode,
+  type GeneratedContentPreviewMode
+} from "../services/generatedContent";
 import {
   compositeAspectContentKey,
+  natalAngleContentKey,
   natalAspectContentKey,
   natalHouseContentKey,
   natalPlacementContentKey,
@@ -34,18 +48,21 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "reviewQueue" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "overview" | "articles" | "content" | "reviewQueue" | "compositeByType" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
 type AdminContentQueueFilter = "failed" | "missingSource" | "draft" | "published" | null;
+type AdminContentClass = "phrasebank" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
+type AdminContentClassFilter = AdminContentClass | "all";
+type AdminPhrasebankTierFilter = "all" | "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminReviewQueueStatusFilter = GeneratedContentStatus | "all";
 type AdminReviewQueueEvergreenFilter = "all" | "evergreen" | "hideEvergreen";
-type AdminReviewQueueSourceFilter = "all" | "revoicePending" | "voiced";
+type AdminReviewQueueSourceFilter = AdminContentClassFilter;
 type AdminReviewQueueFamilyFilter = "all" | "placement" | "aspect" | "ingress" | "retrograde" | "eclipse" | "synastry" | "other";
 type AdminReviewQueueGroupKey = `${AdminReviewQueueFamilyFilter}:${string}`;
-type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
+type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
 type AdminVocabularyStatusFilter = GeneratedContentStatus | "all";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminHookCatalogSelection = { type: "lunar"; key: string } | { type: "fallback"; key: string };
@@ -54,10 +71,12 @@ type SlotDictionarySourceFilter = "all" | "calculated" | "vocabulary" | "fallbac
 type SlotDictionaryStatus = "calculated" | "ready" | "draft" | "local" | "missing";
 type SlotDictionaryStatusFilter = "all" | SlotDictionaryStatus;
 type AdminTemplateDrawerMode = "view" | "edit";
+type CompositeRelationshipTypeKey = "romantic" | "friendship" | "family" | "coworkers" | "creative" | "exes" | "complicated";
 type AdminContentBlockFilter =
   | "all"
   | "fallback_template"
   | "placement"
+  | "angle"
   | "sign"
   | "house"
   | "ruler"
@@ -65,6 +84,7 @@ type AdminContentBlockFilter =
   | "sky_aspect"
   | "sky_article"
   | "lunar_calendar"
+  | "daily_horoscope"
   | "transit_to_natal_aspect"
   | "synastry_aspect"
   | "composite_aspect"
@@ -152,6 +172,22 @@ type AdminContentExchangeBundle = {
     summary: string;
     body: string;
     bestMove: string;
+  }>;
+};
+
+type SourceGroundedDashboardRecordBundle = {
+  summary?: {
+    readyRecords?: number;
+    sourceGaps?: number;
+    recordsByFamily?: Record<string, number>;
+    sourceGapsByFamily?: Record<string, number>;
+  };
+  sourceGaps?: Array<{
+    canonicalKey: string;
+    family: string;
+    surface: string;
+    state: "SOURCE_GAP";
+    missing: string[];
   }>;
 };
 
@@ -269,7 +305,7 @@ type AdminVocabularyCardItem = {
   kind?: "topic" | "sign-style";
 };
 
-type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "lunar" | "eclipses" | "career" | "relationship";
+type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "angles" | "zodiac" | "lunar" | "eclipses" | "career" | "relationship";
 
 type AdminTemplateDraft = {
   headline: string;
@@ -293,9 +329,9 @@ type LunarCoverageSummaryItem = {
 type AdminSlotDictionaryRow = {
   slot: string;
   label: string;
-  group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Lunar language" | "Sky language" | "Aspect language" | "Relationship language";
+  group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Angle language" | "Lunar language" | "Sky language" | "Aspect language" | "Relationship language" | "Transit language" | "Soul language" | "Career language" | "Template structure" | "Timing language";
   source: string;
-  editableIn: "Calculated" | "Vocabulary" | "Fallback Rows";
+  editableIn: "Calculated" | "Vocabulary" | "Fallback hooks";
   status: SlotDictionaryStatus;
   description: string;
   examples?: string[];
@@ -309,7 +345,7 @@ type AdminSlotDictionaryRow = {
 
 type AdminReviewRecord = {
   id: string;
-  source: "global" | "private" | "calculated" | "saved";
+  source: "global" | "private" | "calculated" | "saved" | "snapshot";
   surface: GeneratedContentSurface;
   status: GeneratedContentStatus;
   mode: GeneratedContentMode;
@@ -338,6 +374,25 @@ type AdminReviewRecord = {
   updatedAt: string;
   rawGlobalRow?: AdminGeneratedContentRow;
   rawPrivateRow?: AdminUserGeneratedContentRow;
+};
+
+type LocalSkySnapshotAdminRow = {
+  id: string;
+  contentKey: string;
+  aliases?: string[];
+  surface?: GeneratedContentSurface;
+  mode?: GeneratedContentMode;
+  eventType?: string | null;
+  targetDate?: string | null;
+  headline?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  sections?: unknown;
+  blockType?: AdminContentBlockFilter | string | null;
+  provider?: string | null;
+  sourceSnapshot?: Record<string, unknown> | null;
+  model?: string | null;
+  updatedAt?: string;
 };
 
 type AdminDraftSafety = {
@@ -487,10 +542,57 @@ const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: st
   { key: "all", label: "All categories" },
   { key: "Sky", label: "Sky" },
   { key: "Natal Aspects", label: "Natal Aspects" },
+  { key: "Natal Angles", label: "Natal Angles" },
   { key: "Natal Chart", label: "Natal Chart" },
   { key: "Relationship", label: "Relationship" },
-  { key: "Condition Modifiers", label: "Condition Modifiers" },
-  { key: "Fallback Templates", label: "Fallback Templates" }
+  { key: "Condition Modifiers", label: "Condition Modifiers" }
+];
+
+const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
+  { key: "all", label: "Current rows" },
+  { key: "phrasebank", label: "Rich content" },
+  { key: "fallback-hook", label: "Fallback hooks" },
+  { key: "vocab", label: "Vocabulary / phrases" },
+  { key: "reference", label: "References / articles" },
+  { key: "user-generated", label: "User-generated" },
+  { key: "other", label: "Other current rows" },
+  { key: "legacy", label: "Legacy archive" }
+];
+
+const phrasebankTierFilters: Array<{ key: AdminPhrasebankTierFilter; label: string }> = [
+  { key: "all", label: "All tiers" },
+  { key: "CONFIRMED", label: "Confirmed" },
+  { key: "REVIEWED", label: "Reviewed" },
+  { key: "SESSION_APPROVED_DRAFT", label: "Session draft" },
+  { key: "none", label: "No tier" }
+];
+
+function nextGeneratedContentPreviewMode(mode: GeneratedContentPreviewMode): GeneratedContentPreviewMode {
+  if (mode === "normal") return "emergency-floor";
+  if (mode === "emergency-floor") return "hide-emergency-floor";
+  return "normal";
+}
+
+function generatedContentPreviewModeLabel(mode: GeneratedContentPreviewMode) {
+  if (mode === "emergency-floor") return "Floor only";
+  if (mode === "hide-emergency-floor") return "Hidden";
+  return "Normal";
+}
+
+function generatedContentPreviewModeDescription(mode: GeneratedContentPreviewMode) {
+  if (mode === "emergency-floor") return "Localhost viewer uses only LIVE fallback hooks, slot templates, and vocabulary rows.";
+  if (mode === "hide-emergency-floor") return "Localhost viewer hides fallback hooks and slot templates so rich-row gaps are easier to spot.";
+  return "Localhost viewer follows the normal LIVE serving hierarchy.";
+}
+
+const compositeRelationshipTypes: Array<{ key: CompositeRelationshipTypeKey; label: string }> = [
+  { key: "romantic", label: "Romantic" },
+  { key: "friendship", label: "Friendship" },
+  { key: "family", label: "Family" },
+  { key: "coworkers", label: "Coworkers" },
+  { key: "creative", label: "Creative" },
+  { key: "exes", label: "Exes" },
+  { key: "complicated", label: "Complicated" }
 ];
 
 type ContentBlockFilterOption = {
@@ -502,16 +604,18 @@ type ContentBlockFilterOption = {
 
 const contentBlockFilters: ContentBlockFilterOption[] = [
   { key: "all", label: "All content types" },
-  { key: "fallback_template", label: "Fallback template", group: "Fallbacks" },
+  { key: "fallback_template", label: "Fallback hook/template", group: "Fallbacks" },
   { key: "sky_article", label: "Upcoming transit article", group: "Sky" },
   { key: "lunar_calendar", label: "Lunar calendar entry", group: "Sky" },
   { key: "sky_aspect", label: "Sky aspect card", group: "Sky" },
+  { key: "daily_horoscope", label: "Daily horoscope", group: "You" },
   { key: "placement", label: "Natal placement page", group: "You" },
+  { key: "angle", label: "Natal angle page", group: "You" },
   { key: "sign", label: "Natal sign block", group: "You" },
   { key: "house", label: "Natal house block", group: "You" },
   { key: "ruler", label: "Natal ruler block", group: "You" },
   { key: "natal_aspect", label: "Natal chart aspect", group: "You" },
-  { key: "transit_to_natal_aspect", label: "Transit to natal update", group: "You" },
+  { key: "transit_to_natal_aspect", label: "Transit to natal content", group: "You" },
   { key: "synastry_aspect", label: "Synastry aspect", group: "Friends" },
   { key: "composite_aspect", label: "Composite aspect", group: "Friends" },
   { key: "condition_modifier", label: "Condition modifier", group: "General" },
@@ -520,6 +624,7 @@ const contentBlockFilters: ContentBlockFilterOption[] = [
 ];
 
 const contentBlockEditorGroups: Array<NonNullable<ContentBlockFilterOption["group"]>> = ["Fallbacks", "Sky", "You", "Friends", "General"];
+const contentListBlockFilterGroups: Array<NonNullable<ContentBlockFilterOption["group"]>> = ["Sky", "You", "Friends", "General"];
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const personalizedSampleReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
@@ -632,6 +737,7 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
   "sky.aspect-sign-context": { planetA: "Mercury", signA: "Cancer", signAStyleShort: "protective feeling", planetB: "Neptune", signB: "Aries", signBStyleShort: "fast instinct" },
   "sky.retrograde": { planet: "Pluto", sign: "Aquarius", planetTopic: "power, pressure, and deep change" },
   "you.natal-placement": { planet: "Moon", sign: "Capricorn", house: 6, planetTopic: "needs and reaction", signStyle: "practical, contained, and responsibility-aware" },
+  "you.natal-angle-placement": { angle: "Midheaven", sign: "Capricorn", angleTopic: "visibility, work, reputation, and public direction", signStyle: "practical, contained, and responsibility-aware", birthTimeConfidence: "reliable" },
   "you.natal-aspect": { planetA: "Moon", aspect: "trine", planetB: "Saturn", planetATopic: "needs and reaction", planetBTopic: "structure and limits" },
   "you.transit-to-natal": {
     transitPlanet: "Saturn",
@@ -842,6 +948,14 @@ function resolveFallbackHookSampleContextFromVocabulary(
   setResolvedSampleSlot(context, "houseTopic", houseTopic);
   setResolvedSampleSlot(context, "houseLifeArea", houseTopic);
 
+  const angle = context.angle;
+  const angleTopic = vocabularyPhraseForPreview(
+    rowsByContentKey,
+    fallbackVocabularyContentKey("angle-topic", normalizedVocabularyKeyPart(angle))
+  );
+
+  setResolvedSampleSlot(context, "angleTopic", angleTopic);
+
   const retrogradeNote = vocabularyPhraseForPreview(
     rowsByContentKey,
     fallbackVocabularyContentKey("retrograde-note", normalizedVocabularyKeyPart(context.planet))
@@ -853,32 +967,46 @@ function resolveFallbackHookSampleContextFromVocabulary(
 }
 
 function adminPageTitle(activePage: AdminDashboardPage) {
+  if (activePage === "overview") return "Content Studio";
+  if (activePage === "articles") return "Articles";
   if (activePage === "releaseNotes") return "Release Notes";
   if (activePage === "connection") return "Connection";
   if (activePage === "appBehavior") return "App Behavior";
-  if (activePage === "templates") return "Templates & Voice";
+  if (activePage === "templates") return "Templates";
   if (activePage === "reviewQueue") return "Review Queue";
+  if (activePage === "compositeByType") return "Composite Review";
   if (activePage === "vocabulary") return "Vocabulary";
-  if (activePage === "slotDictionary") return "Slot Dictionary";
-  if (activePage === "knowledge") return "Fallback Rows";
-  if (activePage === "hooks") return "Hook Catalog";
-  return "Content";
+  if (activePage === "slotDictionary") return "Slots";
+  if (activePage === "knowledge") return "Fallback Hooks";
+  if (activePage === "hooks") return "Surface Map";
+  return "Exact Content";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
+  if (activePage === "overview") return "Admin / Home";
+  if (activePage === "articles") return "Admin / Write / Articles";
   if (activePage === "releaseNotes") return "Admin / Release notes";
   if (activePage === "connection") return "Admin / Connection";
   if (activePage === "appBehavior") return "Admin / App behavior";
-  if (activePage === "templates") return "Admin / Templates & voice";
-  if (activePage === "reviewQueue") return "Admin / Review queue";
-  if (activePage === "vocabulary") return "Admin / Vocabulary";
-  if (activePage === "slotDictionary") return "Admin / Slot dictionary";
-  if (activePage === "knowledge") return "Admin / Fallback rows";
-  if (activePage === "hooks") return "Admin / Hook catalog";
-  return "Admin / Content";
+  if (activePage === "templates") return "Admin / Composition / Templates";
+  if (activePage === "reviewQueue") return "Admin / Publish / Review queue";
+  if (activePage === "compositeByType") return "Admin / Write / Composite review";
+  if (activePage === "vocabulary") return "Admin / Composition / Vocabulary";
+  if (activePage === "slotDictionary") return "Admin / Composition / Slots";
+  if (activePage === "knowledge") return "Admin / Composition / Fallback hooks";
+  if (activePage === "hooks") return "Admin / App surfaces / Surface map";
+  return "Admin / Write / Exact content";
 }
 
 function adminPageDescription(activePage: AdminDashboardPage) {
+  if (activePage === "overview") {
+    return "Start here when you need to write, compose template language, diagnose a public surface, or publish approved rows.";
+  }
+
+  if (activePage === "articles") {
+    return "Draft long-form editorial pieces and reusable article excerpts. Article rows live here instead of being mixed into fallback hooks or vocabulary.";
+  }
+
   if (activePage === "releaseNotes") {
     return "Track product updates across the internal dashboard and the public app in one chronological log.";
   }
@@ -892,30 +1020,34 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "templates") {
-    return "Edit reusable templates, generation guidance, banned words, and phrase banks by content surface.";
+    return "Edit Mustache templates and voice scaffolds. Use this when sentence structure or slot placement is wrong.";
   }
 
   if (activePage === "reviewQueue") {
     return "Review authored and generated rows by family, move copy through editorial approval, and lock finished evergreen rows.";
   }
 
+  if (activePage === "compositeByType") {
+    return "Review relationship-type composite copy and keep romantic language gated to romantic relationships.";
+  }
+
   if (activePage === "vocabulary") {
-    return "Manage dashboard-authored vocabulary rows that feed interpolation slots in app copy.";
+    return "Edit reusable words and clauses that fill template slots, such as planet topics, house topics, signs, angles, lunar phrases, and relationship language.";
   }
 
   if (activePage === "slotDictionary") {
-    return "See which calculated facts and editable rows fill each template slot across the app.";
+    return "Find what each {{slot}} means, whether it is calculated or editable, and where to open the row that supplies it.";
   }
 
   if (activePage === "knowledge") {
-    return "Review and edit the slot-based fallback rows that fill app cards after specific authored copy and knowledge-base content miss.";
+    return "Edit fallback hooks and slot templates by surface. These are the full-sentence safety templates that render when exact content and rich composition miss.";
   }
 
   if (activePage === "hooks") {
-    return "Every card surface in the app is a hook. When a card needs content, it checks three places in order: a published row written for that exact moment, then approved knowledge base content, then the fallback template. This catalog shows what each hook needs and where its content comes from.";
+    return "Read-only routing map for public surfaces. Use it to answer which content key, template, and vocab rows create a card.";
   }
 
-  return "Manage every generated or authored astrology entry from one filtered CMS list.";
+  return "Create and edit exact authored rows for a specific surface, date, chart factor, or relationship context.";
 }
 
 function objectValue(value: unknown): Record<string, unknown> | null {
@@ -1121,9 +1253,17 @@ function vocabularyRowKind(contentKey: string): "topic" | "sign-style" {
   return isVocabularyFamilyKey(contentKey, "sign-style") ? "sign-style" : "topic";
 }
 
-function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign-need" | "zodiac-story" | "planet-shadow" | "house-shadow" | "higher-expression" {
+function vocabularyRowFamily(contentKey: string): "topic" | "single-phrase" | "sign-style" | "sign-need" | "zodiac-story" | "planet-shadow" | "house-shadow" | "higher-expression" {
   if (isVocabularyFamilyKey(contentKey, "sign-style")) return "sign-style";
   if (isVocabularyFamilyKey(contentKey, "sign-need")) return "sign-need";
+  if (
+    contentKey.startsWith("vocab/relationship-context/") ||
+    contentKey.startsWith("fallback-vocab/aspect-verb/") ||
+    contentKey.startsWith("fallback-vocab/aspect-feel/") ||
+    contentKey.startsWith("fallback-vocab/aspect-adj/")
+  ) {
+    return "single-phrase";
+  }
   if (contentKey.startsWith("vocab/zodiac-story/") || contentKey.startsWith("vocab/zodiac-cycle/")) return "zodiac-story";
   if (contentKey.startsWith("vocab/planet-shadow/")) return "planet-shadow";
   if (contentKey.startsWith("vocab/house-shadow/")) return "house-shadow";
@@ -1172,6 +1312,10 @@ function vocabularyItemCategory(item: Pick<AdminVocabularyCardItem, "contentKey"
 
   if (isVocabularyFamilyKey(item.contentKey, "house-life-area") || item.contentKey.startsWith("vocab/house-shadow/") || item.contentKey.startsWith("vocab/higher-expression/house/")) {
     return "houses";
+  }
+
+  if (isVocabularyFamilyKey(item.contentKey, "angle-topic") || item.contentKey.startsWith("vocab/angle-topic/")) {
+    return "angles";
   }
 
   if (isVocabularyFamilyKey(item.contentKey, "planet-topic") || item.contentKey.startsWith("vocab/planet-shadow/") || item.contentKey.startsWith("vocab/planetary-word-bank/") || item.contentKey.startsWith("vocab/higher-expression/planet/") || item.contentKey.startsWith("vocab/natal-card-tagline/") || item.taglineContentKey) {
@@ -1233,6 +1377,29 @@ function signContextSettingEnabled(row?: AdminGeneratedContentRow | null) {
   }
 
   return true;
+}
+
+function skyHistoricalLookbackSettingEnabled(row?: AdminGeneratedContentRow | null) {
+  const sections = objectValue(row?.sections);
+  const enabled = sections?.enabled ?? sections?.[skyHistoricalLookbackSettingId];
+
+  if (typeof enabled === "boolean") {
+    return enabled;
+  }
+
+  if (typeof row?.body === "string") {
+    const normalizedBody = row.body.trim().toLowerCase();
+
+    if (["off", "false", "disabled", "0"].includes(normalizedBody)) {
+      return false;
+    }
+
+    if (["on", "true", "enabled", "1"].includes(normalizedBody)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft {
@@ -1316,6 +1483,90 @@ function contextContentKey(hookKey: string) {
   return `fallback-hook/${hookKey}`;
 }
 
+const canonicalFallbackTemplateContentKeys: Record<string, string> = {
+  "sky.planetary-placement": "slot-template/6B",
+  "sky.planetary-placement-retrograde": "slot-template/6A",
+  "sky.ingress": "slot-template/6M",
+  "sky.aspect-detail": "slot-template/6E",
+  "sky.aspect-row": "slot-template/6O",
+  "sky.retrograde": "slot-template/6I",
+  "sky.station": "slot-template/6H",
+  "sky.retrograde-section": "slot-template/6G",
+  "you.natal-placement": "slot-template/5K",
+  "you.natal-house-placement": "slot-template/5K",
+  "you.natal-angle-placement": "slot-template/5L",
+  "you.natal-ruler": "slot-template/5H",
+  "you.natal-chart-ruler": "slot-template/5H",
+  "you.natal-synthesis": "slot-template/5K",
+  "you.natal-aspect": "slot-template/5Q",
+  "you.transit-to-natal": "slot-template/4A",
+  "you.transit-through-house": "slot-template/3B",
+  "you.transit-to-angle": "slot-template/4D",
+  "friends.composite-aspect": "slot-template/5Q",
+  "friends.relationship-timing": "slot-template/4A"
+};
+
+function canonicalFallbackTemplateContentKey(hookKey: string) {
+  if (hookKey.startsWith("slot-template/")) {
+    return hookKey;
+  }
+
+  if (hookKey.startsWith("fallback-hook/")) {
+    return hookKey;
+  }
+
+  return canonicalFallbackTemplateContentKeys[hookKey] ?? null;
+}
+
+function fallbackTemplateContentKeysForHook(hookKey: string) {
+  if (hookKey.startsWith("slot-template/") || hookKey.startsWith("fallback-hook/")) {
+    return [hookKey];
+  }
+
+  return [
+    canonicalFallbackTemplateContentKey(hookKey),
+    contextContentKey(hookKey)
+  ].filter((contentKey): contentKey is string => Boolean(contentKey));
+}
+
+function findFallbackTemplateRowForHook(rows: AdminGeneratedContentRow[], hookKey: string) {
+  for (const contentKey of fallbackTemplateContentKeysForHook(hookKey)) {
+    const row = findAdminGeneratedContentRow(rows, {
+      contentKey,
+      mode: generatedContentModeForFallbackContentKey(contentKey)
+    });
+
+    if (row) {
+      return row;
+    }
+  }
+
+  return null;
+}
+
+function isFallbackTemplateContentKey(contentKey: string) {
+  return contentKey.startsWith("fallback-hook/") || contentKey.startsWith("slot-template/");
+}
+
+function isEmergencyFloorReviewRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType" | "blockType" | "sourceSnapshot" | "rawGlobalRow">) {
+  const sourceSnapshot = objectValue(record.sourceSnapshot);
+  const rawSourceSnapshot = objectValue(record.rawGlobalRow?.source_snapshot);
+
+  if (sourceSnapshot?.servingFloor === true || rawSourceSnapshot?.servingFloor === true) return true;
+  if (sourceSnapshot?.emergencyFloor === true || rawSourceSnapshot?.emergencyFloor === true) return true;
+
+  const contentKey = record.contentKey;
+  if (isFallbackTemplateContentKey(contentKey)) return true;
+
+  return contentKey.startsWith("vocab/")
+    || contentKey.startsWith("fallback-vocab/")
+    || contentKey.startsWith("guide-phrase/")
+    || contentKey.startsWith("slot-vocab/")
+    || record.eventType === "fallback-hook"
+    || record.eventType === "vocabulary"
+    || record.blockType === "fallback_template";
+}
+
 function fallbackChildBaseHookKey(hookKey: string) {
   const placementMatch = hookKey.match(/^sky\.planetary-placement\/[^/]+\/[^/]+$/);
   if (placementMatch) return "sky.planetary-placement";
@@ -1389,9 +1640,9 @@ const extraTemplateCopySeeds: TemplateCopySeedRow[] = [
     contentType: "template",
     fields: {
       title: "{{activeTransit}}",
-      summary: "{{activeTransit}} is the loudest timing signal today. Collectively, it brings {{aspectTone}} around {{transitPlanetWeather}}. For you, it lands on {{personalActivation}}.",
-      body: "Today’s main signal is {{activeTransit}}. Collectively, this is wider weather around {{transitPlanetWeather}}, moving through {{aspectTone}}.\n\nFor you, it touches {{personalActivation}}. Watch for that theme becoming louder through ordinary moments: a conversation, decision, delay, mood, request, or pressure to respond. The point is not to over-read the day. The point is to notice what asks for attention and choose the cleanest next step.",
-      bestMove: "Name the collective weather, then name where it lands for you. Keep the next step practical and proportionate to the real situation.",
+      summary: "{{activeTransit}} is the loudest timing signal today. It brings {{aspectTone}} around {{transitPlanetWeather}}. For you, it lands on {{personalActivation}}.",
+      body: "Today’s main signal is {{activeTransit}}. This is wider weather around {{transitPlanetWeather}}, moving through {{aspectTone}}.\n\nFor you, it touches {{personalActivation}}. Watch for that theme becoming louder through ordinary moments: a conversation, decision, delay, mood, request, or pressure to respond. The point is not to over-read the day. The point is to notice what asks for attention and choose the cleanest next step.",
+      bestMove: "Name the collective weather, then name where it lands personally. Keep the next step practical and proportionate to what is actually happening.",
       emptyState: "If no approved content exists, leave the product surface blank."
     }
   }
@@ -1420,7 +1671,24 @@ function templateSeedForFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, 
     ?? null;
 }
 
+function isLegacyFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "prompt_version" | "source_snapshot">) {
+  const promptVersion = row.prompt_version ?? "";
+  const sourceSnapshot = objectValue(row.source_snapshot);
+
+  return (
+    promptVersion !== "fallback-hook-template-v1"
+    && promptVersion !== "mustache-madlib-v2.2"
+  ) || sourceSnapshot?.source === "fallback-template-legacy-restore";
+}
+
 function hookSectionForKey(hookKey: string): AdminFallbackHookSectionFilter {
+  if (hookKey.startsWith("slot-template/") || hookKey.startsWith("fallback-hook/")) {
+    return fallbackHookSectionForRow({
+      content_key: hookKey,
+      surface: hookKey.startsWith("slot-template/6") ? "sky" : "natal"
+    });
+  }
+
   return fallbackHookSectionForRow({
     content_key: contextContentKey(hookKey),
     surface: generatedSurfaceForFallbackHook(hookKey)
@@ -1529,6 +1797,27 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     action: { label: "Open house vocabulary", page: "vocabulary", vocabularyFilter: "houses" }
   },
   {
+    slot: "{{angle}}",
+    label: "Natal angle name",
+    group: "Calculated facts",
+    source: "Natal chart calculation",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Literal chart angle from the user's chart, currently Ascendant or Midheaven for natal angle placement pages.",
+    examples: ["Ascendant", "Midheaven"]
+  },
+  {
+    slot: "{{angleTopic}}",
+    label: "Angle topic language",
+    group: "Angle language",
+    source: "fallback-vocab/angle-topic/{angle}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Reusable topic phrasing for what a natal angle governs, including Midheaven visibility and public direction language.",
+    examples: ["fallback-vocab/angle-topic/ascendant", "fallback-vocab/angle-topic/midheaven"],
+    action: { label: "Open angle vocabulary", page: "vocabulary", vocabularyFilter: "angles" }
+  },
+  {
     slot: "{{moonPhase}}",
     label: "Moon phase name",
     group: "Calculated facts",
@@ -1554,33 +1843,33 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     label: "Lunar archetype copy",
     group: "Lunar language",
     source: "fallback-hook/lunation/{phase}/{sign}",
-    editableIn: "Fallback Rows",
+    editableIn: "Fallback hooks",
     status: "missing",
     description: "Moon-sign and phase-specific archetype content used by the Lunar Calendar when exact authored copy is unavailable.",
     examples: ["fallback-hook/lunation/first-quarter/aries", "fallback-hook/lunation/full-moon/cancer"],
-    action: { label: "Open lunar fallback rows", page: "knowledge", fallbackFilter: "lunar-calendar" }
+    action: { label: "Open lunar fallback hooks", page: "knowledge", fallbackFilter: "lunar-calendar" }
   },
   {
     slot: "{{planet}} + {{sign}}",
     label: "Sky placement child copy",
     group: "Sky language",
     source: "fallback-hook/sky.planetary-placement/{planet}/{sign}",
-    editableIn: "Fallback Rows",
+    editableIn: "Fallback hooks",
     status: "missing",
     description: "Specific collective Sky placement fallback copy used before the generic planetary-placement template.",
     examples: ["fallback-hook/sky.planetary-placement/sun/cancer", "fallback-hook/sky.planetary-placement/lilith/sagittarius"],
-    action: { label: "Open Sky fallback rows", page: "knowledge", fallbackFilter: "sky" }
+    action: { label: "Open Sky fallback hooks", page: "knowledge", fallbackFilter: "sky" }
   },
   {
     slot: "{{aspect}}",
     label: "Sky aspect child copy",
     group: "Aspect language",
     source: "fallback-hook/sky.aspect-detail/{aspect}",
-    editableIn: "Fallback Rows",
+    editableIn: "Fallback hooks",
     status: "missing",
     description: "Aspect-specific fallback copy used before the generic sky.aspect-detail template.",
     examples: ["fallback-hook/sky.aspect-detail/conjunction/feed", "fallback-hook/sky.aspect-detail/square/card"],
-    action: { label: "Open Sky fallback rows", page: "knowledge", fallbackFilter: "sky" }
+    action: { label: "Open Sky fallback hooks", page: "knowledge", fallbackFilter: "sky" }
   },
   {
     slot: "{{personA}} / {{personB}}",
@@ -1620,13 +1909,13 @@ const vocabularyStatusFilters: Array<{ key: AdminVocabularyStatusFilter; label: 
 
 function slotDictionarySourceFilterForRow(row: AdminSlotDictionaryRow): SlotDictionarySourceFilter {
   if (row.editableIn === "Vocabulary") return "vocabulary";
-  if (row.editableIn === "Fallback Rows") return "fallback";
+  if (row.editableIn === "Fallback hooks") return "fallback";
   return "calculated";
 }
 
 function slotDictionarySourceBadge(row: AdminSlotDictionaryRow) {
   if (row.editableIn === "Vocabulary") return "Vocabulary";
-  if (row.editableIn === "Fallback Rows") return "Fallback";
+  if (row.editableIn === "Fallback hooks") return "Fallback hook";
   return "Calculated";
 }
 
@@ -1663,6 +1952,184 @@ function slotDictionarySourcePrefix(source: string) {
   return source.includes("{")
     ? source.slice(0, source.indexOf("{"))
     : source;
+}
+
+const mustacheSlotPattern = /{{\s*([#/^]?)\s*([a-zA-Z0-9_.-]+)\s*}}/g;
+
+function mustacheSlotsFromText(text?: string | null) {
+  if (!text) return [];
+
+  const slots = new Set<string>();
+  let match: RegExpExecArray | null;
+  mustacheSlotPattern.lastIndex = 0;
+
+  while ((match = mustacheSlotPattern.exec(text)) !== null) {
+    const slotName = match[2]?.trim();
+    if (!slotName || slotName === ".") continue;
+    slots.add(`{{${slotName}}}`);
+  }
+
+  return [...slots];
+}
+
+function stringifySectionsForSlotScan(sections: AdminGeneratedContentRow["sections"]) {
+  if (!sections) return "";
+  try {
+    return JSON.stringify(sections);
+  } catch {
+    return "";
+  }
+}
+
+function mustacheSlotsFromTemplateRow(row: AdminGeneratedContentRow) {
+  return new Set([
+    ...mustacheSlotsFromText(row.headline),
+    ...mustacheSlotsFromText(row.summary),
+    ...mustacheSlotsFromText(row.body),
+    ...mustacheSlotsFromText(stringifySectionsForSlotScan(row.sections))
+  ]);
+}
+
+function slotNameFromBraces(slot: string) {
+  return slot.replace(/^\{\{/, "").replace(/\}\}$/, "").trim();
+}
+
+function readableLabelFromSlotName(name: string) {
+  return name
+    .replace(/[_.-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function slotDictionaryGroupForToken(name: string): AdminSlotDictionaryRow["group"] {
+  const normalized = name.toLowerCase();
+
+  if (/(mission|purpose|node|integration|sustaining|developmental|lived|grounded)/.test(normalized)) return "Soul language";
+  if (/(career|vocational|work|public|authority|practical|mc|midheaven)/.test(normalized)) return "Career language";
+  if (/(transit|transiting|natal_point|natalpoint|orb|window|timing|exact_date|exactdate)/.test(normalized)) return "Transit language";
+  if (/(relationship|person_a|persona|person_b|personb|partner|bond|composite|synastry)/.test(normalized)) return "Relationship language";
+  if (/(moon|phase|lunation|lunar)/.test(normalized)) return "Lunar language";
+  if (/(aspect|conjunction|opposition|square|trine|sextile)/.test(normalized)) return "Aspect language";
+  if (/(house|life_area|lifearea)/.test(normalized)) return "House language";
+  if (/(angle|ascendant|descendant|ic)/.test(normalized)) return "Angle language";
+  if (/(sign|zodiac|dignity|ruler)/.test(normalized)) return "Zodiac language";
+  if (/(planet|body|point|chiron|node|sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)/.test(normalized)) return "Planet language";
+  if (/^(has|is|show|include|with)_/.test(normalized)) return "Template structure";
+  if (/(date|time|period|duration|left|window)/.test(normalized)) return "Timing language";
+  return "Sky language";
+}
+
+function slotDictionaryEditableForToken(name: string): AdminSlotDictionaryRow["editableIn"] {
+  const normalized = name.toLowerCase();
+
+  if (/^(has|is|show|include|with)_/.test(normalized)) return "Calculated";
+  if (/(person|planet|body|point|sign|house|angle|aspect|orb|date|time|degree|window|relationship_type|relationshiptype|phase|mode)/.test(normalized)) return "Calculated";
+  if (/(topic|style|need|language|clause|scene|practice|expression|direction|claim|condition|archetype|meaning|cost|action|response|texture|motif|voice|tone|purpose|career|mission|vocational|authority|integration|discernment)/.test(normalized)) return "Vocabulary";
+
+  return "Fallback hooks";
+}
+
+function slotDictionaryActionForDynamicToken(
+  name: string,
+  editableIn: AdminSlotDictionaryRow["editableIn"],
+  group: AdminSlotDictionaryRow["group"]
+): AdminSlotDictionaryRow["action"] {
+  if (editableIn === "Calculated") return undefined;
+
+  if (editableIn === "Fallback hooks") {
+    return { label: "Open fallback hooks", page: "knowledge", fallbackFilter: "all" };
+  }
+
+  if (group === "Planet language") return { label: "Open planet vocabulary", page: "vocabulary", vocabularyFilter: "planets" };
+  if (group === "Zodiac language") return { label: "Open zodiac vocabulary", page: "vocabulary", vocabularyFilter: "zodiac" };
+  if (group === "House language") return { label: "Open house vocabulary", page: "vocabulary", vocabularyFilter: "houses" };
+  if (group === "Lunar language") return { label: "Open lunar vocabulary", page: "vocabulary", vocabularyFilter: "lunar" };
+  if (group === "Relationship language") return { label: "Open relationship vocabulary", page: "vocabulary", vocabularyFilter: "relationship" };
+
+  return { label: "Open vocabulary", page: "vocabulary", vocabularyFilter: "all" };
+}
+
+function slotDictionaryVocabularyRowMatchesToken(row: AdminGeneratedContentRow, tokenName: string) {
+  const normalized = tokenName.toLowerCase().replace(/[_.\s]+/g, "-");
+  const compact = normalized.replace(/-/g, "");
+  const key = row.content_key.toLowerCase();
+  const text = [row.headline, row.summary, row.body].join(" ").toLowerCase();
+
+  return key.includes(normalized) || key.replace(/[-_/]/g, "").includes(compact) || text.includes(`{{${tokenName}}}`);
+}
+
+function dynamicSlotDictionaryRowsFromTemplates(
+  templateRows: AdminGeneratedContentRow[],
+  reusableRows: AdminGeneratedContentRow[]
+) {
+  const rowsBySlot = new Map<string, AdminGeneratedContentRow[]>();
+
+  templateRows
+    .filter((row) => isFallbackTemplateContentKey(row.content_key))
+    .forEach((row) => {
+      mustacheSlotsFromTemplateRow(row).forEach((slot) => {
+        const existing = rowsBySlot.get(slot) ?? [];
+        existing.push(row);
+        rowsBySlot.set(slot, existing);
+      });
+    });
+
+  return [...rowsBySlot.entries()]
+    .sort(([first], [second]) => first.localeCompare(second))
+    .map(([slot, sourceRows]) => {
+      const tokenName = slotNameFromBraces(slot);
+      const group = slotDictionaryGroupForToken(tokenName);
+      const editableIn = slotDictionaryEditableForToken(tokenName);
+      const matchingReusableRows = reusableRows.filter((row) => slotDictionaryVocabularyRowMatchesToken(row, tokenName));
+      const status: SlotDictionaryStatus = editableIn === "Calculated"
+        ? "calculated"
+        : editableIn === "Vocabulary"
+          ? adminContentReadinessStatus(matchingReusableRows)
+          : adminContentReadinessStatus(sourceRows);
+
+      return {
+        slot,
+        label: readableLabelFromSlotName(tokenName),
+        group,
+        source: editableIn === "Calculated"
+          ? "Calculated at render time"
+          : editableIn === "Vocabulary"
+            ? `vocabulary or phrase rows for ${tokenName}`
+            : "fallback-hook/ or slot-template/ rows",
+        editableIn,
+        status,
+        description: editableIn === "Calculated"
+          ? "The app resolves this value from the active sky, chart, relationship, route, or fixture context."
+          : editableIn === "Vocabulary"
+            ? "Reusable phrase-bank language used by one or more fallback-hook or slot-template rows."
+            : "Reusable fallback text or a nested template referenced by saved app copy.",
+        examples: [...new Set(sourceRows.map((row) => row.content_key))].slice(0, 4),
+        action: slotDictionaryActionForDynamicToken(tokenName, editableIn, group)
+      } satisfies AdminSlotDictionaryRow;
+    });
+}
+
+function mergeSlotDictionaryRows(staticRows: AdminSlotDictionaryRow[], dynamicRows: AdminSlotDictionaryRow[]) {
+  const rowsBySlot = new Map<string, AdminSlotDictionaryRow>();
+
+  staticRows.forEach((row) => rowsBySlot.set(row.slot, row));
+  dynamicRows.forEach((row) => {
+    const existing = rowsBySlot.get(row.slot);
+    if (!existing) {
+      rowsBySlot.set(row.slot, row);
+      return;
+    }
+
+    rowsBySlot.set(row.slot, {
+      ...existing,
+      status: existing.status === "calculated" ? existing.status : row.status,
+      examples: [...new Set([...(existing.examples ?? []), ...(row.examples ?? [])])].slice(0, 6)
+    });
+  });
+
+  return [...rowsBySlot.values()].sort((first, second) => {
+    const groupSort = first.group.localeCompare(second.group);
+    return groupSort || first.slot.localeCompare(second.slot);
+  });
 }
 
 function fallbackHookSurfaceLabel(row: Pick<AdminGeneratedContentRow, "surface">, hook?: ReturnType<typeof fallbackHookForContextRow>) {
@@ -1707,7 +2174,20 @@ function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] =
     .map((hook) => {
       const contentKey = contextContentKey(hook.key);
       const hookMode = generatedContentModeForFallbackHook(hook);
+      const canonicalContentKey = canonicalFallbackTemplateContentKey(hook.key);
+      const canonicalRow = canonicalContentKey
+        ? findAdminGeneratedContentRow(savedRows, {
+          contentKey: canonicalContentKey,
+          mode: generatedContentModeForFallbackContentKey(canonicalContentKey)
+        })
+        : null;
       registeredFallbackTargetKeys.add(adminGeneratedContentTargetKey(contentKey, null, hookMode));
+      if (canonicalContentKey) {
+        registeredFallbackTargetKeys.add(adminGeneratedContentTargetKey(canonicalContentKey, null, generatedContentModeForFallbackContentKey(canonicalContentKey)));
+      }
+      if (canonicalRow) {
+        return canonicalRow;
+      }
       const savedRow = savedByTargetKey.get(adminGeneratedContentTargetKey(contentKey, null, hookMode));
 
       if (savedRow) {
@@ -1783,7 +2263,9 @@ function adminContentReadinessStatus(rows: AdminGeneratedContentRow[]): Exclude<
 }
 
 function hookKeyFromFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key">) {
-  return row.content_key.replace(/^fallback-hook\//, "");
+  return row.content_key.startsWith("fallback-hook/")
+    ? row.content_key.replace(/^fallback-hook\//, "")
+    : row.content_key;
 }
 
 function fallbackChildLabelPart(value: string) {
@@ -1824,7 +2306,7 @@ function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
   const hookKey = hookKeyFromFallbackTemplateRow(row);
   const hook = fallbackHookForContextRow(hookKey);
 
-  return hookPlainDescriptions[hookKey] || hook?.description || "Reusable fallback copy for this app hook.";
+  return hookPlainDescriptions[hookKey] || hook?.description || "Reusable fallback-hook or slot-template row for this app surface.";
 }
 
 function previewForFallbackTemplateDraft(draft: AdminTemplateDraft) {
@@ -1922,7 +2404,7 @@ function contextRowsFromTemplateRows(rows: AdminGeneratedContentRow[]): AdminCon
     };
   });
   const childRows = rows
-    .filter((row) => row.content_key.startsWith("fallback-hook/"))
+    .filter((row) => isFallbackTemplateContentKey(row.content_key))
     .filter((row) => !registeredContentKeys.has(row.content_key))
     .filter((row) => !isLocalPlaceholderGeneratedContentRow(row))
     .map((row) => {
@@ -2327,7 +2809,7 @@ function lunarCoverageVocabDependencies(definition: LunarCalendarContentKeyDefin
   }
 
   if (definition.group === "transit-fallback" && signPart) {
-    dependencies.add(`vocab/aspect-verb/${signPart}`);
+    dependencies.add(fallbackVocabularyContentKey("aspect-verb", signPart));
   }
 
   return [...dependencies];
@@ -2984,6 +3466,37 @@ function contentRecordDateLabel(record: AdminReviewRecord) {
   return "No date";
 }
 
+function contentRecordUpdatedLabel(record: AdminReviewRecord) {
+  if (record.targetDate) {
+    return adminDateLabel(record.targetDate);
+  }
+
+  const dailyHoroscopeDate = dailyHoroscopeDateFromContentKey(record.contentKey);
+  if (dailyHoroscopeDate) {
+    return adminDateLabel(dailyHoroscopeDate);
+  }
+
+  if (record.evergreen) {
+    return "Evergreen";
+  }
+
+  if (!record.updatedAt) {
+    return "No update";
+  }
+
+  const date = new Date(record.updatedAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Updated";
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
 function compactAdminText(value: string | null | undefined, fallback = "No reader-facing copy saved yet.") {
   const normalized = (value ?? "").replace(/\s+/g, " ").trim();
 
@@ -3135,9 +3648,130 @@ const reviewStatusRank: Record<GeneratedContentStatus, number> = {
   ARCHIVED: 1
 };
 
+function isPhrasebankRecord(record: AdminReviewRecord) {
+  const sourceName = typeof record.sourceSnapshot?.source === "string" ? record.sourceSnapshot.source : "";
+
+  return Boolean(phrasebankTierForRecord(record))
+    || sourceName === "tldr-astro-phrasebank-20260714"
+    || record.model === "compiled-phrasebank-import";
+}
+
+function isLegacyGeneratedContentRecord(record: AdminReviewRecord) {
+  return record.source === "global" && !isPhrasebankRecord(record);
+}
+
+function isArticleReviewRecord(record: AdminReviewRecord) {
+  const sourceSnapshot = objectValue(record.sourceSnapshot);
+
+  return record.eventType === "article"
+    || record.blockType === "essay"
+    || record.contentKey.startsWith("article/")
+    || sourceSnapshot?.contentType === "article";
+}
+
+function contentClassForReviewRecord(record: AdminReviewRecord): AdminContentClass {
+  if (record.source === "private") return "user-generated";
+  if (isFallbackTemplateRecord(record)) return "fallback-hook";
+  if (isVocabularyContentRecord(record)) return "vocab";
+  if (isArticleReviewRecord(record)) return "reference";
+  if (isReferenceOnlyRecord(record)) return "reference";
+  if (isPhrasebankRecord(record)) return "phrasebank";
+  if (isLegacyGeneratedContentRecord(record)) return "legacy";
+  return "other";
+}
+
+function contentClassForGeneratedRow(row: AdminGeneratedContentRow): AdminContentClass {
+  const contentKey = row.content_key.toLowerCase();
+  const eventType = (row.event_type ?? "").toLowerCase().replaceAll("_", "-");
+  const sourceSnapshot = objectValue(row.source_snapshot);
+  const sourceName = typeof sourceSnapshot?.source === "string" ? sourceSnapshot.source : "";
+  const factRecord = objectValue(row.facts);
+  const hasPhrasebankTier = Boolean(
+    objectValue(factRecord?.phrasebank)?.tier
+    || sourceSnapshot?.tier
+    || sourceName === "tldr-astro-phrasebank-20260714"
+    || row.model === "compiled-phrasebank-import"
+  );
+
+  if (contentKey.startsWith("cc/fallback")) return "legacy";
+  if (contentKey.startsWith("fallback-hook/") || eventType === "fallback-hook" || row.block_type === "fallback_template") return "fallback-hook";
+  if (contentKey.startsWith("vocab/") || contentKey.startsWith("fallback-vocab/") || eventType === "vocabulary") return "vocab";
+  if (contentKey.startsWith("reference/") || sourceSnapshot?.referenceOnly === true) return "reference";
+  if (hasPhrasebankTier) return "phrasebank";
+  if (row.provider || row.model) return "legacy";
+  return "other";
+}
+
+function contentClassLabel(contentClass: AdminContentClass) {
+  if (contentClass === "phrasebank") return "Phrasebank";
+  if (contentClass === "fallback-hook") return "Fallback-hook";
+  if (contentClass === "vocab") return "Vocab";
+  if (contentClass === "reference") return "Reference";
+  if (contentClass === "legacy") return "Archive";
+  if (contentClass === "user-generated") return "User-generated";
+  return "Other";
+}
+
+function compositeRelationshipTypeSections(record: AdminReviewRecord) {
+  const sections = objectValue(record.rawGlobalRow?.sections ?? record.sourceSnapshot?.sections);
+  const byRelationshipType = objectValue(sections?.byRelationshipType);
+
+  return byRelationshipType;
+}
+
+function compositeRelationshipTypeCopy(variant: unknown) {
+  const value = objectValue(variant);
+
+  if (!value) return "";
+
+  return [
+    stringValue(value.experience),
+    stringValue(value.advice),
+    stringValue(value.astro)
+  ].filter(Boolean).join(" ");
+}
+
+function compositeRelationshipTypeCoverage(record: AdminReviewRecord) {
+  const byRelationshipType = compositeRelationshipTypeSections(record);
+
+  return compositeRelationshipTypes.map(({ key, label }) => ({
+    key,
+    label,
+    copy: compositeRelationshipTypeCopy(byRelationshipType?.[key])
+  }));
+}
+
+function reviewRecordSourcePriority(record: AdminReviewRecord) {
+  if (isPhrasebankRecord(record)) return 0;
+  if (isLegacyGeneratedContentRecord(record)) return 2;
+  return 1;
+}
+
+function recordMatchesContentClassFilter(record: AdminReviewRecord, filter: AdminContentClassFilter) {
+  const recordClass = contentClassForReviewRecord(record);
+
+  if (filter === "all") return recordClass !== "legacy";
+  return recordClass === filter;
+}
+
+function recordMatchesPhrasebankTierFilter(record: AdminReviewRecord, filter: AdminPhrasebankTierFilter) {
+  const tier = phrasebankTierForRecord(record);
+
+  if (filter === "all") return true;
+  if (filter === "none") return !tier;
+  return tier === filter;
+}
+
 function preferredReviewRecord(current: AdminReviewRecord | undefined, next: AdminReviewRecord) {
   if (!current) {
     return next;
+  }
+
+  const currentSourcePriority = reviewRecordSourcePriority(current);
+  const nextSourcePriority = reviewRecordSourcePriority(next);
+
+  if (nextSourcePriority !== currentSourcePriority) {
+    return nextSourcePriority < currentSourcePriority ? next : current;
   }
 
   const currentRank = reviewStatusRank[current.status] ?? 0;
@@ -3196,7 +3830,7 @@ function dedupeContentLibraryRecords(records: AdminReviewRecord[]) {
 
 function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): GeneratedContentSurface {
   if (category === "Sky") return "sky";
-  if (category === "Natal Aspects" || category === "Natal Chart") return "natal";
+  if (category === "Natal Aspects" || category === "Natal Angles" || category === "Natal Chart") return "natal";
   if (category === "Relationship") return "relationship";
   if (category === "Fallback Templates") return "sky";
   return fallbackSurface === "all" ? "sky" : fallbackSurface;
@@ -3204,6 +3838,7 @@ function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurfac
 
 function manualEntryEventType(category: AdminContentCategoryFilter, surface: GeneratedContentSurface) {
   if (category === "Natal Aspects") return "manual-natal-aspect";
+  if (category === "Natal Angles") return "natal-angle-placement";
   if (category === "Natal Chart") return "natal-placement";
   if (category === "Relationship") return "manual-relationship";
   if (surface === "sky") return "upcoming-transit-article";
@@ -3217,6 +3852,7 @@ function manualEntryBlockType(category: AdminContentCategoryFilter, selectedBloc
 
   if (category === "Sky") return "sky_article";
   if (category === "Natal Aspects") return "natal_aspect";
+  if (category === "Natal Angles") return "angle";
   if (category === "Natal Chart") return "placement";
   if (category === "Relationship") return "synastry_aspect";
   if (category === "Condition Modifiers") return "condition_modifier";
@@ -3624,6 +4260,55 @@ function reviewRecordPlainText(record: AdminReviewRecord) {
   ].join("\n");
 }
 
+const unsafeServingMetadataMarkers = [
+  "legacy",
+  "unsafe",
+  "directional",
+  "editorial-only",
+  "editorial_only",
+  "superseded",
+  "source-grounded",
+  "source_grounded",
+  "local-normalized-dashboard-source",
+  "normalized-dashboard-source",
+  "revoice-pending",
+  "revoice_pending",
+  "reference-only",
+  "raw_quarantine",
+  "replace the headline, summary, and body",
+  "current full-sentence fallback-hook wording"
+];
+
+function recordMetadataText(record: AdminReviewRecord) {
+  return [
+    record.contentKey,
+    record.provider,
+    record.model,
+    record.promptVersion,
+    record.reviewerNotes,
+    JSON.stringify(record.facts ?? {}),
+    JSON.stringify(record.sourceSnapshot ?? {}),
+    JSON.stringify(record.rawGlobalRow?.facts ?? {}),
+    JSON.stringify(record.rawGlobalRow?.source_snapshot ?? {})
+  ].join(" ").toLowerCase();
+}
+
+function recordUnsafeServingMetadataReason(record: AdminReviewRecord) {
+  const metadata = recordMetadataText(record);
+
+  if (record.contentKey.toLowerCase().startsWith("cc/fallback")) {
+    return "Legacy cc/fallback rows are audit-only and are not part of the reader fallback system.";
+  }
+
+  const marker = unsafeServingMetadataMarkers.find((candidate) => metadata.includes(candidate));
+
+  if (marker) {
+    return `Metadata marks this row as ${marker.replaceAll("_", " ")}.`;
+  }
+
+  return "";
+}
+
 function hasTimeBoundEvergreenLanguage(record: AdminReviewRecord) {
   const text = [record.summary, record.body].join("\n");
   const match = timeBoundEvergreenPatterns.find((pattern) => pattern.test(text));
@@ -3652,6 +4337,11 @@ function skyNatalPhrasingWarnings(record: AdminReviewRecord) {
 function readerSafetyBlockReason(record: AdminReviewRecord) {
   const hasAnyCopy = Boolean(record.body.trim() || record.summary.trim() || record.sections.some((section) => section.body.trim()));
   const safeCopy = readerFacingCopyForRecord(record);
+  const metadataReason = recordUnsafeServingMetadataReason(record);
+
+  if (metadataReason) {
+    return metadataReason;
+  }
 
   if (!hasAnyCopy) {
     return "Body is empty.";
@@ -3759,6 +4449,7 @@ function readerSafetyStateForRecord(record: AdminReviewRecord): AdminReaderSafet
   const reviewState = record.rawGlobalRow?.review_state;
   const hasAnyCopy = Boolean(record.body.trim() || record.summary.trim() || record.sections.some((section) => section.body.trim()));
   const hasSafeReaderCopy = Boolean(readerFacingCopyForRecord(record));
+  const blockReason = readerSafetyBlockReason(record);
 
   if (record.status !== "LIVE") {
     return {
@@ -3784,13 +4475,21 @@ function readerSafetyStateForRecord(record: AdminReviewRecord): AdminReaderSafet
     };
   }
 
+  if (blockReason) {
+    return {
+      key: "fallback-needed",
+      label: hasAnyCopy ? "Blocked from readers" : "No reader copy",
+      detail: blockReason
+    };
+  }
+
   if (!hasSafeReaderCopy) {
     return {
       key: "fallback-needed",
-      label: hasAnyCopy ? "Fallback: unsafe copy" : "Fallback: no body",
+      label: hasAnyCopy ? "Blocked from readers" : "No reader copy",
       detail: hasAnyCopy
-        ? "Saved copy looks like metadata, provenance, or notes, so runtime should use fallback copy."
-        : "No reader-facing paragraph is saved, so runtime should use fallback copy."
+        ? "Saved copy looks like metadata, provenance, or notes, so runtime must use the fallback hook instead."
+        : "No reader-facing paragraph is saved, so runtime must use the fallback hook instead."
     };
   }
 
@@ -3818,13 +4517,96 @@ function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "
 }
 
 function isFallbackTemplateRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType">) {
-  return record.contentKey.toLowerCase().startsWith("fallback-hook/")
+  const contentKey = record.contentKey.toLowerCase();
+
+  return contentKey.startsWith("fallback-hook/")
+    || contentKey.startsWith("slot-template/")
     || (record.eventType ?? "").toLowerCase().replaceAll("_", "-") === "fallback-hook";
+}
+
+function isVocabularyContentRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType">) {
+  const contentKey = record.contentKey.toLowerCase();
+  const eventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
+
+  return contentKey.startsWith("vocab/")
+    || contentKey.startsWith("fallback-vocab/")
+    || eventType === "vocabulary";
+}
+
+function hasReferenceOnlySnapshot(record: Pick<AdminReviewRecord, "sourceSnapshot">) {
+  const snapshot = objectValue(record.sourceSnapshot);
+  const authoredFallback = objectValue(snapshot?.authoredFallback);
+
+  return snapshot?.referenceOnly === true
+    || authoredFallback?.mappingAction === "REFERENCE_ONLY";
+}
+
+function isReferenceOnlyRecord(record: Pick<AdminReviewRecord, "contentKey" | "sourceSnapshot" | "reviewerNotes" | "body">) {
+  const contentKey = record.contentKey.toLowerCase();
+  const reviewerNotes = (record.reviewerNotes ?? "").toLowerCase();
+  const body = (record.body ?? "").toLowerCase();
+
+  return contentKey.startsWith("reference/")
+    || hasReferenceOnlySnapshot(record)
+    || reviewerNotes.includes("reference-only")
+    || reviewerNotes.includes("reference vocabulary")
+    || reviewerNotes.includes("not direct client-facing")
+    || body.includes("use as source/reference language")
+    || body.includes("not direct client-facing copy");
+}
+
+function isSpecializedAdminRecord(record: AdminReviewRecord) {
+  return isFallbackTemplateRecord(record)
+    || isVocabularyContentRecord(record)
+    || isReferenceOnlyRecord(record);
 }
 
 function isInternalAdminSettingRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType">) {
   return record.contentKey.toLowerCase().startsWith(adminVoiceTemplateContentKeyPrefix)
     || (record.eventType ?? "").toLowerCase().replaceAll("_", "-") === "voice-setting";
+}
+
+function localSkySnapshotAdminRows(): AdminReviewRecord[] {
+  const rows = (skyContentSnapshot as { rows?: LocalSkySnapshotAdminRow[] }).rows ?? [];
+
+  return rows.map((row) => {
+    const sourceSnapshot = row.sourceSnapshot ?? null;
+    const snapshotFamily = typeof sourceSnapshot?.family === "string" ? sourceSnapshot.family : null;
+    const title = row.headline?.trim()
+      || titleFromContentKey(row.contentKey)
+        .replace(/\bIs\b/u, "in");
+    const blockType = contentBlockFilters.some((filter) => filter.key === row.blockType)
+      ? row.blockType as AdminContentBlockFilter
+      : null;
+
+    return {
+      id: `local-snapshot:${row.contentKey}`,
+      source: "snapshot",
+      surface: row.surface ?? "sky",
+      status: "DRAFT",
+      mode: row.mode ?? "feed",
+      title,
+      subtitle: row.summary ?? "",
+      targetDate: row.targetDate ?? null,
+      contentKey: row.contentKey,
+      eventType: row.eventType ?? snapshotFamily,
+      summary: row.summary ?? "",
+      body: row.body ?? "",
+      sections: [],
+      blockType,
+      facts: null,
+      knowledgeIds: Array.isArray(sourceSnapshot?.sourceKeys) ? sourceSnapshot.sourceKeys.filter((key): key is string => typeof key === "string") : [],
+      sourceSnapshot,
+      evergreen: true,
+      evergreenAt: null,
+      evergreenBy: null,
+      reviewerNotes: "Source-grounded generated snapshot. Facts come from calculated AstrologyFact objects; prose is regenerated from normalized package records.",
+      provider: row.provider ?? "local-normalized-dashboard-source",
+      model: row.model ?? "deterministic-normalized-snapshot",
+      promptVersion: "source-grounded-snapshot",
+      updatedAt: row.updatedAt ?? new Date(0).toISOString()
+    };
+  });
 }
 
 function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCategoryFilter, "all"> {
@@ -3856,7 +4638,80 @@ function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCa
     return "Natal Aspects";
   }
 
+  if (
+    normalizedContentKey.startsWith("natal.angle.")
+    || normalizedContentKey.startsWith("natal-angle-")
+    || normalizedContentKey.includes("midheaven")
+    || normalizedContentKey.includes("ascendant")
+    || normalizedEventType.includes("natal-angle")
+  ) {
+    return "Natal Angles";
+  }
+
   return "Natal Chart";
+}
+
+function titleFromContentKey(contentKey: string) {
+  const slug = contentKey
+    .replace(/^fallback-hook\//, "")
+    .split(/[/.]/)
+    .filter(Boolean)
+    .pop() ?? contentKey;
+
+  return slug
+    .replace(/\{\{|\}\}/g, "")
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ") || contentKey;
+}
+
+function dailyHoroscopeDateFromContentKey(contentKey: string) {
+  return contentKey.toLowerCase().match(/you-daily-horoscope-v\d+-(\d{4}-\d{2}-\d{2})$/)?.[1] ?? null;
+}
+
+function isDailyHoroscopeRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType" | "surface">) {
+  const normalizedKey = record.contentKey.toLowerCase();
+  const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
+
+  return record.surface === "you"
+    && (
+      normalizedKey.startsWith("you-daily-horoscope-")
+      || normalizedEventType.includes("daily-horoscope")
+      || normalizedEventType.includes("daily-timing")
+      || normalizedEventType.includes("you-update-summary")
+    );
+}
+
+function contentRecordDisplayTitle(record: AdminReviewRecord) {
+  const rawTitle = record.title.trim();
+
+  if (isDailyHoroscopeRecord(record)) {
+    const targetDate = record.targetDate ?? dailyHoroscopeDateFromContentKey(record.contentKey);
+
+    return targetDate ? `Daily horoscope · ${adminDateLabel(targetDate)}` : "Daily horoscope";
+  }
+
+  if (rawTitle && !rawTitle.includes("{{")) {
+    return rawTitle;
+  }
+
+  if (isFallbackTemplateRecord(record)) {
+    return titleFromContentKey(record.contentKey);
+  }
+
+  return contentCategoryLabel(record);
+}
+
+function contentRecordKindLabel(record: AdminReviewRecord) {
+  if (isFallbackTemplateRecord(record)) return "Fallback hook/template";
+  if ((record.eventType ?? "").toLowerCase() === "vocabulary" || record.contentKey.startsWith("vocab/") || record.contentKey.startsWith("fallback-vocab/")) return "Vocabulary";
+  if (record.source === "snapshot") return "Source-grounded snapshot";
+  if (record.source === "calculated") return "Generated snapshot";
+  if (record.rawGlobalRow?.lane === "reference") return "Reference";
+  if (record.provider === "manual" || record.source === "saved") return "Authored";
+
+  return contentBlockTypeLabel(record);
 }
 
 function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
@@ -3878,6 +4733,7 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
   }
 
   if (normalizedKey.startsWith("natal.placement.") || normalizedEventType.includes("natal-placement")) return "placement";
+  if (normalizedKey.startsWith("natal.angle.") || normalizedEventType.includes("natal-angle")) return "angle";
   if (normalizedKey.startsWith("natal.sign.")) return "sign";
   if (normalizedKey.startsWith("natal.house.")) return "house";
   if (normalizedKey.startsWith("natal.ruler.")) return "ruler";
@@ -3901,6 +4757,7 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
   if (normalizedKey.startsWith("synastry.aspect.")) return "synastry_aspect";
   if (normalizedKey.startsWith("composite.aspect.")) return "composite_aspect";
   if (normalizedKey.startsWith("natal.synthesis.")) return "synthesis";
+  if (isDailyHoroscopeRecord(record)) return "daily_horoscope";
   if (record.surface === "sky" && normalizedEventType.includes("current-aspect")) return "sky_aspect";
   if (record.surface === "sky" && (record.mode === "article" || normalizedEventType.includes("transit-article") || normalizedEventType.includes("sky-article"))) return "sky_article";
   if (record.surface === "you" && normalizedEventType.includes("transit-to-natal")) return "transit_to_natal_aspect";
@@ -3936,6 +4793,7 @@ function contentStatusLabel(status: string) {
 
 function contentRestrictionLabel(record: AdminReviewRecord) {
   if (record.source === "private" || record.userId || record.subjectId) return "Personal";
+  if (record.source === "snapshot") return "Snapshot";
   if (record.source === "calculated") return "Pending";
 
   return "Visible";
@@ -3960,6 +4818,67 @@ function appLocationDetail(record: AdminReviewRecord) {
 
   return contentCategoryLabel(record);
 }
+
+function contentSourceLabel(record: AdminReviewRecord) {
+  if (record.source === "snapshot") return "Source-grounded generated snapshot";
+  if (record.rawGlobalRow?.lane === "reference") return "Reference lane";
+  if (record.provider === "manual") return "Manual";
+  if (record.provider) return record.provider;
+  if (record.source === "private") return "Personal";
+  if (record.source === "calculated") return "Local snapshot";
+
+  return "Dashboard";
+}
+
+function phrasebankTierForRecord(record: Pick<AdminReviewRecord, "facts" | "sourceSnapshot">) {
+  const factTier = record.facts?.phrasebank && typeof record.facts.phrasebank === "object"
+    ? (record.facts.phrasebank as Record<string, unknown>).tier
+    : null;
+  const snapshotTier = record.sourceSnapshot?.tier;
+  const tier = typeof factTier === "string"
+    ? factTier
+    : typeof snapshotTier === "string"
+      ? snapshotTier
+      : "";
+
+  return tier.toUpperCase();
+}
+
+function phrasebankTierLabel(tier: string) {
+  if (tier === "CONFIRMED") return "Confirmed";
+  if (tier === "SESSION_APPROVED_DRAFT") return "Session draft";
+  if (tier === "REVIEWED") return "Reviewed";
+  return "";
+}
+
+function isPhrasebankSignoffRecord(record: AdminReviewRecord) {
+  return Boolean(phrasebankTierForRecord(record)) && record.source !== "private";
+}
+
+function phrasebankReviewState(record: AdminReviewRecord) {
+  return record.rawGlobalRow?.review_state ?? null;
+}
+
+const marieSignoffChecklist = [
+  ["Planet in sign", "Natal placements", 120],
+  ["Planet in house", "Natal placements", 120],
+  ["Planet on the angles", "Natal placements", 48],
+  ["Moon detail", "Natal placements", 20],
+  ["Lunar nodes", "Natal placements", 24],
+  ["Chiron placement + aspect", "Natal placements", 49],
+  ["Natal aspects", "Natal placements", 214],
+  ["Asteroids / points", "Natal placements", 64],
+  ["Transit-to-natal aspect bank", "Transits", 470],
+  ["Long-term house transit", "Transits", 84],
+  ["Planetary horoscope", "Transits", 60],
+  ["Collective Sky card/detail", "Sky", 42],
+  ["Sky events", "Sky", 23],
+  ["Historical lookback", "Sky", 6],
+  ["Lunation by sign", "Sky", 20],
+  ["Synastry inter-aspects + overlays", "Relationships", 219],
+  ["Composite placements/aspects", "Relationships", 467],
+  ["Support/reference parked", "Reference", 91]
+] as const;
 
 function recordMetadataLabel(record: AdminReviewRecord) {
   return [
@@ -4099,7 +5018,7 @@ function reviewSurfaceUsesDateFilter(surface: AdminReviewSurface) {
 function reviewSurfacesForCategory(category: AdminContentCategoryFilter) {
   if (category === "Sky") return ["upcomingAspects"] as AdminReviewSurface[];
   if (category === "Relationship") return ["relationshipLayer"] as AdminReviewSurface[];
-  if (category === "Natal Aspects" || category === "Natal Chart") return ["transitNatal", "natalChart"] as AdminReviewSurface[];
+  if (category === "Natal Aspects" || category === "Natal Angles" || category === "Natal Chart") return ["transitNatal", "natalChart"] as AdminReviewSurface[];
   if (category === "Fallback Templates") return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
 
   return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
@@ -4311,6 +5230,40 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
 }
 
 export function GeneratedContentAdminDashboard() {
+  const sourceGroundedBundle = sourceGroundedDashboardRecords as SourceGroundedDashboardRecordBundle;
+  const sourceGroundedSummary = sourceGroundedBundle.summary ?? {};
+  const sourceGroundedGapSamples = (sourceGroundedBundle.sourceGaps ?? []).slice(0, 4);
+  const sourceGroundedReviewBundle = sourceGroundedReviewCandidates as {
+    summary?: {
+      totalCandidates?: number;
+      draftCandidatesBySurface?: Record<string, number>;
+      classificationCounts?: Record<string, number>;
+      eligibleReviewedClausesBySurface?: Record<string, number>;
+    };
+    fixtures?: Array<{
+      id: string;
+      label: string;
+      surfaceId: string;
+      classification: string;
+      productionReaderResult: string;
+      candidateId: string | null;
+    }>;
+    candidates?: Array<{
+      id: string;
+      dashboardLabel: string;
+      surfaceId: string;
+      sourceTier: string;
+      templateId: string;
+      templateVersion: string;
+      primarySourceIds: string[];
+      supportingSourceIds: string[];
+      slotProvenance: Array<{ slot: string; sourceId: string; sourceTier: string }>;
+      finalPreview: string;
+      bannedSeamResults: { passed: boolean; matches: string[] };
+      redundancyResults: { passed: boolean; suppressedSlots: string[] };
+    }>;
+  };
+  const sourceGroundedReviewSummary = sourceGroundedReviewBundle.summary ?? {};
   const [secret, setSecret] = useState(() => {
     try {
       return window.localStorage.getItem(adminSecretStorageKey) ?? "";
@@ -4323,9 +5276,13 @@ export function GeneratedContentAdminDashboard() {
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
   const [contentQueueFilter, setContentQueueFilter] = useState<AdminContentQueueFilter>(null);
+  const [contentSourceFilter, setContentSourceFilter] = useState<AdminContentClassFilter>("all");
+  const [contentTierFilter, setContentTierFilter] = useState<AdminPhrasebankTierFilter>("all");
+  const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [reviewQueueStatusFilter, setReviewQueueStatusFilter] = useState<AdminReviewQueueStatusFilter>("all");
   const [reviewQueueEvergreenFilter, setReviewQueueEvergreenFilter] = useState<AdminReviewQueueEvergreenFilter>("hideEvergreen");
-  const [reviewQueueSourceFilter, setReviewQueueSourceFilter] = useState<AdminReviewQueueSourceFilter>("all");
+  const [reviewQueueSourceFilter, setReviewQueueSourceFilter] = useState<AdminReviewQueueSourceFilter>("phrasebank");
+  const [reviewQueueTierFilter, setReviewQueueTierFilter] = useState<AdminPhrasebankTierFilter>("all");
   const [reviewQueueFamilyFilter, setReviewQueueFamilyFilter] = useState<AdminReviewQueueFamilyFilter>("all");
   const [reviewQueuePlanetFilter, setReviewQueuePlanetFilter] = useState("all");
   const [reviewQueueQuery, setReviewQueueQuery] = useState("");
@@ -4344,6 +5301,8 @@ export function GeneratedContentAdminDashboard() {
   const [lunarCoverageLoadedFromDb, setLunarCoverageLoadedFromDb] = useState(false);
   const [signContextSettingRow, setSignContextSettingRow] = useState<AdminGeneratedContentRow | null>(null);
   const [signContextEnabled, setSignContextEnabled] = useState(true);
+  const [skyHistoricalLookbackSettingRow, setSkyHistoricalLookbackSettingRow] = useState<AdminGeneratedContentRow | null>(null);
+  const [skyHistoricalLookbackEnabled, setSkyHistoricalLookbackEnabled] = useState(false);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
   const [vocabularyCategoryFilter, setVocabularyCategoryFilter] = useState<AdminVocabularyCategoryFilter>("all");
   const [vocabularyStatusFilter, setVocabularyStatusFilter] = useState<AdminVocabularyStatusFilter>("all");
@@ -4366,6 +5325,7 @@ export function GeneratedContentAdminDashboard() {
   });
   const [selectedHookCatalogItem, setSelectedHookCatalogItem] = useState<AdminHookCatalogSelection | null>(null);
   const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
+  const [selectedFallbackHookKey, setSelectedFallbackHookKey] = useState<string | null>(null);
   const [templateDrawerMode, setTemplateDrawerMode] = useState<AdminTemplateDrawerMode>("view");
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
   const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
@@ -4409,7 +5369,8 @@ export function GeneratedContentAdminDashboard() {
   const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [voiceSettingsLoadedFromDb, setVoiceSettingsLoadedFromDb] = useState(false);
-  const [activePage, setActivePage] = useState<AdminDashboardPage>("content");
+  const [activePage, setActivePage] = useState<AdminDashboardPage>("overview");
+  const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const contentImportInputRef = useRef<HTMLInputElement | null>(null);
   const contentImportScopeRef = useRef<AdminContentScope>("settings");
   const saveToastTimeoutRef = useRef<number | null>(null);
@@ -4426,9 +5387,13 @@ export function GeneratedContentAdminDashboard() {
     error: isTldrAstroApiConfigured ? null : "VITE_TLDRASTRO_API_URL is not configured."
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
+  const currentTemplateContentRows = useMemo(
+    () => templateContentRows.filter((row) => !isLegacyFallbackTemplateRow(row)),
+    [templateContentRows]
+  );
   const fallbackHookSectionCounts = useMemo(() => {
     const counts = {
-      all: templateContentRows.length,
+      all: currentTemplateContentRows.length,
       sky: 0,
       you: 0,
       friends: 0,
@@ -4436,7 +5401,7 @@ export function GeneratedContentAdminDashboard() {
       settings: 0
     } satisfies Record<AdminFallbackHookSectionFilter, number>;
 
-    templateContentRows.forEach((row) => {
+    currentTemplateContentRows.forEach((row) => {
       const section = fallbackHookSectionForRow(row);
 
       if (section !== "all") {
@@ -4445,14 +5410,17 @@ export function GeneratedContentAdminDashboard() {
     });
 
     return counts;
-  }, [templateContentRows]);
+  }, [currentTemplateContentRows]);
   const filteredTemplateContentRows = useMemo(() => (
     fallbackHookSectionFilter === "all"
-      ? templateContentRows
-      : templateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
-  ), [fallbackHookSectionFilter, templateContentRows]);
+      ? currentTemplateContentRows
+      : currentTemplateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
+  ), [currentTemplateContentRows, fallbackHookSectionFilter]);
   const isLunarCoverageSelected = false;
-  const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId) ?? null;
+  const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId)
+    ?? (selectedFallbackHookKey
+      ? findFallbackTemplateRowForHook(templateContentRows, selectedFallbackHookKey)
+      : null);
   const selectedLunarCatalogDefinition = selectedHookCatalogItem?.type === "lunar"
     ? lunarCalendarContentKeyDefinitions.find((definition) => definition.key === selectedHookCatalogItem.key) ?? null
     : null;
@@ -4471,19 +5439,34 @@ export function GeneratedContentAdminDashboard() {
       handledAdminDeepLinkHashRef.current = null;
     }
 
+    setIsCreateMenuOpen(false);
     setActivePage(page);
   }
+
+  function handleCreateAction(page: AdminDashboardPage, nextMessage: string) {
+    setIsCreateMenuOpen(false);
+    navigateAdminPage(page);
+    setMessage(nextMessage);
+  }
+
+  function closeTemplateContentDrawer() {
+    if (/^#fallback-row\//.test(window.location.hash)) {
+      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      handledAdminDeepLinkHashRef.current = null;
+    }
+
+    setSelectedTemplateContentId(null);
+    setSelectedFallbackHookKey(null);
+  }
+
   function openFallbackHookTemplateEditor(hookKey: string, mode: AdminTemplateDrawerMode = "edit") {
-    const contentKey = contextContentKey(hookKey);
-    const hookMode = generatedContentModeForFallbackContentKey(contentKey);
-    const row = findAdminGeneratedContentRow(templateContentRows, {
-      contentKey,
-      mode: hookMode
-    });
+    const contentKey = canonicalFallbackTemplateContentKey(hookKey) ?? contextContentKey(hookKey);
+    const row = findFallbackTemplateRowForHook(templateContentRows, hookKey);
 
     setFallbackHookSectionFilter(hookSectionForKey(hookKey));
     setTemplateDrawerMode(mode);
     setSelectedTemplateContentId(row?.id ?? `placeholder:${contentKey}`);
+    setSelectedFallbackHookKey(hookKey);
     setSelectedHookCatalogItem(null);
     setActivePage("knowledge");
     window.history.replaceState(null, "", `#fallback-row/${encodeURIComponent(hookKey)}`);
@@ -4512,9 +5495,82 @@ export function GeneratedContentAdminDashboard() {
 
     void copyAdminEditorLink(nextUrl, contextContentKey(hookKey));
   }
+
+  async function createFallbackHookDraftFromCatalog(hook: FallbackHookDefinition) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const contentKey = contextContentKey(hook.key);
+    const seedDraft = templateSeedDraftForContentKey(contentKey);
+    const headline = seedDraft.headline || hook.copy.headline || "";
+    const summary = seedDraft.summary || hook.copy.summary || "";
+    const body = seedDraft.body || hook.copy.body || "";
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            contentKey,
+            surface: generatedSurfaceForFallbackHook(hook.key),
+            mode: generatedContentModeForFallbackHook(hook),
+            eventType: "fallback-hook",
+            status: "DRAFT",
+            headline,
+            summary,
+            body,
+            sections: [],
+            facts: {},
+            knowledgeIds: [],
+            sourceSnapshot: {
+              contentType: "template",
+              hook: hook.key,
+              source: "fallback-hook-catalog"
+            },
+            promptVersion: "fallback-hook-template-v1",
+            blockType: "fallback_template",
+            reviewerNotes: ""
+          })
+        }
+      );
+      const createdRow = payload.rows?.[0];
+
+      await loadTemplateContentRows({ forceDraftRefresh: true });
+      if (createdRow) {
+        setTemplateContentDrafts((currentDrafts) => ({
+          ...currentDrafts,
+          [createdRow.id]: templateDraftFromRow(createdRow)
+        }));
+        setSelectedTemplateContentId(createdRow.id);
+      }
+      setFallbackHookSectionFilter(hookSectionForKey(hook.key));
+      setTemplateDrawerMode("edit");
+      setSelectedFallbackHookKey(hook.key);
+      setSelectedHookCatalogItem(null);
+      setActivePage("knowledge");
+      window.history.replaceState(null, "", `#fallback-row/${encodeURIComponent(hook.key)}`);
+      setMessage(`Created ${contentKey} as DRAFT. Review and sign off separately when ready.`);
+      showSaveToast("Fallback hook draft created");
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not create fallback hook draft."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
   const lunarCoverageRowsByKey = useMemo(() => (
     new Map(lunarCoverageRows.map((row) => [row.content_key, row]))
   ), [lunarCoverageRows]);
+  const fallbackTemplateRowsByContentKey = useMemo(() => (
+    new Map(templateContentRows.map((row) => [row.content_key, row]))
+  ), [templateContentRows]);
   const vocabularyRowsByContentKey = useMemo(() => (
     new Map(vocabularyRows.map((row) => [row.content_key, row]))
   ), [vocabularyRows]);
@@ -4586,10 +5642,18 @@ export function GeneratedContentAdminDashboard() {
     () => dedupeContentLibraryRecords(reviewRecords.filter((record) => !isInternalAdminSettingRecord(record))),
     [reviewRecords]
   );
+  const localSkySnapshotContentRecords = useMemo(() => localSkySnapshotAdminRows(), []);
+  const defaultContentLibraryRecords = useMemo(() => {
+    const persistedContent = dedupedContentRecords.filter((record) => !isSpecializedAdminRecord(record));
+    const persistedKeys = new Set(persistedContent.map((record) => record.contentKey));
+    const visibleLocalSnapshots = localSkySnapshotContentRecords.filter((record) => !persistedKeys.has(record.contentKey));
+
+    return [...persistedContent, ...visibleLocalSnapshots];
+  }, [dedupedContentRecords, localSkySnapshotContentRecords]);
   const filteredContentRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
-    return dedupedContentRecords
+    return defaultContentLibraryRecords
       .filter((record) => {
         if (!normalizedPersonQuery) return true;
 
@@ -4602,13 +5666,18 @@ export function GeneratedContentAdminDashboard() {
         ].some((value) => value?.toLowerCase().includes(normalizedPersonQuery));
       })
       .filter((record) => categoryFilter === "all" || contentCategoryLabel(record) === categoryFilter)
-      .filter((record) => contentBlockFilter === "all" || contentBlockType(record) === contentBlockFilter);
-  }, [categoryFilter, contentBlockFilter, personQuery, dedupedContentRecords]);
+      .filter((record) => contentBlockFilter === "all" || contentBlockType(record) === contentBlockFilter)
+      .filter((record) => recordMatchesContentClassFilter(record, contentSourceFilter))
+      .filter((record) => recordMatchesPhrasebankTierFilter(record, contentTierFilter));
+  }, [categoryFilter, contentBlockFilter, contentSourceFilter, contentTierFilter, personQuery, defaultContentLibraryRecords]);
   const allContentRecords = useMemo(() => {
     return filteredContentRecords
       .filter((record) => recordMatchesQueueFilter(record, contentQueueFilter))
       .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
       .sort((first, second) => {
+        const sourcePriorityCompare = reviewRecordSourcePriority(first) - reviewRecordSourcePriority(second);
+        if (sourcePriorityCompare) return sourcePriorityCompare;
+
         const firstDate = first.targetDate ?? "";
         const secondDate = second.targetDate ?? "";
 
@@ -4619,6 +5688,24 @@ export function GeneratedContentAdminDashboard() {
         return first.title.localeCompare(second.title);
       });
   }, [contentQueueFilter, contentStatusFilter, filteredContentRecords]);
+  const emergencyFloorRecords = useMemo(() => allContentRecords.filter(isEmergencyFloorReviewRecord), [allContentRecords]);
+  const visibleContentRecords = useMemo(() => {
+    if (generatedContentPreviewMode === "emergency-floor") {
+      return allContentRecords.filter(isEmergencyFloorReviewRecord);
+    }
+
+    if (generatedContentPreviewMode === "hide-emergency-floor") {
+      return allContentRecords.filter((record) => !isEmergencyFloorReviewRecord(record));
+    }
+
+    return allContentRecords;
+  }, [allContentRecords, generatedContentPreviewMode]);
+  const compositeByTypeRecords = useMemo(() => (
+    dedupedContentRecords
+      .filter((record) => record.surface === "composite")
+      .filter((record) => Boolean(compositeRelationshipTypeSections(record)))
+      .sort((first, second) => first.contentKey.localeCompare(second.contentKey))
+  ), [dedupedContentRecords]);
   const reviewQueueBaseRecords = useMemo(() => dedupedContentRecords, [dedupedContentRecords]);
   const reviewQueueProgress = useMemo(() => {
     const visibleRows = reviewQueueBaseRecords.filter((record) => !isArchivedRecord(record));
@@ -4642,20 +5729,22 @@ export function GeneratedContentAdminDashboard() {
         return !record.evergreen;
       })
       .filter((record) => {
-        if (reviewQueueSourceFilter === "all") return true;
-        const pending = hasRevoicePendingProvenance(record);
-        return reviewQueueSourceFilter === "revoicePending" ? pending : !pending;
+        return recordMatchesContentClassFilter(record, reviewQueueSourceFilter);
       })
+      .filter((record) => recordMatchesPhrasebankTierFilter(record, reviewQueueTierFilter))
       .filter((record) => reviewQueueFamilyFilter === "all" || reviewQueueFamily(record) === reviewQueueFamilyFilter)
       .filter((record) => reviewQueuePlanetFilter === "all" || reviewQueuePlacementPlanet(record) === reviewQueuePlanetFilter)
       .filter((record) => !query || reviewRecordPlainText(record).toLowerCase().includes(query))
       .sort((first, second) => {
+        const sourcePriorityCompare = reviewRecordSourcePriority(first) - reviewRecordSourcePriority(second);
+        if (sourcePriorityCompare) return sourcePriorityCompare;
+
         const familyCompare = reviewQueueGroupLabel(reviewQueueGroupKey(first)).localeCompare(reviewQueueGroupLabel(reviewQueueGroupKey(second)));
         if (familyCompare) return familyCompare;
 
         return reviewQueueRecordLabel(first).localeCompare(reviewQueueRecordLabel(second));
       });
-  }, [reviewQueueBaseRecords, reviewQueueEvergreenFilter, reviewQueueFamilyFilter, reviewQueuePlanetFilter, reviewQueueQuery, reviewQueueSourceFilter, reviewQueueStatusFilter]);
+  }, [reviewQueueBaseRecords, reviewQueueEvergreenFilter, reviewQueueFamilyFilter, reviewQueuePlanetFilter, reviewQueueQuery, reviewQueueSourceFilter, reviewQueueStatusFilter, reviewQueueTierFilter]);
   const reviewQueueGroups = useMemo(() => {
     const groups = new Map<AdminReviewQueueGroupKey, { key: AdminReviewQueueGroupKey; label: string; records: AdminReviewRecord[]; reviewed: number; evergreen: number; total: number }>();
 
@@ -4689,7 +5778,7 @@ export function GeneratedContentAdminDashboard() {
     ?? activeReviewQueueRecords[0]
     ?? null;
   const readerSafetyCounts = useMemo(() => {
-    return allContentRecords.reduce(
+    return visibleContentRecords.reduce(
       (counts, record) => {
         const state = readerSafetyStateForRecord(record).key;
 
@@ -4710,17 +5799,28 @@ export function GeneratedContentAdminDashboard() {
         flaggedCopy: 0
       }
     );
-  }, [allContentRecords]);
-  const cmsStatusCounts = useMemo(() => contentStatusCounts(filteredContentRecords), [filteredContentRecords]);
-  const cmsQueueCounts = useMemo(() => contentQueueCounts(filteredContentRecords), [filteredContentRecords]);
+  }, [visibleContentRecords]);
+  const previewFilteredContentRecords = useMemo(() => {
+    if (generatedContentPreviewMode === "emergency-floor") {
+      return filteredContentRecords.filter(isEmergencyFloorReviewRecord);
+    }
+
+    if (generatedContentPreviewMode === "hide-emergency-floor") {
+      return filteredContentRecords.filter((record) => !isEmergencyFloorReviewRecord(record));
+    }
+
+    return filteredContentRecords;
+  }, [filteredContentRecords, generatedContentPreviewMode]);
+  const cmsStatusCounts = useMemo(() => contentStatusCounts(previewFilteredContentRecords), [previewFilteredContentRecords]);
+  const cmsQueueCounts = useMemo(() => contentQueueCounts(previewFilteredContentRecords), [previewFilteredContentRecords]);
   const contentFailureQueueCount = useMemo(() => dedupedContentRecords.filter(isFailureQueueRecord).length, [dedupedContentRecords]);
-  const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
+  const selectedReviewRecord = visibleContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const selectableContentRecords = useMemo(() => (
-    allContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
-  ), [allContentRecords]);
+    visibleContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
+  ), [visibleContentRecords]);
   const selectedContentRecords = useMemo(() => (
-    allContentRecords.filter((record) => selectedContentRowIds.has(record.id))
-  ), [allContentRecords, selectedContentRowIds]);
+    visibleContentRecords.filter((record) => selectedContentRowIds.has(record.id))
+  ), [visibleContentRecords, selectedContentRowIds]);
   const selectedPersistedContentRecords = useMemo(() => (
     selectedContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
   ), [selectedContentRecords]);
@@ -4764,6 +5864,7 @@ export function GeneratedContentAdminDashboard() {
   const selectedMetadataBlockType = selectedReviewMetadata?.blockType ?? (selectedReviewRecord ? contentBlockType(selectedReviewRecord) : "all");
   const selectedMetadataIsNatal = selectedReviewMetadata?.surface === "natal";
   const selectedMetadataIsNatalPlacement = selectedMetadataCategory === "Natal Chart";
+  const selectedMetadataIsNatalAngle = selectedMetadataCategory === "Natal Angles";
   const selectedMetadataIsNatalAspect = selectedMetadataCategory === "Natal Aspects";
   const selectedMetadataIsModularNatalBlock = selectedMetadataIsNatal && selectedMetadataBlockType !== "all" && selectedMetadataBlockType !== "essay";
   const selectedMetadataIsLunarCalendar = selectedMetadataBlockType === "lunar_calendar";
@@ -4771,8 +5872,8 @@ export function GeneratedContentAdminDashboard() {
   const selectedMetadataIsTimeBasedAspect = selectedMetadataBlockType === "sky_aspect" || selectedMetadataBlockType === "transit_to_natal_aspect";
   const selectedMetadataUsesAspectSigns = selectedMetadataUsesAspectFields && (selectedMetadataIsTimeBasedAspect || ["natal_aspect", "synastry_aspect", "composite_aspect"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesAspectHouses = selectedMetadataUsesAspectFields && ["natal_aspect", "synastry_aspect", "composite_aspect", "transit_to_natal_aspect"].includes(selectedMetadataBlockType);
-  const selectedMetadataUsesPlacementBody = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "sign", "house", "synthesis"].includes(selectedMetadataBlockType));
-  const selectedMetadataUsesPlacementSign = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "sign", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementBody = (selectedMetadataIsNatalPlacement || selectedMetadataIsNatalAngle) && (!selectedMetadataIsModularNatalBlock || ["placement", "angle", "sign", "house", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementSign = (selectedMetadataIsNatalPlacement || selectedMetadataIsNatalAngle) && (!selectedMetadataIsModularNatalBlock || ["placement", "angle", "sign", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesPlacementHouse = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "house", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesPlacementRuler = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "ruler", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesFullRulerPlacement = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "synthesis"].includes(selectedMetadataBlockType));
@@ -4864,6 +5965,7 @@ export function GeneratedContentAdminDashboard() {
       all: vocabularyCardItems.length,
       planets: 0,
       houses: 0,
+      angles: 0,
       zodiac: 0,
       lunar: 0,
       eclipses: 0,
@@ -4936,6 +6038,10 @@ export function GeneratedContentAdminDashboard() {
       return "House rows provide life-area language, house shadows, and higher-expression phrasing for chart placement templates.";
     }
 
+    if (vocabularyCategoryFilter === "angles") {
+      return "Angle rows provide reusable Ascendant and Midheaven topic language for natal angle placement templates.";
+    }
+
     if (vocabularyCategoryFilter === "zodiac") {
       return "Zodiac style is the short tone phrase templates use for a sign, like \"steady and slow to change course.\" It describes the sign's manner or texture, not a full placement interpretation.";
     }
@@ -4952,7 +6058,7 @@ export function GeneratedContentAdminDashboard() {
       return "Relationship rows provide context language for friends, family, coworkers, business contacts, romantic partners, exes, mentors, managers, roommates, and acquaintances.";
     }
 
-    return "Vocabulary rows provide reusable phrases for planets, houses, zodiac signs, lunar/eclipses, relationship, and career archetype copy used by interpolation templates.";
+    return "Vocabulary rows provide reusable phrases for planets, houses, angles, zodiac signs, lunar/eclipses, relationship, and career archetype copy used by interpolation templates.";
   }, [vocabularyCategoryFilter]);
   const resolvedFallbackHookSampleContexts = useMemo<Record<string, FallbackHookContext>>(() => {
     const rowsByContentKey = liveVocabularyRowsByContentKey(vocabularyRows);
@@ -4976,7 +6082,7 @@ export function GeneratedContentAdminDashboard() {
       templateContentRows.filter((row) => row.content_key.startsWith(prefix))
     );
 
-    return baseSlotDictionaryRows.map((row) => {
+    const staticRows = baseSlotDictionaryRows.map((row) => {
       if (row.editableIn === "Calculated") {
         return row;
       }
@@ -4991,6 +6097,9 @@ export function GeneratedContentAdminDashboard() {
         status
       } satisfies AdminSlotDictionaryRow;
     });
+    const dynamicRows = dynamicSlotDictionaryRowsFromTemplates(templateContentRows, [...vocabularyRows, ...taglineRows]);
+
+    return mergeSlotDictionaryRows(staticRows, dynamicRows);
   }, [taglineRows, templateContentRows, vocabularyRows]);
   const slotDictionaryCounts = useMemo(() => ({
     calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
@@ -5118,18 +6227,36 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function fetchTemplateRowsForAdmin() {
-    const params = new URLSearchParams({
-      status: "all",
-      contentKeyPrefix: "fallback-hook/",
-      limit: "1000"
-    });
-    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?${params}`,
-      secret
-    );
+    const prefixes = ["fallback-hook/", "slot-template/"];
+    const payloads = await Promise.all(prefixes.map((prefix) => {
+      const params = new URLSearchParams({
+        status: "all",
+        contentKeyPrefix: prefix,
+        limit: "1000"
+      });
 
-    const savedRows = (payload.rows ?? [])
-      .filter((row) => row.content_key.startsWith("fallback-hook/"))
+      return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?${params}`,
+        secret
+      );
+    }));
+
+    const savedRowsByKey = new Map<string, AdminGeneratedContentRow>();
+
+    for (const row of payloads.flatMap((payload) => payload.rows ?? [])) {
+      if (!row.content_key.startsWith("fallback-hook/") && !row.content_key.startsWith("slot-template/")) {
+        continue;
+      }
+
+      const key = `${row.content_key}::${row.mode}`;
+      const existing = savedRowsByKey.get(key);
+
+      if (!existing || new Date(row.updated_at).getTime() > new Date(existing.updated_at).getTime()) {
+        savedRowsByKey.set(key, row);
+      }
+    }
+
+    const savedRows = Array.from(savedRowsByKey.values())
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
 
     return fallbackTemplatePlaceholderRows(savedRows);
@@ -5170,6 +6297,23 @@ export function GeneratedContentAdminDashboard() {
 
     return findAdminGeneratedContentRow(payload.rows ?? [], {
       contentKey: signContextAspectCardsSettingKey,
+      mode: "feed"
+    }) ?? null;
+  }
+
+  async function fetchSkyHistoricalLookbackSettingForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      contentKeyPrefix: skyHistoricalLookbackSettingKey,
+      limit: "1"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return findAdminGeneratedContentRow(payload.rows ?? [], {
+      contentKey: skyHistoricalLookbackSettingKey,
       mode: "feed"
     }) ?? null;
   }
@@ -5892,7 +7036,7 @@ export function GeneratedContentAdminDashboard() {
       }
       setLunarCoverageRows([]);
       setLunarCoverageLoadedFromDb(false);
-      setMessage(`Showing ${nextRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.`);
+      setMessage(`Showing ${nextRows.length} local fallback placeholders. Add the content generation secret to load saved rows.`);
       return;
     }
 
@@ -5900,23 +7044,12 @@ export function GeneratedContentAdminDashboard() {
     templateContentLoadRequestRef.current = requestId;
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({
-        status: "all",
-        contentKeyPrefix: "fallback-hook/",
-        limit: "1000"
-      });
-      const [payload, nextVocabularyRows, nextLunarCoverageRows] = await Promise.all([
-        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-          `/api/admin/generated-content?${params}`,
-          secret
-        ),
+      const [savedRows, nextVocabularyRows, nextLunarCoverageRows] = await Promise.all([
+        fetchTemplateRowsForAdmin(),
         fetchVocabularyRowsForAdmin(),
         fetchLunarCoverageRowsForAdmin()
       ]);
-      const savedRows = (payload.rows ?? [])
-        .filter((row) => row.content_key.startsWith("fallback-hook/"))
-        .sort((first, second) => first.content_key.localeCompare(second.content_key));
-      const nextRows = fallbackTemplatePlaceholderRows(savedRows);
+      const nextRows = savedRows;
 
       if (requestId !== templateContentLoadRequestRef.current) {
         return;
@@ -5935,7 +7068,7 @@ export function GeneratedContentAdminDashboard() {
       setLunarCoverageRows(nextLunarCoverageRows);
       setLunarCoverageLoadedFromDb(true);
       setAccessStatus("valid");
-      setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.${refreshDrafts ? "" : " Kept unsaved local edits."}`);
+      setMessage(`Loaded ${savedRows.length} saved fallback-hook and slot-template rows. Missing routes stay visible in Surface Map instead of appearing as editable content rows.${refreshDrafts ? "" : " Kept unsaved local edits."}`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -5948,7 +7081,7 @@ export function GeneratedContentAdminDashboard() {
       }
       setLunarCoverageRows([]);
       setLunarCoverageLoadedFromDb(false);
-      setMessage(`${adminErrorMessage(error, "Could not load saved fallback template rows.")} Showing ${nextRows.length} local fallback-hook placeholders.`);
+      setMessage(`${adminErrorMessage(error, "Could not load saved fallback hook and slot-template rows.")} Showing ${nextRows.length} local placeholders.`);
     } finally {
       setIsLoading(false);
     }
@@ -6039,6 +7172,24 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadSkyHistoricalLookbackSetting() {
+    if (!canUseApi) {
+      return;
+    }
+
+    try {
+      const row = await fetchSkyHistoricalLookbackSettingForAdmin();
+
+      setSkyHistoricalLookbackSettingRow(row);
+      setSkyHistoricalLookbackEnabled(skyHistoricalLookbackSettingEnabled(row));
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load historical lookback setting."));
+    }
+  }
+
   useEffect(() => {
     setAccessStatus(secret.trim() ? "checking" : "empty");
     if (canUseApi) {
@@ -6061,6 +7212,7 @@ export function GeneratedContentAdminDashboard() {
 
     if (activePage === "appBehavior" && canUseApi) {
       void loadSignContextSetting();
+      void loadSkyHistoricalLookbackSetting();
     }
 
     if (activePage === "templates") {
@@ -6071,12 +7223,12 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     setSelectedContentRowIds((currentIds) => {
-      const visibleIds = new Set(allContentRecords.map((record) => record.id));
+      const visibleIds = new Set(visibleContentRecords.map((record) => record.id));
       const nextIds = new Set([...currentIds].filter((id) => visibleIds.has(id)));
 
       return nextIds.size === currentIds.size ? currentIds : nextIds;
     });
-  }, [allContentRecords]);
+  }, [visibleContentRecords]);
 
   useEffect(() => {
     const openFromHash = () => {
@@ -6097,12 +7249,8 @@ export function GeneratedContentAdminDashboard() {
 
       if (fallbackMatch) {
         const hookKey = decodeURIComponent(fallbackMatch[1]);
-        const contentKey = contextContentKey(hookKey);
-        const hookMode = generatedContentModeForFallbackContentKey(contentKey);
-        const row = findAdminGeneratedContentRow(templateContentRows, {
-          contentKey,
-          mode: hookMode
-        });
+        const contentKey = canonicalFallbackTemplateContentKey(hookKey) ?? contextContentKey(hookKey);
+        const row = findFallbackTemplateRowForHook(templateContentRows, hookKey);
         const expectedSelectedId = row?.id ?? `placeholder:${contentKey}`;
 
         if (handledAdminDeepLinkHashRef.current === hash && selectedTemplateContentId === expectedSelectedId) {
@@ -6114,6 +7262,7 @@ export function GeneratedContentAdminDashboard() {
         setFallbackHookSectionFilter(hookSectionForKey(hookKey));
         setTemplateDrawerMode("edit");
         setSelectedTemplateContentId(expectedSelectedId);
+        setSelectedFallbackHookKey(hookKey);
         setSelectedHookCatalogItem(null);
         return;
       }
@@ -7238,7 +8387,7 @@ export function GeneratedContentAdminDashboard() {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
-      setMessage(adminErrorMessage(error, "Could not save fallback template row."));
+      setMessage(adminErrorMessage(error, "Could not save fallback hook or slot-template row."));
     } finally {
       setIsLoading(false);
     }
@@ -7309,6 +8458,87 @@ export function GeneratedContentAdminDashboard() {
         setAccessStatus("invalid");
       }
       setMessage(adminErrorMessage(error, "Could not save sign context setting."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveSkyHistoricalLookbackSetting(nextEnabled = skyHistoricalLookbackEnabled) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const updatedAt = new Date().toISOString();
+    const payloadBody = {
+      headline: "Historical lookbacks in expanded Sky",
+      summary: nextEnabled ? "Enabled" : "Disabled",
+      body: nextEnabled ? "on" : "off",
+      sections: {
+        enabled: nextEnabled,
+        [skyHistoricalLookbackSettingId]: nextEnabled
+      },
+      facts: {
+        settingId: skyHistoricalLookbackSettingId,
+        value: nextEnabled,
+        updatedAt,
+        updatedBy: "admin",
+        scope: "application",
+        userConfigurable: false
+      },
+      sourceSnapshot: {
+        contentType: "app-setting",
+        settingId: skyHistoricalLookbackSettingId,
+        scope: "application",
+        userConfigurable: false,
+        auditEvent: "sky-historical-lookback-setting-updated",
+        updatedAt
+      },
+      reviewerNotes: "Admin setting: toggles reviewed historical context beneath eligible expanded collective Sky articles. Default is off; drafts never render."
+    };
+
+    setIsLoading(true);
+    try {
+      if (skyHistoricalLookbackSettingRow) {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: skyHistoricalLookbackSettingRow.id,
+              status: "LIVE",
+              ...payloadBody
+            })
+          }
+        );
+      } else {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              contentKey: skyHistoricalLookbackSettingKey,
+              surface: "sky",
+              mode: "feed",
+              eventType: "app-setting",
+              status: "LIVE",
+              promptVersion: "app-setting-v1",
+              ...payloadBody
+            })
+          }
+        );
+      }
+
+      await loadSkyHistoricalLookbackSetting();
+      setMessage(`Historical lookbacks in expanded Sky are ${nextEnabled ? "on" : "off"}.`);
+      showSaveToast("App behavior saved");
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save historical lookback setting."));
     } finally {
       setIsLoading(false);
     }
@@ -7481,7 +8711,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       contentKey: record.contentKey,
       eventType: record.eventType || "manual-review",
       facts: baseFacts,
-      promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined
+      promptVersion: metadata.category === "Natal Chart"
+        ? "natal-placement-v2"
+        : metadata.category === "Natal Angles"
+          ? "natal-angle-v1"
+          : undefined
     };
 
     if (metadata.surface === "natal" && blockType === "placement" && trimmedBody && trimmedSign && trimmedHouse) {
@@ -7515,6 +8749,26 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           modernRulerHouse: metadata.modernRulerHouse.trim() || undefined
         },
         promptVersion: "natal-placement-v2"
+      };
+    }
+
+    if (metadata.surface === "natal" && blockType === "angle" && trimmedBody && trimmedSign) {
+      return {
+        ...base,
+        contentKey: natalAngleContentKey(trimmedBody, trimmedSign),
+        eventType: "natal-angle-placement",
+        facts: {
+          ...baseFacts,
+          blockType,
+          type: "natal-angle-placement",
+          angle: trimmedBody,
+          body: trimmedBody,
+          point: trimmedBody,
+          placementBody: trimmedBody,
+          sign: trimmedSign,
+          placementSign: trimmedSign
+        },
+        promptVersion: "natal-angle-v1"
       };
     }
 
@@ -8464,6 +9718,60 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setMessage("New content entry ready. Choose its content type, then write or generate a draft.");
   }
 
+  function startNewArticle() {
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+    const baseRecord = manualEntryRecord("Sky", "sky", "essay");
+    const nextRecord: AdminReviewRecord = {
+      ...baseRecord,
+      id: `manual:article:${timestamp}`,
+      title: "Untitled article",
+      subtitle: `Article / Draft / ${adminDateLabel(baseRecord.targetDate)}`,
+      contentKey: `article/${timestamp}`,
+      eventType: "article",
+      mode: "in_depth",
+      blockType: "essay",
+      facts: {
+        ...baseRecord.facts,
+        source: "manual-article-entry",
+        blockType: "essay",
+        category: "Article"
+      },
+      sourceSnapshot: {
+        ...baseRecord.sourceSnapshot,
+        source: "admin-article-entry",
+        contentType: "article",
+        createdAt: now.toISOString()
+      }
+    };
+    const nextMetadata = reviewMetadataForRecord(nextRecord);
+
+    setReviewRecords((currentRecords) => [nextRecord, ...currentRecords.filter((record) => record.id !== nextRecord.id)]);
+    setReviewCounts((currentCounts) => ({
+      ...currentCounts,
+      total: currentCounts.total + 1,
+      DRAFT: currentCounts.DRAFT + 1
+    }));
+    setSelectedReviewId(nextRecord.id);
+    setEditingReviewId(nextRecord.id);
+    setReviewEditTitle(nextRecord.title);
+    setReviewEditSummary("");
+    setReviewEditBody("");
+    setReviewEditMetadata(nextMetadata);
+    setSelectedId(null);
+    setDraft(createAdminDraft("sky", nextRecord.targetDate ?? dateInputValue()));
+    setSurface("sky");
+    setStatus("DRAFT");
+    setCategoryFilter("all");
+    setContentBlockFilter("essay");
+    setContentSourceFilter("all");
+    setContentStatusFilter("DRAFT");
+    setActivePage("content");
+    setAreGenerationInputsOpen(true);
+    setIsCreateMenuOpen(false);
+    setMessage("New article draft ready. Add the headline, summary, body, and article metadata, then save it as DRAFT.");
+  }
+
   async function createDraft() {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -8733,7 +10041,26 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         </a>
 
         <nav className="admin-nav" aria-label="Content operations">
-          <p className="admin-nav-section-label">Content</p>
+          <p className="admin-nav-section-label">Home</p>
+          <button
+            className={activePage === "overview" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("overview")}
+            aria-current={activePage === "overview" ? "page" : undefined}
+          >
+            <LayoutDashboard size={18} aria-hidden="true" />
+            Studio Home
+          </button>
+          <p className="admin-nav-section-label">Write</p>
+          <button
+            className={activePage === "articles" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("articles")}
+            aria-current={activePage === "articles" ? "page" : undefined}
+          >
+            <BookOpenText size={18} aria-hidden="true" />
+            Articles
+          </button>
           <button
             className={activePage === "content" ? "active" : ""}
             type="button"
@@ -8741,17 +10068,36 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "content" ? "page" : undefined}
           >
             <FileText size={18} aria-hidden="true" />
-            <span className="admin-nav-label">Content</span>
+            <span className="admin-nav-label">Exact Content</span>
             {contentFailureQueueCount > 0 && <strong className="admin-nav-badge">{contentFailureQueueCount}</strong>}
           </button>
           <button
-            className={activePage === "reviewQueue" ? "active" : ""}
+            className={activePage === "compositeByType" ? "active" : ""}
             type="button"
-            onClick={() => navigateAdminPage("reviewQueue")}
-            aria-current={activePage === "reviewQueue" ? "page" : undefined}
+            onClick={() => navigateAdminPage("compositeByType")}
+            aria-current={activePage === "compositeByType" ? "page" : undefined}
           >
-            <TreePine size={18} aria-hidden="true" />
-            Review Queue
+            <Database size={18} aria-hidden="true" />
+            Composite Review
+          </button>
+          <p className="admin-nav-section-label">Composition</p>
+          <button
+            className={activePage === "templates" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("templates")}
+            aria-current={activePage === "templates" ? "page" : undefined}
+          >
+            <Sparkles size={18} aria-hidden="true" />
+            Templates
+          </button>
+          <button
+            className={activePage === "slotDictionary" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("slotDictionary")}
+            aria-current={activePage === "slotDictionary" ? "page" : undefined}
+          >
+            <KeyRound size={18} aria-hidden="true" />
+            Slots
           </button>
           <button
             className={activePage === "vocabulary" ? "active" : ""}
@@ -8762,25 +10108,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <Database size={18} aria-hidden="true" />
             Vocabulary
           </button>
-          <p className="admin-nav-section-label">Templates</p>
-          <button
-            className={activePage === "slotDictionary" ? "active" : ""}
-            type="button"
-            onClick={() => navigateAdminPage("slotDictionary")}
-            aria-current={activePage === "slotDictionary" ? "page" : undefined}
-          >
-            <KeyRound size={18} aria-hidden="true" />
-            Slot Dictionary
-          </button>
-          <button
-            className={activePage === "templates" ? "active" : ""}
-            type="button"
-            onClick={() => navigateAdminPage("templates")}
-            aria-current={activePage === "templates" ? "page" : undefined}
-          >
-            <Sparkles size={18} aria-hidden="true" />
-            Templates & Voice
-          </button>
           <button
             className={activePage === "knowledge" ? "active" : ""}
             type="button"
@@ -8788,8 +10115,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "knowledge" ? "page" : undefined}
           >
             <BookOpenText size={18} aria-hidden="true" />
-            Fallback Rows
+            Fallback Hooks
           </button>
+          <p className="admin-nav-section-label">App surfaces</p>
           <button
             className={activePage === "hooks" ? "active" : ""}
             type="button"
@@ -8797,7 +10125,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "hooks" ? "page" : undefined}
           >
             <LayoutDashboard size={18} aria-hidden="true" />
-            Hook Catalog
+            Surface Map
+          </button>
+          <p className="admin-nav-section-label">Publish</p>
+          <button
+            className={activePage === "reviewQueue" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("reviewQueue")}
+            aria-current={activePage === "reviewQueue" ? "page" : undefined}
+          >
+            <TreePine size={18} aria-hidden="true" />
+            Review Queue
           </button>
           <p className="admin-nav-section-label">System</p>
           <button
@@ -8844,18 +10182,71 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <h1>{adminPageTitle(activePage)}</h1>
             <p>{adminPageDescription(activePage)}</p>
           </div>
-          <div className={`admin-api-indicator status-${apiStatus.state}`}>
-            <Server size={15} aria-hidden="true" />
-            <span>
-              {apiStatus.state === "online"
-                ? "API online"
-                : apiStatus.state === "checking"
-                  ? "Checking API"
-                  : apiStatus.state === "notConfigured"
-                    ? "API missing"
-                    : "API offline"}
-            </span>
-            {apiStatus.latencyMs !== null && <small>{apiStatus.latencyMs}ms</small>}
+          <div className="admin-global-actions">
+            <div className="admin-create-menu">
+              <button
+                type="button"
+                className="admin-create-button"
+                onClick={() => setIsCreateMenuOpen((open) => !open)}
+                aria-expanded={isCreateMenuOpen}
+                aria-haspopup="menu"
+              >
+                <Plus size={16} aria-hidden="true" />
+                Create
+              </button>
+              {isCreateMenuOpen && (
+                <div className="admin-create-menu-panel" role="menu" aria-label="Create content">
+                  <button type="button" role="menuitem" onClick={startNewArticle}>
+                    <BookOpenText size={15} aria-hidden="true" />
+                    <span>
+                      Article
+                      <small>Long-form editorial copy</small>
+                    </span>
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Exact content rows are for a specific app surface, date, chart factor, or relationship context.")}>
+                    <FileText size={15} aria-hidden="true" />
+                    <span>
+                      Exact content
+                      <small>Specific reader-facing row</small>
+                    </span>
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => handleCreateAction("vocabulary", "Vocabulary rows fill slots with reusable words, clauses, and short phrases.")}>
+                    <Database size={15} aria-hidden="true" />
+                    <span>
+                      Vocabulary value
+                      <small>Reusable slot language</small>
+                    </span>
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => handleCreateAction("templates", "Templates control sentence structure and where slots appear.")}>
+                    <Sparkles size={15} aria-hidden="true" />
+                    <span>
+                      Template
+                      <small>Mustache structure</small>
+                    </span>
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Fallback hooks are the emergency templates used when richer content is unavailable.")}>
+                    <KeyRound size={15} aria-hidden="true" />
+                    <span>
+                      Fallback hook
+                      <small>Emergency rendering floor</small>
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className={`admin-api-indicator status-${apiStatus.state}`}>
+              <Server size={15} aria-hidden="true" />
+              <span>
+                {apiStatus.state === "online"
+                  ? "API online"
+                  : apiStatus.state === "checking"
+                    ? "Checking API"
+                    : apiStatus.state === "notConfigured"
+                      ? "API missing"
+                      : "API offline"}
+              </span>
+              {apiStatus.latencyMs !== null && <small>{apiStatus.latencyMs}ms</small>}
+            </div>
           </div>
           {(activePage === "content" || activePage === "reviewQueue") && (
             <div className="admin-header-actions">
@@ -8890,7 +10281,167 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           hidden
         />
 
-        {activePage === "releaseNotes" ? (
+        {activePage === "overview" ? (
+          <section id="dashboard-overview" className="admin-template-panel admin-overview-page" aria-label="Dashboard map">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Authoring workspace</p>
+                <h2>Where to Work</h2>
+                <p>Use this map to decide whether you are writing final content, editing template structure, filling vocabulary, diagnosing a public surface, or publishing reviewed work.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Dashboard migration status">
+                <article>
+                  <span>Write</span>
+                  <strong>3</strong>
+                </article>
+                <article>
+                  <span>Compose</span>
+                  <strong>4</strong>
+                </article>
+                <article>
+                  <span>Diagnose</span>
+                  <strong>1</strong>
+                </article>
+                <article>
+                  <span>Publish</span>
+                  <strong>1</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-studio-map" aria-label="Editorial workspace map">
+              <button type="button" onClick={() => navigateAdminPage("articles")}>
+                <BookOpenText size={18} aria-hidden="true" />
+                <span>Articles</span>
+                <small>Write long-form editorial pieces and article excerpts.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("content")}>
+                <FileText size={18} aria-hidden="true" />
+                <span>Exact Content</span>
+                <small>Write a row for a specific surface, chart factor, date, or relationship.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("templates")}>
+                <Sparkles size={18} aria-hidden="true" />
+                <span>Templates</span>
+                <small>Fix sentence structure, Mustache fields, and reusable scaffolds.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("slotDictionary")}>
+                <KeyRound size={18} aria-hidden="true" />
+                <span>Slots</span>
+                <small>Find the source of a variable and open its editor.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("vocabulary")}>
+                <Database size={18} aria-hidden="true" />
+                <span>Vocabulary</span>
+                <small>Edit the words and clauses that fill templates.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("knowledge")}>
+                <BookOpenText size={18} aria-hidden="true" />
+                <span>Fallback Hooks</span>
+                <small>Edit emergency templates used when richer rows miss.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("hooks")}>
+                <LayoutDashboard size={18} aria-hidden="true" />
+                <span>Surface Map</span>
+                <small>Diagnose which hook, key, template, and vocab made a public card.</small>
+              </button>
+              <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
+                <TreePine size={18} aria-hidden="true" />
+                <span>Review Queue</span>
+                <small>Approve, publish, archive, and audit reader-ready rows.</small>
+              </button>
+            </div>
+
+            <div className="admin-fallback-row-list admin-source-grounded-summary" aria-label="Dashboard diagnostics">
+              <details className="admin-diagnostics-details">
+                <summary>System diagnostics</summary>
+                <div className="admin-fallback-usage" aria-label="Content system workstreams">
+                  {contentSystemWorkstreams.map((workstream) => (
+                    <article key={workstream.id}>
+                      <span>{workstream.state}</span>
+                      <h3>{workstream.title}</h3>
+                      <p>{workstream.scope}</p>
+                      <small>{workstream.nextAction}</small>
+                    </article>
+                  ))}
+                </div>
+                <div className="admin-fallback-row-actions">
+                  <span className="ui-pill">source records: {sourceGroundedSummary.readyRecords ?? 0}</span>
+                  <span className="ui-pill">source gaps: {sourceGroundedSummary.sourceGaps ?? 0}</span>
+                  <span className="ui-pill">draft candidates: {sourceGroundedReviewSummary.totalCandidates ?? 0}</span>
+                  <span className="ui-pill">{SOURCE_GROUNDED_V2_TEMPLATE_VERSION}</span>
+                </div>
+                {sourceGroundedGapSamples.length > 0 && (
+                  <ul className="admin-source-gap-list">
+                    {sourceGroundedGapSamples.map((gap) => (
+                      <li key={gap.canonicalKey}>
+                        <strong>{gap.canonicalKey}</strong>
+                        <span>{gap.missing.join(", ")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </details>
+            </div>
+          </section>
+        ) : activePage === "articles" ? (
+          <section className="admin-template-panel admin-articles-page" aria-label="Articles workspace">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Write</p>
+                <h2>Articles</h2>
+                <p>Create long-form editorial drafts here. Articles are saved as editable DRAFT rows and stay out of fallback hooks and vocabulary.</p>
+              </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={startNewArticle}>
+                  <Plus size={16} aria-hidden="true" />
+                  New Article Draft
+                </button>
+              </div>
+            </div>
+
+            <div className="admin-studio-map admin-article-workflow" aria-label="Article workflow">
+              <article>
+                <BookOpenText size={18} aria-hidden="true" />
+                <span>Article</span>
+                <small>Reader-facing long-form copy, explainers, and guided editorial pages.</small>
+              </article>
+              <article>
+                <FileText size={18} aria-hidden="true" />
+                <span>Article excerpt</span>
+                <small>Short support copy that can be quoted or linked from a card.</small>
+              </article>
+              <article>
+                <Archive size={18} aria-hidden="true" />
+                <span>Reference source</span>
+                <small>Research or imported material that should not render directly to visitors.</small>
+              </article>
+            </div>
+
+            <section className="admin-fallback-row-list" aria-label="Article authoring guidance">
+              <article className="admin-fallback-row">
+                <div className="admin-fallback-row-main">
+                  <div>
+                    <p className="admin-eyebrow">Current state</p>
+                    <h3>Article rows are visible, but not split into a dedicated API yet</h3>
+                  </div>
+                  <span className="ui-pill admin-template-badge">Editor home</span>
+                </div>
+                <p>For now, create article drafts from Exact Content and classify them as article or essay rows. This page keeps article work out of fallback hooks, templates, and vocabulary while the dedicated article library is wired.</p>
+                <div className="admin-fallback-row-actions">
+                  <button type="button" onClick={() => navigateAdminPage("content")}>
+                    <FileText size={15} aria-hidden="true" />
+                    Open Exact Content
+                  </button>
+                  <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
+                    <TreePine size={15} aria-hidden="true" />
+                    Open Review Queue
+                  </button>
+                </div>
+              </article>
+            </section>
+          </section>
+        ) : activePage === "releaseNotes" ? (
           <section id="release-notes" className="admin-template-panel admin-release-page" aria-label="Release notes">
             <div className="admin-template-header">
               <div>
@@ -9069,14 +10620,41 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 Off means sky aspect bodies render exactly as they did before this sign-context layer.
               </p>
             </section>
+            <section className="admin-template-panel" aria-label="Historical lookbacks in expanded Sky settings">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Application content setting</p>
+                  <h2>Historical lookbacks in expanded Sky</h2>
+                  <p>Show reviewed historical context beneath eligible collective Sky interpretations. This setting affects all readers.</p>
+                  <code className="admin-managed-key">{skyHistoricalLookbackSettingKey}</code>
+                </div>
+                <div className="admin-template-actions">
+                  <label className="admin-setting-switch">
+                    <input
+                      checked={skyHistoricalLookbackEnabled}
+                      onChange={(event) => setSkyHistoricalLookbackEnabled(event.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>{skyHistoricalLookbackEnabled ? "On" : "Off"}</span>
+                  </label>
+                  <button type="button" onClick={() => void saveSkyHistoricalLookbackSetting()} disabled={isLoading || !canUseApi}>
+                    <Save size={16} aria-hidden="true" />
+                    Save Setting
+                  </button>
+                </div>
+              </div>
+              <p className="admin-template-note">
+                Default off. Turning this on only displays reviewed, eligible historical records that match the current Sky event; it never promotes drafts or replaces the present interpretation.
+              </p>
+            </section>
           </section>
         ) : activePage === "slotDictionary" ? (
           <section className="admin-template-panel admin-slot-dictionary-page" aria-label="Slot dictionary">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Template slot map</p>
-                <h2>Template Slot Map</h2>
-                <p>Use this as the global map for what fills each template variable. Calculated facts are locked; reusable language points to Vocabulary or Fallback Rows.</p>
+                <p className="admin-eyebrow">Composition</p>
+                <h2>Slots</h2>
+                <p>Use this when a template has <code>{"{{something}}"}</code> in it. Calculated slots are read-only; editable slots open Vocabulary or Fallback Hooks.</p>
               </div>
             </div>
 
@@ -9117,7 +10695,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div className="admin-slot-info-row">
                 <details>
                   <summary>How slots work</summary>
-                  <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> are calculated by the app. Editable rows supply reusable wording through Vocabulary or Fallback Rows, and fallback hooks render only after exact authored content and approved knowledge rows miss.</p>
+                  <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> come from chart or sky facts. Slots such as topic language, tone, lived scene, or practical action come from Vocabulary or Fallback Hooks.</p>
                 </details>
                 <button
                   type="button"
@@ -9298,9 +10876,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <section className="admin-template-panel admin-vocabulary-page" aria-label="Vocabulary content rows">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Prompt version vocab-v1</p>
+                <p className="admin-eyebrow">Composition</p>
                 <h2>Vocabulary</h2>
-                <p>Edit reusable planet, house, zodiac, lunar, eclipse, relationship, and career language used by template interpolation and natal chart card taglines.</p>
+                <p>Edit reusable words, clauses, and short phrases that fill template slots. Use this for language fragments, not full articles or fallback-hook bodies.</p>
               </div>
               <div className="admin-release-summary" aria-label="Vocabulary row count">
                 <article>
@@ -9338,6 +10916,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   { key: "all", label: "All" },
                   { key: "planets", label: "Planets" },
                   { key: "houses", label: "Houses" },
+                  { key: "angles", label: "Angles" },
                   { key: "zodiac", label: "Zodiac" },
                   { key: "lunar", label: "Lunar" },
                   { key: "eclipses", label: "Eclipses" },
@@ -9507,6 +11086,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               const vocabularyCategory = vocabularyItemCategory(item);
               const isCareerVocabularyRow = vocabularyCategory === "career";
               const showsPrimaryPhraseFields = vocabularyFamily === "topic" || vocabularyFamily === "sign-style";
+              const showsSinglePhraseField = vocabularyFamily === "single-phrase";
               const showsSignNeed = vocabularyFamily === "sign-style" || vocabularyFamily === "sign-need" || Boolean(item.signNeedRow);
               const showsZodiacStory = vocabularyFamily === "sign-style" || vocabularyFamily === "zodiac-story" || Boolean(item.storyRow);
               const showsShadow = vocabularyFamily === "sign-style" || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" || Boolean(item.shadowRow);
@@ -9542,6 +11122,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           {vocabularyFamily === "planet-shadow" && <span className="ui-pill admin-status">Planet shadow</span>}
                           {vocabularyFamily === "house-shadow" && <span className="ui-pill admin-status">House shadow</span>}
                           {vocabularyFamily === "higher-expression" && <span className="ui-pill admin-status">Higher expression</span>}
+                          {vocabularyFamily === "single-phrase" && <span className="ui-pill admin-status">Shared phrase</span>}
                           {item.signNeedRow && signNeedStatus && <span className={`ui-pill admin-status status-${signNeedStatus.toLowerCase()}`}>Current Moon in sign</span>}
                           {item.storyRow && storyStatus && <span className={`ui-pill admin-status status-${storyStatus.toLowerCase()}`}>Zodiac story</span>}
                           {item.shadowRow && shadowStatus && <span className={`ui-pill admin-status status-${shadowStatus.toLowerCase()}`}>{vocabularyItemCategory(item) === "planets" ? "Planet shadow" : "House shadow"}</span>}
@@ -9624,6 +11205,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             })}
                             rows={9}
                           />
+                        </label>
+                      )}
+
+                      {rowDraft && topicRow && showsSinglePhraseField && (
+                        <label className="admin-field-wide admin-compact-vocabulary-field">
+                          <span>Phrase</span>
+                          <textarea
+                            value={rowDraft.natal}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
+                            rows={3}
+                          />
+                          <small>Sentence-ready copy for this content key.</small>
                         </label>
                       )}
 
@@ -9746,21 +11339,21 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             })()}
           </section>
         ) : activePage === "knowledge" ? (
-          <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback template content rows">
+          <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback hook and slot-template rows">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Slot-based app copy</p>
-                <h2>Fallback Rows</h2>
-                <p>Edit the `fallback-hook/` rows that hold reusable template copy for app cards such as sky aspects, sign seasons, lunar calendar days, synastry contacts, and house overlays.</p>
+                <p className="admin-eyebrow">Composition</p>
+                <h2>Fallback Hooks</h2>
+                <p>Edit the emergency full-sentence templates that render after exact content and phrase-bank composition miss. Use Templates for structure and Vocabulary for reusable phrases.</p>
               </div>
-              <div className="admin-release-summary" aria-label="Template row count">
+              <div className="admin-release-summary" aria-label="Fallback hook row count">
                 <article>
                   <span>{fallbackHookSectionFilter === "all" ? "Rows" : "Filtered"}</span>
                   <strong>{filteredTemplateContentRows.length}</strong>
                 </article>
                 <article>
-                  <span>Prefix</span>
-                  <strong>fallback-hook/</strong>
+                  <span>Families</span>
+                  <strong>fallback + slot</strong>
                 </article>
               </div>
               <div className="admin-template-actions">
@@ -9780,22 +11373,22 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </div>
 
             <div className="admin-fallback-usage" aria-label="How fallback rows are used">
-              <article>
-                <span>Where They Live</span>
-                <p>These rows are stored in generated content with keys that begin `fallback-hook/`. They are global rows, not per-user generated rows.</p>
-              </article>
-              <article>
-                <span>When They Render</span>
-                <p>The app tries a published specific row first, then approved knowledge-base content, then these fallback rows. If all three miss, the card stays blank.</p>
-              </article>
-              <article>
-                <span>How Slots Work</span>
-                <p>Values like <code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{moonPhase}}"}</code>, <code>{"{{personA}}"}</code>, and <code>{"{{house}}"}</code> are filled from the calculated sky, lunar calendar, natal, or relationship context at render time.</p>
-              </article>
-              <article>
-                <span>Review Surface</span>
-                <p>Use this section for the reusable fallback wording. Use Content for dated or specific generated rows, and Hook Catalog to see every app surface that can call a fallback row.</p>
-              </article>
+                <article>
+                  <span>Edit here</span>
+                  <p>Use this page for current <code>fallback-hook/</code> routes and <code>slot-template/</code> Mustache templates.</p>
+                </article>
+                <article>
+                  <span>Do not put here</span>
+                  <p>Articles, rich readings, vocabulary fragments, and legacy <code>cc/fallback</code> rows belong outside this editor.</p>
+                </article>
+                <article>
+                  <span>Preview first</span>
+                  <p>Open a row to preview the rendered sentence with sample slot values before publishing.</p>
+                </article>
+                <article>
+                  <span>Diagnose route</span>
+                  <p>Use Surface Map when you need to know which hook or surface called this row.</p>
+                </article>
             </div>
 
             <div className="admin-fallback-section-filters" role="tablist" aria-label="Fallback hook sections">
@@ -9806,7 +11399,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   className={fallbackHookSectionFilter === filter.key ? "active" : ""}
                   onClick={() => {
                     setFallbackHookSectionFilter(filter.key);
-                    setSelectedTemplateContentId(null);
+                    closeTemplateContentDrawer();
                   }}
                   role="tab"
                   aria-selected={fallbackHookSectionFilter === filter.key}
@@ -9818,18 +11411,21 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </div>
 
             {!isLunarCoverageSelected && (
-              <div className="admin-fallback-row-list" aria-label="Fallback template rows">
+              <div className="admin-fallback-row-list" aria-label="Fallback hook and slot-template rows">
                 {filteredTemplateContentRows.map((row) => {
                   const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
                   const badge = contentTypeBadge(row);
                   const hookKey = hookKeyFromFallbackTemplateRow(row);
                   const hook = fallbackHookForContextRow(hookKey);
-                  const isSelected = row.id === selectedTemplateContentId;
+                  const isSelected = row.id === selectedTemplateContentId || selectedTemplateContentRow?.id === row.id;
                   const isLocalOnly = isLocalPlaceholderGeneratedContentRow(row);
+                  const isLegacyFallback = isLegacyFallbackTemplateRow(row);
 
                   const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
                     setTemplateDrawerMode(mode);
                     setSelectedTemplateContentId(row.id);
+                    setSelectedFallbackHookKey(hookKey);
+                    window.history.replaceState(null, "", `#fallback-row/${encodeURIComponent(hookKey)}`);
                   };
 
                   return (
@@ -9847,6 +11443,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <div className="admin-managed-badges">
                           {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
                           {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
+                          {isLegacyFallback && <span className="ui-pill admin-status status-archived">Archived model</span>}
                           {isLocalOnly ? (
                             <span className="ui-pill admin-status admin-slot-status-local">Local only</span>
                           ) : (
@@ -9855,6 +11452,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         </div>
                       </div>
                       <p>{descriptionForFallbackTemplateRow(row)}</p>
+                      {isLegacyFallback && (
+                        <p className="admin-template-note admin-publication-note">Archived model: blocked from reader routes until rewritten as current fallback-hook or slot-template wording.</p>
+                      )}
                       <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
                       <div className="admin-fallback-row-actions">
                         <button type="button" onClick={() => openTemplateRow("view")} title={`View ${row.content_key} inside the dashboard`}>
@@ -9870,7 +11470,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   );
                 })}
                 {filteredTemplateContentRows.length === 0 && (
-                  <p className="admin-empty">No fallback-hook template rows match this section.</p>
+                  <p className="admin-empty">No fallback hook or slot-template rows match this section.</p>
                 )}
               </div>
             )}
@@ -9974,10 +11574,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             )}
 
             {selectedTemplateContentRow && (
-              <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedTemplateContentId(null)}>
+              <div className="admin-drawer-backdrop" role="presentation" onClick={closeTemplateContentDrawer}>
                 <section
                   className="admin-editor-panel admin-template-drawer admin-editor-drawer"
-                  aria-label={templateDrawerMode === "view" ? "Fallback template preview" : "Fallback template editor"}
+                  aria-label={templateDrawerMode === "view" ? "Fallback hook preview" : "Fallback hook editor"}
                   onClick={(event) => event.stopPropagation()}
                 >
                   {(() => {
@@ -9989,6 +11589,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     const seed = templateSeedForFallbackTemplateRow(row);
                     const isViewMode = templateDrawerMode === "view";
                     const isLocalOnly = isLocalPlaceholderGeneratedContentRow(row);
+                    const isLegacyFallback = isLegacyFallbackTemplateRow(row);
                     const previewSlotDefaults = fallbackHookSampleContextForKey(hookKey);
                     const previewSlotDraft = templatePreviewSlotDrafts[row.content_key] ?? {};
                     const previewSlots = Object.fromEntries(
@@ -10001,8 +11602,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <>
                         <div className="admin-editor-toolbar">
                           <div className="admin-drawer-topbar">
-                            <p className="admin-eyebrow">{isViewMode ? "Fallback row preview" : "Fallback row editor"}</p>
-                            <button type="button" onClick={() => setSelectedTemplateContentId(null)}>
+                            <p className="admin-eyebrow">{isViewMode ? "Fallback hook preview" : "Fallback hook editor"}</p>
+                            <button type="button" onClick={closeTemplateContentDrawer}>
                               <X size={16} aria-hidden="true" />
                               Close
                             </button>
@@ -10015,6 +11616,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <div className="admin-managed-badges">
                               {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
                               {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
+                              {isLegacyFallback && <span className="ui-pill admin-status status-archived">Archived model</span>}
                               {isLocalOnly && <span className="ui-pill admin-status admin-slot-status-local">Local only</span>}
                               {isViewMode ? (
                                 !isLocalOnly && <span className={`ui-pill admin-status status-${rowDraft.status.toLowerCase()}`}>{rowDraft.status}</span>
@@ -10037,8 +11639,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </div>
                           <code className="admin-managed-key">{row.content_key}</code>
                           <p className="admin-template-note">{descriptionForFallbackTemplateRow(row)}</p>
+                          {isLegacyFallback && (
+                            <p className="admin-template-note admin-publication-note">Archived model: blocked from reader routes until rewritten as current fallback-hook or slot-template wording.</p>
+                          )}
                           <p className="admin-template-note admin-publication-note">
-                            Public site use: fallback hooks render only when this row is LIVE, the public page reloads, and no exact generated row or approved knowledge row wins first.
+                            Runtime order: exact content wins first, phrase-bank composition wins second, and this fallback hook renders only when both miss.
                           </p>
                         </div>
 
@@ -10159,9 +11764,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Hook catalog</p>
-                <h2>Named Content Points</h2>
-                <p>Every card surface in the app is a hook. When a card needs content, it checks three places in order: a published row written for that exact moment, then approved knowledge base content, then the fallback template. This catalog shows what each hook needs and where its content comes from.</p>
+                <p className="admin-eyebrow">App surfaces</p>
+                <h2>Surface Map</h2>
+                <p>Use this read-only map when the public app shows wrong copy. It tells you which hook was requested, which IDs it checks, and which fallback row can render.</p>
               </div>
               <div className="admin-template-actions">
                 <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as JSON">
@@ -10181,20 +11786,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
             <div className="admin-fallback-usage" aria-label="How hooks resolve content">
               <article>
-                <span>1. Exact Moment</span>
-                <p>A published row written for the specific card, date, chart factor, or relationship context wins first.</p>
+                <span>1. Exact content</span>
+                <p>A published row for the specific card, date, chart factor, or relationship context wins first.</p>
               </article>
               <article>
-                <span>2. Knowledge Base</span>
-                <p>If there is no exact row, the hook looks for approved knowledge IDs that match the calculated facts.</p>
+                <span>2. Phrase bank</span>
+                <p>If there is no exact row, the surface can assemble approved phrase-bank content from matching facts.</p>
               </article>
               <article>
-                <span>3. Fallback Template</span>
+                <span>3. Fallback hook</span>
                 <p>If authored knowledge misses, the hook renders the matching <code>fallback-hook/</code> template with live slot values.</p>
               </article>
               <article>
-                <span>Catalog Use</span>
-                <p>Use these cards to see what each surface needs, which IDs it checks, and which example lookups prove the route.</p>
+                <span>Use this for</span>
+                <p>Finding the editor. This page diagnoses routes; it is not where you write the final copy.</p>
               </article>
             </div>
 
@@ -10249,7 +11854,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <p className="admin-eyebrow">Hook catalog</p>
                   <h3>Fallback Hook Routes</h3>
                 </div>
-                <p className="admin-template-note">Scrollable route index for app surfaces, required facts, lookup IDs, and fallback template patterns.</p>
+                <p className="admin-template-note">Scrollable route index for app surfaces, required facts, lookup IDs, and fallback-hook or slot-template patterns.</p>
               </div>
               <div className="admin-table-scroll admin-hook-table" role="region" aria-label="Fallback hook routes" tabIndex={0}>
                 <table>
@@ -10260,6 +11865,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <th scope="col">Key</th>
                       <th scope="col">Needs</th>
                       <th scope="col">Looks for</th>
+                      <th scope="col">Saved row</th>
                       <th scope="col">Preview</th>
                     </tr>
                   </thead>
@@ -10268,6 +11874,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 const sampleContext = resolvedFallbackHookSampleContexts[hook.key] ?? fallbackHookSampleContexts[hook.key] ?? {};
                 const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
                 const plainDescription = hookPlainDescriptions[hook.key] || hook.description;
+                const savedHookRow = fallbackTemplateRowsByContentKey.get(contextContentKey(hook.key));
                 const hookArea = hook.label.startsWith("Lunar Calendar >")
                   ? "Lunar Calendar"
                   : hook.domain === "natal" && hook.surface === "you"
@@ -10305,6 +11912,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           <code key={template}>{template}</code>
                         ))}
                       </div>
+                    </td>
+                    <td>
+                      <span className={`ui-pill admin-status ${savedHookRow ? `status-${savedHookRow.status.toLowerCase()}` : ""}`}>
+                        {savedHookRow ? contentStatusLabel(savedHookRow.status) : "Missing"}
+                      </span>
                     </td>
                     <td>
                       {sampleIds.length} example{sampleIds.length === 1 ? "" : "s"}
@@ -10406,6 +12018,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         ?? fallbackHookSampleContextForKey(selectedFallbackCatalogHook.key);
                       const sampleIds = knowledgeIdsForFallbackHook(selectedFallbackCatalogHook.key, sampleContext);
                       const plainDescription = hookPlainDescriptions[selectedFallbackCatalogHook.key] || selectedFallbackCatalogHook.description;
+                      const savedFallbackHookRow = fallbackTemplateRowsByContentKey.get(contextContentKey(selectedFallbackCatalogHook.key));
 
                       return (
                         <>
@@ -10415,10 +12028,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <code>{selectedFallbackCatalogHook.key}</code>
                             <p>{plainDescription}</p>
                             <div className="admin-hook-detail-actions">
-                              <button type="button" onClick={() => openFallbackHookTemplateEditor(selectedFallbackCatalogHook.key, "edit")}>
-                                <Pencil size={15} aria-hidden="true" />
-                                Open Fallback Row
-                              </button>
+                              {savedFallbackHookRow ? (
+                                <button type="button" onClick={() => openFallbackHookTemplateEditor(selectedFallbackCatalogHook.key, "edit")}>
+                                  <Pencil size={15} aria-hidden="true" />
+                                  Open Fallback Row
+                                </button>
+                              ) : (
+                                <button type="button" onClick={() => void createFallbackHookDraftFromCatalog(selectedFallbackCatalogHook)} disabled={isLoading || !canUseApi}>
+                                  <Plus size={15} aria-hidden="true" />
+                                  Author Draft
+                                </button>
+                              )}
                               <button type="button" onClick={() => copyFallbackHookEditorLink(selectedFallbackCatalogHook.key)}>
                                 <KeyRound size={15} aria-hidden="true" />
                                 Copy Link to Row
@@ -10427,6 +12047,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </div>
 
                           <div className="admin-hook-detail-grid">
+                            <article>
+                              <span>Saved row</span>
+                              <strong>{savedFallbackHookRow ? contentStatusLabel(savedFallbackHookRow.status) : "Missing"}</strong>
+                            </article>
                             <article>
                               <span>Surface</span>
                               <strong>{selectedFallbackCatalogHook.surface}</strong>
@@ -10469,7 +12093,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </section>
 
                           <section className="admin-hook-detail-section">
-                            <h4>Fallback template patterns</h4>
+                            <h4>Fallback hook patterns</h4>
                             <dl className="admin-hook-pattern-list">
                               <div>
                                 <dt>Headline</dt>
@@ -10727,11 +12351,19 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </select>
               </label>
               <label>
-                <span>Source</span>
+                <span>Content class</span>
                 <select value={reviewQueueSourceFilter} onChange={(event) => setReviewQueueSourceFilter(event.target.value as AdminReviewQueueSourceFilter)}>
-                  <option value="all">All sources</option>
-                  <option value="revoicePending">Revoice pending</option>
-                  <option value="voiced">Voiced</option>
+                  {contentClassFilters.map((filter) => (
+                    <option key={filter.key} value={filter.key}>{filter.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Tier</span>
+                <select value={reviewQueueTierFilter} onChange={(event) => setReviewQueueTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+                  {phrasebankTierFilters.map((filter) => (
+                    <option key={filter.key} value={filter.key}>{filter.label}</option>
+                  ))}
                 </select>
               </label>
               <label>
@@ -10758,6 +12390,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <input value={reviewQueueQuery} onChange={(event) => setReviewQueueQuery(event.target.value)} placeholder="Title, content key, body text" />
                 </div>
               </label>
+            </section>
+
+            <section className="admin-reader-safety-panel" aria-label="Final sign-off checklist">
+              <div>
+                <p className="admin-eyebrow">Final sign-off</p>
+                <h3>Phrasebank checklist</h3>
+                <p>Reviewed and session draft rows stay DRAFT or review-held until a row is explicitly signed off.</p>
+              </div>
+              <div className="admin-status-grid">
+                {marieSignoffChecklist.map(([label, group, count]) => (
+                  <div className="admin-status-card" key={`${group}-${label}`}>
+                    <span>{group}</span>
+                    <strong>{label}</strong>
+                    <small>{count} rows</small>
+                  </div>
+                ))}
+              </div>
             </section>
 
             <section className="admin-review-queue-layout" aria-label="Review queue">
@@ -10787,6 +12436,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   const publishBlock = canTransitionReviewRecord(record, "LIVE");
                   const evergreenBlock = canMarkEvergreen(record);
                   const isSelectableRecord = record.source !== "private" && Boolean(savedGlobalRowId(record));
+                  const phrasebankTier = phrasebankTierForRecord(record);
+                  const phrasebankTierText = phrasebankTierLabel(phrasebankTier);
+                  const recordContentClass = contentClassForReviewRecord(record);
 
                   return (
                     <article
@@ -10809,6 +12461,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           <code>{record.contentKey}</code>
                         </div>
                         <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                        <span className="ui-pill admin-status">{contentClassLabel(recordContentClass)}</span>
+                        {phrasebankTierText ? (
+                          <span className="ui-pill admin-status">{phrasebankTierText}</span>
+                        ) : null}
+                        {isLegacyGeneratedContentRecord(record) ? (
+                          <span className="ui-pill admin-status">Legacy</span>
+                        ) : null}
                         <button
                           type="button"
                           className={`admin-evergreen-toggle ${record.evergreen ? "active" : ""}`}
@@ -10864,6 +12523,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           <Upload size={15} aria-hidden="true" />
                           Publish
                         </button>
+                        {isPhrasebankSignoffRecord(record) ? (
+                          <button type="button" onClick={() => void transitionReviewQueueRecord(record, "LIVE")} disabled={isLoading || Boolean(publishBlock)} title={publishBlock || "Final sign-off: publish and clear review hold"}>
+                            <Check size={15} aria-hidden="true" />
+                            Sign Off
+                          </button>
+                        ) : null}
                       </div>
                     </article>
                   );
@@ -10925,31 +12590,133 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </aside>
             </section>
           </>
+        ) : activePage === "compositeByType" ? (
+          <section id="composite-by-type" className="admin-template-panel admin-template-page" aria-label="Composite relationship type coverage">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Relationship-aware composite</p>
+                <h2>Composite by Type</h2>
+                <p>Type-aware rows keep the single-voice body as fallback. Romantic variants are only safe for explicitly romantic relationships; non-romantic relationships fall back to friendship when runtime asks for typed copy.</p>
+              </div>
+              <span className="ui-pill admin-status">{compositeByTypeRecords.length} typed rows</span>
+            </div>
+
+            <div className="admin-fallback-usage" aria-label="Composite runtime behavior">
+              <article>
+                <span>Default</span>
+                <p>The row body remains the single-voice fallback for every pair and relationship type.</p>
+              </article>
+              <article>
+                <span>Typed fields</span>
+                <p><code>sections.byRelationshipType</code> stores <code>experience</code>, <code>advice</code>, and <code>astro</code>.</p>
+              </article>
+              <article>
+                <span>Romantic gate</span>
+                <p>Romantic copy only renders when the manual chart relationship type is explicitly romantic.</p>
+              </article>
+            </div>
+
+            <div className="admin-template-card-list">
+              {compositeByTypeRecords.length === 0 ? (
+                <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>
+              ) : compositeByTypeRecords.map((record) => {
+                const coverage = compositeRelationshipTypeCoverage(record);
+                const presentCount = coverage.filter((item) => item.copy).length;
+
+                return (
+                  <article className="admin-template-card" key={record.id}>
+                    <div className="admin-section-heading-row">
+                      <div>
+                        <p className="admin-eyebrow">{contentStatusLabel(record.status)} / {phrasebankTierLabel(phrasebankTierForRecord(record)) || "No tier"}</p>
+                        <h3>{record.title}</h3>
+                        <code>{record.contentKey}</code>
+                      </div>
+                      <div className="admin-template-actions">
+                        <span className="ui-pill admin-status">{presentCount}/{compositeRelationshipTypes.length} typed</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedReviewId(record.id);
+                            setActivePage("content");
+                          }}
+                        >
+                          <Pencil size={15} aria-hidden="true" />
+                          Open Row
+                        </button>
+                      </div>
+                    </div>
+                    <section className="admin-template-rendered-preview" aria-label="Single voice fallback">
+                      <article>
+                        <span>Single-voice fallback</span>
+                        <p>{record.body || record.summary || "No fallback body saved."}</p>
+                      </article>
+                    </section>
+                    <div className="admin-dependency-map-grid">
+                      {coverage.map((item) => (
+                        <article key={`${record.id}-${item.key}`}>
+                          <span>{item.label}{item.key === "romantic" ? " / gated" : ""}</span>
+                          <strong>{item.copy ? "Authored" : "Falls back"}</strong>
+                          <p>{item.copy || "Uses the single-voice composite bank for this relationship type."}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
         ) : (
           <>
             <section className="admin-content-toolbar" aria-label="Content filters">
               <div>
                 <p className="admin-eyebrow">Content library</p>
-                <h2>All Entries</h2>
+                <h2>Phrasebank Content</h2>
                 <p>
-                  {isLoading && allContentRecords.length === 0
-                    ? "Loading entries across generated, authored, global, and personal content."
-                    : `${cmsStatusCounts.all} entries across generated, authored, global, and personal content.`
+                  {isLoading && visibleContentRecords.length === 0
+                    ? "Loading phrasebank content."
+                    : generatedContentPreviewMode === "emergency-floor"
+                    ? `${visibleContentRecords.length} emergency-floor rows visible in localhost preview.`
+                    : generatedContentPreviewMode === "hide-emergency-floor"
+                    ? `${visibleContentRecords.length} rows with ${emergencyFloorRecords.length} emergency-floor rows hidden for diagnostic review.`
+                    : `${cmsStatusCounts.all} reader-facing rows with the normal serving hierarchy.`
                   }
                 </p>
               </div>
-              <div className="admin-new-actions" aria-label="New content">
-                <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading}>
-                  <Sparkles size={16} aria-hidden="true" />
-                  Add Sky Aspect Drafts
+              <div className="admin-new-actions" aria-label="Content admin shortcuts">
+                <button
+                  type="button"
+                  className={`admin-emergency-floor-toggle mode-${generatedContentPreviewMode}`}
+                  onClick={() => {
+                    const nextMode = nextGeneratedContentPreviewMode(generatedContentPreviewMode);
+                    setGeneratedContentPreviewMode(nextMode);
+                    writeGeneratedContentPreviewMode(nextMode);
+                  }}
+                  aria-label={`Localhost viewer preview mode: ${generatedContentPreviewModeLabel(generatedContentPreviewMode)}`}
+                  title={generatedContentPreviewModeDescription(generatedContentPreviewMode)}
+                >
+                  {generatedContentPreviewMode === "hide-emergency-floor" ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+                  <span>Viewer preview</span>
+                  <strong>{generatedContentPreviewModeLabel(generatedContentPreviewMode)}</strong>
                 </button>
-                <button type="button" onClick={() => void prepopulateContentQueue("modifier")} disabled={isLoading}>
-                  <Sparkles size={16} aria-hidden="true" />
-                  Add Modifier Drafts
+                <button type="button" onClick={() => setActivePage("reviewQueue")}>
+                  <Check size={16} aria-hidden="true" />
+                  Review Queue
                 </button>
-                <button type="button" onClick={() => void startNewContent()} disabled={isLoading}>
-                  <Plus size={16} aria-hidden="true" />
-                  New Content
+                <button type="button" onClick={() => setActivePage("articles")}>
+                  <BookOpenText size={16} aria-hidden="true" />
+                  Articles
+                </button>
+                <button type="button" onClick={() => setActivePage("vocabulary")}>
+                  <BookOpenText size={16} aria-hidden="true" />
+                  Vocabulary
+                </button>
+                <button type="button" onClick={() => setActivePage("knowledge")}>
+                  <FileText size={16} aria-hidden="true" />
+                  Fallback hooks
+                </button>
+                <button type="button" onClick={() => setActivePage("hooks")}>
+                  <KeyRound size={16} aria-hidden="true" />
+                  Surface Map
                 </button>
               </div>
             </section>
@@ -11003,6 +12770,22 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <input type="date" value={dateEnd} onChange={(event) => setDateEnd(event.target.value)} disabled={!isDateFilterActive} />
                 </label>
                 <label>
+                  <span>Content class</span>
+                  <select value={contentSourceFilter} onChange={(event) => setContentSourceFilter(event.target.value as AdminContentClassFilter)}>
+                    {contentClassFilters.map((filter) => (
+                      <option key={filter.key} value={filter.key}>{filter.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>Tier</span>
+                  <select value={contentTierFilter} onChange={(event) => setContentTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+                    {phrasebankTierFilters.map((filter) => (
+                      <option key={filter.key} value={filter.key}>{filter.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
                   <span>Category</span>
                   <select
                     value={categoryFilter}
@@ -11027,7 +12810,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <span>Block type</span>
                   <select value={contentBlockFilter} onChange={(event) => setContentBlockFilter(event.target.value as AdminContentBlockFilter)}>
                     <option value="all">All content types</option>
-                    {contentBlockEditorGroups.map((group) => (
+                    {contentListBlockFilterGroups.map((group) => (
                       <optgroup key={group} label={group}>
                         {contentBlockFilters.filter((filter) => filter.group === group).map((filter) => (
                           <option key={filter.key} value={filter.key}>{filter.label}</option>
@@ -11145,18 +12928,19 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </label>
                         </th>
                         <th scope="col">Content</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Provider</th>
-                        <th scope="col">Visibility</th>
-                        <th scope="col">Lives in</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Category</th>
+                        <th scope="col">Runtime</th>
+                        <th scope="col">Editorial</th>
+                        <th scope="col">Surface</th>
+                        <th scope="col">Kind</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Source</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {allContentRecords.map((record) => {
+                      {visibleContentRecords.map((record) => {
                         const isSelectableRecord = record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record));
                         const readerSafety = readerSafetyStateForRecord(record);
+                        const rowContentClass = contentClassForReviewRecord(record);
                         const openRecord = () => {
                           setSelectedReviewId(record.id);
                           cancelReviewEdit();
@@ -11180,7 +12964,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             }}
                             role="button"
                             tabIndex={0}
-                            title={`${record.title} · ${recordMetadataLabel(record)}`}
+                            title={`${contentRecordDisplayTitle(record)} · ${record.contentKey} · ${readerSafety.detail}`}
                           >
                             <td className="admin-content-select-cell" onClick={(event) => event.stopPropagation()}>
                               <label className="admin-content-row-check" title={isSelectableRecord ? "Select row" : "Save this calculated row before bulk status changes"} onClick={(event) => event.stopPropagation()}>
@@ -11190,44 +12974,52 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                   disabled={isLoading || !isSelectableRecord}
                                   onChange={() => toggleContentRowSelection(record)}
                                   onClick={(event) => event.stopPropagation()}
-                                  aria-label={`Select ${record.title}`}
+                                  aria-label={`Select ${contentRecordDisplayTitle(record)}`}
                                 />
                               </label>
                             </td>
                             <td className="admin-content-title-cell">
-                              <strong className="admin-content-row-title">{record.title}</strong>
-                              <small className={`admin-reader-state-pill ${readerSafety.key}`} title={readerSafety.detail}>
+                              <strong className="admin-content-row-title">{contentRecordDisplayTitle(record)}</strong>
+                              <code className="admin-content-row-key">{record.contentKey}</code>
+                              {record.title.includes("{{") && (
+                                <small className="admin-content-row-meta">{record.title}</small>
+                              )}
+                            </td>
+                            <td className="admin-content-badge-cell">
+                              <span className={`admin-reader-state-pill ${readerSafety.key}`} title={readerSafety.detail}>
                                 {readerSafety.label}
-                              </small>
+                              </span>
                             </td>
                             <td className="admin-content-badge-cell">
                               <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                            </td>
-                            <td className="admin-content-badge-cell">
-                              <span className="ui-pill">{record.provider || "unknown"}</span>
-                            </td>
-                            <td className="admin-content-badge-cell">
-                              <span className={`ui-pill admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
                             </td>
                             <td className="admin-content-location">
                               <strong>{appLocationLabel(record)}</strong>
                               <small>{record.surface === "natal" ? contentBlockTypeLabel(record) : appLocationDetail(record)}</small>
                             </td>
-                            <td className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate ? "missing" : ""}`}>
-                              {contentRecordDateLabel(record)}
+                            <td className="admin-content-row-section">{contentRecordKindLabel(record)}</td>
+                            <td className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate && !record.evergreen ? "missing" : ""}`}>
+                              {contentRecordUpdatedLabel(record)}
                             </td>
-                            <td className="admin-content-row-section">{contentCategoryLabel(record)}</td>
+                            <td className="admin-content-row-section">
+                              <span className="ui-pill admin-status">{contentClassLabel(rowContentClass)}</span>
+                              <small>{contentSourceLabel(record)}</small>
+                            </td>
                           </tr>
                         );
                       })}
                     </tbody>
                   </table>
-                  {allContentRecords.length === 0 && (
+                  {visibleContentRecords.length === 0 && (
                     <p className={`admin-empty${!isLoading && reviewLoadError ? " admin-empty-error" : ""}`}>
                       {isLoading
                         ? "Loading content records..."
                         : reviewLoadError
                         ? `Content could not load: ${reviewLoadError}`
+                        : generatedContentPreviewMode === "hide-emergency-floor" && emergencyFloorRecords.length > 0
+                        ? "Only emergency-floor rows match these filters. Turn the emergency floor back on to inspect them."
+                        : generatedContentPreviewMode === "emergency-floor"
+                        ? "No emergency-floor rows match these filters."
                         : "No content records match these filters yet."}
                     </p>
                   )}
@@ -11252,6 +13044,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         {isEditingReviewRecord ? "Edit mode" : "Read-only preview"}
                       </span>
                       <span className={`ui-pill admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
+                      {phrasebankTierLabel(phrasebankTierForRecord(selectedReviewRecord)) ? (
+                        <span className="ui-pill admin-status">{phrasebankTierLabel(phrasebankTierForRecord(selectedReviewRecord))}</span>
+                      ) : null}
+                      {isLegacyGeneratedContentRecord(selectedReviewRecord) ? (
+                        <span className="ui-pill admin-status">Legacy</span>
+                      ) : null}
                     </div>
                     <label className="admin-title-field">
                       <span>Title</span>
@@ -11272,6 +13070,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       ) : null}
                       {recordAstrologyFactsLabel(selectedReviewRecord) ? (
                         <small className="admin-astro-facts-line">{recordAstrologyFactsLabel(selectedReviewRecord)}</small>
+                      ) : null}
+                      {isPhrasebankSignoffRecord(selectedReviewRecord) ? (
+                        <small className="admin-astro-facts-line">
+                          Phrasebank tier: {phrasebankTierLabel(phrasebankTierForRecord(selectedReviewRecord)) || phrasebankTierForRecord(selectedReviewRecord)}
+                          {phrasebankReviewState(selectedReviewRecord) ? ` · Review hold: ${phrasebankReviewState(selectedReviewRecord)}` : " · No review hold"}
+                        </small>
                       ) : null}
                     </label>
                     <div className="admin-toolbar-actions">
@@ -11317,6 +13121,19 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <Check size={16} aria-hidden="true" />
                         Publish
                       </button>
+                      {isPhrasebankSignoffRecord(selectedReviewRecord) ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            void saveReviewEdit(selectedReviewRecord, "LIVE");
+                          }}
+                          disabled={!canEditSelectedReviewRecord || isLoading}
+                          title="Final sign-off publishes the DRAFT row and clears review_state through the admin API."
+                        >
+                          <Check size={16} aria-hidden="true" />
+                          Final Sign-off
+                        </button>
+                      ) : null}
                       {selectedReviewRecord.source !== "private" && (
                         <button
                           className="admin-danger-button"
@@ -11530,6 +13347,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                 category: nextCategory,
                                 surface: surfaceForContentCategory(nextCategory),
                                 ...(nextCategory === "Sky" ? { blockType: "sky_article" as AdminContentBlockFilter, mode: "article" as GeneratedContentMode } : {}),
+                                ...(nextCategory === "Natal Angles" ? { blockType: "angle" as AdminContentBlockFilter } : {}),
                                 ...(nextCategory === "Natal Chart" ? { blockType: "placement" as AdminContentBlockFilter } : {}),
                                 ...(nextCategory === "Fallback Templates" ? { blockType: "fallback_template" as AdminContentBlockFilter, mode: "feed" as GeneratedContentMode } : {})
                               });
@@ -11537,10 +13355,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           >
                             <option value="Sky">Sky</option>
                             <option value="Natal Aspects">Natal Aspects</option>
+                            <option value="Natal Angles">Natal Angles</option>
                             <option value="Natal Chart">Natal Chart</option>
                             <option value="Relationship">Relationship</option>
                             <option value="Condition Modifiers">Condition Modifiers</option>
-                            <option value="Fallback Templates">Fallback Templates</option>
+                            <option value="Fallback Templates">Fallback hooks + templates</option>
                           </select>
                         </label>
                         <label className="admin-metadata-field">

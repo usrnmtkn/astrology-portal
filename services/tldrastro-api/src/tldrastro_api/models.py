@@ -6,11 +6,6 @@ from pydantic import BaseModel, Field
 
 class HouseSystem(str, Enum):
     whole_sign = "whole_sign"
-    placidus = "placidus"
-    koch = "koch"
-    equal = "equal"
-    porphyry = "porphyry"
-    regiomontanus = "regiomontanus"
 
 
 class Zodiac(str, Enum):

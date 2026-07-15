@@ -1,0 +1,307 @@
+{
+  "_meta": {
+    "title": "Collective Sky — compact cards (sky.collective.card)",
+    "contract": "sky.collective.card.v1",
+    "count": 21,
+    "tier": "REVIEWED_CLAUSE",
+    "voice": "collective we/us/our",
+    "note": "compact claim is NOT paragraph one of the expanded article",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "sky/card/sun-cancer",
+      "event": "sun-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "The collective mood turns inward and protective for a few weeks, and we care more about who feels safe and who feels left out.",
+      "sourceIds": [
+        "cc/planet-sign/sun-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/moon-cancer",
+      "event": "moon-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "For a day or two our feelings sit close to the surface and home matters more than usual.",
+      "sourceIds": [
+        "cc/moon-sign/moon-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/mercury-retrograde-cancer",
+      "event": "mercury-retrograde-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Old conversations and unfinished feelings come back around, so it is a better stretch for repair than for launching something new.",
+      "sourceIds": [
+        "cc/retrograde/mercury-retrograde-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/venus-virgo",
+      "event": "venus-virgo",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "We show affection through usefulness now, and love looks like remembering the small thing someone needed.",
+      "sourceIds": [
+        "cc/planet-sign/venus-virgo"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/mars-gemini",
+      "event": "mars-gemini",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "We are all quicker to act and assert, ready to start before we are fully sure.",
+      "sourceIds": [
+        "cc/planet-sign/mars-gemini"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/jupiter-leo",
+      "event": "jupiter-leo",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "There is more collective appetite for boldness and play, and we are drawn to whatever feels generous and warm.",
+      "sourceIds": [
+        "cc/planet-sign/jupiter-leo"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/saturn-aries",
+      "event": "saturn-aries",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "We are being asked to get serious about acting for ourselves, and courage starts to feel like a responsibility.",
+      "sourceIds": [
+        "cc/planet-sign/saturn-aries"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/chiron-taurus",
+      "event": "chiron-taurus",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "A collective tenderness around worth and security surfaces, and the question of whether there is enough gets closer to the bone.",
+      "sourceIds": [
+        "cc/planet-sign/chiron-taurus"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/saturn-station-retrograde-aries",
+      "event": "saturn-station-retrograde-aries",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Saturn pauses and turns inward, so the pressure we have been pushing against asks to be re-examined instead of forced.",
+      "sourceIds": [
+        "cc/station/saturn-station-retrograde-aries"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/mercury-station-direct-cancer",
+      "event": "mercury-station-direct-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Mercury turns forward again, so the conversations and decisions that stalled start moving, though not all at once.",
+      "sourceIds": [
+        "cc/station/mercury-station-direct-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/sun-conjunct-mercury-cancer",
+      "event": "sun-conjunct-mercury-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Our attention and our words point the same way today, which makes it easier to say plainly what we actually mean.",
+      "sourceIds": [
+        "cc/aspect/sun-conjunct-mercury-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/mars-square-saturn",
+      "event": "mars-square-saturn",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Drive and restraint pull against each other for a couple of days, and pushing harder tends to hit more resistance.",
+      "sourceIds": [
+        "cc/aspect/mars-square-saturn"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/venus-trine-jupiter",
+      "event": "venus-trine-jupiter",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Warmth and generosity come easily for a day or two, which makes it a good time to give and receive with less guarding.",
+      "sourceIds": [
+        "cc/aspect/venus-trine-jupiter"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/uranus-gemini",
+      "event": "uranus-gemini",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "The way we communicate gets more restless and experimental, and the old channels stop being able to hold it all.",
+      "sourceIds": [
+        "cc/planet-sign/uranus-gemini"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/jupiter-cancer",
+      "event": "jupiter-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "The collective grows more protective and home-minded, and questions of care and belonging get bigger than the private sphere.",
+      "sourceIds": [
+        "cc/planet-sign/jupiter-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/libra-season",
+      "event": "libra-season",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "The collective mood tips from fixing and perfecting toward balancing and relating, and fairness starts to matter more than being right.",
+      "sourceIds": [
+        "cc/ingress/libra-season"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/mars-enters-cancer",
+      "event": "mars-enters-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Drive shifts gears as Mars leaves restless Gemini for Cancer, trading quick talk and scattered starts for something more protective and personal.",
+      "sourceIds": [
+        "cc/ingress/mars-enters-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/new-moon-cancer",
+      "event": "new-moon-cancer",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "A fresh start opens around home and belonging, the kind you commit to before there is anything to show for it.",
+      "sourceIds": [
+        "cc/lunation/new-moon-cancer"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/full-moon-capricorn",
+      "event": "full-moon-capricorn",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "Something we have been building comes to a head in public view, and what is finished asks to be acknowledged and released.",
+      "sourceIds": [
+        "cc/lunation/full-moon-capricorn"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/solar-eclipse-aries",
+      "event": "solar-eclipse-aries",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "A charged fresh start arrives around independence and identity, the kind of turning point that tends to move faster than we planned.",
+      "sourceIds": [
+        "cc/lunation/solar-eclipse-aries"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    },
+    {
+      "id": "sky/card/lunar-eclipse-libra",
+      "event": "lunar-eclipse-libra",
+      "surface": "sky.collective.card",
+      "templateId": "sky.collective.card.v1",
+      "compactClaim": "A relationship or balance we have been holding reaches a sudden head, and something we have outgrown is ready to be released.",
+      "sourceIds": [
+        "cc/lunation/lunar-eclipse-libra"
+      ],
+      "readerAuthority": "reviewed-exact",
+      "status": "REVIEWED_CLAUSE",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1"
+    }
+  ]
+}

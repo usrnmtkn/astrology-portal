@@ -1589,14 +1589,12 @@ a.tx-card.has-article:hover .tx-more {
   margin: 0;
 }
 
-.lunar-selected-card__archetype,
 .lunar-selected-card__check-in {
   display: grid;
   gap: 8px;
   margin-top: 6px;
 }
 
-.lunar-selected-card__archetype > span,
 .lunar-selected-card__check-in > span {
   color: var(--muted);
   font-family: var(--font-label);
@@ -1677,6 +1675,25 @@ a.tx-card.has-article:hover .tx-more {
   color: var(--ink);
 }
 
+.lunar-selected-card__arc-milestone-groups {
+  display: grid;
+  gap: 14px;
+}
+
+.lunar-selected-card__arc-milestone-groups section {
+  display: grid;
+  gap: 8px;
+}
+
+.lunar-selected-card__arc-milestone-groups section > span {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .lunar-selected-card__arc li .lunar-moon-disc {
   width: 18px;
   height: 18px;
@@ -1706,19 +1723,17 @@ a.tx-card.has-article:hover .tx-more {
   white-space: nowrap;
 }
 
-.lunar-selected-card__season-story {
-  margin: 0;
-  color: var(--ink-2);
-  font-family: var(--font-display);
-  font-size: 14.5px;
-  line-height: 1.55;
-}
-
+.lunar-selected-card__season-phase,
 .lunar-selected-card__arc-phase-list {
   display: grid;
   gap: 10px;
 }
 
+.lunar-selected-card__season-phase {
+  padding-bottom: 4px;
+}
+
+.lunar-selected-card__season-phase > span,
 .lunar-selected-card__arc-phase-list > span {
   color: var(--muted);
   font-family: var(--font-label);
@@ -1726,6 +1741,38 @@ a.tx-card.has-article:hover .tx-more {
   font-weight: var(--weight-bold);
   letter-spacing: 0.14em;
   line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__season-phase strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+}
+
+.lunar-selected-card__season-phase p {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.lunar-selected-card__season-prompt {
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 74%, transparent);
+}
+
+.lunar-selected-card__season-prompt span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -1763,6 +1810,16 @@ a.tx-card.has-article:hover .tx-more {
   white-space: normal;
 }
 
+.lunar-selected-card__arc-phase-list li small span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+  line-height: 1.25;
+}
+
 .lunar-selected-card__arc-phase-list li.is-current strong,
 .lunar-selected-card__arc-phase-list li.is-current small {
   color: var(--ink);
@@ -1773,27 +1830,15 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-selected-card__arc-phase-list li.is-current {
-  padding: 10px 0;
+  padding: 8px 0;
   border-top-color: color-mix(in srgb, var(--lunation) 35%, var(--line));
   border-bottom: 1px solid color-mix(in srgb, var(--lunation) 35%, var(--line));
 }
 
-.lunar-selected-card__arc-all-phases {
-  display: grid;
-  gap: 8px;
-}
-
-.lunar-selected-card__arc-all-phases summary {
-  cursor: pointer;
-  color: var(--muted);
-  font-family: var(--font-label);
+.lunar-selected-card__arc-phase-list li.is-current strong {
   font-size: 12px;
-  font-weight: var(--weight-semibold);
-  line-height: 1.35;
-}
-
-.lunar-selected-card__arc-all-phases[open] summary {
-  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .lunar-selected-card__daily-events {

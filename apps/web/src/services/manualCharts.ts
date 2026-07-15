@@ -1,5 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
+import { normalizeRelationshipContextKey } from "./relationshipContext";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -77,7 +78,7 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
     firstName: row.first_name,
     lastName: row.last_name,
     pronouns: normalizePronounChoice(row.pronouns),
-    relationshipType: chartType === "event" ? null : row.relationship_type,
+    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(row.relationship_type),
     birthDate: row.birth_date,
     birthTime: row.birth_time,
     birthTimeUnknown: row.birth_time_unknown,
@@ -102,7 +103,7 @@ function inputToRow(userId: string, input: ManualChartInput) {
     first_name: input.firstName ?? null,
     last_name: input.lastName ?? null,
     pronouns: normalizePronounChoice(input.pronouns),
-    relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend",
+    relationship_type: input.chartType === "event" ? "event" : normalizeRelationshipContextKey(input.relationshipType),
     birth_date: input.birthDate,
     birth_time: input.birthTimeUnknown ? null : input.birthTime,
     birth_time_unknown: input.birthTimeUnknown,
@@ -122,7 +123,7 @@ function manualChartToInput(chart: ManualChart): ManualChartInput {
     firstName: chart.firstName ?? null,
     lastName: chart.lastName ?? null,
     pronouns: normalizePronounChoice(chart.pronouns),
-    relationshipType: chart.chartType === "event" ? null : chart.relationshipType ?? "friend",
+    relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
     birthDate: chart.birthDate,
     birthTime: chart.birthTimeUnknown ? null : chart.birthTime,
     birthTimeUnknown: chart.birthTimeUnknown,
@@ -156,7 +157,7 @@ function readLocalManualCharts(userId: string): ManualChart[] {
             ...chart,
             chartType,
             pronouns: normalizePronounChoice(chart.pronouns),
-            relationshipType: chartType === "event" ? null : chart.relationshipType ?? "friend"
+            relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType)
           };
         })
       : [];
@@ -183,8 +184,11 @@ function clearLocalManualCharts(userId: string) {
 
 function createLocalManualChart(userId: string, input: ManualChartInput): ManualChart {
   const now = new Date().toISOString();
+  const chartType = input.chartType ?? "person";
   const nextChart: ManualChart = {
     ...input,
+    chartType,
+    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType),
     pronouns: normalizePronounChoice(input.pronouns ?? defaultPronounChoice),
     id: `manual-${Date.now()}`,
     ownerUserId: userId,
@@ -201,9 +205,15 @@ function createLocalManualChart(userId: string, input: ManualChartInput): Manual
 function updateLocalManualChart(userId: string, chartId: string, input: ManualChartInput): ManualChart {
   const charts = readLocalManualCharts(userId);
   const updatedAt = new Date().toISOString();
+  const chartType = input.chartType ?? "person";
+  const normalizedInput = {
+    ...input,
+    chartType,
+    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
+  };
   const nextCharts = charts.map((chart) => (
     chart.id === chartId
-      ? { ...chart, ...input, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: userId, updatedAt }
+      ? { ...chart, ...normalizedInput, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: userId, updatedAt }
       : chart
   )).sort((first, second) => first.displayName.localeCompare(second.displayName));
   const nextChart = nextCharts.find((chart) => chart.id === chartId);
@@ -293,7 +303,7 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
       owner_user_id: userId,
       manual_chart_id: chart.id,
       status: "active",
-      relationship_type: chart.chartType === "event" ? "event" : chart.relationshipType || "friend",
+      relationship_type: chart.chartType === "event" ? "event" : normalizeRelationshipContextKey(chart.relationshipType),
       created_from: "manual_chart"
     });
 
@@ -408,7 +418,7 @@ export async function updateManualChart(userId: string, chartId: string, input: 
 
   const { error: connectionError } = await client
     .from("connections")
-    .update({ relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend" })
+    .update({ relationship_type: input.chartType === "event" ? "event" : normalizeRelationshipContextKey(input.relationshipType) })
     .eq("owner_user_id", userId)
     .eq("manual_chart_id", chartId);
 

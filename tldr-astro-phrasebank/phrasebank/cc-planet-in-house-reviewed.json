@@ -1,0 +1,2882 @@
+{
+  "_meta": {
+    "title": "Reviewed planet-in-house (natal house layer + Home planetary horoscope)",
+    "count": 120,
+    "bodies": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto"
+    ],
+    "serves": {
+      "me.natal_placement": "house_integration (composed on the sign layer)",
+      "home.planetary_horoscope": "home_scene (Marie horoscope voice, personalized by rising-sign house)"
+    },
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/planet-in-house/sun-in-1st-house",
+      "body": "sun",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Your identity and vitality live right out front, in how you show up and take the lead.",
+      "home_scene": "You've been letting the room set the tone. This week, how you show up is the whole story, so lead with it.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-2nd-house",
+      "body": "sun",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your sense of self is tied to what you earn, own, and feel you're worth.",
+      "home_scene": "You've been quietly measuring yourself by your bank balance. This week a purchase or a bill makes worth and money feel like the same thing, and they're not.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-3rd-house",
+      "body": "sun",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "You shine through your voice, your ideas, and the daily back-and-forth.",
+      "home_scene": "You've been sitting on something you want to say. This week the conversation or the message wants out, so say it plainly.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-4th-house",
+      "body": "sun",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your core self is rooted in home, family, and your private base.",
+      "home_scene": "You've been pouring everything into the outside world. This week you feel most like yourself at home, away from the noise.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-5th-house",
+      "body": "sun",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "Your identity wants to create, play, romance, and be seen making something.",
+      "home_scene": "You've been playing it safe. This week the urge to make something, or to flirt, gets loud, so let yourself.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-6th-house",
+      "body": "sun",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "You find yourself through useful work, routine, and tending the body.",
+      "home_scene": "You've been running on autopilot. This week the daily grind and your body ask for attention, and small fixes matter.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-7th-house",
+      "body": "sun",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You meet yourself through partnership and the person across from you.",
+      "home_scene": "You've been going it alone. This week a close relationship holds up a mirror, and you meet yourself in how someone responds.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-8th-house",
+      "body": "sun",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "Your identity deepens through what's shared, intimate, and transformed.",
+      "home_scene": "You've been keeping things on the surface. This week something shared, trusted, or hidden asks you to get honest.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-9th-house",
+      "body": "sun",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "Your sense of self needs the bigger view: belief, study, and horizon.",
+      "home_scene": "You've been circling a bigger question about where your life is headed. This week it gets concrete: a class, a trip, or a belief you're ready to act on.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-10th-house",
+      "body": "sun",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "You're most yourself in the open, in your work and public standing.",
+      "home_scene": "You've been under-owning your work. This week your public role and reputation are lit up, and what you're known for matters.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-11th-house",
+      "body": "sun",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "Your identity lives in the group, the network, and the future you're building.",
+      "home_scene": "You've been drifting from your people. This week friends, community, and a future plan pull focus, so show up for them.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/sun-in-12th-house",
+      "body": "sun",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your core self works quietly, behind the scenes, in the unseen and the restful.",
+      "home_scene": "You've been pushing through on empty. This week you need more solitude than usual, and the real work happens quietly.",
+      "source_keys": [
+        "cc/planet/sun",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-1st-house",
+      "body": "moon",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Your feelings show on the surface and shape how you come across.",
+      "home_scene": "You've been managing how you come across. This week your mood shows whether you mean it to or not, so let it.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-2nd-house",
+      "body": "moon",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your emotional security is tied to money, comfort, and what you own.",
+      "home_scene": "You've been tying your sense of safety to your bank balance. This week feeling secure and feeling solvent run together, so tend both.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-3rd-house",
+      "body": "moon",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "You feel through talking, and your moods move with your daily conversations.",
+      "home_scene": "You've been keeping a feeling to yourself. This week a conversation stirs it up, so say the tender thing plainly.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-4th-house",
+      "body": "moon",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your emotional core lives at home, in family and the need to belong.",
+      "home_scene": "You've been away from home too much. This week you need to go home, in whatever form that takes, and be soft there.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-5th-house",
+      "body": "moon",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You need creative expression and affection to feel emotionally fed.",
+      "home_scene": "You've been all business. This week your heart wants play and warmth, so make or love something.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-6th-house",
+      "body": "moon",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "You settle emotionally when the routine works and the body's cared for.",
+      "home_scene": "You've been ignoring the small stuff. This week a bit of order and self-care steadies your whole mood.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-7th-house",
+      "body": "moon",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "Your feelings center on the person across from you and being met.",
+      "home_scene": "You've been waiting to be noticed. This week you're looking to a close other for comfort, so ask for it directly.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some rooms require so much social calculation that you forget what you actually think. You monitor the tone, flatter the right person, laugh at the right moment, and leave exhausted from saying almost nothing. Spend less time where honesty carries a penalty.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-8th-house",
+      "body": "moon",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "Your emotional life runs deep, private, and all-in on trust.",
+      "home_scene": "You've been holding a heavy feeling down. This week it surfaces, so let it move through you instead of gripping it.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-9th-house",
+      "body": "moon",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You feel best with room, hope, and something bigger to reach for.",
+      "home_scene": "You've been feeling boxed in. This week your mood wants room and meaning, so give it some horizon.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-10th-house",
+      "body": "moon",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your feelings are tied to your standing and how you're seen publicly.",
+      "home_scene": "You've been taking work personally. This week how your efforts land hits your mood, so don't read it as a verdict on you.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-11th-house",
+      "body": "moon",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You feel held by your people and your sense of a shared future.",
+      "home_scene": "You've been isolating. This week time with your people feeds you, so lean toward the group.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/moon-in-12th-house",
+      "body": "moon",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your emotional life is quiet and inward, needing rest and retreat.",
+      "home_scene": "You've been running loud. This week you need to withdraw and refill, so protect the quiet.",
+      "source_keys": [
+        "cc/planet/moon",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "It is easy to disappear into thought when the physical world feels demanding. Hours pass, meals get skipped, messages go unanswered, and the day becomes difficult to reenter. Give yourself something solid to return to: water, food, a shower, a walk, another person's voice. Come back before the distance starts feeling normal.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-1st-house",
+      "body": "mercury",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "You think out loud and lead with your mind and your words.",
+      "home_scene": "You've been holding your thoughts back. This week people meet you through what you say, so say the clear version.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some ideas become less clear the longer you stare at them. You keep rewriting the sentence, reopening the document, or trying to force a decision from a mind that has already gone tired. Leave it alone for a while. A thought can continue developing after you stop chasing it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-2nd-house",
+      "body": "mercury",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your thinking turns to money, value, and practical worth.",
+      "home_scene": "You've been avoiding the numbers. This week your mind's on the budget and what's worth it, so do the math.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some ideas become less clear the longer you stare at them. You keep rewriting the sentence, reopening the document, or trying to force a decision from a mind that has already gone tired. Leave it alone for a while. A thought can continue developing after you stop chasing it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-3rd-house",
+      "body": "mercury",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "Your mind is at home here: messages, errands, siblings, quick learning.",
+      "home_scene": "You've been meaning to reply. This week the messages and errands pile up, so keep the channel clear.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-4th-house",
+      "body": "mercury",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "You think about home and family, and old memories thread your thoughts.",
+      "home_scene": "You've been avoiding a family conversation. This week it comes up, and old memories thread into it.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-5th-house",
+      "body": "mercury",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "Your thinking is playful and creative, made to be expressed.",
+      "home_scene": "You've been overthinking something creative. This week an idea wants to become something, so say or make the fun thing.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Confidence rarely needs a long introduction. You can see it in the person who knows their material, answers the question, and does not scramble when somebody remains unimpressed. Let the work speak before you start raising your voice on its behalf.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-6th-house",
+      "body": "mercury",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "Your mind runs the details of work, health, and routine.",
+      "home_scene": "You've been putting off the admin. This week the to-do list and the fine print want handling.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A system can save time until maintaining it becomes another job. You color-code the calendar, rebuild the tracker, adjust the routine, and spend the afternoon preparing to begin. Use the structure that helps you move. Retire the parts that only make you feel temporarily in control.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-7th-house",
+      "body": "mercury",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You think by dialoguing; you sharpen ideas against a close other.",
+      "home_scene": "You've been talking around the real thing. This week a conversation with someone close clarifies it, so listen too.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some rooms require so much social calculation that you forget what you actually think. You monitor the tone, flatter the right person, laugh at the right moment, and leave exhausted from saying almost nothing. Spend less time where honesty carries a penalty.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-8th-house",
+      "body": "mercury",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "Your mind digs into what's hidden, shared, and psychologically deep.",
+      "home_scene": "You've been skimming the surface. This week you want the real story underneath, so dig honestly.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-9th-house",
+      "body": "mercury",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "Your thinking reaches for the big picture, belief, and the far view.",
+      "home_scene": "You've been stuck in the weeds. This week a bigger idea or a plan to learn or travel pulls your focus.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-10th-house",
+      "body": "mercury",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your ideas and communication shape your public work and reputation.",
+      "home_scene": "You've been under-sharing your ideas. This week what you say publicly matters, so put it in writing.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A strong opinion can harden quickly when it earns you attention. Soon you are defending something you barely believe because changing your mind would feel embarrassing. Keep enough distance from your own conclusions to notice when the facts have moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-11th-house",
+      "body": "mercury",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "Your mind runs on networks, ideas shared with the group, and the future.",
+      "home_scene": "You've been quiet in the group. This week a shared conversation or a future plan gets your gears going.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A strong opinion can harden quickly when it earns you attention. Soon you are defending something you barely believe because changing your mind would feel embarrassing. Keep enough distance from your own conclusions to notice when the facts have moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mercury-in-12th-house",
+      "body": "mercury",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your thinking works quietly and intuitively, behind the scenes.",
+      "home_scene": "You've been thinking in circles. This week the insight comes when you stop pushing, so make room for quiet.",
+      "source_keys": [
+        "cc/planet/mercury",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some ideas become less clear the longer you stare at them. You keep rewriting the sentence, reopening the document, or trying to force a decision from a mind that has already gone tired. Leave it alone for a while. A thought can continue developing after you stop chasing it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-1st-house",
+      "body": "venus",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Your charm and taste come through in how you present and meet people.",
+      "home_scene": "You've been dressing yourself down. This week you're more magnetic than usual, so let yourself be liked.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-2nd-house",
+      "body": "venus",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "You value comfort and beauty, and your worth ties to what you have.",
+      "home_scene": "You've been denying yourself the nice thing. This week pleasure and money mix, so treat yourself, within reason.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-3rd-house",
+      "body": "venus",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "You connect through words, wit, and the people close by.",
+      "home_scene": "You've been all business with the people close by. This week a warm word or a small kindness lands well.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-4th-house",
+      "body": "venus",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your love lives at home, in comfort and the people who feel like family.",
+      "home_scene": "You've been neglecting your space. This week you want it warm and your people close, so make it so.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-5th-house",
+      "body": "venus",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You love romance, play, and making beautiful things.",
+      "home_scene": "You've been too serious. This week the flirtation and the creative pleasure are the point, so enjoy them.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-6th-house",
+      "body": "venus",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "You show love through the practical: helping, tending, remembering.",
+      "home_scene": "You've been saying love in grand terms. This week it shows up in small useful acts instead.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-7th-house",
+      "body": "venus",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "Partnership and harmony are the whole point; you love the us.",
+      "home_scene": "You've been keeping the peace over your own preference. This week a close relationship wants honesty, so say what you want from it.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-8th-house",
+      "body": "venus",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "You love deeply and all-in, where trust and intimacy are shared.",
+      "home_scene": "You've been guarding your heart. This week closeness deepens, so get honest about what you actually want.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-9th-house",
+      "body": "venus",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You love adventure, honesty, and a partner who expands your world.",
+      "home_scene": "You've been settling for the familiar. This week connection wants room and adventure, so reach for it.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-10th-house",
+      "body": "venus",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your values and relationships touch your public life and work.",
+      "home_scene": "You've been hiding what you value at work. This week who and what you value shows up publicly.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-11th-house",
+      "body": "venus",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You connect through friendship, shared ideals, and the group.",
+      "home_scene": "You've been skipping your friends. This week your people and a shared cause bring warmth, so show up.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/venus-in-12th-house",
+      "body": "venus",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your love is tender, private, and a little idealized.",
+      "home_scene": "You've been idealizing someone quietly. This week a tender feeling stirs, so enjoy it with one foot on the ground.",
+      "source_keys": [
+        "cc/planet/venus",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-1st-house",
+      "body": "mars",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Your drive comes straight through you; you act first and directly.",
+      "home_scene": "You've been holding your energy in. This week it's high and up front, so aim it before you spend it.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Hesitation becomes dangerous when it keeps you halfway inside a decision. You agree and then resist, leave and then return, speak and then take it back. Decide whether the move is yours. If it is, put your full weight behind it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-2nd-house",
+      "body": "mars",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "You put your energy into earning, building, and securing what's yours.",
+      "home_scene": "You've been passive about money. This week you're driven to earn or secure something, and steady wins.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-3rd-house",
+      "body": "mars",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "Your drive goes into words, errands, and quick daily moves.",
+      "home_scene": "You've been biting your tongue. This week you're sharp and busy, so pick your words before you fire them.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-4th-house",
+      "body": "mars",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your energy turns toward home, family, and defending your base.",
+      "home_scene": "You've been simmering about the household. This week there's heat at home, so fix or move the thing instead of stewing.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-5th-house",
+      "body": "mars",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You act on desire and creative impulse; you chase what delights you.",
+      "home_scene": "You've been sitting on a bold move. This week the urge to make it, or to make a bold pass, is strong.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Confidence rarely needs a long introduction. You can see it in the person who knows their material, answers the question, and does not scramble when somebody remains unimpressed. Let the work speak before you start raising your voice on its behalf.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-6th-house",
+      "body": "mars",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "Your drive powers the work, the routine, and the body's upkeep.",
+      "home_scene": "You've been letting the routine slide. This week energy goes into getting things done, so channel it into the task.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A system can save time until maintaining it becomes another job. You color-code the calendar, rebuild the tracker, adjust the routine, and spend the afternoon preparing to begin. Use the structure that helps you move. Retire the parts that only make you feel temporarily in control.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-7th-house",
+      "body": "mars",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "Your assertion plays out through others, in partnership and open conflict.",
+      "home_scene": "You've been avoiding a conflict. This week a relationship gets charged, so have it out cleanly, not sideways.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some rooms require so much social calculation that you forget what you actually think. You monitor the tone, flatter the right person, laugh at the right moment, and leave exhausted from saying almost nothing. Spend less time where honesty carries a penalty.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-8th-house",
+      "body": "mars",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "Your drive is intense and strategic around what's shared and hidden.",
+      "home_scene": "You've been circling a power dynamic. This week it heats up, so aim for real change, not for winning.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-9th-house",
+      "body": "mars",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You chase the big goal, the trip, the belief worth fighting for.",
+      "home_scene": "You've been restless for something bigger. This week you want to bolt toward it, so point the energy true.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-10th-house",
+      "body": "mars",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your ambition drives your career and public push.",
+      "home_scene": "You've been holding back at work. This week you're driven, so push hard and pick fights with authority carefully.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Hesitation becomes dangerous when it keeps you halfway inside a decision. You agree and then resist, leave and then return, speak and then take it back. Decide whether the move is yours. If it is, put your full weight behind it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-11th-house",
+      "body": "mars",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "Your energy goes into the group, the cause, and the future you're building.",
+      "home_scene": "You've been quiet in the group. This week you're fired up about a shared goal, so put the drive to collective use.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Hesitation becomes dangerous when it keeps you halfway inside a decision. You agree and then resist, leave and then return, speak and then take it back. Decide whether the move is yours. If it is, put your full weight behind it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/mars-in-12th-house",
+      "body": "mars",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your drive works quietly, best aimed at something you believe in.",
+      "home_scene": "You've been running on empty. This week your energy is low or hidden, so rest, then act on the quiet conviction.",
+      "source_keys": [
+        "cc/planet/mars",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Hesitation becomes dangerous when it keeps you halfway inside a decision. You agree and then resist, leave and then return, speak and then take it back. Decide whether the move is yours. If it is, put your full weight behind it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-1st-house",
+      "body": "jupiter",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Growth and confidence come through simply being yourself.",
+      "home_scene": "You've been playing small. This week doors open just by showing up as you, so take the opening.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Thinking about how large the world is can make your own life feel very small. Then something happens: you catch a train, meet a stranger, take the wrong road, or see a place you never knew existed. You do not need to understand the whole journey to enter it. Go far enough to let life surprise you.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-2nd-house",
+      "body": "jupiter",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your luck and growth run through money, worth, and resources.",
+      "home_scene": "You've been undercharging yourself. This week an opening around income or worth appears, so grow it without overreaching.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A promotion, a new apartment, a better title, or another impressive achievement can give you a good week. Then the excitement wears off and you are alone with the same dissatisfaction. If every milestone leaves you immediately searching for the next one, the problem may be somewhere your résumé cannot reach.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-3rd-house",
+      "body": "jupiter",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "You expand through learning, talking, and connecting locally.",
+      "home_scene": "You've been keeping ideas to yourself. This week they multiply and want sharing, so say the idea before it's perfect.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Thinking about how large the world is can make your own life feel very small. Then something happens: you catch a train, meet a stranger, take the wrong road, or see a place you never knew existed. You do not need to understand the whole journey to enter it. Go far enough to let life surprise you.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-4th-house",
+      "body": "jupiter",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your abundance lives in home, family, and roots.",
+      "home_scene": "You've been outgrowing your space. This week home life wants to expand, so grow it in one sustainable way.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Thinking about how large the world is can make your own life feel very small. Then something happens: you catch a train, meet a stranger, take the wrong road, or see a place you never knew existed. You do not need to understand the whole journey to enter it. Go far enough to let life surprise you.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-5th-house",
+      "body": "jupiter",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You grow through creativity, romance, and play.",
+      "home_scene": "You've been holding your joy back. This week permission to be big and expressive is in the air, so take it.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Confidence rarely needs a long introduction. You can see it in the person who knows their material, answers the question, and does not scramble when somebody remains unimpressed. Let the work speak before you start raising your voice on its behalf.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-6th-house",
+      "body": "jupiter",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "Your growth comes through useful work and steady improvement.",
+      "home_scene": "You've been grinding without reward. This week an opening at work or in your routine pays if you tend it.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "A system can save time until maintaining it becomes another job. You color-code the calendar, rebuild the tracker, adjust the routine, and spend the afternoon preparing to begin. Use the structure that helps you move. Retire the parts that only make you feel temporarily in control.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-7th-house",
+      "body": "jupiter",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "Partnership expands your world; you grow through the right people.",
+      "home_scene": "You've been going it alone. This week a relationship opens doors, so invest without overpromising.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Some rooms require so much social calculation that you forget what you actually think. You monitor the tone, flatter the right person, laugh at the right moment, and leave exhausted from saying almost nothing. Spend less time where honesty carries a penalty.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-8th-house",
+      "body": "jupiter",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "You gain through what's shared and by releasing the shallow.",
+      "home_scene": "You've been guarding what's shared. This week a deep opening appears, so go in honestly.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-9th-house",
+      "body": "jupiter",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You grow by reaching: travel, study, belief, the bigger horizon.",
+      "home_scene": "You've been staying close to home. This week a bigger question or journey calls, so say yes to the growth.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "You can spend years waiting for the opportunity, person, or sudden break that will finally make movement possible. Meanwhile, the smaller exits keep appearing: one application, one phone call, one uncomfortable decision, one day of work. Take the next available step. A way out is often built while you are already moving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-10th-house",
+      "body": "jupiter",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your expansion shows up in career and public standing.",
+      "home_scene": "You've been waiting to be picked. This week a professional opening appears, so reach for it and prepare properly.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Thinking about how large the world is can make your own life feel very small. Then something happens: you catch a train, meet a stranger, take the wrong road, or see a place you never knew existed. You do not need to understand the whole journey to enter it. Go far enough to let life surprise you.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-11th-house",
+      "body": "jupiter",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You grow through community, networks, and shared vision.",
+      "home_scene": "You've been outside the circle. This week your community or a shared cause opens something up.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Every new idea arrives with a crowd insisting that it changes everything. A week later, the crowd has moved on and everyone pretends they were never impressed. You can watch the excitement without reorganizing your life around it. Let an idea survive its first round of applause before you follow it anywhere.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/jupiter-in-12th-house",
+      "body": "jupiter",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your growth is inward: faith, imagination, and quiet replenishment.",
+      "home_scene": "You've been ignoring your inner life. This week the growth is private, so trust the quiet current.",
+      "source_keys": [
+        "cc/planet/jupiter",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Thinking about how large the world is can make your own life feel very small. Then something happens: you catch a train, meet a stranger, take the wrong road, or see a place you never knew existed. You do not need to understand the whole journey to enter it. Go far enough to let life surprise you.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-1st-house",
+      "body": "saturn",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "You build discipline into your very identity and how you show up.",
+      "home_scene": "You've been half-committed to who you're being. This week it asks you to get serious, so do the real part.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-2nd-house",
+      "body": "saturn",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your work is around worth and security, built slowly.",
+      "home_scene": "You've been avoiding a money reality. This week worth or income is under weight, so build the base for real.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-3rd-house",
+      "body": "saturn",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "You bring structure to your voice, your mind, and daily commitments.",
+      "home_scene": "You've been letting your word slip. This week a message or plan needs care and follow-through.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-4th-house",
+      "body": "saturn",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Your foundation work is at home, in family and roots.",
+      "home_scene": "You've been deferring a home responsibility. This week it asks to be handled, not put off.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-5th-house",
+      "body": "saturn",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You learn to earn creative recognition and take play seriously.",
+      "home_scene": "You've been dabbling. This week a creative or romantic effort asks for real commitment.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-6th-house",
+      "body": "saturn",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "Your discipline lives in work, health, and the daily grind.",
+      "home_scene": "You've been skipping maintenance. This week the routine and your body ask for honest upkeep.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-7th-house",
+      "body": "saturn",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You build commitment and honest limits into partnership.",
+      "home_scene": "You've been vague with a partner. This week a relationship asks for a clearer agreement or limit.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-8th-house",
+      "body": "saturn",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "Your work is around trust, shared resources, and control.",
+      "home_scene": "You've been avoiding a shared reckoning. This week something owed or trusted asks for honesty.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-9th-house",
+      "body": "saturn",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You test and structure your beliefs instead of borrowing them.",
+      "home_scene": "You've been borrowing your beliefs. This week one gets tested, so do the unglamorous groundwork.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-10th-house",
+      "body": "saturn",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "You build authority and responsibility in your public life.",
+      "home_scene": "You've been carrying more than the credit. This week your career asks you to carry it well and prove it over time.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-11th-house",
+      "body": "saturn",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You bring structure to your networks and your future goals.",
+      "home_scene": "You've been loose with a goal. This week a friendship or a long-term plan asks for realism and commitment.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/saturn-in-12th-house",
+      "body": "saturn",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your discipline is inward and quiet, giving form to the unseen.",
+      "home_scene": "You've been avoiding the quiet work. This week tend the hidden thing before it grows.",
+      "source_keys": [
+        "cc/planet/saturn",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "It is easy to disappear into thought when the physical world feels demanding. Hours pass, meals get skipped, messages go unanswered, and the day becomes difficult to reenter. Give yourself something solid to return to: water, food, a shower, a walk, another person's voice. Come back before the distance starts feeling normal.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-1st-house",
+      "body": "uranus",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "You disrupt and reinvent your own identity and self-presentation.",
+      "home_scene": "You've been performing a version of yourself. This week a restless urge to change how you show up spikes, so experiment where you can undo it.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Leaving a restrictive system creates an immediate sense of freedom. Then the practical questions arrive: how you will support yourself, make decisions, handle conflict, and keep the new arrangement from recreating the old one. Build a life sturdy enough to hold the independence you wanted.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-2nd-house",
+      "body": "uranus",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "You rethink money, worth, and security in unconventional ways.",
+      "home_scene": "You've been clinging to a money habit. This week a sudden shift around income or values shakes it up.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Leaving a restrictive system creates an immediate sense of freedom. Then the practical questions arrive: how you will support yourself, make decisions, handle conflict, and keep the new arrangement from recreating the old one. Build a life sturdy enough to hold the independence you wanted.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-3rd-house",
+      "body": "uranus",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "Your mind and communications run on the unexpected.",
+      "home_scene": "You've been thinking the usual way. This week a surprising idea jolts you, so write it down.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-4th-house",
+      "body": "uranus",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "You break and remake the meaning of home and family.",
+      "home_scene": "You've been keeping home the same. This week the urge to change the setup or the family script rises.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-5th-house",
+      "body": "uranus",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You reinvent how you create, play, and express yourself.",
+      "home_scene": "You've been creating on script. This week an original impulse breaks the routine, so follow it.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-6th-house",
+      "body": "uranus",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "You overhaul work, health, and the daily machine.",
+      "home_scene": "You've been stuck in the same routine. This week a sudden change to it opens something.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-7th-house",
+      "body": "uranus",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You rewrite the terms of your relationships.",
+      "home_scene": "You've been holding a relationship in place. This week it wants more freedom or a new shape.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-8th-house",
+      "body": "uranus",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "You crack open the shared, the hidden, and the taboo.",
+      "home_scene": "You've been guarding a shared arrangement. This week a jolt around it surfaces something.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-9th-house",
+      "body": "uranus",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You disrupt your beliefs and reach for radical new views.",
+      "home_scene": "You've been sure of a belief. This week it gets questioned, and a new horizon appears.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-10th-house",
+      "body": "uranus",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "You break and rebuild your public path.",
+      "home_scene": "You've been on the expected path. This week the urge to reinvent your work gets loud.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Leaving a restrictive system creates an immediate sense of freedom. Then the practical questions arrive: how you will support yourself, make decisions, handle conflict, and keep the new arrangement from recreating the old one. Build a life sturdy enough to hold the independence you wanted.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-11th-house",
+      "body": "uranus",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You innovate through your networks and future vision.",
+      "home_scene": "You've been coasting with your circle. This week a group or a future plan takes a surprising turn.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Leaving a restrictive system creates an immediate sense of freedom. Then the practical questions arrive: how you will support yourself, make decisions, handle conflict, and keep the new arrangement from recreating the old one. Build a life sturdy enough to hold the independence you wanted.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/uranus-in-12th-house",
+      "body": "uranus",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "You awaken the unconscious and dissolve old inner limits.",
+      "home_scene": "You've been ignoring an inner nudge. This week a private breakthrough stirs, so give the restlessness quiet room.",
+      "source_keys": [
+        "cc/planet/uranus",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "Leaving a restrictive system creates an immediate sense of freedom. Then the practical questions arrive: how you will support yourself, make decisions, handle conflict, and keep the new arrangement from recreating the old one. Build a life sturdy enough to hold the independence you wanted.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-1st-house",
+      "body": "neptune",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "Your identity blurs and idealizes; you're a screen others project onto.",
+      "home_scene": "You've been unsure how you come across. This week your image gets dreamy or unclear, so ground it in one real thing.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-2nd-house",
+      "body": "neptune",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "Your relationship to money and worth gets dreamy or foggy.",
+      "home_scene": "You've been fuzzy about money. This week the numbers blur, so check them before you commit.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-3rd-house",
+      "body": "neptune",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "Your thinking gets imaginative, intuitive, and easily misled.",
+      "home_scene": "You've been hearing what you hope for. This week facts and wishes blur, so confirm before you agree.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-4th-house",
+      "body": "neptune",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "Home and family carry a dream, a longing, or a fog.",
+      "home_scene": "You've been longing for a home that isn't quite here. This week it feels tender and undefined, so keep one concrete anchor.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-5th-house",
+      "body": "neptune",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "Your creativity and romance run on inspiration and idealization.",
+      "home_scene": "You've been chasing an ideal. This week inspiration runs high, so make the real thing and stay grounded.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-6th-house",
+      "body": "neptune",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "Your work and health need compassion, and boundaries blur.",
+      "home_scene": "You've been running on fumes. This week your energy is diffuse, so rest and don't over-give.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-7th-house",
+      "body": "neptune",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You idealize partners and long for perfect union.",
+      "home_scene": "You've been seeing the best in someone. This week enjoy it, but stay clear-eyed about what's actually offered.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-8th-house",
+      "body": "neptune",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "The shared and the hidden get dreamy, inspired, or confused.",
+      "home_scene": "You've been blurred about something shared. This week wait to decide until it clears.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-9th-house",
+      "body": "neptune",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "Your beliefs turn mystical, visionary, or escapist.",
+      "home_scene": "You've been longing for meaning. This week a vision rises, inspiring but easy to get lost in.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-10th-house",
+      "body": "neptune",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "Your public path dissolves and reforms around a calling.",
+      "home_scene": "You've been foggy on your direction. This week your sense of the path dissolves, so take one grounded step.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-11th-house",
+      "body": "neptune",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "Your ideals and community carry a dream and a haze.",
+      "home_scene": "You've been chasing a shared dream. This week it inspires, so keep one foot on the ground.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/neptune-in-12th-house",
+      "body": "neptune",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "Your inner life is oceanic, spiritual, and porous.",
+      "home_scene": "You've been thin-skinned lately. This week the veil is thin, so rest, create, and protect your edges.",
+      "source_keys": [
+        "cc/planet/neptune",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "It is easy to disappear into thought when the physical world feels demanding. Hours pass, meals get skipped, messages go unanswered, and the day becomes difficult to reenter. Give yourself something solid to return to: water, food, a shower, a walk, another person's voice. Come back before the distance starts feeling normal.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-1st-house",
+      "body": "pluto",
+      "house": 1,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "self and how you meet the world",
+      "house_integration": "You transform your very self, from the identity up.",
+      "home_scene": "You've been holding a version of yourself together. This week a deep pressure to become truer builds, so let the false part go.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/1"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-2nd-house",
+      "body": "pluto",
+      "house": 2,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "money, worth, and what you value",
+      "house_integration": "You transform your relationship to money, worth, and power.",
+      "home_scene": "You've been avoiding a truth about money or power. This week the reckoning around value intensifies.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/2"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-3rd-house",
+      "body": "pluto",
+      "house": 3,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "your mind, siblings, and daily talk",
+      "house_integration": "Your mind and words carry transformative, penetrating power.",
+      "home_scene": "You've been softening what you mean. This week a conversation digs deep, so say it plainly.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/3"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-4th-house",
+      "body": "pluto",
+      "house": 4,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "home, family, and roots",
+      "house_integration": "You transform home, family, and the foundation itself.",
+      "home_scene": "You've been avoiding something in the family. This week it surfaces to be dealt with.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/4"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-5th-house",
+      "body": "pluto",
+      "house": 5,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "creativity, romance, and play",
+      "house_integration": "You transform how you create, love, and express power.",
+      "home_scene": "You've been guarding your creative fire. This week an intense pull surfaces, so aim it at real change.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/5"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-6th-house",
+      "body": "pluto",
+      "house": 6,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "work, health, and routine",
+      "house_integration": "You transform work, health, and the systems of daily life.",
+      "home_scene": "You've been pushing through your body's signals. This week a deep shift in your routine or health asks to be faced.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/6"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-7th-house",
+      "body": "pluto",
+      "house": 7,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "partnership and close others",
+      "house_integration": "You transform through relationship, power, and intimacy.",
+      "home_scene": "You've been keeping the power even. This week a relationship intensifies, so get honest about the balance in it.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/7"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-8th-house",
+      "body": "pluto",
+      "house": 8,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "shared resources, intimacy, and depth",
+      "house_integration": "You're at home in the depths: shared power, death, rebirth.",
+      "home_scene": "You've been circling something shared. This week it forces a real reckoning.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/8"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-9th-house",
+      "body": "pluto",
+      "house": 9,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "travel, study, and belief",
+      "house_integration": "You transform your beliefs and how far your mind reaches.",
+      "home_scene": "You've been sure of a worldview. This week it gets overturned and rebuilt from the ground.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/9"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-10th-house",
+      "body": "pluto",
+      "house": 10,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "career and public life",
+      "house_integration": "You transform your public role and relationship to power.",
+      "home_scene": "You've been managing your image. This week your standing or ambition goes through a real reckoning.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/10"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-11th-house",
+      "body": "pluto",
+      "house": 11,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "friends, networks, and the future",
+      "house_integration": "You transform your community and your role in the collective.",
+      "home_scene": "You've been part of a group dynamic. This week it undergoes deep change.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/11"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/planet-in-house/pluto-in-12th-house",
+      "body": "pluto",
+      "house": 12,
+      "status": "REVIEWED_CLAUSE",
+      "surfaces": [
+        "me.natal_placement",
+        "home.planetary_horoscope"
+      ],
+      "kind": "planet_in_house",
+      "house_domain": "the private, the unseen, and rest",
+      "house_integration": "You transform the unconscious and what's been buried.",
+      "home_scene": "You've been sitting on something buried. This week a quiet, private purge surfaces, so face it and release it.",
+      "source_keys": [
+        "cc/planet/pluto",
+        "cc/house/12"
+      ],
+      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "marie_advice": {
+        "text": "It is easy to disappear into thought when the physical world feels demanding. Hours pass, meals get skipped, messages go unanswered, and the day becomes difficult to reenter. Give yourself something solid to return to: water, food, a shower, a walk, another person's voice. Come back before the distance starts feeling normal.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    }
+  ]
+}

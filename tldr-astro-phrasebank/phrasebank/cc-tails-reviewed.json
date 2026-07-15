@@ -1,0 +1,1407 @@
+{
+  "_meta": {
+    "title": "Reviewed small tails: transiting-node contacts + asteroids (Ceres/Pallas/Juno/Vesta)",
+    "node_transits": 12,
+    "asteroid_cores": 4,
+    "asteroid_in_sign": 48,
+    "count": 64,
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/node-transit/north-node-conjunction-sun",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "sun",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Sun",
+      "slots": {
+        "scene": "A door opens toward who you're becoming, and your sense of purpose gets a push",
+        "action": "Say yes to the stretch that scares you a little"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-moon",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "moon",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Moon",
+      "slots": {
+        "scene": "Your emotional life gets pulled toward growth, and the right people and feelings show up to move you",
+        "action": "Let yourself be moved instead of retreating to the familiar"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-mercury",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "mercury",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Mercury",
+      "slots": {
+        "scene": "Your mind and voice get pulled toward what you're meant to learn and say",
+        "action": "Follow the conversation or the study that opens a door"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-venus",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "venus",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Venus",
+      "slots": {
+        "scene": "Love and worth get pulled toward growth, and a connection or value can move you forward",
+        "action": "Reach for the relationship or pleasure that stretches you"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-mars",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "mars",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Mars",
+      "slots": {
+        "scene": "Your drive locks onto something you're actually meant to pursue",
+        "action": "Point it at the goal that matters and go"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-ascendant",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "ascendant",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Ascendant",
+      "slots": {
+        "scene": "You're being pulled to step into a truer version of yourself in the world",
+        "action": "Show up as who you're becoming, not who you were"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/north-node-conjunction-midheaven",
+      "kind": "node_transit",
+      "node": "north",
+      "natal_point": "midheaven",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting North Node conjunct your Midheaven",
+      "slots": {
+        "scene": "Your public path gets a push toward its real direction",
+        "action": "Take the visible step toward what you're meant to build"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/south-node-conjunction-sun",
+      "kind": "node_transit",
+      "node": "south",
+      "natal_point": "sun",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting South Node conjunct your Sun",
+      "slots": {
+        "scene": "An old version of yourself resurfaces, comfortable but outgrown",
+        "action": "Notice what you're ready to stop leading with"
+      },
+      "source_keys": [
+        "cc/ref/nodes/south-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/south-node-conjunction-moon",
+      "kind": "node_transit",
+      "node": "south",
+      "natal_point": "moon",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting South Node conjunct your Moon",
+      "slots": {
+        "scene": "Old emotional patterns and familiar comforts come back around",
+        "action": "Feel them, then let the ones you've outgrown go"
+      },
+      "source_keys": [
+        "cc/ref/nodes/south-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/south-node-conjunction-venus",
+      "kind": "node_transit",
+      "node": "south",
+      "natal_point": "venus",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting South Node conjunct your Venus",
+      "slots": {
+        "scene": "An old love pattern or a familiar comfort resurfaces",
+        "action": "Enjoy what's real and release what keeps you small"
+      },
+      "source_keys": [
+        "cc/ref/nodes/south-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/south-node-conjunction-mars",
+      "kind": "node_transit",
+      "node": "south",
+      "natal_point": "mars",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting South Node conjunct your Mars",
+      "slots": {
+        "scene": "An old way of asserting yourself comes back, easy but limiting",
+        "action": "Notice where the familiar fight isn't yours anymore"
+      },
+      "source_keys": [
+        "cc/ref/nodes/south-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/node-transit/south-node-conjunction-ascendant",
+      "kind": "node_transit",
+      "node": "south",
+      "natal_point": "ascendant",
+      "surface": "transits.node",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Transiting South Node conjunct your Ascendant",
+      "slots": {
+        "scene": "An old self-image resurfaces, comfortable and outdated",
+        "action": "Check whether it's still who you're before you lead with it"
+      },
+      "source_keys": [
+        "cc/ref/nodes/south-node"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres",
+      "kind": "asteroid_core",
+      "asteroid": "ceres",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres",
+      "slots": {
+        "meaning": "Ceres is nurture, care, and how you give and receive nourishment, plus loss and what helps you grieve"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas",
+      "kind": "asteroid_core",
+      "asteroid": "pallas",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas",
+      "slots": {
+        "meaning": "Pallas is wisdom, strategy, and creative pattern-recognition, how you solve problems"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/juno",
+      "kind": "asteroid_core",
+      "asteroid": "juno",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno",
+      "slots": {
+        "meaning": "Juno is commitment and partnership, and what you need to feel secure in a bond"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta",
+      "kind": "asteroid_core",
+      "asteroid": "vesta",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta",
+      "slots": {
+        "meaning": "Vesta is devotion and focus, what you hold sacred and where you tend the flame"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres-in-aries",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "aries",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Aries",
+      "slots": {
+        "story": "You nurture through action and encouragement, and you feel cared for when someone champions you"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop making yourself smaller to make others comfortable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-taurus",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "taurus",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Taurus",
+      "slots": {
+        "story": "You nurture through comfort, food, and steady presence, and you feel cared for through touch and calm"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop proving your worth to people who can't even recognize their own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-gemini",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "gemini",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Gemini",
+      "slots": {
+        "story": "You nurture through words and staying in touch, and you feel cared for when someone really listens"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres-in-cancer",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "cancer",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Cancer",
+      "slots": {
+        "story": "You nurture instinctively and deeply, and you feel cared for when home feels safe"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres-in-leo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "leo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Leo",
+      "slots": {
+        "story": "You nurture with warmth and generous attention, and you feel cared for when you're celebrated"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres-in-virgo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "virgo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Virgo",
+      "slots": {
+        "story": "You nurture through practical help, and you feel cared for when someone eases your load"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Cynicism can make you feel intelligent while slowly making the world smaller. You become skilled at finding the flaw, predicting the disappointment, and explaining why enthusiasm is naive. Look up once in a while. There are still things worth being astonished by.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-libra",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "libra",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Libra",
+      "slots": {
+        "story": "You nurture through harmony and fairness, and you feel cared for when things are balanced and kind"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "No relationship, no job, no amount of success is worth abandoning yourself for.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-scorpio",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "scorpio",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Scorpio",
+      "slots": {
+        "story": "You nurture with fierce loyalty and depth, and you feel cared for when someone can hold your intensity"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Grieve the version of you who worked so hard to try make broken things work.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-sagittarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "sagittarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Sagittarius",
+      "slots": {
+        "story": "You nurture by encouraging freedom, and you feel cared for when someone gives you room"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/ceres-in-capricorn",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "capricorn",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Capricorn",
+      "slots": {
+        "story": "You nurture through reliability and providing, and you feel cared for when someone shows up consistently"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop needing to appear unshakeable when you're clearly shaking.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A serious commitment eventually reaches the part nobody applauds. The work becomes repetitive, inconvenient, and harder to explain to people who expected quick results. This is where your choice acquires weight. Keep showing up after the excitement leaves.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-aquarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "aquarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Aquarius",
+      "slots": {
+        "story": "You nurture by giving space and accepting difference, and you feel cared for when you're free to be yourself"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "The power of group work isn't speed. It's endurance.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/ceres-in-pisces",
+      "kind": "asteroid_in_sign",
+      "asteroid": "ceres",
+      "sign": "pisces",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Ceres in Pisces",
+      "slots": {
+        "story": "You nurture with boundless compassion, and you feel cared for when someone receives your feelings gently"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/ceres",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you're feeling drained or pulled inward, don’t fight it.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-aries",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "aries",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Aries",
+      "slots": {
+        "story": "You solve problems by acting fast and cutting straight to it"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop making yourself smaller to make others comfortable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-taurus",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "taurus",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Taurus",
+      "slots": {
+        "story": "You solve problems patiently and practically, building the durable answer"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop proving your worth to people who can't even recognize their own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-gemini",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "gemini",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Gemini",
+      "slots": {
+        "story": "You solve problems by gathering information and connecting the dots"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas-in-cancer",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "cancer",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Cancer",
+      "slots": {
+        "story": "You solve problems intuitively, reading the emotional pattern under the surface"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas-in-leo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "leo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Leo",
+      "slots": {
+        "story": "You solve problems creatively and boldly, with a flair for the big move"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas-in-virgo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "virgo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Virgo",
+      "slots": {
+        "story": "You solve problems through analysis and careful, precise refinement"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-libra",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "libra",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Libra",
+      "slots": {
+        "story": "You solve problems by weighing all sides and finding the fair balance"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop saying yes before you've thought it through.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-scorpio",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "scorpio",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Scorpio",
+      "slots": {
+        "story": "You solve problems by investigating what's hidden and going to the root"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas-in-sagittarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "sagittarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Sagittarius",
+      "slots": {
+        "story": "You solve problems with the big-picture view and a leap of faith"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/pallas-in-capricorn",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "capricorn",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Capricorn",
+      "slots": {
+        "story": "You solve problems strategically and structurally, playing the long game"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop needing to appear unshakeable when you're clearly shaking.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-aquarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "aquarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Aquarius",
+      "slots": {
+        "story": "You solve problems with unconventional, systems-level thinking"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/pallas-in-pisces",
+      "kind": "asteroid_in_sign",
+      "asteroid": "pallas",
+      "sign": "pisces",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Pallas in Pisces",
+      "slots": {
+        "story": "You solve problems intuitively and imaginatively, sensing the whole"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/pallas",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you're feeling drained or pulled inward, don’t fight it.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-aries",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "aries",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Aries",
+      "slots": {
+        "story": "In commitment you need independence and a partner who keeps it exciting"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop making yourself smaller to make others comfortable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-taurus",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "taurus",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Taurus",
+      "slots": {
+        "story": "In commitment you need stability, loyalty, and steady closeness"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop proving your worth to people who can't even recognize their own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-gemini",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "gemini",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Gemini",
+      "slots": {
+        "story": "In commitment you need mental connection and a partner who keeps talking"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/juno-in-cancer",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "cancer",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Cancer",
+      "slots": {
+        "story": "In commitment you need emotional safety and a shared sense of home"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/juno-in-leo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "leo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Leo",
+      "slots": {
+        "story": "In commitment you need warmth, loyalty, and to feel special to them"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/juno-in-virgo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "virgo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Virgo",
+      "slots": {
+        "story": "In commitment you need reliability and a partner who shows love through effort"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-libra",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "libra",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Libra",
+      "slots": {
+        "story": "In commitment you need fairness, harmony, and true partnership"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop saying yes before you've thought it through.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-scorpio",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "scorpio",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Scorpio",
+      "slots": {
+        "story": "In commitment you need depth, total honesty, and unbreakable trust"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Grieve the version of you who worked so hard to try make broken things work.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-sagittarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "sagittarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Sagittarius",
+      "slots": {
+        "story": "In commitment you need freedom, honesty, and room to grow together"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/juno-in-capricorn",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "capricorn",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Capricorn",
+      "slots": {
+        "story": "In commitment you need loyalty, structure, and a partner who's building too"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop needing to appear unshakeable when you're clearly shaking.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-aquarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "aquarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Aquarius",
+      "slots": {
+        "story": "In commitment you need friendship, space, and acceptance of your independence"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "The power of group work isn't speed. It's endurance.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/juno-in-pisces",
+      "kind": "asteroid_in_sign",
+      "asteroid": "juno",
+      "sign": "pisces",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Juno in Pisces",
+      "slots": {
+        "story": "In commitment you need tenderness, devotion, and a spiritual connection"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/juno",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you're feeling drained or pulled inward, don’t fight it.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-aries",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "aries",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Aries",
+      "slots": {
+        "story": "You devote yourself with fierce, pioneering focus to what you start"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop making yourself smaller to make others comfortable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-taurus",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "taurus",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Taurus",
+      "slots": {
+        "story": "You devote yourself steadily to what you build and value"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop proving your worth to people who can't even recognize their own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-gemini",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "gemini",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Gemini",
+      "slots": {
+        "story": "You devote yourself to learning, ideas, and the work of communication"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-cancer",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "cancer",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Cancer",
+      "slots": {
+        "story": "You devote yourself to home, family, and caring for your people"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-leo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "leo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Leo",
+      "slots": {
+        "story": "You devote yourself to creative expression and what you love wholeheartedly"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-virgo",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "virgo",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Virgo",
+      "slots": {
+        "story": "You devote yourself to craft, service, and getting the work right"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-libra",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "libra",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Libra",
+      "slots": {
+        "story": "You devote yourself to relationship, beauty, and keeping the peace sacred"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "Stop saying yes before you've thought it through.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-scorpio",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "scorpio",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Scorpio",
+      "slots": {
+        "story": "You devote yourself intensely to what you're committed to, all or nothing"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-sagittarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "sagittarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Sagittarius",
+      "slots": {
+        "story": "You devote yourself to a belief, a quest, or the search for meaning"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-capricorn",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "capricorn",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Capricorn",
+      "slots": {
+        "story": "You devote yourself to your work, your goals, and your responsibilities"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/asteroid/vesta-in-aquarius",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "aquarius",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Aquarius",
+      "slots": {
+        "story": "You devote yourself to a cause, a community, or a vision of the future"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/asteroid/vesta-in-pisces",
+      "kind": "asteroid_in_sign",
+      "asteroid": "vesta",
+      "sign": "pisces",
+      "surface": "me.natal_placement",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Vesta in Pisces",
+      "slots": {
+        "story": "You devote yourself to the spiritual, the creative, and the compassionate"
+      },
+      "source_keys": [
+        "cc/ref/asteroid/vesta",
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "pull_quote": {
+        "text": "If you're feeling drained or pulled inward, don’t fight it.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    }
+  ]
+}

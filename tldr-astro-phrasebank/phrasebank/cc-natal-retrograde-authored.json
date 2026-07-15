@@ -1,0 +1,184 @@
+{
+  "_meta": {
+    "title": "Natal retrograde by planet (authored, REVIEWED)",
+    "count": 9,
+    "personal_sections": 6,
+    "outer_modifiers": 3,
+    "tier": "REVIEWED_CLAUSE",
+    "surface": "me.natal_retrograde",
+    "outer_policy": "Uranus/Neptune/Pluto are low-weight modifiers: Rx marker by default, one restrained sentence only when stationary, angular, closely aspecting a personal planet / chart ruler / angle, or part of a major configuration.",
+    "caveat": "each outer planet is retrograde for roughly half the year",
+    "omitted": "Sun and Moon never retrograde",
+    "note": "Serve after sign-off."
+  },
+  "reviewed": [
+    {
+      "id": "cc/natal-retrograde/mercury",
+      "kind": "natal_retrograde",
+      "body": "mercury",
+      "heading": "Mercury was retrograde when you were born.",
+      "text": "You think in spirals, not straight lines. With natal Mercury retrograde, understanding arrives on its own schedule: you turn things over, revisit them, and often grasp them more deeply than people who answered faster. Your mind does its best work in review and reflection. Trust that your slower, more inward way of knowing is a real intelligence, worth every extra beat it takes.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/venus",
+      "kind": "natal_retrograde",
+      "body": "venus",
+      "heading": "Venus was retrograde when you were born.",
+      "text": "Love and worth are things you come to from the inside out. With natal Venus retrograde, affection and self-value don't always announce themselves easily; you tend to revisit old bonds and reexamine what you truly want before you can move forward. What you build this way is rare: a sense of worth that no one handed you. The tender work is letting what you feel inside reach the people it's meant for.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/mars",
+      "kind": "natal_retrograde",
+      "body": "mars",
+      "heading": "Mars was retrograde when you were born.",
+      "text": "Your drive runs on an inner current. With natal Mars retrograde, desire and initiative gather quietly before they show; you rehearse, you strategize, and you often act with more precision than people who charge straight ahead. Directness can feel awkward, so your strength tends to work underground. Give it a clean, deliberate outlet, and that patience becomes a real advantage instead of a slow burn.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/jupiter",
+      "kind": "natal_retrograde",
+      "body": "jupiter",
+      "heading": "Jupiter was retrograde when you were born.",
+      "text": "Growth, for you, has never run in a straight line. With natal Jupiter retrograde, the path to meaning loops and doubles back, and that is exactly how it is meant to go for you. Your faith and your luck get built slowly from the inside, through reflection, experiment, and the freedom to fail and begin again. What you arrive at is a wisdom you actually own, and optimism tends to find its way back to you.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/saturn",
+      "kind": "natal_retrograde",
+      "body": "saturn",
+      "heading": "Saturn was retrograde when you were born.",
+      "text": "You answer to an inner authority. With natal Saturn retrograde, the standards you hold yourself to live inside you, often stricter than anything the world would impose, along with old doubts about whether you measure up. Structure and self-trust get built slowly, brick by brick, from within. As you ease the inner critic, its voice becomes guidance instead of punishment, and the authority you quietly earned becomes yours to claim.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/chiron",
+      "kind": "natal_retrograde",
+      "body": "chiron",
+      "heading": "Chiron was retrograde when you were born.",
+      "text": "You heal from the inside out. With natal Chiron retrograde, the tender place you carry gets tended privately, often for years, before you ever speak it aloud, and you may become a quiet healer for others while your own sore spot stays hidden. The medicine grows within. The tender work is letting your own healing be as visible and cared for as the help you give so freely to everyone else.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "section_placement": "warm section on the planet's placement page (me.natal_placement)",
+      "register": "natal second-person, growth-affirming",
+      "doctrine_source": "A Spiritual Approach to Astrology + standard (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/uranus",
+      "kind": "natal_retrograde_outer",
+      "body": "uranus",
+      "weight": "low-weight natal modifier",
+      "default": "show the Rx marker only; do not generate a defining retrograde trait",
+      "restrained_sentence": "With Uranus retrograde, you may question rules privately for a long time before anyone sees you change course.",
+      "emit_when": [
+        "stationary near the birth moment",
+        "angular: conjunct the Ascendant, Midheaven, Descendant, or IC",
+        "close aspect to the Sun, Moon, Mercury, Venus, or Mars",
+        "close aspect to the chart ruler",
+        "part of a major natal configuration"
+      ],
+      "context_order": "name the outer planet's house, then any close aspect, then (only if prominent) this one restrained retrograde sentence",
+      "caveat": "each outer planet is retrograde for roughly half the year",
+      "avoid_claims": [
+        "rebellious",
+        "psychic",
+        "secretive",
+        "traumatized",
+        "powerful",
+        "spiritually advanced"
+      ],
+      "soft_language": "use 'may' and 'can'",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "generational": true,
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/neptune",
+      "kind": "natal_retrograde_outer",
+      "body": "neptune",
+      "weight": "low-weight natal modifier",
+      "default": "show the Rx marker only; do not generate a defining retrograde trait",
+      "restrained_sentence": "With Neptune retrograde, you may sense that something does not add up before you can explain what feels wrong, and it can take time to admit when a hope, promise, or belief no longer matches what is happening.",
+      "emit_when": [
+        "stationary near the birth moment",
+        "angular: conjunct the Ascendant, Midheaven, Descendant, or IC",
+        "close aspect to the Sun, Moon, Mercury, Venus, or Mars",
+        "close aspect to the chart ruler",
+        "part of a major natal configuration"
+      ],
+      "context_order": "name the outer planet's house, then any close aspect, then (only if prominent) this one restrained retrograde sentence",
+      "caveat": "each outer planet is retrograde for roughly half the year",
+      "avoid_claims": [
+        "rebellious",
+        "psychic",
+        "secretive",
+        "traumatized",
+        "powerful",
+        "spiritually advanced"
+      ],
+      "soft_language": "use 'may' and 'can'",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "generational": true,
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/natal-retrograde/pluto",
+      "kind": "natal_retrograde_outer",
+      "body": "pluto",
+      "weight": "low-weight natal modifier",
+      "default": "show the Rx marker only; do not generate a defining retrograde trait",
+      "restrained_sentence": "With Pluto retrograde, you may notice pressure, resentment, or control long before you name it, and you can live with the tension quietly until the arrangement has to change.",
+      "emit_when": [
+        "stationary near the birth moment",
+        "angular: conjunct the Ascendant, Midheaven, Descendant, or IC",
+        "close aspect to the Sun, Moon, Mercury, Venus, or Mars",
+        "close aspect to the chart ruler",
+        "part of a major natal configuration"
+      ],
+      "context_order": "name the outer planet's house, then any close aspect, then (only if prominent) this one restrained retrograde sentence",
+      "caveat": "each outer planet is retrograde for roughly half the year",
+      "avoid_claims": [
+        "rebellious",
+        "psychic",
+        "secretive",
+        "traumatized",
+        "powerful",
+        "spiritually advanced"
+      ],
+      "soft_language": "use 'may' and 'can'",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.natal_retrograde",
+      "generational": true,
+      "review_note": "authored; needs Marie/editorial sign-off"
+    }
+  ]
+}

@@ -1,0 +1,489 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Natal angle-in-sign readings (Asc/MC/Dsc/IC x 12). Reader field: 'reading'. Fills the last uncovered surface so the angle page is a full reading, not a template.",
+  "count": 48
+ },
+ "reviewed": [
+  {
+   "id": "cc/angle/ascendant-in-aries",
+   "angle": "ascendant",
+   "sign": "aries",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across direct and quick to start, and people register your drive before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-taurus",
+   "angle": "ascendant",
+   "sign": "taurus",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across steady, grounded, and unhurried, and people register your calm before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-gemini",
+   "angle": "ascendant",
+   "sign": "gemini",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across curious, verbal, and quick, and people register your wit before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-cancer",
+   "angle": "ascendant",
+   "sign": "cancer",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across warm but a little guarded, and people register your care before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-leo",
+   "angle": "ascendant",
+   "sign": "leo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across bright, warm, and expressive, and people register your warmth before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-virgo",
+   "angle": "ascendant",
+   "sign": "virgo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across precise, modest, and observant, and people register your competence before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-libra",
+   "angle": "ascendant",
+   "sign": "libra",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across gracious, even, and relational, and people register your ease before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-scorpio",
+   "angle": "ascendant",
+   "sign": "scorpio",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across intense, private, and all-in, and people register your depth before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-sagittarius",
+   "angle": "ascendant",
+   "sign": "sagittarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across open, restless, and frank, and people register your optimism before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-capricorn",
+   "angle": "ascendant",
+   "sign": "capricorn",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across composed, serious, and self-contained, and people register your authority before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-aquarius",
+   "angle": "ascendant",
+   "sign": "aquarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across cool, original, and a little apart, and people register your originality before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ascendant-in-pisces",
+   "angle": "ascendant",
+   "sign": "pisces",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You come across soft, dreamy, and porous, and people register your gentleness before you say a word. This is the doorway to you, the first impression that colors everything after it, not the whole room behind it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-aries",
+   "angle": "midheaven",
+   "sign": "aries",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as direct and quick to start, and your drive is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-taurus",
+   "angle": "midheaven",
+   "sign": "taurus",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as steady, grounded, and unhurried, and your calm is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-gemini",
+   "angle": "midheaven",
+   "sign": "gemini",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as curious, verbal, and quick, and your wit is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-cancer",
+   "angle": "midheaven",
+   "sign": "cancer",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as warm but a little guarded, and your care is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-leo",
+   "angle": "midheaven",
+   "sign": "leo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as bright, warm, and expressive, and your warmth is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-virgo",
+   "angle": "midheaven",
+   "sign": "virgo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as precise, modest, and observant, and your competence is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-libra",
+   "angle": "midheaven",
+   "sign": "libra",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as gracious, even, and relational, and your ease is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-scorpio",
+   "angle": "midheaven",
+   "sign": "scorpio",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as intense, private, and all-in, and your depth is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-sagittarius",
+   "angle": "midheaven",
+   "sign": "sagittarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as open, restless, and frank, and your optimism is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-capricorn",
+   "angle": "midheaven",
+   "sign": "capricorn",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as composed, serious, and self-contained, and your authority is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-aquarius",
+   "angle": "midheaven",
+   "sign": "aquarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as cool, original, and a little apart, and your originality is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/midheaven-in-pisces",
+   "angle": "midheaven",
+   "sign": "pisces",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "In public you read as soft, dreamy, and porous, and your gentleness is what your reputation gets built on. Where you are headed wants work and a role that let that quality show, rather than something that keeps it hidden.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-aries",
+   "angle": "descendant",
+   "sign": "aries",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are direct and quick to start, who carry the drive you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-taurus",
+   "angle": "descendant",
+   "sign": "taurus",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are steady, grounded, and unhurried, who carry the calm you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-gemini",
+   "angle": "descendant",
+   "sign": "gemini",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are curious, verbal, and quick, who carry the wit you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-cancer",
+   "angle": "descendant",
+   "sign": "cancer",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are warm but a little guarded, who carry the care you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-leo",
+   "angle": "descendant",
+   "sign": "leo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are bright, warm, and expressive, who carry the warmth you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-virgo",
+   "angle": "descendant",
+   "sign": "virgo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are precise, modest, and observant, who carry the competence you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-libra",
+   "angle": "descendant",
+   "sign": "libra",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are gracious, even, and relational, who carry the ease you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-scorpio",
+   "angle": "descendant",
+   "sign": "scorpio",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are intense, private, and all-in, who carry the depth you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-sagittarius",
+   "angle": "descendant",
+   "sign": "sagittarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are open, restless, and frank, who carry the optimism you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-capricorn",
+   "angle": "descendant",
+   "sign": "capricorn",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are composed, serious, and self-contained, who carry the authority you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-aquarius",
+   "angle": "descendant",
+   "sign": "aquarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are cool, original, and a little apart, who carry the originality you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/descendant-in-pisces",
+   "angle": "descendant",
+   "sign": "pisces",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "You are drawn to people who are soft, dreamy, and porous, who carry the gentleness you do not always lead with yourself. Close partnership is where you meet that missing piece in someone else and learn to own more of it.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-aries",
+   "angle": "ic",
+   "sign": "aries",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is direct and quick to start, and home works when there is room for drive and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-taurus",
+   "angle": "ic",
+   "sign": "taurus",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is steady, grounded, and unhurried, and home works when there is room for calm and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-gemini",
+   "angle": "ic",
+   "sign": "gemini",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is curious, verbal, and quick, and home works when there is room for wit and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-cancer",
+   "angle": "ic",
+   "sign": "cancer",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is warm but a little guarded, and home works when there is room for care and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-leo",
+   "angle": "ic",
+   "sign": "leo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is bright, warm, and expressive, and home works when there is room for warmth and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-virgo",
+   "angle": "ic",
+   "sign": "virgo",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is precise, modest, and observant, and home works when there is room for competence and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-libra",
+   "angle": "ic",
+   "sign": "libra",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is gracious, even, and relational, and home works when there is room for ease and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-scorpio",
+   "angle": "ic",
+   "sign": "scorpio",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is intense, private, and all-in, and home works when there is room for depth and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-sagittarius",
+   "angle": "ic",
+   "sign": "sagittarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is open, restless, and frank, and home works when there is room for optimism and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-capricorn",
+   "angle": "ic",
+   "sign": "capricorn",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is composed, serious, and self-contained, and home works when there is room for authority and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-aquarius",
+   "angle": "ic",
+   "sign": "aquarius",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is cool, original, and a little apart, and home works when there is room for originality and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  },
+  {
+   "id": "cc/angle/ic-in-pisces",
+   "angle": "ic",
+   "sign": "pisces",
+   "surface": "me.natal_angle",
+   "status": "REVIEWED_CLAUSE",
+   "reading": "Your private ground is soft, dreamy, and porous, and home works when there is room for gentleness and the version of you no one else sees. This is the root you return to, the base the rest of the chart is built on.",
+   "provenance": "angle domain + Marie sign character; authored",
+   "tone_version": "marie-calibrated-v1"
+  }
+ ]
+}

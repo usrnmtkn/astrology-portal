@@ -211,6 +211,43 @@ function adminHeaders() {
   };
 }
 
+function missingGeneratedInterpretationsColumn(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const message = "message" in payload && typeof payload.message === "string" ? payload.message : "";
+  const match = message.match(/column generated_interpretations\.([a-z_]+) does not exist/i)
+    ?? message.match(/column "([a-z_]+)" does not exist/i);
+
+  return match?.[1] ?? null;
+}
+
+async function fetchGeneratedInterpretationsRows(params: URLSearchParams, selectColumns: string[], errorLabel: string) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+      headers: adminHeaders()
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (response.ok) {
+      return (payload ?? []) as SavedContentRow[];
+    }
+
+    const missingColumn = response.status === 400 ? missingGeneratedInterpretationsColumn(payload) : null;
+
+    if (missingColumn && selectColumns.includes(missingColumn)) {
+      selectColumns.splice(selectColumns.indexOf(missingColumn), 1);
+      params.set("select", selectColumns.join(","));
+      continue;
+    }
+
+    throw new Error(`${errorLabel} failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  throw new Error(`${errorLabel} failed after retrying missing generated_interpretations columns.`);
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
@@ -481,8 +518,28 @@ function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurfa
 }
 
 async function savedContentRows(startDate?: string | null, endDate?: string | null) {
+  const selectColumns = [
+    "id",
+    "content_key",
+    "surface",
+    "mode",
+    "status",
+    "event_type",
+    "target_date",
+    "headline",
+    "summary",
+    "body",
+    "sections",
+    "block_type",
+    "facts",
+    "source_snapshot",
+    "reviewer_notes",
+    "provider",
+    "model",
+    "updated_at"
+  ];
   const params = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,provider,model,updated_at",
+    select: selectColumns.join(","),
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: "5000"
   });
@@ -495,35 +552,25 @@ async function savedContentRows(startDate?: string | null, endDate?: string | nu
     params.set("or", `(target_date.is.null,target_date.lte.${endDate})`);
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
-    headers: adminHeaders()
-  });
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(`Supabase generated content list failed with ${response.status}: ${JSON.stringify(payload)}`);
-  }
-
-  const rows = (payload ?? []) as SavedContentRow[];
+  const rows = await fetchGeneratedInterpretationsRows(params, [...selectColumns], "Supabase generated content list");
   const fallbackParams = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,provider,model,updated_at",
+    select: selectColumns.join(","),
     content_key: "like.fallback-hook/*",
     order: "content_key.asc",
     limit: "500"
   });
-  const fallbackResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${fallbackParams}`, {
-    headers: adminHeaders()
-  });
-  const fallbackPayload = await fallbackResponse.json().catch(() => null);
+  let fallbackRows: SavedContentRow[] = [];
 
-  if (!fallbackResponse.ok) {
-    console.warn(`Supabase fallback template list failed with ${fallbackResponse.status}: ${JSON.stringify(fallbackPayload)}`);
+  try {
+    fallbackRows = await fetchGeneratedInterpretationsRows(fallbackParams, [...selectColumns], "Supabase fallback template list");
+  } catch (error) {
+    console.warn(error instanceof Error ? error.message : "Supabase fallback template list failed.");
     return rows;
   }
 
   const byId = new Map(rows.map((row) => [row.id, row]));
 
-  for (const row of (fallbackPayload ?? []) as SavedContentRow[]) {
+  for (const row of fallbackRows) {
     byId.set(row.id, row);
   }
 

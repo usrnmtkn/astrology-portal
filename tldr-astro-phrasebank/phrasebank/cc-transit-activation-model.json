@@ -1,0 +1,146 @@
+{
+  "_meta": {
+    "title": "Transit-to-natal-aspect activation layer",
+    "surface": "transits.activation",
+    "requires_birth_time": "when a house or angle is involved",
+    "composed_at_render_from": [
+      "transiting body",
+      "house it is passing through",
+      "natal point aspected",
+      "aspect",
+      "orb",
+      "pass (applying/exact/separating)",
+      "exact date"
+    ],
+    "compose_order": [
+      "house = area of life (slow bodies; the background chapter)",
+      "transiting planet = the longer process",
+      "natal point = what is contacted",
+      "aspect = how the contact behaves (from the reviewed aspect-pair bank)",
+      "orb + pass = timing and intensity"
+    ],
+    "aspect_source": "cc-aspect-pair-reviewed*.json (470 reviewed readings; fast + slow bodies)",
+    "fast_planets": "aspect-only (no house background); Sun/Moon/Mercury/Venus/Mars belong here",
+    "no_tight_aspect": "the slow-body house passage stays in the background; the reading says so rather than inventing an event"
+  },
+  "worked_examples": [
+    {
+      "title": "Transiting Saturn square your natal Mars",
+      "layers": {
+        "house": 7,
+        "aspect": "saturn-square-mars",
+        "timing": {
+          "orb": 0.8,
+          "phase": "applying",
+          "exact_date": "March 3"
+        }
+      },
+      "paragraphs": [
+        "Saturn is moving through your 7th house, a longer chapter about commitment, fairness, and follow-through in your closest relationships. Within that, a specific contact is coming into focus.",
+        "Right now Saturn is square your natal Mars, which is what makes this personal. Your drive runs straight into a wall of limits, delay, or authority, and the friction is frustrating. You either push recklessly or freeze, and both cost you. The resistance marks exactly where your effort needs to get stronger. Channel the energy into disciplined, bounded action instead of a reckless push. The wall recurs until the effort is structured; each pass is a strength test.",
+        "This contact is building toward exact around March 3, and its effect is strongest right now."
+      ],
+      "requires_birth_time": true,
+      "trace": {
+        "sourceKeys": [
+          "cc/aspect-pair/saturn-conjunction-descendant",
+          "cc/planet-in-house/saturn-in-7-house",
+          "cc/house/7",
+          "cc/aspect-pair/saturn-square-mars"
+        ],
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Transiting Mars square your natal Saturn",
+      "layers": {
+        "aspect": "mars-square-saturn",
+        "timing": {
+          "orb": 0.3,
+          "phase": "exact",
+          "exact_date": "today"
+        }
+      },
+      "paragraphs": [
+        "Right now Mars is square your natal Saturn, which is what makes this personal. Your drive keeps running into a wall right now, whether it's a limit, a delay, or a wave of self-doubt. It's frustrating, and pushing harder or freezing up will only wear you out. This is a moment for the long game: break the goal into smaller, steadier steps, and let the resistance show you exactly where you need to get stronger.",
+        "This contact is exact around today, and its effect is strongest right now."
+      ],
+      "requires_birth_time": false,
+      "trace": {
+        "sourceKeys": [
+          "cc/aspect-pair/mars-square-saturn"
+        ],
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Transiting Pluto conjunct your natal Sun",
+      "layers": {
+        "house": 11,
+        "aspect": "pluto-conjunction-sun",
+        "timing": {
+          "orb": 2,
+          "phase": "separating",
+          "exact_date": "last month"
+        }
+      },
+      "paragraphs": [
+        "Pluto is moving through your 11th house, a longer chapter about your friendships, your community, and your vision of the future. Within that, a specific contact is coming into focus.",
+        "Right now Pluto is conjunct your natal Sun, which is what makes this personal. A pressure to become someone truer builds, and a hollow version of yourself starts to fall away. The image you've been holding together has been protecting a fear of not mattering, but it may now be intensifying the exhaustion of defending a self that isn't quite real. This is a death-and-rebirth of identity: what's false leaves so what's real can stand. Let one outworn part of your self-image go instead of gripping for control.",
+        "This contact is just past exact around last month and easing, and its effect is close and clearly felt."
+      ],
+      "requires_birth_time": true,
+      "trace": {
+        "sourceKeys": [
+          "cc/aspect-pair/pluto-conjunction-sun",
+          "cc/planet-in-house/pluto-in-11-house",
+          "cc/house/11",
+          "cc/aspect-pair/pluto-conjunction-sun"
+        ],
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Transiting Saturn through your 7th house",
+      "layers": {
+        "house": 7,
+        "aspect": "none"
+      },
+      "paragraphs": [
+        "Saturn is moving through your 7th house, a longer chapter about commitment, fairness, and follow-through in your closest relationships.",
+        "With no close aspect to a personal planet or angle right now, this chapter stays in the background and develops through ordinary experience rather than a single sharp event."
+      ],
+      "requires_birth_time": true,
+      "trace": {
+        "sourceKeys": [
+          "cc/aspect-pair/saturn-conjunction-descendant",
+          "cc/planet-in-house/saturn-in-7-house",
+          "cc/house/7"
+        ],
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Transiting the Moon conjunct your natal Jupiter",
+      "layers": {
+        "aspect": "moon-conjunction-jupiter",
+        "timing": {
+          "orb": 1,
+          "phase": "applying",
+          "exact_date": "this evening"
+        }
+      },
+      "paragraphs": [
+        "Right now the Moon is conjunct your natal Jupiter, which is what makes this personal. Your heart feels generous today, and it's easy to let the good in. Warmth, hope, and a little more faith than usual are all available to you, so let yourself feel held by them. Just keep an eye on the urge to overdo it, and enjoy the abundance without inflating the promises.",
+        "This contact is building toward exact around this evening, and its effect is strongest right now."
+      ],
+      "requires_birth_time": false,
+      "trace": {
+        "sourceKeys": [
+          "cc/aspect-pair/moon-conjunction-jupiter"
+        ],
+        "readerAuthority": "composed-reviewed"
+      }
+    }
+  ]
+}

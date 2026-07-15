@@ -1,0 +1,658 @@
+{
+  "_meta": {
+    "title": "Reviewed Chiron -> angle contacts (completes the Chiron matrix)",
+    "angles": [
+      "ascendant",
+      "midheaven",
+      "descendant",
+      "ic"
+    ],
+    "authored_valences": [
+      "conjunction",
+      "square",
+      "trine"
+    ],
+    "count": 20,
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-ascendant",
+      "pair": "chiron conjunction ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked",
+        "behavioral_consequence": "you either hide the tender part or lead with it",
+        "proportionate_adjustment": "Let people meet the real, unpolished you in one small way"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "The wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked. You either hide the tender part or lead with it. Let people meet the real, unpolished you in one small way.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-ascendant",
+      "pair": "chiron square ascendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "an old wound about your right to simply exist keeps rubbing against how you have to show up",
+        "behavioral_consequence": "you brace for rejection before you've even entered the room",
+        "proportionate_adjustment": "Show up as yourself once, without the armor"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An old wound about your right to simply exist keeps rubbing against how you have to show up. You brace for rejection before you've even entered the room. Show up as yourself once, without the armor.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-ascendant",
+      "pair": "chiron trine ascendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can wear the old wound lightly, and it becomes part of what makes you approachable",
+        "behavioral_consequence": "people feel safe with you because you're not pretending to be unhurt",
+        "proportionate_adjustment": "Let the healed-enough wound be visible; it's a gift"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can wear the old wound lightly, and it becomes part of what makes you approachable. People feel safe with you because you're not pretending to be unhurt. Let the healed-enough wound be visible; it's a gift.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-ascendant",
+      "pair": "chiron sextile ascendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can wear the old wound lightly, and it becomes part of what makes you approachable",
+        "behavioral_consequence": "people feel safe with you because you're not pretending to be unhurt, but only if you take the opening",
+        "proportionate_adjustment": "Let the healed-enough wound be visible; it's a gift"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-trine-ascendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can wear the old wound lightly, and it becomes part of what makes you approachable. People feel safe with you because you're not pretending to be unhurt, but only if you take the opening. Let the healed-enough wound be visible; it's a gift.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Some of our most courageous people are also the most scared.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-ascendant",
+      "pair": "chiron opposition ascendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound shows up through your closest relationships, so a partner can mirror your tender spot",
+        "behavioral_consequence": "you attract wounded others to heal, or fear you're only wanted when useful, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Let one relationship be mutual, not a rescue"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-conjunction-descendant",
+      "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
+      "expanded_narrative": "The wound shows up through your closest relationships, so a partner can mirror your tender spot. You attract wounded others to heal, or fear you're only wanted when useful, felt from the opposite side of the axis. Let one relationship be mutual, not a rescue.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Fear is not the enemy.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-midheaven",
+      "pair": "chiron conjunction midheaven",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound sits on your public role and worth, so being seen for your work touches an old inadequacy",
+        "behavioral_consequence": "you overwork to prove yourself, or hide the work so no one can judge it",
+        "proportionate_adjustment": "Do the visible work anyway, wound and all"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "The wound sits on your public role and worth, so being seen for your work touches an old inadequacy. You overwork to prove yourself, or hide the work so no one can judge it. Do the visible work anyway, wound and all.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-midheaven",
+      "pair": "chiron square midheaven",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "an old wound about achievement and being good enough collides with your public path",
+        "behavioral_consequence": "you read professional setbacks as proof you don't belong",
+        "proportionate_adjustment": "Take the next real step; the wound doesn't decide your worth"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An old wound about achievement and being good enough collides with your public path. You read professional setbacks as proof you don't belong. Take the next real step; the wound doesn't decide your worth.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-midheaven",
+      "pair": "chiron trine midheaven",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can turn the old worth-wound into work that actually helps others",
+        "behavioral_consequence": "your vocation carries real compassion because you know the ache",
+        "proportionate_adjustment": "Build the public work that heals what wounded you"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can turn the old worth-wound into work that actually helps others. Your vocation carries real compassion because you know the ache. Build the public work that heals what wounded you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-midheaven",
+      "pair": "chiron sextile midheaven",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can turn the old worth-wound into work that actually helps others",
+        "behavioral_consequence": "your vocation carries real compassion because you know the ache, but only if you take the opening",
+        "proportionate_adjustment": "Build the public work that heals what wounded you"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-trine-midheaven",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can turn the old worth-wound into work that actually helps others. Your vocation carries real compassion because you know the ache, but only if you take the opening. Build the public work that heals what wounded you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-midheaven",
+      "pair": "chiron opposition midheaven",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound reaches all the way home, so the family foundation itself felt unsafe or wounding",
+        "behavioral_consequence": "you either recreate the old wound at home or overprotect against it, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Build one small piece of the safety you didn't get"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-conjunction-ic",
+      "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
+      "expanded_narrative": "The wound reaches all the way home, so the family foundation itself felt unsafe or wounding. You either recreate the old wound at home or overprotect against it, felt from the opposite side of the axis. Build one small piece of the safety you didn't get.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Some of our most courageous people are also the most scared.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-descendant",
+      "pair": "chiron conjunction descendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound shows up through your closest relationships, so a partner can mirror your tender spot",
+        "behavioral_consequence": "you attract wounded others to heal, or fear you're only wanted when useful",
+        "proportionate_adjustment": "Let one relationship be mutual, not a rescue"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "The wound shows up through your closest relationships, so a partner can mirror your tender spot. You attract wounded others to heal, or fear you're only wanted when useful. Let one relationship be mutual, not a rescue.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-descendant",
+      "pair": "chiron square descendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "an old wound about being wanted keeps getting pressed in close relationships",
+        "behavioral_consequence": "you over-give to secure love, then quietly resent it",
+        "proportionate_adjustment": "Ask for what you need instead of earning your place"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An old wound about being wanted keeps getting pressed in close relationships. You over-give to secure love, then quietly resent it. Ask for what you need instead of earning your place.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-descendant",
+      "pair": "chiron trine descendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can bring real healing to a close relationship without losing yourself",
+        "behavioral_consequence": "your care lands because you know the wound firsthand",
+        "proportionate_adjustment": "Offer someone the acceptance in a relationship that you needed"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can bring real healing to a close relationship without losing yourself. Your care lands because you know the wound firsthand. Offer someone the acceptance in a relationship that you needed.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-descendant",
+      "pair": "chiron sextile descendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can bring real healing to a close relationship without losing yourself",
+        "behavioral_consequence": "your care lands because you know the wound firsthand, but only if you take the opening",
+        "proportionate_adjustment": "Offer someone the acceptance in a relationship that you needed"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-trine-descendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can bring real healing to a close relationship without losing yourself. Your care lands because you know the wound firsthand, but only if you take the opening. Offer someone the acceptance in a relationship that you needed.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Some of our most courageous people are also the most scared.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-descendant",
+      "pair": "chiron opposition descendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked",
+        "behavioral_consequence": "you either hide the tender part or lead with it, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Let people meet the real, unpolished you in one small way"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-conjunction-ascendant",
+      "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
+      "expanded_narrative": "The wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked. You either hide the tender part or lead with it, felt from the opposite side of the axis. Let people meet the real, unpolished you in one small way.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Fear is not the enemy.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-conjunction-ic",
+      "pair": "chiron conjunction ic",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound reaches all the way home, so the family foundation itself felt unsafe or wounding",
+        "behavioral_consequence": "you either recreate the old wound at home or overprotect against it",
+        "proportionate_adjustment": "Build one small piece of the safety you didn't get"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "The wound reaches all the way home, so the family foundation itself felt unsafe or wounding. You either recreate the old wound at home or overprotect against it. Build one small piece of the safety you didn't get.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-square-ic",
+      "pair": "chiron square ic",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "an old family wound keeps rubbing against the home you're trying to build now",
+        "behavioral_consequence": "the past reaches into your present base uninvited",
+        "proportionate_adjustment": "Name the inherited wound instead of passing it on"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An old family wound keeps rubbing against the home you're trying to build now. The past reaches into your present base uninvited. Name the inherited wound instead of passing it on.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-trine-ic",
+      "pair": "chiron trine ic",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can heal the family wound and make home a actually safe place",
+        "behavioral_consequence": "your private base becomes the refuge you always needed",
+        "proportionate_adjustment": "Make home the safety you can now give yourself"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can heal the family wound and make home a actually safe place. Your private base becomes the refuge you always needed. Make home the safety you can now give yourself.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-ic",
+      "pair": "chiron sextile ic",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "you can heal the family wound and make home a actually safe place",
+        "behavioral_consequence": "your private base becomes the refuge you always needed, but only if you take the opening",
+        "proportionate_adjustment": "Make home the safety you can now give yourself"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-trine-ic",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can heal the family wound and make home a actually safe place. Your private base becomes the refuge you always needed, but only if you take the opening. Make home the safety you can now give yourself.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/chiron-opposition-ic",
+      "pair": "chiron opposition ic",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "chiron",
+      "transiting_body": "chiron",
+      "slots": {
+        "angle_specific_scene": "the wound sits on your public role and worth, so being seen for your work touches an old inadequacy",
+        "behavioral_consequence": "you overwork to prove yourself, or hide the work so no one can judge it, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Do the visible work anyway, wound and all"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/chiron/wounded-healer"
+      ],
+      "doctrine_source": "Wounded-healer doctrine (Chiron), reference folder Chiron material (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/chiron-conjunction-midheaven",
+      "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
+      "expanded_narrative": "The wound sits on your public role and worth, so being seen for your work touches an old inadequacy. You overwork to prove yourself, or hide the work so no one can judge it, felt from the opposite side of the axis. Do the visible work anyway, wound and all.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Fear is not the enemy.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    }
+  ]
+}

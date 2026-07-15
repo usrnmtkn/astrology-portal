@@ -1,0 +1,1760 @@
+{
+  "_meta": {
+    "title": "Reviewed outer-planet -> angle contacts",
+    "transiting": [
+      "uranus",
+      "neptune",
+      "pluto"
+    ],
+    "angles": [
+      "ascendant",
+      "midheaven",
+      "descendant",
+      "ic"
+    ],
+    "authored_valences": [
+      "conjunction",
+      "square",
+      "trine"
+    ],
+    "derived_valences": {
+      "sextile": "trine flagged act-on-it",
+      "opposition": "conjunction to opposite angle"
+    },
+    "count": 60,
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+    "tone_version": "marie-calibrated-v1",
+    "note": "Completes the angle matrix for the transpersonal planets. Rendered as the angle paragraph."
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/uranus-conjunction-ascendant",
+      "pair": "uranus conjunction ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "who you are and how you show up is being rewired, and you can't go back to the old version",
+        "behavioral_consequence": "you feel the pull to break the image people have of you",
+        "proportionate_adjustment": "Let the change happen in one real, reversible step instead of all at once"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Who you are and how you show up is being rewired, and you can't go back to the old version. You feel the pull to break the image people have of you. Let the change happen in one real, reversible step instead of all at once.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-square-ascendant",
+      "pair": "uranus square ascendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "how you present keeps colliding with a restlessness you can't sit still inside",
+        "behavioral_consequence": "the urge to blow something up to feel free spikes",
+        "proportionate_adjustment": "Change one bounded thing before you upend the whole life"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "How you present keeps colliding with a restlessness you can't sit still inside. The urge to blow something up to feel free spikes. Change one bounded thing before you upend the whole life.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-trine-ascendant",
+      "pair": "uranus trine ascendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "you can reinvent how you come across without a crisis to force it",
+        "behavioral_consequence": "a freer, more original you is easy to try on",
+        "proportionate_adjustment": "Take the unconventional move while it's this low-risk"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can reinvent how you come across without a crisis to force it. A freer, more original you is easy to try on. Take the unconventional move while it's this low-risk.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-sextile-ascendant",
+      "pair": "uranus sextile ascendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "you can reinvent how you come across without a crisis to force it",
+        "behavioral_consequence": "a freer, more original you is easy to try on, but only if you take the opening",
+        "proportionate_adjustment": "Take the unconventional move while it's this low-risk"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-trine-ascendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can reinvent how you come across without a crisis to force it. A freer, more original you is easy to try on, but only if you take the opening. Take the unconventional move while it's this low-risk.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-opposition-ascendant",
+      "pair": "uranus opposition ascendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your closest relationships get shaken awake, and the terms you settled into stop fitting",
+        "behavioral_consequence": "you or a partner needs room the old arrangement didn't allow, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Renegotiate the space out loud instead of bolting"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-conjunction-descendant",
+      "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
+      "expanded_narrative": "Your closest relationships get shaken awake, and the terms you settled into stop fitting. You or a partner needs room the old arrangement didn't allow, felt from the opposite side of the axis. Renegotiate the space out loud instead of bolting.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-conjunction-midheaven",
+      "pair": "uranus conjunction midheaven",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your public path is being disrupted, and the career you built may no longer fit who you're becoming",
+        "behavioral_consequence": "you feel done with the role before you have the next one",
+        "proportionate_adjustment": "Experiment at the edges before you torch the whole position"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your public path is being disrupted, and the career you built may no longer fit who you're becoming. You feel done with the role before you have the next one. Experiment at the edges before you torch the whole position.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-square-midheaven",
+      "pair": "uranus square midheaven",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your ambition keeps jolting against a structure that won't hold you anymore",
+        "behavioral_consequence": "the itch to quit or reinvent gets loud",
+        "proportionate_adjustment": "Test a bounded change instead of a dramatic exit"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your ambition keeps jolting against a structure that won't hold you anymore. The itch to quit or reinvent gets loud. Test a bounded change instead of a dramatic exit.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-trine-midheaven",
+      "pair": "uranus trine midheaven",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "an original, unconventional path opens in your work",
+        "behavioral_consequence": "you can do it your own way and be backed for it",
+        "proportionate_adjustment": "Take the unusual professional opening now"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An original, unconventional path opens in your work. You can do it your own way and be backed for it. Take the unusual professional opening now.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-sextile-midheaven",
+      "pair": "uranus sextile midheaven",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "an original, unconventional path opens in your work",
+        "behavioral_consequence": "you can do it your own way and be backed for it, but only if you take the opening",
+        "proportionate_adjustment": "Take the unusual professional opening now"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-trine-midheaven",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "An original, unconventional path opens in your work. You can do it your own way and be backed for it, but only if you take the opening. Take the unusual professional opening now.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-opposition-midheaven",
+      "pair": "uranus opposition midheaven",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your home and roots get disrupted, and where you belong is up for redefinition",
+        "behavioral_consequence": "you feel the urge to move, change the setup, or break from the family script, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Change one real thing about the base before you uproot it all"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-conjunction-ic",
+      "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
+      "expanded_narrative": "Your home and roots get disrupted, and where you belong is up for redefinition. You feel the urge to move, change the setup, or break from the family script, felt from the opposite side of the axis. Change one real thing about the base before you uproot it all.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-conjunction-descendant",
+      "pair": "uranus conjunction descendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your closest relationships get shaken awake, and the terms you settled into stop fitting",
+        "behavioral_consequence": "you or a partner needs room the old arrangement didn't allow",
+        "proportionate_adjustment": "Renegotiate the space out loud instead of bolting"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your closest relationships get shaken awake, and the terms you settled into stop fitting. You or a partner needs room the old arrangement didn't allow. Renegotiate the space out loud instead of bolting.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-square-descendant",
+      "pair": "uranus square descendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "a close relationship keeps disrupting the stability you counted on",
+        "behavioral_consequence": "freedom and closeness feel briefly at war",
+        "proportionate_adjustment": "Name the need for room directly instead of acting it out"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A close relationship keeps disrupting the stability you counted on. Freedom and closeness feel briefly at war. Name the need for room directly instead of acting it out.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-trine-descendant",
+      "pair": "uranus trine descendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "a fresh, freer way of relating becomes available",
+        "behavioral_consequence": "you can connect without losing yourself",
+        "proportionate_adjustment": "Try the unconventional relationship shape while it's easy"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A fresh, freer way of relating becomes available. You can connect without losing yourself. Try the unconventional relationship shape while it's easy.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-sextile-descendant",
+      "pair": "uranus sextile descendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "a fresh, freer way of relating becomes available",
+        "behavioral_consequence": "you can connect without losing yourself, but only if you take the opening",
+        "proportionate_adjustment": "Try the unconventional relationship shape while it's easy"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-trine-descendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "A fresh, freer way of relating becomes available. You can connect without losing yourself, but only if you take the opening. Try the unconventional relationship shape while it's easy.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-opposition-descendant",
+      "pair": "uranus opposition descendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "who you are and how you show up is being rewired, and you can't go back to the old version",
+        "behavioral_consequence": "you feel the pull to break the image people have of you, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Let the change happen in one real, reversible step instead of all at once"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-conjunction-ascendant",
+      "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
+      "expanded_narrative": "Who you are and how you show up is being rewired, and you can't go back to the old version. You feel the pull to break the image people have of you, felt from the opposite side of the axis. Let the change happen in one real, reversible step instead of all at once.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-conjunction-ic",
+      "pair": "uranus conjunction ic",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your home and roots get disrupted, and where you belong is up for redefinition",
+        "behavioral_consequence": "you feel the urge to move, change the setup, or break from the family script",
+        "proportionate_adjustment": "Change one real thing about the base before you uproot it all"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your home and roots get disrupted, and where you belong is up for redefinition. You feel the urge to move, change the setup, or break from the family script. Change one real thing about the base before you uproot it all.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-square-ic",
+      "pair": "uranus square ic",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "home and family keep jolting against your need for independence",
+        "behavioral_consequence": "the old foundation feels too tight",
+        "proportionate_adjustment": "Loosen one household constraint instead of walking out"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home and family keep jolting against your need for independence. The old foundation feels too tight. Loosen one household constraint instead of walking out.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-trine-ic",
+      "pair": "uranus trine ic",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "you can rebuild home life in a freer, more original way",
+        "behavioral_consequence": "the private base updates without a crisis",
+        "proportionate_adjustment": "Redesign one part of home the way you actually want it"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can rebuild home life in a freer, more original way. The private base updates without a crisis. Redesign one part of home the way you actually want it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-sextile-ic",
+      "pair": "uranus sextile ic",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "you can rebuild home life in a freer, more original way",
+        "behavioral_consequence": "the private base updates without a crisis, but only if you take the opening",
+        "proportionate_adjustment": "Redesign one part of home the way you actually want it"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-trine-ic",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can rebuild home life in a freer, more original way. The private base updates without a crisis, but only if you take the opening. Redesign one part of home the way you actually want it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/uranus-opposition-ic",
+      "pair": "uranus opposition ic",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "uranus",
+      "transiting_body": "uranus",
+      "slots": {
+        "angle_specific_scene": "your public path is being disrupted, and the career you built may no longer fit who you're becoming",
+        "behavioral_consequence": "you feel done with the role before you have the next one, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Experiment at the edges before you torch the whole position"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/uranus-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/uranus-conjunction-midheaven",
+      "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
+      "expanded_narrative": "Your public path is being disrupted, and the career you built may no longer fit who you're becoming. You feel done with the role before you have the next one, felt from the opposite side of the axis. Experiment at the edges before you torch the whole position.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-conjunction-ascendant",
+      "pair": "neptune conjunction ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "the edges of who you're go soft, and the clear self-image you had starts to dissolve",
+        "behavioral_consequence": "people read you differently, and you're less sure how you come across",
+        "proportionate_adjustment": "Ground the day in one concrete task while the identity reforms"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "The edges of who you're go soft, and the clear self-image you had starts to dissolve. People read you differently, and you're less sure how you come across. Ground the day in one concrete task while the identity reforms.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-square-ascendant",
+      "pair": "neptune square ascendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "how you present keeps blurring, and you're easily misread or misled about yourself",
+        "behavioral_consequence": "confusion about who you're creeps in",
+        "proportionate_adjustment": "Handle the next real thing instead of deciding who you're from inside the fog"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "How you present keeps blurring, and you're easily misread or misled about yourself. Confusion about who you're creeps in. Handle the next real thing instead of deciding who you're from inside the fog.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-trine-ascendant",
+      "pair": "neptune trine ascendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "a softer, more compassionate way of being yourself flows in",
+        "behavioral_consequence": "you can dissolve an old rigidity in how you show up",
+        "proportionate_adjustment": "Give the gentler self one concrete form"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A softer, more compassionate way of being yourself flows in. You can dissolve an old rigidity in how you show up. Give the gentler self one concrete form.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-sextile-ascendant",
+      "pair": "neptune sextile ascendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "a softer, more compassionate way of being yourself flows in",
+        "behavioral_consequence": "you can dissolve an old rigidity in how you show up, but only if you take the opening",
+        "proportionate_adjustment": "Give the gentler self one concrete form"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-trine-ascendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "A softer, more compassionate way of being yourself flows in. You can dissolve an old rigidity in how you show up, but only if you take the opening. Give the gentler self one concrete form.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-opposition-ascendant",
+      "pair": "neptune opposition ascendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "a close relationship turns idealized and porous, and the line between you and them blurs",
+        "behavioral_consequence": "you see the best in them, sometimes more than is there, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Enjoy the tenderness and keep one foot in what's actually offered"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-conjunction-descendant",
+      "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
+      "expanded_narrative": "A close relationship turns idealized and porous, and the line between you and them blurs. You see the best in them, sometimes more than is there, felt from the opposite side of the axis. Enjoy the tenderness and keep one foot in what's actually offered.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-conjunction-midheaven",
+      "pair": "neptune conjunction midheaven",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "your sense of vocation dissolves and reforms, and the old definition of success loses its hold",
+        "behavioral_consequence": "you're pulled toward meaning over status, sometimes into fog",
+        "proportionate_adjustment": "Take one grounded professional step while the calling clarifies"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your sense of vocation dissolves and reforms, and the old definition of success loses its hold. You're pulled toward meaning over status, sometimes into fog. Take one grounded professional step while the calling clarifies.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-square-midheaven",
+      "pair": "neptune square midheaven",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "your public direction keeps going out of focus, and effort seems to drain into mist",
+        "behavioral_consequence": "motivation and clarity both slip",
+        "proportionate_adjustment": "Do one concrete, checkable task instead of forcing the whole vision"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your public direction keeps going out of focus, and effort seems to drain into mist. Motivation and clarity both slip. Do one concrete, checkable task instead of forcing the whole vision.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-trine-midheaven",
+      "pair": "neptune trine midheaven",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "an inspired, meaningful direction opens in your work",
+        "behavioral_consequence": "you can bring imagination and compassion into what you do",
+        "proportionate_adjustment": "Give the vocation one real, tangible form"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "An inspired, meaningful direction opens in your work. You can bring imagination and compassion into what you do. Give the vocation one real, tangible form.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-sextile-midheaven",
+      "pair": "neptune sextile midheaven",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "an inspired, meaningful direction opens in your work",
+        "behavioral_consequence": "you can bring imagination and compassion into what you do, but only if you take the opening",
+        "proportionate_adjustment": "Give the vocation one real, tangible form"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-trine-midheaven",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "An inspired, meaningful direction opens in your work. You can bring imagination and compassion into what you do, but only if you take the opening. Give the vocation one real, tangible form.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-opposition-midheaven",
+      "pair": "neptune opposition midheaven",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "home and roots go dreamy and undefined, and your sense of where you belong loosens",
+        "behavioral_consequence": "the private base feels both softer and less solid, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Keep one concrete anchor at home while things reshape"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-conjunction-ic",
+      "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
+      "expanded_narrative": "Home and roots go dreamy and undefined, and your sense of where you belong loosens. The private base feels both softer and less solid, felt from the opposite side of the axis. Keep one concrete anchor at home while things reshape.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-conjunction-descendant",
+      "pair": "neptune conjunction descendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "a close relationship turns idealized and porous, and the line between you and them blurs",
+        "behavioral_consequence": "you see the best in them, sometimes more than is there",
+        "proportionate_adjustment": "Enjoy the tenderness and keep one foot in what's actually offered"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A close relationship turns idealized and porous, and the line between you and them blurs. You see the best in them, sometimes more than is there. Enjoy the tenderness and keep one foot in what's actually offered.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-square-descendant",
+      "pair": "neptune square descendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "a close relationship keeps dissolving into confusion, projection, or quiet disillusion",
+        "behavioral_consequence": "who owes what and who is who gets murky",
+        "proportionate_adjustment": "Wait to decide until you can see the person plainly"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A close relationship keeps dissolving into confusion, projection, or quiet disillusion. Who owes what and who is who gets murky. Wait to decide until you can see the person plainly.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-trine-descendant",
+      "pair": "neptune trine descendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "compassion and imagination flow easily with a close other",
+        "behavioral_consequence": "you can love more openly and gently",
+        "proportionate_adjustment": "Offer one real act of grace"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Compassion and imagination flow easily with a close other. You can love more openly and gently. Offer one real act of grace.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-sextile-descendant",
+      "pair": "neptune sextile descendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "compassion and imagination flow easily with a close other",
+        "behavioral_consequence": "you can love more openly and gently, but only if you take the opening",
+        "proportionate_adjustment": "Offer one real act of grace"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-trine-descendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "Compassion and imagination flow easily with a close other. You can love more openly and gently, but only if you take the opening. Offer one real act of grace.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-opposition-descendant",
+      "pair": "neptune opposition descendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "the edges of who you're go soft, and the clear self-image you had starts to dissolve",
+        "behavioral_consequence": "people read you differently, and you're less sure how you come across, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Ground the day in one concrete task while the identity reforms"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-conjunction-ascendant",
+      "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
+      "expanded_narrative": "The edges of who you're go soft, and the clear self-image you had starts to dissolve. People read you differently, and you're less sure how you come across, felt from the opposite side of the axis. Ground the day in one concrete task while the identity reforms.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-conjunction-ic",
+      "pair": "neptune conjunction ic",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "home and roots go dreamy and undefined, and your sense of where you belong loosens",
+        "behavioral_consequence": "the private base feels both softer and less solid",
+        "proportionate_adjustment": "Keep one concrete anchor at home while things reshape"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home and roots go dreamy and undefined, and your sense of where you belong loosens. The private base feels both softer and less solid. Keep one concrete anchor at home while things reshape.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-square-ic",
+      "pair": "neptune square ic",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "home or family keeps dissolving into confusion or a longing you can't place",
+        "behavioral_consequence": "the foundation feels foggy",
+        "proportionate_adjustment": "Handle one practical home thing rather than the whole diffuse mood"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home or family keeps dissolving into confusion or a longing you can't place. The foundation feels foggy. Handle one practical home thing rather than the whole diffuse mood.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-trine-ic",
+      "pair": "neptune trine ic",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "home becomes a source of peace, imagination, and quiet retreat",
+        "behavioral_consequence": "your private base softens in a healing way",
+        "proportionate_adjustment": "Make one restful, beautiful corner of home"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home becomes a source of peace, imagination, and quiet retreat. Your private base softens in a healing way. Make one restful, beautiful corner of home.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-sextile-ic",
+      "pair": "neptune sextile ic",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "home becomes a source of peace, imagination, and quiet retreat",
+        "behavioral_consequence": "your private base softens in a healing way, but only if you take the opening",
+        "proportionate_adjustment": "Make one restful, beautiful corner of home"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-trine-ic",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "Home becomes a source of peace, imagination, and quiet retreat. Your private base softens in a healing way, but only if you take the opening. Make one restful, beautiful corner of home.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/neptune-opposition-ic",
+      "pair": "neptune opposition ic",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "neptune",
+      "transiting_body": "neptune",
+      "slots": {
+        "angle_specific_scene": "your sense of vocation dissolves and reforms, and the old definition of success loses its hold",
+        "behavioral_consequence": "you're pulled toward meaning over status, sometimes into fog, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Take one grounded professional step while the calling clarifies"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/neptune-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/neptune-conjunction-midheaven",
+      "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
+      "expanded_narrative": "Your sense of vocation dissolves and reforms, and the old definition of success loses its hold. You're pulled toward meaning over status, sometimes into fog, felt from the opposite side of the axis. Take one grounded professional step while the calling clarifies.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-conjunction-ascendant",
+      "pair": "pluto conjunction ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "who you're is being rebuilt from the ground, and a hollow version of your identity is being stripped away",
+        "behavioral_consequence": "you feel intense, exposed, and unable to fake it",
+        "proportionate_adjustment": "Let the false layer go instead of gripping for control"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Who you're is being rebuilt from the ground, and a hollow version of your identity is being stripped away. You feel intense, exposed, and unable to fake it. Let the false layer go instead of gripping for control.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-square-ascendant",
+      "pair": "pluto square ascendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "how you show up keeps colliding with a demand to get real about power and honesty",
+        "behavioral_consequence": "a confrontation with a hollow self-image intensifies",
+        "proportionate_adjustment": "Let what's false fall away rather than defending it"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "How you show up keeps colliding with a demand to get real about power and honesty. A confrontation with a hollow self-image intensifies. Let what's false fall away rather than defending it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-trine-ascendant",
+      "pair": "pluto trine ascendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform how you come across with a deep, quiet authority",
+        "behavioral_consequence": "your presence carries real weight without a fight",
+        "proportionate_adjustment": "Point the intensity at one honest change you want to lead"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can transform how you come across with a deep, quiet authority. Your presence carries real weight without a fight. Point the intensity at one honest change you want to lead.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-sextile-ascendant",
+      "pair": "pluto sextile ascendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform how you come across with a deep, quiet authority",
+        "behavioral_consequence": "your presence carries real weight without a fight, but only if you take the opening",
+        "proportionate_adjustment": "Point the intensity at one honest change you want to lead"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-trine-ascendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can transform how you come across with a deep, quiet authority. Your presence carries real weight without a fight, but only if you take the opening. Point the intensity at one honest change you want to lead.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-opposition-ascendant",
+      "pair": "pluto opposition ascendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ascendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force",
+        "behavioral_consequence": "intensity, power, and honesty enter a close bond, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Get clear on what you actually want before the intensity decides"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-conjunction-descendant",
+      "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
+      "expanded_narrative": "Your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force. Intensity, power, and honesty enter a close bond, felt from the opposite side of the axis. Get clear on what you actually want before the intensity decides.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-conjunction-midheaven",
+      "pair": "pluto conjunction midheaven",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "your public role is being transformed, and a version of your ambition has to die for a truer one to rise",
+        "behavioral_consequence": "power, exposure, or a reckoning enters your career",
+        "proportionate_adjustment": "Rebuild the vocation on what's real, and release what was only status"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your public role is being transformed, and a version of your ambition has to die for a truer one to rise. Power, exposure, or a reckoning enters your career. Rebuild the vocation on what's real, and release what was only status.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-square-midheaven",
+      "pair": "pluto square midheaven",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "your ambition keeps colliding with a power you can't overpower",
+        "behavioral_consequence": "a control struggle in your work intensifies",
+        "proportionate_adjustment": "Aim the drive at real change, not at winning the power fight"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your ambition keeps colliding with a power you can't overpower. A control struggle in your work intensifies. Aim the drive at real change, not at winning the power fight.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-trine-midheaven",
+      "pair": "pluto trine midheaven",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform your public standing with focused, lasting power",
+        "behavioral_consequence": "deep influence builds without a collision",
+        "proportionate_adjustment": "Take the ambitious rebuild while the depth is available"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can transform your public standing with focused, lasting power. Deep influence builds without a collision. Take the ambitious rebuild while the depth is available.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-sextile-midheaven",
+      "pair": "pluto sextile midheaven",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform your public standing with focused, lasting power",
+        "behavioral_consequence": "deep influence builds without a collision, but only if you take the opening",
+        "proportionate_adjustment": "Take the ambitious rebuild while the depth is available"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-trine-midheaven",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can transform your public standing with focused, lasting power. Deep influence builds without a collision, but only if you take the opening. Take the ambitious rebuild while the depth is available.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-opposition-midheaven",
+      "pair": "pluto opposition midheaven",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "midheaven",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "home, family, and your roots are transformed, and something buried in the foundation surfaces to be dealt with",
+        "behavioral_consequence": "old family power dynamics or a deep purge of the base come up, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Face what surfaces and rebuild the foundation on truth"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-conjunction-ic",
+      "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
+      "expanded_narrative": "Home, family, and your roots are transformed, and something buried in the foundation surfaces to be dealt with. Old family power dynamics or a deep purge of the base come up, felt from the opposite side of the axis. Face what surfaces and rebuild the foundation on truth.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-conjunction-descendant",
+      "pair": "pluto conjunction descendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force",
+        "behavioral_consequence": "intensity, power, and honesty enter a close bond",
+        "proportionate_adjustment": "Get clear on what you actually want before the intensity decides"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force. Intensity, power, and honesty enter a close bond. Get clear on what you actually want before the intensity decides.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-square-descendant",
+      "pair": "pluto square descendant",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "a close relationship keeps forcing a reckoning with control, trust, or power",
+        "behavioral_consequence": "jealousy or an old imbalance erupts",
+        "proportionate_adjustment": "Name the imbalance plainly instead of reacting to the charge"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "A close relationship keeps forcing a reckoning with control, trust, or power. Jealousy or an old imbalance erupts. Name the imbalance plainly instead of reacting to the charge.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-trine-descendant",
+      "pair": "pluto trine descendant",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can deepen a relationship and let what's shallow fall away without a fight",
+        "behavioral_consequence": "real intimacy becomes available cleanly",
+        "proportionate_adjustment": "Let one honest thing be said and let the depth in"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can deepen a relationship and let what's shallow fall away without a fight. Real intimacy becomes available cleanly. Let one honest thing be said and let the depth in.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-sextile-descendant",
+      "pair": "pluto sextile descendant",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can deepen a relationship and let what's shallow fall away without a fight",
+        "behavioral_consequence": "real intimacy becomes available cleanly, but only if you take the opening",
+        "proportionate_adjustment": "Let one honest thing be said and let the depth in"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-trine-descendant",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can deepen a relationship and let what's shallow fall away without a fight. Real intimacy becomes available cleanly, but only if you take the opening. Let one honest thing be said and let the depth in.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-opposition-descendant",
+      "pair": "pluto opposition descendant",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "descendant",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "who you're is being rebuilt from the ground, and a hollow version of your identity is being stripped away",
+        "behavioral_consequence": "you feel intense, exposed, and unable to fake it, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Let the false layer go instead of gripping for control"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-conjunction-ascendant",
+      "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
+      "expanded_narrative": "Who you're is being rebuilt from the ground, and a hollow version of your identity is being stripped away. You feel intense, exposed, and unable to fake it, felt from the opposite side of the axis. Let the false layer go instead of gripping for control.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-conjunction-ic",
+      "pair": "pluto conjunction ic",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "home, family, and your roots are transformed, and something buried in the foundation surfaces to be dealt with",
+        "behavioral_consequence": "old family power dynamics or a deep purge of the base come up",
+        "proportionate_adjustment": "Face what surfaces and rebuild the foundation on truth"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home, family, and your roots are transformed, and something buried in the foundation surfaces to be dealt with. Old family power dynamics or a deep purge of the base come up. Face what surfaces and rebuild the foundation on truth.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-square-ic",
+      "pair": "pluto square ic",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "home or family keeps forcing a confrontation with old, buried power",
+        "behavioral_consequence": "a foundational control struggle intensifies",
+        "proportionate_adjustment": "Deal with the specific buried thing instead of the whole history"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Home or family keeps forcing a confrontation with old, buried power. A foundational control struggle intensifies. Deal with the specific buried thing instead of the whole history.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-trine-ic",
+      "pair": "pluto trine ic",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform your home and roots at a deep level without a crisis",
+        "behavioral_consequence": "the private base is rebuilt cleanly and for good",
+        "proportionate_adjustment": "Do the deep home or family repair while it's this workable"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "You can transform your home and roots at a deep level without a crisis. The private base is rebuilt cleanly and for good. Do the deep home or family repair while it's this workable.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-sextile-ic",
+      "pair": "pluto sextile ic",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "you can transform your home and roots at a deep level without a crisis",
+        "behavioral_consequence": "the private base is rebuilt cleanly and for good, but only if you take the opening",
+        "proportionate_adjustment": "Do the deep home or family repair while it's this workable"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-trine-ic",
+      "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
+      "expanded_narrative": "You can transform your home and roots at a deep level without a crisis. The private base is rebuilt cleanly and for good, but only if you take the opening. Do the deep home or family repair while it's this workable.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/pluto-opposition-ic",
+      "pair": "pluto opposition ic",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_template": "4D",
+      "angle": "ic",
+      "body": "pluto",
+      "transiting_body": "pluto",
+      "slots": {
+        "angle_specific_scene": "your public role is being transformed, and a version of your ambition has to die for a truer one to rise",
+        "behavioral_consequence": "power, exposure, or a reckoning enters your career, felt from the opposite side of the axis",
+        "proportionate_adjustment": "Rebuild the vocation on what's real, and release what was only status"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition",
+        "cc/ref/outer-planets/pluto-transit"
+      ],
+      "doctrine_source": "Robert Hand, Planets in Transit; Liz Greene, The Outer Planets and Their Cycles (doctrine only, voiced original)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "derived_from": "cc/aspect-pair/pluto-conjunction-midheaven",
+      "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
+      "expanded_narrative": "Your public role is being transformed, and a version of your ambition has to die for a truer one to rise. Power, exposure, or a reckoning enters your career, felt from the opposite side of the axis. Rebuild the vocation on what's real, and release what was only status.",
+      "revoice_version": "chani-quality-v1-composed"
+    }
+  ]
+}

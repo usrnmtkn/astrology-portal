@@ -11,6 +11,7 @@ from tldrastro_api.models import (
     RelationshipTheme,
     SynastryRequest,
 )
+from tldrastro_api.services.chart import CANONICAL_HOUSE_SYSTEM
 from tldrastro_api.services.composite import calculate_composite
 from tldrastro_api.services.relationship_facts import relationship_facts
 from tldrastro_api.services.synastry import calculate_synastry
@@ -104,7 +105,7 @@ def calculate_relationship_compare(request: RelationshipCompareRequest) -> Relat
     themes = _relationship_themes(synastry, composite)
     return RelationshipCompareResponse(
         metadata=ChartMetadata(
-            houseSystem=request.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),

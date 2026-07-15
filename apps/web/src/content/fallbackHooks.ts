@@ -71,6 +71,19 @@ const zodiacSigns = [
 
 const aspectTypes = ["conjunction", "sextile", "square", "trine", "opposition"];
 
+const ingressPlanets = [
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+];
+
 function titleCaseKeyPart(value: string) {
   return value
     .split("-")
@@ -192,7 +205,7 @@ const seasonArcFallbackHookDefinitions = Object.entries(seasonArcCopyBySign).fla
     surface: "sky",
     domain: "sky",
     mode: "feed",
-    description: `Editable fallback row for the ${sign} season story in the lunar calendar rail.`,
+    description: `Editable fallback row for the ${sign} season overview in the lunar calendar rail.`,
     knowledgeIdTemplates: [`season/${signSlug}`],
     requiredFacts: ["sun sign", "season"],
     copy: {
@@ -207,7 +220,7 @@ const seasonArcFallbackHookDefinitions = Object.entries(seasonArcCopyBySign).fla
     surface: "sky",
     domain: "sky",
     mode: "feed",
-    description: `Editable fallback row for the ${phase.phase} chapter in the ${sign} season story.`,
+    description: `Editable fallback row for the ${phase.phase} lunar phase in the ${sign} season arc.`,
     knowledgeIdTemplates: [`season/${signSlug}`, `season-arc/${signSlug}`],
     requiredFacts: ["sun sign", "season", "moon phase"],
     copy: {
@@ -220,9 +233,23 @@ const seasonArcFallbackHookDefinitions = Object.entries(seasonArcCopyBySign).fla
   return [storyHook, ...phaseHooks];
 });
 
+const planetIngressFallbackHookDefinitions = ingressPlanets.map((planet) => ({
+  key: `sky.ingress.${planet}`,
+  label: `Sky > ${titleCaseKeyPart(planet)} Ingress Template`,
+  surface: "sky",
+  domain: "sky",
+  mode: "feed",
+  description: `Planet-specific ingress template for ${titleCaseKeyPart(planet)} entering any sign. The destination sign remains a render-time slot.`,
+  knowledgeIdTemplates: [`sky-ingress-${planet}-{sign}`, `sky-${planet}-enters-{sign}`, `sky-${planet}-in-{sign}`],
+  requiredFacts: ["planet", "sign", "ingress date", "planet-specific threshold shift"],
+  slotKeys: ["planet", "sign", "ingressDate", "thresholdShift", "strongestSkyAspect", "strongestNatalAspect", "natalHouse", "retrogradeCondition"],
+  copy: emptyFallbackHookCopy
+} satisfies FallbackHookDefinition));
+
 export const fallbackHookDefinitions = [
   ...lunarBeatFallbackHookDefinitions,
   ...seasonArcFallbackHookDefinitions,
+  ...planetIngressFallbackHookDefinitions,
   {
     key: "sky.seasonal-current",
     label: "Sky > Season",
@@ -296,6 +323,18 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "sky.ingress",
+    label: "Sky > Planetary Ingress",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Planet entering a sign, composed with relevant current-sky aspect, personal transit, natal house, or retrograde condition when available.",
+    knowledgeIdTemplates: ["sky-ingress-{planet}-{sign}", "sky-{planet}-enters-{sign}", "sky-{planet}-in-{sign}"],
+    requiredFacts: ["planet", "sign", "ingress date", "optional strongest current-sky aspect", "optional natal house when birth time is reliable", "optional retrograde/station condition"],
+    slotKeys: ["planet", "sign", "ingressDate", "strongestSkyAspect", "strongestNatalAspect", "natalHouse", "retrogradeCondition"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "sky.aspect-detail",
     label: "Sky > Aspect Detail Write-Up",
     surface: "sky",
@@ -329,6 +368,18 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "sky.station",
+    label: "Sky > Station Detail",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Planet-specific station direct or station retrograde copy, using the planet topic and station direction.",
+    knowledgeIdTemplates: ["station-{planet}-{direction}", "sky-station-{planet}-{direction}", "sky-retrograde-{planet}"],
+    requiredFacts: ["planet", "station direction", "planet topic", "station date"],
+    slotKeys: ["planet", "direction", "planetTopic", "stationDate", "sign"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "sky.retrograde-section",
     label: "Sky > Retrograde Section",
     surface: "sky",
@@ -348,6 +399,30 @@ export const fallbackHookDefinitions = [
     description: "Natal planet-in-sign placements shown on the You page.",
     knowledgeIdTemplates: ["natal-{planet}-in-{sign}", "{planet}-in-{sign}"],
     requiredFacts: ["planet", "sign", "planet topic", "sign style"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "you.natal-house-placement",
+    label: "Natal > Planet In House",
+    surface: "you",
+    domain: "natal",
+    mode: "in_depth",
+    description: "Natal planet-in-house placement text when a reliable birth time gives house position.",
+    knowledgeIdTemplates: ["natal-{planet}-in-house-{house}", "natal-{planet}-house-{house}", "{planet}-house-{house}"],
+    requiredFacts: ["planet", "house", "planet topic", "house life area", "reliable birth time"],
+    slotKeys: ["planet", "house", "planetTopic", "houseTopic", "birthTimeConfidence"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "you.natal-angle-placement",
+    label: "Natal > Ascendant / Midheaven Placement",
+    surface: "you",
+    domain: "natal",
+    mode: "in_depth",
+    description: "Ascendant and Midheaven sign placement text when birth time is reliable enough to calculate angles.",
+    knowledgeIdTemplates: ["natal-{angle}-in-{sign}", "{angle}-in-{sign}", "natal-angle-{angle}-{sign}"],
+    requiredFacts: ["angle", "sign", "angle meaning", "sign style", "reliable birth time"],
+    slotKeys: ["angle", "sign", "angleTopic", "signStyle", "birthTimeConfidence"],
     copy: emptyFallbackHookCopy
   },
   {
@@ -374,6 +449,30 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "you.transit-through-house",
+    label: "Natal > Transit Through House",
+    surface: "you",
+    domain: "natal",
+    mode: "feed",
+    description: "Current sky planet moving through a natal house, only when birth time is reliable enough to derive houses.",
+    knowledgeIdTemplates: ["transit-house-{transitPlanet}-{house}", "transit-{transitPlanet}-through-house-{house}", "{transitPlanet}-house-{house}"],
+    requiredFacts: ["transitPlanet", "house", "house life area", "reliable birth time", "transit window optional"],
+    slotKeys: ["transitPlanet", "house", "houseTopic", "transitPlanetTopic", "transitStart", "transitEnd", "birthTimeConfidence"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "you.transit-to-angle",
+    label: "Natal > Transit To Angle",
+    surface: "you",
+    domain: "natal",
+    mode: "feed",
+    description: "Current transit aspecting the natal Ascendant, Descendant, Midheaven, or IC, only when birth time is reliable enough to derive angles.",
+    knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{angle}", "{transitPlanet}-{aspect}-{angle}", "transit-angle-{transitPlanet}-{aspect}-{angle}"],
+    requiredFacts: ["transitPlanet", "aspect", "angle", "orb/timing optional", "reliable birth time"],
+    slotKeys: ["transitPlanet", "aspect", "angle", "angleTopic", "transitPlanetTopic", "timingIntensity", "timingPhase", "birthTimeConfidence"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "you.daily-timing",
     label: "Natal > Daily Timing",
     surface: "you",
@@ -383,6 +482,42 @@ export const fallbackHookDefinitions = [
     knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{natalPoint}", "{transitPlanet}-{aspect}-{natalPoint}", "{natalPoint}"],
     requiredFacts: ["transitPlanet", "aspect", "natalPoint", "orb", "window"],
     slotKeys: ["activeTransit", "transitPlanet", "aspect", "natalPoint", "transitPlanetTopic", "natalPointTopic", "transitPlanetWeather", "aspectTone", "personalActivation", "activatedHouse", "activatedHouseTopic", "timingIntensity", "timingPhase", "orb", "window", "activatedSign", "activatedRuler"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "natal/hard-aspect",
+    label: "Natal > Hard Aspect Reframe",
+    surface: "natal",
+    domain: "natal",
+    mode: "in_depth",
+    description: "Fallback line for squares and oppositions in natal or career-focused chart interpretation when a hard aspect needs a non-fatalistic reframe.",
+    knowledgeIdTemplates: ["natal-{planetA}-{aspect}-{planetB}", "{planetA}-{aspect}-{planetB}", "{planetB}-{aspect}-{planetA}"],
+    requiredFacts: ["planetA", "planetB", "aspect", "life area or career planet context"],
+    slotKeys: ["planetA", "planetB", "aspect", "planetATopic", "planetBTopic", "lifeArea", "careerContext"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "natal/chart-contradiction",
+    label: "Natal > Chart Contradiction",
+    surface: "natal",
+    domain: "natal",
+    mode: "in_depth",
+    description: "UX fallback for the moment a reader feels a natal card does not sound like them.",
+    knowledgeIdTemplates: [],
+    requiredFacts: ["reader mismatch context optional", "birth time confidence optional"],
+    slotKeys: ["personName", "placement", "birthTimeConfidence", "socialConditioningContext"],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "natal/free-will-disclaimer",
+    label: "Natal > Free Will Disclaimer",
+    surface: "natal",
+    domain: "natal",
+    mode: "article",
+    description: "Report-level disclaimer reminding the reader that the chart describes potential rather than fixed fate.",
+    knowledgeIdTemplates: ["natal-free-will", "chart-potential", "cosmic-blueprint"],
+    requiredFacts: ["report or archetype context"],
+    slotKeys: ["personName", "reportType", "archetype"],
     copy: emptyFallbackHookCopy
   },
   {
@@ -422,6 +557,36 @@ export const fallbackHookDefinitions = [
       "personBNamePossessive",
       "planetB",
       "planetBTopic"
+    ],
+    copy: emptyFallbackHookCopy
+  },
+  {
+    key: "friends.same-planet",
+    label: "Friends > Same-Planet Synastry",
+    surface: "friends",
+    domain: "relationship",
+    mode: "in_depth",
+    description: "Symmetric synastry contacts where both charts meet through the same planet, such as Saturn conjunct Saturn.",
+    knowledgeIdTemplates: [
+      "synastry-same-planet-{planet}-{aspect}",
+      "synastry-same-planet-{planet}-{aspectFamily}",
+      "synastry-same-planet-{planet}",
+      "relationship-same-planet-{planet}-{aspect}",
+      "relationship-same-planet-{planet}"
+    ],
+    requiredFacts: ["same planet", "aspect", "relationship context", "orb"],
+    slotKeys: [
+      "friendName",
+      "readerName",
+      "personA",
+      "personB",
+      "planet",
+      "planetA",
+      "planetB",
+      "aspect",
+      "aspectFamily",
+      "relationshipContext",
+      "orb"
     ],
     copy: emptyFallbackHookCopy
   },

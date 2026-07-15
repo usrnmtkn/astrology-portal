@@ -8,6 +8,7 @@ import {
   pronounChoices,
   type PronounChoice
 } from "../../services/personReferences";
+import { relationshipContextOptions } from "../../services/relationshipContext";
 
 export type FriendChartFormState = {
   chartType: ManualChartType;
@@ -122,11 +123,9 @@ export function FriendChartModal({
                   onChange={(event) => onFieldChange("relationshipType", event.target.value)}
                   aria-label="Relationship type"
                 >
-                  <option value="friend">Friend</option>
-                  <option value="partner">Partner</option>
-                  <option value="family">Family</option>
-                  <option value="work">Coworker</option>
-                  <option value="other">Other</option>
+                  {relationshipContextOptions.map((option) => (
+                    <option value={option.key} key={option.key}>{option.label}</option>
+                  ))}
                 </select>
               </div>
             </label>

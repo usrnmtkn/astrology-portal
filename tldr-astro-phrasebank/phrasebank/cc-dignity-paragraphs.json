@@ -1,0 +1,1259 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Dignity paragraph per planet x state (5K dignity_paragraph).",
+  "count": 50
+ },
+ "reviewed": [
+  {
+   "content_key": "cc/dignity/sun/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is in its home sign here, so it works at full strength: your identity, vitality, and where you are meant to shine comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/sun/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is exalted here, honored and near its best, so your identity, vitality, and where you are meant to shine shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/sun/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is in detriment here, opposite the sign it rules, so it works against the grain: your identity, vitality, and where you are meant to shine takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/sun/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is in fall here, its least supported placement, so your identity, vitality, and where you are meant to shine can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/sun/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun has no special dignity here, so your identity, vitality, and where you are meant to shine takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/moon/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is in its home sign here, so it works at full strength: your feelings, needs, and sense of safety comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/moon/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is exalted here, honored and near its best, so your feelings, needs, and sense of safety shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/moon/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is in detriment here, opposite the sign it rules, so it works against the grain: your feelings, needs, and sense of safety takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/moon/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is in fall here, its least supported placement, so your feelings, needs, and sense of safety can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/moon/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon has no special dignity here, so your feelings, needs, and sense of safety takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mercury/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is in its home sign here, so it works at full strength: how you think, speak, and connect ideas comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mercury/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is exalted here, honored and near its best, so how you think, speak, and connect ideas shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mercury/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is in detriment here, opposite the sign it rules, so it works against the grain: how you think, speak, and connect ideas takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mercury/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is in fall here, its least supported placement, so how you think, speak, and connect ideas can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mercury/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury has no special dignity here, so how you think, speak, and connect ideas takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/venus/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is in its home sign here, so it works at full strength: how you love, and what you find beautiful and worth having comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/venus/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is exalted here, honored and near its best, so how you love, and what you find beautiful and worth having shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/venus/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is in detriment here, opposite the sign it rules, so it works against the grain: how you love, and what you find beautiful and worth having takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/venus/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is in fall here, its least supported placement, so how you love, and what you find beautiful and worth having can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/venus/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus has no special dignity here, so how you love, and what you find beautiful and worth having takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mars/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is in its home sign here, so it works at full strength: your drive, will, and how you go after what you want comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mars/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is exalted here, honored and near its best, so your drive, will, and how you go after what you want shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mars/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is in detriment here, opposite the sign it rules, so it works against the grain: your drive, will, and how you go after what you want takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mars/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is in fall here, its least supported placement, so your drive, will, and how you go after what you want can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/mars/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars has no special dignity here, so your drive, will, and how you go after what you want takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/jupiter/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is in its home sign here, so it works at full strength: how you grow, believe, and reach for more comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/jupiter/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is exalted here, honored and near its best, so how you grow, believe, and reach for more shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/jupiter/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is in detriment here, opposite the sign it rules, so it works against the grain: how you grow, believe, and reach for more takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/jupiter/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is in fall here, its least supported placement, so how you grow, believe, and reach for more can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/jupiter/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter has no special dignity here, so how you grow, believe, and reach for more takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/saturn/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is in its home sign here, so it works at full strength: your discipline, limits, and where you build real mastery comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/saturn/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is exalted here, honored and near its best, so your discipline, limits, and where you build real mastery shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/saturn/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is in detriment here, opposite the sign it rules, so it works against the grain: your discipline, limits, and where you build real mastery takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/saturn/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is in fall here, its least supported placement, so your discipline, limits, and where you build real mastery can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/saturn/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn has no special dignity here, so your discipline, limits, and where you build real mastery takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/uranus/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is in its home sign here, so it works at full strength: your need for freedom and where you break the mold comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/uranus/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is exalted here, honored and near its best, so your need for freedom and where you break the mold shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/uranus/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is in detriment here, opposite the sign it rules, so it works against the grain: your need for freedom and where you break the mold takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/uranus/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is in fall here, its least supported placement, so your need for freedom and where you break the mold can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/uranus/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus has no special dignity here, so your need for freedom and where you break the mold takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/neptune/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is in its home sign here, so it works at full strength: your imagination, ideals, and what you long for comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/neptune/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is exalted here, honored and near its best, so your imagination, ideals, and what you long for shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/neptune/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is in detriment here, opposite the sign it rules, so it works against the grain: your imagination, ideals, and what you long for takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/neptune/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is in fall here, its least supported placement, so your imagination, ideals, and what you long for can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/neptune/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune has no special dignity here, so your imagination, ideals, and what you long for takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/pluto/domicile",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is in its home sign here, so it works at full strength: your depth, power, and capacity to transform comes naturally and with confidence.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "state": "domicile"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/pluto/exaltation",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is exalted here, honored and near its best, so your depth, power, and capacity to transform shows up amplified, sometimes larger than life.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "state": "exaltation"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/pluto/detriment",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is in detriment here, opposite the sign it rules, so it works against the grain: your depth, power, and capacity to transform takes conscious effort and reaches its aim through less familiar means.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "state": "detriment"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/pluto/fall",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is in fall here, its least supported placement, so your depth, power, and capacity to transform can feel undervalued or hard to reach, and the growth is in trusting it anyway.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "state": "fall"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/dignity/pluto/peregrine",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto has no special dignity here, so your depth, power, and capacity to transform takes its tone from the sign and from its aspects rather than from strength of its own.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "state": "peregrine"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

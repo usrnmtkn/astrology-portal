@@ -1,0 +1,572 @@
+{
+  "_meta": {
+    "title": "Reviewed fast-planet gap-fill aspect-pairs (inner-planet combinations)",
+    "count": 23,
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/mercury-square-venus",
+      "pair": "mercury square venus",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "what you think and what you value pull slightly apart, so your words come out sweeter or sharper than you mean",
+        "habitual_response": "Softening the truth until it loses its point",
+        "specific_cost": "a message that's pleasant but unclear",
+        "meaning_bridge": "the friction is between honesty and harmony",
+        "practical_action": "Say the true thing kindly, rather than the kind thing instead of the true one"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you think and what you value pull slightly apart, so your words come out sweeter or sharper than you mean. It's easy to fall into softening the truth until it loses its point, which can cost you a message that's pleasant but unclear. But the friction is between honesty and harmony. Say the true thing kindly, rather than the kind thing instead of the true one.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-opposition-venus",
+      "pair": "mercury opposition venus",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "your head and your heart give different answers about someone or something",
+        "habitual_response": "Talking yourself into or out of a feeling",
+        "specific_cost": "a decision that argues with what you actually want",
+        "meaning_bridge": "logic and liking are pulling opposite ways",
+        "practical_action": "Let both the reason and the wanting have a say"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your head and your heart give different answers about someone or something. It's easy to fall into talking yourself into or out of a feeling, which can cost you a decision that argues with what you actually want. But logic and liking are pulling opposite ways. Let both the reason and the wanting have a say.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-square-sun",
+      "pair": "mercury square sun",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "what you think and who you're get crossed, so you overthink your own decisions",
+        "habitual_response": "Second-guessing yourself out loud",
+        "specific_cost": "confidence spent arguing with your own plan",
+        "meaning_bridge": "the friction is between the idea and the ego behind it",
+        "practical_action": "Decide, then stop relitigating it"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you think and who you're get crossed, so you overthink your own decisions. It's easy to fall into second-guessing yourself out loud, which can cost you confidence spent arguing with your own plan. But the friction is between the idea and the ego behind it. Decide, then stop relitigating it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-opposition-sun",
+      "pair": "mercury opposition sun",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "your thinking and your will keep facing off",
+        "habitual_response": "Overexplaining to convince yourself",
+        "specific_cost": "a plan talked to death",
+        "meaning_bridge": "idea and identity are out of phase",
+        "practical_action": "Trust the decision once it's made"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your thinking and your will keep facing off. It's easy to fall into overexplaining to convince yourself, which can cost you a plan talked to death. But idea and identity are out of phase. Trust the decision once it's made.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-square-mars",
+      "pair": "mercury square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "your thoughts and your temper get crossed, so words come out sharp and quick",
+        "habitual_response": "Firing off the reply before you mean to",
+        "specific_cost": "a message you'd take back",
+        "meaning_bridge": "the friction is between thinking and reacting",
+        "practical_action": "Draft it, wait, then send"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your thoughts and your temper get crossed, so words come out sharp and quick. It's easy to fall into firing off the reply before you mean to, which can cost you a message you'd take back. But the friction is between thinking and reacting. Draft it, wait, then send.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-opposition-mars",
+      "pair": "mercury opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "your ideas and your impulses pull opposite ways",
+        "habitual_response": "Arguing to win rather than to understand",
+        "specific_cost": "a debate that turns into a fight",
+        "meaning_bridge": "thought and drive are out of phase",
+        "practical_action": "Slow the pace before it becomes a contest"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your ideas and your impulses pull opposite ways. It's easy to fall into arguing to win rather than to understand, which can cost you a debate that turns into a fight. But thought and drive are out of phase. Slow the pace before it becomes a contest.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-square-sun",
+      "pair": "venus square sun",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "what you find lovely and who you're trying to be don't quite match",
+        "habitual_response": "Performing a taste that isn't yours",
+        "specific_cost": "pleasure spent on appearances",
+        "meaning_bridge": "the friction is between worth and self-image",
+        "practical_action": "Choose what you actually like, not what looks right"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you find lovely and who you're trying to be don't quite match. It's easy to fall into performing a taste that isn't yours, which can cost you pleasure spent on appearances. But the friction is between worth and self-image. Choose what you actually like, not what looks right.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-opposition-sun",
+      "pair": "venus opposition sun",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "what you want and who you're keep facing off",
+        "habitual_response": "Chasing approval instead of pleasure",
+        "specific_cost": "a choice that impresses but doesn't satisfy",
+        "meaning_bridge": "value and identity are out of phase",
+        "practical_action": "Pick the thing that pleases you, not the room"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you want and who you're keep facing off. It's easy to fall into chasing approval instead of pleasure, which can cost you a choice that impresses but doesn't satisfy. But value and identity are out of phase. Pick the thing that pleases you, not the room.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-square-mars",
+      "pair": "venus square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "what you want and how you go after it get crossed, so desire and irritation run close",
+        "habitual_response": "Pushing too hard, or going cold to protect yourself",
+        "specific_cost": "a connection that's all friction or all stall",
+        "meaning_bridge": "the friction is between affection and drive",
+        "practical_action": "Say what you want directly and let them respond"
+      },
+      "source_keys": [
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you want and how you go after it get crossed, so desire and irritation run close. It's easy to fall into pushing too hard, or going cold to protect yourself, which can cost you a connection that's all friction or all stall. But the friction is between affection and drive. Say what you want directly and let them respond.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-opposition-mars",
+      "pair": "venus opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "slots": {
+        "lived_scene": "your affection and your drive keep pulling opposite ways, often through another person",
+        "habitual_response": "Chasing what pulls away and cooling on what's offered",
+        "specific_cost": "a push-pull that exhausts everyone",
+        "meaning_bridge": "love and desire are out of phase",
+        "practical_action": "Want what's actually there, not what resists you"
+      },
+      "source_keys": [
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your affection and your drive keep pulling opposite ways, often through another person. It's easy to fall into chasing what pulls away and cooling on what's offered, which can cost you a push-pull that exhausts everyone. But love and desire are out of phase. Want what's actually there, not what resists you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-sextile-venus",
+      "pair": "mercury sextile venus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "it's easy to say the warm, tactful thing",
+        "underuse_pattern": "you keep the nice thought to yourself",
+        "deliberate_participation": "Pay the compliment or smooth the conversation",
+        "meaning_bridge": "grace and words cooperate now"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "It's easy to say the warm, tactful thing, and grace and words cooperate now. What's easy to miss is that you keep the nice thought to yourself, so pay the compliment or smooth the conversation.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-trine-venus",
+      "pair": "mercury trine venus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "charm and clarity flow together",
+        "underuse_pattern": "you coast on pleasantries",
+        "deliberate_participation": "Have the warm, honest conversation",
+        "meaning_bridge": "taste and words agree easily"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Charm and clarity flow together, and taste and words agree easily. What's easy to miss is that you coast on pleasantries, so have the warm, honest conversation.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-sextile-sun",
+      "pair": "mercury sextile sun",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your thoughts and your sense of purpose line up, so it's easy to say what you mean",
+        "underuse_pattern": "you undersell the idea",
+        "deliberate_participation": "Say the thing you actually think",
+        "meaning_bridge": "mind and will cooperate"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your thoughts and your sense of purpose line up, so it's easy to say what you mean, and mind and will cooperate. What's easy to miss is that you undersell the idea, so say the thing you actually think.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-trine-sun",
+      "pair": "mercury trine sun",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your mind and your identity move together, and you think clearly about your own direction",
+        "underuse_pattern": "you sit on the clear plan",
+        "deliberate_participation": "Put the idea into action",
+        "meaning_bridge": "clear thinking about yourself comes easily"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your mind and your identity move together, and you think clearly about your own direction, and clear thinking about yourself comes easily. What's easy to miss is that you sit on the clear plan, so put the idea into action.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-sextile-mars",
+      "pair": "mercury sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your thinking and your drive cooperate, so you can say the sharp thing well and act on your ideas",
+        "underuse_pattern": "you let the idea sit",
+        "deliberate_participation": "Say it and do it while the energy's there",
+        "meaning_bridge": "mind and action line up"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your thinking and your drive cooperate, so you can say the sharp thing well and act on your ideas, and mind and action line up. What's easy to miss is that you let the idea sit, so say it and do it while the energy's there.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-trine-mars",
+      "pair": "mercury trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your mind and your drive move well together, and decisive words come easily",
+        "underuse_pattern": "you soften what you could say cleanly",
+        "deliberate_participation": "Make the direct point",
+        "meaning_bridge": "thinking and doing are in sync"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your mind and your drive move well together, and decisive words come easily, and thinking and doing are in sync. What's easy to miss is that you soften what you could say cleanly, so make the direct point.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-sextile-sun",
+      "pair": "venus sextile sun",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "what you value and who you're cooperate, so warmth and confidence come together",
+        "underuse_pattern": "you hide what you enjoy",
+        "deliberate_participation": "Let yourself want something and be seen wanting it",
+        "meaning_bridge": "pleasure and identity agree"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "What you value and who you're cooperate, so warmth and confidence come together, and pleasure and identity agree. What's easy to miss is that you hide what you enjoy, so let yourself want something and be seen wanting it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-trine-sun",
+      "pair": "venus trine sun",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your values and your identity flow together, and being yourself is pleasant",
+        "underuse_pattern": "you downplay your own warmth",
+        "deliberate_participation": "Enjoy being liked as you are",
+        "meaning_bridge": "worth and self come easily"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your values and your identity flow together, and being yourself is pleasant, and worth and self come easily. What's easy to miss is that you downplay your own warmth, so enjoy being liked as you are.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-sextile-mars",
+      "pair": "venus sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "attraction and affection line up easily, so desire and warmth cooperate",
+        "underuse_pattern": "you wait to be pursued",
+        "deliberate_participation": "Reach for what and who you want",
+        "meaning_bridge": "wanting and being liked agree"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Attraction and affection line up easily, so desire and warmth cooperate, and wanting and being liked agree. What's easy to miss is that you wait to be pursued, so reach for what and who you want.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-trine-mars",
+      "pair": "venus trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "desire and affection flow together with no resistance",
+        "underuse_pattern": "you let the chemistry idle",
+        "deliberate_participation": "Act on the attraction",
+        "meaning_bridge": "wanting and warmth line up smoothly"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Desire and affection flow together with no resistance, and wanting and warmth line up smoothly. What's easy to miss is that you let the chemistry idle, so act on the attraction.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-sextile-mars",
+      "pair": "sun sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "your identity and your drive cooperate, so confident action comes easily",
+        "underuse_pattern": "you hold the initiative back",
+        "deliberate_participation": "Take the bold, well-aimed step",
+        "meaning_bridge": "self and drive agree"
+      },
+      "source_keys": [
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your identity and your drive cooperate, so confident action comes easily, and self and drive agree. What's easy to miss is that you hold the initiative back, so take the bold, well-aimed step.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-mars",
+      "pair": "sun trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "slots": {
+        "available_opening": "who you are and your drive move together, and action feels natural and unforced",
+        "underuse_pattern": "you coast on the easy confidence",
+        "deliberate_participation": "Put the energy toward a real goal",
+        "meaning_bridge": "identity and drive line up"
+      },
+      "source_keys": [
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Who you are and your drive move together, and action feels natural and unforced, and identity and drive line up. What's easy to miss is that you coast on the easy confidence, so put the energy toward a real goal.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-conjunction-venus",
+      "pair": "mercury conjunction venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "your thinking and your affection run together, so words come out charming and you talk about what you love",
+        "function_a_lived": "the way you think and speak",
+        "function_b_lived": "the way you value and connect",
+        "concentration_action": "Say the kind thing you mean, and don't let charm stand in for honesty"
+      },
+      "source_keys": [
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "expanded_narrative": "Your thinking and your affection run together, so words come out charming and you talk about what you love. It can be hard to separate the way you think and speak from the way you value and connect right now, so say the kind thing you mean, and don't let charm stand in for honesty.",
+      "revoice_version": "chani-quality-v1-composed"
+    }
+  ]
+}

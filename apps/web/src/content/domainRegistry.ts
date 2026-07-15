@@ -1,5 +1,6 @@
 import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
 import { equivalentAstroContentKeys } from "./keyAliases";
+import { firstReaderFacingCopy, readerFacingParagraphs } from "./readerSafety";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -582,7 +583,7 @@ export function createDomainRegistry(bundleInput: unknown) {
     const mode = registryMode;
     const sourceSummary = cleanText(placement.tldr);
     const sourceBody = cleanText(placement.body);
-    const sourceDetailParagraphs = cleanParagraphs([sourceBody, placement.gift, placement.challenge, placement.note]);
+    const sourceDetailParagraphs = cleanParagraphs([sourceBody, placement.gift, placement.challenge]);
 
     const knowledgeItem: KnowledgeItem = {
       id: placement.id,
@@ -643,7 +644,7 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: cleanText(angle.tldr) || id,
         displaySummary: cleanText(angle.tldr),
-        detailParagraphs: cleanParagraphs([angle.body, angle.approach, angle.shadow, angle.note]),
+        detailParagraphs: cleanParagraphs([angle.body, angle.approach, angle.shadow]),
         livedExperience: cleanText(angle.body),
         gift: cleanText(angle.approach),
         challenge: cleanText(angle.shadow)
@@ -859,9 +860,9 @@ export function createDomainRegistry(bundleInput: unknown) {
 
       return {
         bundle,
-        summary: cleanText(summary),
-        body: cleanText(body),
-        detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
+        summary: firstReaderFacingCopy([cleanText(summary)]),
+        body: firstReaderFacingCopy([cleanText(body)]),
+        detailParagraphs: readerFacingParagraphs(cleanParagraphs(renderedDetailParagraphs))
       };
     }
 
@@ -882,9 +883,9 @@ export function createDomainRegistry(bundleInput: unknown) {
 
       return {
         bundle,
-        summary,
-        body,
-        detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
+        summary: firstReaderFacingCopy([summary]),
+        body: firstReaderFacingCopy([body]),
+        detailParagraphs: readerFacingParagraphs(cleanParagraphs(renderedDetailParagraphs))
       };
     }
 

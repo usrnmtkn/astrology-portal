@@ -1,0 +1,2280 @@
+{
+  "_meta": {
+    "title": "Reviewed cc/aspect-pair clauses",
+    "promoted_from": "EVIDENCE_ONLY_UNTIL_REVIEWED",
+    "count": 84,
+    "voice": "Marie Satori house voice",
+    "tier": "REVIEWED_CLAUSE",
+    "note": "Slots feed the transit templates (4A/4B/4C short; 4E-4I long by transiting outer planet). A house still locates the scene at render time; these clauses supply the lived situation only.",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/aspect-pair/mars-square-pluto",
+      "pair": "mars square pluto",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "a push to get your way hardens into a need to dominate the situation or the person in it",
+        "habitual_response": "Going all-or-nothing to force the outcome",
+        "specific_cost": "a power struggle and a bridge you will want back",
+        "meaning_bridge": "the intensity is real fuel, it just wants a target that's change rather than winning",
+        "practical_action": "Aim the force at what you actually want to build, and leave one exit standing"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-square-pluto",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A push to get your way hardens into a need to dominate the situation or the person in it. It's easy to fall into going all-or-nothing to force the outcome, which can cost you a power struggle and a bridge you will want back. But the intensity is real fuel, it just wants a target that's change rather than winning. Aim the force at what you actually want to build, and leave one exit standing.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop fearing that changing means losing yourself.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can feel when a room has turned strange. The conversation becomes mean, the questions get invasive, or your body starts looking for the nearest exit before your mind has explained why. You do not need to remain there long enough to collect evidence. Go.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mars-square-saturn",
+      "pair": "mars square saturn",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "the urge to move runs straight into a limit, a delay, or a wave of self-doubt",
+        "habitual_response": "Pushing recklessly or freezing in place",
+        "specific_cost": "wasted effort and the sense that you're blocked",
+        "meaning_bridge": "the resistance is marking exactly where you need to get stronger",
+        "practical_action": "Move in smaller structured steps instead of one big shove"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-square-saturn",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your drive keeps running into a wall right now, whether it's a limit, a delay, or a wave of self-doubt. It's frustrating, and pushing harder or freezing up will only wear you out. This is a moment for the long game: break the goal into smaller, steadier steps, and let the resistance show you exactly where you need to get stronger.",
+      "revoice_version": "chani-quality-v1-authored",
+      "pull_quote": {
+        "text": "Saturn doesn't want you to become faster, more efficient, or more competitive. It just wants you to act your age.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "The day will fill itself if you let it. Other people's requests arrive, small problems become urgent, and suddenly it is evening without anything important moving forward. Decide what you are doing before the noise begins. Give your own life the first hour.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mercury-square-neptune",
+      "pair": "mercury square neptune",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4H",
+      "slots": {
+        "lived_scene": "the facts blur and it's easy to hear the version you were hoping for",
+        "habitual_response": "Filling the gaps with a hunch and acting on it",
+        "specific_cost": "a promise made on fog that has to be walked back",
+        "meaning_bridge": "clarity is available, it just has to be checked against something solid",
+        "practical_action": "Confirm the detail against a real source before you sign or agree"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-square-neptune",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "The facts blur and it's easy to hear the version you were hoping for. It's easy to fall into filling the gaps with a hunch and acting on it, which can cost you a promise made on fog that has to be walked back. But clarity is available, it just has to be checked against something solid. Confirm the detail against a real source before you sign or agree.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Imagination is the only way you can contend with uncertainty.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mercury-square-pluto",
+      "pair": "mercury square pluto",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "a conversation turns into a quiet contest over who's right and who gets the last word",
+        "habitual_response": "Maneuvering, hinting, or digging instead of saying it",
+        "specific_cost": "trust spent on a power play",
+        "meaning_bridge": "the real subject is recognition, and it responds to plainness, not pressure",
+        "practical_action": "Say the honest thing plainly. The maneuvering costs more than the point"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-square-pluto",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A conversation can turn into a quiet contest over who's right or whether your effort gets seen, and words can dig or maneuver more than usual. The real subject is usually recognition, and it responds to plainness, not pressure. Say the honest thing directly, because the maneuvering costs more than the point ever will.",
+      "revoice_version": "chani-quality-v1-authored",
+      "marie_advice": {
+        "text": "A strong opinion can harden quickly when it earns you attention. Soon you are defending something you barely believe because changing your mind would feel embarrassing. Keep enough distance from your own conclusions to notice when the facts have moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mercury-square-saturn",
+      "pair": "mercury square saturn",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "thoughts turn heavy and self-critical and words feel slow to come",
+        "habitual_response": "Reading the seriousness as proof it's hopeless",
+        "specific_cost": "a real idea left unsaid because it didn't feel finished",
+        "meaning_bridge": "this is precision, not pessimism, and it rewards the plain structured version",
+        "practical_action": "Say the clear, bare-bones version and let it be enough"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-square-saturn",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Thoughts turn heavy and self-critical and words feel slow to come. It's easy to fall into reading the seriousness as proof it's hopeless, which can cost you a real idea left unsaid because it didn't feel finished. But this is precision, not pessimism, and it rewards the plain structured version. Say the clear, bare-bones version and let it be enough.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your pace is not too slow.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some ideas become less clear the longer you stare at them. You keep rewriting the sentence, reopening the document, or trying to force a decision from a mind that has already gone tired. Leave it alone for a while. A thought can continue developing after you stop chasing it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mercury-opposition-chiron",
+      "pair": "mercury opposition chiron",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "something said or heard touches an old sore spot and words land harder than intended",
+        "habitual_response": "Answering from the hurt and getting defensive",
+        "specific_cost": "a defensive exchange where a repair was possible",
+        "meaning_bridge": "the sting is an opening for the honest conversation, not only for more hurt",
+        "practical_action": "Use it for the healing conversation rather than the defensive one"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-opposition-chiron",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Something said or heard touches an old sore spot and words land harder than intended. It's easy to fall into answering from the hurt and getting defensive, which can cost you a defensive exchange where a repair was possible. But the sting is an opening for the honest conversation, not only for more hurt. Use it for the healing conversation rather than the defensive one.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-chiron",
+      "pair": "moon opposition chiron",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "something another person does lands right on an old bruise",
+        "habitual_response": "Treating their action as the whole wound",
+        "specific_cost": "a fight about them that was really about the tender spot",
+        "meaning_bridge": "the ache was there before they touched it",
+        "practical_action": "Tend the bruise first, then decide what's actually about them"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-chiron",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Something another person does lands right on an old bruise. It's easy to fall into treating their action as the whole wound, which can cost you a fight about them that was really about the tender spot. But the ache was there before they touched it. Tend the bruise first, then decide what's actually about them.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-jupiter",
+      "pair": "moon opposition jupiter",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4F",
+      "slots": {
+        "lived_scene": "what usually comforts you stops feeling like enough and you get restless for more",
+        "habitual_response": "Chasing a bigger fix than the moment needs",
+        "specific_cost": "overreach that leaves the real need unmet",
+        "meaning_bridge": "the hunger is information about what's missing, not a mandate to supersize",
+        "practical_action": "Name the actual need before you go looking for more"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-jupiter",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "What usually comforts you stops feeling like enough and you get restless for more. It's easy to fall into chasing a bigger fix than the moment needs, which can cost you overreach that leaves the real need unmet. But the hunger is information about what's missing, not a mandate to supersize. Name the actual need before you go looking for more.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-mars",
+      "pair": "moon opposition mars",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "your need for calm runs up against someone's heat or push",
+        "habitual_response": "Snapping before you clock the irritation",
+        "specific_cost": "a small conflict that didn't have to happen",
+        "meaning_bridge": "the charge wants to move through your body, not your mouth",
+        "practical_action": "Move first, then speak"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-mars",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your need for calm runs up against someone's heat or push. It's easy to fall into snapping before you clock the irritation, which can cost you a small conflict that didn't have to happen. But the charge wants to move through your body, not your mouth. Move first, then speak.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-mercury",
+      "pair": "moon opposition mercury",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "you feel one thing and think another, and they won't line up",
+        "habitual_response": "Letting the argument in your head overrule the feeling",
+        "specific_cost": "a decision that ignores half of what's true",
+        "meaning_bridge": "both the logic and the mood are carrying real data",
+        "practical_action": "Hear both out before you decide anything"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-mercury",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "You feel one thing and think another, and they won't line up. It's easy to fall into letting the argument in your head overrule the feeling, which can cost you a decision that ignores half of what's true. But both the logic and the mood are carrying real data. Hear both out before you decide anything.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-neptune",
+      "pair": "moon opposition neptune",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4H",
+      "slots": {
+        "lived_scene": "your feelings blur with everyone else's until you can't tell which are yours",
+        "habitual_response": "Taking the room's mood as your own",
+        "specific_cost": "a choice made on borrowed feeling",
+        "meaning_bridge": "your own signal is in there under the noise",
+        "practical_action": "Get quiet and check what's actually yours before acting"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-neptune",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your feelings blur with everyone else's until you can't tell which are yours. It's easy to fall into taking the room's mood as your own, which can cost you a choice made on borrowed feeling. But your own signal is in there under the noise. Get quiet and check what's actually yours before acting.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-pluto",
+      "pair": "moon opposition pluto",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "emotional intensity runs into a control dynamic, an old jealousy or a buried feeling asking to be seen",
+        "habitual_response": "Reacting from the grip instead of choosing",
+        "specific_cost": "a reaction that hands someone else the wheel",
+        "meaning_bridge": "the feeling can be felt fully without running the show",
+        "practical_action": "Feel it all the way through, then choose your response"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-pluto",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Emotional intensity runs into a control dynamic, an old jealousy or a buried feeling asking to be seen. It's easy to fall into reacting from the grip instead of choosing, which can cost you a reaction that hands someone else the wheel. But the feeling can be felt fully without running the show. Feel it all the way through, then choose your response.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-saturn",
+      "pair": "moon opposition saturn",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "your own needs collide with a duty or with someone's distance",
+        "habitual_response": "Dropping yourself to hold it together, or dropping the task to feel okay",
+        "specific_cost": "resentment on one side or a dropped ball on the other",
+        "meaning_bridge": "you don't actually have to choose between the two",
+        "practical_action": "Make room for the feeling without abandoning the responsibility"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-saturn",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your own needs collide with a duty or with someone's distance. It's easy to fall into dropping yourself to hold it together, or dropping the task to feel okay, which can cost you resentment on one side or a dropped ball on the other. But you don't actually have to choose between the two. Make room for the feeling without abandoning the responsibility.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your pace is not too slow.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-sun",
+      "pair": "moon opposition sun",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "the face you show and the feeling underneath sit across from each other",
+        "habitual_response": "Picking one and disowning the other",
+        "specific_cost": "a self that's either performed or overwhelmed",
+        "meaning_bridge": "both sides are you and both can be true at once",
+        "practical_action": "Let the outer steadiness and the inner need coexist today"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-sun",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "The face you show and the feeling underneath sit across from each other. It's easy to fall into picking one and disowning the other, which can cost you a self that's either performed or overwhelmed. But both sides are you and both can be true at once. Let the outer steadiness and the inner need coexist today.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-uranus",
+      "pair": "moon opposition uranus",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4G",
+      "slots": {
+        "lived_scene": "your need for security pulls hard against an urge to break away",
+        "habitual_response": "Bolting or clamping down",
+        "specific_cost": "a disruption you caused instead of chose",
+        "meaning_bridge": "the restlessness is pointing at something that needs more room",
+        "practical_action": "Give the need for space a small, deliberate outlet"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-uranus",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your need for security pulls hard against an urge to break away. It's easy to fall into bolting or clamping down, which can cost you a disruption you caused instead of chose. But the restlessness is pointing at something that needs more room. Give the need for space a small, deliberate outlet.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-opposition-venus",
+      "pair": "moon opposition venus",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "what you need for comfort pulls against what you want to give someone else",
+        "habitual_response": "Over-tending them and starving yourself, or the reverse",
+        "specific_cost": "a lopsided exchange nobody enjoys",
+        "meaning_bridge": "both your comfort and theirs get to count",
+        "practical_action": "Say what you actually want instead of keeping a silent scoreboard"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-opposition-venus",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "What you need for comfort pulls against what you want to give someone else. It's easy to fall into over-tending them and starving yourself, or the reverse, which can cost you a lopsided exchange nobody enjoys. But both your comfort and theirs get to count. Say what you actually want instead of keeping a silent scoreboard.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-chiron",
+      "pair": "moon square chiron",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "an old hurt gets poked and you go straight to defense",
+        "habitual_response": "Acting on the flinch before you notice it",
+        "specific_cost": "a reaction that reopens the wound",
+        "meaning_bridge": "the defensiveness is a bruise, not a verdict",
+        "practical_action": "Notice the flinch before you move on it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-chiron",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "An old hurt gets poked and you go straight to defense. It's easy to fall into acting on the flinch before you notice it, which can cost you a reaction that reopens the wound. But the defensiveness is a bruise, not a verdict. Notice the flinch before you move on it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-jupiter",
+      "pair": "moon square jupiter",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4F",
+      "slots": {
+        "lived_scene": "a good mood inflates and you promise more than the day can hold",
+        "habitual_response": "Committing big on a feeling",
+        "specific_cost": "obligations you can't honor later",
+        "meaning_bridge": "the warmth is real, the scale is the thing to watch",
+        "practical_action": "Enjoy the lift and keep the commitments to size"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-jupiter",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A good mood inflates and you promise more than the day can hold. It's easy to fall into committing big on a feeling, which can cost you obligations you can't honor later. But the warmth is real, the scale is the thing to watch. Enjoy the lift and keep the commitments to size.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-mars",
+      "pair": "moon square mars",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "feeling runs hot and the fuse is short, and you're one comment away from the reply you'll replay at 2am",
+        "habitual_response": "Saying the sharp thing before you mean to",
+        "specific_cost": "a remark you would take back an hour later",
+        "meaning_bridge": "the heat is energy that wants a physical outlet",
+        "practical_action": "Move the charge through your body before it reaches your mouth"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-mars",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feeling runs hot and the fuse is short, and you're one comment away from the reply you'll replay at 2am. It's easy to fall into saying the sharp thing before you mean to, which can cost you a remark you would take back an hour later. But the heat is energy that wants a physical outlet. Move the charge through your body before it reaches your mouth.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-mercury",
+      "pair": "moon square mercury",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "your head and your heart start to bicker",
+        "habitual_response": "Overthinking the mood or talking yourself out of a real feeling",
+        "specific_cost": "a true feeling argued away",
+        "meaning_bridge": "the noise settles once you let the feeling be a fact",
+        "practical_action": "Quiet the mental chatter first, then name what you feel"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-mercury",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your head and your heart start to bicker. It's easy to fall into overthinking the mood or talking yourself out of a real feeling, which can cost you a true feeling argued away. But the noise settles once you let the feeling be a fact. Quiet the mental chatter first, then name what you feel.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-neptune",
+      "pair": "moon square neptune",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4H",
+      "slots": {
+        "lived_scene": "moods turn foggy and porous and you soak up everyone's feelings",
+        "habitual_response": "Making a big emotional call inside the haze",
+        "specific_cost": "a decision you can't see clearly enough to trust",
+        "meaning_bridge": "the fog lifts with rest, it's not the truth",
+        "practical_action": "Rest, and hold the big emotional decisions until it clears"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-neptune",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Moods turn foggy and porous and you soak up everyone's feelings. It's easy to fall into making a big emotional call inside the haze, which can cost you a decision you can't see clearly enough to trust. But the fog lifts with rest, it's not the truth. Rest, and hold the big emotional decisions until it clears.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-north-node",
+      "pair": "moon square north node",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "what you're reaching for scrapes against what actually soothes you, and it feels awkward",
+        "habitual_response": "Retreating to the familiar because the growth is uncomfortable",
+        "specific_cost": "a small chance to grow, skipped for comfort",
+        "meaning_bridge": "the awkwardness is the stretch, not a stop sign",
+        "practical_action": "Take one small step toward it anyway"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-north-node",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "What you're reaching for scrapes against what actually soothes you, and it feels awkward. It's easy to fall into retreating to the familiar because the growth is uncomfortable, which can cost you a small chance to grow, skipped for comfort. But the awkwardness is the stretch, not a stop sign. Take one small step toward it anyway.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-pluto",
+      "pair": "moon square pluto",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "emotional intensity turns toward control or a quiet brooding power struggle",
+        "habitual_response": "Gripping the feeling and turning it over and over",
+        "specific_cost": "an afternoon lost to the spiral",
+        "meaning_bridge": "the intensity clears when you let it move",
+        "practical_action": "Let the feeling pass through instead of holding it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-pluto",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Emotional intensity turns toward control or a quiet brooding power struggle. It's easy to fall into gripping the feeling and turning it over and over, which can cost you an afternoon lost to the spiral. But the intensity clears when you let it move. Let the feeling pass through instead of holding it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-saturn",
+      "pair": "moon square saturn",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "a feeling runs into a cold wall and you feel unsupported or not enough",
+        "habitual_response": "Taking the loneliness of the mood as a fact about your life",
+        "specific_cost": "self-criticism dressed up as realism",
+        "meaning_bridge": "the wall is the mood's weather, not the whole picture",
+        "practical_action": "Comfort yourself first, then deal with the actual limit"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-saturn",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A feeling runs into a cold wall today, and you can end up feeling unsupported, blocked, or just not enough. It's real weather, but it isn't the whole truth about your life. Comfort yourself first, then deal with the actual limit in front of you rather than the heavy mood around it.",
+      "revoice_version": "chani-quality-v1-authored",
+      "pull_quote": {
+        "text": "Starting at the wrong time wastes more time than waiting for the right time.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "When you expect to be hurt, ordinary closeness can start feeling intrusive. A question sounds like criticism. Concern feels like pressure. Someone reaches for you and meets the defenses built for a person who is no longer there. Check who is actually standing in front of you before you shut the door.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-sun",
+      "pair": "moon square sun",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "what would comfort you and what you think you should be doing pull in different directions",
+        "habitual_response": "Pushing through and resenting it, or resting and feeling guilty",
+        "specific_cost": "a day spent half in each",
+        "meaning_bridge": "you can pick one on purpose instead of being pulled",
+        "practical_action": "Choose comfort or push deliberately, and let the other wait"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-sun",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "What would comfort you and what you think you should be doing pull in different directions. It's easy to fall into pushing through and resenting it, or resting and feeling guilty, which can cost you a day spent half in each. But you can pick one on purpose instead of being pulled. Choose comfort or push deliberately, and let the other wait.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-uranus",
+      "pair": "moon square uranus",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4G",
+      "slots": {
+        "lived_scene": "restlessness spikes and feelings arrive without warning",
+        "habitual_response": "Bolting from the familiar to get relief",
+        "specific_cost": "a disruption you didn't think through",
+        "meaning_bridge": "the urge is a signal that something is too tight",
+        "practical_action": "Give yourself real space before you upend anything"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-uranus",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Restlessness spikes and feelings arrive without warning. It's easy to fall into bolting from the familiar to get relief, which can cost you a disruption you didn't think through. But the urge is a signal that something is too tight. Give yourself real space before you upend anything.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-square-venus",
+      "pair": "moon square venus",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "you want comfort and you want closeness, and the two are slightly crossed",
+        "habitual_response": "Soothing the gap with spending or sweets",
+        "specific_cost": "a quick fix that misses the real want",
+        "meaning_bridge": "the craving is pointing at a softer need underneath",
+        "practical_action": "Reach for the actual comfort instead of the substitute"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-square-venus",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "You want comfort and you want closeness, and the two are slightly crossed. It's easy to fall into soothing the gap with spending or sweets, which can cost you a quick fix that misses the real want. But the craving is pointing at a softer need underneath. Reach for the actual comfort instead of the substitute.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/saturn-square-jupiter",
+      "pair": "saturn square jupiter",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4F",
+      "slots": {
+        "lived_scene": "a wish to expand runs into something telling you to slow down and consolidate",
+        "habitual_response": "Overreaching, or shutting the growth down entirely",
+        "specific_cost": "growth that outruns its foundation, or a foundation with nothing on it",
+        "meaning_bridge": "optimism and realism are both right here",
+        "practical_action": "Grow, and build the structure that lets the growth hold"
+      },
+      "source_keys": [
+        "cc/aspect-pair/saturn-square-jupiter",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A wish to expand runs into something telling you to slow down and consolidate. It's easy to fall into overreaching, or shutting the growth down entirely, which can cost you growth that outruns its foundation, or a foundation with nothing on it. But optimism and realism are both right here. Grow, and build the structure that lets the growth hold.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-opposition-moon",
+      "pair": "sun opposition moon",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "your public self and your private feelings pull opposite ways",
+        "habitual_response": "Performing steadiness and abandoning what you need",
+        "specific_cost": "a composed exterior that costs too much to keep up",
+        "meaning_bridge": "the outer role and the inner need are both true",
+        "practical_action": "Stay steady on the outside without dropping what you feel underneath"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-opposition-moon",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your public self and your private feelings pull opposite ways. It's easy to fall into performing steadiness and abandoning what you need, which can cost you a composed exterior that costs too much to keep up. But the outer role and the inner need are both true. Stay steady on the outside without dropping what you feel underneath.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop needing to appear unshakeable when you're clearly shaking.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/sun-opposition-saturn",
+      "pair": "sun opposition saturn",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "your aim runs up against hard reality or someone else's limit",
+        "habitual_response": "Reading the gap as a verdict on your worth",
+        "specific_cost": "confidence spent arguing with a wall",
+        "meaning_bridge": "the limit is information about pacing, not about your value",
+        "practical_action": "Name what's in your control and put steady work there"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-opposition-saturn",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your aim runs up against hard reality or someone else's limit. It's easy to fall into reading the gap as a verdict on your worth, which can cost you confidence spent arguing with a wall. But the limit is information about pacing, not about your value. Name what's in your control and put steady work there.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-square-pluto",
+      "pair": "sun square pluto",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "something asks you to drop a hollow version of yourself and get honest about power",
+        "habitual_response": "Gripping harder for control instead of loosening",
+        "specific_cost": "a reckoning made heavier by the grip",
+        "meaning_bridge": "what's false is trying to fall away so something real can stand",
+        "practical_action": "Let the hollow part go rather than defending it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-square-pluto",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Something asks you to drop a hollow version of yourself and get honest about power. It's easy to fall into gripping harder for control instead of loosening, which can cost you a reckoning made heavier by the grip. But what's false is trying to fall away so something real can stand. Let the hollow part go rather than defending it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-square-saturn",
+      "pair": "sun square saturn",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "your direction runs into a limit, a duty, or an authority saying not yet",
+        "habitual_response": "Taking the block as proof you're not enough",
+        "specific_cost": "borrowed doubt standing in for real feedback",
+        "meaning_bridge": "this is a test of commitment, not a judgment",
+        "practical_action": "Do the boring part nobody claps for. That's the confidence that actually holds"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-square-saturn",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your momentum runs into a limit today, a duty, a delay, or someone with authority saying not yet, and it's easy to take it as a verdict on you. It isn't. It's a test of commitment. Do the boring, load-bearing part nobody claps for, because the confidence you build that way is the kind that actually holds.",
+      "revoice_version": "chani-quality-v1-authored"
+    },
+    {
+      "id": "cc/aspect-pair/venus-opposition-north-node",
+      "pair": "venus opposition north node",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": null,
+      "slots": {
+        "lived_scene": "what you value and what you're growing toward pull against each other, often through another person",
+        "habitual_response": "Reaching for the old comfort over the stretch",
+        "specific_cost": "a familiar pleasure that quietly keeps you in place",
+        "meaning_bridge": "the tension is showing you which choice actually moves you",
+        "practical_action": "Choose the option that helps you grow, even if it's less familiar"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-opposition-north-node",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "What you value and what you're growing toward pull against each other, often through another person. It's easy to fall into reaching for the old comfort over the stretch, which can cost you a familiar pleasure that quietly keeps you in place. But the tension is showing you which choice actually moves you. Choose the option that helps you grow, even if it's less familiar.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-opposition-pluto",
+      "pair": "venus opposition pluto",
+      "aspect": "opposition",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4I",
+      "slots": {
+        "lived_scene": "closeness runs into power, jealousy, or the sense you have been giving far more than you get",
+        "habitual_response": "Reacting to the intensity before you know what you want",
+        "specific_cost": "more of yourself poured into an imbalance",
+        "meaning_bridge": "the imbalance is being exposed so you can address it",
+        "practical_action": "Get clear on what you want from the connection before you react"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-opposition-pluto",
+        "cc/aspect/opposition",
+        "cc/ref/aspect-psychology/opposition"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Closeness runs into power, jealousy, or the sense you have been giving far more than you get. It's easy to fall into reacting to the intensity before you know what you want, which can cost you more of yourself poured into an imbalance. But the imbalance is being exposed so you can address it. Get clear on what you want from the connection before you react.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-square-saturn",
+      "pair": "venus square saturn",
+      "aspect": "square",
+      "valence": "challenging",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4A",
+      "recommended_long_template": "4E",
+      "slots": {
+        "lived_scene": "a relationship, or your sense of being valued, feels tested, distant, or effortful, and doubt about being wanted creeps in",
+        "habitual_response": "Withdrawing instead of just asking whether you're wanted",
+        "specific_cost": "a connection judged only by its coldest moment",
+        "meaning_bridge": "the chill is a test of the bond, not proof you're unwanted",
+        "practical_action": "Ask for what you need directly, and let people show you they care through their actions"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-square-saturn",
+        "cc/aspect/square",
+        "cc/ref/aspect-psychology/square"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A relationship, or your sense of being valued, might feel tested, distant, or like more effort than it should be, and it's easy to read that chill as proof you're not wanted. More often it's just asking whether the connection holds up when you stop over-giving to keep the peace. Ask for what you need directly instead of pulling away, and let people show you they care through what they actually do.",
+      "revoice_version": "chani-quality-v1-authored",
+      "pull_quote": {
+        "text": "No relationship, no job, no amount of success is worth abandoning yourself for.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some relationships survive because one person keeps leaving the door cracked. You answer the late message, agree to one more conversation, and call it kindness even though every contact unsettles your life again. If leaving was necessary, finish leaving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/chiron-sextile-north-node",
+      "pair": "chiron sextile north node",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "an old tender spot lines up with where you're meant to grow, and there's a gentle opening",
+        "underuse_pattern": "you leave the sore spot untouched because it's easier",
+        "deliberate_participation": "Tend it in one small honest way and let it point you forward",
+        "meaning_bridge": "the wound and the growth edge are pointing the same direction"
+      },
+      "source_keys": [
+        "cc/aspect-pair/chiron-sextile-north-node",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "An old tender spot lines up with where you're meant to grow, and there's a gentle opening, and the wound and the growth edge are pointing the same direction. What's easy to miss is that you leave the sore spot untouched because it's easier, so tend it in one small honest way and let it point you forward.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mars-sextile-pluto",
+      "pair": "mars sextile pluto",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4I",
+      "slots": {
+        "available_opening": "focused intensity is available that can move something that has been stuck",
+        "underuse_pattern": "you let the drive sit idle to avoid the power struggle",
+        "deliberate_participation": "Aim it at one real, lasting change",
+        "meaning_bridge": "deep drive without the fight is rare and usable"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-sextile-pluto",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Focused intensity is available that can move something that has been stuck, and deep drive without the fight is rare and usable. What's easy to miss is that you let the drive sit idle to avoid the power struggle, so aim it at one real, lasting change.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop fearing that changing means losing yourself.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mars-trine-saturn",
+      "pair": "mars trine saturn",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "energy and discipline are cooperating, so you can work hard without burning out",
+        "underuse_pattern": "you coast and let the steady window pass",
+        "deliberate_participation": "Finish the thing you keep almost finishing",
+        "meaning_bridge": "this is productive drive that actually lasts"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-trine-saturn",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Energy and discipline are cooperating, so you can work hard without burning out, and this is productive drive that actually lasts. What's easy to miss is that you coast and let the steady window pass, so finish the thing you keep almost finishing.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Saturn doesn't want you to become faster, more efficient, or more competitive. It just wants you to act your age.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/mercury-trine-jupiter",
+      "pair": "mercury trine jupiter",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4F",
+      "slots": {
+        "available_opening": "ideas connect easily and explaining things feels natural",
+        "underuse_pattern": "you spend it on small talk instead of a real question",
+        "deliberate_participation": "Say the idea out loud before you have perfected it",
+        "meaning_bridge": "the mental flow wants a subject worth the reach"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-trine-jupiter",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Ideas connect easily and explaining things feels natural, and the mental flow wants a subject worth the reach. What's easy to miss is that you spend it on small talk instead of a real question, so say the idea out loud before you have perfected it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-trine-saturn",
+      "pair": "mercury trine saturn",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "thinking is clear, careful, and organized, so you can plan and say the precise thing",
+        "underuse_pattern": "you let the focus drift to easy tasks",
+        "deliberate_participation": "Use it for the serious conversation or the detailed work",
+        "meaning_bridge": "precision and follow-through are both online"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-trine-saturn",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Thinking is clear, careful, and organized, so you can plan and say the precise thing, and precision and follow-through are both online. What's easy to miss is that you let the focus drift to easy tasks, so use it for the serious conversation or the detailed work.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your pace is not too slow.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-chiron",
+      "pair": "moon sextile chiron",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "a gentle chance opens to tend an old sore spot",
+        "underuse_pattern": "you skip it because it feels small",
+        "deliberate_participation": "Do one kind thing toward the tender part",
+        "meaning_bridge": "small care goes a long way here"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-chiron",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A gentle chance opens to tend an old sore spot, and small care goes a long way here. What's easy to miss is that you skip it because it feels small, so do one kind thing toward the tender part.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-jupiter",
+      "pair": "moon sextile jupiter",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4F",
+      "slots": {
+        "available_opening": "a warm, hopeful feeling wants to rise in you",
+        "underuse_pattern": "you brush it off or hold it back",
+        "deliberate_participation": "Let it move through your body without forcing it bigger",
+        "meaning_bridge": "the optimism and the mood are lined up on their own"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-jupiter",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A warm, hopeful feeling wants to rise in you, and the optimism and the mood are lined up on their own. What's easy to miss is that you brush it off or hold it back, so let it move through your body without forcing it bigger.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-mars",
+      "pair": "moon sextile mars",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "a chance opens to turn a feeling into action",
+        "underuse_pattern": "you let the impulse fade",
+        "deliberate_participation": "Do the small brave thing the mood is pointing at",
+        "meaning_bridge": "the feeling is ready to become a move"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-mars",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A chance opens to turn a feeling into action, and the feeling is ready to become a move. What's easy to miss is that you let the impulse fade, so do the small brave thing the mood is pointing at.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-mercury",
+      "pair": "moon sextile mercury",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "it gets easier to put a feeling into words",
+        "underuse_pattern": "you keep avoiding the conversation",
+        "deliberate_participation": "Have the talk you have been putting off",
+        "meaning_bridge": "feeling and language are cooperating"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-mercury",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "It gets easier to put a feeling into words, and feeling and language are cooperating. What's easy to miss is that you keep avoiding the conversation, so have the talk you have been putting off.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-neptune",
+      "pair": "moon sextile neptune",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "a soft opening for intuition and compassion appears",
+        "underuse_pattern": "you talk yourself out of the nudge",
+        "deliberate_participation": "Follow it into something you make or someone you care for",
+        "meaning_bridge": "the gentle signal is worth trusting"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-neptune",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A soft opening for intuition and compassion appears, and the gentle signal is worth trusting. What's easy to miss is that you talk yourself out of the nudge, so follow it into something you make or someone you care for.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-pluto",
+      "pair": "moon sextile pluto",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4I",
+      "slots": {
+        "available_opening": "a chance opens to go one level deeper without drama",
+        "underuse_pattern": "you stay on the surface",
+        "deliberate_participation": "Let one honest feeling surface and actually look at it",
+        "meaning_bridge": "depth is available cleanly right now"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-pluto",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A chance opens to go one level deeper without drama, and depth is available cleanly right now. What's easy to miss is that you stay on the surface, so let one honest feeling surface and actually look at it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-saturn",
+      "pair": "moon sextile saturn",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "a chance opens to give a feeling some structure",
+        "underuse_pattern": "you let the mood stay loose and unsettled",
+        "deliberate_participation": "Add a steadying routine or a small boundary",
+        "meaning_bridge": "structure helps the feeling settle"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-saturn",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A chance opens to give a feeling some structure, and structure helps the feeling settle. What's easy to miss is that you let the mood stay loose and unsettled, so add a steadying routine or a small boundary.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Starting at the wrong time wastes more time than waiting for the right time.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-sun",
+      "pair": "moon sextile sun",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "a small opening lines up how you feel with what you're doing",
+        "underuse_pattern": "you overlook the easy step",
+        "deliberate_participation": "Take it and let the mood carry the day",
+        "meaning_bridge": "self and feeling are gently in step"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-sun",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A small opening lines up how you feel with what you're doing, and self and feeling are gently in step. What's easy to miss is that you overlook the easy step, so take it and let the mood carry the day.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-uranus",
+      "pair": "moon sextile uranus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4G",
+      "slots": {
+        "available_opening": "a chance opens to try a fresh emotional approach",
+        "underuse_pattern": "you default to the usual routine",
+        "deliberate_participation": "Break one small pattern and notice how it feels",
+        "meaning_bridge": "novelty is easy and low-risk today"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-uranus",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A chance opens to try a fresh emotional approach, and novelty is easy and low-risk today. What's easy to miss is that you default to the usual routine, so break one small pattern and notice how it feels.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-sextile-venus",
+      "pair": "moon sextile venus",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "a soft opening for warmth, affection, and small pleasures appears",
+        "underuse_pattern": "you postpone the nice thing",
+        "deliberate_participation": "Reach for the comforting, lovely thing now",
+        "meaning_bridge": "tenderness is close to the surface"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-sextile-venus",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A soft opening for warmth, affection, and small pleasures appears, and tenderness is close to the surface. What's easy to miss is that you postpone the nice thing, so reach for the comforting, lovely thing now.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-chiron",
+      "pair": "moon trine chiron",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "it's easier than usual to feel the tender thing without being swamped by it",
+        "underuse_pattern": "you avoid it out of habit",
+        "deliberate_participation": "Let yourself feel it while it's gentle",
+        "meaning_bridge": "healing is unusually comfortable here"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-chiron",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "It's easier than usual to feel the tender thing without being swamped by it, and healing is unusually comfortable here. What's easy to miss is that you avoid it out of habit, so let yourself feel it while it's gentle.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-jupiter",
+      "pair": "moon trine jupiter",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4F",
+      "slots": {
+        "available_opening": "a warm, generous, feel-good flow is easy to share",
+        "underuse_pattern": "you keep it to yourself",
+        "deliberate_participation": "Spread the good feeling around",
+        "meaning_bridge": "the mood is actually generous"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-jupiter",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A warm, generous, feel-good flow is easy to share, and the mood is actually generous. What's easy to miss is that you keep it to yourself, so spread the good feeling around.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-mars",
+      "pair": "moon trine mars",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "emotion is fueling action smoothly and you're moved by what you care about",
+        "underuse_pattern": "you sit on the energy",
+        "deliberate_participation": "Put it to work on something that matters to you",
+        "meaning_bridge": "feeling and drive are cooperating"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-mars",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Emotion is fueling action smoothly and you're moved by what you care about, and feeling and drive are cooperating. What's easy to miss is that you sit on the energy, so put it to work on something that matters to you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-mercury",
+      "pair": "moon trine mercury",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "it's easy to name what you feel and talk it through",
+        "underuse_pattern": "you stay quiet anyway",
+        "deliberate_participation": "Say the honest, gentle thing",
+        "meaning_bridge": "feeling and words flow together"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-mercury",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "It's easy to name what you feel and talk it through, and feeling and words flow together. What's easy to miss is that you stay quiet anyway, so say the honest, gentle thing.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-neptune",
+      "pair": "moon trine neptune",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "a soft, imaginative, forgiving mood is available",
+        "underuse_pattern": "you let it pass unused",
+        "deliberate_participation": "Make something or offer someone a little grace",
+        "meaning_bridge": "empathy and imagination are open"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-neptune",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A soft, imaginative, forgiving mood is available, and empathy and imagination are open. What's easy to miss is that you let it pass unused, so make something or offer someone a little grace.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-pluto",
+      "pair": "moon trine pluto",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4I",
+      "slots": {
+        "available_opening": "you can be honest about the heavy thing and come out lighter",
+        "underuse_pattern": "you keep it buried",
+        "deliberate_participation": "Say the true thing and let it renew you",
+        "meaning_bridge": "depth here restores rather than drains"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-pluto",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "You can be honest about the heavy thing and come out lighter, and depth here restores rather than drains. What's easy to miss is that you keep it buried, so say the true thing and let it renew you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-saturn",
+      "pair": "moon trine saturn",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "there's real comfort in routine, discipline, and knowing where you stand",
+        "underuse_pattern": "you resist the structure that would steady you",
+        "deliberate_participation": "Lean into the routine that grounds you",
+        "meaning_bridge": "contained feeling is its own comfort now"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-saturn",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "There's real comfort in routine, discipline, and knowing where you stand, and contained feeling is its own comfort now. What's easy to miss is that you resist the structure that would steady you, so lean into the routine that grounds you.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Starting at the wrong time wastes more time than waiting for the right time.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-sun",
+      "pair": "moon trine sun",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "who you are and how you feel agree without effort",
+        "underuse_pattern": "you second-guess the easy confidence",
+        "deliberate_participation": "Take the day at its word",
+        "meaning_bridge": "comfort and confidence come easily"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-sun",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Who you are and how you feel agree without effort, and comfort and confidence come easily. What's easy to miss is that you second-guess the easy confidence, so take the day at its word.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-uranus",
+      "pair": "moon trine uranus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4G",
+      "slots": {
+        "available_opening": "change feels easy and you're comfortable doing it your own way",
+        "underuse_pattern": "you cling to the familiar out of habit",
+        "deliberate_participation": "Try the fresh approach that appeals to you",
+        "meaning_bridge": "emotional freedom is refreshing here"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-uranus",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Change feels easy and you're comfortable doing it your own way, and emotional freedom is refreshing here. What's easy to miss is that you cling to the familiar out of habit, so try the fresh approach that appeals to you.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-trine-venus",
+      "pair": "moon trine venus",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "a warm, affectionate mood is good for closeness and self-kindness",
+        "underuse_pattern": "you keep the tenderness at arm's length",
+        "deliberate_participation": "Reach for connection or treat yourself gently",
+        "meaning_bridge": "affection comes easily today"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-trine-venus",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A warm, affectionate mood is good for closeness and self-kindness, and affection comes easily today. What's easy to miss is that you keep the tenderness at arm's length, so reach for connection or treat yourself gently.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-jupiter",
+      "pair": "sun trine jupiter",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4F",
+      "slots": {
+        "available_opening": "confidence and opportunity align and doors feel open",
+        "underuse_pattern": "you hesitate and let the moment pass",
+        "deliberate_participation": "Say yes to growth you can actually honor",
+        "meaning_bridge": "the expansion is real and available"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-trine-jupiter",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Confidence and opportunity align and doors feel open, and the expansion is real and available. What's easy to miss is that you hesitate and let the moment pass, so say yes to growth you can actually honor.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-trine-saturn",
+      "pair": "sun trine saturn",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "ambition and structure are working with each other and steady effort pays off",
+        "underuse_pattern": "you wait instead of committing",
+        "deliberate_participation": "Commit to something long-term and build it properly",
+        "meaning_bridge": "discipline feels supportive rather than heavy"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-trine-saturn",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Ambition and structure are working with each other and steady effort pays off, and discipline feels supportive rather than heavy. What's easy to miss is that you wait instead of committing, so commit to something long-term and build it properly.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-sextile-neptune",
+      "pair": "venus sextile neptune",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "a gentle opening around love, art, and imagination appears",
+        "underuse_pattern": "you only admire it instead of acting",
+        "deliberate_participation": "Make one tangible, beautiful thing with what is already here",
+        "meaning_bridge": "inspiration can become real if you move on it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-sextile-neptune",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "A gentle opening around love, art, and imagination appears, and inspiration can become real if you move on it. What's easy to miss is that you only admire it instead of acting, so make one tangible, beautiful thing with what is already here.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-sextile-north-node",
+      "pair": "venus sextile north node",
+      "aspect": "sextile",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": null,
+      "slots": {
+        "available_opening": "warmth and your growth edge cooperate and a small step toward what you want feels natural",
+        "underuse_pattern": "you wait for a bigger sign",
+        "deliberate_participation": "Reach for the connection or pleasure that also moves you forward",
+        "meaning_bridge": "pleasure and growth point the same way"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-sextile-north-node",
+        "cc/aspect/sextile",
+        "cc/ref/aspect-psychology/sextile"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Warmth and your growth edge cooperate and a small step toward what you want feels natural, and pleasure and growth point the same way. What's easy to miss is that you wait for a bigger sign, so reach for the connection or pleasure that also moves you forward.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-trine-jupiter",
+      "pair": "venus trine jupiter",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4F",
+      "slots": {
+        "available_opening": "good feeling, social ease, and a little luck in love and money flow",
+        "underuse_pattern": "you let the warmth go unspent",
+        "deliberate_participation": "Be generous without overextending",
+        "meaning_bridge": "the ease is real, the only risk is overdoing it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-trine-jupiter",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Good feeling, social ease, and a little luck in love and money flow, and the ease is real, the only risk is overdoing it. What's easy to miss is that you let the warmth go unspent, so be generous without overextending.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-trine-neptune",
+      "pair": "venus trine neptune",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4H",
+      "slots": {
+        "available_opening": "romance, art, and compassion blend beautifully",
+        "underuse_pattern": "you drift off into the ideal",
+        "deliberate_participation": "Enjoy it with one foot on the ground about what's real",
+        "meaning_bridge": "love and imagination are cooperating"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-trine-neptune",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Romance, art, and compassion blend beautifully, and love and imagination are cooperating. What's easy to miss is that you drift off into the ideal, so enjoy it with one foot on the ground about what's real.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-trine-saturn",
+      "pair": "venus trine saturn",
+      "aspect": "trine",
+      "valence": "supportive",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4B",
+      "recommended_long_template": "4E",
+      "slots": {
+        "available_opening": "affection and commitment sit easily together and your sense of worth feels stable",
+        "underuse_pattern": "you leave the good thing undefined",
+        "deliberate_participation": "Define what you want and make it durable",
+        "meaning_bridge": "warmth and structure agree here"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-trine-saturn",
+        "cc/aspect/trine",
+        "cc/ref/aspect-psychology/trine"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Affection and commitment sit easily together and your sense of worth feels stable, and warmth and structure agree here. What's easy to miss is that you leave the good thing undefined, so define what you want and make it durable.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mars-conjunction-jupiter",
+      "pair": "mars conjunction jupiter",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4F",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "drive and confidence swell at the same time and bold moves feel easy",
+        "function_a_lived": "the push to act",
+        "function_b_lived": "the appetite for more",
+        "concentration_action": "Take the big swing, sized to what you can actually follow through on"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-conjunction-jupiter",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Drive and confidence swell at the same time and bold moves feel easy. It can be hard to separate the push to act from the appetite for more right now, so take the big swing, sized to what you can actually follow through on.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mars-conjunction-north-node",
+      "pair": "mars conjunction north node",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "your drive locks onto something you're actually hungry for",
+        "function_a_lived": "the raw wanting",
+        "function_b_lived": "the goal it's aimed at",
+        "concentration_action": "Point it at what matters and go, without skipping your basic needs"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mars-conjunction-north-node",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your drive locks onto something you're actually hungry for. It can be hard to separate the raw wanting from the goal it's aimed at right now, so point it at what matters and go, without skipping your basic needs.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/mercury-conjunction-mars",
+      "pair": "mercury conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "thinking speeds up and words get sharp and quick",
+        "function_a_lived": "the fast thought",
+        "function_b_lived": "the urge to fire it off",
+        "concentration_action": "Stay deliberate about what you send"
+      },
+      "source_keys": [
+        "cc/aspect-pair/mercury-conjunction-mars",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Thinking speeds up and words get sharp and quick. It can be hard to separate the fast thought from the urge to fire it off right now, so stay deliberate about what you send.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-chiron",
+      "pair": "moon conjunction chiron",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "an old feeling surfaces and a sore spot goes tender",
+        "function_a_lived": "the mood",
+        "function_b_lived": "the old wound it touches",
+        "concentration_action": "Be gentle with yourself, this is a place that still heals"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-chiron",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "An old feeling surfaces and a sore spot goes tender. It can be hard to separate the mood from the old wound it touches right now, so be gentle with yourself, this is a place that still heals.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-jupiter",
+      "pair": "moon conjunction jupiter",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4F",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "the heart runs generous and the mood expands",
+        "function_a_lived": "the feeling",
+        "function_b_lived": "the urge to make it bigger",
+        "concentration_action": "Enjoy the warmth and watch the urge to overdo it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-jupiter",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your heart feels generous today, and it's easy to let the good in. Warmth, hope, and a little more faith than usual are all available to you, so let yourself feel held by them. Just keep an eye on the urge to overdo it, and enjoy the abundance without inflating the promises.",
+      "revoice_version": "chani-quality-v1-authored"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-mars",
+      "pair": "moon conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings run hot and fast and a mood moves you to act",
+        "function_a_lived": "the feeling",
+        "function_b_lived": "the impulse to act on it",
+        "concentration_action": "Aim the energy before you spend it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-mars",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your feelings run hot and fast today, and a mood can move you to act before you've thought it through. That's powerful when it's aimed and reactive when it's not. Feel the intensity, then point it at something real, and move your body before the heat reaches your mouth.",
+      "revoice_version": "chani-quality-v1-authored"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-mercury",
+      "pair": "moon conjunction mercury",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feeling and thought run together, so you feel what you think",
+        "function_a_lived": "the emotion",
+        "function_b_lived": "the need to talk it out",
+        "concentration_action": "Say the tender thing plainly"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-mercury",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feeling and thought run together, so you feel what you think. It can be hard to separate the emotion from the need to talk it out right now, so say the tender thing plainly.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-neptune",
+      "pair": "moon conjunction neptune",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4H",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings turn dreamy and porous and you soak up the room",
+        "function_a_lived": "the mood",
+        "function_b_lived": "the blurred edges around it",
+        "concentration_action": "Enjoy the imagination and keep a boundary where you drift"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-neptune",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feelings turn dreamy and porous and you soak up the room. It can be hard to separate the mood from the blurred edges around it right now, so enjoy the imagination and keep a boundary where you drift.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Imagination is the only way you can contend with uncertainty.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-north-node",
+      "pair": "moon conjunction north node",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "your feelings point straight at what you're growing toward",
+        "function_a_lived": "the pull",
+        "function_b_lived": "the direction it names",
+        "concentration_action": "Take one step closer without mistaking the intensity for a finished decision"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-north-node",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Your feelings point straight at what you're growing toward. It can be hard to separate the pull from the direction it names right now, so take one step closer without mistaking the intensity for a finished decision.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-pluto",
+      "pair": "moon conjunction pluto",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4I",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings run deep and intense and something buried can surface",
+        "function_a_lived": "the depth of feeling",
+        "function_b_lived": "the buried thing rising",
+        "concentration_action": "Let it move through instead of gripping it"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-pluto",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feelings run deep and intense and something buried can surface. It can be hard to separate the depth of feeling from the buried thing rising right now, so let it move through instead of gripping it.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-saturn",
+      "pair": "moon conjunction saturn",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4E",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings turn heavy, serious, or lonely and you want to withdraw",
+        "function_a_lived": "the heavy mood",
+        "function_b_lived": "the pull to pull away",
+        "concentration_action": "Tend to yourself and let it pass without taking it as the truth"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-saturn",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feelings turn heavy, serious, or lonely and you want to withdraw. It can be hard to separate the heavy mood from the pull to pull away right now, so tend to yourself and let it pass without taking it as the truth.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your pace is not too slow.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A hard period can become so familiar that feeling better makes you uneasy. You may miss the music you listened to, the people who understood you then, or the excuse to expect very little from life. You can remember what those years taught you without continuing to live inside them.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-sun",
+      "pair": "moon conjunction sun",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings and identity move as one, so you feel most yourself when you honor the mood",
+        "function_a_lived": "what you need",
+        "function_b_lived": "who you are",
+        "concentration_action": "Let the mood and the day point the same way"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-sun",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feelings and identity move as one, so you feel most yourself when you honor the mood. It can be hard to separate what you need from who you are right now, so let the mood and the day point the same way.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-uranus",
+      "pair": "moon conjunction uranus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4G",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "moods turn sudden and restless and you need room to breathe",
+        "function_a_lived": "the feeling",
+        "function_b_lived": "the urge for space",
+        "concentration_action": "Expect the unexpected and give yourself room"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-uranus",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Moods turn sudden and restless and you need room to breathe. It can be hard to separate the feeling from the urge for space right now, so expect the unexpected and give yourself room.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/moon-conjunction-venus",
+      "pair": "moon conjunction venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "feelings turn soft, affectionate, and pleasure-seeking",
+        "function_a_lived": "the tenderness",
+        "function_b_lived": "the wish for closeness",
+        "concentration_action": "Open a window for warmth, connection, and self-care"
+      },
+      "source_keys": [
+        "cc/aspect-pair/moon-conjunction-venus",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Feelings turn soft, affectionate, and pleasure-seeking. It can be hard to separate the tenderness from the wish for closeness right now, so open a window for warmth, connection, and self-care.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/sun-conjunction-north-node",
+      "pair": "sun conjunction north node",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "who you are and where you're headed line up and you feel the pull toward something bigger",
+        "function_a_lived": "your identity",
+        "function_b_lived": "the direction it's drawn to",
+        "concentration_action": "Aim yourself at it deliberately, without burning past your own limits"
+      },
+      "source_keys": [
+        "cc/aspect-pair/sun-conjunction-north-node",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Who you are and where you're headed line up and you feel the pull toward something bigger. It can be hard to separate your identity from the direction it's drawn to right now, so aim yourself at it deliberately, without burning past your own limits.",
+      "revoice_version": "chani-quality-v1-composed"
+    },
+    {
+      "id": "cc/aspect-pair/venus-conjunction-mars",
+      "pair": "venus conjunction mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": null,
+      "slots": {
+        "two_functions_becoming_entangled_scene": "attraction and drive line up, so what you want and who you want it from stop being separate",
+        "function_a_lived": "the attraction",
+        "function_b_lived": "the drive behind it",
+        "concentration_action": "Pursue it plainly instead of dressing it up as something more acceptable"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-conjunction-mars",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Attraction and drive line up right now, so what you want and who you want it from stop being separate questions. Desire feels direct, a little bold, and easy to act on before you've thought it through. Pursue it plainly instead of dressing it up as something more acceptable, and let the rest of the connection catch up to the spark.",
+      "revoice_version": "chani-quality-v1-authored"
+    },
+    {
+      "id": "cc/aspect-pair/venus-conjunction-uranus",
+      "pair": "venus conjunction uranus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "status": "REVIEWED_CLAUSE",
+      "template_family": "personalized_transit",
+      "recommended_short_template": "4C",
+      "recommended_long_template": "4G",
+      "slots": {
+        "two_functions_becoming_entangled_scene": "attraction turns sudden and electric, a spark or an urge to shake up how you love or spend",
+        "function_a_lived": "the pull",
+        "function_b_lived": "the urge to disrupt",
+        "concentration_action": "Enjoy the novelty without mistaking a jolt for a foundation"
+      },
+      "source_keys": [
+        "cc/aspect-pair/venus-conjunction-uranus",
+        "cc/aspect/conjunction",
+        "cc/ref/aspect-psychology/conjunction"
+      ],
+      "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
+      "tone_version": "marie-calibrated-v1",
+      "expanded_narrative": "Attraction turns sudden and electric, a spark or an urge to shake up how you love or spend. It can be hard to separate the pull from the urge to disrupt right now, so enjoy the novelty without mistaking a jolt for a foundation.",
+      "revoice_version": "chani-quality-v1-composed"
+    }
+  ]
+}

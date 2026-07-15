@@ -1,0 +1,297 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Dispositor / ruler-bridge paragraph per sign (5K ruler_bridge_paragraph).",
+  "count": 12
+ },
+ "reviewed": [
+  {
+   "content_key": "cc/ruler-bridge/aries",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Aries answers to Mars, so this placement ultimately reports to wherever Mars sits in your chart. That house and sign is where its drive and initiative finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "aries"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/taurus",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Taurus answers to Venus, so this placement ultimately reports to wherever Venus sits in your chart. That house and sign is where its security and worth finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "taurus"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/gemini",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Gemini answers to Mercury, so this placement ultimately reports to wherever Mercury sits in your chart. That house and sign is where its ideas and connection finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "gemini"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/cancer",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Cancer answers to the Moon, so this placement ultimately reports to wherever the Moon sits in your chart. That house and sign is where its care and belonging finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "cancer"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/leo",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Leo answers to the Sun, so this placement ultimately reports to wherever the Sun sits in your chart. That house and sign is where its expression and heart finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "leo"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/virgo",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Virgo answers to Mercury, so this placement ultimately reports to wherever Mercury sits in your chart. That house and sign is where its craft and improvement finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "virgo"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/libra",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Libra answers to Venus, so this placement ultimately reports to wherever Venus sits in your chart. That house and sign is where its partnership and balance finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "libra"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/scorpio",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Scorpio answers to Pluto, so this placement ultimately reports to wherever Pluto sits in your chart. That house and sign is where its depth and power finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "scorpio"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/sagittarius",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sagittarius answers to Jupiter, so this placement ultimately reports to wherever Jupiter sits in your chart. That house and sign is where its meaning and freedom finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "sagittarius"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/capricorn",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Capricorn answers to Saturn, so this placement ultimately reports to wherever Saturn sits in your chart. That house and sign is where its ambition and structure finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "capricorn"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/aquarius",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Aquarius answers to Uranus, so this placement ultimately reports to wherever Uranus sits in your chart. That house and sign is where its originality and the collective finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "aquarius"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/ruler-bridge/pisces",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pisces answers to Neptune, so this placement ultimately reports to wherever Neptune sits in your chart. That house and sign is where its imagination and compassion finds its real direction.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "sign": "pisces"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

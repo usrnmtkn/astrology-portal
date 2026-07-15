@@ -1,67 +1,138 @@
+import { resolvePersonReference, type PersonReference, type PronounChoice } from "../../services/personReferences";
+
 type RoadmapOwnerKind = "self" | "person" | "chart";
 
 type SoulRoadmapCardProps = {
   className?: string;
+  onOpenDetail?: () => void;
   ownerKind?: RoadmapOwnerKind;
   ownerName?: string;
+  ownerPronouns?: PronounChoice | null;
   risingPending?: boolean;
   sun: string;
   moon: string;
+  northNode?: string;
   rising: string;
 };
 
 type SignRoadmap = {
-  action: string;
+  integratedTheme: string;
+  sunExpression: string;
+  pathExpression: string;
+  moonStyle: string;
+  moonContribution: string;
   keywords: string[];
+};
+
+export type SoulRoadmapProfile = {
+  label: string;
+  title: string;
+  tldr: string;
+  points: Array<{
+    label: string;
+    value: string;
+  }>;
+  sections: Array<{
+    heading: string;
+    body: string;
+  }>;
 };
 
 const signRoadmaps: Record<string, SignRoadmap> = {
   Aries: {
-    action: "take action, fight for what matters, and move independently",
+    integratedTheme: "courage, initiation, and self-directed action",
+    sunExpression: "acting on instinct, claiming agency, and fighting for what matters",
+    pathExpression: "direct action, honest confrontation, courage, and the willingness to go first",
+    moonStyle: "responding quickly, naming what they want, and letting emotion become easier to handle once it has somewhere to go",
+    moonContribution: "stay brave enough to act when the mission needs momentum",
     keywords: ["I am", "I fight for", "I take action", "I am strong-willed"]
   },
   Taurus: {
-    action: "create stability, honor what is valuable, and stay connected to the earth",
+    integratedTheme: "stability, embodiment, value, and lasting security",
+    sunExpression: "building something steady, useful, beautiful, and worth protecting",
+    pathExpression: "patience, consistency, self-worth, and the slow work of making life feel secure",
+    moonStyle: "returning to the body, the senses, and what feels dependable",
+    moonContribution: "keep the mission grounded in real needs, real value, and sustainable choices",
     keywords: ["I have", "I value", "I connect with the earth", "I create stability"]
   },
   Gemini: {
-    action: "learn, think, communicate, and make sense of experience through language",
+    integratedTheme: "curiosity, language, learning, and mental connection",
+    sunExpression: "learning, asking questions, translating ideas, and keeping information moving",
+    pathExpression: "conversation, adaptability, observation, and the courage to keep asking better questions",
+    moonStyle: "thinking out loud, naming the pattern, and processing feelings through words",
+    moonContribution: "turn experience into language the mission can use",
     keywords: ["I learn", "I think", "I communicate", "I intellectualize"]
   },
   Cancer: {
-    action: "feel, nourish, empathize, and protect what needs care",
+    integratedTheme: "care, belonging, memory, and emotional protection",
+    sunExpression: "nourishing what matters, protecting what is vulnerable, and creating emotional safety",
+    pathExpression: "care, intuition, family patterns, emotional honesty, and the work of learning what needs protection",
+    moonStyle: "tracking attachment, memory, and the need to feel emotionally safe. When something affects them, they may first protect themselves or the people they love before they can explain what they feel",
+    moonContribution: "protect the heart of the mission without losing contact with what they feel",
     keywords: ["I feel", "I nourish", "I empathize", "I mother"]
   },
   Leo: {
-    action: "create, lead, and bring warmth, courage, and heart into the room",
+    integratedTheme: "creative visibility, heart, leadership, and self-expression",
+    sunExpression: "creating, leading, and becoming visible for what comes from the heart",
+    pathExpression: "confidence, creative risk, play, pride, and the work of being seen without performing away the self",
+    moonStyle: "needing warmth, recognition, and a sense that their feelings matter",
+    moonContribution: "keep the mission alive with courage, generosity, and creative fire",
     keywords: ["I will", "I am creative", "I lead", "I father"]
   },
   Virgo: {
-    action: "analyze, serve, heal, and cultivate useful daily practices",
+    integratedTheme: "discernment, service, healing, and useful craft",
+    sunExpression: "improving what is in front of them, serving well, and making daily practice meaningful",
+    pathExpression: "skill-building, refinement, humility, ritual, and attention to what actually works",
+    moonStyle: "sorting the details, noticing what is off, and trying to make the feeling useful",
+    moonContribution: "turn emotional information into repair, care, and practical next steps",
     keywords: ["I analyze", "I serve", "I heal", "I cultivate", "I ritualize"]
   },
   Libra: {
-    action: "balance, relate, connect, and build meaningful relationships",
+    integratedTheme: "relationship, fairness, beauty, and balance",
+    sunExpression: "building connection, creating harmony, and learning who they are through relationship",
+    pathExpression: "partnership, compromise, conflict, fairness, and the work of figuring out where they stand with other people",
+    moonStyle: "weighing both sides, seeking fairness, and needing relational clarity before they feel settled",
+    moonContribution: "keep the mission connected to justice, reciprocity, and the people it affects",
     keywords: ["I balance", "I relate", "I connect", "I build relationships"]
   },
   Scorpio: {
-    action: "transform, feel deeply, study what is hidden, and uncover the truth underneath",
+    integratedTheme: "depth, power, truth, transformation, and emotional honesty",
+    sunExpression: "uncovering what is hidden, transforming what is stagnant, and facing what others avoid",
+    pathExpression: "trust, intimacy, shadow work, emotional courage, and the willingness to go beneath the obvious story",
+    moonStyle: "listening for what is hidden, unspoken, intense, or emotionally charged. They may not trust the first explanation, and they may not feel settled until they understand what is really happening underneath it",
+    moonContribution: "point the mission toward the part of the situation people may be avoiding",
     keywords: ["I transform", "I desire", "I feel deeply", "I go deep", "I uncover"]
   },
   Sagittarius: {
-    action: "expand, question deeper meaning, teach, and see from wider points of view",
+    integratedTheme: "meaning, freedom, faith, teaching, and wider perspective",
+    sunExpression: "seeking truth, widening the horizon, teaching what they learn, and following the larger meaning",
+    pathExpression: "movement, honesty, study, travel, faith, and encounters with perspectives bigger than their starting point",
+    moonStyle: "trying to find the larger meaning. When something hurts, they may need space, honesty, movement, or a wider perspective before the feeling starts to make sense",
+    moonContribution: "give the mission perspective, honesty, and enough space to keep growing",
     keywords: ["I expand", "I philosophize", "I teach", "I envision", "I understand"]
   },
   Capricorn: {
-    action: "work with commitment, contribute pragmatically, rise above, and mentor",
+    integratedTheme: "responsibility, mastery, commitment, and earned respect",
+    sunExpression: "building something solid, useful, and respected. Capricorn is not here to drift. It is here to take responsibility, commit to the work, and become someone others can rely on",
+    pathExpression: "discipline, patience, ambition, contribution, and the willingness to become reliable over time",
+    moonStyle: "organizing the feeling, taking responsibility, and asking what can be done",
+    moonContribution: "keep the mission committed, useful, and strong enough to last",
     keywords: ["I utilize", "I contribute", "I work", "I am committed", "I mentor"]
   },
   Aquarius: {
-    action: "innovate, disrupt stale patterns, change systems, and motivate the collective",
+    integratedTheme: "innovation, independence, community, and future-minded change",
+    sunExpression: "questioning stale patterns, thinking differently, and making room for what comes next",
+    pathExpression: "community, experimentation, friendship, objectivity, and the courage to disrupt inherited patterns",
+    moonStyle: "stepping back, looking for the pattern, and needing emotional room to think clearly",
+    moonContribution: "keep the mission connected to the future and the people it wants to include",
     keywords: ["I innovate", "I know", "I disrupt", "I change", "I build communities"]
   },
   Pisces: {
-    action: "imagine, create, inspire, believe, dream, and move with spiritual sensitivity",
+    integratedTheme: "imagination, compassion, spirituality, and creative surrender",
+    sunExpression: "imagining what could be, creating from sensitivity, and staying connected to spirit, art, or compassion",
+    pathExpression: "intuition, faith, creativity, forgiveness, and the work of staying open without dissolving",
+    moonStyle: "absorbing the feeling, sensing what is unspoken, and needing gentleness before clarity arrives",
+    moonContribution: "keep the mission compassionate, imaginative, and connected to something larger than control",
     keywords: ["I imagine", "I create", "I inspire", "I believe", "I dream"]
   }
 };
@@ -83,66 +154,186 @@ function possessiveName(name: string) {
 }
 
 function ownerLabel(ownerKind: RoadmapOwnerKind, ownerName = "") {
-  if (ownerKind === "self") return "My";
+  if (ownerKind === "self") return "Your";
   if (ownerKind === "chart") return "This chart's";
 
   return possessiveName(ownerName);
 }
 
-function missionStatement({
-  moon,
-  ownerKind,
-  ownerName,
-  rising,
-  risingPending,
-  sun
-}: {
-  moon: SignRoadmap;
-  ownerKind: RoadmapOwnerKind;
-  ownerName?: string;
-  rising: SignRoadmap | null;
-  risingPending: boolean;
-  sun: SignRoadmap;
-}) {
-  if (ownerKind === "self") {
-    const path = rising && !risingPending
-      ? `The path I choose asks me to ${rising.action}.`
-      : "The path I choose will become clearer once the birth time confirms my Ascendant.";
+function sentenceSubject(ownerKind: RoadmapOwnerKind, ownerName = "") {
+  if (ownerKind === "self") return "you";
+  if (ownerKind === "chart") return "it";
 
-    return `My life goal is to ${sun.action}. ${path} Along the way, my emotional style may guide me to ${moon.action}.`;
+  return ownerName.trim() || "they";
+}
+
+function pronounSet(ownerKind: RoadmapOwnerKind, ownerName = "", ownerPronouns?: PronounChoice | null) {
+  if (ownerKind === "self") {
+    return {
+      possessive: "your",
+      subject: "you",
+      object: "you",
+      verb: "process",
+      helps: "helps you"
+    };
   }
 
   if (ownerKind === "chart") {
-    const path = rising && !risingPending
-      ? `Its path expresses through the need to ${rising.action}.`
-      : "Its path will become clearer once the chart has a confirmed Ascendant.";
-
-    return `This chart's central purpose is to ${sun.action}. ${path} Its emotional tone may move through the need to ${moon.action}.`;
+    return {
+      possessive: "its",
+      subject: "it",
+      object: "it",
+      verb: "processes",
+      helps: "helps it"
+    };
   }
 
-  const possessive = ownerLabel("person", ownerName);
-  const subject = ownerName?.trim() || "They";
-  const path = rising && !risingPending
-    ? `The path ${subject} chooses asks them to ${rising.action}.`
-    : `The path ${subject} chooses will become clearer once the birth time confirms their Ascendant.`;
+  const reference = resolvePersonReference({ name: ownerName || "they", pronouns: ownerPronouns });
 
-  return `${possessive} life goal is to ${sun.action}. ${path} Along the way, their emotional style may guide them to ${moon.action}.`;
+  return {
+    possessive: reference.possessiveAdjective,
+    subject: reference.subject,
+    object: reference.object,
+    reflexive: reference.reflexive,
+    verb: reference.verbAgreement === "plural" ? "process" : "processes",
+    helps: `helps ${reference.object}`,
+    reference
+  };
 }
 
-export function SoulRoadmapCard({
-  className = "",
+function formatRoadmapText(value: string, ownerKind: RoadmapOwnerKind, reference?: PersonReference) {
+  const replacements = ownerKind === "self"
+    ? {
+        they: "you",
+        them: "you",
+        their: "your",
+        themselves: "yourself",
+        are: "are",
+        have: "have"
+      }
+    : ownerKind === "chart"
+      ? {
+        they: "it",
+        them: "it",
+        their: "its",
+        themselves: "itself",
+        are: "is",
+        have: "has"
+      }
+      : {
+        they: reference?.subject ?? "they",
+        them: reference?.object ?? "them",
+        their: reference?.possessiveAdjective ?? "their",
+        themselves: reference?.reflexive ?? "themselves",
+        are: reference?.bePresent ?? "are",
+        have: reference?.havePresent ?? "have"
+      };
+
+  return value
+    .replace(/\bthey are\b/g, `${replacements.they} ${replacements.are}`)
+    .replace(/\bThey are\b/g, `${replacements.they[0].toUpperCase() + replacements.they.slice(1)} ${replacements.are}`)
+    .replace(/\bthey have\b/g, `${replacements.they} ${replacements.have}`)
+    .replace(/\bThey have\b/g, `${replacements.they[0].toUpperCase() + replacements.they.slice(1)} ${replacements.have}`)
+    .replace(/\bthemselves\b/g, replacements.themselves)
+    .replace(/\bThemselves\b/g, replacements.themselves[0].toUpperCase() + replacements.themselves.slice(1))
+    .replace(/\btheir\b/g, replacements.their)
+    .replace(/\bTheir\b/g, replacements.their[0].toUpperCase() + replacements.their.slice(1))
+    .replace(/\bthem\b/g, replacements.them)
+    .replace(/\bThem\b/g, replacements.them[0].toUpperCase() + replacements.them.slice(1))
+    .replace(/\bthey\b/g, replacements.they)
+    .replace(/\bThey\b/g, replacements.they[0].toUpperCase() + replacements.they.slice(1));
+}
+
+function signArticle(sign: string) {
+  return /^[AEIOU]/.test(sign) ? "an" : "a";
+}
+
+function moonMissionSentence({
+  moonSign,
+  moonStyle,
+  moonContribution,
+  pronouns
+}: {
+  moonSign: string;
+  moonStyle: string;
+  moonContribution: string;
+  pronouns: ReturnType<typeof pronounSet>;
+}) {
+  const moonOpener = `With ${signArticle(moonSign)} ${moonSign} Moon, ${pronouns.subject} ${pronouns.verb} life by ${moonStyle}`;
+
+  if (moonStyle.includes(".")) {
+    return `${moonOpener}. This ${pronouns.helps} ${moonContribution}.`;
+  }
+
+  return `${moonOpener}, which ${pronouns.helps} ${moonContribution}.`;
+}
+
+function missionStatement({
+  moonSign,
+  moon,
+  northNodeSign,
+  northNode,
+  ownerKind,
+  ownerName,
+  ownerPronouns,
+  risingSign,
+  rising,
+  risingPending,
+  sunSign,
+  sun
+}: {
+  moonSign: string;
+  moon: SignRoadmap;
+  northNodeSign: string;
+  northNode: SignRoadmap | null;
+  ownerKind: RoadmapOwnerKind;
+  ownerName?: string;
+  ownerPronouns?: PronounChoice | null;
+  risingSign: string;
+  rising: SignRoadmap | null;
+  risingPending: boolean;
+  sunSign: string;
+  sun: SignRoadmap;
+}) {
+  const pronouns = pronounSet(ownerKind, ownerName, ownerPronouns);
+  const sunExpression = formatRoadmapText(sun.sunExpression, ownerKind, pronouns.reference);
+  const pathSign = northNodeSign || risingSign;
+  const pathRoadmap = northNode ?? rising;
+  const pathExpression = pathRoadmap ? formatRoadmapText(pathRoadmap.pathExpression, ownerKind, pronouns.reference) : "";
+  const moonStyle = formatRoadmapText(moon.moonStyle, ownerKind, pronouns.reference);
+  const name = sentenceSubject(ownerKind, ownerName);
+  const opener = ownerKind === "self"
+    ? `Your purpose is strongest when your life direction has a clear place to land.`
+    : `${name}'s purpose is strongest when their life direction has a clear place to land.`;
+  const sunSentence = `With ${signArticle(sunSign)} ${sunSign} Sun, ${pronouns.possessive} vitality grows through ${sunExpression}.`;
+  const pathSentence = pathRoadmap && pathSign
+    ? `${pathSign} gives the path a direction through ${pathExpression}.`
+    : `The growth path will become clearer when more chart context is available.`;
+  const moonSentence = `The ${moonSign} Moon keeps the purpose emotionally honest through ${moonStyle}.`;
+
+  return [opener, sunSentence, pathSentence, moonSentence]
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function resolveSoulRoadmapProfile({
   ownerKind = "self",
   ownerName = "",
+  ownerPronouns = null,
   risingPending = false,
   sun,
   moon,
+  northNode = "",
   rising
-}: SoulRoadmapCardProps) {
+}: Omit<SoulRoadmapCardProps, "className" | "onOpenDetail">): SoulRoadmapProfile | null {
   const sunSign = cleanSign(sun);
   const moonSign = cleanSign(moon);
+  const northNodeSign = cleanSign(northNode);
   const risingSign = cleanSign(rising);
   const sunRoadmap = sunSign ? signRoadmaps[sunSign] : null;
   const moonRoadmap = moonSign ? signRoadmaps[moonSign] : null;
+  const northNodeRoadmap = northNodeSign ? signRoadmaps[northNodeSign] : null;
   const risingRoadmap = risingSign ? signRoadmaps[risingSign] : null;
 
   if (!sunRoadmap || !moonRoadmap) {
@@ -150,41 +341,130 @@ export function SoulRoadmapCard({
   }
 
   const label = ownerKind === "chart" ? "Chart roadmap" : "Soul's roadmap";
-  const pathLabel = risingPending || !risingRoadmap ? "Pending" : risingSign;
-  const cardClassName = ["soul-roadmap-card", className].filter(Boolean).join(" ");
+  const pathLabel = northNodeSign || (risingPending || !risingRoadmap ? "Pending" : risingSign);
+  const title = ownerKind === "self" ? "Your mission statement" : `${ownerLabel(ownerKind, ownerName)} mission statement`;
+  const tldr = missionStatement({
+    moonSign,
+    moon: moonRoadmap,
+    northNodeSign,
+    northNode: northNodeRoadmap,
+    ownerKind,
+    ownerName,
+    ownerPronouns,
+    risingSign,
+    rising: risingRoadmap,
+    risingPending: risingPending || !risingRoadmap,
+    sunSign,
+    sun: sunRoadmap
+  });
+  const displayName = sentenceSubject(ownerKind, ownerName);
+  const pronouns = pronounSet(ownerKind, ownerName, ownerPronouns);
+  const sunExpression = formatRoadmapText(sunRoadmap.sunExpression, ownerKind, pronouns.reference);
+  const pathRoadmap = northNodeRoadmap ?? risingRoadmap;
+  const pathSign = northNodeSign || risingSign;
+  const pathExpression = pathRoadmap ? formatRoadmapText(pathRoadmap.pathExpression, ownerKind, pronouns.reference) : "";
+  const moonStyle = formatRoadmapText(moonRoadmap.moonStyle, ownerKind, pronouns.reference);
+
+  return {
+    label,
+    title,
+    tldr,
+    points: [
+      { label: "Sun", value: sunSign },
+      { label: "Path", value: pathLabel },
+      { label: "Moon", value: moonSign }
+    ],
+    sections: [
+      {
+        heading: `${sunSign} Sun`,
+        body: `The ${sunSign} Sun shows where vitality has to become a lived choice: ${sunExpression}.`
+      },
+      !pathRoadmap || !pathSign
+        ? {
+            heading: "Path pending",
+            body: "The growth path will become clearer when the chart has enough context to show it."
+          }
+        : {
+            heading: `${northNodeRoadmap ? "North Node" : "Path"} in ${pathSign}`,
+            body: `${pathSign} brings ${displayName} toward the mission through ${pathExpression}. This gives the purpose a lived direction.`
+          },
+      {
+        heading: `${moonSign} Moon`,
+        body: `${moonSign} shows how ${pronouns.subject} ${pronouns.verb} life: ${moonStyle}. This gives the purpose a way to stay emotionally honest while it develops.`
+      }
+    ]
+  };
+}
+
+export function SoulRoadmapCard({
+  className = "",
+  onOpenDetail,
+  ownerKind = "self",
+  ownerName = "",
+  ownerPronouns = null,
+  risingPending = false,
+  sun,
+  moon,
+  northNode = "",
+  rising
+}: SoulRoadmapCardProps) {
+  const profile = resolveSoulRoadmapProfile({
+    ownerKind,
+    ownerName,
+    ownerPronouns,
+    risingPending,
+    sun,
+    moon,
+    northNode,
+    rising
+  });
+
+  if (!profile) {
+    return null;
+  }
+
+  const cardClassName = [
+    "soul-roadmap-card",
+    onOpenDetail ? "soul-roadmap-card--button" : "",
+    className
+  ].filter(Boolean).join(" ");
+  const content = (
+    <>
+      <div className="soul-roadmap-card__header">
+        <span className="eyebrow section-label">{profile.label}</span>
+        <h3>{profile.title}</h3>
+        <p>{profile.tldr}</p>
+      </div>
+    </>
+  );
+
+  if (onOpenDetail) {
+    return (
+      <button className={cardClassName} type="button" aria-label={`Read ${profile.title}`} onClick={onOpenDetail}>
+        {content}
+      </button>
+    );
+  }
 
   return (
-    <section className={cardClassName} aria-label={label}>
+    <section className={cardClassName} aria-label={profile.label}>
       <div className="soul-roadmap-card__header">
-        <span className="eyebrow section-label">{label}</span>
-        <h3>{ownerKind === "self" ? "Your mission statement" : `${ownerLabel(ownerKind, ownerName)} mission statement`}</h3>
-        <p>{missionStatement({
-          moon: moonRoadmap,
-          ownerKind,
-          ownerName,
-          rising: risingRoadmap,
-          risingPending: risingPending || !risingRoadmap,
-          sun: sunRoadmap
-        })}</p>
+        <span className="eyebrow section-label">{profile.label}</span>
+        <h3>{profile.title}</h3>
+        <p>{profile.tldr}</p>
       </div>
       <div className="soul-roadmap-card__points" aria-label="Roadmap points">
-        <span>
-          <strong>Sun</strong>
-          <em>{sunSign}</em>
-        </span>
-        <span>
-          <strong>Path</strong>
-          <em>{pathLabel}</em>
-        </span>
-        <span>
-          <strong>Moon</strong>
-          <em>{moonSign}</em>
-        </span>
+        {profile.points.map((point) => (
+          <span key={point.label}>
+            <strong>{point.label}</strong>
+            <em>{point.value}</em>
+          </span>
+        ))}
       </div>
       <div className="soul-roadmap-card__keywords" aria-label="Roadmap keywords">
-        <p><strong>{sunSign}</strong> {sunRoadmap.keywords.join(" / ")}</p>
-        {!risingPending && risingRoadmap ? <p><strong>{risingSign}</strong> {risingRoadmap.keywords.join(" / ")}</p> : null}
-        <p><strong>{moonSign}</strong> {moonRoadmap.keywords.join(" / ")}</p>
+        {profile.sections.map((section) => (
+          <p key={section.heading}><strong>{section.heading}</strong> {section.body}</p>
+        ))}
       </div>
     </section>
   );

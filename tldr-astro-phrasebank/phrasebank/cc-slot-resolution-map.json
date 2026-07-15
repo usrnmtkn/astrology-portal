@@ -1,0 +1,3559 @@
+{
+ "version": "slot-resolution-v1",
+ "note": "Maps every template slot to its source. fact=calculated astrology; flag=computed boolean; interpretive=authored record (type+category) with scope_from wiring; gap=needs authoring. scope_from '$x' means the value of fact-slot x; literals pass through. select is the pick rule inside the resolved record (e.g. one_of a variant list, or a named field/sentence).",
+ "counts": {
+  "slots": 235,
+  "interpretive": 172,
+  "fact": 40,
+  "flag": 23,
+  "gap": 0
+ },
+ "resolution": {
+  "activation_condition": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "development",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "affected_process": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "angle_name": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "angle_specific_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "approach_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "clause",
+   "fallback": "house-theme/house-lived",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "aspect_name": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "aspect_verb": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "available_opening": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "opportunity",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "avoidance_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "response",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "behavioral_consequence": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "cost",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "body_function_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_glyph": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "body_in_sign_lived_claim": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "vocab/lived-behaviors",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_in_sign_lived_tension": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "clause",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_sign_dynamic": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "dynamic",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_sign_dynamic_in_same_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "dynamic",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_sign_dynamic_in_same_subject": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "dynamic",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "body_signal": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "clause",
+   "hint": "cost",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "boundary_or_care_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "bounded_experiment": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$natal_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "capacity_being_developed": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "development",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "capacity_direction": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "central_question": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "phrase-function"
+   },
+   "scope_from": {
+    "function": "question"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "challenging_aspect_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$body",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "challenging_aspects_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$body",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "paragraph",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "clarifying_question_or_request": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "phrase-function"
+   },
+   "scope_from": {
+    "function": "question"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "action/daily-action",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "clear_result": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "full-moon",
+    "role": "result"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_focus_shift": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "ingress"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "text",
+   "hint": "one_of",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_friction_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_opening_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "collective_structure_or_assumption": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-vocab"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "clause",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "combined_function_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "conjunction"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "compact_collective_claim": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "claim",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "compassionate_bridge": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "guide-phrase"
+   },
+   "scope_from": {},
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/pull-quote",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "compassionate_limit": {
+   "kind": "interpretive",
+   "source": {
+    "type": "closing",
+    "category": "daily-closing"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "concentration_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$natal_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "control_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "response",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "cooperative_function": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "aspect-vocab"
+   },
+   "scope_from": {
+    "aspect": "$aspect_name"
+   },
+   "select": "clause",
+   "hint": "capacity",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "culmination_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "full-moon",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "decision_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "first-quarter",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "decisive_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "first-quarter",
+    "role": "action"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "deliberate_collective_use": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "deliberate_participation": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$natal_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/phrase-function",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "developing_effort": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "waxing-gibbous",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "developmental_direction": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "developmental_task": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "dignity_lived_effect": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "dignity"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "one_of",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "dignity_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "dignity"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "paragraph",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "discernment_meaning": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$transiting_point"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "early_effort": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "waxing-crescent",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "early_recurrence_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "retrograde"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "motion": "retrograde"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/planet-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "editorial_headline": {
+   "kind": "interpretive",
+   "source": {
+    "type": "hook",
+    "category": "daily-hook"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "embodied_need": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "clause",
+   "hint": "tension",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "emerging_need": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "development",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "end_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "ending_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "balsamic",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "energy_protection_or_connection_permission": {
+   "kind": "interpretive",
+   "source": {
+    "type": "closing",
+    "category": "daily-closing"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "event_date_compact": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "event_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "event_lived_meaning": {
+   "kind": "interpretive",
+   "source": {
+    "type": "event-horoscope",
+    "category": "collective-event"
+   },
+   "scope_from": {
+    "event": "$event_title"
+   },
+   "select": "text",
+   "hint": "one_of",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "event_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "event-action",
+    "category": "do-dont"
+   },
+   "scope_from": {
+    "event": "$event_title"
+   },
+   "select": "clause",
+   "hint": "one_of",
+   "fallback": "action/daily-action",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "event_title": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "exact_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "exact_degree_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "exact_time_compact": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "exact_time_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "exit_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "felt_tension": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "tension",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "first_impression_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "1"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "function_a_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_a"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "function_b_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_b"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "grounding_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$natal_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "growth_edge": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "1"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "habitual_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "response",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "has_calculated_mercury_sect": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_challenging_aspect": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_challenging_aspects": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_collective_response": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_dignity": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_exact_date": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_exact_time": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_exit_date": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_natal_house": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_natal_sign": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_pass_context": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_practical_action": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_reflective_question_two": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_reliable_sect": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_response": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_ruler_bridge": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_supportive_aspect": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_supportive_aspects": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "has_timezone": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "house_ordinal": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "immediate_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "imperative_one": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "imperative_two": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "ingress_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "ingress_time_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "integrated_resource": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "integration_direction": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "guide-phrase"
+   },
+   "scope_from": {},
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "integration_practice": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "integration_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "retrograde"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "motion": "direct"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/planet-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "is_day_chart": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "is_natal_retrograde": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "is_night_chart": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "is_retrograde": {
+   "kind": "flag",
+   "source": "computed_boolean"
+  },
+  "larger_commitment": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "lesson_or_result": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "waning-gibbous",
+    "role": "result"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "liberating_meaning": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$transiting_point"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "likely_cost": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "cost",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "lived_consequence": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_a"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "scene",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "lived_tension": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "tension",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "mercury_sect_sentence": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "mercury-archetype"
+   },
+   "scope_from": {
+    "planet": "mercury"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "vocab/planet-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "moon_sign": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "natal_house_ordinal": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "natal_point": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "natal_sign": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "new_beginning_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "new-moon",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "new_orientation": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$transiting_point"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "next_decision": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "observable_behavior": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "response",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "observable_collective_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "old_certainty": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "one_house_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "one_private_house_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "orb_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "ordinary_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "clause",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "outgrown_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "balsamic",
+    "role": "result"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "outgrown_structure": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "last-quarter",
+    "role": "scene"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "partnership_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "7"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "pass_context": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "placement_core_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "vocab/lived-behaviors",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "point_a": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "point_a_function_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_a"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "point_a_need": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_a"
+   },
+   "select": "one_of",
+   "hint": "need",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "point_b": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "point_b_function_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_b"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "point_b_need": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_b"
+   },
+   "select": "one_of",
+   "hint": "need",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "polarity_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "opposition"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "pole_a_behavior": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_a"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "pole_b_behavior": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$point_b"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "practical_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/phrase-function",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "premature_next_step": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "pressure_meaning": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$transiting_point"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "private_foundation_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "4"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "private_lived_process": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "projected_or_sought_quality": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "7"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "proportionate_adjustment": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$natal_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "proportionate_collective_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "public_role_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "midheaven"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/career",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "recurring_disruption_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "recurring_internal_conflict_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "square"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "recurring_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "recurring_opportunity_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "opportunity",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "recurring_power_or_loss_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "refinement_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "waxing-gibbous",
+    "role": "action"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "reflective_question_one": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "phrase-function"
+   },
+   "scope_from": {
+    "function": "question"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "reflective_question_two": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "phrase-function"
+   },
+   "scope_from": {
+    "function": "question"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "relational_growth_edge": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "relational_or_internal_balance": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "guide-phrase"
+   },
+   "scope_from": {},
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "relational_quality": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "7"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "relational_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "release_or_revision_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "last-quarter",
+    "role": "action"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "repeating_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "response",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "restorative_or_boundary_direction": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "4"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "retrograde_internalization_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "retrograde-phase"
+   },
+   "scope_from": {
+    "phase": "natal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "retrograde_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "retrograde-phase"
+   },
+   "scope_from": {
+    "phase": "natal"
+   },
+   "select": "text",
+   "hint": "paragraph",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "retrograde_revision_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "retrograde-phase"
+   },
+   "scope_from": {
+    "phase": "natal"
+   },
+   "select": "text",
+   "hint": "pattern",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "review_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "retrograde"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "motion": "retrograde"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/planet-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "review_subject": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "reviewed_process": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "root_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "4"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "routine_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "ruler_body": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "ruler_bridge_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-house"
+   },
+   "scope_from": {
+    "planet": "$ruler_body",
+    "house": "$ruler_house_ordinal"
+   },
+   "select": "clause",
+   "hint": "paragraph",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "ruler_bridge_same_subject": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-house"
+   },
+   "scope_from": {
+    "planet": "$ruler_body",
+    "house": "$ruler_house_ordinal"
+   },
+   "select": "clause",
+   "hint": "one_of",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "ruler_house_ordinal": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "ruler_sign": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "same_relationship_subject": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "7"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": "synastry/synastry-core",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "same_subject_development": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "scene_claim": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "claim",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "second_question": {
+   "kind": "interpretive",
+   "source": {
+    "type": "phrase",
+    "category": "phrase-function"
+   },
+   "scope_from": {
+    "function": "question"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "secondary_conflict": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "tension",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "sect_modifier_day": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "dignity-tag"
+   },
+   "scope_from": {
+    "condition": "sect"
+   },
+   "select": "text",
+   "hint": "day",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "sect_modifier_night": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "dignity-tag"
+   },
+   "scope_from": {
+    "condition": "sect"
+   },
+   "select": "text",
+   "hint": "night",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "sect_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "dignity-tag"
+   },
+   "scope_from": {
+    "condition": "sect"
+   },
+   "select": "text",
+   "hint": "paragraph",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "seed_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "new-moon",
+    "role": "action"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "shadow_degree_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "shadow_exit_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "shared_priority_or_pressure_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "short_permission": {
+   "kind": "interpretive",
+   "source": {
+    "type": "closing",
+    "category": "daily-closing"
+   },
+   "scope_from": {
+    "sign": "$moon_sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "sign": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "sign_style_lived": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "clause",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "slow_collective_development": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "small_building_action": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "moon-phase"
+   },
+   "scope_from": {
+    "phase": "waxing-crescent",
+    "role": "action"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_cost": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "cost",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_follow_through": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_house_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "scene",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_material": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "function",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_pressure": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-in-sign"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "tension",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "specific_reset": {
+   "kind": "interpretive",
+   "source": {
+    "type": "action",
+    "category": "daily-action"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "stability_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "response",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "stale_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "response",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "start_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "station_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "station_degree_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "station_direct_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "station_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "retrograde"
+   },
+   "scope_from": {
+    "planet": "$body",
+    "motion": "station"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/planet-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "station_retrograde_date_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "supportive_aspect_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$body",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "supportive_aspects_paragraph": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$body",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "paragraph",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "supportive_capacity": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "aspect-vocab"
+   },
+   "scope_from": {
+    "aspect": "$aspect_name"
+   },
+   "select": "clause",
+   "hint": "capacity",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "supportive_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "technical_event_sentence": {
+   "kind": "interpretive",
+   "source": {
+    "type": "timing",
+    "category": "timing"
+   },
+   "scope_from": {
+    "topic": "$event_title"
+   },
+   "select": "one_of",
+   "hint": "one_of",
+   "fallback": "phrase/guide-phrase",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "timezone_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "timing_display": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "transformational_meaning": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$transiting_point"
+   },
+   "select": "one_of",
+   "hint": "meaning",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "transiting_point": {
+   "kind": "fact",
+   "source": "calculated_astrology"
+  },
+  "trust_or_capacity_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "development",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "two_functions_becoming_entangled_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "aspect-pair",
+    "category": "aspect-pair"
+   },
+   "scope_from": {
+    "planetA": "$point_a",
+    "planetB": "$point_b",
+    "aspect": "$aspect_name"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "vocab/aspect-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "two_functions_conflict": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "aspect-vocab"
+   },
+   "scope_from": {
+    "aspect": "$aspect_name"
+   },
+   "select": "clause",
+   "hint": "conflict",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "uncertain_lived_scene": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "scene",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "underlying_need": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "planet-lived"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "one_of",
+   "hint": "need",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "underlying_vulnerability": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "tension",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "understandable_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "response",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "underuse_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "response",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "unhelpful_extreme": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "cost",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "unspoken_issue": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "lived-behaviors"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "clause",
+   "hint": "tension",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "vocational_pattern": {
+   "kind": "interpretive",
+   "source": {
+    "type": "vocab",
+    "category": "midheaven"
+   },
+   "scope_from": {
+    "sign": "$sign"
+   },
+   "select": "text",
+   "hint": "pattern",
+   "fallback": "vocab/career",
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  }
+ },
+ "template_overrides": {
+  "6M::same_subject_development": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "ingress"
+   },
+   "scope_from": {
+    "planet": "$body"
+   },
+   "select": "text",
+   "hint": "one_of",
+   "fallback": "vocab/planet-vocab",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "3B::same_subject_development": {
+   "kind": "interpretive",
+   "source": {
+    "type": "house-theme",
+    "category": "house-lived"
+   },
+   "scope_from": {
+    "house": "$house_ordinal"
+   },
+   "select": "one_of",
+   "hint": "development",
+   "fallback": null,
+   "coverage": "full",
+   "ultimate_fallback": "phrase/guide-phrase"
+  },
+  "4A::habitual_response": {
+   "kind": "interpretive",
+   "source": {
+    "type": "transit",
+    "category": "planet-through-house"
+   },
+   "scope_from": {
+    "planet": "$transiting_point",
+    "house": "$natal_house_ordinal"
+   },
+   "select": "text",
+   "hint": "response",
+   "fallback": "house-theme/house-lived",
+   "coverage": "partial",
+   "ultimate_fallback": "phrase/guide-phrase"
+  }
+ },
+ "templates": {
+  "1A": [
+   "date_display",
+   "editorial_headline",
+   "felt_tension",
+   "habitual_response",
+   "lived_scene",
+   "practical_action",
+   "specific_cost"
+  ],
+  "1B": [
+   "avoidance_pattern",
+   "date_display",
+   "editorial_headline",
+   "lived_scene",
+   "practical_action"
+  ],
+  "1C": [
+   "date_display",
+   "editorial_headline",
+   "larger_commitment",
+   "routine_scene",
+   "specific_reset",
+   "stale_pattern"
+  ],
+  "1D": [
+   "clarifying_question_or_request",
+   "date_display",
+   "editorial_headline",
+   "habitual_response",
+   "secondary_conflict",
+   "unspoken_issue"
+  ],
+  "2A": [
+   "new_beginning_scene",
+   "seed_action"
+  ],
+  "2B": [
+   "early_effort",
+   "small_building_action"
+  ],
+  "2C": [
+   "decision_scene",
+   "decisive_action"
+  ],
+  "2D": [
+   "developing_effort",
+   "refinement_action"
+  ],
+  "2E": [
+   "clear_result",
+   "culmination_scene"
+  ],
+  "2F": [
+   "lesson_or_result"
+  ],
+  "2G": [
+   "outgrown_structure",
+   "release_or_revision_action"
+  ],
+  "2H": [
+   "ending_scene",
+   "outgrown_pattern"
+  ],
+  "2I": [
+   "boundary_or_care_action",
+   "embodied_need",
+   "energy_protection_or_connection_permission",
+   "moon_sign"
+  ],
+  "2J": [
+   "body_signal",
+   "moon_sign",
+   "ordinary_scene",
+   "short_permission"
+  ],
+  "2K": [
+   "compassionate_limit",
+   "imperative_one",
+   "imperative_two",
+   "moon_sign"
+  ],
+  "3A": [
+   "body",
+   "body_glyph",
+   "end_date_display",
+   "is_retrograde",
+   "sign",
+   "start_date_display"
+  ],
+  "3B": [
+   "body",
+   "compassionate_bridge",
+   "end_date_display",
+   "has_reflective_question_two",
+   "house_ordinal",
+   "practical_action",
+   "reflective_question_one",
+   "reflective_question_two",
+   "same_subject_development",
+   "scene_claim",
+   "sign",
+   "start_date_display"
+  ],
+  "3C": [
+   "body",
+   "body_sign_dynamic",
+   "end_date_display",
+   "habitual_response",
+   "house_ordinal",
+   "likely_cost",
+   "lived_scene",
+   "practical_action",
+   "sign",
+   "specific_house_scene",
+   "start_date_display"
+  ],
+  "3D": [
+   "body",
+   "central_question",
+   "end_date_display",
+   "observable_behavior",
+   "practical_action",
+   "second_question",
+   "sign",
+   "specific_house_scene",
+   "start_date_display"
+  ],
+  "3E": [
+   "body",
+   "developmental_task",
+   "end_date_display",
+   "lived_tension",
+   "practical_action",
+   "sign",
+   "specific_pressure",
+   "start_date_display",
+   "understandable_response",
+   "unhelpful_extreme"
+  ],
+  "4A": [
+   "aspect_verb",
+   "editorial_headline",
+   "exact_date_display",
+   "habitual_response",
+   "has_exact_date",
+   "has_natal_house",
+   "has_natal_sign",
+   "immediate_lived_scene",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "practical_action",
+   "specific_cost",
+   "timing_display",
+   "transiting_point"
+  ],
+  "4B": [
+   "aspect_verb",
+   "available_opening",
+   "deliberate_participation",
+   "editorial_headline",
+   "exact_date_display",
+   "has_exact_date",
+   "has_natal_house",
+   "has_natal_sign",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "timing_display",
+   "transiting_point",
+   "underuse_pattern"
+  ],
+  "4C": [
+   "concentration_action",
+   "editorial_headline",
+   "exact_date_display",
+   "function_a_lived",
+   "function_b_lived",
+   "has_exact_date",
+   "has_natal_house",
+   "has_natal_sign",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "timing_display",
+   "transiting_point",
+   "two_functions_becoming_entangled_scene"
+  ],
+  "4D": [
+   "angle_name",
+   "angle_specific_scene",
+   "aspect_verb",
+   "behavioral_consequence",
+   "editorial_headline",
+   "exact_date_display",
+   "has_exact_date",
+   "orb_display",
+   "proportionate_adjustment",
+   "timing_display",
+   "transiting_point"
+  ],
+  "4E": [
+   "aspect_verb",
+   "editorial_headline",
+   "has_natal_house",
+   "has_natal_sign",
+   "has_pass_context",
+   "has_practical_action",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "pass_context",
+   "practical_action",
+   "pressure_meaning",
+   "recurring_lived_scene",
+   "repeating_pattern",
+   "timing_display",
+   "transiting_point"
+  ],
+  "4F": [
+   "aspect_verb",
+   "capacity_being_developed",
+   "deliberate_participation",
+   "editorial_headline",
+   "has_natal_house",
+   "has_natal_sign",
+   "has_pass_context",
+   "has_practical_action",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "pass_context",
+   "recurring_opportunity_scene",
+   "timing_display",
+   "transiting_point",
+   "trust_or_capacity_pattern"
+  ],
+  "4G": [
+   "aspect_verb",
+   "bounded_experiment",
+   "editorial_headline",
+   "emerging_need",
+   "has_natal_house",
+   "has_natal_sign",
+   "has_pass_context",
+   "has_practical_action",
+   "liberating_meaning",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "pass_context",
+   "recurring_disruption_scene",
+   "stability_pattern",
+   "timing_display",
+   "transiting_point"
+  ],
+  "4H": [
+   "aspect_verb",
+   "discernment_meaning",
+   "editorial_headline",
+   "grounding_action",
+   "has_natal_house",
+   "has_natal_sign",
+   "has_pass_context",
+   "has_practical_action",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "new_orientation",
+   "old_certainty",
+   "orb_display",
+   "pass_context",
+   "timing_display",
+   "transiting_point",
+   "uncertain_lived_scene"
+  ],
+  "4I": [
+   "aspect_verb",
+   "control_pattern",
+   "editorial_headline",
+   "has_natal_house",
+   "has_natal_sign",
+   "has_pass_context",
+   "has_practical_action",
+   "natal_house_ordinal",
+   "natal_point",
+   "natal_sign",
+   "orb_display",
+   "pass_context",
+   "practical_action",
+   "recurring_power_or_loss_scene",
+   "specific_cost",
+   "timing_display",
+   "transformational_meaning",
+   "transiting_point",
+   "underlying_vulnerability"
+  ],
+  "5A": [
+   "body",
+   "body_in_sign_lived_claim",
+   "house_ordinal",
+   "integrated_resource",
+   "one_house_scene",
+   "sign"
+  ],
+  "5B": [
+   "body",
+   "body_in_sign_lived_tension",
+   "developmental_direction",
+   "habitual_response",
+   "house_ordinal",
+   "one_house_scene",
+   "sign",
+   "specific_cost",
+   "underlying_need"
+  ],
+  "5C": [
+   "body",
+   "body_function_lived",
+   "house_ordinal",
+   "relational_growth_edge",
+   "relational_scene",
+   "same_relationship_subject",
+   "sign",
+   "sign_style_lived"
+  ],
+  "5D": [
+   "body",
+   "house_ordinal",
+   "integration_direction",
+   "one_private_house_scene",
+   "private_lived_process",
+   "sign"
+  ],
+  "5E": [
+   "has_calculated_mercury_sect",
+   "has_reliable_sect",
+   "is_day_chart",
+   "is_night_chart",
+   "mercury_sect_sentence",
+   "sect_modifier_day",
+   "sect_modifier_night"
+  ],
+  "5F": [
+   "is_natal_retrograde",
+   "retrograde_internalization_scene",
+   "retrograde_revision_pattern"
+  ],
+  "5G": [
+   "dignity_lived_effect",
+   "has_dignity"
+  ],
+  "5H": [
+   "has_ruler_bridge",
+   "ruler_body",
+   "ruler_bridge_same_subject",
+   "ruler_house_ordinal",
+   "ruler_sign",
+   "sign"
+  ],
+  "5I": [
+   "has_supportive_aspect",
+   "supportive_aspect_scene",
+   "supportive_capacity"
+  ],
+  "5J": [
+   "challenging_aspect_scene",
+   "has_challenging_aspect",
+   "integration_practice"
+  ],
+  "5K": [
+   "body",
+   "challenging_aspects_paragraph",
+   "dignity_paragraph",
+   "has_challenging_aspects",
+   "has_dignity",
+   "has_reliable_sect",
+   "has_ruler_bridge",
+   "has_supportive_aspects",
+   "house_ordinal",
+   "is_natal_retrograde",
+   "placement_core_paragraph",
+   "retrograde_paragraph",
+   "ruler_bridge_paragraph",
+   "sect_paragraph",
+   "sign",
+   "supportive_aspects_paragraph"
+  ],
+  "5L": [
+   "approach_pattern",
+   "first_impression_scene",
+   "growth_edge",
+   "sign",
+   "sign_style_lived"
+  ],
+  "5M": [
+   "public_role_scene",
+   "sign",
+   "sign_style_lived",
+   "vocational_pattern"
+  ],
+  "5N": [
+   "partnership_scene",
+   "projected_or_sought_quality",
+   "relational_quality",
+   "sign"
+  ],
+  "5O": [
+   "private_foundation_scene",
+   "restorative_or_boundary_direction",
+   "root_pattern",
+   "sign"
+  ],
+  "5P": [
+   "combined_function_scene",
+   "integration_direction",
+   "lived_consequence",
+   "point_a",
+   "point_b"
+  ],
+  "5Q": [
+   "activation_condition",
+   "aspect_name",
+   "capacity_direction",
+   "point_a",
+   "point_a_function_lived",
+   "point_b",
+   "point_b_function_lived",
+   "supportive_lived_scene"
+  ],
+  "5R": [
+   "habitual_response",
+   "integration_direction",
+   "point_a",
+   "point_a_need",
+   "point_b",
+   "point_b_need",
+   "recurring_internal_conflict_scene"
+  ],
+  "5S": [
+   "activation_condition",
+   "point_a",
+   "point_b",
+   "polarity_scene",
+   "pole_a_behavior",
+   "pole_b_behavior",
+   "relational_or_internal_balance"
+  ],
+  "6A": [
+   "body",
+   "compact_collective_claim",
+   "end_date_display",
+   "is_retrograde",
+   "sign",
+   "start_date_display"
+  ],
+  "6B": [
+   "body",
+   "body_sign_dynamic_in_same_scene",
+   "collective_lived_scene",
+   "collective_response",
+   "end_date_display",
+   "has_collective_response",
+   "sign",
+   "start_date_display"
+  ],
+  "6C": [
+   "body",
+   "body_sign_dynamic_in_same_subject",
+   "end_date_display",
+   "observable_collective_pattern",
+   "shared_priority_or_pressure_scene",
+   "sign",
+   "start_date_display"
+  ],
+  "6D": [
+   "body",
+   "collective_structure_or_assumption",
+   "end_date_display",
+   "sign",
+   "slow_collective_development",
+   "start_date_display"
+  ],
+  "6E": [
+   "aspect_name",
+   "aspect_verb",
+   "collective_friction_scene",
+   "exact_time_display",
+   "has_exact_time",
+   "has_response",
+   "orb_display",
+   "point_a",
+   "point_b",
+   "proportionate_collective_response",
+   "timing_display",
+   "two_functions_conflict"
+  ],
+  "6F": [
+   "aspect_name",
+   "aspect_verb",
+   "collective_opening_scene",
+   "cooperative_function",
+   "deliberate_collective_use",
+   "exact_time_display",
+   "has_exact_time",
+   "has_response",
+   "orb_display",
+   "point_a",
+   "point_b",
+   "timing_display"
+  ],
+  "6G": [
+   "body",
+   "early_recurrence_scene",
+   "shadow_degree_display",
+   "sign",
+   "start_date_display",
+   "station_retrograde_date_display"
+  ],
+  "6H": [
+   "affected_process",
+   "body",
+   "sign",
+   "station_date_display",
+   "station_degree_display",
+   "station_lived_scene"
+  ],
+  "6I": [
+   "body",
+   "has_practical_action",
+   "practical_action",
+   "premature_next_step",
+   "review_scene",
+   "sign",
+   "specific_material",
+   "station_direct_date_display",
+   "station_retrograde_date_display"
+  ],
+  "6J": [
+   "body",
+   "exact_date_display",
+   "exact_degree_display",
+   "review_subject",
+   "sign"
+  ],
+  "6K": [
+   "body",
+   "next_decision",
+   "reviewed_process",
+   "sign",
+   "station_date_display",
+   "station_degree_display"
+  ],
+  "6L": [
+   "body",
+   "integration_scene",
+   "shadow_degree_display",
+   "shadow_exit_date_display",
+   "sign",
+   "specific_follow_through",
+   "station_direct_date_display"
+  ],
+  "6M": [
+   "body",
+   "collective_focus_shift",
+   "exit_date_display",
+   "has_exit_date",
+   "has_response",
+   "has_timezone",
+   "ingress_date_display",
+   "ingress_time_display",
+   "proportionate_collective_response",
+   "same_subject_development",
+   "sign",
+   "timezone_display"
+  ],
+  "6N": [
+   "event_date_display",
+   "event_lived_meaning",
+   "event_response",
+   "event_title",
+   "exact_time_display",
+   "has_exact_time",
+   "has_response",
+   "technical_event_sentence"
+  ],
+  "6O": [
+   "event_date_compact",
+   "event_title",
+   "exact_time_compact",
+   "has_exact_time"
+  ]
+ }
+}

@@ -1,0 +1,424 @@
+{
+  "_meta": {
+    "title": "Reviewed Sky events: retrogrades/stations + ingresses",
+    "retrogrades": 9,
+    "retro_phases": 4,
+    "ingresses": 10,
+    "count": 23,
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1",
+    "note": "Ingress destination-sign flavor composes from planet-in-sign collective_shift."
+  },
+  "reviewed": [
+    {
+      "id": "cc/retrograde/mercury",
+      "kind": "retrograde",
+      "body": "mercury",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Mercury retrograde: how you think, talk, and plan comes up for review, and old threads and miscommunications resurface",
+        "practical_response": "Back up, double-check, and reread before you send. Reflect and revise, don't launch"
+      },
+      "source_keys": [
+        "cc/event-action/mercury-retrograde",
+        "ms/retrograde/mercury"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/venus",
+      "kind": "retrograde",
+      "body": "venus",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Venus retrograde: love, worth, and what you value come up for review, and old flames and old wants resurface",
+        "practical_response": "Revisit rather than begin. Hold off on the big haircut or the new relationship for now"
+      },
+      "source_keys": [
+        "cc/event-action/venus-retrograde",
+        "ms/retrograde/venus"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/mars",
+      "kind": "retrograde",
+      "body": "mars",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Mars retrograde: your drive and how you assert come up for review, and stalled effort and old anger resurface",
+        "practical_response": "Slow down and rethink the strategy. Don't force it or start the fight now"
+      },
+      "source_keys": [
+        "cc/event-action/mars-retrograde",
+        "ms/retrograde/mars"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/jupiter",
+      "kind": "retrograde",
+      "body": "jupiter",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Jupiter retrograde: your beliefs, your growth, and where you've overextended come up for review",
+        "practical_response": "Reassess what you're expanding and why. Grow inward before you grow outward"
+      },
+      "source_keys": [
+        "cc/event-action/jupiter-retrograde",
+        "ms/retrograde/jupiter"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/saturn",
+      "kind": "retrograde",
+      "body": "saturn",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Saturn retrograde: the structures, rules, and commitments you live by come up for review",
+        "practical_response": "Reassess your commitments and where you've been too hard on yourself. This is patient inner work"
+      },
+      "source_keys": [
+        "cc/event-action/saturn-retrograde",
+        "ms/retrograde/saturn"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/uranus",
+      "kind": "retrograde",
+      "body": "uranus",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Uranus retrograde: your need for freedom and change turns inward and gets rethought",
+        "practical_response": "Notice where you want change on the inside before you upend anything outside"
+      },
+      "source_keys": [
+        "cc/event-action/uranus-retrograde",
+        "ms/retrograde/uranus"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/neptune",
+      "kind": "retrograde",
+      "body": "neptune",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Neptune retrograde: your ideals, dreams, and illusions come up for a clearer look",
+        "practical_response": "Let a fantasy correct gently. See what's real without throwing out the dream"
+      },
+      "source_keys": [
+        "cc/event-action/neptune-retrograde",
+        "ms/retrograde/neptune"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/pluto",
+      "kind": "retrograde",
+      "body": "pluto",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Pluto retrograde: your relationship to power and transformation turns inward",
+        "practical_response": "Face the buried thing quietly. The real change this cycle is internal"
+      },
+      "source_keys": [
+        "cc/event-action/pluto-retrograde",
+        "ms/retrograde/pluto"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retrograde/chiron",
+      "kind": "retrograde",
+      "body": "chiron",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "recognizable_situation": "Chiron retrograde: an old wound resurfaces for a deeper round of healing",
+        "practical_response": "Tend the tender place instead of pushing past it"
+      },
+      "source_keys": [
+        "cc/event-action/chiron-retrograde",
+        "ms/retrograde/chiron"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retro-phase/pre-shadow",
+      "kind": "retro_phase",
+      "phase": "pre-shadow",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "phase_situation": "About two weeks before the station, the planet slows through the ground it will retrace, and the theme it's about to review starts previewing itself",
+        "practical_response": "Act with clear purpose and a little extra care. Note what starts feeling sticky now"
+      },
+      "source_keys": [
+        "ms/retro-phase/pre-shadow"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retro-phase/station",
+      "kind": "retro_phase",
+      "phase": "station",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "phase_situation": "For a couple of days the planet stands still, a concentrated dose of its pure archetype before it turns",
+        "practical_response": "Pause and pay attention. This is the turning point, not the time to push"
+      },
+      "source_keys": [
+        "ms/retro-phase/station"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retro-phase/retrograde-passage",
+      "kind": "retro_phase",
+      "phase": "retrograde-passage",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "phase_situation": "The planet moves backward through familiar ground, and its themes turn inward for reflection and repair",
+        "practical_response": "Reflect, revise, and mend rather than initiate. Don't sign or launch the big new thing"
+      },
+      "source_keys": [
+        "ms/retro-phase/retrograde-passage"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/retro-phase/post-shadow",
+      "kind": "retro_phase",
+      "phase": "post-shadow",
+      "surface": "sky.retrograde_station",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "phase_situation": "The planet moves forward again through the reviewed ground, testing what you learned",
+        "practical_response": "Wait for the shadow to clear before you launch. Apply what the review taught you"
+      },
+      "source_keys": [
+        "ms/retro-phase/post-shadow"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/sun",
+      "kind": "ingress",
+      "body": "sun",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "The Sun changes signs, so the season turns and the collective focus moves to a new set of themes"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/sun",
+        "cc/planet/sun"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/moon",
+      "kind": "ingress",
+      "body": "moon",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "The Moon changes signs every couple of days, so the emotional weather shifts flavor"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/moon",
+        "cc/planet/moon"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/mercury",
+      "kind": "ingress",
+      "body": "mercury",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Mercury changes signs, so how everyone thinks, talks, and gets around shifts flavor"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/mercury",
+        "cc/planet/mercury"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/venus",
+      "kind": "ingress",
+      "body": "venus",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Venus changes signs, so what feels attractive, pleasurable, and worth spending on shifts"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/venus",
+        "cc/planet/venus"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/mars",
+      "kind": "ingress",
+      "body": "mars",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Mars changes signs, so what everyone's driven toward, and how they fight for it, shifts"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/mars",
+        "cc/planet/mars"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/jupiter",
+      "kind": "ingress",
+      "body": "jupiter",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Jupiter changes signs about once a year, so the collective's growth and luck move to a new area of life"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/jupiter",
+        "cc/planet/jupiter"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/saturn",
+      "kind": "ingress",
+      "body": "saturn",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Saturn changes signs every couple of years, so where the collective gets serious and tested shifts"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/saturn",
+        "cc/planet/saturn"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/uranus",
+      "kind": "ingress",
+      "body": "uranus",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Uranus changes signs after years, so a whole area of life opens up for disruption and reinvention"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/uranus",
+        "cc/planet/uranus"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/neptune",
+      "kind": "ingress",
+      "body": "neptune",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Neptune changes signs after years, so a whole area of life takes on a dreamier, more dissolving tone"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/neptune",
+        "cc/planet/neptune"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/ingress/pluto",
+      "kind": "ingress",
+      "body": "pluto",
+      "surface": "sky.ingress_calendar",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "threshold_shift": "Pluto changes signs after many years, so a whole domain begins a long, deep transformation"
+      },
+      "compose_note": "append the destination-sign flavor from cc/planet-in-sign/{body}-in-{sign}.collective_shift",
+      "source_keys": [
+        "ms/ingress/pluto",
+        "cc/planet/pluto"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    }
+  ]
+}

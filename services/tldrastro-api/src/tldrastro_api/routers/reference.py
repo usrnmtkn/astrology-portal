@@ -5,11 +5,6 @@ router = APIRouter(tags=["reference"])
 
 HOUSE_SYSTEMS = [
     {"id": "whole_sign", "label": "Whole Sign", "default": True, "swissEphCode": "W"},
-    {"id": "placidus", "label": "Placidus", "default": False, "swissEphCode": "P"},
-    {"id": "koch", "label": "Koch", "default": False, "swissEphCode": "K"},
-    {"id": "equal", "label": "Equal", "default": False, "swissEphCode": "E"},
-    {"id": "porphyry", "label": "Porphyry", "default": False, "swissEphCode": "O"},
-    {"id": "regiomontanus", "label": "Regiomontanus", "default": False, "swissEphCode": "R"},
 ]
 
 BODIES = [

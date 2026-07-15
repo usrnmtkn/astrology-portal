@@ -1,0 +1,147 @@
+{
+  "_meta": {
+    "title": "Marie Satori published-article quotes (CONFIRMED, serve-verbatim)",
+    "count": 15,
+    "tier": "CONFIRMED",
+    "source_folder": "satori-writing",
+    "register_note": "second-person; personalized surfaces only, not the collective we/us Sky layer",
+    "voice_note": "excluded from tone_pass and seam/register lints"
+  },
+  "quotes": [
+    {
+      "id": "ms/quote/eclipse/observe",
+      "text": "You are not meant to push harder right now, just sit back and observe.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Pisces Total Lunar Eclipse 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "eclipse, retrograde-heavy sky, integration"
+    },
+    {
+      "id": "ms/quote/eclipse/dam",
+      "text": "It hits like floodwater that's been pressing against a dam for months.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Pisces Total Lunar Eclipse 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "eclipse buildup / release"
+    },
+    {
+      "id": "ms/quote/newmoon/funeral",
+      "text": "That New Moon was a funeral: not tragic, but raw, inevitable, and necessary.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Pisces Total Lunar Eclipse 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "endings, closing New Moon of a cycle"
+    },
+    {
+      "id": "ms/quote/eclipse/life-let-go",
+      "text": "Which dream were you keeping on life support? What needed to end that you kept postponing, until life did the letting go for you?",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Pisces Total Lunar Eclipse 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "release, overdue endings"
+    },
+    {
+      "id": "ms/quote/saturn-aries/water-to-move",
+      "text": "In Pisces, Saturn asked you to sit in the water, to grieve, to surrender. Now it's time to move.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Saturn enters Aries 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Saturn Pisces -> Aries threshold"
+    },
+    {
+      "id": "ms/quote/saturn-aries/freedom-limits",
+      "text": "Freedom doesn't come from avoiding limits, it comes from choosing which ones matter.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Saturn enters Aries 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Saturn in Aries, discipline and initiative"
+    },
+    {
+      "id": "ms/quote/saturn-aries/fire-back",
+      "text": "The fire is back. And it's asking what you're going to do with it.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Saturn enters Aries 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Saturn in Aries, initiation"
+    },
+    {
+      "id": "ms/quote/saturn-aries/patience-to-build",
+      "text": "What if evolution requires the patience to build?",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Saturn enters Aries 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Saturn in Aries vs move-fast-break-things"
+    },
+    {
+      "id": "ms/quote/uranus-gemini/living-experiment",
+      "text": "Growth isn't a straight line; it's a living experiment.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Uranus Rx in Gemini (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Uranus, change, adaptation"
+    },
+    {
+      "id": "ms/quote/uranus-gemini/signals",
+      "text": "Those disruptions weren't random. They were signals.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Uranus Rx in Gemini (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Uranus disruption as early preview"
+    },
+    {
+      "id": "ms/quote/venus-virgo/dishes",
+      "text": "This isn't the Venus that sweeps you off your feet. This is the Venus that notices you've been overwhelmed and does the dishes without being asked.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Venus in Virgo 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Venus in Virgo, love as practical care"
+    },
+    {
+      "id": "ms/quote/venus-virgo/daily-practice",
+      "text": "Love as a daily practice of care, attention, and sacred service.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Venus in Virgo 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Venus in Virgo, service as love"
+    },
+    {
+      "id": "ms/quote/jupiter-cancer/amplifies",
+      "text": "Jupiter doesn't just bless. Jupiter amplifies.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — What Jupiter in Cancer Means for Your Sign (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Jupiter magnifies whatever is already there"
+    },
+    {
+      "id": "ms/quote/jupiter-cancer/wells-wombs",
+      "text": "This is the Jupiter of wells, wombs, kitchens, and kin.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — What Jupiter in Cancer Means for Your Sign (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Jupiter in Cancer, home and lineage"
+    },
+    {
+      "id": "ms/quote/venus-cancer/remembers",
+      "text": "This is the kind of love that remembers your favorite song, how you take your coffee, and what helps you feel safe when everything feels uncertain.",
+      "tier": "CONFIRMED",
+      "source": "Marie Satori — Venus in Cancer 2025 (mariesatori.com)",
+      "register": "personalized second-person ('you')",
+      "serving": "may serve verbatim on personalized horoscope surfaces; provenance for collective Sky voicing; never tone-passed or linted",
+      "themes": "Venus in Cancer, protective comfort love"
+    }
+  ]
+}

@@ -12,7 +12,13 @@ from tldrastro_api.models import (
     SynastryRequest,
     SynastryResponse,
 )
-from tldrastro_api.services.chart import ASPECT_DEFINITIONS, angular_separation, aspect_orbs, house_for_longitude
+from tldrastro_api.services.chart import (
+    ASPECT_DEFINITIONS,
+    CANONICAL_HOUSE_SYSTEM,
+    angular_separation,
+    aspect_orbs,
+    house_for_longitude,
+)
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.relationship_facts import house_overlay_fact, synastry_contact_fact
 
@@ -249,7 +255,7 @@ def calculate_synastry(request: SynastryRequest) -> SynastryResponse:
 
     return SynastryResponse(
         metadata=ChartMetadata(
-            houseSystem=request.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),

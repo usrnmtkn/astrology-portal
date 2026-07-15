@@ -1,0 +1,622 @@
+{
+  "_meta": {
+    "title": "Marie site lines + reusable templates (curated voice layer)",
+    "count": 27,
+    "families": 6,
+    "line_tier": "CONFIRMED (serve-verbatim)",
+    "template_tier": "REVIEWED_TEMPLATE",
+    "register": "personalized second-person; NOT the collective we/us Sky layer",
+    "excluded_by_author": [
+      "alignment",
+      "authentic self",
+      "masks",
+      "abstract healing",
+      "keyword stacks",
+      "most X-not-Y",
+      "attributed quotes from other writers"
+    ],
+    "voice_note": "CONFIRMED lines excluded from tone_pass and seam/register lints"
+  },
+  "principle": "Name an ordinary behavior first (overworking, staying quiet, managing someone's mood, editing a message, refusing help, keeping a failing system running). The astrology becomes powerful when it explains why that behavior is becoming impossible to continue.",
+  "families": [
+    {
+      "id": "family/strength-gone-too-far",
+      "name": "The strength that has gone too far",
+      "pattern": "Your {strength} helped you {survive/succeed/connect}, but it is now costing you {lived consequence}."
+    },
+    {
+      "id": "family/behavior-and-hidden-reason",
+      "name": "The behavior and the hidden reason",
+      "pattern": "You have been {specific behavior} because {fear or need}. Now {concrete consequence} is becoming harder to ignore."
+    },
+    {
+      "id": "family/body-reveals-cost",
+      "name": "The body reveals the cost",
+      "pattern": "Your body may be carrying {symptom or exhaustion} while you continue {appeasing, working, managing, or avoiding}."
+    },
+    {
+      "id": "family/two-conflicting-needs",
+      "name": "The two conflicting needs",
+      "pattern": "One side of you wants {desire}. The other is afraid of {specific cost attached to receiving it}."
+    },
+    {
+      "id": "family/disruption-as-information",
+      "name": "The disruption as information",
+      "pattern": "The {delay, conflict, ending, or disruption} reveals where {existing arrangement} was already failing."
+    },
+    {
+      "id": "family/practical-close",
+      "name": "The practical close",
+      "pattern": "Choose one {conversation/task/habit/boundary}. Make it specific enough to act on before {timing marker}."
+    }
+  ],
+  "records": [
+    {
+      "id": "ms/site-line/full-moon-in-taurus/01",
+      "exact": {
+        "text": "Your value isn't up for negotiation, even in relationships where you love the other person.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Full Moon in Taurus",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus"
+      },
+      "template": {
+        "form": "Your {need/value/boundary} is not up for negotiation, even in {relationship where enforcing it is difficult}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/chiron-retrograde-in-aries/02",
+      "exact": {
+        "text": "You've pushed past your own limits to keep things running, but exhaustion isn't a badge of honor.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Chiron Retrograde in Aries",
+        "url": "https://mariesatori.com/blogs/astrology/chiron-retrograde-in-aries"
+      },
+      "template": {
+        "form": "You've pushed past {limit} to keep {responsibility} running, but {visible consequence} is catching up with you.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/strength-gone-too-far",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/aquarius-full-moon-2025/03",
+      "exact": {
+        "text": "One side of you wants to be seen. The other side is scared of what visibility might cost.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Aquarius Full Moon",
+        "url": "https://mariesatori.com/blogs/astrology/aquarius-full-moon-2025"
+      },
+      "template": {
+        "form": "One side of you wants {desire}. The other is afraid of {specific cost of receiving it}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/two-conflicting-needs",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/relationship-year-libra-2025-to-venus-rx-2026/04",
+      "exact": {
+        "text": "We have learned to voice the small preferences while hiding the big truths.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Relationship Year",
+        "url": "https://mariesatori.com/blogs/astrology/relationship-year-libra-2025-to-venus-rx-2026"
+      },
+      "template": {
+        "form": "You may voice {safe preference} while continuing to hide {truth that could change the relationship}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/behavior-and-hidden-reason",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/venus-retrograde-2025/05",
+      "exact": {
+        "text": "What is witnessed here will shape what comes next.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Venus Retrograde",
+        "url": "https://mariesatori.com/blogs/astrology/venus-retrograde-2025"
+      },
+      "template": {
+        "form": "What becomes clear {during this event} will shape {next phase, decision, or relationship chapter}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/leo-new-moon-2025/06",
+      "exact": {
+        "text": "Ask yourself what could grow if you stopped managing other people's chaos.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Leo New Moon",
+        "url": "https://mariesatori.com/blogs/astrology/leo-new-moon-2025"
+      },
+      "template": {
+        "form": "Ask yourself what could {grow/change/be completed} if you stopped managing {problem that belongs to others}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/virgo-new-moon-august-23rd-2025/07",
+      "exact": {
+        "text": "Your wellness routine has become another way to fail.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Virgo New Moon",
+        "url": "https://mariesatori.com/blogs/astrology/virgo-new-moon-august-23rd-2025"
+      },
+      "template": {
+        "form": "Your {system intended to help} may have become another way to {judge, exhaust, or punish yourself}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/strength-gone-too-far",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/this-weeks-astrology-august-30-september-7-2025/08",
+      "exact": {
+        "text": "The chaos you've been trying to prevent might have been the breakthrough you needed.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — This Week's Astrology: August 30 – September 7",
+        "url": "https://mariesatori.com/blogs/astrology/this-weeks-astrology-august-30-september-7-2025"
+      },
+      "template": {
+        "form": "The {change/disruption/conversation} you have been trying to prevent may be what finally changes {stuck situation}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/disruption-as-information",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/this-weeks-astrology-august-30-september-7-2025/09",
+      "exact": {
+        "text": "Your body has been keeping score while you've been keeping peace.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — This Week's Astrology: August 30 – September 7",
+        "url": "https://mariesatori.com/blogs/astrology/this-weeks-astrology-august-30-september-7-2025"
+      },
+      "template": {
+        "form": "Your body has been carrying {physical consequence} while you have been {appeasing, accommodating, or remaining silent}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/body-reveals-cost",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/full-moon-eclipse-in-pisces-2025/10",
+      "exact": {
+        "text": "Even your self-care has deliverables.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Pisces Full Moon Eclipse",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-eclipse-in-pisces-2025"
+      },
+      "template": {
+        "form": "Even your {rest/creativity/healing/spiritual practice} has become something you expect yourself to complete correctly.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/strength-gone-too-far",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/uranu-retrograde-in-gemini/11",
+      "exact": {
+        "text": "It is revealing where your productivity has become a prison and how your responsibility to others has made you irresponsible to yourself.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Uranus Retrograde in Gemini",
+        "url": "https://mariesatori.com/blogs/astrology/uranu-retrograde-in-gemini"
+      },
+      "template": {
+        "form": "{Event} reveals where your {strength} has begun controlling your life and what it has caused you to neglect.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/strength-gone-too-far",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/pisces-new-moon-2025/12",
+      "exact": {
+        "text": "Silence is not protection.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Pisces New Moon",
+        "url": "https://mariesatori.com/blogs/astrology/pisces-new-moon-2025"
+      },
+      "template": {
+        "form": "{Coping behavior} is not protecting you from {consequence it only postpones}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/monthly-overview-june-2025/13",
+      "exact": {
+        "text": "Stability requires maintenance.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Monthly Horoscopes: June 2025",
+        "url": "https://mariesatori.com/blogs/astrology/monthly-overview-june-2025"
+      },
+      "template": {
+        "form": "{Relationship/stability/trust/health} requires maintenance, especially when {pressure or changing condition}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/uranus-direct-in-taurus-2025/14",
+      "exact": {
+        "text": "When Uranus moves through Taurus, money doesn't work the same way anymore.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Uranus Direct in Taurus",
+        "url": "https://mariesatori.com/blogs/astrology/uranus-direct-in-taurus-2025"
+      },
+      "template": {
+        "form": "When {planet} moves through {sign/house}, {affected life area} does not work the same way anymore.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/saturn-enters-aries/15",
+      "exact": {
+        "text": "This is when your words become your commitments.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Saturn Enters Aries",
+        "url": "https://mariesatori.com/blogs/astrology/saturn-enters-aries"
+      },
+      "template": {
+        "form": "This is when your {words/ideas/desires/plans} become {commitments, decisions, or consequences}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/jupiter-in-cancer-horoscopes-by-sign-2025/16",
+      "exact": {
+        "text": "Your daily life is your spell. Build it to nourish, not drain.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Jupiter in Cancer",
+        "url": "https://mariesatori.com/blogs/astrology/jupiter-in-cancer-horoscopes-by-sign-2025"
+      },
+      "template": {
+        "form": "Your {daily behavior} creates {longer-term condition}. Build it to support {need}, rather than continually draining it.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/practical-close",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/full-moon-in-aries/17",
+      "exact": {
+        "text": "These thought patterns have been protecting you from disappointment, but they're also protecting you from good things.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Full Moon in Aries",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-in-aries"
+      },
+      "template": {
+        "form": "This {belief/defense/habit} protects you from {feared outcome} while also keeping you from {wanted experience}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/two-conflicting-needs",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/gemini-season-2025/18",
+      "exact": {
+        "text": "You're being asked to match your words with your actions, your values with your commitments.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Gemini Season",
+        "url": "https://mariesatori.com/blogs/astrology/gemini-season-2025"
+      },
+      "template": {
+        "form": "Match your {stated belief} with {observable action}, and your {value} with {commitment that proves it}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/pisces-season-2025/19",
+      "exact": {
+        "text": "If you've been running yourself ragged, the eclipse will intervene.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Pisces Season",
+        "url": "https://mariesatori.com/blogs/astrology/pisces-season-2025"
+      },
+      "template": {
+        "form": "If you have been ignoring {limit/problem}, {event or consequence} may force the pause you have avoided.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/leo-full-moon-2025/20",
+      "exact": {
+        "text": "Whether it arrives as a revelation, a confrontation, or a sudden break in the script, it forces clarity.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Leo Full Moon",
+        "url": "https://mariesatori.com/blogs/astrology/leo-full-moon-2025"
+      },
+      "template": {
+        "form": "Whether it arrives through {possibility one}, {possibility two}, or {possibility three}, {event} makes {truth} harder to avoid.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/mars-direct-in-cancer/21",
+      "exact": {
+        "text": "The harder you pushed, the less things moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Mars Direct in Cancer",
+        "url": "https://mariesatori.com/blogs/astrology/mars-direct-in-cancer"
+      },
+      "template": {
+        "form": "The harder you pushed {person, decision, project, or timeline}, the less {movement or cooperation} you received.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/august-3rd-9th-2025/22",
+      "exact": {
+        "text": "You don't have to keep balancing things that were never yours to juggle.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Astrological Overview: August 3–9",
+        "url": "https://mariesatori.com/blogs/astrology/august-3rd-9th-2025"
+      },
+      "template": {
+        "form": "You do not have to keep managing {conflict, responsibility, or emotions} that never belonged to you.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/full-moon-in-taurus/23",
+      "exact": {
+        "text": "Your worth isn't determined by your earning capacity.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Taurus Full Moon (Aries Rising)",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus"
+      },
+      "template": {
+        "form": "Your {worth/value} is not determined by {external measure}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/full-moon-in-taurus/24",
+      "exact": {
+        "text": "Your body carries information you might not have words for yet.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Taurus Full Moon (Taurus Rising)",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus"
+      },
+      "template": {
+        "form": "Your body carries {information/signal} you might not have words for yet.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/body-reveals-cost",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/full-moon-in-taurus/25",
+      "exact": {
+        "text": "Your body knows the difference between sustainable effort and survival mode.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Taurus Full Moon (Gemini Rising)",
+        "url": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus"
+      },
+      "template": {
+        "form": "Your body knows the difference between {sustainable version} and {survival version}.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/body-reveals-cost",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/libra-new-moon-2025/26",
+      "exact": {
+        "text": "Let the silence hold what words can't.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Libra New Moon (Aquarius)",
+        "url": "https://mariesatori.com/blogs/astrology/libra-new-moon-2025"
+      },
+      "template": {
+        "form": "Let {the pause/silence/stillness} hold what {words/fixing/explaining} can't.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": null,
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    },
+    {
+      "id": "ms/site-line/libra-new-moon-2025/27",
+      "exact": {
+        "text": "This buys you time to think about whether you can genuinely help without resenting it later.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori — Libra New Moon (Taurus)",
+        "url": "https://mariesatori.com/blogs/astrology/libra-new-moon-2025"
+      },
+      "template": {
+        "form": "That buys you time to decide whether you can genuinely {help/commit/say yes} without resenting it later.",
+        "tier": "REVIEWED_TEMPLATE"
+      },
+      "family": "family/practical-close",
+      "register": "personalized second-person",
+      "surface_hint": [
+        "home.daily_horoscope",
+        "home.weekly_horoscope",
+        "home.monthly_horoscope",
+        "me.personalized_transit"
+      ]
+    }
+  ]
+}

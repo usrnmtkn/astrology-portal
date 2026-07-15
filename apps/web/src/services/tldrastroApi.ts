@@ -1,3 +1,5 @@
+import type { RelationshipContext } from "./relationshipContext";
+
 export type DateTimeInput = {
   date: string;
   time?: string | null;
@@ -14,7 +16,7 @@ export type TldrAstroLocationInput = {
 };
 
 export type TldrAstroChartSettings = {
-  houseSystem?: "whole_sign" | "placidus" | "koch" | "equal" | "porphyry" | "regiomontanus";
+  houseSystem?: "whole_sign";
   zodiac?: "tropical" | "sidereal";
   ayanamsa?: string | null;
   aspectProfile?: "standard" | "tight";
@@ -105,6 +107,7 @@ type PersonalTimingRequest = {
 export type RelationshipRequest = {
   personA: TldrAstroSubject;
   personB: TldrAstroSubject;
+  relationshipContext?: RelationshipContext;
   settings?: TldrAstroChartSettings;
   includeContentFacts?: boolean;
 };

@@ -1,0 +1,795 @@
+{
+  "_meta": {
+    "title": "Reviewed natal lunar-node placements (North Node growth axis)",
+    "coverage": "North Node x 12 signs + x 12 houses (each names its South Node counterpoint)",
+    "surface": "me.natal_placement",
+    "render": "{growth_direction}. The easy pull backward is {release_pull}. {lived_practice}.",
+    "count": 24,
+    "tier": "REVIEWED_CLAUSE",
+    "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+    "note": "The nodes are a natal axis, not an aspect; South Node is always the opposite sign/house.",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/node/north-node-in-aries",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Aries",
+      "south_node": "South Node in Libra",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward standing on your own two feet: acting on your own wants, starting things without a committee",
+        "release_pull": "leaning on other people to decide, keeping the peace until you disappear",
+        "lived_practice": "Make one decision today without polling the group chat. Everyone will be fine"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "People who call you difficult are the ones who benefit from your lack of boundaries.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Hesitation becomes dangerous when it keeps you halfway inside a decision. You agree and then resist, leave and then return, speak and then take it back. Decide whether the move is yours. If it is, put your full weight behind it.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-taurus",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Taurus",
+      "south_node": "South Node in Scorpio",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward steadiness and self-worth built slowly: knowing what's enough and letting life be simple",
+        "release_pull": "living in crisis and entanglement, measuring yourself through other people's intensity or resources",
+        "lived_practice": "Build one calm, self-sufficient thing and let it stay uncomplicated"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop equating your worth with how much you own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A promotion, a new apartment, a better title, or another impressive achievement can give you a good week. Then the excitement wears off and you are alone with the same dissatisfaction. If every milestone leaves you immediately searching for the next one, the problem may be somewhere your résumé cannot reach.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-gemini",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Gemini",
+      "south_node": "South Node in Sagittarius",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward curiosity and real listening: asking, gathering the local facts, staying a student",
+        "release_pull": "assuming you already know, preaching the big answer instead of hearing the actual question",
+        "lived_practice": "Ask one real question and let the answer change your mind"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Trust that your voice is enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A strong opinion can harden quickly when it earns you attention. Soon you are defending something you barely believe because changing your mind would feel embarrassing. Keep enough distance from your own conclusions to notice when the facts have moved.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-cancer",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Cancer",
+      "south_node": "South Node in Capricorn",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward feeling and tending: letting yourself need people and build a real emotional home",
+        "release_pull": "hiding inside control, status, and being the one who holds it all together",
+        "lived_practice": "Let one person see you before you've got it handled"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Your needs are not too much.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A hard period can become so familiar that feeling better makes you uneasy. You may miss the music you listened to, the people who understood you then, or the excuse to expect very little from life. You can remember what those years taught you without continuing to live inside them.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-leo",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Leo",
+      "south_node": "South Node in Aquarius",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward heart and courage: creating from yourself and letting your individual warmth be seen",
+        "release_pull": "dissolving into the group, staying detached and above it to avoid standing out",
+        "lived_practice": "Make one thing that's unmistakably yours and put your name on it"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "You’re allowed to make things that don’t impress anyone but you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "When something succeeds, it is easy to remember every decision you made and forget the timing, help, luck, and access that carried it forward. Your effort mattered. So did the people who answered, opened a door, covered a shift, or gave you another chance. Knowing what helped you get here makes you a better leader once you arrive.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-virgo",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Virgo",
+      "south_node": "South Node in Pisces",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward useful order: discernment, craft, and showing up for the practical, humble work",
+        "release_pull": "escaping into fog, overwhelm, or martyrdom when the details ask something of you",
+        "lived_practice": "Do one small concrete task well instead of drifting past it"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "You don’t need to fix everything to deserve love.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A system can save time until maintaining it becomes another job. You color-code the calendar, rebuild the tracker, adjust the routine, and spend the afternoon preparing to begin. Use the structure that helps you move. Retire the parts that only make you feel temporarily in control.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-libra",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Libra",
+      "south_node": "South Node in Aries",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward partnership and fairness: considering the other person and building things with them",
+        "release_pull": "the me-first reflex, deciding alone, treating cooperation as weakness",
+        "lived_practice": "Ask someone what they need before you push your own plan"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop fearing that boundaries mean you don't love enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some rooms require so much social calculation that you forget what you actually think. You monitor the tone, flatter the right person, laugh at the right moment, and leave exhausted from saying almost nothing. Spend less time where honesty carries a penalty.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-scorpio",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Scorpio",
+      "south_node": "South Node in Taurus",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward depth and honest intimacy: letting go, merging, facing what you'd rather not",
+        "release_pull": "clinging to comfort, possessions, and the familiar to avoid real transformation",
+        "lived_practice": "Let one thing end or one truth surface instead of gripping the safe version"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop calling it stress when it's actually rage being suppressed.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can feel when a room has turned strange. The conversation becomes mean, the questions get invasive, or your body starts looking for the nearest exit before your mind has explained why. You do not need to remain there long enough to collect evidence. Go.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-sagittarius",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Sagittarius",
+      "south_node": "South Node in Gemini",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward faith and meaning: trusting the bigger picture instead of drowning in every detail",
+        "release_pull": "scattering into information and second-guessing, collecting opinions to avoid a direction",
+        "lived_practice": "Commit to one belief you can act on and stop polling for more data"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "The ninth house is the house of freedom.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can spend years waiting for the opportunity, person, or sudden break that will finally make movement possible. Meanwhile, the smaller exits keep appearing: one application, one phone call, one uncomfortable decision, one day of work. Take the next available step. A way out is often built while you are already moving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-capricorn",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Capricorn",
+      "south_node": "South Node in Cancer",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward maturity and self-authority: taking responsibility and building a structure that's yours",
+        "release_pull": "staying small and dependent, letting a mood or a caretaker run the decision",
+        "lived_practice": "Handle one thing you've been waiting for someone else to come rescue you from"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Authority is the power to make choices about your own life. Status is the role that you play for other people.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Shortcuts become especially persuasive when the real work is repetitive. That is when people start buying tools they do not need, changing direction again, or talking about the work more than they do it. Return to the part that requires practice. Skill still grows the old-fashioned way.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-aquarius",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Aquarius",
+      "south_node": "South Node in Leo",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward contribution and the wider circle: your gift in service of something past your own spotlight",
+        "release_pull": "chasing approval and center stage, taking it personally when you're not the star",
+        "lived_practice": "Give to the group without needing the credit for it"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop fearing that belonging means losing your individuality.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Every new idea arrives with a crowd insisting that it changes everything. A week later, the crowd has moved on and everyone pretends they were never impressed. You can watch the excitement without reorganizing your life around it. Let an idea survive its first round of applause before you follow it anywhere.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-pisces",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in Pisces",
+      "south_node": "South Node in Virgo",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward trust and surrender: compassion, imagination, and letting some things be uncertain",
+        "release_pull": "over-analysing, perfecting, and worrying every detail into the ground",
+        "lived_practice": "Let one imperfect thing be, and trust it will hold"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Some truths are felt in the body before the mind can understand them.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some days you answer the messages, make the food, finish the shift, and feel almost nothing while doing it. That does not make the day meaningless. Keeping your life going during a low period is work, even when nobody sees anything dramatic happen.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-1-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 1st house",
+      "south_node": "South Node in the 7th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward being your own person: initiating, and letting yourself have wants of your own",
+        "release_pull": "over-defining yourself through a partner or through what others need",
+        "lived_practice": "Start one thing for yourself before you check who it's for"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Let yourself want what you want.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "The day will fill itself if you let it. Other people's requests arrive, small problems become urgent, and suddenly it is evening without anything important moving forward. Decide what you are doing before the noise begins. Give your own life the first hour.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-2-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 2nd house",
+      "south_node": "South Node in the 8th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward your own resources and worth: building something steady that's actually yours",
+        "release_pull": "depending on other people's money, power, or intensity",
+        "lived_practice": "Earn or make one thing on your own steam"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop equating your worth with how much you own.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "A promotion, a new apartment, a better title, or another impressive achievement can give you a good week. Then the excitement wears off and you are alone with the same dissatisfaction. If every milestone leaves you immediately searching for the next one, the problem may be somewhere your résumé cannot reach.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-3-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 3rd house",
+      "south_node": "South Node in the 9th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward everyday learning and connection: the near conversations, the local facts, the questions",
+        "release_pull": "hiding behind the grand belief or the far-off answer",
+        "lived_practice": "Have the ordinary conversation and actually listen"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Trust that your voice is enough.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-4-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 4th house",
+      "south_node": "South Node in the 10th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward a private emotional foundation: home, roots, and being cared for",
+        "release_pull": "over-investing in status, career, and the public scoreboard",
+        "lived_practice": "Tend the home life you keep postponing for the résumé"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Your needs are not too much.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-5-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 5th house",
+      "south_node": "South Node in the 11th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward personal creativity and joy: making, playing, and risking your own heart",
+        "release_pull": "losing yourself in the group's goals and hopes",
+        "lived_practice": "Make or love one thing purely because it's yours"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "You’re allowed to make things that don’t impress anyone but you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Confidence rarely needs a long introduction. You can see it in the person who knows their material, answers the question, and does not scramble when somebody remains unimpressed. Let the work speak before you start raising your voice on its behalf.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-6-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 6th house",
+      "south_node": "South Node in the 12th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward practical service and daily craft: the routine, the body, the useful work",
+        "release_pull": "escaping into overwhelm, fantasy, or self-sacrifice",
+        "lived_practice": "Do the small daily thing that actually helps"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "You are enough even when you feel minuscule.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "The day will fill itself if you let it. Other people's requests arrive, small problems become urgent, and suddenly it is evening without anything important moving forward. Decide what you are doing before the noise begins. Give your own life the first hour.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-7-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 7th house",
+      "south_node": "South Node in the 1st house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward partnership: cooperating, and letting another person actually matter",
+        "release_pull": "going it alone and calling independence the only safe option",
+        "lived_practice": "Let someone in on a decision you'd normally make solo"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Over-giving is not generosity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some relationships survive because one person keeps leaving the door cracked. You answer the late message, agree to one more conversation, and call it kindness even though every contact unsettles your life again. If leaving was necessary, finish leaving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-8-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 8th house",
+      "south_node": "South Node in the 2nd house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward depth and shared trust: intimacy, transformation, and letting go of control",
+        "release_pull": "clinging to your own comfort, possessions, and the way things already are",
+        "lived_practice": "Merge or release one thing instead of guarding it"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Your worth isn’t defined by what you have, but by what you give and receive.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can feel when a room has turned strange. The conversation becomes mean, the questions get invasive, or your body starts looking for the nearest exit before your mind has explained why. You do not need to remain there long enough to collect evidence. Go.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-9-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 9th house",
+      "south_node": "South Node in the 3rd house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward the bigger view: meaning and the horizon past your own street",
+        "release_pull": "drowning in details, errands, and other people's opinions",
+        "lived_practice": "Follow one question somewhere larger than your inbox"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "The ninth house is the house of freedom.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "You can spend years waiting for the opportunity, person, or sudden break that will finally make movement possible. Meanwhile, the smaller exits keep appearing: one application, one phone call, one uncomfortable decision, one day of work. Take the next available step. A way out is often built while you are already moving.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-10-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 10th house",
+      "south_node": "South Node in the 4th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward public contribution and responsibility: standing where you can be counted on",
+        "release_pull": "retreating into the private and familiar when the world asks something of you",
+        "lived_practice": "Take one visible responsibility instead of staying behind the scenes"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Authority is the power to make choices about your own life. Status is the role that you play for other people.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "When something succeeds, it is easy to remember every decision you made and forget the timing, help, luck, and access that carried it forward. Your effort mattered. So did the people who answered, opened a door, covered a shift, or gave you another chance. Knowing what helped you get here makes you a better leader once you arrive.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-11-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 11th house",
+      "south_node": "South Node in the 5th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward community and the collective future: your gift among others",
+        "release_pull": "performing for personal approval and centre stage",
+        "lived_practice": "Contribute to something shared without needing the spotlight"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Stop fearing that belonging means losing your individuality.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Every new idea arrives with a crowd insisting that it changes everything. A week later, the crowd has moved on and everyone pretends they were never impressed. You can watch the excitement without reorganizing your life around it. Let an idea survive its first round of applause before you follow it anywhere.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    },
+    {
+      "id": "cc/node/north-node-in-12-house",
+      "surface": "me.natal_placement",
+      "kind": "lunar_node",
+      "title": "North Node in the 12th house",
+      "south_node": "South Node in the 6th house",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "growth_direction": "Your growth is toward surrender and inner life: rest, trust, and the unseen",
+        "release_pull": "over-controlling the routine and worrying the details into the ground",
+        "lived_practice": "Let one thing be uncertain and unmanaged today"
+      },
+      "source_keys": [
+        "cc/ref/nodes/north-node",
+        "cc/ref/nodes/south-node"
+      ],
+      "doctrine_source": "Elizabeth Spring, North Node Astrology; Dane Rudhyar, The Lunar Nodes; Healing the Soul: Pluto, Uranus and the Lunar Nodes (doctrine only, voiced original)",
+      "originalityCheck": "voiced original; doctrine-grounded",
+      "review_note": "needs Marie/editorial final sign-off before serving",
+      "tone_version": "marie-calibrated-v1",
+      "pull_quote": {
+        "text": "Some truths are felt in the body before the mind can understand them.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card"
+      },
+      "marie_advice": {
+        "text": "Some days you answer the messages, make the food, finish the shift, and feel almost nothing while doing it. That does not make the day meaningless. Keeping your life going during a low period is work, even when nobody sees anything dramatic happen.",
+        "tier": "CONFIRMED",
+        "source": "Marie Satori (authored)",
+        "use": "optional CONFIRMED expanded advice; serve verbatim"
+      }
+    }
+  ]
+}

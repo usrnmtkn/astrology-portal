@@ -1,0 +1,850 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Moon-phase scene/action/result fills for templates 2A-2H (fills the 15 gap slots). Grounded in Marie's lunation frame. scope={phase, role}.",
+  "count": 30,
+  "source": "Marie lunation frame"
+ },
+ "reviewed": [
+  {
+   "content_key": "cc/moon-phase/new-moon/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The thing you are only just beginning to want",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "new-moon",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/new-moon/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The quiet idea you have not said out loud yet",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "new-moon",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/new-moon/action/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "one small intention to plant",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "new-moon",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/new-moon/action/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "a single seed to set rather than a harvest to force",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "new-moon",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-crescent/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the fragile first effort you have started",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-crescent",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-crescent/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the beginning that is still finding its footing",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-crescent",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-crescent/action/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Add one steady piece and leave it alone.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-crescent",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-crescent/action/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Feed it a little and resist checking whether it has grown yet.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-crescent",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/first-quarter/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The first real obstacle",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "first-quarter",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/first-quarter/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The gap between the intention and the actual work",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "first-quarter",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/first-quarter/action/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "take the step you can defend",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "first-quarter",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/first-quarter/action/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "move before every doubt has cleared",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "first-quarter",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-gibbous/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the thing you have been building",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-gibbous",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-gibbous/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the effort that is nearly, but not quite, there",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-gibbous",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-gibbous/action/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Fix one detail rather than starting the whole thing over.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-gibbous",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waxing-gibbous/action/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Tighten what is close before you add anything new.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waxing-gibbous",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/full-moon/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "What you seeded at the last new moon",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "full-moon",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/full-moon/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "An intention you set weeks ago, now come to fruition",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "full-moon",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/full-moon/result/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "what has actually come to fruition",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "full-moon",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/full-moon/result/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the thing that has become undeniable",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "full-moon",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waning-gibbous/result/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "what the last two weeks have taught you",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waning-gibbous",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/waning-gibbous/result/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the result you can finally name now that the light has peaked",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "waning-gibbous",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/last-quarter/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "A structure that served the beginning",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "last-quarter",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/last-quarter/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The plan you set at the new moon",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "last-quarter",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/last-quarter/action/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Release the part you have outgrown instead of leaning on it harder.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "last-quarter",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/last-quarter/action/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Revise what no longer fits and keep only what still works.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "last-quarter",
+     "role": "action"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/balsamic/scene/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the cycle that is winding down",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "balsamic",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/balsamic/scene/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "whatever is ready to end",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "balsamic",
+     "role": "scene"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/balsamic/result/alt1",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "what has become familiar and overused",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "balsamic",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/moon-phase/balsamic/result/alt2",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "the comfortable habit you keep returning to",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "moon-phase",
+    "scope": {
+     "phase": "balsamic",
+     "role": "result"
+    },
+    "provenance": "Marie Satori lunation model: New/Full frames verbatim-grounded (context-new-moon, context-full-moon, guide-phrases); waxing/waning arc phrased in her voice.",
+    "sourceFile": "marie lunation frame",
+    "lane": "reference"
+   },
+   "prompt_version": "authored-moon-phase-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

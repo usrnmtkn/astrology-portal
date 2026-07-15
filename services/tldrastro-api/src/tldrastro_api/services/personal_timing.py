@@ -5,6 +5,7 @@ from tldrastro_api.models import (
     AppResponseContract,
     ChartMetadata,
     ContentFactPacket,
+    HouseSystem,
     PersonalTimingRequest,
     PersonalTimingResponse,
     ProfectionsRequest,
@@ -12,6 +13,7 @@ from tldrastro_api.models import (
     TransitChartRequest,
     TransitHit,
 )
+from tldrastro_api.services.chart import CANONICAL_HOUSE_SYSTEM
 from tldrastro_api.services.profections import calculate_profections
 from tldrastro_api.services.transits import calculate_transits
 
@@ -75,7 +77,7 @@ def _content_facts(request: PersonalTimingRequest, profections, boosted) -> List
             ),
             priority=85,
             timeSensitivity="active-now",
-            houseSystem=request.settings.houseSystem,
+            houseSystem=HouseSystem.whole_sign,
             zodiac=request.settings.zodiac,
             facts={
                 "type": "annual_profection",
@@ -105,7 +107,7 @@ def _content_facts(request: PersonalTimingRequest, profections, boosted) -> List
                 ),
                 priority=min(100, top_boost.boostedScore),
                 timeSensitivity="active-now",
-                houseSystem=request.settings.houseSystem,
+                houseSystem=HouseSystem.whole_sign,
                 zodiac=request.settings.zodiac,
                 facts={
                     "type": "timing_boosted_transit",
@@ -216,7 +218,7 @@ def calculate_personal_timing(request: PersonalTimingRequest) -> PersonalTimingR
 
     return PersonalTimingResponse(
         metadata=ChartMetadata(
-            houseSystem=request.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),

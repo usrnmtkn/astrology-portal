@@ -12,10 +12,14 @@ export type LocationInput = {
 export type PlanetPosition = {
   planet: string;
   glyph: string;
+  longitude?: number;
+  latitude?: number | null;
+  speed?: number | null;
   sign: string;
   signGlyph: string;
   degree: number;
   house: number;
+  houseSystem?: "whole_sign";
   motion: "direct" | "retrograde";
   transitStart?: string | null;
   transitEnd?: string | null;
@@ -23,6 +27,11 @@ export type PlanetPosition = {
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;
   retrogradeWindowSource?: "station" | "sign-transit" | null;
+  retrogradePhase?: "retrograde-passage" | null;
+  retrogradeShadowStart?: string | null;
+  retrogradeShadowEnd?: string | null;
+  cazimi?: boolean | null;
+  cazimiOrb?: number | null;
 };
 
 export type SolarDaylight = {
@@ -36,10 +45,29 @@ export type SolarDaylight = {
 export type SkySnapshot = {
   location: LocationInput;
   generatedAt: string;
+  calculationProvenance?: {
+    source: string;
+    library: string;
+    libraryVersion: string;
+    ephemerisFiles: string[];
+    zodiac: "tropical" | "sidereal";
+    frame: "geocentric" | "topocentric";
+    houseSystem: "whole_sign";
+    planetHouseSystem: "whole_sign";
+    nodeType: "mean" | "true";
+    calculationVersion: string;
+  };
   ascendant: string;
   ascendantLongitude?: number;
   midheaven: string;
   midheavenLongitude?: number;
+  houseCusps?: Array<{
+    house: number;
+    longitude: number;
+    sign: string;
+    degree: number;
+    houseSystem: "whole_sign";
+  }>;
   moonPhase: string;
   moonStatus?: {
     kind: "sign" | "void";
@@ -69,9 +97,13 @@ export type SkySnapshot = {
     from: string;
     to: string;
     type: string;
+    exactAngle?: number;
+    separation?: number;
     orb: number;
+    applying?: boolean;
     conditions?: AspectConditions;
   }>;
+  facts?: import("./services/astrologyFacts").AstrologyFact[];
 };
 
 export type AspectConditions = {

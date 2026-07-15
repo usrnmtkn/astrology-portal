@@ -1,0 +1,676 @@
+{
+  "schema": "tldrastro-admin-content-v1",
+  "note": "Fallback VOCAB as editable dashboard rows, keyed to the EXACT template variables your existing dashboard templates already use. No new template strings — your templates stay the templates; these rows fill their slots. Single editable source: the admin. The emergency composer + planetTopicVocabulary must read these instead of any hardcoded bank.",
+  "variableMap": {
+    "{{planetTopic}} / {{planetATopic}} / {{planetBTopic}} / {{transitPlanetTopic}}": "fallback-vocab/planet-topic/{planet}",
+    "{{natalPointTopic}} (angle)": "fallback-vocab/angle-topic/{angle}",
+    "{{planetACore}} / {{planetBCore}}": "fallback-vocab/planet-core/{planet}",
+    "{{signStyle}} / {{signAStyle}} / {{signBStyle}}": "fallback-vocab/sign-style/{sign}",
+    "{{signNeed}}": "fallback-vocab/sign-need/{sign}",
+    "{{houseLifeArea}} / {{lifeAreaDescription}} / {{lifeArea}}": "fallback-vocab/house-life-area/{house}",
+    "{{aspectVerb}}": "fallback-vocab/aspect-verb/{aspect}",
+    "{{aspectFeel}}": "fallback-vocab/aspect-feel/{aspect}",
+    "ruler logic": "fallback-vocab/sign-ruler/{sign}",
+    "{{aspectAdj}}": "fallback-vocab/aspect-adj/{aspect}"
+  },
+  "compositionRules": {
+    "namedFunctionRequired": "Always fill the topic slot from planetFunction / angleFunction (a named meaning). Never use generic placeholders like 'this part of them', 'how this part becomes active', or 'this placement'.",
+    "bannedPhrases": [
+      "this part of them",
+      "this part of you",
+      "how this part becomes active",
+      "becomes active",
+      "so the point is not generic",
+      "is not generic",
+      "material.",
+      "working through",
+      "the point is",
+      "describes how",
+      "this placement describes",
+      "generic ascendant material",
+      "carries that story further",
+      "this placement becomes concrete",
+      "becomes concrete through",
+      "pulling sense of self toward",
+      "points this house toward",
+      "this is where",
+      "builds identity",
+      "how this part",
+      "this part becomes"
+    ],
+    "noMetaCopy": "Never describe the astrology's own construction or reassure the reader it isn't generic. Say what the point means, then how the sign colors it, then where the house lands it.",
+    "shape": "{Subject} {Point} is in {Sign}{ in the {House} house}. {pointFunction}, colored by {signTone}{, landing in {houseArea}}.",
+    "rulershipMustExplain": "When a placement section follows a sign's ruling planet into another house, first state the rulership reason (\"{Sign} is ruled by {Ruler}\" / \"the Ascendant is {Sign}, so {Ruler} is the chart ruler\"), then give the ruler's placement. Never jump to the ruler's house without naming why. Use the signRuler map so the ruler is astrologically correct.",
+    "grammar": {
+      "article": "Use 'an' before a vowel sound, 'a' otherwise. Never 'a unconventional' / 'a inventive'.",
+      "subjectVerb": "Match verb to subject: 'they build' (not 'they builds'), 'she builds'. Never emit 'they builds'.",
+      "noDoubleArticle": "Do not prepend an article when the signTone slot is used in a template that already supplies one."
+    },
+    "singleSource": "This file is the ONLY source of emergency/fallback reader vocab. The app must not keep parallel hardcoded planet-meaning, sign-style, house-topic, or ruler-sentence banks. Any deterministic composer reads planetFunction / angleFunction / signTone / houseArea / signRuler / templates from here."
+  },
+  "templateRows": [
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/sun",
+      "contentKey": "fallback-vocab/planet-topic/sun",
+      "headline": "Sun — planetTopic",
+      "summary": "",
+      "body": "identity, vitality, confidence, leadership, visibility, and life direction"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/moon",
+      "contentKey": "fallback-vocab/planet-topic/moon",
+      "headline": "Moon — planetTopic",
+      "summary": "",
+      "body": "emotions, instincts, and what brings safety"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/mercury",
+      "contentKey": "fallback-vocab/planet-topic/mercury",
+      "headline": "Mercury — planetTopic",
+      "summary": "",
+      "body": "thinking, communication, and how information gets processed"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/venus",
+      "contentKey": "fallback-vocab/planet-topic/venus",
+      "headline": "Venus — planetTopic",
+      "summary": "",
+      "body": "love, pleasure, taste, and values"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/mars",
+      "contentKey": "fallback-vocab/planet-topic/mars",
+      "headline": "Mars — planetTopic",
+      "summary": "",
+      "body": "drive, assertion, and the will to act"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/jupiter",
+      "contentKey": "fallback-vocab/planet-topic/jupiter",
+      "headline": "Jupiter — planetTopic",
+      "summary": "",
+      "body": "growth, belief, and where things expand"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/saturn",
+      "contentKey": "fallback-vocab/planet-topic/saturn",
+      "headline": "Saturn — planetTopic",
+      "summary": "",
+      "body": "structure, discipline, limits, and time"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/uranus",
+      "contentKey": "fallback-vocab/planet-topic/uranus",
+      "headline": "Uranus — planetTopic",
+      "summary": "",
+      "body": "disruption, change, and the urge to break free"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/neptune",
+      "contentKey": "fallback-vocab/planet-topic/neptune",
+      "headline": "Neptune — planetTopic",
+      "summary": "",
+      "body": "dreams, imagination, and where boundaries dissolve"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/pluto",
+      "contentKey": "fallback-vocab/planet-topic/pluto",
+      "headline": "Pluto — planetTopic",
+      "summary": "",
+      "body": "power, depth, and slow transformation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-topic/chiron",
+      "contentKey": "fallback-vocab/planet-topic/chiron",
+      "headline": "Chiron — planetTopic",
+      "summary": "",
+      "body": "old insecurities and where repair happens"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/sun",
+      "contentKey": "fallback-vocab/planet-core/sun",
+      "headline": "Sun — planetCore",
+      "summary": "",
+      "body": "identity"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/moon",
+      "contentKey": "fallback-vocab/planet-core/moon",
+      "headline": "Moon — planetCore",
+      "summary": "",
+      "body": "emotion"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/mercury",
+      "contentKey": "fallback-vocab/planet-core/mercury",
+      "headline": "Mercury — planetCore",
+      "summary": "",
+      "body": "the mind"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/venus",
+      "contentKey": "fallback-vocab/planet-core/venus",
+      "headline": "Venus — planetCore",
+      "summary": "",
+      "body": "connection"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/mars",
+      "contentKey": "fallback-vocab/planet-core/mars",
+      "headline": "Mars — planetCore",
+      "summary": "",
+      "body": "drive"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/jupiter",
+      "contentKey": "fallback-vocab/planet-core/jupiter",
+      "headline": "Jupiter — planetCore",
+      "summary": "",
+      "body": "expansion"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/saturn",
+      "contentKey": "fallback-vocab/planet-core/saturn",
+      "headline": "Saturn — planetCore",
+      "summary": "",
+      "body": "structure"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/uranus",
+      "contentKey": "fallback-vocab/planet-core/uranus",
+      "headline": "Uranus — planetCore",
+      "summary": "",
+      "body": "change"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/neptune",
+      "contentKey": "fallback-vocab/planet-core/neptune",
+      "headline": "Neptune — planetCore",
+      "summary": "",
+      "body": "imagination"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/pluto",
+      "contentKey": "fallback-vocab/planet-core/pluto",
+      "headline": "Pluto — planetCore",
+      "summary": "",
+      "body": "transformation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/planet-core/chiron",
+      "contentKey": "fallback-vocab/planet-core/chiron",
+      "headline": "Chiron — planetCore",
+      "summary": "",
+      "body": "an old wound and its repair"
+    },
+    {
+      "id": "placeholder:fallback-vocab/angle-topic/ascendant",
+      "contentKey": "fallback-vocab/angle-topic/ascendant",
+      "headline": "Ascendant — natalPointTopic",
+      "summary": "",
+      "body": "first impressions, outward style, and how the world gets met"
+    },
+    {
+      "id": "placeholder:fallback-vocab/angle-topic/descendant",
+      "contentKey": "fallback-vocab/angle-topic/descendant",
+      "headline": "Descendant — natalPointTopic",
+      "summary": "",
+      "body": "what draws us toward others and close partnership"
+    },
+    {
+      "id": "placeholder:fallback-vocab/angle-topic/midheaven",
+      "contentKey": "fallback-vocab/angle-topic/midheaven",
+      "headline": "Midheaven — natalPointTopic",
+      "summary": "",
+      "body": "public role, reputation, and direction in the world"
+    },
+    {
+      "id": "placeholder:fallback-vocab/angle-topic/imum-coeli",
+      "contentKey": "fallback-vocab/angle-topic/imum-coeli",
+      "headline": "Imum-Coeli — natalPointTopic",
+      "summary": "",
+      "body": "roots, home, and the private foundation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/aries",
+      "contentKey": "fallback-vocab/sign-style/aries",
+      "headline": "Aries — signStyle",
+      "summary": "",
+      "body": "bold, fast, self-starting"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/taurus",
+      "contentKey": "fallback-vocab/sign-style/taurus",
+      "headline": "Taurus — signStyle",
+      "summary": "",
+      "body": "slow, steady, comfort-seeking"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/gemini",
+      "contentKey": "fallback-vocab/sign-style/gemini",
+      "headline": "Gemini — signStyle",
+      "summary": "",
+      "body": "curious, restless, talkative"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/cancer",
+      "contentKey": "fallback-vocab/sign-style/cancer",
+      "headline": "Cancer — signStyle",
+      "summary": "",
+      "body": "tender, protective, home-centered"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/leo",
+      "contentKey": "fallback-vocab/sign-style/leo",
+      "headline": "Leo — signStyle",
+      "summary": "",
+      "body": "warm, expressive, spotlight-seeking"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/virgo",
+      "contentKey": "fallback-vocab/sign-style/virgo",
+      "headline": "Virgo — signStyle",
+      "summary": "",
+      "body": "precise, practical, improving"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/libra",
+      "contentKey": "fallback-vocab/sign-style/libra",
+      "headline": "Libra — signStyle",
+      "summary": "",
+      "body": "relational, balancing, fairness-seeking"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/scorpio",
+      "contentKey": "fallback-vocab/sign-style/scorpio",
+      "headline": "Scorpio — signStyle",
+      "summary": "",
+      "body": "intense, private, all-or-nothing"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/sagittarius",
+      "contentKey": "fallback-vocab/sign-style/sagittarius",
+      "headline": "Sagittarius — signStyle",
+      "summary": "",
+      "body": "expansive, restless, meaning-seeking"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/capricorn",
+      "contentKey": "fallback-vocab/sign-style/capricorn",
+      "headline": "Capricorn — signStyle",
+      "summary": "",
+      "body": "disciplined, ambitious, long-game"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/aquarius",
+      "contentKey": "fallback-vocab/sign-style/aquarius",
+      "headline": "Aquarius — signStyle",
+      "summary": "",
+      "body": "inventive, independent, collective-minded"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-style/pisces",
+      "contentKey": "fallback-vocab/sign-style/pisces",
+      "headline": "Pisces — signStyle",
+      "summary": "",
+      "body": "dreamy, compassionate, boundary-dissolving"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/aries",
+      "contentKey": "fallback-vocab/sign-need/aries",
+      "headline": "Aries — signNeed",
+      "summary": "",
+      "body": "to act and lead"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/taurus",
+      "contentKey": "fallback-vocab/sign-need/taurus",
+      "headline": "Taurus — signNeed",
+      "summary": "",
+      "body": "stability and comfort"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/gemini",
+      "contentKey": "fallback-vocab/sign-need/gemini",
+      "headline": "Gemini — signNeed",
+      "summary": "",
+      "body": "variety and mental stimulation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/cancer",
+      "contentKey": "fallback-vocab/sign-need/cancer",
+      "headline": "Cancer — signNeed",
+      "summary": "",
+      "body": "safety and belonging"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/leo",
+      "contentKey": "fallback-vocab/sign-need/leo",
+      "headline": "Leo — signNeed",
+      "summary": "",
+      "body": "recognition and warmth"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/virgo",
+      "contentKey": "fallback-vocab/sign-need/virgo",
+      "headline": "Virgo — signNeed",
+      "summary": "",
+      "body": "order and usefulness"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/libra",
+      "contentKey": "fallback-vocab/sign-need/libra",
+      "headline": "Libra — signNeed",
+      "summary": "",
+      "body": "harmony and fairness"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/scorpio",
+      "contentKey": "fallback-vocab/sign-need/scorpio",
+      "headline": "Scorpio — signNeed",
+      "summary": "",
+      "body": "depth and honesty"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/sagittarius",
+      "contentKey": "fallback-vocab/sign-need/sagittarius",
+      "headline": "Sagittarius — signNeed",
+      "summary": "",
+      "body": "freedom and meaning"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/capricorn",
+      "contentKey": "fallback-vocab/sign-need/capricorn",
+      "headline": "Capricorn — signNeed",
+      "summary": "",
+      "body": "achievement and structure"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/aquarius",
+      "contentKey": "fallback-vocab/sign-need/aquarius",
+      "headline": "Aquarius — signNeed",
+      "summary": "",
+      "body": "independence and a cause"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-need/pisces",
+      "contentKey": "fallback-vocab/sign-need/pisces",
+      "headline": "Pisces — signNeed",
+      "summary": "",
+      "body": "meaning and gentleness"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/1",
+      "contentKey": "fallback-vocab/house-life-area/1",
+      "headline": "1 house — houseLifeArea",
+      "summary": "",
+      "body": "identity, the body, and self-presentation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/2",
+      "contentKey": "fallback-vocab/house-life-area/2",
+      "headline": "2 house — houseLifeArea",
+      "summary": "",
+      "body": "money, worth, and values"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/3",
+      "contentKey": "fallback-vocab/house-life-area/3",
+      "headline": "3 house — houseLifeArea",
+      "summary": "",
+      "body": "communication, learning, and everyday connections"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/4",
+      "contentKey": "fallback-vocab/house-life-area/4",
+      "headline": "4 house — houseLifeArea",
+      "summary": "",
+      "body": "home, family, and private foundation"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/5",
+      "contentKey": "fallback-vocab/house-life-area/5",
+      "headline": "5 house — houseLifeArea",
+      "summary": "",
+      "body": "creativity, play, romance, and self-expression"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/6",
+      "contentKey": "fallback-vocab/house-life-area/6",
+      "headline": "6 house — houseLifeArea",
+      "summary": "",
+      "body": "work, health, and daily routine"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/7",
+      "contentKey": "fallback-vocab/house-life-area/7",
+      "headline": "7 house — houseLifeArea",
+      "summary": "",
+      "body": "partnership and one-to-one relationships"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/8",
+      "contentKey": "fallback-vocab/house-life-area/8",
+      "headline": "8 house — houseLifeArea",
+      "summary": "",
+      "body": "intimacy, shared resources, and deep change"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/9",
+      "contentKey": "fallback-vocab/house-life-area/9",
+      "headline": "9 house — houseLifeArea",
+      "summary": "",
+      "body": "belief, study, travel, and the bigger picture"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/10",
+      "contentKey": "fallback-vocab/house-life-area/10",
+      "headline": "10 house — houseLifeArea",
+      "summary": "",
+      "body": "career, reputation, and public role"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/11",
+      "contentKey": "fallback-vocab/house-life-area/11",
+      "headline": "11 house — houseLifeArea",
+      "summary": "",
+      "body": "friends, community, and long-term hopes"
+    },
+    {
+      "id": "placeholder:fallback-vocab/house-life-area/12",
+      "contentKey": "fallback-vocab/house-life-area/12",
+      "headline": "12 house — houseLifeArea",
+      "summary": "",
+      "body": "solitude, the unconscious, and the behind-the-scenes"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-verb/conjunction",
+      "contentKey": "fallback-vocab/aspect-verb/conjunction",
+      "headline": "Conjunction — aspectVerb",
+      "summary": "",
+      "body": "merges with"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-verb/sextile",
+      "contentKey": "fallback-vocab/aspect-verb/sextile",
+      "headline": "Sextile — aspectVerb",
+      "summary": "",
+      "body": "supports"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-verb/square",
+      "contentKey": "fallback-vocab/aspect-verb/square",
+      "headline": "Square — aspectVerb",
+      "summary": "",
+      "body": "challenges"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-verb/trine",
+      "contentKey": "fallback-vocab/aspect-verb/trine",
+      "headline": "Trine — aspectVerb",
+      "summary": "",
+      "body": "harmonizes with"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-verb/opposition",
+      "contentKey": "fallback-vocab/aspect-verb/opposition",
+      "headline": "Opposition — aspectVerb",
+      "summary": "",
+      "body": "pulls against"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-feel/conjunction",
+      "contentKey": "fallback-vocab/aspect-feel/conjunction",
+      "headline": "Conjunction — aspectFeel",
+      "summary": "",
+      "body": "two chart functions meet at once, so one clear response matters more than juggling every signal"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-feel/sextile",
+      "contentKey": "fallback-vocab/aspect-feel/sextile",
+      "headline": "Sextile — aspectFeel",
+      "summary": "",
+      "body": "an available opening that becomes useful when someone takes a concrete step"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-feel/square",
+      "contentKey": "fallback-vocab/aspect-feel/square",
+      "headline": "Square — aspectFeel",
+      "summary": "",
+      "body": "recurring friction that asks for an adjustment"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-feel/trine",
+      "contentKey": "fallback-vocab/aspect-feel/trine",
+      "headline": "Trine — aspectFeel",
+      "summary": "",
+      "body": "easy and natural, easy to overlook"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-feel/opposition",
+      "contentKey": "fallback-vocab/aspect-feel/opposition",
+      "headline": "Opposition — aspectFeel",
+      "summary": "",
+      "body": "a polarity that asks both sides to be named without collapsing either one"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/aries",
+      "contentKey": "fallback-vocab/sign-ruler/aries",
+      "headline": "Aries — ruling planet",
+      "summary": "",
+      "body": "mars"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/taurus",
+      "contentKey": "fallback-vocab/sign-ruler/taurus",
+      "headline": "Taurus — ruling planet",
+      "summary": "",
+      "body": "venus"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/gemini",
+      "contentKey": "fallback-vocab/sign-ruler/gemini",
+      "headline": "Gemini — ruling planet",
+      "summary": "",
+      "body": "mercury"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/cancer",
+      "contentKey": "fallback-vocab/sign-ruler/cancer",
+      "headline": "Cancer — ruling planet",
+      "summary": "",
+      "body": "moon"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/leo",
+      "contentKey": "fallback-vocab/sign-ruler/leo",
+      "headline": "Leo — ruling planet",
+      "summary": "",
+      "body": "sun"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/virgo",
+      "contentKey": "fallback-vocab/sign-ruler/virgo",
+      "headline": "Virgo — ruling planet",
+      "summary": "",
+      "body": "mercury"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/libra",
+      "contentKey": "fallback-vocab/sign-ruler/libra",
+      "headline": "Libra — ruling planet",
+      "summary": "",
+      "body": "venus"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/scorpio",
+      "contentKey": "fallback-vocab/sign-ruler/scorpio",
+      "headline": "Scorpio — ruling planet",
+      "summary": "",
+      "body": "mars"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/sagittarius",
+      "contentKey": "fallback-vocab/sign-ruler/sagittarius",
+      "headline": "Sagittarius — ruling planet",
+      "summary": "",
+      "body": "jupiter"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/capricorn",
+      "contentKey": "fallback-vocab/sign-ruler/capricorn",
+      "headline": "Capricorn — ruling planet",
+      "summary": "",
+      "body": "saturn"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/aquarius",
+      "contentKey": "fallback-vocab/sign-ruler/aquarius",
+      "headline": "Aquarius — ruling planet",
+      "summary": "",
+      "body": "saturn"
+    },
+    {
+      "id": "placeholder:fallback-vocab/sign-ruler/pisces",
+      "contentKey": "fallback-vocab/sign-ruler/pisces",
+      "headline": "Pisces — ruling planet",
+      "summary": "",
+      "body": "jupiter"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-adj/conjunction",
+      "contentKey": "fallback-vocab/aspect-adj/conjunction",
+      "headline": "Conjunction — aspect adjective",
+      "summary": "",
+      "body": "conjunct"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-adj/sextile",
+      "contentKey": "fallback-vocab/aspect-adj/sextile",
+      "headline": "Sextile — aspect adjective",
+      "summary": "",
+      "body": "sextile"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-adj/square",
+      "contentKey": "fallback-vocab/aspect-adj/square",
+      "headline": "Square — aspect adjective",
+      "summary": "",
+      "body": "square"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-adj/trine",
+      "contentKey": "fallback-vocab/aspect-adj/trine",
+      "headline": "Trine — aspect adjective",
+      "summary": "",
+      "body": "trine"
+    },
+    {
+      "id": "placeholder:fallback-vocab/aspect-adj/opposition",
+      "contentKey": "fallback-vocab/aspect-adj/opposition",
+      "headline": "Opposition — aspect adjective",
+      "summary": "",
+      "body": "opposite"
+    }
+  ]
+}
