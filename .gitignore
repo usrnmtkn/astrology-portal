@@ -12,3 +12,14 @@ test-results/
 playwright-report/
 artifacts/
 api/_lib/local-env.js
+
+# Local/generated review artifacts
+exports/
+scripts/generated/
+
+# Python cache files from phrasebank tooling
+__pycache__/
+*.py[cod]
+
+# Local reference screenshots used during template/content handoff work
+apps/web/src/content/templateHandoffV2/references/
