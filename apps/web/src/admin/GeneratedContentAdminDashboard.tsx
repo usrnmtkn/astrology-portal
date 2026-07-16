@@ -1104,7 +1104,7 @@ function writingSurfaceEditableSources(surface: WritingSurfaceMapItem) {
     "phrasebank",
     "knowledge",
     "madlib-material",
-    "generated"
+    "stored-source"
   ];
   const editableSources = surface.sources.filter((source) => editableRoles.includes(source.role));
 
@@ -1129,7 +1129,7 @@ function writingSurfaceFallbackSection(area: WritingSurfaceMapItem["area"]): Adm
 }
 
 function writingSurfaceSourceActionLabel(source: WritingSurfaceSourceItem) {
-  if (source.role === "source-grounded" || source.role === "generated") return "Open Exact Content";
+  if (source.role === "source-grounded" || source.role === "stored-source") return "Open Exact Content";
   if (source.role === "knowledge" || source.role === "madlib-material") return "Open Fallback Hooks";
   if (source.role === "phrasebank") return "Find Imported Rows";
 
@@ -1138,7 +1138,7 @@ function writingSurfaceSourceActionLabel(source: WritingSurfaceSourceItem) {
 
 function writingSurfaceSourceActionHelp(source: WritingSurfaceSourceItem) {
   if (source.role === "source-grounded") return "Editable after the source-grounded rows are imported into Exact Content.";
-  if (source.role === "generated") return "Editable in Exact Content when this source exists as a managed row.";
+  if (source.role === "stored-source") return "Editable in Exact Content when this source exists as a managed row.";
   if (source.role === "knowledge") return "Editable through the fallback hook or knowledge-row editor.";
   if (source.role === "madlib-material") return "Editable through Fallback Hooks or source-based fallback material.";
   if (source.role === "phrasebank") return "Usually authored in phrasebank files, then imported/synced into the app.";
@@ -1151,11 +1151,11 @@ function writingSurfaceSourceCanOpen(source: WritingSurfaceSourceItem) {
     || source.role === "phrasebank"
     || source.role === "knowledge"
     || source.role === "madlib-material"
-    || source.role === "generated";
+    || source.role === "stored-source";
 }
 
 function writingSurfaceSourceActionClass(source: WritingSurfaceSourceItem) {
-  const opensContent = source.role === "source-grounded" || source.role === "phrasebank" || source.role === "generated";
+  const opensContent = source.role === "source-grounded" || source.role === "phrasebank" || source.role === "stored-source";
 
   return `admin-source-action ${opensContent ? "admin-source-action-primary" : "admin-source-action-secondary"}`;
 }
@@ -5943,14 +5943,14 @@ export function GeneratedContentAdminDashboard() {
   function openWritingSurfaceSource(surface: WritingSurfaceMapItem, source: WritingSurfaceSourceItem) {
     setIsCreateMenuOpen(false);
 
-    if (source.role === "source-grounded" || source.role === "generated" || source.role === "phrasebank") {
+    if (source.role === "source-grounded" || source.role === "stored-source" || source.role === "phrasebank") {
       const params = new URLSearchParams({
         category: writingSurfaceContentCategory(surface.area),
-        source: source.role === "generated" ? "fallback-hook" : "phrasebank",
+        source: source.role === "stored-source" ? "fallback-hook" : "phrasebank",
         q: surface.surface
       });
       setCategoryFilter(writingSurfaceContentCategory(surface.area));
-      setContentSourceFilter(source.role === "generated" ? "fallback-hook" : "phrasebank");
+      setContentSourceFilter(source.role === "stored-source" ? "fallback-hook" : "phrasebank");
       setPersonQuery(surface.surface);
       setContentQueueFilter(null);
       setContentStatusFilter("all");
