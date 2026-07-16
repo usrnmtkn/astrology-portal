@@ -341,18 +341,16 @@ export const SkyWheel = memo(function SkyWheel({
           <clipPath id={wheelClipId}>
             <circle cx={center} cy={center} r={radius.outer} />
           </clipPath>
-          <radialGradient id={`${wheelClipId}-transit-band-gradient`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="var(--transit-wheel-band-inner, var(--surface-muted))" stopOpacity="0" />
-            <stop offset="78%" stopColor="var(--transit-wheel-band-inner, var(--surface-muted))" stopOpacity="0" />
-            <stop offset="89%" stopColor="var(--transit-wheel-band-mid, var(--surface-muted))" stopOpacity="0.76" />
-            <stop offset="100%" stopColor="var(--transit-wheel-band-outer, var(--surface))" stopOpacity="0.42" />
-          </radialGradient>
           {signLabels.map(({ sign, path }) => (
             <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
           ))}
         </defs>
         {hasTransitOverlay ? (
-          <circle className="transit-planet-band" cx={center} cy={center} r={radius.transitBandOuter} fill={`url(#${wheelClipId}-transit-band-gradient)`} />
+          <g className="transit-planet-row" aria-hidden="true">
+            <circle className="transit-planet-band" cx={center} cy={center} r={radius.transitBand} />
+            <circle className="transit-planet-band-outline transit-planet-band-outline--inner" cx={center} cy={center} r={radius.outer} />
+            <circle className="transit-planet-band-outline transit-planet-band-outline--outer" cx={center} cy={center} r={radius.transitBandOuter} />
+          </g>
         ) : null}
         <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
         <g className="wheel-rings">

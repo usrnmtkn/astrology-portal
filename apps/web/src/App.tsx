@@ -978,6 +978,18 @@ function liveGeneratedContentByKeys(
     : null;
 }
 
+function relationshipKnowledgeFallbackByKeys(contentKeys: string[]) {
+  for (const contentKey of contentKeys) {
+    const fallback = approvedVoiceOrKnowledgeFallback(contentKey, "relationship", true);
+
+    if (fallback.summary || fallback.body || fallback.detailParagraphs.length > 0) {
+      return fallback;
+    }
+  }
+
+  return null;
+}
+
 function liveGeneratedContentByKeysMatching(
   generatedContent: GeneratedContentMap,
   contentKeys: string[],
@@ -7438,9 +7450,7 @@ function relationshipAspectContentKeys(firstPoint: string, aspect: string, secon
     keys.add(compositeAspectContentKey(firstPoint, aspect, secondPoint));
   }
 
-  const relationshipKeys = context === "synastry"
-    ? [baseKey]
-    : [baseKey, reversedBaseKey];
+  const relationshipKeys = [baseKey, reversedBaseKey];
 
   relationshipKeys.forEach((key) => {
     keys.add(key);
@@ -9328,34 +9338,19 @@ function synastryContactSummary(
         detailParagraphs: [samePlanetFallback]
       }
     : synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
+  const knowledgeFallback = relationshipKnowledgeFallbackByKeys(contact.contentKeys);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
-        contact.contentKeys,
-        {
-          contentKey: isSamePlanetContact
-            ? templateFallbackContentKeys.friendsSamePlanet
-            : templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(
-            friendName,
-            contact.friendPoint.name,
-            contact.aspect,
-            comparisonName,
-            contact.yourPoint.name,
-            "friend",
-            {
-              personAPronouns: friendPronouns,
-              personBPronouns: comparisonPronouns,
-              personBIsReader: comparisonIsSelf
-            }
-          ),
-          afterContentFallback
-        }
+        contact.contentKeys
       )
     : null;
   const headlinerParagraphs = synastryHeadlinerParagraphs(generated);
   const generatedPreview = headlinerParagraphs[0]
     || firstReaderFacingCopy([generated?.summary])
+    || knowledgeFallback?.summary
+    || knowledgeFallback?.body
+    || knowledgeFallback?.detailParagraphs[0]
     || generatedContentParagraphs(generated)[0]
     || afterContentFallback.summary
     || afterContentFallback.body
@@ -9560,7 +9555,7 @@ function compatibilityDynamicHeading(aspect: string): CompatibilityDynamic["head
 }
 
 function compatibilityDynamicsFromContacts(contacts: SynastryContact[]): CompatibilityDynamic[] {
-  return contacts.slice(0, 5).map((contact) => ({
+  return contacts.map((contact) => ({
     id: `compatibility-dynamic-${contact.id}`,
     heading: compatibilityDynamicHeading(contact.aspect),
     glyphs: `${contact.friendPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.yourPoint.glyph}`,
@@ -9592,7 +9587,6 @@ function synastryDetailCopy(
     relationshipType
   };
   const relationshipFallback = relationshipAwareSynastryFallback(fallbackContext);
-  const isSamePlanetContact = isSamePlanetSynastryContact(contact.friendPoint.name, contact.yourPoint.name);
   const hookFallback = relationshipFallback
     ? {
         summary: relationshipFallback,
@@ -9600,29 +9594,11 @@ function synastryDetailCopy(
         detailParagraphs: [relationshipFallback]
       }
     : synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
+  const knowledgeFallback = relationshipKnowledgeFallbackByKeys(contact.contentKeys);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
-        contact.contentKeys,
-        {
-          contentKey: isSamePlanetContact
-            ? templateFallbackContentKeys.friendsSamePlanet
-            : templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(
-            friendName,
-            contact.friendPoint.name,
-            contact.aspect,
-            comparisonName,
-            contact.yourPoint.name,
-            "friend",
-            {
-              personAPronouns: friendPronouns,
-              personBPronouns: comparisonPronouns,
-              personBIsReader: comparisonIsSelf
-            }
-          ),
-          afterContentFallback: hookFallback
-        }
+        contact.contentKeys
       )
     : null;
   const headlinerParagraphs = synastryHeadlinerParagraphs(generated);
@@ -9647,6 +9623,22 @@ function synastryDetailCopy(
 
   if (generatedParagraphs.length > 0) {
     return generatedParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf),
+      {
+        primaryName: friendName,
+        comparisonName,
+        comparisonIsSelf,
+        primaryPoint: contact.friendPoint.name,
+        comparisonPoint: contact.yourPoint.name,
+        aspect: contact.aspect,
+        romanticAllowed,
+        relationshipType
+      }
+    ));
+  }
+
+  if (knowledgeFallback?.detailParagraphs.length) {
+    return knowledgeFallback.detailParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
       relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf),
       {
         primaryName: friendName,
@@ -10710,6 +10702,7 @@ export function App() {
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [cityPickerOpenedFromMobileControls, setCityPickerOpenedFromMobileControls] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [mobileSkyControlsOpen, setMobileSkyControlsOpen] = useState(false);
   const [skyFullChartOpen, setSkyFullChartOpen] = useState(false);
@@ -10940,6 +10933,7 @@ export function App() {
     setDatePickerOpen(false);
     setMobileSkyControlsOpen(false);
     setCityPickerOpen(false);
+    setCityPickerOpenedFromMobileControls(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [selectedSkyDetail]);
@@ -11228,8 +11222,9 @@ export function App() {
 
     function closeCityPicker(restoreFocus = true) {
       setCityPickerOpen(false);
+      setCityPickerOpenedFromMobileControls(false);
       if (restoreFocus) {
-        cityPickerTriggerRef.current?.focus();
+        (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
       }
     }
 
@@ -12253,7 +12248,8 @@ export function App() {
     setManualLocation(nextLocation.label);
     setHasLocationPreference(true);
     setCityPickerOpen(false);
-    cityPickerTriggerRef.current?.focus();
+    setCityPickerOpenedFromMobileControls(false);
+    (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
   }
 
   function applyCitySuggestion(suggestion: CitySuggestion) {
@@ -12268,7 +12264,8 @@ export function App() {
     setCitySuggestions([]);
     setCitySearchStatus("idle");
     setCityPickerOpen(false);
-    cityPickerTriggerRef.current?.focus();
+    setCityPickerOpenedFromMobileControls(false);
+    (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
   }
 
   function openCreateChartModal({
@@ -12435,18 +12432,21 @@ export function App() {
     setSkyDate(nextDate);
     setDatePickerOpen(false);
     setCityPickerOpen(false);
+    setCityPickerOpenedFromMobileControls(false);
     setMobileSkyControlsOpen(false);
   }
 
   function openMobileDatePicker() {
     setMobileSkyControlsOpen(false);
     setCityPickerOpen(false);
+    setCityPickerOpenedFromMobileControls(false);
     setDatePickerOpen(true);
   }
 
   function openMobileCityPicker() {
     setMobileSkyControlsOpen(false);
     setDatePickerOpen(false);
+    setCityPickerOpenedFromMobileControls(true);
     setCityPickerOpen(true);
   }
 
@@ -12515,6 +12515,7 @@ export function App() {
               aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`}
               onClick={() => {
                 setCityPickerOpen(false);
+                setCityPickerOpenedFromMobileControls(false);
                 setDatePickerOpen(false);
                 setMenuOpen(false);
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
@@ -12750,7 +12751,7 @@ export function App() {
                     )}
                     {cityPickerOpen && (
                       <form
-                        className="city-picker hero-city-picker"
+                        className={`city-picker hero-city-picker${cityPickerOpenedFromMobileControls ? " hero-city-picker--mobile" : ""}`}
                         id="city-picker"
                         ref={cityPickerRef}
                         onSubmit={(event) => {
@@ -12780,7 +12781,8 @@ export function App() {
                             type="button"
                             onClick={() => {
                               setCityPickerOpen(false);
-                              cityPickerTriggerRef.current?.focus();
+                              setCityPickerOpenedFromMobileControls(false);
+                              (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
                             }}
                           >
                             Cancel
@@ -12801,6 +12803,7 @@ export function App() {
                         onOpenChart={() => {
                           setDatePickerOpen(false);
                           setCityPickerOpen(false);
+                          setCityPickerOpenedFromMobileControls(false);
                           setMobileSkyControlsOpen(false);
                           setSkyFullChartOpen(true);
                         }}
@@ -15167,8 +15170,7 @@ function CalculationDiagnosticsPanel({
   hydrationState: "snapshot" | "hydrated";
   sky: SkySnapshot;
 }) {
-  const diagnosticsEnabled = import.meta.env.DEV
-    || String(import.meta.env.VITE_ASTRO_DIAGNOSTICS ?? "false").toLowerCase() === "true";
+  const diagnosticsEnabled = String(import.meta.env.VITE_ASTRO_DIAGNOSTICS ?? "false").toLowerCase() === "true";
 
   if (!diagnosticsEnabled) {
     return null;
