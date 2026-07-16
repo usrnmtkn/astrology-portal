@@ -430,6 +430,13 @@ function stripTemplateHeaderParagraphs(rendered: string, titles: string[]) {
   const metadata = new Set(titles.map((title) => normalizeReaderText(title).toLowerCase()).filter(Boolean));
   return rendered
     .split(/\n{2,}/u)
+    .map((paragraph) => (
+      paragraph
+        .split(/\n/u)
+        .map((line) => normalizeReaderText(line))
+        .filter((line) => line && !metadata.has(line.toLowerCase()))
+        .join(" ")
+    ))
     .map((paragraph) => normalizeReaderText(paragraph))
     .filter((paragraph) => {
       if (!paragraph) return false;
@@ -1241,17 +1248,20 @@ function approvedFallbackFor(surface: SurfaceId, facts: Record<string, unknown>,
         challenging_aspect: ""
       }
     });
+    const visibleRendered = stripTemplateHeaderParagraphs(rendered, [title]);
+    const expandedNarrative = visibleRendered.join("\n\n");
+
     return {
       fallbackId: `fallback-hook/me.natal-placement/${slugPart(facts.natalBody)}-${slugPart(facts.natalSign)}${facts.natalHouse ? `-house-${facts.natalHouse}` : ""}`,
       fallbackSpecificity: facts.natalHouse ? "exact-combination" : "surface-family",
-      finalVisibleStrings: rendered.split("\n\n").filter((part) => !isUnsafeReaderClause(part)),
+      finalVisibleStrings: visibleRendered,
       renderedFields: {
         factualPlacementTitle: title,
-        integratedSignHouseStory: rendered.split("\n\n").filter((part) => !isUnsafeReaderClause(part)).join("\n\n"),
+        integratedSignHouseStory: expandedNarrative,
         ...(facts.degree ? { degreeDisplay: sentence(facts.degree) } : {})
       },
       fieldMap,
-      expandedCopy: rendered.split("\n\n").filter((part) => !isUnsafeReaderClause(part)).join("\n\n"),
+      expandedCopy: expandedNarrative,
       readerAuthority: "approved-fallback",
       supportingSourceKeys: [
         ...(exemplar?.source_keys ?? []),

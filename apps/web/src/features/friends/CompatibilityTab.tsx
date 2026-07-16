@@ -16,8 +16,17 @@ export type CompatibilityPlanetCard = {
     theirLine: string;
     sameSign: boolean;
     sameSignLine: string;
-    sameSignQuote: { text: string; source: string } | null;
     verdict: string;
+    relationship: string;
+    contentTrace?: string;
+  };
+  summary?: {
+    function: string;
+    nouns: string;
+    shared: string;
+    different: string;
+    watch: string;
+    try: string;
     relationship: string;
     contentTrace?: string;
   };
@@ -94,9 +103,7 @@ export function CompatibilityTab({
                 {sameSign ? (
                   <>
                     <p>{writeup.yourLine}</p>
-                    {writeup.sameSignLine || writeup.sameSignQuote ? (
-                      <p>{[writeup.sameSignLine, writeup.sameSignQuote?.text].filter(Boolean).join(" ")}</p>
-                    ) : null}
+                    {writeup.sameSignLine ? <p>{writeup.sameSignLine}</p> : null}
                   </>
                 ) : (
                   <>

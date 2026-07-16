@@ -26,6 +26,20 @@ flowchart LR
 
 The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JSON file into the app. When the knowledge package changes, run the root build so `packages/astro-knowledge/dist/knowledge.json` is regenerated before the web app builds.
 
+## Content Precedence
+
+Fallback copy is a floor, not a competing source. Reader-facing app surfaces should resolve copy in this order:
+
+1. Personalized/generated content for the exact user/event.
+2. Exact live generated rows for the requested content key.
+3. Authored or approved knowledge-bank copy for the same placement, aspect, transit, or relationship contact.
+4. Template fallback rows such as `fallback-hook/...`, only to fill blank fields.
+5. Emergency copy from local composition helpers, only when no specific copy exists.
+
+Async content and registry loading must not downgrade visible copy. If a card already has specific authored or approved reader-facing text, a later-loading broad `fallback-hook/...` template should not replace it. UI code should prefer shared copy resolvers over ad hoc fallback chains, and any new fallback path should preserve this monotonic rule. In the web app, `liveGeneratedContentByKeys` treats `afterContentFallback` as the floor by default, so template fallback rows cannot overwrite better caller-provided copy after the registry finishes loading.
+
+Cards should also never render blank. When no specific reader-facing copy exists, show the neutral review state instead of hiding text or inventing broad placeholder interpretation.
+
 ## Common Commands
 
 ```bash

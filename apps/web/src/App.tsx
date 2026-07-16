@@ -66,6 +66,7 @@ import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-syna
 import natalAngleReviewedBank from "../../../tldr-astro-phrasebank/phrasebank/cc-natal-angle-reviewed.json";
 import {
   emergencyAspectBehavior,
+  emergencyDetailFallbackCopy,
   emergencyHouseArea,
   emergencyNatalPlacementCopy,
   emergencyPlanetFunction,
@@ -4787,6 +4788,9 @@ function SkyDetailArticle({
       fallbackParagraphs.length > 0 ||
       drilldown
   );
+  const emergencyFallbackParagraph = hasReadableBody || hasRelatedAspects
+    ? ""
+    : emergencyDetailFallbackCopy(detail.title);
   const isAspectsOnlyArticle = hasRelatedAspects && !hasReadableBody;
 
   return (
@@ -4927,6 +4931,11 @@ function SkyDetailArticle({
                   <div className="article-related-aspects__list aspect-row-list">
                     {detail.relatedAspects.rows}
                   </div>
+                </section>
+              ) : null}
+              {emergencyFallbackParagraph ? (
+                <section className="article-section sky-detail-section">
+                  <p>{emergencyFallbackParagraph}</p>
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
