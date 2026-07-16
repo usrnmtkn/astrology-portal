@@ -15,6 +15,7 @@ const outputPath = path.join(repoRoot, "scripts/content-source/final-source-grou
 const appOutputPath = path.join(repoRoot, "apps/web/src/content/finalSourceGroundedDashboardRecords.json");
 const reportPath = path.join(repoRoot, "scripts/generated/final-source-grounded-preview-report.json");
 const markdownReportPath = path.join(repoRoot, "scripts/generated/final-source-grounded-preview-report.md");
+const natalOverlayPath = path.join(repoRoot, "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json");
 
 const SIGNS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 const PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"];
@@ -43,6 +44,49 @@ function readJson(filePath) {
 function writeJson(filePath, value) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function overlayRecordsByCanonicalKey(baseRecords, overlayRecords, families) {
+  const familySet = new Set(families);
+  const overlayByKey = new Map(
+    overlayRecords
+      .filter((record) => familySet.has(record.family))
+      .map((record) => [record.canonicalKey, record])
+  );
+  const merged = baseRecords.map((record) => (
+    overlayByKey.get(record.canonicalKey) ?? record
+  ));
+  const existingKeys = new Set(merged.map((record) => record.canonicalKey));
+
+  for (const record of overlayByKey.values()) {
+    if (!existingKeys.has(record.canonicalKey)) {
+      merged.push(record);
+      existingKeys.add(record.canonicalKey);
+    }
+  }
+
+  return merged;
+}
+
+function dedupeRecordsByCanonicalKey(records) {
+  const byKey = new Map();
+
+  for (const record of records) {
+    byKey.set(record.canonicalKey, record);
+  }
+
+  return Array.from(byKey.values());
+}
+
+function applyNatalReviewedOverlay(records) {
+  if (!fs.existsSync(natalOverlayPath)) {
+    return dedupeRecordsByCanonicalKey(records);
+  }
+
+  const overlay = readJson(natalOverlayPath);
+  return dedupeRecordsByCanonicalKey(
+    overlayRecordsByCanonicalKey(records, overlay.records ?? [], ["natal-aspect", "natal-placement"])
+  );
 }
 
 function title(value) {
@@ -426,7 +470,9 @@ for (const exemplar of exemplars) {
   assertSourcesExist(context, exemplar.source_keys ?? []);
 }
 
-const recordsByFamily = dashboardRecords.reduce((acc, record) => {
+const finalDashboardRecords = applyNatalReviewedOverlay(dashboardRecords);
+
+const recordsByFamily = finalDashboardRecords.reduce((acc, record) => {
   acc[record.family] = (acc[record.family] ?? 0) + 1;
   return acc;
 }, {});
@@ -443,10 +489,10 @@ const output = {
     controllingFile: "CODEX-IMPLEMENTATION-PROMPT.md",
     sourceStore: "tldr-astro-records.json"
   },
-  records: dashboardRecords,
+  records: finalDashboardRecords,
   sourceGaps,
   summary: {
-    readyRecords: dashboardRecords.length,
+    readyRecords: finalDashboardRecords.length,
     sourceGaps: sourceGaps.length,
     recordsByFamily,
     sourceGapsByFamily
@@ -457,10 +503,10 @@ const report = {
   ok: true,
   summary: output.summary,
   representativePreviews: {
-    natalPlacement: dashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-placement.sun.aquarius.house_9"),
-    saturnRetroPlacement: dashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-placement.saturn.virgo.house_4"),
-    natalAspect: dashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-aspect.venus.square.saturn"),
-    transit: dashboardRecords.find((record) => record.canonicalKey === "dashboard.personalized-transit.saturn.square.venus"),
+    natalPlacement: finalDashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-placement.sun.aquarius.house_9"),
+    saturnRetroPlacement: finalDashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-placement.saturn.virgo.house_4"),
+    natalAspect: finalDashboardRecords.find((record) => record.canonicalKey === "dashboard.natal-aspect.venus.square.saturn"),
+    transit: finalDashboardRecords.find((record) => record.canonicalKey === "dashboard.personalized-transit.saturn.square.venus"),
     mercuryRetrogradeExemplar: exemplars.find((record) => record.id === "exemplar.sky.mercury-retrograde.cancer")
   }
 };

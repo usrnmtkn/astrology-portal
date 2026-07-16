@@ -137,7 +137,7 @@
       "tag": "template",
       "headline": "Natal aspect — two natal planets (any type)",
       "summary": "You/Friends: aspect between two natal planets. Type flavor from aspect-verb / aspect-feel.",
-      "body": "{{possessive}} {{planetA}} is {{aspectAdj}} {{planetB}}, linking {{planetATopic}} with {{planetBTopic}}. It plays as {{aspectFeel}}. Notice how that shapes the way this runs.",
+      "body": "{{possessive}} {{planetA}} is {{aspectAdj}} {{planetB}}, linking {{planetATopic}} with {{planetBTopic}}. It plays as {{aspectFeel}}, shaping how these two parts of the chart move together.",
       "isNewKey": false
     },
     {
