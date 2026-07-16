@@ -22,6 +22,8 @@
     "qa:editorial-copy": "node scripts/run-editorial-writing-qa.mjs",
     "qa:css-audit": "node scripts/run-css-consistency-audit.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
+    "qa:visual-baseline": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts",
+    "qa:visual-baseline:update": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts --update-snapshots",
     "preview": "npm run preview -w @tldr/web",
     "typecheck": "npm run typecheck -w @tldr/web",
     "visual:smoke": "playwright test -c playwright.config.ts",

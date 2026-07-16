@@ -10,6 +10,23 @@
   overflow-x: clip;
 }
 
+.friend-transits-stage .friend-profile-copy-column {
+  gap: var(--section-stack-gap);
+}
+
+.friend-transits-stage .friends-logic-card {
+  padding: var(--surface-card-padding);
+}
+
+.friend-transit-group {
+  display: grid;
+  gap: var(--section-label-gap-after);
+}
+
+.friend-transit-group .friend-section-label {
+  margin: 0;
+}
+
 .friends-page:not(.friend-detail-page) .friends-page-heading,
 .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
 .friends-page:not(.friend-detail-page) .friends-feed-view {
@@ -66,14 +83,14 @@
   gap: 11px;
   min-width: 0;
   margin-right: auto;
-  padding: 10px 12px 10px 16px;
+  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3) calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
-  line-height: 1;
+  line-height: var(--leading-label);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -97,11 +114,11 @@
 .settings-location-save,
 .settings-header button {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--surface);
-  padding: 18px 34px;
-  font-weight: var(--weight-semibold);
+  padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) + var(--space-1) / 2);
+  font-weight: var(--weight-medium);
 }
 
 .manual-chart-add-button {
@@ -111,9 +128,9 @@
   width: auto;
   min-height: 46px;
   margin-left: auto;
-  padding: 0 22px;
+  padding: 0 calc(var(--space-5) + var(--space-1) / 2);
   font-size: var(--text-button-size);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
   letter-spacing: var(--tracking-number);
   overflow: hidden;
@@ -214,10 +231,10 @@
 .you-empty-card button {
   justify-self: start;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--surface);
-  padding: 13px 18px;
+  padding: calc(var(--space-3) + var(--space-1) / 4) calc(var(--space-4) + var(--space-1) / 2);
   font-weight: var(--weight-semibold);
 }
 
@@ -230,7 +247,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .manual-chart-row {
@@ -271,7 +288,7 @@
   min-width: 0;
   max-width: 100%;
   gap: 24px;
-  padding: 28px 20px 18px 28px;
+  padding: calc(var(--space-7) - var(--space-1)) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
   border: 0;
   background: transparent;
   text-align: left;
@@ -286,7 +303,7 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ink);
   color: var(--surface);
   font-weight: var(--weight-semibold);
@@ -298,7 +315,7 @@
   place-items: center;
   flex: 0 0 auto;
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ink);
   color: var(--surface);
   font-weight: var(--weight-semibold);
@@ -408,7 +425,7 @@
   align-items: center;
   justify-content: flex-start;
   min-width: 0;
-  padding: 0 20px 26px 134px;
+  padding: 0 var(--space-5) calc(var(--space-6) + var(--space-1) / 2) calc(var(--space-10) * 2 + var(--space-1) + var(--space-1) / 2);
 }
 
 .manual-chart-birth-time-button {
@@ -417,15 +434,15 @@
   justify-content: center;
   gap: 9px;
   min-height: 42px;
-  padding: 0 18px;
+  padding: 0 calc(var(--space-4) + var(--space-1) / 2);
   border: 1.5px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
 }
 
@@ -442,7 +459,7 @@
   width: 46px;
   height: 46px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--muted);
   padding: 0;
@@ -457,7 +474,7 @@
   width: max-content;
   min-width: 180px;
   max-width: min(260px, calc(100vw - 40px));
-  padding: 8px;
+  padding: var(--space-2);
   border: 1px solid var(--overlay-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
@@ -476,9 +493,10 @@
   align-items: center;
   gap: 10px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--card-radius);
   background: transparent;
-  padding: 10px 12px;
+  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3);
+  font-weight: var(--weight-regular);
   text-align: left;
   white-space: nowrap;
 }
@@ -495,7 +513,7 @@
   align-items: center;
   gap: 34px;
   min-height: 190px;
-  padding: 46px 52px;
+  padding: calc(var(--space-9) - var(--space-1) / 2) calc(var(--space-9) + var(--space-1));
   width: 100%;
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
@@ -591,9 +609,9 @@
   width: 24px;
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: 34px;
+  font-size: var(--friend-feed-chevron-size);
   font-weight: var(--weight-regular);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .friend-detail-page {
@@ -634,13 +652,13 @@
   --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
   --friend-composite-row-template: 56px minmax(0, 1fr) auto;
   --friend-composite-row-gap: 20px;
-  --friend-composite-row-padding: 24px 30px;
-  --friend-placement-column-title-padding: 0 0 12px;
+  --friend-composite-row-padding: var(--space-6) calc(var(--space-7) - var(--space-1) / 2);
+  --friend-placement-column-title-padding: 0 0 var(--space-3);
   --friend-placement-symbol-size: var(--text-glyph);
   --friend-placement-label-size: var(--friend-row-title-size);
   --friend-placement-meta-size: var(--text-placement-meta);
   --friend-placement-summary-size: var(--text-description);
-  --friend-placement-compact-padding: 18px 20px;
+  --friend-placement-compact-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5);
   --friend-placement-row-gap: 12px;
   --friend-placement-row-bg: var(--card-bg);
   --friend-placement-row-border: var(--card-border);
@@ -742,7 +760,7 @@
   width: 100%;
   min-width: 0;
   gap: 16px;
-  padding: var(--id-card-padding-y) max(var(--id-card-padding-x), 76px) var(--id-card-padding-y) var(--id-card-padding-x);
+  padding: var(--id-card-padding-y) max(var(--id-card-padding-x), calc(var(--space-10) + var(--space-3))) var(--id-card-padding-y) var(--id-card-padding-x);
   border: 1px solid var(--card-border);
   border-radius: var(--id-card-radius);
   background: var(--card-bg);
@@ -752,7 +770,7 @@
 
 .friend-profile-card {
   gap: 16px;
-  padding: 18px var(--id-card-padding-x);
+  padding: calc(var(--space-4) + var(--space-1) / 2) var(--id-card-padding-x);
   border-color: var(--card-border);
   border-radius: var(--id-card-radius);
   background: var(--card-bg);
@@ -771,7 +789,7 @@
 }
 
 .friend-profile-card .manual-chart-signatures {
-  margin-top: 4px;
+  margin-top: var(--space-1);
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   line-height: var(--leading-tight);
@@ -893,7 +911,7 @@
   gap: 22px;
   width: 100%;
   min-width: 0;
-  padding: 24px 28px;
+  padding: var(--space-6) calc(var(--space-7) - var(--space-1));
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -906,12 +924,12 @@
   width: 44px;
   height: 44px;
   border: 1px solid var(--card-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--card-glyph-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .relationship-explainer-card__glyph img {
@@ -965,7 +983,7 @@
   gap: 10px;
   width: 100%;
   min-width: 0;
-  padding: 22px 28px;
+  padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -993,13 +1011,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 2px 0 0;
+  margin: calc(var(--space-1) / 2) 0 0;
   padding: 0;
   list-style: none;
 }
 
 .relationship-api-summary li {
-  padding: 5px 8px;
+  padding: calc(var(--space-1) + var(--space-1) / 4) var(--space-2);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
   color: var(--card-meta-color);
@@ -1038,7 +1056,7 @@
 .you-signatures-main {
   display: grid;
   gap: 12px;
-  padding: 26px;
+  padding: calc(var(--space-6) + var(--space-1) / 2);
 }
 
 .you-signatures-main h3 {
@@ -1058,7 +1076,7 @@
 .elemental-balance {
   display: grid;
   gap: 6px;
-  padding: 14px var(--card-padding) 16px;
+  padding: calc(var(--space-3) + var(--space-1) / 2) var(--card-padding) var(--space-4);
   border-top: 1px solid var(--card-border);
   color: var(--card-body-color);
 }
@@ -1120,7 +1138,7 @@
   margin-right: 0;
   width: 14px;
   height: 14px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   border: 3px solid currentColor;
   color: var(--ink);
 }
@@ -1185,7 +1203,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
-  padding: 0 0 11px;
+  padding: 0 0 calc(var(--space-3) - var(--space-1) / 4);
   border-bottom: 1px solid var(--line);
 }
 
@@ -1211,7 +1229,7 @@
   border: 0;
   border-radius: var(--card-radius);
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .synastry-placement-column-inner .synastry-placement-table {
@@ -1225,11 +1243,11 @@
   grid-template-columns: minmax(42px, 62px) minmax(0, 1fr) max-content;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
   border: 1px solid var(--card-border);
   border-bottom: 0;
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   overflow: visible;
 }
 
@@ -1281,7 +1299,7 @@
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .synastry-rx-glyph-svg {
@@ -1299,7 +1317,7 @@
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-body);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .synastry-placement-column-inner .synastry-rx-glyph-svg,
@@ -1322,7 +1340,7 @@
   place-items: center;
   width: 28px;
   height: 28px;
-  line-height: 1;
+  line-height: var(--leading-label);
   max-width: 100%;
   overflow: visible;
   text-overflow: clip;
@@ -1391,7 +1409,7 @@
 }
 
 .synastry-placement-empty {
-  padding: 0 28px 24px;
+  padding: 0 calc(var(--space-7) - var(--space-1)) var(--space-6);
 }
 
 .friend-placement-column {
@@ -1401,12 +1419,12 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .friend-placement-column-title {
   margin: 0;
-  padding: 20px 24px;
+  padding: var(--space-5) var(--space-6);
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -1427,7 +1445,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   overflow: visible;
 }
 
@@ -1559,7 +1577,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .synastry-placement-table {
@@ -1602,14 +1620,14 @@
 ) {
   border-color: transparent;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
   .synastry-placement-column-header,
   .synastry-placement-panel-header
 ) {
-  padding-bottom: 8px;
+  padding-bottom: var(--space-2);
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(
@@ -1619,7 +1637,7 @@
 ) {
   border-color: transparent;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row {
@@ -1638,17 +1656,17 @@
 .friend-chart-page .aspect-row-static {
   --aspect-row-template: 82px minmax(0, 1fr) 30px;
   --aspect-row-gap: 14px;
-  --aspect-row-padding: 18px 22px;
+  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
   --aspect-row-glyph-width: 82px;
   --aspect-row-glyph-size: 22px;
-  --aspect-row-copy-margin: 4px;
+  --aspect-row-copy-margin: var(--space-1);
   --aspect-row-copy-color: var(--card-body-color);
   --aspect-row-copy-size: var(--friend-row-description-size);
   --aspect-row-copy-line: 1.45;
   --aspect-row-meta-width: 30px;
   --aspect-row-meta-size: var(--aspect-card-meta-size);
   --aspect-row-meta-weight: var(--aspect-card-meta-weight);
-  --aspect-row-action-margin: 8px;
+  --aspect-row-action-margin: var(--space-2);
   --aspect-row-action-color: var(--app-text);
   border-color: var(--card-border);
 }
@@ -1665,7 +1683,7 @@
   z-index: var(--z-modal);
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--space-6);
   background: var(--modal-backdrop-bg);
 }
 
@@ -1674,7 +1692,7 @@
   width: min(640px, 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow: auto;
-  border-radius: 32px;
+  border-radius: var(--radius);
   background: var(--app-card);
   color: var(--app-text);
   box-shadow: var(--modal-shadow);
@@ -1729,7 +1747,7 @@
 
 .add-chart-modal__title {
   margin: 0;
-  margin-right: 48px;
+  margin-right: var(--space-9);
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-card-title-size);
@@ -1739,7 +1757,7 @@
 }
 
 .add-chart-modal__subtitle {
-  margin: 8px 0 8px;
+  margin: var(--space-2) 0 var(--space-2);
   color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-row-body-size);
@@ -1754,7 +1772,7 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -1766,9 +1784,9 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
-  line-height: 1;
+  line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
@@ -1793,10 +1811,10 @@
   font-family: var(--font-body);
   font-size: var(--text-button-size);
   font-variant-numeric: tabular-nums;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
   line-height: var(--leading-meta);
-  padding: 12px 14px;
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
   text-transform: none;
 }
 
@@ -1837,15 +1855,16 @@
   border: 0;
   border-top: 1px solid var(--border);
   margin: 0;
-  padding: 18px 0 0;
+  padding: calc(var(--space-4) + var(--space-1) / 2) 0 0;
 }
 
 .add-chart-pronouns legend {
   color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-11);
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
   padding: 0;
   text-transform: uppercase;
 }
@@ -1854,7 +1873,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px 16px;
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }
 
 .add-chart-pronoun-option {
@@ -1862,9 +1881,9 @@
   color: var(--text);
   cursor: pointer;
   display: inline-flex;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-13);
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
   gap: 8px;
 }
 
@@ -1883,7 +1902,7 @@
 
 .add-chart-field select {
   min-height: 46px;
-  padding-right: 42px;
+  padding-right: calc(var(--space-8) + var(--space-1) / 2);
 }
 
 .add-chart-field input:not([type="checkbox"])::placeholder,
@@ -1907,7 +1926,7 @@
 }
 
 .birth-time-field .checkbox-row {
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
 }
 
 .add-chart-form .checkbox-row {
@@ -1936,7 +1955,7 @@
   padding: 0;
   box-sizing: border-box;
   border: 1px solid var(--line-strong);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
 
@@ -1968,9 +1987,9 @@
 .add-chart-submit {
   width: 100%;
   min-height: 47px;
-  margin-top: 6px;
+  margin-top: calc(var(--space-1) + var(--space-1) / 2);
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   background: var(--pill-bg);
   color: var(--pill-fg);
   font-family: var(--font-body);
@@ -1978,7 +1997,7 @@
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-number);
   line-height: var(--leading-meta);
-  padding: 14px;
+  padding: calc(var(--space-3) + var(--space-1) / 2);
   cursor: pointer;
 }
 
@@ -1990,7 +2009,7 @@
 .friend-chart-modal-heading {
   display: grid;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
 }
 
 .manual-chart-form-heading h3,
@@ -2054,7 +2073,7 @@
 
 .app-shell.mode-friends .friends-chart-toolbar {
   justify-content: flex-end;
-  margin: 18px 0 24px;
+  margin: calc(var(--space-4) + var(--space-1) / 2) 0 var(--space-6);
 }
 
 .app-shell.mode-friends .manual-chart-workspace,
@@ -2089,7 +2108,7 @@
 .app-shell.mode-friends .manual-chart-select {
   gap: 24px;
   grid-template-columns: 82px minmax(0, 1fr);
-  padding: 28px 20px 18px 28px;
+  padding: calc(var(--space-7) - var(--space-1)) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
 }
 
 .app-shell.mode-friends .friend-profile-panel {
@@ -2151,7 +2170,7 @@
 
   .app-shell.mode-friends .friend-profile-card {
     min-height: 110px;
-    padding: 22px 24px;
+    padding: calc(var(--space-5) + var(--space-1) / 2) var(--space-6);
   }
 
   .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
@@ -2188,7 +2207,7 @@
   width: 38px;
   height: 38px;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--accent);
   background: color-mix(in srgb, var(--accent-bg) 68%, transparent);
 }
@@ -2219,11 +2238,11 @@
   align-items: center;
   min-height: 30px;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
-  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  padding: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2);
   color: var(--muted);
   font-size: var(--text-meta-size);
-  line-height: 1.2;
+  line-height: var(--leading-title);
 }
 
 .compatibility-card__signs {
@@ -2235,7 +2254,7 @@
   color: var(--muted);
   font-size: var(--text-meta-size);
   letter-spacing: 0;
-  line-height: 1.2;
+  line-height: var(--leading-title);
   text-align: left;
 }
 
@@ -2248,14 +2267,14 @@
 .compatibility-card__signs strong {
   color: var(--ink);
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .compatibility-sign-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  line-height: 1;
+  line-height: var(--leading-label);
   vertical-align: middle;
 }
 
@@ -2277,9 +2296,38 @@
 .compatibility-card-list__header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 12px;
   min-width: 0;
+}
+
+.compatibility-card-list__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background: var(--control-bg);
+  padding: calc(var(--space-1) * 0.75);
+}
+
+.compatibility-card-list__toggle button {
+  min-height: 30px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  padding: calc(var(--space-1) + var(--space-1) / 4) calc(var(--space-2) + var(--space-1) / 2);
+  font: inherit;
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-h1);
+  cursor: pointer;
+}
+
+.compatibility-card-list__toggle button.is-active {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-weight: var(--weight-semibold);
 }
 
 .compatibility-glance p,
@@ -2306,7 +2354,7 @@
 
 .compatibility-card__header p {
   max-width: 42rem;
-  line-height: 1.4;
+  line-height: var(--leading-description);
 }
 
 .compatibility-card__glyph {
@@ -2315,14 +2363,14 @@
   width: 44px;
   height: 44px;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--ink);
-  font-size: 23px;
-  line-height: 1;
+  font-size: var(--compatibility-card-glyph-size);
+  line-height: var(--leading-label);
 }
 
 .compatibility-card__body {
-  padding-top: 4px;
+  padding-top: var(--space-1);
 }
 
 .compatibility-card__reading {
@@ -2333,12 +2381,46 @@
 .compatibility-card__reading p {
   color: var(--card-body-color);
   font-size: var(--text-body-size);
-  line-height: 1.72;
+  line-height: var(--leading-body);
 }
 
 .compatibility-card__verdict {
   color: var(--card-title-color) !important;
   font-weight: var(--weight-semibold);
+}
+
+.compatibility-card__summary {
+  gap: 16px;
+}
+
+.compatibility-summary-lanes {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.compatibility-summary-lanes div {
+  display: grid;
+  grid-template-columns: minmax(84px, max-content) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.compatibility-summary-lanes dt {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.compatibility-summary-lanes dd {
+  margin: 0;
+  color: var(--card-body-color);
+  font-size: var(--text-body-size);
+  line-height: var(--leading-description);
 }
 
 .compatibility-card__receipt {
@@ -2370,6 +2452,11 @@
 }
 
 @media (max-width: 560px) {
+  .compatibility-card-list__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .compatibility-card__header {
     gap: 8px;
     grid-template-columns: auto minmax(0, 1fr);
@@ -2378,7 +2465,7 @@
   .compatibility-card__glyph {
     width: 38px;
     height: 38px;
-    font-size: 20px;
+    font-size: var(--compatibility-card-glyph-size-compact);
   }
 
   .compatibility-card__reading {
@@ -2387,6 +2474,11 @@
 
   .compatibility-card__signs {
     display: grid;
+    gap: 4px;
+  }
+
+  .compatibility-summary-lanes div {
+    grid-template-columns: minmax(0, 1fr);
     gap: 4px;
   }
 }
@@ -2406,7 +2498,7 @@
 
   .app-shell.mode-friends .friends-page:has(.friend-profile-view),
   .app-shell.mode-friends .friend-profile-panel {
-    margin-top: 18px;
+    margin-top: calc(var(--space-4) + var(--space-1) / 2);
     max-width: var(--friends-page-rail);
   }
 
@@ -2418,7 +2510,7 @@
   .app-shell.mode-friends .manual-chart-select {
     gap: 18px;
     grid-template-columns: 56px minmax(0, 1fr);
-    padding: 22px 14px 14px 18px;
+    padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
   }
 }
 
@@ -2427,7 +2519,7 @@
     grid-template-columns: minmax(0, 1fr) auto 20px;
     gap: 14px;
     min-height: 0;
-    padding: 34px 28px;
+    padding: calc(var(--space-7) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
   }
 
   .friends-feed-card-static {
@@ -2445,6 +2537,6 @@
 
   .friends-feed-chevron {
     width: 20px;
-    font-size: 28px;
+    font-size: var(--friend-feed-chevron-size-compact);
   }
 }

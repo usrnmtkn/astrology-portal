@@ -3,7 +3,7 @@
   width: 40px;
   height: 40px;
   border: 1px solid var(--button-border, var(--card-border));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--ink);
   cursor: pointer;

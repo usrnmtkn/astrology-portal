@@ -122,7 +122,7 @@
   font-family: var(--font-ui);
   font-size: var(--text-body);
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label);
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
@@ -214,7 +214,7 @@ body.modal-open {
   z-index: var(--z-modal);
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--space-6);
   background: var(--modal-backdrop-bg);
 }
 
@@ -223,7 +223,7 @@ body.modal-open {
   width: min(640px, 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow: auto;
-  border-radius: 32px;
+  border-radius: var(--radius);
   background: var(--app-card);
   color: var(--app-text);
   box-shadow: var(--modal-shadow);
@@ -233,7 +233,7 @@ body.modal-open {
 .chart-modal-heading {
   display: grid;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
 }
 
 .chart-modal-heading h3 {
