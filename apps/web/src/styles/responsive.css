@@ -78,11 +78,11 @@
 
   .topbar {
     grid-template-columns: 1fr auto;
-    padding: 16px 16px 0;
+    padding: var(--space-4) var(--space-4) 0;
   }
 
   html[data-scrolled] .topbar {
-    padding-top: 16px;
+    padding-top: var(--space-4);
   }
 
   .nav-pill {
@@ -106,7 +106,7 @@
   }
 
   .site-nav button {
-    padding: 12px;
+    padding: var(--space-3);
     font-size: var(--text-nav);
   }
 
@@ -158,7 +158,7 @@
 @media (max-width: 900px) {
   .auth-page {
     align-items: flex-start;
-    padding-top: 96px;
+    padding-top: calc(var(--space-9) * 2);
   }
 
 }
@@ -218,7 +218,7 @@
     grid-column: 1 / -1;
     justify-self: start;
     text-align: left;
-    margin-top: 2px;
+    margin-top: calc(var(--space-1) / 2);
     white-space: normal;
   }
 
@@ -398,7 +398,7 @@
     gap: 0;
     border-color: transparent;
     background: transparent;
-    box-shadow: none;
+    box-shadow: var(--shadow-flat);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     padding: 0;
@@ -407,7 +407,7 @@
   html[data-scrolled] .nav-pill {
     border-color: transparent;
     background: transparent;
-    box-shadow: none;
+    box-shadow: var(--shadow-flat);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -446,13 +446,13 @@
     column-gap: var(--space-4);
     width: 100%;
     border: 1px solid var(--card-border);
-    border-radius: 22px;
+    border-radius: var(--radius);
     background: var(--card-bg);
     color: var(--card-title-color);
     box-shadow: var(--card-shadow);
     cursor: pointer;
     margin-top: 0;
-    padding: 18px 20px 18px 18px;
+    padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
     text-align: left;
     transform: none;
   }
@@ -500,7 +500,7 @@
   .mobile-full-chart-card__arrow {
     display: grid;
     place-items: center;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
   }
 
   .mobile-full-chart-card__icon {
@@ -605,7 +605,7 @@
     min-height: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
     border-bottom: 1px solid transparent;
     background: transparent;
-    box-shadow: none;
+    box-shadow: var(--shadow-flat);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
@@ -624,7 +624,7 @@
   .mode-member .topbar {
     border-bottom-color: transparent;
     background: transparent;
-    box-shadow: none;
+    box-shadow: var(--shadow-flat);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -650,7 +650,7 @@
     top: calc(var(--top-control-top) + var(--top-control-height) + 12px);
     left: var(--mobile-page-gutter);
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
-    padding: 0 20px;
+    padding: 0 var(--space-5);
     font-size: var(--type-body-size);
   }
 
@@ -676,13 +676,13 @@
     border-color: var(--nav-border);
     background: var(--nav-surface);
     box-shadow: var(--nav-rest-shadow);
-    padding: 0 16px 0 8px;
+    padding: 0 var(--space-4) 0 var(--space-2);
   }
 
   .brand-dot {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
   }
 
   .brand-dot svg {
@@ -720,7 +720,7 @@
   .mode-detail .nav-pill {
     align-items: center;
     gap: 10px;
-    padding: 0 22px 0 8px;
+    padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-2);
   }
 
   .theme-toggle {
@@ -740,7 +740,7 @@
     min-width: var(--top-icon-button-size);
     height: var(--top-icon-button-size);
     border: 1px solid var(--floating-button-border);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--floating-button-bg);
     color: var(--ink);
     box-shadow: var(--nav-rest-shadow);
@@ -749,16 +749,20 @@
   .sky-header-date-button {
     gap: 8px;
     max-width: min(42vw, 210px);
-    padding: 0 22px 0 24px;
+    padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-6);
     font-family: var(--font-ui);
     font-size: var(--nav-link-size);
     font-weight: var(--weight-medium);
-    line-height: 1;
+    line-height: var(--leading-label);
   }
 
   .sky-header-date-button__date,
   .sky-header-date-button__location {
     flex: 0 1 auto;
+  }
+
+  .sky-header-date-button__date {
+    flex-shrink: 0;
   }
 
   .sky-header-date-button__location {
@@ -779,16 +783,16 @@
     display: grid;
     gap: 16px;
     border: 1px solid var(--overlay-border);
-    border-radius: 22px;
+    border-radius: var(--radius);
     background: var(--surface);
     box-shadow: var(--shadow-mobile-panel);
-    padding: 16px;
+    padding: var(--space-4);
   }
 
   .date-picker {
     gap: 14px;
     width: min(330px, calc(100vw - var(--mobile-page-gutter) * 2));
-    padding: 14px;
+    padding: calc(var(--space-3) + var(--space-1) / 2);
   }
 
   .date-picker-header {
@@ -822,26 +826,26 @@
   .date-picker-grid button {
     min-height: 38px;
     aspect-ratio: auto;
-    border-radius: 13px;
+    border-radius: var(--radius-sm);
     font-size: var(--text-body);
-    line-height: 1;
+    line-height: var(--leading-label);
   }
 
   .date-picker-actions {
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 2px;
+    margin-top: calc(var(--space-1) / 2);
   }
 
   .date-picker-today,
   .date-picker-cancel {
     min-height: 44px;
-    padding: 0 18px;
+    padding: 0 calc(var(--space-4) + var(--space-1) / 2);
     font-size: var(--text-button-size);
   }
 
   .mobile-sky-controls__label {
-    margin: 2px 0 -6px;
+    margin: calc(var(--space-1) / 2) 0 calc(calc(var(--space-1) + var(--space-1) / 2) * -1);
     color: var(--muted);
     font-family: var(--font-ui);
     font-size: var(--text-section-label-size);
@@ -858,10 +862,10 @@
     width: 100%;
     min-height: 54px;
     border: 1px solid var(--input-border);
-    border-radius: 14px;
+    border-radius: var(--radius-sm);
     background: var(--surface-2);
     color: var(--ink);
-    padding: 0 16px;
+    padding: 0 var(--space-4);
     text-align: left;
   }
 
@@ -901,6 +905,12 @@
     width: min(340px, calc(100vw - var(--mobile-control-inset) * 2));
     max-width: 100%;
     margin-top: 0;
+  }
+
+  .hero-city-picker--mobile {
+    left: var(--mobile-control-inset);
+    right: var(--mobile-control-inset);
+    width: auto;
   }
 
   .page-shell,
@@ -999,7 +1009,7 @@
   .mode-guest .sky-intro__lead,
   .mode-member .sky-intro__lead {
     font-size: var(--sky-mobile-hero-title);
-    line-height: 1;
+    line-height: var(--leading-label);
   }
 
   .mode-guest .today-controls,
@@ -1019,13 +1029,13 @@
     column-gap: var(--space-4);
     width: 100%;
     border: 1px solid var(--card-border);
-    border-radius: 22px;
+    border-radius: var(--radius);
     background: var(--card-bg);
     color: var(--card-title-color);
     box-shadow: var(--card-shadow);
     cursor: pointer;
     margin-top: 0;
-    padding: 18px 20px 18px 18px;
+    padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
     text-align: left;
     transform: none;
   }
@@ -1073,7 +1083,7 @@
   .mobile-full-chart-card__arrow {
     display: grid;
     place-items: center;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
   }
 
   .mobile-full-chart-card__icon {
@@ -1153,7 +1163,7 @@
     z-index: calc(var(--z-topbar) - 1);
     width: auto;
     border: 1px solid var(--card-border);
-    border-radius: 22px;
+    border-radius: var(--radius);
     background: var(--card-bg);
     box-shadow: var(--row-card-shadow, var(--card-shadow));
   }
@@ -1171,13 +1181,13 @@
 
   .mode-guest .sky-lunar-brief,
   .mode-member .sky-lunar-brief {
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: var(--space-5);
+    margin-bottom: calc(var(--space-7) - var(--space-1) / 2);
   }
 
   .mode-guest .next-lun,
   .mode-member .next-lun {
-    margin-top: 18px;
+    margin-top: calc(var(--space-4) + var(--space-1) / 2);
   }
 
   .mode-guest .retrograde-section,
@@ -1280,7 +1290,7 @@
   }
 
   .auth-card {
-    border-radius: 28px;
+    border-radius: var(--radius);
   }
 
   .synastry-placement-row {
@@ -1337,7 +1347,7 @@
   .friend-hero-card,
   .you-profile-card {
     grid-template-columns: auto 1fr;
-    padding: 22px 76px 22px 22px;
+    padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-10) + var(--space-3)) calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
   }
 
   .friend-kebab {
@@ -1445,7 +1455,7 @@
   .manual-chart-row-cta {
     grid-area: cta;
     justify-content: flex-start;
-    padding: 0 58px 20px 94px;
+    padding: 0 calc(var(--space-10) - var(--space-1) - var(--space-1) / 2) var(--space-5) calc(var(--space-9) * 2 - var(--space-1) / 2);
   }
 
   .manual-chart-select {
@@ -1453,7 +1463,7 @@
     grid-template-columns: 58px minmax(0, 1fr);
     align-items: start;
     gap: 16px;
-    padding: 22px 58px 22px 20px;
+    padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-10) - var(--space-1) - var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2) var(--space-5);
   }
 
   .manual-chart-avatar {
@@ -1480,7 +1490,7 @@
 
   .app-shell.mode-friends .manual-chart-select {
     grid-area: select;
-    padding-right: 16px;
+    padding-right: var(--space-4);
   }
 
   .app-shell.mode-friends .manual-chart-actions {
@@ -1491,7 +1501,7 @@
     align-self: start;
     justify-self: end;
     height: 46px;
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
 
   .app-shell.mode-friends .manual-chart-row-cta {
@@ -1614,7 +1624,7 @@
 
   .settings-theme-control button {
     min-width: 96px;
-    padding-inline: 22px;
+    padding-inline: calc(var(--space-5) + var(--space-1) / 2);
   }
 }
 
@@ -1683,7 +1693,8 @@
 @media (max-width: 520px) {
   .mode-guest .sky-header-date-button,
   .mode-member .sky-header-date-button {
-    max-width: 116px;
+    max-width: 132px;
+    min-width: 132px;
   }
 
   .sky-header-date-button__location {

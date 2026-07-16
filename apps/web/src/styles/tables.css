@@ -5,7 +5,7 @@
   gap: var(--sp-2);
   align-items: start;
   width: 100%;
-  padding: var(--card-row-padding, 18px 20px 20px);
+  padding: var(--card-row-padding, calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5));
 }
 
 button.placement-table-row {
@@ -32,7 +32,7 @@ button.placement-table-row {
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .placement-table-row.is-retrograde .placement-table-row__glyph {
@@ -42,7 +42,7 @@ button.placement-table-row {
   border-radius: 0;
   background: transparent;
   color: var(--wheel-glyph);
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .placement-table-row__body {
@@ -78,7 +78,7 @@ button.placement-table-row {
   font-family: var(--font-body);
   font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label);
   margin-left: var(--rx-label-tighten-offset);
   vertical-align: 0.04em;
 }
@@ -152,11 +152,11 @@ button.planet-placement-row {
   width: 48px;
   min-width: 48px;
   height: 22px;
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
   color: var(--card-title-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
-  line-height: 1;
+  line-height: var(--leading-label);
   text-align: center;
 }
 
@@ -164,11 +164,11 @@ button.planet-placement-row {
   width: 48px;
   min-width: 48px;
   height: 22px;
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
   border-radius: 0;
   background: transparent;
   color: var(--card-title-color);
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .planet-placement-row__body {
@@ -378,9 +378,9 @@ button.planet-placement-row {
   z-index: var(--z-tooltip, 80);
   box-sizing: border-box;
   max-width: min(340px, calc(100vw - 24px));
-  padding: 12px 14px;
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
   border: 1px solid var(--tooltip-border);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   background: var(--tooltip-bg);
   color: var(--tooltip-fg);
   box-shadow: var(--tooltip-shadow);

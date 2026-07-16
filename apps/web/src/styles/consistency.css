@@ -1,0 +1,114 @@
+/*
+  Final consistency layer for shared text labels and repeated card spacing.
+  Keep this import last so older feature-specific CSS cannot silently drift.
+*/
+
+:where(
+  .eyebrow,
+  .section-label,
+  .aspect-section-label,
+  .friend-section-label,
+  .placements-heading .eyebrow,
+  .settings-group-label,
+  .article-eyebrow,
+  .article-section__eyebrow
+) {
+  display: block;
+  margin: var(--label-eyebrow-margin);
+  padding: var(--label-eyebrow-padding);
+  color: var(--card-meta-color);
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--label-eyebrow-line-height);
+  letter-spacing: var(--label-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+:where(.section-label, .aspect-section-label, .friend-section-label) + :where(.sky-card, .friends-logic-card, .updates-aspect-list, .placement-table-card, .aspects-card) {
+  margin-top: var(--section-label-gap-after);
+}
+
+.lunar-selected-card :where(
+  h2,
+  p,
+  em,
+  strong,
+  small,
+  li,
+  .lunar-selected-card__eyebrow,
+  .lunar-selected-card__meta,
+  .lunar-selected-card__meta-element,
+  .lunar-selected-card__body,
+  .lunar-selected-card__arc,
+  .lunar-selected-card__arc-phase-list,
+  .lunar-selected-card__daily-event,
+  .lunar-selected-card__daily-event strong,
+  .lunar-selected-card__daily-event span:not(.lunar-selected-card__daily-event-glyph),
+  .lunar-selected-card__transit-notes,
+  .lunar-selected-card__void,
+  .lunar-selected-card__void-heading strong,
+  .lunar-selected-card__stats,
+  .lunar-selected-card__practice
+) {
+  font-family: var(--lunar-selected-font-body);
+}
+
+.lunar-selected-card :where(
+  h2 span,
+  .lunar-selected-card__arc li strong span,
+  .lunar-selected-card__daily-event-glyph,
+  .lunar-selected-card__void-heading span,
+  .lunar-selected-card__void-next span
+) {
+  font-family: var(--font-glyph);
+}
+
+:where(
+  .site-menu,
+  .menu-popover,
+  .dropdown-popover,
+  .nav-popover,
+  .popover,
+  .manual-chart-overflow-menu,
+  .you-profile-overflow-menu,
+  .friend-compare-popover,
+  .lunar-location-picker,
+  .admin-create-menu-panel
+) :where(
+  button,
+  a,
+  label,
+  input,
+  p,
+  span,
+  strong,
+  small,
+  .section-label,
+  [role="menuitem"]
+) {
+  font-weight: var(--weight-regular);
+}
+
+:where(
+  form,
+  .auth-page,
+  .chart-modal,
+  .settings-location-editor,
+  .lunar-location-picker,
+  .admin-dashboard
+) :where(input, select, textarea) {
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+}
+
+:where(
+  form,
+  .auth-page,
+  .chart-modal,
+  .settings-location-editor,
+  .lunar-location-picker,
+  .admin-dashboard
+) :where(label, legend, .auth-label, .settings-row__label) {
+  font-weight: var(--weight-medium);
+}

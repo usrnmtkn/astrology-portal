@@ -55,11 +55,11 @@
   background: var(--floating-button-bg);
   color: var(--ink);
   box-shadow: var(--nav-rest-shadow);
-  padding: 0 22px 0 24px;
+  padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-6);
   font-family: var(--font-ui);
   font-size: var(--nav-link-size);
   font-weight: var(--weight-medium);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
   backdrop-filter: blur(0) saturate(1);
   -webkit-backdrop-filter: blur(0) saturate(1);
@@ -112,7 +112,7 @@ html[data-scrolled] .sky-header-date-button {
   display: block;
   width: 4px;
   height: 4px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: currentColor;
   opacity: 0.55;
 }
@@ -135,10 +135,10 @@ html[data-scrolled] .sky-header-date-button {
   gap: 16px;
   width: min(480px, calc(100vw - 64px));
   border: 1px solid var(--overlay-border);
-  border-radius: 22px;
+  border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-mobile-panel);
-  padding: 16px;
+  padding: var(--space-4);
 }
 
 .mobile-sky-controls__tabs {
@@ -164,7 +164,7 @@ html[data-scrolled] .sky-header-date-button {
   font-family: var(--font-ui);
   font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .mobile-sky-controls__tabs button.active {
@@ -174,7 +174,7 @@ html[data-scrolled] .sky-header-date-button {
 }
 
 .mobile-sky-controls__label {
-  margin: 2px 0 -6px;
+  margin: calc(var(--space-1) / 2) 0 calc(calc(var(--space-1) + var(--space-1) / 2) * -1);
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: var(--type-meta-size);
@@ -191,10 +191,10 @@ html[data-scrolled] .sky-header-date-button {
   width: 100%;
   min-height: 54px;
   border: 1px solid var(--input-border);
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--ink);
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   text-align: left;
 }
 
@@ -226,7 +226,7 @@ html[data-scrolled] .sky-header-date-button {
   border: 0;
   border-radius: var(--button-radius);
   background: var(--button-surface, var(--surface));
-  padding: 14px var(--button-padding-x);
+  padding: calc(var(--space-3) + var(--space-1) / 2) var(--button-padding-x);
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
 }
@@ -248,7 +248,7 @@ html[data-scrolled] .sky-header-date-button {
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
-  padding: 18px;
+  padding: calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .hero-city-picker label {
@@ -270,7 +270,7 @@ html[data-scrolled] .sky-header-date-button {
   border-radius: var(--control-radius);
   background: var(--control-bg);
   color: var(--ink);
-  padding: 14px 16px;
+  padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
 }
 
 .city-suggestions {
@@ -287,10 +287,10 @@ html[data-scrolled] .sky-header-date-button {
   gap: 12px;
   min-width: 0;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   background: transparent;
   color: var(--ink);
-  padding: 10px 12px;
+  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3);
   text-align: left;
 }
 
@@ -313,7 +313,7 @@ html[data-scrolled] .sky-header-date-button {
 .city-suggestions span {
   color: var(--muted);
   font-size: var(--type-caption-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   text-transform: uppercase;
 }
 
@@ -328,14 +328,14 @@ html[data-scrolled] .sky-header-date-button {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: calc(var(--space-1) + var(--space-1) / 2);
 }
 
 .city-picker-actions button {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   min-height: 42px;
-  padding: 0 18px;
+  padding: 0 calc(var(--space-4) + var(--space-1) / 2);
   font-weight: var(--weight-medium);
 }
 
@@ -362,7 +362,7 @@ html[data-scrolled] .sky-header-date-button {
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
-  padding: 16px;
+  padding: var(--space-4);
 }
 
 .date-picker-header {
@@ -375,7 +375,7 @@ html[data-scrolled] .sky-header-date-button {
 .date-picker-header strong {
   text-align: center;
   font-weight: var(--weight-medium);
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .date-picker-header-actions {
@@ -389,7 +389,7 @@ html[data-scrolled] .sky-header-date-button {
 .date-picker-today,
 .date-picker-cancel {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--ink);
   font-weight: var(--weight-medium);
@@ -424,7 +424,7 @@ html[data-scrolled] .sky-header-date-button {
   aspect-ratio: 1;
   min-width: 0;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--card-radius);
   background: transparent;
   color: var(--ink);
   font-weight: var(--weight-medium);
@@ -453,13 +453,13 @@ html[data-scrolled] .sky-header-date-button {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: calc(var(--space-1) + var(--space-1) / 2);
 }
 
 .date-picker-today,
 .date-picker-cancel {
   min-height: 42px;
-  padding: 0 18px;
+  padding: 0 calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .date-picker-today {

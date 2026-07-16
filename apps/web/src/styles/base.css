@@ -218,7 +218,7 @@ svg {
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-label);
   text-transform: uppercase;

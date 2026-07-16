@@ -11,9 +11,9 @@
 
 .settings-location-cancel {
   border: 1px solid var(--button-border, var(--card-border));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--ink);
-  padding: 16px 26px;
-  font-weight: var(--weight-semibold);
+  padding: var(--space-4) calc(var(--space-6) + var(--space-1) / 2);
+  font-weight: var(--weight-medium);
 }
