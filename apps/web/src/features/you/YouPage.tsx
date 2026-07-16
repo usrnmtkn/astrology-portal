@@ -763,7 +763,7 @@ export function YouPage({
             id="you-subtabs"
             value={profileTab}
             options={[
-              { value: "transits", label: "Updates" },
+              { value: "transits", label: "Transits" },
               { value: "chart", label: "Natal Chart" }
             ]}
             onChange={setProfileTab}
