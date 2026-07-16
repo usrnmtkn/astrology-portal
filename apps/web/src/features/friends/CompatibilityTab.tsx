@@ -1,25 +1,33 @@
-import { HeartHandshake } from "lucide-react";
+import { zodiacAssetHref, zodiacSignIconFiles } from "../../components/charts/chartAssets";
 
 export type CompatibilityPlanetCard = {
   id: string;
   glyph: string;
   planet: string;
-  topic: string;
+  comparisonLabel: string;
   youSign: string;
   friendName: string;
   friendSign: string;
-  planetFunction: string;
-  yourStyle: string;
-  friendStyle: string;
-  synthesis: string;
-  practice: string;
+  goDeeper: {
+    glyph: string;
+    match: string;
+    function: string;
+    yourLine: string;
+    theirLine: string;
+    sameSign: boolean;
+    sameSignLine: string;
+    sameSignQuote: { text: string; source: string } | null;
+    verdict: string;
+    relationship: string;
+    contentTrace?: string;
+  };
   exactAspectLabel?: string;
   contentTrace?: string;
 };
 
 export type CompatibilityDynamic = {
   id: string;
-  heading: "What flows" | "What needs care" | "Mixed or charged dynamics";
+  heading: "What flows" | "Challenges" | "Mixed or charged dynamics";
   glyphs: string;
   title: string;
   summary: string;
@@ -27,97 +35,90 @@ export type CompatibilityDynamic = {
 };
 
 export type CompatibilityTabProps = {
-  atAGlance: string[];
   cards: CompatibilityPlanetCard[];
-  comparisonLabel: string;
   dynamics: CompatibilityDynamic[];
-  friendBigThree: Array<{ label: string; value: string }>;
   friendName: string;
-  relationshipLabel: string;
 };
 
+function CompatibilitySignLabel({ sign }: { sign: string }) {
+  const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
+
+  return (
+    <span className="compatibility-sign-label">
+      {iconHref ? <img src={iconHref} alt="" aria-hidden="true" /> : null}
+      <span>{sign}</span>
+    </span>
+  );
+}
+
 export function CompatibilityTab({
-  atAGlance,
   cards,
-  comparisonLabel,
   dynamics,
-  friendBigThree,
-  friendName,
-  relationshipLabel
+  friendName
 }: CompatibilityTabProps) {
   const groupedDynamics = dynamics.reduce<Record<CompatibilityDynamic["heading"], CompatibilityDynamic[]>>((groups, dynamic) => {
     groups[dynamic.heading].push(dynamic);
     return groups;
   }, {
     "What flows": [],
-    "What needs care": [],
+    "Challenges": [],
     "Mixed or charged dynamics": []
   });
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
-        <section className="compatibility-summary" aria-labelledby="compatibility-summary-title">
-          <span className="compatibility-summary__icon" aria-hidden="true">
-            <HeartHandshake size={20} />
-          </span>
-          <span className="eyebrow section-label friend-section-label">{comparisonLabel}</span>
-          <h3 id="compatibility-summary-title">{friendName}</h3>
-          <div className="compatibility-summary__meta">
-            <span>{relationshipLabel}</span>
-            {friendBigThree.map((item) => (
-              <span key={item.label}>{item.label} {item.value}</span>
-            ))}
-          </div>
-        </section>
-
-        {atAGlance.length > 0 ? (
-          <section className="compatibility-glance" aria-label="At a glance">
-            <span className="eyebrow section-label friend-section-label">At a glance</span>
-            <div className="compatibility-glance__list">
-              {atAGlance.map((sentence) => (
-                <p key={sentence}>{sentence}</p>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
         <section className="compatibility-card-list" aria-label="Planet comparisons">
-          <span className="eyebrow section-label friend-section-label">Planet comparisons</span>
-          {cards.map((card) => (
-            <article className="compatibility-card" key={card.id} data-content-trace={card.contentTrace}>
+          <div className="compatibility-card-list__header">
+            <span className="eyebrow section-label friend-section-label">Planet comparisons</span>
+          </div>
+          {cards.map((card) => {
+            const writeup = card.goDeeper;
+            const sameSign = writeup.sameSign;
+
+            return (
+            <article className="compatibility-card" key={card.id} data-content-trace={writeup.contentTrace ?? card.contentTrace}>
               <header className="compatibility-card__header">
-                <span className="compatibility-card__glyph" aria-hidden="true">{card.glyph}</span>
-                <span>
+                <span className="compatibility-card__glyph" aria-hidden="true">{writeup.glyph || card.glyph}</span>
+                <div>
                   <h3>{card.planet}</h3>
-                  <p>{card.topic}</p>
-                </span>
+                  <p>{writeup.match}</p>
+                </div>
               </header>
               <div className="compatibility-card__signs" aria-label={`${card.planet} signs`}>
-                <span>You · {card.youSign}</span>
-                <span>{card.friendName} · {card.friendSign}</span>
+                <span><strong>{card.comparisonLabel}</strong>: <CompatibilitySignLabel sign={card.youSign} /></span>
+                <span><strong>{card.friendName}</strong>: <CompatibilitySignLabel sign={card.friendSign} /></span>
               </div>
-              <p className="compatibility-card__function">{card.planetFunction}</p>
-              <div className="compatibility-card__body">
-                <p>{card.yourStyle}</p>
-                <p>{card.friendStyle}</p>
-                <p>{card.synthesis}</p>
-                <p>{card.practice}</p>
+              <div className="compatibility-card__body compatibility-card__reading">
+                <p>{writeup.function}</p>
+                {sameSign ? (
+                  <>
+                    <p>{writeup.yourLine}</p>
+                    {writeup.sameSignLine || writeup.sameSignQuote ? (
+                      <p>{[writeup.sameSignLine, writeup.sameSignQuote?.text].filter(Boolean).join(" ")}</p>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <p>{writeup.yourLine}</p>
+                    <p>{writeup.theirLine}</p>
+                  </>
+                )}
+                <p className="compatibility-card__verdict">{writeup.verdict}</p>
               </div>
               {card.exactAspectLabel ? (
                 <p className="compatibility-card__receipt">{card.exactAspectLabel}</p>
               ) : null}
             </article>
-          ))}
+          )})}
         </section>
 
         {dynamics.length > 0 ? (
-          <section className="compatibility-dynamics" aria-label="Exact dynamics">
-            <span className="eyebrow section-label friend-section-label">Exact dynamics</span>
+          <section className="compatibility-dynamics" aria-label="Compatibility dynamics">
             {(Object.keys(groupedDynamics) as CompatibilityDynamic["heading"][]).map((heading) => (
               groupedDynamics[heading].length > 0 ? (
                 <div className="compatibility-dynamics__group" key={heading}>
-                  <h3>{heading}</h3>
+                  <span className="eyebrow section-label friend-section-label">{heading}</span>
                   <div className="list you-aspects-list aspect-row-list friend-aspect-list">
                     {groupedDynamics[heading].map((dynamic) => (
                       <article className="aspect-row aspect-row-static friend-aspect-row compatibility-dynamic-row" key={dynamic.id}>
