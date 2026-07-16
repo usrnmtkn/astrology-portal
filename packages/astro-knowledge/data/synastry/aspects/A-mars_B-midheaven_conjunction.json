@@ -1,0 +1,15 @@
+{
+  "id": "A-mars_B-midheaven_conjunction",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "midheaven",
+  "aspect": "conjunction",
+  "plainTranslation": "Their drive lands right on your ambitions and pushes your public direction forward.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Merged from cc-synastry-web-bundle.json.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "authoringStatus": "draft",
+  "summaryShort": "Their drive lands right on your ambitions and pushes your public direction forward.",
+  "summaryDeep": "Their drive lands right on your ambitions and pushes your public direction forward. They can light a fire under your goals, or steamroll them with their own agenda. Use their motivation as fuel, and keep your hand on the wheel of where you're going."
+}
