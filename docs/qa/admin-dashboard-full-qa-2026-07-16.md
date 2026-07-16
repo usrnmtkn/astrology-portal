@@ -81,4 +81,4 @@ The provided screenshots show the admin dashboard in a real loaded state with AP
 
 ## Recommendation
 
-Treat this admin dashboard as functionally QA-green. The next cleanup pass should be a broader admin CSS token pass focused on spacing, radius, line-height, and remaining non-form typography declarations in `apps/web/src/admin/admin.css`.
+Treat this admin dashboard as functionally QA-green. The next cleanup pass should be a broader admin CSS token pass focused on spacing, radius, line-height, and remaining non-form typography declarations in `apps/admin/src/admin.css`.

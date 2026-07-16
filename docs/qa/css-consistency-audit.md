@@ -72,7 +72,7 @@ The audit still finds 50 rules that mention eyebrow/section-label selectors, but
 
 Highest hardcoded spacing debt:
 
-- `apps/web/src/admin/admin.css`: 334 declarations
+- `apps/admin/src/admin.css`: 334 declarations
 - `apps/web/src/styles/lunar-calendar.css`: 56 declarations
 - `apps/web/src/styles/friends.css`: 57 declarations
 - `apps/web/src/styles/sky.css`: 43 declarations
@@ -86,7 +86,7 @@ This explains why card interiors and section gaps can still feel similar but not
 
 Highest hardcoded font-size debt:
 
-- `apps/web/src/admin/admin.css`: 134 declarations
+- `apps/admin/src/admin.css`: 134 declarations
 - `apps/web/src/styles/lunar-calendar.css`: 0 declarations after the current cleanup pass
 
 4. Radius usage is improved but still mixed.

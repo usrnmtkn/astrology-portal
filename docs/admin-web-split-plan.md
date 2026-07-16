@@ -16,14 +16,14 @@ The immediate goal is a bounded monorepo split:
 
 - `apps/web/src/main.tsx` detects `/admin/content` and `/admin/generated-content` before loading public styles.
 - `apps/web/src/App.tsx` lazy-loads `GeneratedContentAdminDashboard` and renders it for admin paths.
-- `apps/web/src/admin/GeneratedContentAdminDashboard.tsx` owns the dashboard UI and imports `./admin.css`.
+- `apps/admin/src/GeneratedContentAdminDashboard.tsx` owns the dashboard UI and imports `./admin.css`.
 - The admin component imports shared content and service modules from `apps/web/src/content/*` and `apps/web/src/services/*`.
 - Admin API calls currently live as direct `/api/admin/*` fetch strings inside the dashboard component.
 - Admin QA lives in shared Playwright/report scripts under `tests/visual` and `scripts`.
 
 ## Phase 1: Guard The Boundary
 
-Status: started.
+Status: done.
 
 - Add `npm run qa:admin-boundary`.
 - Treat `App.tsx` and `main.tsx` as temporary bridges.
@@ -32,7 +32,7 @@ Status: started.
 
 ## Phase 2: Create The Admin App Shell
 
-Status: started.
+Status: done.
 
 - Add a real `apps/admin` Vite app with its own `index.html`, `src/main.tsx`, and style entry.
 - Mount the existing dashboard component from its current location first.
@@ -40,6 +40,8 @@ Status: started.
 - Keep shared content/service imports stable until the admin shell is proven.
 
 ## Phase 3: Move Admin Source
+
+Status: done.
 
 - Move `apps/web/src/admin/*` to `apps/admin/src`.
 - Move admin CSS into the admin app style graph.

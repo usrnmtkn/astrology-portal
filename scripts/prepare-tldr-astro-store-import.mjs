@@ -2746,7 +2746,7 @@ function writeRepositoryMap(outDir) {
     "- Runtime generated-content reader: `/Users/mprez/Code/tldrastro/apps/web/src/services/generatedContent.ts`",
     "- Serving guard migration: `/Users/mprez/Code/tldrastro/apps/web/supabase/migrations/20260711110000_generated_content_serving_lane.sql`",
     "- Runtime key constructors: `/Users/mprez/Code/tldrastro/apps/web/src/services/generatedContentKeys.ts`",
-    "- Content dashboard: `/Users/mprez/Code/tldrastro/apps/web/src/admin/GeneratedContentAdminDashboard.tsx`",
+    "- Content dashboard: `/Users/mprez/Code/tldrastro/apps/admin/src/GeneratedContentAdminDashboard.tsx`",
     "- Admin generated-content API: `/Users/mprez/Code/tldrastro/api/admin/generated-content.ts`",
     "- Admin review API: `/Users/mprez/Code/tldrastro/api/admin/review-records.ts`",
     "- Generation endpoint: `/Users/mprez/Code/tldrastro/api/generate-content.ts`",

@@ -65,20 +65,20 @@ for (const hook of requiredNatalHooks) {
 }
 
 assert.ok(
-  appSource.includes("isPromotedEmergencyFloorContent"),
-  "App runtime must explicitly recognize promoted sparse floor rows."
+  appSource.includes("sourceGroundedNatalPlacementSectionsRuntime"),
+  "Natal placement runtime must prefer source-grounded placement sections."
 );
 assert.ok(
-  appSource.includes("model === \"compiled-phrasebank-authored-placement-floor\""),
-  "Sparse promoted placement rows must not be treated as emergency fallback content."
+  appSource.includes("placementScaffoldNormalizedSections"),
+  "Natal placement runtime must use normalized source-based madlib/scaffold fallback sections when source-grounded copy is unavailable."
 );
 assert.ok(
-  appSource.includes("contentKey.startsWith(\"fallback-hook/you.\")"),
-  "Natal placement runtime must still allow fallback-hook/you.* rows as the emergency floor."
+  appSource.includes("templateFallbackContentKeys"),
+  "Natal placement runtime must keep fallback-hook/you.* rows behind the normalized fallback layer."
 );
 
 console.log(JSON.stringify({
   status: "PASS",
   checkedHooks: requiredNatalHooks.length,
-  contract: "natal placement emergency floor is fallback hooks plus vocab, not promoted sparse content rows"
+  contract: "natal placement prose resolves as source-grounded first, then normalized source-based fallback"
 }, null, 2));

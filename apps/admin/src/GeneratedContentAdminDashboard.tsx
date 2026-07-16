@@ -1,11 +1,11 @@
 import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, EyeOff, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Search, Server, Sparkles, Trash2, TreePine, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
-import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type FallbackHookDefinition, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
-import { fallbackVocabularyDependencyFamilies, fallbackVocabularyReferenceLanePolicy } from "../content/fallbackVocabularyDependencies";
-import { findMetaphorPhraseFlags, metaphorFamilies, metaphorGuidanceSummary, metaphorValidationPhrases } from "../content/metaphorSpecificityPhraseBook";
-import { firstReaderFacingCopy, isReaderFacingCopy } from "../content/readerSafety";
-import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
+import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type FallbackHookDefinition, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../../web/src/content/fallbackHooks";
+import { fallbackVocabularyDependencyFamilies, fallbackVocabularyReferenceLanePolicy } from "../../web/src/content/fallbackVocabularyDependencies";
+import { findMetaphorPhraseFlags, metaphorFamilies, metaphorGuidanceSummary, metaphorValidationPhrases } from "../../web/src/content/metaphorSpecificityPhraseBook";
+import { firstReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety";
+import templateCopySeed from "../../web/src/content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import { contentSystemWorkstreams } from "./contentSystemPlan";
 import {
@@ -21,19 +21,19 @@ import {
   type WritingSurfaceMapItem,
   type WritingSurfaceStatus
 } from "./writingSurfaceSourceMap";
-import sourceGroundedDashboardRecords from "../content/finalSourceGroundedDashboardRecords.json" with { type: "json" };
-import sourceGroundedReviewCandidates from "../content/sourceGroundedReviewCandidates.json";
+import sourceGroundedDashboardRecords from "../../web/src/content/finalSourceGroundedDashboardRecords.json" with { type: "json" };
+import sourceGroundedReviewCandidates from "../../web/src/content/sourceGroundedReviewCandidates.json";
 import {
   SOURCE_GROUNDED_V2_TEMPLATE_VERSION
-} from "../content/sourceGroundedV2";
-import { skyHistoricalLookbackSettingId, skyHistoricalLookbackSettingKey } from "../content/skyHistoricalLookback";
-import skyContentSnapshot from "../content/skyContentSnapshot.json";
+} from "../../web/src/content/sourceGroundedV2";
+import { skyHistoricalLookbackSettingId, skyHistoricalLookbackSettingKey } from "../../web/src/content/skyHistoricalLookback";
+import skyContentSnapshot from "../../web/src/content/skyContentSnapshot.json";
 import {
   readGeneratedContentPreviewMode,
   writeGeneratedContentPreviewMode,
   type GeneratedContentMode,
   type GeneratedContentPreviewMode
-} from "../services/generatedContent";
+} from "../../web/src/services/generatedContent";
 import {
   compositeAspectContentKey,
   natalAngleContentKey,
@@ -46,15 +46,15 @@ import {
   skyAspectContentKey,
   synastryAspectContentKey,
   transitToNatalAspectContentKey
-} from "../services/generatedContentKeys";
+} from "../../web/src/services/generatedContentKeys";
 import {
   fallbackNatalCardTaglines,
   natalCardTaglineContentKey,
   natalCardTaglinePoints,
   normalizedNatalCardTaglinePoint
-} from "../services/natalPlacementTaglines";
-import { interpolateTemplateString, type TemplateSlotValues } from "../services/templateInterpolation";
-import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
+} from "../../web/src/services/natalPlacementTaglines";
+import { interpolateTemplateString, type TemplateSlotValues } from "../../web/src/services/templateInterpolation";
+import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../../web/src/services/tldrastroApi";
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";

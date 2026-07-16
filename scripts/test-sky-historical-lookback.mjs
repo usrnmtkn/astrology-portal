@@ -120,7 +120,7 @@ assert.deepEqual(rendered.trace.previousWindowSource, ["calculated/ephemeris/ura
 assert.deepEqual(rendered.trace.historicalEventSources, ["reviewed/history/communications-1940s"]);
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
-const adminSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/admin/GeneratedContentAdminDashboard.tsx"), "utf8");
+const adminSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 
 assert.match(appSource, /skyHistoricalLookbackEnabled\(generatedContent\)/, "App must gate lookbacks from generated content settings.");
 assert.match(appSource, /<h2>\{detail\.historicalLookback\.heading\}<\/h2>/, "Reader must render historical heading only when a lookback exists.");

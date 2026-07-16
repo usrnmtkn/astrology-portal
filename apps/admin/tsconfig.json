@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "../web/src/*.d.ts", "../web/src/admin", "../web/src/content", "../web/src/services"],
+  "include": ["src", "../web/src/*.d.ts", "../web/src/content", "../web/src/services"],
   "references": []
 }
