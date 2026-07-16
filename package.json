@@ -25,6 +25,8 @@
     "qa:css-audit": "node scripts/run-css-consistency-audit.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
     "qa:admin-boundary": "node scripts/audit-admin-web-boundaries.mjs",
+    "qa:database-friends": "node scripts/test-friends-chart-database-loading-contract.mjs && node scripts/test-friends-chart-data-retention-contract.mjs",
+    "qa:friends-data-retention": "node scripts/test-friends-chart-data-retention-contract.mjs",
     "qa:visual-baseline": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts",
     "qa:visual-baseline:update": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts --update-snapshots",
     "preview": "npm run preview -w @tldr/web",

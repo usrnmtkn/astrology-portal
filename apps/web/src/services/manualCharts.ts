@@ -65,6 +65,7 @@ type ManualChartRow = {
 };
 
 const localManualChartsKey = (userId: string) => `tldrastro:manualCharts:${userId}`;
+const localManualChartsKeyPrefix = "tldrastro:manualCharts:";
 
 function rowToManualChart(row: ManualChartRow): ManualChart {
   const chartType = row.relationship_type === "event" ? "event" : "person";
@@ -255,6 +256,30 @@ export function listCachedManualCharts(userIds: string[]): ManualChart[] {
   });
 
   return charts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+}
+
+export function listLocalManualChartUserIds(): string[] {
+  try {
+    const userIds: string[] = [];
+
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index);
+
+      if (!key?.startsWith(localManualChartsKeyPrefix)) {
+        continue;
+      }
+
+      const userId = key.slice(localManualChartsKeyPrefix.length);
+
+      if (userId) {
+        userIds.push(userId);
+      }
+    }
+
+    return userIds;
+  } catch {
+    return [];
+  }
 }
 
 function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart) {

@@ -96,6 +96,10 @@ function formatPlanetPlacementLine(position: PlanetPosition) {
   return `${formatPlanetPlacementTitle(position)} ${formatPlanetDegree(position)}`;
 }
 
+function angleFromCenter(center: number, point: { x: number; y: number }) {
+  return ((Math.atan2(center - point.y, point.x - center) * 180) / Math.PI + 360) % 360;
+}
+
 function wheelPlanetIconFile(position: PlanetPosition) {
   if (position.motion === "retrograde") {
     return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
@@ -629,6 +633,10 @@ export const SynastryWheel = memo(function SynastryWheel({
     aspect: 64,
     inner: 28
   };
+  const houseLabelRadius = {
+    outer: radius.innerRingOuter + 18,
+    inner: radius.innerRingOuter - 12
+  };
   const isNatalWheel = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
   const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
@@ -668,17 +676,17 @@ export const SynastryWheel = memo(function SynastryWheel({
     ascendantLongitude,
     angleForLongitude,
     center,
-    radius: radius.outerHouse,
+    radius: houseLabelRadius.outer,
     signs
-  }), [ascendant, ascendantLongitude, isNatalWheel]);
+  }), [ascendant, ascendantLongitude, isNatalWheel, houseLabelRadius.outer]);
   const innerHouseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant: innerAscendant,
     ascendantLongitude: innerAscendantLongitude,
     angleForLongitude,
     center,
-    radius: radius.innerHouse,
+    radius: houseLabelRadius.inner,
     signs
-  }), [innerAscendant, innerAscendantLongitude, ascendantLongitude, isNatalWheel]);
+  }), [innerAscendant, innerAscendantLongitude, ascendantLongitude, isNatalWheel, houseLabelRadius.inner]);
   const angularLabels = useMemo(() => chartAngularLabelGeometry({
     ascendantLongitude,
     midheavenLongitude,
@@ -709,7 +717,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
-      radialOffsets: [0, -7, 7],
+      radialOffsets: [0],
       minMarkerRadius: radius.innerRingOuter + 10,
       maxMarkerRadius: radius.signInner - 14
     }
@@ -725,7 +733,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
-      radialOffsets: [0, 7, -7],
+      radialOffsets: [0],
       minMarkerRadius: radius.innerRingInner + 12,
       maxMarkerRadius: radius.innerRingOuter - 12
     }
@@ -736,7 +744,14 @@ export const SynastryWheel = memo(function SynastryWheel({
     const layout = ring === "outer" ? outerPlanetLayouts.get(position.planet) : innerPlanetLayouts.get(position.planet);
     const baseRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
     const truePoint = point(angle, baseRadius);
-    const marker = layout?.marker ?? point(angle, baseRadius);
+    const rawMarker = layout?.marker ?? point(angle, baseRadius);
+    const marker = point(angleFromCenter(center, rawMarker), baseRadius);
+    const tickInner = ring === "outer"
+      ? point(angle, radius.signInner - 17)
+      : point(angle, radius.innerRingOuter - 17);
+    const tickOuter = ring === "outer"
+      ? point(angle, radius.signInner - 5)
+      : point(angle, radius.innerRingOuter - 5);
     const degreeOffset = ring === "outer"
         ? { x: 0, y: 18 }
         : { x: 0, y: 17 };
@@ -750,6 +765,15 @@ export const SynastryWheel = memo(function SynastryWheel({
         role="img"
         aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${formatPlanetPlacementLine(position)}`}
       >
+        <line
+          x1={tickInner.x}
+          y1={tickInner.y}
+          x2={tickOuter.x}
+          y2={tickOuter.y}
+          className={`planet-tick wheel-placement__tick synastry-planet-tick synastry-planet-tick--${ring}`}
+          data-ring={ring}
+          data-planet={position.planet}
+        />
         <g className={`planet-label-group wheel-placement${hasDisplacement ? " planet-label-group--displaced" : ""}`} transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={ring === "outer" ? planetHitAreaRadius + 3 : planetHitAreaRadius + 2} className="planet-hit-area" />
           <WheelPlanetGlyph position={position} yOffset={-4} />
