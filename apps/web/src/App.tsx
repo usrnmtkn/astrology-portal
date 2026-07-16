@@ -4558,6 +4558,16 @@ function placementTransitRangeLabel(position: PlanetPosition, generatedAt: strin
   return placementTransitRange(position, generatedAt);
 }
 
+function transitHouseRangeLabel(transit: TransitItem, currentSky: SkySnapshot | null, generatedAt: string) {
+  const currentPosition = currentSky?.positions.find((position) => position.planet === transit.transitPlanet);
+
+  if (!currentPosition) {
+    return "";
+  }
+
+  return placementTransitRangeLabel(currentPosition, generatedAt);
+}
+
 function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
   if (!position.transitEnd) {
     return null;
@@ -16891,6 +16901,7 @@ function ProfileView({
     const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house);
     const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
     const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
+    const timingRange = transitHouseRangeLabel(transit, currentSky, transitForm.chartDate);
     const articleSections = normalizedHouseTransit.sections.map((section) => ({
       heading: section.heading,
       tldr: "",
@@ -16907,6 +16918,7 @@ function ProfileView({
         summary: stripTldrPrefix(rowSummary),
         sections: articleSections,
         meta: [
+          ...(timingRange ? [{ label: "Date range", value: timingRange }] : []),
           { label: "House", value: `${ordinalHouse(house)} House` },
           { label: "Area", value: houseLifeAreas[house] ?? "" },
           { label: "Transit planet", value: transit.transitPlanet }
@@ -16930,6 +16942,7 @@ function ProfileView({
             <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
               {transit.term === "long" ? "Long-term" : "Short-term"}
             </span>
+            {timingRange ? <span>{timingRange}</span> : null}
             <span>{houseLifeAreas[house] ?? "house topic"}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
