@@ -9,6 +9,24 @@ const repoRoot = path.resolve(__dirname, "..").replace(/^\/Users\/mprez\/Code\//
 const packageRoot = "/private/tmp/tldr-astro-handoff-final/tldr-astro-handoff-final";
 const packageRecords = JSON.parse(fs.readFileSync(path.join(packageRoot, "tldr-astro-records.json"), "utf8")).records;
 const sourceKeys = new Set(packageRecords.map((record) => record.key));
+const natalOverlayPath = path.join(repoRoot, "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json");
+
+if (fs.existsSync(natalOverlayPath)) {
+  const natalOverlay = JSON.parse(fs.readFileSync(natalOverlayPath, "utf8"));
+
+  for (const record of natalOverlay.records ?? []) {
+    for (const key of record.sourceKeys ?? []) {
+      sourceKeys.add(key);
+    }
+
+    for (const clause of Object.values(record.clauses ?? {})) {
+      for (const key of clause.source_keys ?? []) {
+        sourceKeys.add(key);
+      }
+    }
+  }
+}
+
 const materialized = JSON.parse(fs.readFileSync(path.join(repoRoot, "scripts/content-source/final-source-grounded-dashboard-records.json"), "utf8"));
 const appMaterialized = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps/web/src/content/finalSourceGroundedDashboardRecords.json"), "utf8"));
 

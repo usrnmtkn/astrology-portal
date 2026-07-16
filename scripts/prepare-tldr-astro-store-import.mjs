@@ -2566,7 +2566,7 @@ function writeRollbackSql(outDir, batchId) {
 
 function csvValue(value) {
   const text = Array.isArray(value)
-    ? value.join("|")
+    ? value.map((item) => item && typeof item === "object" ? JSON.stringify(item) : String(item ?? "")).join("|")
     : value && typeof value === "object"
       ? JSON.stringify(value)
       : String(value ?? "");

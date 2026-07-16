@@ -79,6 +79,24 @@ const aspectDetail = runtime.sourceGroundedSkyAspectParagraphs({
 }).join("\n\n");
 assertReaderSafe("Sun conjunction Mercury detail", aspectDetail);
 
+const staleNatalPlacementSections = runtime.sourceGroundedNatalPlacementSections({
+  natalSky: null,
+  ownerPerspective: "you",
+  position: {
+    planet: "Sun",
+    sign: "Aquarius",
+    house: 9,
+    longitude: 329.4167,
+    degree: "29°25'",
+    motion: "direct"
+  }
+});
+assert.deepEqual(
+  staleNatalPlacementSections,
+  [],
+  "stale ready natal placement rows must not outrank approved v2 fallback"
+);
+
 const sourceFiles = [
   "apps/web/src/services/careerArchetype.ts",
   "apps/web/src/components/charts/SoulRoadmapCard.tsx",
