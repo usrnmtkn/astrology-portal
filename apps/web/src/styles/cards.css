@@ -52,7 +52,7 @@
 .soul-roadmap-card__header {
   display: grid;
   gap: 10px;
-  padding: 24px var(--card-padding) 22px;
+  padding: var(--space-6) var(--card-padding) calc(var(--space-5) + var(--space-1) / 2);
 }
 
 .soul-roadmap-card__header h3 {
@@ -82,7 +82,7 @@
   display: grid;
   gap: 5px;
   min-width: 0;
-  padding: 14px var(--card-padding);
+  padding: calc(var(--space-3) + var(--space-1) / 2) var(--card-padding);
 }
 
 .soul-roadmap-card__points span + span {
@@ -110,7 +110,7 @@
 .soul-roadmap-card__keywords {
   display: grid;
   gap: 8px;
-  padding: 16px var(--card-padding) 18px;
+  padding: var(--space-4) var(--card-padding) calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .soul-roadmap-card__keywords p {
@@ -135,7 +135,7 @@
 .career-archetype-card__header {
   display: grid;
   gap: 10px;
-  padding: 22px var(--card-padding) 20px;
+  padding: calc(var(--space-5) + var(--space-1) / 2) var(--card-padding) var(--space-5);
 }
 
 .career-archetype-card__header h3,
@@ -159,7 +159,7 @@
 }
 
 .career-archetype-card__summary {
-  padding: 0 var(--card-padding) 18px;
+  padding: 0 var(--card-padding) calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .career-archetype-card__tldr {
@@ -187,7 +187,7 @@
   display: grid;
   gap: 5px;
   min-width: 0;
-  padding: 13px var(--card-padding);
+  padding: calc(var(--space-3) + var(--space-1) / 4) var(--card-padding);
 }
 
 .career-archetype-card__factors span + span {
@@ -221,7 +221,7 @@
 .career-archetype-card__sections article {
   display: grid;
   gap: 8px;
-  padding: 16px var(--card-padding) 18px;
+  padding: var(--space-4) var(--card-padding) calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .career-archetype-card__sections article + article {
@@ -271,7 +271,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 :where(

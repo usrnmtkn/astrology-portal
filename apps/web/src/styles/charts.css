@@ -173,7 +173,7 @@
 .chart-house-system-label {
   fill: var(--wheel-label);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--chart-degree-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   text-anchor: middle;
@@ -381,7 +381,7 @@
 
 .sky-wheel .transit-planet-labels .planet-degree {
   fill: var(--transit-wheel-degree, var(--chart-degree-label));
-  font-size: 9px;
+  font-size: var(--chart-transit-degree-size);
   letter-spacing: 0;
 }
 
@@ -419,7 +419,7 @@
 .sky-wheel-synastry .zodiac-wheel__sign-label {
   font-family: var(--font-label);
   font-weight: var(--weight-medium);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   opacity: 0.88;
 }
 
@@ -520,8 +520,8 @@
 
 .sky-wheel-synastry .chart-house-system-label {
   font-family: var(--font-label);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
+  font-size: var(--chart-synastry-house-label-size);
+  letter-spacing: var(--tracking-label);
   opacity: 0.68;
 }
 
@@ -543,7 +543,7 @@
   max-height: min(960px, calc(100svh - 28px));
   overflow: hidden;
   border: 1px solid var(--modal-border);
-  border-radius: 28px;
+  border-radius: var(--radius);
   background: var(--bg);
   color: var(--ink);
   box-shadow: var(--modal-shadow);
@@ -560,7 +560,7 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 14px;
   min-height: min(960px, calc(100svh - 28px));
-  padding: clamp(18px, 3vw, 30px);
+  padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
   box-sizing: border-box;
 }
 
@@ -588,7 +588,7 @@
   width: 44px;
   height: 44px;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--ink);
 }
@@ -601,7 +601,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding-top: clamp(4px, 1vh, 12px);
+  padding-top: clamp(var(--space-1), 1vh, var(--space-3));
 }
 
 .chart-shell--fullscreen {
@@ -655,7 +655,7 @@
   border: 0;
   border-radius: 0;
   background: var(--bg);
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   overflow: hidden;
 }
 
@@ -694,7 +694,7 @@
   font-family: var(--font-ui);
   font-size: var(--text-button-size);
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label);
   cursor: pointer;
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),

@@ -154,6 +154,15 @@
   --shadow-overlay:
     0 24px 70px rgba(28, 32, 52, 0.12),
     0 4px 16px rgba(28, 32, 52, 0.06);
+  --shadow-lunar-phase:
+    inset -9px -7px 16px rgba(63, 50, 18, 0.28),
+    inset 8px 6px 12px rgba(255, 255, 255, 0.26),
+    0 2px 8px rgba(28, 32, 52, 0.12);
+  --shadow-lunar-phase-ring: 0 0 10px rgba(12, 14, 22, 0.42);
+  --shadow-lunar-phase-dark:
+    inset -7px -6px 14px rgba(0, 0, 0, 0.22),
+    inset 5px 4px 11px rgba(255, 255, 255, 0.035),
+    0 2px 8px rgba(28, 32, 52, 0.12);
   --shadow-flat: none;
   --shadow: var(--shadow-card);
   --bg-grad:
@@ -227,8 +236,73 @@
   --sign-degree-offset-y: 0.02em;
   --lunar-card-copy-gap: var(--sp-1);
   --lunar-card-title-gap: var(--sp-1);
+  --lunar-type-micro: 8px;
+  --lunar-type-micro-plus: 8.5px;
+  --lunar-type-tiny: 9px;
+  --lunar-type-label: 10px;
+  --lunar-type-label-plus: 10.5px;
+  --lunar-type-eyebrow: 11px;
+  --lunar-type-caption: 12px;
+  --lunar-type-fine: 12.5px;
+  --lunar-type-meta: 13px;
+  --lunar-type-body: 14px;
+  --lunar-type-action: 15px;
+  --lunar-type-title: 16px;
+  --lunar-type-card-title: 16.5px;
+  --lunar-type-phase-title: 17px;
+  --lunar-type-section-title: 18px;
+  --lunar-type-large: 20px;
+  --lunar-type-moon-title: 21px;
+  --lunar-type-display: 22px;
+  --lunar-type-display-lg: 24px;
+  --lunar-type-display-xl: 25px;
+  --lunar-type-glyph-emphasis: 1.08em;
+  --lunar-selected-title-size: clamp(26px, 2.4vw, 34px);
+  --lunar-selected-subtitle-size: var(--lunar-type-body);
+  --lunar-selected-section-title-size: var(--lunar-type-title);
+  --lunar-selected-body-size: var(--lunar-type-body);
+  --lunar-selected-meta-size: var(--lunar-type-caption);
+  --lunar-selected-stat-size: var(--lunar-type-large);
+  --lunar-selected-event-title-size: var(--lunar-type-body);
+  --lunar-selected-glyph-size: var(--lunar-type-section-title);
+  --lunar-selected-glyph-emphasis-size: var(--lunar-type-glyph-emphasis);
+  --lunar-selected-font-title: var(--font-body);
+  --lunar-selected-font-body: var(--font-body);
+  --lunar-selected-font-label: var(--font-body);
+  --lunar-selected-title-weight: var(--weight-medium);
+  --lunar-selected-body-weight: var(--weight-regular);
+  --lunar-selected-label-weight: var(--weight-medium);
+  --lunar-glyph-emphasis-weight: 900;
+  --lunar-selected-title-leading: var(--leading-label);
+  --lunar-selected-title-leading-mobile: 1.05;
+  --lunar-selected-section-title-leading: var(--leading-title);
+  --lunar-selected-body-leading: var(--leading-description);
+  --lunar-selected-label-leading: var(--label-eyebrow-line-height);
+  --lunar-selected-meta-leading: var(--leading-meta);
+  --lunar-selected-row-leading: var(--leading-label);
+  --lunar-selected-row-title-leading-mobile: var(--leading-h1);
+  --lunar-selected-compact-leading: var(--leading-label);
+  --lunar-space-1: 1px;
+  --lunar-space-2: 2px;
+  --lunar-space-3: 3px;
+  --lunar-space-4: 4px;
+  --lunar-space-5: 5px;
+  --lunar-space-6: 6px;
+  --lunar-space-7: 7px;
+  --lunar-space-8: 8px;
+  --lunar-space-9: 9px;
+  --lunar-space-10: 10px;
+  --lunar-space-11: 11px;
+  --lunar-space-12: 12px;
+  --lunar-space-14: 14px;
+  --lunar-space-16: 16px;
+  --lunar-space-18: 18px;
+  --lunar-space-20: 20px;
+  --lunar-space-24: 24px;
+  --lunar-space-26: 26px;
+  --lunar-space-28: 28px;
   --lunar-card-subline-size: var(--text-placement-meta);
-  --lunar-card-padding: 10px 18px;
+  --lunar-card-padding: calc(var(--space-2) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
   --lunar-card-min-height: 84px;
   --lunar-card-grid-gap: 14px;
   --lunar-card-glyph-box-size: 64px;
@@ -236,7 +310,7 @@
   --lunar-card-glyph-size: var(--text-glyph);
   --lunar-card-glyph-optical-y: 0.02em;
   --lunar-card-phase-size: calc(var(--text-glyph) + var(--space-3));
-  --lunar-card-mobile-padding: 10px 12px;
+  --lunar-card-mobile-padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3);
   --lunar-card-mobile-min-height: 80px;
   --lunar-card-mobile-grid-gap: 12px;
   --lunar-card-mobile-glyph-box-size: calc(var(--lunar-card-glyph-box-size) - var(--sp-2));
@@ -244,11 +318,11 @@
   --lunar-card-mobile-phase-size: calc(var(--lunar-card-phase-size) - var(--sp-1));
   --lunar-card-min-inline-size: 340px;
   --lunar-card-stack-breakpoint: 720px;
-  --snap-card-padding: 14px 18px 14px 16px;
+  --snap-card-padding: calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
   --snap-card-radius: var(--radius-sm);
   --snap-card-gap: 14px;
   --snap-group-gap: 18px;
-  --snap-next-padding: 16px 18px 16px 16px;
+  --snap-next-padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2) var(--space-4) var(--space-4);
   --snap-next-gap: 14px;
   --snap-icon-size: 36px;
   --snap-glyph-size: 18px;
@@ -269,10 +343,10 @@
   --sky-card-mobile-min-height: var(--lunar-card-mobile-min-height);
   --sky-card-mobile-grid-gap: var(--lunar-card-mobile-grid-gap);
   --sky-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-column-size);
-  --sky-placement-card-padding: 24px 28px 24px 22px;
+  --sky-placement-card-padding: var(--space-6) calc(var(--space-7) - var(--space-1)) var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
   --sky-placement-card-gap: 26px;
   --sky-placement-glyph-column-size: 42px;
-  --sky-placement-mobile-padding: 20px 18px 20px 16px;
+  --sky-placement-mobile-padding: var(--space-5) calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-4);
   --sky-placement-mobile-gap: 18px;
   --sky-placement-mobile-glyph-column-size: 34px;
   --sky-aspect-glyph-size: var(--type-section-heading-size);
@@ -290,6 +364,10 @@
   --friend-row-title-size: var(--text-card-title);
   --friend-row-description-size: var(--text-description);
   --friend-row-meta-size: var(--type-meta-size);
+  --friend-feed-chevron-size: 34px;
+  --friend-feed-chevron-size-compact: 28px;
+  --compatibility-card-glyph-size: 23px;
+  --compatibility-card-glyph-size-compact: 20px;
   --text-placement-degree: var(--type-degree-size);
   --text-placement-meta: var(--type-meta-size);
   --article-title-size: var(--article-h2-size);
@@ -324,12 +402,21 @@
   --text-compact-meta: var(--type-hint-size);
   --text-compact-label: var(--type-label-size);
   --text-compact-caption: var(--type-label-size);
+  --label-eyebrow-font-size: var(--text-section-label-size);
+  --label-eyebrow-line-height: var(--leading-label);
+  --label-eyebrow-tracking: var(--tracking-label);
+  --label-eyebrow-margin: 0;
+  --label-eyebrow-padding: 0;
+  --section-label-gap-after: var(--space-2);
+  --section-stack-gap: var(--space-6);
+  --surface-card-padding: clamp(22px, 3vw, 34px);
+  --surface-card-padding-compact: var(--card-row-padding);
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
   --badge-font-family: var(--font-label);
   --badge-font-size: var(--type-pill-size);
   --badge-font-weight: var(--weight-semibold);
-  --badge-padding: 6px 11px;
+  --badge-padding: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-3) - var(--space-1) / 4);
   --badge-min-height: 28px;
   --badge-radius: var(--radius-pill);
   --badge-line-height: var(--leading-pill);
@@ -385,14 +472,14 @@
   --card-list-gap: var(--space-2);
   --card-stack-gap: var(--space-2);
   --card-row-gap: var(--sp-2);
-  --card-row-padding: 18px 20px 20px;
-  --card-row-padding-compact: 12px 16px;
-  --card-row-padding-comfortable: 18px 22px;
-  --form-field-padding: 18px;
-  --modal-panel-padding: 28px;
-  --mobile-overlay-padding: 18px 18px 22px;
+  --card-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5);
+  --card-row-padding-compact: var(--space-3) var(--space-4);
+  --card-row-padding-comfortable: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
+  --form-field-padding: calc(var(--space-4) + var(--space-1) / 2);
+  --modal-panel-padding: calc(var(--space-7) - var(--space-1));
+  --mobile-overlay-padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
   --snapshot-card-gap: 12px;
-  --snapshot-card-padding: 10px 16px;
+  --snapshot-card-padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
   --snapshot-card-radius: var(--card-radius);
   --snapshot-icon-size: 44px;
   --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
@@ -401,6 +488,7 @@
   --col: 560px;
   --radius: 20px;
   --radius-sm: 14px;
+  --radius-circle: 50%;
   --radius-pill: 999px;
 
   /* 3. COMPONENT TOKENS */
@@ -463,6 +551,11 @@
   --table-row-bg: var(--card-bg);
   --table-row-border: var(--card-border);
   --table-row-gap: var(--sp-2);
+  --chart-transit-degree-size: 9px;
+  --chart-synastry-house-label-size: 10.5px;
+  --sky-ledger-title-size: 21px;
+  --sky-ledger-glyph-size: 17px;
+  --sky-ledger-meta-size: 11.5px;
   --overlay-bg: var(--card-bg);
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
@@ -521,7 +614,7 @@
   --segmented-bg: var(--surface);
   --segmented-border: var(--line);
   --segmented-radius: var(--radius-pill);
-  --segmented-padding: 5px;
+  --segmented-padding: calc(var(--space-1) + var(--space-1) / 4);
   --segmented-gap: 6px;
   --segmented-item-height: 44px;
   --segmented-item-px: 24px;
@@ -534,8 +627,8 @@
   --segmented-shadow: var(--card-shadow);
   --segmented-active-shadow: none;
   --id-card-radius: var(--card-radius);
-  --id-card-padding-y: 22px;
-  --id-card-padding-x: 20px;
+  --id-card-padding-y: calc(var(--space-5) + var(--space-1) / 2);
+  --id-card-padding-x: var(--space-5);
   --id-avatar-size: 60px;
   --id-name-size: var(--text-card-title);
   --id-signature-size: 13px;
@@ -593,8 +686,8 @@
   --mobile-page-gutter: 18px;
   --mobile-page-bottom: var(--sp-6);
   --mobile-page-padding: 128px var(--mobile-page-gutter) var(--mobile-page-bottom);
-  --mobile-card-padding: 20px;
-  --mobile-row-padding: 18px 16px;
+  --mobile-card-padding: var(--space-5);
+  --mobile-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
   --mobile-row-gap: var(--sp-1);
   --mobile-chart-max: 520px;
   --mobile-control-inset: 20px;

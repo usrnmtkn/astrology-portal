@@ -31,11 +31,11 @@
   min-height: var(--top-control-height);
   align-items: center;
   gap: var(--top-control-gap);
-  padding: 16px 32px 0;
+  padding: var(--space-4) var(--space-7) 0;
   pointer-events: none;
   border-bottom: 1px solid transparent;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   transition:
@@ -48,10 +48,10 @@
 html[data-scrolled] .topbar {
   border-bottom-color: transparent;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding-top: 16px;
+  padding-top: var(--space-4);
 }
 
 .nav-pill {
@@ -71,7 +71,7 @@ html[data-scrolled] .topbar {
   box-shadow: var(--nav-rest-shadow);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding: 0 26px 0 9px;
+  padding: 0 calc(var(--space-6) + var(--space-1) / 2) 0 calc(var(--space-2) + var(--space-1) / 4);
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
@@ -118,7 +118,7 @@ html[data-scrolled] .topbar {
   font-size: var(--text-wordmark);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
 }
 
@@ -137,11 +137,11 @@ html[data-scrolled] .topbar {
   background: transparent;
   color: var(--ink-2);
   min-height: 34px;
-  padding: 7px 14px;
+  padding: calc(var(--space-2) - var(--space-1) / 4) calc(var(--space-3) + var(--space-1) / 2);
   font-size: var(--nav-link-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-nav);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
   transition:
     background-color 160ms ease,
@@ -387,10 +387,10 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  padding: 12px var(--sp-2);
+  padding: var(--space-3) var(--sp-2);
   color: var(--ink);
   text-align: left;
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
 }
 
 .site-menu button.active {

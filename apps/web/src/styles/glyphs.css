@@ -12,7 +12,7 @@
   font-family: var(--font-glyph);
   font-weight: var(--weight-regular);
   letter-spacing: 0;
-  line-height: 1;
+  line-height: var(--leading-label);
   text-shadow: none;
   -webkit-text-stroke: 0 currentColor;
   -webkit-text-stroke-width: 0;

@@ -16,7 +16,7 @@
 }
 
 .create-chart-step-row + .create-chart-step-row {
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }
 
 .create-chart-rail {
@@ -46,9 +46,9 @@
   z-index: 1;
   width: 18px;
   height: 18px;
-  margin-top: 22px;
+  margin-top: calc(var(--space-5) + var(--space-1) / 2);
   border: 2px solid var(--line-strong);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--surface);
 }
 
@@ -84,7 +84,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ink);
   color: var(--surface);
   font-weight: var(--weight-semibold);
@@ -127,10 +127,10 @@
   align-items: center;
   gap: 14px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--surface);
-  padding: 10px 22px 10px 10px;
+  padding: calc(var(--space-2) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2);
   text-align: left;
   box-shadow: var(--control-shadow);
 }
@@ -153,7 +153,7 @@
   gap: 8px;
   min-width: 0;
   color: var(--muted);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -163,11 +163,12 @@
   width: 100%;
   min-height: 60px;
   border: 1px solid var(--input-border);
-  border-radius: 18px;
+  border-radius: var(--radius);
   background: var(--surface-2);
   color: var(--ink);
   padding: var(--form-field-padding);
   font: inherit;
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
   text-transform: none;
 }

@@ -23,7 +23,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .aspect-row-glyphs {
@@ -34,12 +34,12 @@
   width: var(--aspect-row-glyph-width, 78px);
   min-width: var(--aspect-row-glyph-width, 78px);
   height: 25px;
-  margin-top: 1px;
+  margin-top: calc(var(--space-1) / 4);
   gap: var(--aspect-row-glyph-gap);
   font-family: var(--font-glyph);
   font-size: var(--aspect-row-glyph-size, 20px);
   font-weight: var(--weight-regular);
-  line-height: 1;
+  line-height: var(--leading-label);
   text-shadow: none;
   white-space: nowrap;
   -webkit-text-stroke: 0 currentColor;
@@ -57,7 +57,7 @@
   font-family: var(--font-glyph);
   font-size: var(--aspect-inline-icon-size, 20px);
   font-weight: var(--weight-regular);
-  line-height: 1;
+  line-height: var(--leading-label);
   text-align: center;
   text-shadow: none;
   -webkit-text-stroke: 0 currentColor;
@@ -107,7 +107,7 @@
 }
 
 .aspect-row-copy .aspect-row-subtitle:not(.ui-pill) {
-  margin-top: var(--aspect-row-subtitle-margin, 4px);
+  margin-top: var(--aspect-row-subtitle-margin, var(--space-1));
   color: var(--aspect-row-subtitle-color, var(--card-meta-color));
   font-family: var(--font-body);
   font-size: var(--aspect-row-subtitle-size, var(--text-meta-size));
@@ -175,7 +175,7 @@
   width: var(--aspect-row-meta-width, 30px);
   min-width: var(--aspect-row-meta-width, 30px);
   gap: 5px;
-  padding-top: 5px;
+  padding-top: calc(var(--space-1) + var(--space-1) / 4);
   color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--aspect-row-meta-size, var(--text-meta-size));
@@ -189,7 +189,7 @@
 .aspect-row-dot {
   width: 5px;
   height: 5px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--muted);
   opacity: 0.55;
 }
@@ -244,8 +244,8 @@
 .daily-horoscope-summary,
 .personal-timing-summary {
   display: grid;
-  gap: 10px;
-  padding: clamp(20px, 2.4vw, 28px) var(--row-px);
+  gap: var(--section-label-gap-after);
+  padding: var(--surface-card-padding);
   background: var(--card-bg);
   color: var(--ink);
 }
@@ -264,8 +264,8 @@
 }
 
 .daily-horoscope-summary__writeup {
-  margin-top: 10px;
-  padding-top: 20px;
+  margin-top: calc(var(--space-2) + var(--space-1) / 2);
+  padding-top: var(--space-5);
   border-top: 1px solid var(--card-border);
 }
 
@@ -275,7 +275,7 @@
 }
 
 .daily-horoscope-writeup__section + .daily-horoscope-writeup__section {
-  padding-top: 18px;
+  padding-top: calc(var(--space-4) + var(--space-1) / 2);
   border-top: 1px solid var(--card-border);
 }
 
@@ -309,13 +309,13 @@
   display: grid;
   gap: 8px;
   width: min(360px, 100%);
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
 }
 
 .summary-skeleton span {
   display: block;
   height: 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--card-border) 72%, transparent),
@@ -356,7 +356,7 @@
 }
 
 .personal-timing-summary li {
-  padding: 5px 8px;
+  padding: calc(var(--space-1) + var(--space-1) / 4) var(--space-2);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
   color: var(--card-meta-color);
@@ -369,8 +369,7 @@
   --updates-aspect-glyph-width: var(--aspect-row-glyph-width, 82px);
   --updates-aspect-meta-width: var(--aspect-row-meta-width, 30px);
   --updates-aspect-row-gap: var(--aspect-row-gap, 16px);
-  --updates-aspect-row-py: clamp(20px, 2.4vw, 28px);
-  --updates-aspect-row-px: var(--row-px);
+  --updates-aspect-row-padding: var(--surface-card-padding);
   --updates-aspect-copy-gap: 7px;
 
   display: grid;
@@ -379,7 +378,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .updates-aspect-row {
@@ -388,7 +387,7 @@
   align-items: start;
   width: 100%;
   gap: var(--updates-aspect-row-gap);
-  padding: var(--updates-aspect-row-py) var(--updates-aspect-row-px);
+  padding: var(--updates-aspect-row-padding);
   background: var(--card-bg);
   cursor: pointer;
   text-align: left;
@@ -421,12 +420,12 @@
   width: var(--updates-aspect-glyph-width);
   min-width: var(--updates-aspect-glyph-width);
   height: 24px;
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
   gap: 6px;
   color: var(--ink);
   font-family: var(--font-glyph);
   font-size: var(--aspect-row-glyph-size, 22px);
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
 }
 
@@ -473,8 +472,8 @@
   border-top: 1px solid var(--card-border);
   display: grid;
   gap: 10px;
-  margin-top: 8px;
-  padding-top: 14px;
+  margin-top: var(--space-2);
+  padding-top: calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .updates-aspect-row__detail span {
@@ -494,13 +493,13 @@
   width: var(--updates-aspect-meta-width);
   min-width: var(--updates-aspect-meta-width);
   gap: 6px;
-  padding-top: 2px;
+  padding-top: calc(var(--space-1) / 2);
   color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
+  line-height: var(--leading-label);
   text-align: center;
   white-space: nowrap;
 }
@@ -523,13 +522,13 @@
 
 .article-related-aspects .aspect-row.article-related-aspect-row {
   --row-bg: transparent;
-  --aspect-row-padding: 28px 0;
+  --aspect-row-padding: calc(var(--space-7) - var(--space-1)) 0;
 
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
 }
 
 .article-related-aspects .aspect-row.article-related-aspect-row:last-child {

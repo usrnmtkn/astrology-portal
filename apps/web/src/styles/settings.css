@@ -100,7 +100,7 @@ button.settings-signout-row {
 .settings-row label,
 .settings-profile-row strong,
 .account-editable-row label {
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -110,7 +110,7 @@ button.settings-signout-row {
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: var(--text-body-sm, 14px);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);
   text-transform: uppercase;
@@ -173,7 +173,7 @@ button.settings-signout-row {
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: var(--text-body-sm, 14px);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);
   text-transform: uppercase;
@@ -205,7 +205,7 @@ button.settings-signout-row {
   background: transparent;
   padding: 0;
   color: var(--ink);
-  box-shadow: none;
+  box-shadow: var(--shadow-flat);
   font-family: var(--font-body);
   font-size: var(--text-row-value);
   font-weight: var(--weight-regular);
@@ -234,7 +234,7 @@ button.settings-signout-row {
 .account-row-input:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .account-row-input::placeholder {
@@ -247,19 +247,19 @@ button.settings-signout-row {
   max-width: 100%;
   justify-self: start;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--control-bg);
-  padding: 4px;
+  padding: var(--space-1);
 }
 
 .settings-theme-control button {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--muted);
   min-width: 104px;
-  padding: 12px 24px;
-  font-weight: var(--weight-semibold);
+  padding: var(--space-3) var(--space-6);
+  font-weight: var(--weight-medium);
 }
 
 .settings-theme-control button.active {
@@ -273,15 +273,15 @@ button.settings-signout-row {
   width: 72px;
   height: 38px;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--control-bg);
-  padding: 4px;
+  padding: var(--space-1);
 }
 
 .settings-switch span {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--surface);
   box-shadow: var(--control-thumb-shadow);
 }

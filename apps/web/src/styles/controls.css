@@ -49,7 +49,7 @@
   font-family: var(--font-body);
   font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
-  line-height: 1;
+  line-height: var(--leading-label);
   letter-spacing: var(--tracking-number);
   text-align: center;
   white-space: nowrap;
@@ -84,6 +84,6 @@
 
 .segmented-control--compact .segmented-control__item {
   height: var(--segmented-item-height);
-  padding: 0 18px;
+  padding: 0 calc(var(--space-4) + var(--space-1) / 2);
   font-size: var(--text-button-size);
 }

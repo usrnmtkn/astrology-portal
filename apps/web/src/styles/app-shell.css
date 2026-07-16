@@ -76,12 +76,14 @@
 .friend-placement-column-title small,
 .eyebrow {
   display: block;
-  margin: 0;
+  margin: var(--label-eyebrow-margin);
+  padding: var(--label-eyebrow-padding);
   color: var(--muted);
-  font-size: var(--type-xs);
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-meta);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
   text-transform: uppercase;
 }
 
