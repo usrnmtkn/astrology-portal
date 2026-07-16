@@ -1,0 +1,15 @@
+{
+  "id": "A-ascendant_B-ascendant_conjunction",
+  "kind": "interaspect",
+  "planetA": "ascendant",
+  "planetB": "ascendant",
+  "aspect": "conjunction",
+  "plainTranslation": "Your first impressions click, and you come across to each other as familiar right away.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Merged from cc-synastry-web-bundle.json.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "authoringStatus": "draft",
+  "summaryShort": "Your first impressions click, and you come across to each other as familiar right away.",
+  "summaryDeep": "Your first impressions click, and you come across to each other as familiar right away. An easy, instinctive rapport. Trust the early ease, and still let the real people show up over time."
+}

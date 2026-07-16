@@ -1,0 +1,15 @@
+{
+  "id": "A-saturn_B-ascendant_conjunction",
+  "kind": "interaspect",
+  "planetA": "saturn",
+  "planetB": "ascendant",
+  "aspect": "conjunction",
+  "plainTranslation": "Their standards affect how freely you show up around them.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Merged from cc-synastry-web-bundle.json.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "authoringStatus": "draft",
+  "summaryShort": "Their standards affect how freely you show up around them.",
+  "summaryDeep": "Their standards affect how freely you show up around them. They can help you get serious or make you self-conscious. Take the steadiness; don't make yourself smaller to fit their gravity."
+}
