@@ -46,7 +46,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Confidence and opportunity open up around who you are, and doors you'd stopped knocking on start to give. You can afford to aim higher than usual right now. What grows here is a bigger, more generous version of yourself that can hold the growth. Say yes to the opportunity, sized to what you can actually honor. Because Jupiter's openings come in passes, take them as they arrive rather than all at once.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Trust in the natural flow of the universe and have faith that all will align in the perfect time.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-square-sun",
@@ -77,7 +84,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A wave of confidence swells, and the temptation is to promise or take on more than you can carry. The optimism is real; the scale is the thing to watch. What grows here is the judgment to grow without overreaching. Take the big swing, but keep it one honest size. The overreach urge returns across the passes; each one is a chance to right-size the ambition.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Trust in the natural flow of the universe and have faith that all will align in the perfect time.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-sun",
@@ -240,7 +254,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings swell, and you promise the world on a good mood or overdo the comfort to feel full. The generosity is real; the excess is the risk. What grows here is the ability to feel abundant without overindulging. Enjoy the lift and keep the emotional commitments realistic. The urge to overdo returns; each pass, feel the fullness without inflating it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Let yourself heal in the quiet moments without measuring your worth by what you accomplish.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-moon",
@@ -309,7 +330,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A hopeful, feel-good warmth flows easily and is easy to share. Emotional generosity comes without effort. What grows here is a settled sense of enough. Spread the warmth around while it's flowing.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Let yourself heal in the quiet moments without measuring your worth by what you accomplish.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-moon",
@@ -397,7 +425,7 @@
       "transiting_body": "jupiter",
       "natal_body": "mercury",
       "slots": {
-        "recurring_opportunity_scene": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver by Friday",
+        "recurring_opportunity_scene": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver",
         "trust_or_capacity_pattern": "The vision is real; the follow-through is the gap",
         "capacity_being_developed": "What grows here is the discernment to dream big and still deliver",
         "deliberate_participation": "Make the bold claim real by keeping it to what you can back up",
@@ -414,8 +442,15 @@
       "originalityCheck": "voiced original; doctrine-grounded; fits the 4F expansion frame",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
-      "expanded_narrative": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver by Friday. The vision is real; the follow-through is the gap. What grows here is the discernment to dream big and still deliver. Make the bold claim real by keeping it to what you can back up. The exaggeration urge recurs; each pass, ground the big idea in one fact.",
-      "revoice_version": "chani-quality-v1-composed"
+      "expanded_narrative": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver. The vision is real; the follow-through is the gap. What grows here is the discernment to dream big and still deliver. Make the bold claim real by keeping it to what you can back up. The exaggeration urge recurs; each pass, ground the big idea in one fact.",
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Skilled in conversation, you’re always ready to exchange ideas.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-mercury",
@@ -484,7 +519,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Ideas flow and explaining things feels natural and expansive. Mental growth comes easily now. What grows here is a wider, more generous way of thinking. Pitch the idea or start the study while the mind is this open.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "You are adaptable, you like choices, and a curious mind that enjoys exploring multiple subjects.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-mercury",
@@ -553,7 +595,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth and goodwill open up in love and money, and social life gets easy and pleasant. It's genuinely a generous stretch, so enjoy it, be generous back, and let yourself be liked. Just keep an eye on the urge to overspend or to promise more warmth than you can keep up.",
-      "revoice_version": "chani-quality-v1-authored"
+      "revoice_version": "chani-quality-v1-authored",
+      "pull_quote": {
+        "text": "Your worth isn’t defined by what you have, but by what you give and receive.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-square-venus",
@@ -584,7 +633,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Affection and appetite swell, and the temptation is to overindulge, overspend, or promise more warmth than you can sustain. The generosity is real; the excess is the trap. What grows here is the ability to enjoy abundance without overdoing it. Enjoy the pleasure and keep it to a size you won't regret. The overindulgence urge recurs; each pass, savor without overreaching.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Your worth isn’t defined by what you have, but by what you give and receive.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-venus",
@@ -710,7 +766,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Confident, enterprising energy expands your drive, and bold moves feel not just possible but easy. The appetite for more and the energy to chase it are both high. What grows here is the ability to take a big swing and follow through. Take the ambitious action, sized to what you can actually complete. Take the openings to move as they come rather than all at once.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The courage to choose differently lives here.",
+        "source": "Marie Satori (\"Sagittarius Full Moon 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-square-mars",
@@ -741,7 +804,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew. The enthusiasm is real; the overreach is the danger. What grows here is the judgment to be bold without being reckless. Take the big swing, but scale it to what you can follow through on. The urge to overreach recurs; each pass, match the ambition to the capacity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Do it, but don't confuse busyness with progress.",
+        "source": "Marie Satori (\"Weekly Horoscopes: September 7–14, 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-mars",
@@ -773,7 +843,14 @@
       "derivation_note": "opposition read as the expansion felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Drive and confidence swell together, and the risk is overreaching, overcommitting, or biting off more than you can chew. The enthusiasm is real; the overreach is the danger. What grows here is the judgment to be bold without being reckless. Take the big swing, but scale it to what you can follow through on. The urge to overreach recurs; each pass, match the ambition to the capacity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Do it, but don't confuse busyness with progress.",
+        "source": "Marie Satori (\"Weekly Horoscopes: September 7–14, 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-trine-mars",
@@ -804,7 +881,14 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Confident, well-aimed energy flows and enterprising action comes off smoothly. Effort turns into progress without a fight. What grows here is an easy, generous confidence in action. Spend the energy on the ambitious thing while the timing supports it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The courage to choose differently lives here.",
+        "source": "Marie Satori (\"Sagittarius Full Moon 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-mars",

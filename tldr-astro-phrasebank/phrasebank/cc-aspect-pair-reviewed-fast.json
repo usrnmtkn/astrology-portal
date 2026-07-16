@@ -29,7 +29,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "What you think and what you value pull slightly apart, so your words come out sweeter or sharper than you mean. It's easy to fall into softening the truth until it loses its point, which can cost you a message that's pleasant but unclear. But the friction is between honesty and harmony. Say the true thing kindly, rather than the kind thing instead of the true one.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Start small: share your real opinion, change a habit, ask for help.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-opposition-venus",
@@ -54,7 +61,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your head and your heart give different answers about someone or something. It's easy to fall into talking yourself into or out of a feeling, which can cost you a decision that argues with what you actually want. But logic and liking are pulling opposite ways. Let both the reason and the wanting have a say.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Start small: share your real opinion, change a habit, ask for help.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-square-sun",
@@ -79,7 +93,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "What you think and who you're get crossed, so you overthink your own decisions. It's easy to fall into second-guessing yourself out loud, which can cost you confidence spent arguing with your own plan. But the friction is between the idea and the ego behind it. Decide, then stop relitigating it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop minimizing what you know.",
+        "source": "Marie Satori (\"Gemini Season 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-opposition-sun",
@@ -104,7 +125,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your thinking and your will keep facing off. It's easy to fall into overexplaining to convince yourself, which can cost you a plan talked to death. But idea and identity are out of phase. Trust the decision once it's made.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop minimizing what you know.",
+        "source": "Marie Satori (\"Gemini Season 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-square-mars",
@@ -129,7 +157,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your thoughts and your temper get crossed, so words come out sharp and quick. It's easy to fall into firing off the reply before you mean to, which can cost you a message you'd take back. But the friction is between thinking and reacting. Draft it, wait, then send.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What was the fight for? What were you defending?",
+        "source": "Marie Satori (\"Mars Direct in Cancer\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-opposition-mars",
@@ -154,7 +189,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your ideas and your impulses pull opposite ways. It's easy to fall into arguing to win rather than to understand, which can cost you a debate that turns into a fight. But thought and drive are out of phase. Slow the pace before it becomes a contest.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What was the fight for? What were you defending?",
+        "source": "Marie Satori (\"Mars Direct in Cancer\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/venus-square-sun",
@@ -229,7 +271,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "What you want and how you go after it get crossed, so desire and irritation run close. It's easy to fall into pushing too hard, or going cold to protect yourself, which can cost you a connection that's all friction or all stall. But the friction is between affection and drive. Say what you want directly and let them respond.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Venus wants you to stop apologizing for having needs, to speak up about what you actually want.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/venus-opposition-mars",
@@ -254,7 +303,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your affection and your drive keep pulling opposite ways, often through another person. It's easy to fall into chasing what pulls away and cooling on what's offered, which can cost you a push-pull that exhausts everyone. But love and desire are out of phase. Want what's actually there, not what resists you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Venus wants you to stop apologizing for having needs, to speak up about what you actually want.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-sextile-venus",
@@ -374,7 +430,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your thinking and your drive cooperate, so you can say the sharp thing well and act on your ideas, and mind and action line up. What's easy to miss is that you let the idea sit, so say it and do it while the energy's there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Say it badly if you have to.",
+        "source": "Marie Satori (\"Virgo New Moon: August 23, 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/mercury-trine-mars",
@@ -398,7 +461,14 @@
       "originalityCheck": "voiced",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your mind and your drive move well together, and decisive words come easily, and thinking and doing are in sync. What's easy to miss is that you soften what you could say cleanly, so make the direct point.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Say it badly if you have to.",
+        "source": "Marie Satori (\"Virgo New Moon: August 23, 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/venus-sextile-sun",

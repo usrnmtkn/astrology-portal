@@ -57,7 +57,7 @@ HAND = {
  "cc/aspect-pair/sun-square-saturn": {
    "practical_action": "Do the boring part nobody claps for. That's the confidence that actually holds"},
  "cc/aspect-pair/moon-square-mars": {
-   "lived_scene": "feeling runs hot and the fuse is short, and you're one comment away from the reply you'll replay at 2am",
+   "lived_scene": "feeling runs hot and the fuse is short, and you're one comment away from the reply you'll keep replaying",
    "practical_action": "Move the charge through your body before it reaches your mouth"},
  "cc/aspect-pair/mercury-square-pluto": {
    "lived_scene": "a conversation turns into a quiet contest over who's right and who gets the last word",
@@ -81,7 +81,7 @@ HAND = {
  "cc/aspect-pair/saturn-conjunction-venus": {
    "practical_action": "Ask for what you need out loud, and make one thing clearer before you add another"},
  "cc/aspect-pair/jupiter-square-mercury": {
-   "recurring_opportunity_scene": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver by Friday"},
+   "recurring_opportunity_scene": "Big ideas are outrunning the receipts, and you're this close to promising something you can't deliver"},
  "cc/aspect-pair/jupiter-conjunction-venus": {
    "deliberate_participation": "Enjoy it. Just don't overspend or overpromise the warmth you can't keep up"},
  "cc/aspect-pair/mars-conjunction-midheaven": {

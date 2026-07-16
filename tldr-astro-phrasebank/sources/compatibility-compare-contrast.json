@@ -1,0 +1,711 @@
+{
+  "_meta": {
+    "title": "Compatibility compare/contrast primitives (Shared / Different / Watch / Try)",
+    "model": "Per planet, each card composes four one-line lanes: Shared (from the two signs' element/relationship), Different (each sign's trait clause), Watch (relationship-type risk), Try (relationship-type move). traits.diff = clause for different-sign cards; traits.same = plural predicate for same-sign cards.",
+    "provenance": "Sign trait clauses condensed from Marie Satori, 'As Above, So Below' (2023) — her verbatim per-sign Moon/Mercury/Venus descriptions — plus cc-planet-in-sign-reviewed. Voiced-original condensations of her words; tier voiced-original-grounded, DRAFT pending sign-off. NOT served as verbatim Marie.",
+    "relationship_types": [
+      "same_sign",
+      "same_element",
+      "opposition",
+      "complementary",
+      "friction",
+      "mixed"
+    ]
+  },
+  "signs": {
+    "aries": {
+      "element": "fire",
+      "modality": "cardinal"
+    },
+    "taurus": {
+      "element": "earth",
+      "modality": "fixed"
+    },
+    "gemini": {
+      "element": "air",
+      "modality": "mutable"
+    },
+    "cancer": {
+      "element": "water",
+      "modality": "cardinal"
+    },
+    "leo": {
+      "element": "fire",
+      "modality": "fixed"
+    },
+    "virgo": {
+      "element": "earth",
+      "modality": "mutable"
+    },
+    "libra": {
+      "element": "air",
+      "modality": "cardinal"
+    },
+    "scorpio": {
+      "element": "water",
+      "modality": "fixed"
+    },
+    "sagittarius": {
+      "element": "fire",
+      "modality": "mutable"
+    },
+    "capricorn": {
+      "element": "earth",
+      "modality": "cardinal"
+    },
+    "aquarius": {
+      "element": "air",
+      "modality": "fixed"
+    },
+    "pisces": {
+      "element": "water",
+      "modality": "mutable"
+    }
+  },
+  "planets": {
+    "moon": {
+      "function": "The Moon rules your emotions, your intuition, and the subconscious. It shows how each of you feels, soothes, and needs care.",
+      "nouns": "emotional needs, comfort habits, private reactions",
+      "traits": {
+        "aries": {
+          "diff": "Aries feels fast and fiery and wears its heart on its sleeve",
+          "same": "feel fast and fiery, quick to act on a mood"
+        },
+        "taurus": {
+          "diff": "Taurus feels deeply and grounds in comfort, stability, and the senses",
+          "same": "settle through comfort, stability, and steadiness"
+        },
+        "gemini": {
+          "diff": "Gemini feels in quick, changeable shifts and needs to talk it out",
+          "same": "process feelings by talking them out"
+        },
+        "cancer": {
+          "diff": "Cancer feels strongly and finds comfort in home, family, and the familiar",
+          "same": "seek safety in home, family, and the familiar"
+        },
+        "leo": {
+          "diff": "Leo feels dramatically and needs warmth, recognition, and appreciation",
+          "same": "need warmth and recognition to feel okay"
+        },
+        "virgo": {
+          "diff": "Virgo feels practically and settles once things are handled",
+          "same": "steady yourselves by handling the details"
+        },
+        "libra": {
+          "diff": "Libra feels balanced and needs fairness and harmony",
+          "same": "need fairness and harmony to feel settled"
+        },
+        "scorpio": {
+          "diff": "Scorpio feels intensely and privately and won't do shallow reassurance",
+          "same": "feel intensely and privately, guarding your depths"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius feels best with freedom and something to look forward to",
+          "same": "need room to breathe and a horizon ahead"
+        },
+        "capricorn": {
+          "diff": "Capricorn feels seriously and steadies through structure and goals",
+          "same": "manage feelings through structure and self-control"
+        },
+        "aquarius": {
+          "diff": "Aquarius keeps a unique, detached approach and needs emotional freedom",
+          "same": "keep a cool, independent distance from your own feelings"
+        },
+        "pisces": {
+          "diff": "Pisces feels everything and soaks up the emotional weather around it",
+          "same": "absorb the emotional weather and feel it all"
+        }
+      },
+      "shared": {
+        "same_sign": "You share the same emotional language, so you recognize each other fast.",
+        "fire": "Both fire Moons feel loudly and want to move the mood into action.",
+        "earth": "Both earth Moons steady themselves through the practical and real.",
+        "air": "Both air Moons need to understand a feeling before they can settle into it.",
+        "water": "Both water Moons read emotional tone quickly.",
+        "cross": "You both need to feel safe — you just reach for it differently."
+      },
+      "watch": {
+        "same_sign": "You can amplify the same mood instead of balancing each other out.",
+        "same_element": "One person may go quiet while the other reaches for reassurance.",
+        "opposition": "Your comfort styles can feel like opposites pulling in two directions.",
+        "complementary": "The ease can let you skip saying what you actually need.",
+        "friction": "One runs hot or practical while the other needs depth or space.",
+        "mixed": "Your timing for comfort can be off — one soothes while the other wants to move on."
+      },
+      "try": {
+        "same_sign": "When you're both low, let one of you name it out loud first.",
+        "same_element": "Name whether you need space or comfort before reacting.",
+        "opposition": "Treat the difference as two halves of care, not a verdict on who's right.",
+        "complementary": "Keep naming what you need even when things feel smooth.",
+        "friction": "Translate: name the feeling before fixing it or analyzing it.",
+        "mixed": "Say what would actually settle you instead of assuming the other knows."
+      },
+      "same_house": "You share the sign and the house, so your inner emotional lives play out in the same part of life. You are deeply in tune, which feels safe, but it also means you mirror each other's moods instead of balancing them. Watch for feeding the same fear or sinking into the same feeling together. When you are both caught in it, look outside the two of you for a different emotional perspective.",
+      "same_sign": "You share the same inner emotional world, so you feel understood without having to explain yourself. You need the same things to feel safe, and you soothe yourselves the same way. The risk is that you drop into the same mood at the same time, and neither of you is in a different enough place to lift the other out of it. When you are both low, agree that one of you names the feeling out loud first.",
+      "same_sign_quote": {
+        "text": "You can't do everything alone anymore. At least not without it breaking you.",
+        "source": "Marie Satori"
+      },
+      "verdict": {
+        "same_sign": "You read each other's moods without a word.",
+        "same_element": "You need the same things emotionally, and it comes easy.",
+        "complementary": "Your feelings just track each other.",
+        "opposition": "Your emotional needs run opposite, but they can balance if you let them.",
+        "friction": "You keep missing each other emotionally, and someone ends up feeling unseen.",
+        "mixed": "Your emotional timing rarely lines up, but it can with real effort."
+      }
+    },
+    "mercury": {
+      "function": "Mercury rules communication, intellect, and reasoning. It shows how each of you thinks, talks, and needs to be understood.",
+      "nouns": "conversation, decision-making, how each of you explains things",
+      "traits": {
+        "aries": {
+          "diff": "Aries thinks fast and speaks direct, assertive, and enthusiastic",
+          "same": "think fast and say it straight"
+        },
+        "taurus": {
+          "diff": "Taurus thinks it through and speaks measured, grounded, and practical",
+          "same": "weigh your words before speaking"
+        },
+        "gemini": {
+          "diff": "Gemini is quick-witted and loves trading ideas across many subjects",
+          "same": "move fast through ideas and love the exchange"
+        },
+        "cancer": {
+          "diff": "Cancer thinks through feeling and communicates intuitively and indirectly",
+          "same": "read the emotional subtext and speak indirectly"
+        },
+        "leo": {
+          "diff": "Leo speaks bold, creative, and confident and enjoys the floor",
+          "same": "express with flair and want to be heard"
+        },
+        "virgo": {
+          "diff": "Virgo thinks analytical and detailed and communicates clearly and usefully",
+          "same": "analyze the details and aim for precision"
+        },
+        "libra": {
+          "diff": "Libra thinks diplomatically and looks for the fair, balanced solution",
+          "same": "weigh both sides and seek fair middle ground"
+        },
+        "scorpio": {
+          "diff": "Scorpio probes for truth and prefers depth over small talk",
+          "same": "dig for the real thing and skip small talk"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius thinks big-picture and speaks open, honest, and philosophical",
+          "same": "chase the big idea and speak frankly"
+        },
+        "capricorn": {
+          "diff": "Capricorn thinks strategic and speaks clear, organized, and careful",
+          "same": "plan your words and think in strategy"
+        },
+        "aquarius": {
+          "diff": "Aquarius thinks innovative and unconventional and loves progressive ideas",
+          "same": "think against the grain and trade unconventional ideas"
+        },
+        "pisces": {
+          "diff": "Pisces thinks in images and intuition and speaks empathetically",
+          "same": "think in feeling and imagination more than fact"
+        }
+      },
+      "shared": {
+        "same_sign": "You think in the same language, so you follow each other easily.",
+        "fire": "Both fire Mercuries think fast and say it with conviction.",
+        "earth": "Both earth Mercuries want the practical, usable version of an idea.",
+        "air": "Both air Mercuries live for the exchange of ideas.",
+        "water": "Both water Mercuries read the feeling under the words.",
+        "cross": "You both want to be understood — you just get there by different routes."
+      },
+      "watch": {
+        "same_sign": "You can echo each other and miss the blind spot you share.",
+        "same_element": "One may feel over-explained while the other feels rushed.",
+        "opposition": "You can talk past each other from opposite angles.",
+        "complementary": "Easy rapport can skip the boring but necessary details.",
+        "friction": "One reads tone, the other reads logic — signals get crossed.",
+        "mixed": "One wants the headline while the other wants the whole story."
+      },
+      "try": {
+        "same_sign": "Invite a view neither of you would reach alone.",
+        "same_element": "Repeat the concrete request before reading into the motive.",
+        "opposition": "Name the shared goal before debating the method.",
+        "complementary": "Write down what you actually agreed on.",
+        "friction": "Say the plain point first, then the feeling behind it.",
+        "mixed": "Ask which they want: the short version or the long one."
+      },
+      "same_house": "You share the sign and the house, so you think alike about the same parts of life. That makes for easy agreement, but also a shared blind spot in exactly the area you talk about most. You can be certain together and both be wrong. Pressure-test your conclusions with someone who thinks differently.",
+      "same_sign": "You think the same way, so you follow each other easily and rarely have to over-explain. Conversation is quick and it feels like shorthand. The risk is an echo chamber, where you confirm each other instead of challenging each other. Deliberately bring in the view neither of you would reach on your own.",
+      "same_house_quote": {
+        "text": "Not everything that sounds good is true.",
+        "source": "Marie Satori"
+      },
+      "verdict": {
+        "same_sign": "You're on the same wavelength and barely have to explain yourselves.",
+        "same_element": "You get how the other's mind works, and talk just flows.",
+        "complementary": "Your minds click and conversation runs easy.",
+        "opposition": "You come at everything from opposite angles: sharp debate, or talking past each other.",
+        "friction": "You don't think alike, and conversations keep going sideways.",
+        "mixed": "Your minds work differently, so you have to spell things out instead of assuming you're understood."
+      }
+    },
+    "venus": {
+      "function": "Venus is the planet of love and beauty, of attraction, values, and what you find worth wanting. It shows how each of you loves and shows affection.",
+      "nouns": "affection, repair, what feels worth choosing",
+      "traits": {
+        "aries": {
+          "diff": "Aries loves passionately and thrives on the excitement of the chase",
+          "same": "love fast and hot and crave the spark"
+        },
+        "taurus": {
+          "diff": "Taurus loves through the senses and wants comfort, loyalty, and steadiness",
+          "same": "love slowly and want steady, sensual devotion"
+        },
+        "gemini": {
+          "diff": "Gemini loves through the mind and needs variety and good conversation",
+          "same": "need a mental spark and room to roam"
+        },
+        "cancer": {
+          "diff": "Cancer loves nurturing and protective, with home and family at the center",
+          "same": "love by caring, nesting, and protecting"
+        },
+        "leo": {
+          "diff": "Leo loves warm and generous and wants to be adored",
+          "same": "love grandly and want to be adored"
+        },
+        "virgo": {
+          "diff": "Virgo shows love through practical care and the small useful things",
+          "same": "show love through acts of service and steady care"
+        },
+        "libra": {
+          "diff": "Libra loves through balance, harmony, and shared partnership",
+          "same": "prize harmony, fairness, and partnership"
+        },
+        "scorpio": {
+          "diff": "Scorpio loves intense and all-in and seeks deep emotional bonding",
+          "same": "want all-in, transformative intimacy"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius loves free and adventurous and prizes honesty and space",
+          "same": "love with freedom, honesty, and a shared horizon"
+        },
+        "capricorn": {
+          "diff": "Capricorn loves mature and loyal and shows it through steadfast support",
+          "same": "show love through loyalty and follow-through"
+        },
+        "aquarius": {
+          "diff": "Aquarius loves free-spirited and unconventional and values friendship and independence",
+          "same": "love as friends first and guard your independence"
+        },
+        "pisces": {
+          "diff": "Pisces loves compassionate and selfless and seeks a spiritual bond",
+          "same": "love dreamily and merge easily"
+        }
+      },
+      "shared": {
+        "same_sign": "You love in the same language, so affection lands easily.",
+        "fire": "Both fire Venuses love with heat and want to feel chosen.",
+        "earth": "Both earth Venuses show love through steadiness and the tangible.",
+        "air": "Both air Venuses fall for the mind and the conversation first.",
+        "water": "Both water Venuses bond deep and love with feeling.",
+        "cross": "You both want to feel loved — your love languages just differ."
+      },
+      "watch": {
+        "same_sign": "You can mirror the same need and leave it unspoken.",
+        "same_element": "Similar tastes can hide different expectations of commitment.",
+        "opposition": "What one finds romantic can leave the other cold.",
+        "complementary": "The chemistry can coast without anyone tending it.",
+        "friction": "One wants closeness while the other wants space or proof.",
+        "mixed": "Your rhythms of affection can fall out of sync."
+      },
+      "try": {
+        "same_sign": "Say out loud what would actually feel like love today.",
+        "same_element": "Name what devotion looks like to each of you.",
+        "opposition": "Trade one specific gesture that reads as love to the other.",
+        "complementary": "Choose each other on purpose, not just when it's easy.",
+        "friction": "Ask for what you want instead of testing for it.",
+        "mixed": "Check what the other needs before assuming it matches yours."
+      },
+      "same_house": "You share the sign and the house, so love and worth show up in the same part of your lives. You match closely, which feels effortless, but it can also mean you share the same insecurity with no one to soften it. Do not let the ease keep you from tending the connection. Choose each other on purpose, not only when it is easy.",
+      "same_sign": "You love the same way and want the same things, so affection comes easily and you rarely have to translate what feels good. You value the same qualities. The risk is that you both wait to be pursued, or you assume the other wants exactly what you want and never say it. Name what would actually feel like love out loud.",
+      "same_sign_quote": {
+        "text": "Let yourself want what you want.",
+        "source": "Marie Satori"
+      },
+      "same_house_quote": {
+        "text": "You don't need to fix everything to deserve love.",
+        "source": "Marie Satori"
+      },
+      "verdict": {
+        "same_sign": "You love the same way, and it just works.",
+        "same_element": "You want the same things in love, and it lands.",
+        "complementary": "You love each other in ways that actually reach.",
+        "opposition": "You want opposite things in love, but you can complete each other.",
+        "friction": "Your ways of loving keep missing, and someone ends up feeling unloved.",
+        "mixed": "Your love languages don't match, but they can meet in the middle."
+      }
+    },
+    "sun": {
+      "function": "The Sun is your essential self, your identity and the spirit you lead with. It shows how each of you shines and takes up space.",
+      "nouns": "identity, direction, confidence, how each of you takes up space",
+      "traits": {
+        "aries": {
+          "diff": "Aries leads bold and direct and would rather start than wait",
+          "same": "lead bold and direct, quick to start"
+        },
+        "taurus": {
+          "diff": "Taurus knows itself slowly and solidly and won't move until it's worth it",
+          "same": "know yourselves slowly and stand your ground"
+        },
+        "gemini": {
+          "diff": "Gemini runs on curiosity and talk and tries on ideas constantly",
+          "same": "run on curiosity, talk, and variety"
+        },
+        "cancer": {
+          "diff": "Cancer is most itself while caring for someone and leads with feeling",
+          "same": "lead with feeling and care"
+        },
+        "leo": {
+          "diff": "Leo comes alive when seen and wants warmth, play, and creation",
+          "same": "come alive when seen and want the warmth"
+        },
+        "virgo": {
+          "diff": "Virgo shines by refining things and being useful",
+          "same": "shine by being useful and getting it right"
+        },
+        "libra": {
+          "diff": "Libra finds itself in relationship, in the space between two people",
+          "same": "find yourselves through relationship and balance"
+        },
+        "scorpio": {
+          "diff": "Scorpio is most itself in the deep end, where things are real and intense",
+          "same": "live in the deep end, private and intense"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius needs room to roam and a truth to chase",
+          "same": "need room to roam and a horizon"
+        },
+        "capricorn": {
+          "diff": "Capricorn knows itself by what it builds and takes responsibility for",
+          "same": "know yourselves by what you build"
+        },
+        "aquarius": {
+          "diff": "Aquarius stands a little outside the norm and wants to shift the status quo",
+          "same": "stand outside the norm and want to change things"
+        },
+        "pisces": {
+          "diff": "Pisces is most itself at the edges, where feeling and imagination blur the lines",
+          "same": "live at the edges, dreamy and porous"
+        }
+      },
+      "shared": {
+        "same_sign": "You share a core identity, so you get each other's drive instantly.",
+        "fire": "Both fire Suns lead with heat, drive, and a need to be in motion.",
+        "earth": "Both earth Suns want to build something solid and lasting.",
+        "air": "Both air Suns live in ideas, people, and perspective.",
+        "water": "Both water Suns lead from feeling and depth.",
+        "cross": "You both want to shine — you just point your light differently."
+      },
+      "watch": {
+        "same_sign": "You can compete for the same spotlight instead of sharing it.",
+        "same_element": "Similar drives can push the same way and miss the balance.",
+        "opposition": "Your directions can feel opposed, like a tug-of-war over the wheel.",
+        "complementary": "The easy respect can let you drift onto separate paths.",
+        "friction": "One leads with heat or logic while the other needs depth or ground.",
+        "mixed": "Your pace and priorities can fall out of step."
+      },
+      "try": {
+        "same_sign": "Root for each other; there's room for two to shine.",
+        "same_element": "Let each of you lead where you're actually strongest.",
+        "opposition": "Treat the opposite as the missing half, not the enemy.",
+        "complementary": "Name a shared goal you're both moving toward.",
+        "friction": "Say what you're each trying to build before deciding who's right.",
+        "mixed": "Check what matters most to each of you this season."
+      },
+      "same_house": "You share the sign and the house, so this shows up in the exact same part of life. You are fully mirrored in who you are and where you put yourself forward. The recognition is instant, but there is no one to balance the pattern, so it doubles instead of rounding out. Take turns leading, and look outside the two of you for perspective on this area, because neither of you will naturally provide it.",
+      "same_sign": "You share the same core identity, so you recognize each other fast. You lead the same way and shine in the same kind of room, and you understand what drives the other without it being explained. The catch is that you also share the same blind spot, and neither of you brings an outside angle to it. Let each of you lead where you are genuinely strongest instead of competing for the same attention.",
+      "verdict": {
+        "same_sign": "You're cut from the same cloth, and the respect is real.",
+        "same_element": "Your cores line up, plain and simple.",
+        "complementary": "You bring out the best in who the other is.",
+        "opposition": "You're built opposite at the core: magnetic, or clashing.",
+        "friction": "Your core natures don't naturally meet; understanding each other takes work.",
+        "mixed": "Your cores don't quite line up, but you can stretch each other."
+      }
+    },
+    "mars": {
+      "function": "Mars is the planet of drive and conflict, the warrior and the protector. It shows how each of you goes after what you want and handles anger.",
+      "nouns": "drive, desire, how each of you fights and pursues",
+      "traits": {
+        "aries": {
+          "diff": "Aries goes after what it wants head-on and hates sitting still",
+          "same": "go head-on and fast at what you want"
+        },
+        "taurus": {
+          "diff": "Taurus moves slowly but never stops; its drive is stubborn and lasting",
+          "same": "move slow, steady, and immovable"
+        },
+        "gemini": {
+          "diff": "Gemini fights and flirts with its wit and quick moves",
+          "same": "fight and flirt with words and quick moves"
+        },
+        "cancer": {
+          "diff": "Cancer acts to protect what's its, driven by feeling over logic",
+          "same": "act to protect what's yours, led by feeling"
+        },
+        "leo": {
+          "diff": "Leo acts with flair and pride and wants its courage seen",
+          "same": "act with flair and want the effort seen"
+        },
+        "virgo": {
+          "diff": "Virgo puts its energy into doing it right and sweating the details",
+          "same": "put your energy into doing it right"
+        },
+        "libra": {
+          "diff": "Libra pushes by persuading, not shoving, and hates a fight",
+          "same": "push by persuading and avoid the fight"
+        },
+        "scorpio": {
+          "diff": "Scorpio's drive is intense and strategic — quiet, then all the way",
+          "same": "go quiet, then all the way, strategic and intense"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius chases the big goal with enthusiasm, sometimes overshooting",
+          "same": "chase big goals, sometimes overshooting"
+        },
+        "capricorn": {
+          "diff": "Capricorn works with patient, relentless discipline toward a real result",
+          "same": "grind with patient, relentless discipline"
+        },
+        "aquarius": {
+          "diff": "Aquarius acts on principle and its own timing and resists being told how",
+          "same": "act on principle and your own timing"
+        },
+        "pisces": {
+          "diff": "Pisces' drive ebbs with its mood and moves best toward something it believes in",
+          "same": "move with your moods, best toward belief"
+        }
+      },
+      "shared": {
+        "same_sign": "You pursue and fight the same way, so you read each other's moves.",
+        "fire": "Both fire Mars pursue fast, hot, and head-on.",
+        "earth": "Both earth Mars grind steady toward a tangible result.",
+        "air": "Both air Mars fight with words, wit, and ideas.",
+        "water": "Both water Mars act on feeling and protect what matters.",
+        "cross": "You both go after what you want — you just attack it differently."
+      },
+      "watch": {
+        "same_sign": "Two matching drives can collide or double down instead of balancing.",
+        "same_element": "Similar tempers can escalate the same way at the same time.",
+        "opposition": "Your ways of going after things can feel like a standoff.",
+        "complementary": "The easy momentum can skip the follow-through.",
+        "friction": "One charges while the other stalls or simmers.",
+        "mixed": "Your timing and tactics can clash under pressure."
+      },
+      "try": {
+        "same_sign": "Point the shared energy at a target, not at each other.",
+        "same_element": "Agree on a way to cool down before it peaks.",
+        "opposition": "Split the work by who's actually better at each part.",
+        "complementary": "Decide who owns what before starting.",
+        "friction": "Name the goal and the pace out loud before acting.",
+        "mixed": "Say how you each handle conflict before you're in one."
+      },
+      "same_house": "You share the sign and the house, so your drive and your conflicts land in the same part of life. You push in sync, which is powerful, but it also means you escalate the same way at the same time. When you both get heated, no one is the calm one. Agree on how you will cool down before you need to.",
+      "same_sign": "You go after what you want the same way, so you understand each other's drive and can build real momentum together. The risk is two matching tempers colliding with nothing to absorb the shock, or both charging in the same direction and missing what you run past. Aim the shared energy at a goal, not at each other.",
+      "same_house_quote": {
+        "text": "Stop calling it stress when it's actually rage being suppressed.",
+        "source": "Marie Satori"
+      },
+      "verdict": {
+        "same_sign": "Your passion and drive are a near-perfect match.",
+        "same_element": "Your passion runs on the same fuel, and the heat is real.",
+        "complementary": "Your energies spark off each other fast.",
+        "opposition": "Your drives pull opposite ways: electric, or a standoff.",
+        "friction": "Your drives grind, and conflict comes fast.",
+        "mixed": "Your rhythms of desire don't quite sync, but they can find each other."
+      }
+    },
+    "jupiter": {
+      "function": "Jupiter is the planet of expansion and good fortune. It shows how each of you grows, hopes, and finds meaning.",
+      "nouns": "growth, faith, what each of you reaches for",
+      "traits": {
+        "aries": {
+          "diff": "Aries grows by going first and betting on itself",
+          "same": "grow by going first and betting big"
+        },
+        "taurus": {
+          "diff": "Taurus grows through patience and building; abundance comes slowly and stays",
+          "same": "grow slowly and build to last"
+        },
+        "gemini": {
+          "diff": "Gemini grows through learning and connecting ideas and people",
+          "same": "grow through learning and connection"
+        },
+        "cancer": {
+          "diff": "Cancer grows through care and roots, its fortune in home and belonging",
+          "same": "grow through care, home, and belonging"
+        },
+        "leo": {
+          "diff": "Leo grows by expressing itself fully, through confidence and creativity",
+          "same": "grow by expressing yourselves fully"
+        },
+        "virgo": {
+          "diff": "Virgo grows through craft and small, compounding improvements",
+          "same": "grow through craft and steady improvement"
+        },
+        "libra": {
+          "diff": "Libra grows through relationship and fairness; partnership expands its world",
+          "same": "grow through partnership and fairness"
+        },
+        "scorpio": {
+          "diff": "Scorpio grows through depth and transformation, by letting the shallow go",
+          "same": "grow by going deep and letting go"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius grows by reaching for meaning and horizon",
+          "same": "grow by chasing meaning and adventure"
+        },
+        "capricorn": {
+          "diff": "Capricorn grows through discipline and structure, earning its expansion",
+          "same": "grow the real way, through discipline"
+        },
+        "aquarius": {
+          "diff": "Aquarius grows through vision and community and the unconventional",
+          "same": "grow through vision and community"
+        },
+        "pisces": {
+          "diff": "Pisces grows through faith, art, and compassion, by trusting the current",
+          "same": "grow by trusting the current"
+        }
+      },
+      "shared": {
+        "same_sign": "You share a sense of what's worth reaching for.",
+        "fire": "Both fire Jupiters grow through boldness, faith, and adventure.",
+        "earth": "Both earth Jupiters grow by building something real and lasting.",
+        "air": "Both air Jupiters grow through ideas, people, and perspective.",
+        "water": "Both water Jupiters grow through feeling, depth, and belonging.",
+        "cross": "You both want to grow — you just believe in different roads."
+      },
+      "watch": {
+        "same_sign": "Shared optimism can talk big and skip the practical step.",
+        "same_element": "You can both over-expand in the same direction at once.",
+        "opposition": "Your beliefs about what matters can pull apart.",
+        "complementary": "The easy encouragement can drift without a plan.",
+        "friction": "One wants to leap while the other wants proof.",
+        "mixed": "Your ideas of growth can point different ways."
+      },
+      "try": {
+        "same_sign": "Turn one shared hope into a concrete next move.",
+        "same_element": "Let one of you play the grounded check.",
+        "opposition": "Trade what each of you is actually reaching for.",
+        "complementary": "Anchor the shared dream to a real timeline.",
+        "friction": "Name the risk you each see before deciding.",
+        "mixed": "Find the one goal you both actually want."
+      },
+      "same_house": "You share the sign and the house, so you both expand in the same part of life. That brings a lot of faith and momentum, and also a shared tendency to overdo it in the exact same place. Watch for over-promising or over-reaching together. Stay realistic while you chase the bigger thing.",
+      "same_sign": "You believe in the same things and reach for the same kind of growth, so you encourage each other easily and dream in the same direction. The risk is doubling the optimism and skipping the practical step, or reinforcing the same bias with no one to question it. Let one of you be the grounded check, and turn the shared vision into one concrete move.",
+      "verdict": {
+        "same_sign": "You chase growth in the same direction, and it clicks.",
+        "same_element": "You grow and dream on the same lines.",
+        "complementary": "You blow each other's worlds open.",
+        "opposition": "You grow opposite ways: it widens you, or splits you.",
+        "friction": "What you believe and reach for keeps rubbing wrong.",
+        "mixed": "You grow in different ways, but there is real learning here."
+      }
+    },
+    "saturn": {
+      "function": "Saturn rules structure, discipline, and limits. It shows how each of you handles responsibility and the long game.",
+      "nouns": "commitment, boundaries, how each of you handles the hard part",
+      "traits": {
+        "aries": {
+          "diff": "Aries builds discipline around action, learning to start wisely, not just fast",
+          "same": "learn to start wisely, not just fast"
+        },
+        "taurus": {
+          "diff": "Taurus builds structure around worth and security, learning what's enough",
+          "same": "learn what's truly enough"
+        },
+        "gemini": {
+          "diff": "Gemini builds discipline around its mind and voice: say less, mean more",
+          "same": "learn to say less and mean more"
+        },
+        "cancer": {
+          "diff": "Cancer's work is emotional security, building a foundation it didn't inherit",
+          "same": "build the emotional foundation you didn't inherit"
+        },
+        "leo": {
+          "diff": "Leo learns to earn recognition rather than demand it",
+          "same": "learn to earn recognition, not demand it"
+        },
+        "virgo": {
+          "diff": "Virgo's discipline is service and standards: useful, not perfect",
+          "same": "aim for useful, not perfect"
+        },
+        "libra": {
+          "diff": "Libra builds structure around commitment and fairness, learning what it owes",
+          "same": "learn what you owe and are owed"
+        },
+        "scorpio": {
+          "diff": "Scorpio's work is trust and control, learning what's safe to depend on",
+          "same": "learn what's safe to trust and loosen control"
+        },
+        "sagittarius": {
+          "diff": "Sagittarius builds discipline around belief, testing faith instead of borrowing it",
+          "same": "test your faith instead of borrowing it"
+        },
+        "capricorn": {
+          "diff": "Capricorn's structure is authority and time; it becomes its own authority",
+          "same": "become your own hard-won authority"
+        },
+        "aquarius": {
+          "diff": "Aquarius builds discipline around vision, turning ideals into things that hold",
+          "same": "turn ideals into things that actually hold"
+        },
+        "pisces": {
+          "diff": "Pisces' work is faith and boundaries, giving form to the formless",
+          "same": "give form to the formless"
+        }
+      },
+      "shared": {
+        "same_sign": "You carry the same lesson, so you understand each other's weight.",
+        "fire": "Both fire Saturns learn to temper drive with patience.",
+        "earth": "Both earth Saturns build slow, real, and made to last.",
+        "air": "Both air Saturns turn ideas into commitments that hold.",
+        "water": "Both water Saturns learn where it's safe to depend and trust.",
+        "cross": "You both take the long game seriously — in different arenas."
+      },
+      "watch": {
+        "same_sign": "You can reinforce the same fear or limit instead of easing it.",
+        "same_element": "Similar discipline can turn rigid or cold together.",
+        "opposition": "Your sense of duty can pull in opposite directions.",
+        "complementary": "The steady respect can quietly become all obligation.",
+        "friction": "One tightens control while the other needs slack.",
+        "mixed": "Your timelines and standards can grind against each other."
+      },
+      "try": {
+        "same_sign": "Be the one who reminds the other it's allowed to be enough.",
+        "same_element": "Schedule the warmth, not just the work.",
+        "opposition": "Agree on who carries what before resentment builds.",
+        "complementary": "Name what would actually feel like support.",
+        "friction": "Say what you each need to feel secure.",
+        "mixed": "Define what 'done' and 'enough' mean to each of you."
+      },
+      "same_house": "You share the sign and the house, so the same area of life is where you both feel the pressure to prove yourself. You understand each other's weight, which is a comfort, but you can also pile it on in the exact same place. Watch for turning support into shared hardness. Lighten the load for each other instead of matching it.",
+      "same_sign": "You carry the same lesson, so you take each other's responsibilities seriously and understand each other's fears without explanation. The risk is reinforcing the same limit or fear instead of easing it, and getting heavy together. Be the one who reminds the other it is allowed to be enough, and do not let discipline become a contest over who has it harder.",
+      "same_sign_quote": {
+        "text": "Stop wearing burnout like a badge of honor. It's just burnout.",
+        "source": "Marie Satori"
+      },
+      "same_house_quote": {
+        "text": "Your pace is not too slow.",
+        "source": "Marie Satori"
+      },
+      "verdict": {
+        "same_sign": "You carry the same weight, and you can carry it together.",
+        "same_element": "Your sense of duty runs on the same track.",
+        "complementary": "You shore up each other's discipline.",
+        "opposition": "Your senses of duty pull opposite ways.",
+        "friction": "You handle limits and fear so differently it can wear on you.",
+        "mixed": "Your discipline works differently, but if you learn to work together you carry more than either could alone."
+      }
+    }
+  }
+}

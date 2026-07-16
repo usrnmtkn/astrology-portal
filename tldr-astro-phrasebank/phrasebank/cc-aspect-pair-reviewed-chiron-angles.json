@@ -78,7 +78,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old wound about your right to simply exist keeps rubbing against how you have to show up. You brace for rejection before you've even entered the room. Show up as yourself once, without the armor.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "You are enough even when you feel minuscule.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-trine-ascendant",
@@ -106,7 +113,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can wear the old wound lightly, and it becomes part of what makes you approachable. People feel safe with you because you're not pretending to be unhurt. Let the healed-enough wound be visible; it's a gift.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "You are enough even when you feel minuscule.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-sextile-ascendant",
@@ -240,7 +254,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old wound about achievement and being good enough collides with your public path. You read professional setbacks as proof you don't belong. Take the next real step; the wound doesn't decide your worth.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-trine-midheaven",
@@ -268,7 +289,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can turn the old worth-wound into work that actually helps others. Your vocation carries real compassion because you know the ache. Build the public work that heals what wounded you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Stop measuring your worth by your output.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-sextile-midheaven",
@@ -558,7 +586,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old family wound keeps rubbing against the home you're trying to build now. The past reaches into your present base uninvited. Name the inherited wound instead of passing it on.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The ones you said you were done with, but never really left behind.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-trine-ic",
@@ -586,7 +621,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can heal the family wound and make home a actually safe place. Your private base becomes the refuge you always needed. Make home the safety you can now give yourself.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The ones you said you were done with, but never really left behind.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/chiron-sextile-ic",

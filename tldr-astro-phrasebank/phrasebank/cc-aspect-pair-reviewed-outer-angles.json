@@ -54,7 +54,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Who you are and how you show up is being rewired, and you can't go back to the old version. You feel the pull to break the image people have of you. Let the change happen in one real, reversible step instead of all at once.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The way you are seen is changing.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-square-ascendant",
@@ -82,7 +89,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "How you present keeps colliding with a restlessness you can't sit still inside. The urge to blow something up to feel free spikes. Change one bounded thing before you upend the whole life.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The walls around you are trembling.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-trine-ascendant",
@@ -110,7 +124,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can reinvent how you come across without a crisis to force it. A freer, more original you is easy to try on. Take the unconventional move while it's this low-risk.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The way you are seen is changing.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-ascendant",
@@ -140,7 +161,14 @@
       "derived_from": "cc/aspect-pair/uranus-trine-ascendant",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can reinvent how you come across without a crisis to force it. A freer, more original you is easy to try on, but only if you take the opening. Take the unconventional move while it's this low-risk.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The walls around you are trembling.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-opposition-ascendant",
@@ -198,7 +226,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your public path is being disrupted, and the career you built may no longer fit who you're becoming. You feel done with the role before you have the next one. Experiment at the edges before you torch the whole position.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What’s shifting now is not negotiable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-square-midheaven",
@@ -226,7 +261,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your ambition keeps jolting against a structure that won't hold you anymore. The itch to quit or reinvent gets loud. Test a bounded change instead of a dramatic exit.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What’s shifting now is not negotiable.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-trine-midheaven",
@@ -254,7 +296,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An original, unconventional path opens in your work. You can do it your own way and be backed for it. Take the unusual professional opening now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Where have you convinced yourself that growth means staying put?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-midheaven",
@@ -284,7 +333,14 @@
       "derived_from": "cc/aspect-pair/uranus-trine-midheaven",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "An original, unconventional path opens in your work. You can do it your own way and be backed for it, but only if you take the opening. Take the unusual professional opening now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Where have you convinced yourself that growth means staying put?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-opposition-midheaven",
@@ -342,7 +398,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your closest relationships get shaken awake, and the terms you settled into stop fitting. You or a partner needs room the old arrangement didn't allow. Renegotiate the space out loud instead of bolting.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-square-descendant",
@@ -370,7 +433,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "A close relationship keeps disrupting the stability you counted on. Freedom and closeness feel briefly at war. Name the need for room directly instead of acting it out.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "You’re realizing that authenticity and belonging aren’t always found in the same places.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-trine-descendant",
@@ -486,7 +556,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your home and roots get disrupted, and where you belong is up for redefinition. You feel the urge to move, change the setup, or break from the family script. Change one real thing about the base before you uproot it all.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "If the foundation crumbles, who do you become?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-square-ic",
@@ -514,7 +591,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home and family keep jolting against your need for independence. The old foundation feels too tight. Loosen one household constraint instead of walking out.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "If the foundation crumbles, who do you become?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/uranus-trine-ic",
@@ -630,7 +714,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "The edges of who you're go soft, and the clear self-image you had starts to dissolve. People read you differently, and you're less sure how you come across. Ground the day in one concrete task while the identity reforms.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What’s in motion now is still unfolding.",
+        "source": "Marie Satori (\"Total Lunar Eclipse in Virgo\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-square-ascendant",
@@ -658,7 +749,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "How you present keeps blurring, and you're easily misread or misled about yourself. Confusion about who you're creeps in. Handle the next real thing instead of deciding who you're from inside the fog.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "But you don’t get to simply float here.",
+        "source": "Marie Satori (\"Pisces New Moon\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-trine-ascendant",
@@ -686,7 +784,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "A softer, more compassionate way of being yourself flows in. You can dissolve an old rigidity in how you show up. Give the gentler self one concrete form.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What’s in motion now is still unfolding.",
+        "source": "Marie Satori (\"Total Lunar Eclipse in Virgo\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-sextile-ascendant",
@@ -716,7 +821,14 @@
       "derived_from": "cc/aspect-pair/neptune-trine-ascendant",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "A softer, more compassionate way of being yourself flows in. You can dissolve an old rigidity in how you show up, but only if you take the opening. Give the gentler self one concrete form.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "But you don’t get to simply float here.",
+        "source": "Marie Satori (\"Pisces New Moon\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-opposition-ascendant",
@@ -774,7 +886,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your sense of vocation dissolves and reforms, and the old definition of success loses its hold. You're pulled toward meaning over status, sometimes into fog. Take one grounded professional step while the calling clarifies.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Is it a true reflection of who you are, or have you settled for what feels safe?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-square-midheaven",
@@ -802,7 +921,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your public direction keeps going out of focus, and effort seems to drain into mist. Motivation and clarity both slip. Do one concrete, checkable task instead of forcing the whole vision.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Is it a true reflection of who you are, or have you settled for what feels safe?",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-trine-midheaven",
@@ -918,7 +1044,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "A close relationship turns idealized and porous, and the line between you and them blurs. You see the best in them, sometimes more than is there. Enjoy the tenderness and keep one foot in what's actually offered.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-square-descendant",
@@ -946,7 +1079,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "A close relationship keeps dissolving into confusion, projection, or quiet disillusion. Who owes what and who is who gets murky. Wait to decide until you can see the person plainly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Vulnerability is not weakness; it’s the courage to show up without armor, to let connection transform you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-trine-descendant",
@@ -1062,7 +1202,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home and roots go dreamy and undefined, and your sense of where you belong loosens. The private base feels both softer and less solid. Keep one concrete anchor at home while things reshape.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "This is the point where you let go.",
+        "source": "Marie Satori (\"Pisces New Moon\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-square-ic",
@@ -1090,7 +1237,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home or family keeps dissolving into confusion or a longing you can't place. The foundation feels foggy. Handle one practical home thing rather than the whole diffuse mood.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "This is the point where you let go.",
+        "source": "Marie Satori (\"Pisces New Moon\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-trine-ic",
@@ -1118,7 +1272,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home becomes a source of peace, imagination, and quiet retreat. Your private base softens in a healing way. Make one restful, beautiful corner of home.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "This is where you let the ocean decide.",
+        "source": "Marie Satori (\"Pisces Season\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-sextile-ic",
@@ -1148,7 +1309,14 @@
       "derived_from": "cc/aspect-pair/neptune-trine-ic",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "Home becomes a source of peace, imagination, and quiet retreat. Your private base softens in a healing way, but only if you take the opening. Make one restful, beautiful corner of home.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "This is where you let the ocean decide.",
+        "source": "Marie Satori (\"Pisces Season\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/neptune-opposition-ic",
@@ -1206,7 +1374,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Who you're is being rebuilt from the ground, and a hollow version of your identity is being stripped away. You feel intense, exposed, and unable to fake it. Let the false layer go instead of gripping for control.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The old version of you is dead.",
+        "source": "Marie Satori (\"Uranus Direct in Taurus 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-square-ascendant",
@@ -1234,7 +1409,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "How you show up keeps colliding with a demand to get real about power and honesty. A confrontation with a hollow self-image intensifies. Let what's false fall away rather than defending it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Transformation isn't the breakdown, refusing it will be.",
+        "source": "Marie Satori (\"Full Moon in Taurus\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-trine-ascendant",
@@ -1262,7 +1444,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can transform how you come across with a deep, quiet authority. Your presence carries real weight without a fight. Point the intensity at one honest change you want to lead.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What was once unclear now sharpens into focus.",
+        "source": "Marie Satori (\"Venus Retrograde 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-sextile-ascendant",
@@ -1292,7 +1481,14 @@
       "derived_from": "cc/aspect-pair/pluto-trine-ascendant",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can transform how you come across with a deep, quiet authority. Your presence carries real weight without a fight, but only if you take the opening. Point the intensity at one honest change you want to lead.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What was once unclear now sharpens into focus.",
+        "source": "Marie Satori (\"Venus Retrograde 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-opposition-ascendant",
@@ -1322,7 +1518,14 @@
       "derived_from": "cc/aspect-pair/pluto-conjunction-descendant",
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "expanded_narrative": "Your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force. Intensity, power, and honesty enter a close bond, felt from the opposite side of the axis. Get clear on what you actually want before the intensity decides.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Transformation isn't the breakdown, refusing it will be.",
+        "source": "Marie Satori (\"Full Moon in Taurus\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-conjunction-midheaven",
@@ -1350,7 +1553,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your public role is being transformed, and a version of your ambition has to die for a truer one to rise. Power, exposure, or a reckoning enters your career. Rebuild the vocation on what's real, and release what was only status.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The structures we once relied on are breaking.",
+        "source": "Marie Satori (\"Uranus Direct in Taurus 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-square-midheaven",
@@ -1378,7 +1588,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your ambition keeps colliding with a power you can't overpower. A control struggle in your work intensifies. Aim the drive at real change, not at winning the power fight.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "The structures we once relied on are breaking.",
+        "source": "Marie Satori (\"Uranus Direct in Taurus 2025\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-trine-midheaven",
@@ -1494,7 +1711,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Your closest relationships are transformed, and what's been imbalanced or hidden surfaces with force. Intensity, power, and honesty enter a close bond. Get clear on what you actually want before the intensity decides.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "It reveals why it was never truly yours.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-square-descendant",
@@ -1522,7 +1746,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "A close relationship keeps forcing a reckoning with control, trust, or power. Jealousy or an old imbalance erupts. Name the imbalance plainly instead of reacting to the charge.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "It reveals why it was never truly yours.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-trine-descendant",
@@ -1638,7 +1869,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home, family, and your roots are transformed, and something buried in the foundation surfaces to be dealt with. Old family power dynamics or a deep purge of the base come up. Face what surfaces and rebuild the foundation on truth.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What rises now is not new.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-square-ic",
@@ -1666,7 +1904,14 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "Home or family keeps forcing a confrontation with old, buried power. A foundational control struggle intensifies. Deal with the specific buried thing instead of the whole history.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "What rises now is not new.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/pluto-trine-ic",

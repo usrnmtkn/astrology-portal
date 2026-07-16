@@ -54,6 +54,37 @@ body sections. Content is fine; rendering must follow the served-fields contract
 Render **only** the reader-facing fields named in `cc-served-fields.json` for that surface, in order.
 **Never** render any field in `internal_blacklist`. Never render the same text twice.
 
+## Staged CONFIRMED book source — not app-renderable yet
+`sources/book-as-above-extract.json` is a staged CONFIRMED reference source mined from Marie Satori's
+*As Above, So Below* (2023). It is verbatim book text, tier `CONFIRMED`, status `DRAFT`, and is **not**
+yet wired into served surfaces. Do not import this raw source into the app and do not hand-render it
+directly.
+
+Coverage in the staged source:
+- `planet_in_sign` — 10 planets x 12 signs, with Pluto in Virgo pending.
+- `house_meanings` — 12/12.
+- `empty_houses` — 12/12 keywords.
+- `sign_archetypes` — 12/12.
+- `planet_archetypes` — 7/10, with Sun/Moon/Venus pending.
+
+Do not duplicate or overwrite the already-authored served surfaces:
+- `cc-planet-in-house-reviewed` — 120 rows, `house_integration` / `home_scene`.
+- `cc-transit-house` — transits through natal houses.
+- `cc-planet-in-sign-reviewed` — natal placement by sign. The book's `planet_in_sign` is a verbatim
+  cross-check/enrichment source, not a replacement.
+
+The serving path is: content-library builder folds the book material into served phrasebank files and
+adds `cc-served-fields.json` contract entries; the app renders only those served fields. Once served
+files land, wire these overview surfaces:
+- Sign detail / overview page → served `sign_archetypes`.
+- Planet detail / overview page → served `planet_archetypes`.
+- House detail / reference page → served `house_meanings`.
+- Empty-house surface → served `empty_houses`, checked against existing `build_empty_house.py` output
+  so the reading does not double up.
+
+Known gaps not in the book: two-planet aspects, transit-to-natal aspects, ingresses, and
+full/new-moon-by-sign. Keep current authored/fallback content for those.
+
 ## Serve the reader field VERBATIM — do not re-compose it
 The reader fields are already finished, Marie-voiced sentences. Print them as-is. **Do NOT**
 re-generate the section from planet-topic + sign vocab with a scaffold like
@@ -116,6 +147,104 @@ FOOTER         the `astro` field verbatim ("The astro: …"), if present. Footer
 
 Do not use fixed generic labels (Overview / What it means / How it shows up) that force the same text
 into three slots. Use the labels above, and render only sections that have real content.
+
+## Compatibility cards — compare/contrast (replaces the app-generated template)
+The Friends → Compatibility planet cards must **compare and contrast**, not stack two placement
+descriptions. Delete the app composers flagged in the compatibility error report
+(`signExpression` "…moves through your {planet} topics with a {element}-led {modality} rhythm",
+`planet.toLowerCase()+" topics"`, `planetFunction` `.split(", ").slice(0,3)`, and the generic
+same-sign "recognition / blind spot" sentence). Serve authored content from
+`cc-compatibility-cards.json` instead:
+
+```
+cards[planet][you_sign][their_sign] = { function, nouns, shared, different, watch, try, relationship }
+```
+
+Render each planet card as four labeled lanes, in order — **Shared · Different · Watch · Try** — each
+one line, plus the `function` line as the lead and `nouns` in place of "{planet} topics". Example
+(Moon · You: Scorpio · Them: Cancer):
+- **Shared** — Both water Moons read emotional tone quickly.
+- **Different** — Scorpio protects deep, private feelings and skips shallow reassurance; Cancer seeks familiar safety in home and chosen people.
+- **Watch** — One person may go quiet while the other reaches for reassurance.
+- **Try** — Name whether you need space or comfort before reacting.
+
+The exact same-planet aspect (e.g. "your Moon trine their Moon · orb 2°") still renders as a receipt
+chip; name the aspect first, don't hide it behind soft verbs ("supports/opens/faces"). Content is
+built by `tests/build_compatibility_cards.py` from `sources/compatibility-compare-contrast.json`;
+tier voiced-original-grounded, DRAFT pending editorial sign-off.
+
+### Long-form "Go Deeper" write-up (Co-Star style)
+For the expanded per-planet view, serve `phrasebank/cc-compatibility-writeups.json` (same lookup shape:
+`cards[planet][you_sign][their_sign]`, planet/sign keys lowercase). It renders as flowing prose, in order:
+```
+cards[planet][you][them] = { glyph, match, function, your_line, their_line, synthesis,
+                             relationship, same_sign, house_hint, same_house_line }
+```
+- `match` — a short verdict label shown near the planet heading (Mirrored / Naturally in sync / Easy chemistry / Opposites that complete / Needs translation / Mixed signals).
+- `function` → lead sentence; `your_line` → "Your {Planet} is in {Sign}, meaning …" (Marie's **verbatim** book description); `their_line` → "Their {Planet} is in {Sign}, meaning …" (same description, pronoun-shifted); `synthesis` → closing dynamic + adjustment.
+Serve all four verbatim as-is — do NOT re-compose. Use the summary card (Shared/Different/Watch/Try) as
+the default view and this write-up as the "Go Deeper+" expansion. Descriptions are Marie's reviewed
+article voice (`natal_sign_story`), `their_line` pronoun-shifted, `synthesis`/`match` voiced-original;
+all DRAFT pending sign-off. Built by `tests/build_compatibility_writeups.py`.
+
+**Card structure follows Co-Star:** three moves — planet definition (`function`), the placements, then a
+blunt one-line **`verdict`** as the closer (Co-Star's evaluative judgment, e.g. "Your ways of loving are
+very compatible" / "You don't really understand how each other thinks, and you may frequently argue").
+The `verdict` is keyed to the pair's element relationship and is the last line on every card.
+
+- **Different-sign:** `function` → `your_line` → `their_line` → `verdict`.
+- **Same-sign** (`same_sign: true`): `function` → `your_line` ("You both have Sun in Aquarius, meaning …",
+  `their_line` empty) → `same_sign_line` (the shared-sign dynamic) → `verdict`.
+  Do NOT render `same_sign_quote` (it is always `null` now — no standalone attributed quote block).
+
+`synthesis` is legacy (advisory watch+try) and is superseded by `verdict`; do not render it.
+
+**Do NOT name or branch on houses.** Compatibility runs on signs only (houses need birth times that
+aren't always available), so there is no house differentiation and no "both live in the Nth house"
+copy. Ignore any house data even when present.
+
+## EXACT DYNAMICS (synastry contact lanes: What flows / Challenges / Mixed)
+
+Below the planet-comparison cards, the Compatibility view lists the two charts' actual inter-aspects,
+grouped into **What flows** (trine/sextile), **Challenges** (square/opposition), and **Mixed or
+charged** (conjunction). Every row must render a body — `scene. dynamic. navigation.` — not just a
+title + orb.
+
+**Root cause of the blank rows (fix required):** the app resolves each contact's body from the
+relationship knowledge bundle (`packages/astro-knowledge` → `synastryAspects`). Those records only
+carry an abstract DRAFT `plainTranslation` ("A's growth meets B's growth") with empty `summaryShort`/
+`summaryDeep`, and no angle/outer coverage — so `synastryContactSummary` returns empty for every
+**cross-planet** contact. Only **same-planet** contacts render, because they use the hardcoded
+`samePlanetSynastryFallback` code path, not content. That is exactly why the PDF shows a body on
+Moon△Moon but blanks on Asc□Neptune, Saturn□Asc, Mars□Moon, and Mars☌MC.
+
+**Content is ready:** `phrasebank/cc-synastry-web-bundle.json` (built by `tests/build_synastry_web_bundle.py`
+from the complete `cc-synastry-reviewed`) contains Marie-voiced `summaryShort` + `summaryDeep` for
+**every** contact among the 12 points the app aspects (5 personal + 5 social/outer + Asc/MC), all 5
+aspects — 720 records, in the bundle's own record shape (`id: "A-<their>_B-<your>_<aspect>"`).
+
+**Codex tasks:**
+1. Merge `cc-synastry-web-bundle.json` `synastryAspects` into the `@tldr/astro-knowledge` relationship
+   bundle by `id`, filling `summaryShort`/`summaryDeep` (keep existing `plainTranslation`/`policy`).
+2. Render the body on **every** row in all three lanes — `summaryShort` as the row summary,
+   `summaryDeep` (scene. dynamic. navigation.) on expand — not only the featured contact.
+3. Bespoke pairs are richer; the rest compose from Marie's contribute/receive banks. All **DRAFT**
+   pending editorial sign-off (not prod-LIVE until Marie signs off).
+4. Directionality is `their → your` (planetA = their, planetB = your); the registry already aliases
+   the reverse, so one record per contact is enough.
+
+## Pull-quote de-duplication (transit feed)
+`pull_quote.text` is an OPTIONAL verbatim-Marie closer (tier CONFIRMED). Transit pull-quotes in
+`TRANSIT-PULLQUOTE-REVIEW.md` are editorially signed off as of July 15, 2026 and may serve verbatim.
+On a given day a chart can activate several transit-to-natal cards at once, and a Marie line may be
+attached to more than one aspect pair. **A reader must never see the same pull_quote twice in one
+day/feed.** Rule: when assembling the day's transit cards, keep the `pull_quote` only on the single
+tightest-orb card that carries a given line, and drop the `pull_quote` from every other card that
+would show the same text. If two cards have the same orb, keep it on the earlier card in the feed's
+existing deterministic sort order. The card body (`expanded_narrative`) still renders — only the
+duplicate closer is suppressed. This is a hard guarantee independent of how the quotes are attached;
+the content build also caps each line to ≤2 transit pairs so this rule rarely has to fire (see
+`tests/test_pullquote_collisions.py`, which simulates typical days and gates the raw collision rate).
 
 ## The 7 errors → the rule that fixes each
 1. **Duplicate copy across TLDR/Overview/What-it-means** → TLDR pill is a distinct short summary shown

@@ -2,7 +2,8 @@
 # Reproducible build of the whole reviewed bank, in order.
 #   MS_PATH  = path to marie-source-phrases.json (for the CONFIRMED corpus)
 #   MADLIBS  = path to TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md (for the harness)
-#   SRC_DIR  = path to sources/ (cc + marie phrase banks, for validate.py provenance)
+#   SRC_DIR  = path to phrasebank sources/ (compatibility source + madlibs for builders)
+#   VALIDATE_SRC_DIR = path to legacy cc + marie source banks for validate.py provenance
 set -e
 cd "$(dirname "$0")/.."
 
@@ -23,7 +24,12 @@ python3 tests/tone_pass.py >/dev/null
 python3 tests/build_transit_revoice.py >/dev/null
 
 echo "3/4  extracting CONFIRMED corpus + attaching pull-quotes + Marie advice…"
-python3 tests/build_confirmed_quotes.py >/dev/null
+python3 tests/build_confirmed_quotes.py
+python3 tests/build_audit_replacements.py >/dev/null
+python3 tests/build_compatibility_cards.py >/dev/null
+python3 tests/build_compatibility_writeups.py >/dev/null
+python3 tests/build_synastry_web_bundle.py >/dev/null
+python3 tests/build_natal_source_grounded_bundle.py >/dev/null
 python3 tests/build_ms_article_quotes.py >/dev/null
 python3 tests/build_marie_site_templates.py >/dev/null
 python3 tests/build_horoscope_templates.py >/dev/null
@@ -63,5 +69,7 @@ python3 tests/render_transit_house.py 2>&1 | grep -E "^RESULT|FAILURES"
 python3 tests/render_transit_activation.py 2>&1 | grep -E "^RESULT|FAILURES"
 python3 tests/render_gap_surfaces.py 2>&1 | grep -E "^RESULT|FAILURES"
 python3 tests/render_composite_typed.py 2>&1 | grep -E "^RESULT|FAILURES"
-python3 tests/validate.py 2>&1 | tail -1
+python3 tests/test_pullquote_collisions.py 2>&1 | grep -E "^GATE|COVERAGE|avg active"
+python3 tests/test_no_surfaced_dates.py
+SRC_DIR="${VALIDATE_SRC_DIR:-$SRC_DIR}" python3 tests/validate.py
 python3 tests/consolidate.py 2>&1 | tail -3

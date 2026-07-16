@@ -34,7 +34,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A pull to break from who you're supposed to be turns sharp and sudden. It's easy to fall into bolting or blowing something up just to feel free, which can cost you a rupture you didn't think through. But the restlessness is marking where you've outgrown one role, not proof the whole life is wrong. Change one real thing you can undo. You don't have to blow up the whole life to feel free.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Sudden insights about who you are and what you stand for will reshape your identity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-square-mars",
@@ -61,7 +68,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and your sense of self get crossed, and everything starts feeling like a fight to win. It's easy to fall into flaring up and acting before you think it through, which can cost you a clash with someone you didn't actually mean to make. But there's real power here, it just needs a target that's the work rather than the person. Spend the heat on the task and slow down before you swing.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Not failure, failure has never scared you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-opposition-mars",
@@ -88,7 +102,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your push to act keeps landing against someone else's, and the friction is constant. It's easy to fall into meeting force with force until it becomes a standoff, which can cost you energy burned on the contest instead of the goal. But the drive is usable once it stops needing an opponent. Name what you're actually trying to build and put the energy there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Not failure, failure has never scared you.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/jupiter-square-chiron",
@@ -115,7 +136,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your faith or optimism scrapes against an old sore spot about whether you're allowed to want more. It's easy to fall into overpromising to outrun the doubt, or talking the hope down to avoid the wound, which can cost you a belief inflated past what it can hold, or a real chance talked down. But the tender place is where the growth actually has to pass through, not around. Name the limit honestly and let the hope stay real but sized.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Boundary work becomes sacred.",
+        "source": "Marie Satori (\"What Jupiter in Cancer Means for Your Sign\") — full-corpus audit",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-sextile-neptune",
@@ -193,7 +221,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can be deep and honest about who you're without a fight, and the power transforms you when you aim it inward rather than at controlling others. What's easy to miss is that you stay on the surface to avoid the intensity, so let one real thing change and use the depth on purpose.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "A release of something that was never truly yours.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-trine-pluto",
@@ -219,7 +254,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A steady, intense sense of purpose is available and people feel your influence without a struggle, and depth and leadership come easily now, the only risk is getting dogmatic. What's easy to miss is that you let the drive idle or turn it into quiet control, so point the intensity at one real change you want to lead, before it turns into control.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "A release of something that was never truly yours.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-sextile-uranus",
@@ -245,7 +287,14 @@
       "review_note": "grounded in reference doctrine; needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A fresh, original version of yourself is easy to try on, and your individuality is an asset here, not a liability. What's easy to miss is that you default to the expected version out of habit, so try the unconventional approach that actually appeals to you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "chani-quality-v1-composed",
+      "pull_quote": {
+        "text": "Sudden insights about who you are and what you stand for will reshape your identity.",
+        "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
+        "tier": "CONFIRMED",
+        "use": "optional serve-verbatim closer / standalone card",
+        "match": "transit-theme auto-match; verbatim Marie; DRAFT pending editorial sign-off"
+      }
     },
     {
       "id": "cc/aspect-pair/sun-trine-uranus",

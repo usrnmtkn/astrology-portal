@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "title": "Clean per-sign descriptions for compatibility write-ups (verbatim, Marie Satori 'As Above So Below' 2023)",
+    "tier": "CONFIRMED",
+    "status": "DRAFT"
+  },
+  "descriptions": {
+    "sun": {
+      "aries": "you radiate energy and courage. You have a pioneering spirit, a love of competition, and a knack for initiating new projects. You value your independence and aren't afraid to walk your path boldly and confidently.",
+      "taurus": "you exude steadiness, reliability, and a deep connection with the physical world. You appreciate beauty and comfort, and you're likely to build a life that engages your senses. You show your tenacity in achieving goals and can be quite unyielding once your mind is set.",
+      "gemini": "you embody versatility, curiosity, and a need for variety.",
+      "cancer": "you exude nurturing energy and emotional sensitivity. You highly value family and home and take pride in caring for loved ones. You're guided by your emotions and intuition, and you have an innate ability to provide comfort and security to those around you.",
+      "leo": "you radiate warmth, generosity, and a zest for life. Your presence is often magnetic, drawing others to you naturally. You shine when expressing your creativity and have a strong drive for personal recognition and a desire to be at the center of attention.",
+      "virgo": "you personify efficiency, practicality, and a focus on service. You're detail–oriented and often drawn to tasks that involve analysis or helping others. You shine when precision and care are needed, and your work ethic is second to none.",
+      "libra": "you reflect balance, harmony, and a knack for partnership. You are socially oriented, often striving to create peace and fairness in your surroundings. Your charm and diplomatic skills allow you to navigate relationships with grace and ease.",
+      "scorpio": "you emanate depth, transformation, and intensity. You thrive on emotional intimacy and are unafraid to dive into life's more profound mysteries. Your determination is unyielding, and your passions run deep, allowing you to navigate life's ups and downs with resilience.",
+      "sagittarius": "you reflect a love of freedom, adventure, and truth–seeking. You're drawn to exploring life's big questions and aren't afraid to roam far and wide in your search for answers. Your optimistic nature and broad–minded outlook make you a natural philosopher.",
+      "capricorn": "you exude discipline, ambition, and a strong sense of responsibility. You have a natural knack for management and strategy, and you shine when setting long–term goals. Your practical and cautious approach to life is often a model of success for others.",
+      "aquarius": "you embody individuality, innovation, and a deep sense of humanitarianism. You thrive on uniqueness and often seek to challenge the status quo. You shine in situations where you can utilize your inventive mind and make a difference in the world.",
+      "pisces": "you emanate empathy, spiritual depth, and a strong intuitive sense. You are in tune with the collective unconscious and often show a selfless desire to help others. Your imaginative and compassionate nature allows you to navigate the world with grace and sensitivity."
+    },
+    "moon": {
+      "aries": "your emotions are intense and fiery. You experience emotions in a spontaneous and impulsive manner, often wearing your heart on your sleeve. Your instinctive nature is to take action, and you seek emotional independence and freedom.",
+      "taurus": "your emotions run deep and are grounded in the material world. You seek comfort, stability, and security. You appreciate the simple pleasures of life and find solace in nature and the physical senses.",
+      "gemini": "your emotions are quick and changeable. You have a curious and adaptable nature, and your feelings are often expressed through communication and mental stimulation. Your emotional well–being depends on variety and mental engagement.",
+      "cancer": "you experience emotions strongly and deeply. Your nurturing instincts are heightened, and you have a strong connection to home, family, and your roots. You seek emotional security and find comfort in familiar environments.",
+      "leo": "your emotions are dramatic and passionate. You have a need for recognition and appreciation, and your feelings often demand to be expressed with flair and creativity. You seek emotional warmth and enjoy being at the center of attention.",
+      "virgo": "your emotions are practical and analytical. You have a keen eye for detail and strive for emotional order and efficiency. Your feelings are expressed through acts of service and a desire for self–improvement.",
+      "libra": "your emotions are balanced and harmonious. You have a natural affinity for relationships and seek emotional equilibrium. You value fairness and seek to find emotional fulfillment through cooperation and diplomacy.",
+      "scorpio": "your emotions are intense and deeply transformative. You experience emotions on a profound level and are not afraid to explore the depths of your feelings. You seek emotional authenticity and have a strong intuition.",
+      "sagittarius": "your emotions are expansive and optimistic. You have a thirst for adventure and new experiences, and your feelings are often tied to a sense of freedom and exploration. You seek emotional growth and philosophical understanding.",
+      "capricorn": "your emotions are serious and disciplined. You have a strong sense of responsibility and seek emotional security through long – term goals and accomplishments. You find comfort in structure and tradition.",
+      "aquarius": "your emotions are unconventional and independent. You have a unique and detached approach to your feelings, and you seek emotional freedom and intellectual stimulation. You value individuality and a sense of community.",
+      "pisces": "your emotions are sensitive and empathetic. You have a deep connection to the collective unconscious and are highly intuitive. Your feelings are expressed through creativity, compassion, and a desire for spiritual connection."
+    },
+    "mercury": {
+      "aries": "your communication is direct, assertive, and enthusiastic. You think on your feet, making you a natural problem-solver. You tackle intellectual challenges with boldness and excitement.",
+      "taurus": "your communication style is measured, grounded, and practical. You think things through thoroughly before voicing your opinions, and your words are typically well – considered and reliable.",
+      "gemini": "you're quick-witted and express thoughts eloquently. Skilled in conversation, you're always ready to exchange ideas. Your adaptable and curious mind enjoys exploring multiple subjects.",
+      "cancer": "your thinking process is profoundly influenced by your emotions. Your communication is intuitive, nurturing, and often indirect. You excel in understanding and conveying emotional subtleties.",
+      "leo": "your communication style is bold, creative, and confident. You're good at expressing your thoughts in dramatic and compelling ways. You enjoy being the center of attention, engaging others with your vivacious and charismatic speech.",
+      "virgo": "your thoughts are analytical, detailed, and practical. You excel at problem – solving and critical thinking. You communicate clearly, logically, and you're good at giving useful advice.",
+      "libra": "your thinking process is balanced, diplomatic, and harmonious. You excel in mediating and finding fair solutions in conversations. You enjoy intellectual exchanges that involve give – and – take.",
+      "scorpio": "your communication is intense, probing, and insightful. You uncover truths and delve into deep topics, preferring meaningful conversations over small talk.",
+      "sagittarius": "your communication is optimistic, broad-minded, and sincere. You're a seeker of knowledge, engaging in philosophical and thought-provoking conversations. Your expression is open and honest.",
+      "capricorn": "your communication is clear, organized, and serious. You're good at strategic thinking and planning. Your words are chosen carefully and are often laced with practical wisdom.",
+      "aquarius": "your thinking is innovative, idealistic, and somewhat unconventional. You enjoy intellectual exchanges about progressive ideas. You have the ability to communicate your unique ideas effectively.",
+      "pisces": "your communication is empathetic, imaginative, and intuitive. Your thinking process is often influenced by your feelings. You're good at expressing ideas creatively and understanding others on an emotional level."
+    },
+    "venus": {
+      "aries": "you love passionately, thriving on challenges and the excitement of vibrant, competitive romance. You express affection with an adventurous spirit, cherishing spontaneous and enthusiastic displays of love.",
+      "taurus": "you are all about sensuality and tangible expressions of love. You are drawn to comfort, stability, and pleasure. You value fidelity and consistency, enjoying a slow–burning romance that gradually builds over time.",
+      "gemini": "your love life is marked by curiosity and excitement. Intellectual conversations captivate you, and a mental connection is often a prerequisite for romance. You value variety and intellectual compatibility in relationships.",
+      "cancer": "your love is nurturing, protective, and deep. Home and family are central to your sense of comfort and security in a relationship.",
+      "leo": "your love is dramatic, warm, and generous. You appreciate grand gestures of love and seek to be adored and admired in your relationships. You are drawn to people who are confident and expressive, and you enjoy sharing a glamorous social life with your partner.",
+      "virgo": "your affection is shown through practical means. You value stability and show your love by taking care of the small details that contribute to your partner's wellbeing. Your love language often involves acts of service, and you seek meaningful and productive relationships.",
+      "libra": "you value balance, harmony, and partnership in love. You are diplomatic and fair–minded in your relationships and are drawn to beauty and charm. Your sense of romance involves a deep appreciation for cooperation and shared experiences.",
+      "scorpio": "your love is intense, passionate, and transformative. You seek deep emotional bonding and are drawn to mysteries and the hidden depths of your partner. Your relationships are profoundly intimate, reflecting your desire for deep emotional exchange.",
+      "sagittarius": "your love is adventurous, optimistic, and freedom-loving. You prioritize honesty, intellectual stimulation, and shared adventures in relationships. You're drawn to open-minded individuals who can broaden your horizons and share your zest for life.",
+      "capricorn": "your love is mature, loyal, and somewhat reserved. You value practicality and reliability, preferring to show your affection through steadfast support and shared ambitions.",
+      "aquarius": "your love is",
+      "pisces": "your love is compassionate, imaginative, and selfless. You value emotional connection and spiritual bonding, often showing your affection through empathetic understanding and selfless acts of kindness. You're attracted to those who can share in your dreamy, romantic visions."
+    },
+    "mars": {
+      "aries": "With Mars in Aries, you're blessed with a surge of energy and assertiveness. You act with confidence and a pioneering spirit, eager to forge your own path. Q_uick decisions and rapid action are your signatures.",
+      "taurus": "Mars in Taurus lends you a steady, persistent drive. You tackle tasks with determination, and once you've set a goal, it's near impossible to deter you.",
+      "gemini": "With Mars in Gemini in your chart, your actions are powered by your intellect. Q_uick – thinking and versatility guide your moves. You may be drawn towards activities that involve communication, networking, or learning new skills.",
+      "cancer": "When Mars is in Cancer, your actions are motivated by emotion and intuition. You protect what you hold dear with a fierce determination. While you may approach situations cautiously, once you commit, you invest deep emotional energy.",
+      "leo": "Mars in Leo gives you a flair for the dramatic. Your actions often attract attention, and you carry out your tasks with a sense of pride and a desire for recognition.",
+      "virgo": "With Mars in Virgo, you act with precision and practicality. You have an acute eye for detail and a desire for perfection. Your energy is applied in service, organization, and tasks that require meticulous attention.",
+      "libra": "Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might find yourself in the role of a mediator. You may also have a knack for artistic pursuits.",
+      "scorpio": "You act with intensity and a strong will. Your actions are often guided by your deep intuition, and you're not afraid to explore the hidden depths of any situation.",
+      "sagittarius": "If Mars is in Sagittarius, your actions embody an adventurous spirit. You relish taking risks and exploring new frontiers. Guided by optimism and enthusiasm, you're always prepared for the next big adventure.",
+      "capricorn": "With Mars is in Capricorn, your actions are driven by your ambition and discipline. You have a strong work ethic and the patience to achieve your long – term goals. You act with practicality, and a strong sense of responsibility.",
+      "aquarius": "Mars in Aquarius bestows upon you a unique, innovative drive. You act based on your strong ideals and are willing to challenge the status quo. You may be drawn towards activities that benefit society as a whole or involve cutting–edge technology.",
+      "pisces": "With Mars in Pisces, your actions are motivated by your empathy and intuition. You have a selfless desire to help and heal. Your actions might be guided by your deep spiritual beliefs or a strong sense of creative inspiration."
+    },
+    "jupiter": {
+      "aries": "When Jupiter is in Aries in your chart, it amplifies your confidence and initiative. You find yourself blessed with an increased drive to conquer new territories and champion causes, and you have the potential to lead and inspire others with your enthusiasm.",
+      "taurus": "With Jupiter in Taurus, you may find your fortunes linked to perseverance and practicality.",
+      "gemini": "Jupiter in Gemini in your chart heightens your curiosity and thirst for knowledge. You may find yourself drawn to diverse areas of interest, and are likely to excel in any field that requires communication, networking, or learning new skills.",
+      "cancer": "When Jupiter resides in Cancer, you'll find your emotional intuition amplified. You're blessed with a nurturing spirit and an ability to create a sense of home and community wherever you go. You might also find luck when dealing with real estate or family matters.",
+      "leo": "With Jupiter in Leo, you're bestowed with an enhanced sense of creativity, charm, and leadership. You're likely to shine in the spotlight and succeed in endeavors where your unique talents and charisma can be put on full display.",
+      "virgo": "Jupiter in Virgo in your chart may bring forth growth through service and meticulous work. You have an enhanced ability to improve your surroundings and can find fulfillment and luck in your quest for efficiency and health.",
+      "libra": "If Jupiter is in Libra, you're blessed with a keen sense of balance and diplomacy. Opportunities might abound in partnerships and social settings, and you're likely to excel in situations that require compromise, negotiation, or artistic sense.",
+      "scorpio": "Jupiter in Scorpio sugests a depth of emotional understanding and transformative potential. You can gain wisdom and luck through exploring the hidden realms of life, delving deep into matters of shared resources, or investigating the mysteries of existence.",
+      "sagittarius": "As Jupiter rules Sagittarius, here it expresses its most expansive and adventurous tendencies. Your horizon is broadened through travel, higher learning, or philosophical exploration. You may find yourself drawn to quests for truth and meaning, and the universe often rewards your optimism and wanderlust.",
+      "capricorn": "With Jupiter in Capricorn, it rewards patience, discipline, and ambition. You can find success through hard work, good organization, and the pursuit of long – term goals. Your leadership skills and business acumen are enhanced, often leading to professional growth.",
+      "aquarius": "With Jupiter in Aquarius, you're blessed with visionary insight and a knack for innovative thinking.",
+      "pisces": "Finally, Jupiter in Pisces heightens your empathy, intuition, and spiritual inclinations. You may find luck and expansion through artistic pursuits, acts of compassion, or spiritual exploration. Your understanding of the interconnectedness of all beings may serve as a source of wisdom and inspiration."
+    },
+    "saturn": {
+      "aries": "When Saturn resides in Aries, your life lessons center around self–assertion and individuality. Discipline and patience become tools you need to master to overcome impulsive actions. You learn to cultivate the courage to take the lead and stand up for yourself without being overly confrontational.",
+      "taurus": "Saturn in Taurus prompts you to build a practical approach to material and financial security. It encourages you to avoid impulsive spending and prioritize stability through hard work and perseverance.",
+      "gemini": "Saturn in Gemini places the focus on your communication skills. You're compelled to refine your way of thinking and expressing yourself. You may face challenges in conveying your thoughts initially, but with time and effort, you can become an effective and articulate communicator.",
+      "cancer": "With Saturn in Cancer, your lessons revolve around emotional expression and matters of the home. You're pushed to create a solid foundation for your personal life while balancing your need for emotional security. You may need to address issues of emotional dependency or excessive self–protection.",
+      "leo": "With Saturn in Leo, you're challenged to balance your need for recognition with humility. You'll learn lessons about pride and humility, and how to express your individuality in a way that recognizes others' contributions as well.",
+      "virgo": "Saturn in Virgo requires you to focus on the finer details of life. You're asked to perfect your work, health, and daily routines. With patience and consistent effort, you can become proficient in whatever area you put your mind to.",
+      "libra": "Saturn in Libra calls for lessons in relationships and fairness. You're learning to balance your needs with those of others, establishing partnerships that are both fair and fulfilling. Patience and compromise become essential skills for you to master.",
+      "scorpio": "With Saturn in Scorpio, you're urged to explore the deeper, more intense aspects of life. You're likely to face lessons regarding transformation and letting go of past hurts. Overcoming fears and embracing change will be key themes for you.",
+      "sagittarius": "Saturn in Sagittarius has you focusing on truth, wisdom, and philosophy. You're pushed to explore your beliefs, learn from different cultures, and expand your worldview. It's about understanding the biger picture and integrating this knowledge into your life.",
+      "capricorn": "As Capricorn is Saturn's home sign, you're learning the values of discipline, responsibility, and structure. You're likely to face challenges that test your endurance and dedication, but these trials can shape you into a resilient and dependable individual.",
+      "aquarius": "Saturn in Aquarius propels you towards understanding the needs of the collective and your role within it. You'll face lessons in friendship, group dynamics, and humanitarian ideals. Embracing your individuality while contributing to society can be a delicate balance for you to find.",
+      "pisces": "Saturn in Pisces urges you to face lessons in compassion, intuition, and spiritual understanding. You're asked to navigate your dreams and illusions while staying grounded in reality. Developing a spiritual discipline can help you integrate these energies in a healthy way."
+    }
+  }
+}

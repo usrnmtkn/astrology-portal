@@ -90,10 +90,63 @@ PAIRS = {
  "conjunction":("Their optimism lands on your affection, and the bond feels generous and warm","Easy enjoyment, with a risk of overpromising or overindulging","Enjoy the abundance without letting it inflate the promises")},
 "ascendant-ascendant": {
  "conjunction":("Your first impressions click, and you come across to each other as familiar right away","An easy, instinctive rapport","Trust the early ease, and still let the real people show up over time")},
+"neptune-ascendant": {
+ "hard":("Their dreaminess and blurred edges land on how you show up, so it's not always clear how they actually see you","You can feel idealized or quietly misread, admired for a version of you that isn't quite real","Ask for the clear read instead of performing the image they project onto you")},
+"mars-midheaven": {
+ "conjunction":("Their drive lands right on your ambitions and pushes your public direction forward","They can light a fire under your goals, or steamroll them with their own agenda","Use their motivation as fuel, and keep your hand on the wheel of where you're going")},
 }
 
 VAL_ASPECTS = {"conjunction":["conjunction"], "harmonious":["trine","sextile"], "hard":["square","opposition"]}
 ASPECT_VERB = {"conjunction":"conjunct","trine":"trine","sextile":"sextile","square":"square","opposition":"opposition"}
+
+# ---------------------------------------------------------------------------
+# Generative fallback so NO synastry card is ever empty. The app can surface an
+# aspect between any two points within orb — every outer planet and both angles
+# against everything — but PAIRS only bespoke-covers the common personal-planet
+# contacts. For anything uncovered we compose scene/dynamic/navigation from the
+# contribute/receive banks (Marie's own content model) plus a valence frame.
+# Bespoke PAIRS always win where they exist.
+PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_RECS = json.load(open(os.path.join(PKG, "sources", "tldr-astro-records.json")))["records"]
+CONTRIB, RECV = {}, {}
+for _r in _RECS:
+    _k = _r.get("key", "")
+    if "synastry-bank/contribute/" in _k: CONTRIB[_k.split("/")[-1]] = _r.get("text", "")
+    if "synastry-bank/receive/" in _k:    RECV[_k.split("/")[-1]] = _r.get("text", "")
+# angles can also be the acting ("their") side; short voiced contribute phrases
+CONTRIB.update({
+ "ascendant":"their presence and the way they carry themselves",
+ "midheaven":"their ambitions and public direction",
+ "descendant":"what they look for in a partner",
+ "ic":"their private world and where they come from"})
+# short-form aliases the app may use for the angles
+for _long, _short in (("ascendant","asc"), ("midheaven","mc"), ("descendant","dsc"), ("ic","ic")):
+    if _long in CONTRIB: CONTRIB[_short] = CONTRIB[_long]
+    if _long in RECV:    RECV[_short] = RECV[_long]
+
+GEN_VERB = {"conjunction":"sit right on top of", "harmonious":"work smoothly with", "hard":"press against"}
+GEN_DYN = {
+ "conjunction":"This is one of the closest contacts between you, strong and constant, energizing at its best and a lot to hold at its worst",
+ "harmonious":"It runs easily and asks little, quietly steadying the rest of the bond",
+ "hard":"It catches often enough that you both feel it, and it keeps asking to be worked out"}
+GEN_NAV = {
+ "conjunction":"Let the closeness feed you without letting it run you",
+ "harmonious":"Lean on how naturally this one lines up",
+ "hard":"Name it directly instead of letting it build in silence"}
+
+def _cap(s): return s[:1].upper() + s[1:] if s else s
+def gen_slots(a, b, group):
+    cont, rec = CONTRIB.get(a), RECV.get(b)
+    if not cont or not rec: return None
+    scene = f"{_cap(cont)} {GEN_VERB[group]} {rec}"
+    return (scene, GEN_DYN[group], GEN_NAV[group])
+
+# full body sets: planets contribute + receive; angles receive (and act, via the
+# short phrases above). Iterate every ordered (their -> your) contact.
+PLANETS = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto"]
+ANGLES  = ["ascendant","midheaven","descendant","ic","asc","mc","dsc"]
+THEIR_BODIES = PLANETS + ANGLES
+YOUR_BODIES  = PLANETS + ANGLES
 
 # ms/synastry-house-overlay domains
 OVERLAY = {
@@ -112,21 +165,46 @@ OVERLAY = {
 }
 ORD = {1:"1st",2:"2nd",3:"3rd",4:"4th",5:"5th",6:"6th",7:"7th",8:"8th",9:"9th",10:"10th",11:"11th",12:"12th"}
 
+# canonical names for bespoke lookup (angle short-forms -> full)
+CANON = {"asc":"ascendant","mc":"midheaven","dsc":"descendant"}
+def title_name(x):
+    return {"ic":"IC","asc":"Ascendant","mc":"MC","dsc":"Descendant","midheaven":"MC","ascendant":"Ascendant","descendant":"Descendant"}.get(x, x.capitalize())
+
 records = []
-for pair, vals in PAIRS.items():
-    a, b = pair.split("-")
-    for group, (scene, dyn, nav) in vals.items():
-        for asp in VAL_ASPECTS[group]:
-            records.append({
-              "id": f"cc/synastry/{a}-{asp}-{b}", "kind":"synastry_aspect",
-              "their_body":a, "your_body":b, "aspect":asp, "valence":group,
-              "surface":"synastry.inter_aspect", "status":"REVIEWED_CLAUSE",
-              "title": f"Their {a.capitalize()} {ASPECT_VERB[asp]} your {b.capitalize()}",
-              "slots":{"relational_scene":scene, "dynamic":dyn, "navigation":nav},
-              "source_keys":[f"ms/synastry-bank/contribute/{a}", f"ms/synastry-bank/receive/{b}", f"cc/aspect/{asp}"],
-              "doctrine_source":"ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
-              "tone_version":"marie-calibrated-v1","originalityCheck":"voiced relational; no keyword seam",
-              "review_note":"needs Marie/editorial final sign-off before serving"})
+seen = set()
+bespoke_n = gen_n = 0
+for a in THEIR_BODIES:
+    for b in YOUR_BODIES:
+        ca, cb = CANON.get(a, a), CANON.get(b, b)
+        bespoke = PAIRS.get(f"{ca}-{cb}", {})
+        for group in ("conjunction", "harmonious", "hard"):
+            slots = bespoke.get(group)
+            reviewed = slots is not None
+            if slots is None:
+                slots = gen_slots(a, b, group)
+            if slots is None:
+                continue
+            scene, dyn, nav = slots
+            for asp in VAL_ASPECTS[group]:
+                rid = f"cc/synastry/{a}-{asp}-{b}"
+                if rid in seen:
+                    continue
+                seen.add(rid)
+                if reviewed: bespoke_n += 1
+                else: gen_n += 1
+                records.append({
+                  "id": rid, "kind":"synastry_aspect",
+                  "their_body":a, "your_body":b, "aspect":asp, "valence":group,
+                  "surface":"synastry.inter_aspect",
+                  "status":"REVIEWED_CLAUSE" if reviewed else "DRAFT",
+                  "tier":"reviewed-voiced" if reviewed else "template-generated-grounded",
+                  "generated": not reviewed,
+                  "title": f"Their {title_name(a)} {ASPECT_VERB[asp]} your {title_name(b)}",
+                  "slots":{"relational_scene":scene, "dynamic":dyn, "navigation":nav},
+                  "source_keys":[f"ms/synastry-bank/contribute/{ca}", f"ms/synastry-bank/receive/{cb}", f"cc/aspect/{asp}"],
+                  "doctrine_source":"ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+                  "tone_version":"marie-calibrated-v1","originalityCheck":"voiced relational; no keyword seam",
+                  "review_note":"needs Marie/editorial final sign-off before serving"})
 for h, dom in OVERLAY.items():
     records.append({
       "id": f"cc/synastry/house-overlay-{h}", "kind":"synastry_house_overlay", "house":h,
@@ -138,12 +216,15 @@ for h, dom in OVERLAY.items():
       "originalityCheck":"voiced","review_note":"needs Marie/editorial final sign-off before serving"})
 
 out = {"_meta":{"title":"Reviewed synastry (two-chart): inter-aspects + house overlays",
-        "inter_aspect_pairs":len(PAIRS), "house_overlays":len(OVERLAY), "count":len(records),
+        "bespoke_pairs":len(PAIRS), "house_overlays":len(OVERLAY), "count":len(records),
+        "inter_aspects_bespoke":bespoke_n, "inter_aspects_generated":gen_n,
+        "coverage":"every their->your body contact (10 planets + Asc/MC/Desc/IC, incl. short aliases) at all 5 aspects; no empty cards",
         "voice":"relational, second person about 'them' (their planet -> your planet)",
         "render":"{relational_scene}. {dynamic}. {navigation}.",
-        "tier":"REVIEWED_CLAUSE","tone_version":"marie-calibrated-v1",
-        "note":"House-overlay records give the domain; the specific planet flavor composes from ms/synastry-bank/contribute/{planet}."},
+        "tier":"bespoke = reviewed-voiced; fallback = template-generated-grounded (generated:true), DRAFT",
+        "tone_version":"marie-calibrated-v1",
+        "note":"Bespoke slots override; uncovered contacts compose scene/dynamic/navigation from the contribute/receive banks + a valence frame. House-overlay records give the domain; planet flavor composes from ms/synastry-bank/contribute/{planet}."},
        "reviewed":records}
-dest = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "phrasebank", "cc-synastry-reviewed.json")
+dest = os.path.join(PKG, "phrasebank", "cc-synastry-reviewed.json")
 json.dump(out, open(dest,"w"), indent=2, ensure_ascii=False)
-print(f"wrote {len(records)} synastry records ({sum(1 for r in records if r['kind']=='synastry_aspect')} inter-aspects + {len(OVERLAY)} overlays) -> {dest}")
+print(f"wrote {len(records)} synastry records ({bespoke_n} bespoke + {gen_n} generated inter-aspects + {len(OVERLAY)} overlays) -> {dest}")
