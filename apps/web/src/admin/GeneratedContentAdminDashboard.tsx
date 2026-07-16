@@ -8,6 +8,14 @@ import { firstReaderFacingCopy, isReaderFacingCopy } from "../content/readerSafe
 import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import { contentSystemWorkstreams } from "./contentSystemPlan";
+import {
+  writingLayerLabels,
+  writingSurfaceSourceMap,
+  writingSurfaceSourceRoleLabels,
+  writingSurfaceStatusLabels,
+  type WritingSurfaceMapItem,
+  type WritingSurfaceStatus
+} from "./writingSurfaceSourceMap";
 import sourceGroundedDashboardRecords from "../content/finalSourceGroundedDashboardRecords.json" with { type: "json" };
 import sourceGroundedReviewCandidates from "../content/sourceGroundedReviewCandidates.json";
 import {
@@ -70,6 +78,29 @@ type LunarCoverageFilter = "all" | "lunar-calendar" | "eclipse" | "season" | "tr
 type SlotDictionarySourceFilter = "all" | "calculated" | "vocabulary" | "fallback";
 type SlotDictionaryStatus = "calculated" | "ready" | "draft" | "local" | "missing";
 type SlotDictionaryStatusFilter = "all" | SlotDictionaryStatus;
+type WritingSurfaceAreaFilter = "all" | WritingSurfaceMapItem["area"];
+type WritingSurfaceMapStatusFilter = "all" | WritingSurfaceStatus;
+type WritingSurfaceSourceItem = WritingSurfaceMapItem["sources"][number];
+
+const adminPageHashKeys: Record<AdminDashboardPage, string> = {
+  overview: "home",
+  articles: "articles",
+  content: "exact-content",
+  reviewQueue: "review-queue",
+  compositeByType: "composite-review",
+  connection: "connection",
+  appBehavior: "app-behavior",
+  vocabulary: "vocabulary",
+  slotDictionary: "slots",
+  knowledge: "fallback-hooks",
+  templates: "templates",
+  hooks: "surface-map",
+  releaseNotes: "release-notes"
+};
+
+const adminPageByHashKey = Object.fromEntries(
+  Object.entries(adminPageHashKeys).map(([page, hashKey]) => [hashKey, page])
+) as Record<string, AdminDashboardPage>;
 type AdminTemplateDrawerMode = "view" | "edit";
 type CompositeRelationshipTypeKey = "romantic" | "friendship" | "family" | "coworkers" | "creative" | "exes" | "complicated";
 type AdminContentBlockFilter =
@@ -1036,7 +1067,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "slotDictionary") {
-    return "Find what each {{slot}} means, whether it is calculated or editable, and where to open the row that supplies it.";
+    return "Look up template placeholders. If you are trying to fix prose on a public page, start with Surface Map instead.";
   }
 
   if (activePage === "knowledge") {
@@ -1044,10 +1075,139 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "hooks") {
-    return "Read-only routing map for public surfaces. Use it to answer which content key, template, and vocab rows create a card.";
+    return "Read-only routing map for public surfaces. Use it to answer which source-grounded files, phrasebank rows, knowledge bundles, and source-based madlibs create each card.";
   }
 
   return "Create and edit exact authored rows for a specific surface, date, chart factor, or relationship context.";
+}
+
+function writingSurfaceStatusClass(status: WritingSurfaceStatus) {
+  return `status-${status.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+}
+
+function writingSurfaceStatusCounts() {
+  return writingSurfaceSourceMap.reduce<Record<WritingSurfaceStatus | "total", number>>((counts, item) => {
+    counts.total += 1;
+    counts[item.status] += 1;
+    return counts;
+  }, {
+    total: 0,
+    normalized: 0,
+    partial: 0,
+    "not-normalized": 0
+  });
+}
+
+function writingSurfaceEditableSources(surface: WritingSurfaceMapItem) {
+  const editableRoles: Array<WritingSurfaceMapItem["sources"][number]["role"]> = [
+    "source-grounded",
+    "phrasebank",
+    "knowledge",
+    "madlib-material",
+    "generated"
+  ];
+  const editableSources = surface.sources.filter((source) => editableRoles.includes(source.role));
+
+  return editableSources.length ? editableSources : surface.sources.filter((source) => source.role !== "renderer");
+}
+
+function writingSurfaceContentCategory(area: WritingSurfaceMapItem["area"]): AdminContentCategoryFilter {
+  if (area === "Friends") return "Relationship";
+  if (area === "Natal") return "Natal Chart";
+  if (area === "Sky" || area === "Transits") return "Sky";
+
+  return "all";
+}
+
+function writingSurfaceFallbackSection(area: WritingSurfaceMapItem["area"]): AdminFallbackHookSectionFilter {
+  if (area === "Friends") return "friends";
+  if (area === "Natal") return "you";
+  if (area === "Sky" || area === "Transits") return "sky";
+  if (area === "System") return "settings";
+
+  return "all";
+}
+
+function writingSurfaceSourceActionLabel(source: WritingSurfaceSourceItem) {
+  if (source.role === "source-grounded" || source.role === "generated") return "Open Exact Content";
+  if (source.role === "knowledge" || source.role === "madlib-material") return "Open Fallback Hooks";
+  if (source.role === "phrasebank") return "Find Imported Rows";
+
+  return "File Source";
+}
+
+function writingSurfaceSourceActionHelp(source: WritingSurfaceSourceItem) {
+  if (source.role === "source-grounded") return "Editable after the source-grounded rows are imported into Exact Content.";
+  if (source.role === "generated") return "Editable in Exact Content when this source exists as a managed row.";
+  if (source.role === "knowledge") return "Editable through the fallback hook or knowledge-row editor.";
+  if (source.role === "madlib-material") return "Editable through Fallback Hooks or source-based fallback material.";
+  if (source.role === "phrasebank") return "Usually authored in phrasebank files, then imported/synced into the app.";
+
+  return "This is a code/spec file. Edit it in the repo, not in the content dashboard.";
+}
+
+function writingSurfaceSourceCanOpen(source: WritingSurfaceSourceItem) {
+  return source.role === "source-grounded"
+    || source.role === "phrasebank"
+    || source.role === "knowledge"
+    || source.role === "madlib-material"
+    || source.role === "generated";
+}
+
+function writingSurfaceSourceActionClass(source: WritingSurfaceSourceItem) {
+  const opensContent = source.role === "source-grounded" || source.role === "phrasebank" || source.role === "generated";
+
+  return `admin-source-action ${opensContent ? "admin-source-action-primary" : "admin-source-action-secondary"}`;
+}
+
+function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
+  const query = params?.toString();
+  return `#${adminPageHashKeys[page]}${query ? `?${query}` : ""}`;
+}
+
+function parseAdminHash(hash: string) {
+  const rawHash = hash.startsWith("#") ? hash.slice(1) : hash;
+  const queryStart = rawHash.indexOf("?");
+  const key = queryStart >= 0 ? rawHash.slice(0, queryStart) : rawHash;
+  const query = queryStart >= 0 ? rawHash.slice(queryStart + 1) : "";
+
+  return {
+    key,
+    params: new URLSearchParams(query)
+  };
+}
+
+function isAdminContentCategoryFilter(value: string | null): value is AdminContentCategoryFilter {
+  return Boolean(value) && contentCategoryFilters.some((filter) => filter.key === value);
+}
+
+function isAdminContentClassFilter(value: string | null): value is AdminContentClassFilter {
+  return Boolean(value) && contentClassFilters.some((filter) => filter.key === value);
+}
+
+function isAdminVocabularyCategoryFilter(value: string | null): value is AdminVocabularyCategoryFilter {
+  return Boolean(value) && ([
+    "all",
+    "planets",
+    "houses",
+    "angles",
+    "zodiac",
+    "lunar",
+    "eclipses",
+    "career",
+    "relationship"
+  ] as AdminVocabularyCategoryFilter[]).includes(value as AdminVocabularyCategoryFilter);
+}
+
+function isAdminFallbackHookSectionFilter(value: string | null): value is AdminFallbackHookSectionFilter {
+  return Boolean(value) && fallbackHookSectionFilters.some((filter) => filter.key === value);
+}
+
+function normalizedWritingSurfaceAreaFilter(value: string | null): WritingSurfaceAreaFilter | null {
+  if (!value) return null;
+  if (value === "all") return "all";
+
+  return writingSurfaceSourceMap.find((surface) => surface.area.toLowerCase() === value.toLowerCase())?.area ?? null;
 }
 
 function objectValue(value: unknown): Record<string, unknown> | null {
@@ -5191,6 +5351,39 @@ function reviewCountsForRecords(records: AdminReviewRecord[]): AdminReviewCounts
   };
 }
 
+function isUnsavedManualReviewId(recordId: string | null | undefined): recordId is string {
+  return typeof recordId === "string" && recordId.startsWith("manual:");
+}
+
+function isUnsavedManualReviewRecord(record: AdminReviewRecord) {
+  return isUnsavedManualReviewId(record.id) && !savedGlobalRowId(record) && !record.rawPrivateRow;
+}
+
+function mergeUnsavedManualReviewRecords(currentRecords: AdminReviewRecord[], nextRecords: AdminReviewRecord[]) {
+  const manualRecords = currentRecords.filter(isUnsavedManualReviewRecord);
+
+  if (manualRecords.length === 0) {
+    return nextRecords;
+  }
+
+  const manualIds = new Set(manualRecords.map((record) => record.id));
+  const manualContentKeys = new Set(manualRecords.map((record) => record.contentKey));
+
+  return [
+    ...manualRecords,
+    ...nextRecords.filter((record) => !manualIds.has(record.id) && !manualContentKeys.has(record.contentKey))
+  ];
+}
+
+function prependDraftReviewRecord(currentRecords: AdminReviewRecord[], nextRecord: AdminReviewRecord) {
+  return [
+    nextRecord,
+    ...currentRecords.filter(
+      (record) => record.id !== nextRecord.id && record.contentKey !== nextRecord.contentKey
+    )
+  ];
+}
+
 function categoryUsesDateFilter(category: AdminContentCategoryFilter) {
   return category === "all" || category === "Sky";
 }
@@ -5377,6 +5570,81 @@ function adminErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
+function isLocalAdminApiRequest(path: string) {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const hostname = window.location.hostname;
+  return path.startsWith("/api/admin/") && (hostname === "localhost" || hostname === "127.0.0.1");
+}
+
+function adminApiUnavailableHint(path: string) {
+  if (!isLocalAdminApiRequest(path)) {
+    return "";
+  }
+
+  return " The dashboard UI is running, but the local admin API route is not responding. Restart the local dev server, then reload before saving, importing, publishing, or creating rows.";
+}
+
+function withAdminApiUnavailableHint(message: string, path: string) {
+  const hint = adminApiUnavailableHint(path);
+  if (!hint || message.includes("local admin API")) {
+    return message;
+  }
+
+  return `${message}${hint}`;
+}
+
+function canUseLocalAdminApiHealthFallback() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+}
+
+async function getLocalAdminApiHealthFallback(): Promise<TldrAstroApiHealth | null> {
+  if (!canUseLocalAdminApiHealthFallback()) {
+    return null;
+  }
+
+  const response = await fetch("/api/health", { cache: "no-store" });
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = await response.json().catch(() => null) as {
+    ok?: boolean;
+    status?: string;
+    timestamp?: string;
+    dependencies?: {
+      ephemeris?: {
+        ok?: boolean;
+        detail?: {
+          version?: string | number;
+        };
+      };
+    };
+  } | null;
+
+  if (!payload?.ok) {
+    return null;
+  }
+
+  return {
+    ok: true,
+    service: "tldrastro-local-admin",
+    checkedAt: typeof payload.timestamp === "string" ? payload.timestamp : new Date().toISOString(),
+    ephemeris: {
+      available: Boolean(payload.dependencies?.ephemeris?.ok),
+      library: "local",
+      version: payload.dependencies?.ephemeris?.detail?.version,
+      path: "/api/health"
+    }
+  };
+}
+
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}, timeoutMs = 75000) {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -5394,17 +5662,25 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     const payload = await response.json().catch(() => null) as (T & { error?: string }) | null;
 
     if (!response.ok) {
-      throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status, payload);
+      throw new AdminRequestError(withAdminApiUnavailableHint(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, path), response.status, payload);
     }
 
     if (!payload) {
-      throw new AdminRequestError(`Expected JSON from ${path.split("?")[0]}, but the server returned a non-JSON response. If you are running locally, use the Vercel/API dev server for admin actions.`, response.status);
+      throw new AdminRequestError(withAdminApiUnavailableHint(`Expected JSON from ${path.split("?")[0]}, but the server returned a non-JSON response. If you are running locally, use the Vercel/API dev server for admin actions.`, path), response.status);
     }
 
     return payload;
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new AdminRequestError(`Request to ${path.split("?")[0]} timed out after ${Math.round(timeoutMs / 1000)} seconds. The provider may still be failing upstream; try again or switch providers.`, 408);
+    }
+
+    if (error instanceof AdminRequestError) {
+      throw error;
+    }
+
+    if (error instanceof TypeError) {
+      throw new AdminRequestError(withAdminApiUnavailableHint(`Could not reach ${path.split("?")[0]}.`, path), 0, error);
     }
 
     throw error;
@@ -5500,6 +5776,8 @@ export function GeneratedContentAdminDashboard() {
   const [slotDictionaryQuery, setSlotDictionaryQuery] = useState("");
   const [slotDictionarySourceFilter, setSlotDictionarySourceFilter] = useState<SlotDictionarySourceFilter>("all");
   const [slotDictionaryStatusFilter, setSlotDictionaryStatusFilter] = useState<SlotDictionaryStatusFilter>("all");
+  const [writingSurfaceAreaFilter, setWritingSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
+  const [writingSurfaceStatusFilter, setWritingSurfaceStatusFilter] = useState<WritingSurfaceMapStatusFilter>("all");
   const [slotInfoDismissed, setSlotInfoDismissed] = useState(() => {
     try {
       return window.localStorage.getItem(adminSlotInfoDismissedStorageKey) === "true";
@@ -5555,6 +5833,7 @@ export function GeneratedContentAdminDashboard() {
   const [voiceSettingsLoadedFromDb, setVoiceSettingsLoadedFromDb] = useState(false);
   const [activePage, setActivePage] = useState<AdminDashboardPage>("overview");
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
+  const [localDraftReviewRecords, setLocalDraftReviewRecords] = useState<AdminReviewRecord[]>([]);
   const contentImportInputRef = useRef<HTMLInputElement | null>(null);
   const contentImportScopeRef = useRef<AdminContentScope>("settings");
   const saveToastTimeoutRef = useRef<number | null>(null);
@@ -5636,13 +5915,22 @@ export function GeneratedContentAdminDashboard() {
     event.preventDefault();
     setSelectedHookCatalogItem(item);
   };
-  function navigateAdminPage(page: AdminDashboardPage) {
-    if (/^#(?:fallback-row|lunar-row)\//.test(window.location.hash)) {
-      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-      handledAdminDeepLinkHashRef.current = null;
-    }
 
+  function setAdminHash(nextHash: string, mode: "push" | "replace" = "push") {
+    if (window.location.hash === nextHash) return;
+
+    const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+    if (mode === "replace") {
+      window.history.replaceState(null, "", nextUrl);
+    } else {
+      window.history.pushState(null, "", nextUrl);
+    }
+  }
+
+  function navigateAdminPage(page: AdminDashboardPage) {
     setIsCreateMenuOpen(false);
+    handledAdminDeepLinkHashRef.current = null;
+    setAdminHash(adminHashForPage(page));
     setActivePage(page);
   }
 
@@ -5650,6 +5938,40 @@ export function GeneratedContentAdminDashboard() {
     setIsCreateMenuOpen(false);
     navigateAdminPage(page);
     setMessage(nextMessage);
+  }
+
+  function openWritingSurfaceSource(surface: WritingSurfaceMapItem, source: WritingSurfaceSourceItem) {
+    setIsCreateMenuOpen(false);
+
+    if (source.role === "source-grounded" || source.role === "generated" || source.role === "phrasebank") {
+      const params = new URLSearchParams({
+        category: writingSurfaceContentCategory(surface.area),
+        source: source.role === "generated" ? "fallback-hook" : "phrasebank",
+        q: surface.surface
+      });
+      setCategoryFilter(writingSurfaceContentCategory(surface.area));
+      setContentSourceFilter(source.role === "generated" ? "fallback-hook" : "phrasebank");
+      setPersonQuery(surface.surface);
+      setContentQueueFilter(null);
+      setContentStatusFilter("all");
+      setAdminHash(adminHashForPage("content", params));
+      setActivePage("content");
+      setMessage(`Opened Exact Content for ${surface.surface}. Search is set to this surface; clear it if the imported rows use a different title or key.`);
+      return;
+    }
+
+    if (source.role === "knowledge" || source.role === "madlib-material") {
+      const params = new URLSearchParams({
+        section: writingSurfaceFallbackSection(surface.area)
+      });
+      setFallbackHookSectionFilter(writingSurfaceFallbackSection(surface.area));
+      setAdminHash(adminHashForPage("knowledge", params));
+      setActivePage("knowledge");
+      setMessage(`Opened Fallback Hooks for ${surface.area}. Use the hook list to edit the fallback frame or source-based madlib material.`);
+      return;
+    }
+
+    setMessage(`${source.label} is a file source: ${source.path}. It is visible here for traceability, but it does not have an in-dashboard editor yet.`);
   }
 
   function closeTemplateContentDrawer() {
@@ -5847,12 +6169,17 @@ export function GeneratedContentAdminDashboard() {
   );
   const localSkySnapshotContentRecords = useMemo(() => localSkySnapshotAdminRows(), []);
   const defaultContentLibraryRecords = useMemo(() => {
-    const persistedContent = dedupedContentRecords.filter((record) => !isSpecializedAdminRecord(record));
-    const persistedKeys = new Set(persistedContent.map((record) => record.contentKey));
+    const localDraftContent = localDraftReviewRecords.filter((record) => !isSpecializedAdminRecord(record));
+    const localDraftKeys = new Set(localDraftContent.map((record) => record.contentKey));
+    const localDraftIds = new Set(localDraftContent.map((record) => record.id));
+    const persistedContent = dedupedContentRecords
+      .filter((record) => !isSpecializedAdminRecord(record))
+      .filter((record) => !localDraftKeys.has(record.contentKey) && !localDraftIds.has(record.id));
+    const persistedKeys = new Set([...localDraftKeys, ...persistedContent.map((record) => record.contentKey)]);
     const visibleLocalSnapshots = localSkySnapshotContentRecords.filter((record) => !persistedKeys.has(record.contentKey));
 
-    return [...persistedContent, ...visibleLocalSnapshots];
-  }, [dedupedContentRecords, localSkySnapshotContentRecords]);
+    return [...localDraftContent, ...persistedContent, ...visibleLocalSnapshots];
+  }, [dedupedContentRecords, localDraftReviewRecords, localSkySnapshotContentRecords]);
   const filteredContentRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
@@ -6017,7 +6344,12 @@ export function GeneratedContentAdminDashboard() {
   const cmsStatusCounts = useMemo(() => contentStatusCounts(previewFilteredContentRecords), [previewFilteredContentRecords]);
   const cmsQueueCounts = useMemo(() => contentQueueCounts(previewFilteredContentRecords), [previewFilteredContentRecords]);
   const contentFailureQueueCount = useMemo(() => dedupedContentRecords.filter(isFailureQueueRecord).length, [dedupedContentRecords]);
-  const selectedReviewRecord = visibleContentRecords.find((record) => record.id === selectedReviewId) ?? null;
+  const selectedReviewRecord = selectedReviewId
+    ? localDraftReviewRecords.find((record) => record.id === selectedReviewId)
+      ?? reviewRecords.find((record) => record.id === selectedReviewId)
+      ?? visibleContentRecords.find((record) => record.id === selectedReviewId)
+      ?? null
+    : null;
   const selectableContentRecords = useMemo(() => (
     visibleContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
   ), [visibleContentRecords]);
@@ -7059,6 +7391,18 @@ export function GeneratedContentAdminDashboard() {
 
   async function checkTldrAstroApiStatus() {
     if (!isTldrAstroApiConfigured) {
+      const localHealth = await getLocalAdminApiHealthFallback().catch(() => null);
+      if (localHealth?.ok) {
+        setApiStatus({
+          state: "online",
+          checkedAt: new Date().toISOString(),
+          latencyMs: null,
+          health: localHealth,
+          error: null
+        });
+        return;
+      }
+
       setApiStatus({
         state: "notConfigured",
         checkedAt: new Date().toISOString(),
@@ -7087,6 +7431,18 @@ export function GeneratedContentAdminDashboard() {
         error: health.ok ? null : "The API returned an unhealthy response."
       });
     } catch (error) {
+      const localHealth = await getLocalAdminApiHealthFallback().catch(() => null);
+      if (localHealth?.ok) {
+        setApiStatus({
+          state: "online",
+          checkedAt: new Date().toISOString(),
+          latencyMs: Math.round(performance.now() - startedAt),
+          health: localHealth,
+          error: null
+        });
+        return;
+      }
+
       setApiStatus({
         state: "offline",
         checkedAt: new Date().toISOString(),
@@ -7150,7 +7506,7 @@ export function GeneratedContentAdminDashboard() {
 
       setRows(payload.rows ?? []);
       setMessage(`Loaded ${(payload.rows ?? []).length} ${nextStatus.toLowerCase()} rows. Status totals are current.`);
-      setSelectedReviewId(null);
+      setSelectedReviewId((currentId) => isUnsavedManualReviewId(currentId) ? currentId : null);
 
       if (!payload.rows?.some((row) => row.id === selectedId)) {
         const firstRow = payload.rows?.[0] ?? null;
@@ -7453,11 +7809,66 @@ export function GeneratedContentAdminDashboard() {
   useEffect(() => {
     const openFromHash = () => {
       const hash = window.location.hash;
+      const { key: hashKey, params: hashParams } = parseAdminHash(hash);
       const fallbackMatch = hash.match(/^#fallback-row\/(.+)$/);
       const lunarMatch = hash.match(/^#lunar-row\/(.+)$/);
+      const pageFromHash = adminPageByHashKey[hashKey] ?? (hash === "#reviewQueue" ? "reviewQueue" : null);
 
-      if (hash === "#reviewQueue") {
-        setActivePage("reviewQueue");
+      if (pageFromHash && !fallbackMatch && !lunarMatch) {
+        if (pageFromHash === "content") {
+          const category = hashParams.get("category");
+          const source = hashParams.get("source");
+          const query = hashParams.get("q");
+
+          if (isAdminContentCategoryFilter(category)) {
+            setCategoryFilter(category);
+          }
+
+          if (isAdminContentClassFilter(source)) {
+            setContentSourceFilter(source);
+          }
+
+          if (query !== null) {
+            setPersonQuery(query);
+          }
+        }
+
+        if (pageFromHash === "vocabulary") {
+          const category = hashParams.get("category");
+          const query = hashParams.get("q");
+
+          if (isAdminVocabularyCategoryFilter(category)) {
+            setVocabularyCategoryFilter(category);
+          }
+
+          if (query !== null) {
+            setVocabularyQuery(query);
+          }
+        }
+
+        if (pageFromHash === "knowledge") {
+          const section = hashParams.get("section");
+
+          if (isAdminFallbackHookSectionFilter(section)) {
+            setFallbackHookSectionFilter(section);
+          }
+        }
+
+        if (pageFromHash === "hooks") {
+          const area = hashParams.get("area");
+          const statusFilter = hashParams.get("status");
+          const normalizedArea = normalizedWritingSurfaceAreaFilter(area);
+
+          if (normalizedArea) {
+            setWritingSurfaceAreaFilter(normalizedArea);
+          }
+
+          if (statusFilter === "all" || statusFilter === "normalized" || statusFilter === "partial" || statusFilter === "not-normalized") {
+            setWritingSurfaceStatusFilter(statusFilter as WritingSurfaceMapStatusFilter);
+          }
+        }
+
+        setActivePage(pageFromHash);
         handledAdminDeepLinkHashRef.current = hash;
         return;
       }
@@ -7519,8 +7930,12 @@ export function GeneratedContentAdminDashboard() {
 
     openFromHash();
     window.addEventListener("hashchange", openFromHash);
+    window.addEventListener("popstate", openFromHash);
 
-    return () => window.removeEventListener("hashchange", openFromHash);
+    return () => {
+      window.removeEventListener("hashchange", openFromHash);
+      window.removeEventListener("popstate", openFromHash);
+    };
   }, [currentTemplateContentRows, lunarCoverageRowsByKey, selectedHookCatalogItem?.key, selectedId, selectedTemplateContentId]);
 
   useEffect(() => {
@@ -7538,7 +7953,7 @@ export function GeneratedContentAdminDashboard() {
   async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status, nextCategory = categoryFilter) {
     const surfaces = reviewSurfacesForCategory(nextCategory);
     setSelectedId(null);
-    setSelectedReviewId(null);
+    setSelectedReviewId((currentId) => isUnsavedManualReviewId(currentId) ? currentId : null);
     setDraft(createAdminDraft(surface));
     if (!canUseApi) {
       const nextMessage = "Add the content generation secret first.";
@@ -7633,16 +8048,10 @@ export function GeneratedContentAdminDashboard() {
       });
 
       const nextRecords = Array.from(mergedRecords.values());
+      const nextRecordsForCounts = mergeUnsavedManualReviewRecords(reviewRecords, nextRecords);
 
-      setReviewRecords(nextRecords);
-      setReviewCounts({
-        total: nextRecords.length,
-        DRAFT: nextRecords.filter((record) => record.status === "DRAFT").length,
-        REVIEWED: nextRecords.filter((record) => record.status === "REVIEWED").length,
-        LIVE: nextRecords.filter((record) => record.status === "LIVE").length,
-        ARCHIVED: nextRecords.filter((record) => record.status === "ARCHIVED").length,
-        ERROR: nextRecords.filter((record) => record.status === "ERROR").length
-      });
+      setReviewRecords((currentRecords) => mergeUnsavedManualReviewRecords(currentRecords, nextRecords));
+      setReviewCounts(reviewCountsForRecords(nextRecordsForCounts));
       setAccessStatus("valid");
       const prompts = payloads.map((payload) => payload.prompt).filter(Boolean);
       const warnings = payloads.flatMap((payload) => payload.warnings ?? []);
@@ -7653,8 +8062,8 @@ export function GeneratedContentAdminDashboard() {
       ].filter(Boolean).join(" ");
 
       const loadedMessage = prompts[0] && globalSynastryRows.length > 0
-        ? `Loaded ${nextRecords.length} content rows, including ${globalSynastryRows.length} global synastry rows. ${prompts[0]}`
-        : prompts[0] ?? `Loaded ${nextRecords.length} content rows.`;
+        ? `Loaded ${nextRecordsForCounts.length} content rows, including ${globalSynastryRows.length} global synastry rows. ${prompts[0]}`
+        : prompts[0] ?? `Loaded ${nextRecordsForCounts.length} content rows.`;
 
       setMessage(
         `${loadedMessage}${warningMessage ? ` ${warningMessage}` : ""}`
@@ -7663,15 +8072,8 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       const nextMessage = adminErrorMessage(error, "Could not load review records.");
 
-      setReviewRecords([]);
-      setReviewCounts({
-        total: 0,
-        DRAFT: 0,
-        REVIEWED: 0,
-        LIVE: 0,
-        ARCHIVED: 0,
-        ERROR: 0
-      });
+      setReviewRecords((currentRecords) => currentRecords.filter(isUnsavedManualReviewRecord));
+      setReviewCounts(reviewCountsForRecords(reviewRecords.filter(isUnsavedManualReviewRecord)));
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
@@ -9305,9 +9707,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 body: nextBody,
                 updatedAt: row?.updated_at ?? new Date().toISOString(),
                 rawPrivateRow: row ?? currentRecord.rawPrivateRow
-              }
+            }
             : currentRecord
         )));
+        setLocalDraftReviewRecords((currentRecords) => currentRecords.filter(
+          (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+        ));
         setEditingReviewId(null);
         setMessage(nextStatus === "LIVE" ? "Published this personal content row." : "Saved personal content edits.");
         showSaveToast(nextStatus === "LIVE" ? "Published" : "Personal content saved");
@@ -9377,6 +9782,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             }
           : currentRecord
       )));
+      setLocalDraftReviewRecords((currentRecords) => currentRecords.filter(
+        (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+      ));
       setEditingReviewId(null);
       setMessage(metaphorFlags.length
         ? `Saved with ${metaphorFlags.length} phrase-book flag${metaphorFlags.length === 1 ? "" : "s"} for editorial review.`
@@ -9402,7 +9810,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         return;
       }
 
-      setReviewRecords((currentRecords) => currentRecords.filter((currentRecord) => currentRecord.id !== record.id));
+      setLocalDraftReviewRecords((currentRecords) => currentRecords.filter(
+        (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+      ));
+      setReviewRecords((currentRecords) => currentRecords.filter(
+        (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+      ));
       cancelReviewEdit();
       setSelectedReviewId(null);
       setMessage("Discarded unsaved content entry.");
@@ -9425,7 +9838,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         secret,
         { method: "DELETE" }
       );
-      setReviewRecords((currentRecords) => currentRecords.filter((currentRecord) => currentRecord.id !== record.id));
+      setLocalDraftReviewRecords((currentRecords) => currentRecords.filter(
+        (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+      ));
+      setReviewRecords((currentRecords) => currentRecords.filter(
+        (currentRecord) => currentRecord.id !== record.id && currentRecord.contentKey !== record.contentKey
+      ));
       setDraft(createAdminDraft(surface));
       setSelectedId(null);
       cancelReviewEdit();
@@ -9916,7 +10334,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     const nextRecord = manualEntryRecord(categoryFilter, surface, contentBlockFilter);
     const nextMetadata = reviewMetadataForRecord(nextRecord);
 
-    setReviewRecords((currentRecords) => [nextRecord, ...currentRecords.filter((record) => record.id !== nextRecord.id)]);
+    setLocalDraftReviewRecords((currentRecords) => prependDraftReviewRecord(currentRecords, nextRecord));
+    setReviewRecords((currentRecords) => prependDraftReviewRecord(currentRecords, nextRecord));
     setReviewCounts((currentCounts) => ({
       ...currentCounts,
       total: currentCounts.total + 1,
@@ -9935,38 +10354,42 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setContentStatusFilter("DRAFT");
     setActivePage("content");
     setAreGenerationInputsOpen(true);
+    setIsCreateMenuOpen(false);
     setMessage("New content entry ready. Choose its content type, then write or generate a draft.");
   }
 
   function startNewArticle() {
     const now = new Date();
     const timestamp = now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-    const baseRecord = manualEntryRecord("Sky", "sky", "essay");
+    const baseRecord = manualEntryRecord("Sky", "sky", "sky_article");
     const nextRecord: AdminReviewRecord = {
       ...baseRecord,
       id: `manual:article:${timestamp}`,
       title: "Untitled article",
       subtitle: `Article / Draft / ${adminDateLabel(baseRecord.targetDate)}`,
-      contentKey: `article/${timestamp}`,
-      eventType: "article",
-      mode: "in_depth",
-      blockType: "essay",
+      contentKey: `sky.article.manual.${timestamp}`,
+      eventType: "upcoming-transit-article",
+      mode: "article",
+      blockType: "sky_article",
       facts: {
         ...baseRecord.facts,
         source: "manual-article-entry",
-        blockType: "essay",
-        category: "Article"
+        blockType: "sky_article",
+        category: "Sky",
+        type: "upcoming-transit-article"
       },
       sourceSnapshot: {
         ...baseRecord.sourceSnapshot,
         source: "admin-article-entry",
         contentType: "article",
+        blockType: "sky_article",
         createdAt: now.toISOString()
       }
     };
     const nextMetadata = reviewMetadataForRecord(nextRecord);
 
-    setReviewRecords((currentRecords) => [nextRecord, ...currentRecords.filter((record) => record.id !== nextRecord.id)]);
+    setLocalDraftReviewRecords((currentRecords) => prependDraftReviewRecord(currentRecords, nextRecord));
+    setReviewRecords((currentRecords) => prependDraftReviewRecord(currentRecords, nextRecord));
     setReviewCounts((currentCounts) => ({
       ...currentCounts,
       total: currentCounts.total + 1,
@@ -9982,14 +10405,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setDraft(createAdminDraft("sky", nextRecord.targetDate ?? dateInputValue()));
     setSurface("sky");
     setStatus("DRAFT");
-    setCategoryFilter("all");
-    setContentBlockFilter("essay");
+    setCategoryFilter("Sky");
+    setContentBlockFilter("sky_article");
     setContentSourceFilter("all");
     setContentStatusFilter("DRAFT");
-    setActivePage("content");
+    setActivePage((currentPage) => currentPage === "articles" ? "articles" : "content");
     setAreGenerationInputsOpen(true);
     setIsCreateMenuOpen(false);
     setMessage("New article draft ready. Add the headline, summary, body, and article metadata, then save it as DRAFT.");
+    window.setTimeout(() => {
+      document.querySelector<HTMLInputElement>(".admin-editor-drawer .admin-title-field input")?.focus();
+    }, 0);
   }
 
   async function createDraft() {
@@ -10000,6 +10426,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
     setIsLoading(true);
     try {
+      const facts = parseAdminJson(draft.factsJson, "Facts");
+      const sourceSnapshot = parseAdminJson(draft.sourceSnapshotJson, "Source snapshot");
+      const factsRecord = facts && typeof facts === "object" && !Array.isArray(facts) ? facts as Record<string, unknown> : {};
+      const sourceSnapshotRecord = sourceSnapshot && typeof sourceSnapshot === "object" && !Array.isArray(sourceSnapshot) ? sourceSnapshot as Record<string, unknown> : {};
+      const draftBlockType = typeof factsRecord.blockType === "string" && factsRecord.blockType.trim()
+        ? factsRecord.blockType.trim()
+        : typeof sourceSnapshotRecord.blockType === "string" && sourceSnapshotRecord.blockType.trim()
+          ? sourceSnapshotRecord.blockType.trim()
+          : draft.mode === "article" && draft.surface === "sky"
+            ? "sky_article"
+            : undefined;
+      const draftPromptVersion = typeof sourceSnapshotRecord.promptVersion === "string" && sourceSnapshotRecord.promptVersion.trim()
+        ? sourceSnapshotRecord.promptVersion.trim()
+        : undefined;
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
@@ -10016,8 +10456,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             summary: draft.summary,
             body: draft.body,
             sections: parseAdminJson(draft.sectionsJson, "Sections"),
-            facts: parseAdminJson(draft.factsJson, "Facts"),
-            sourceSnapshot: parseAdminJson(draft.sourceSnapshotJson, "Source snapshot"),
+            facts,
+            sourceSnapshot,
+            ...(draftBlockType ? { blockType: draftBlockType } : {}),
+            ...(draftPromptVersion ? { promptVersion: draftPromptVersion } : {}),
             knowledgeIds: draft.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
             reviewerNotes: draft.reviewerNotes
           })
@@ -10249,6 +10691,27 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     }
   }
 
+  const createArticleDirectly = activePage === "overview" || activePage === "content" || activePage === "articles";
+  const surfaceSourceStatusCounts = writingSurfaceStatusCounts();
+  const writingSurfaceAreaOptions = Array.from(new Set(writingSurfaceSourceMap.map((item) => item.area)));
+  const filteredWritingSurfaces = writingSurfaceSourceMap.filter((surface) => {
+    const matchesArea = writingSurfaceAreaFilter === "all" || surface.area === writingSurfaceAreaFilter;
+    const matchesStatus = writingSurfaceStatusFilter === "all" || surface.status === writingSurfaceStatusFilter;
+
+    return matchesArea && matchesStatus;
+  });
+  const surfaceSourceGroups = filteredWritingSurfaces.reduce<Array<{ area: WritingSurfaceMapItem["area"]; items: WritingSurfaceMapItem[] }>>((groups, item) => {
+    const group = groups.find((candidate) => candidate.area === item.area);
+
+    if (group) {
+      group.items.push(item);
+    } else {
+      groups.push({ area: item.area, items: [item] });
+    }
+
+    return groups;
+  }, []);
+
   return (
     <main className="admin-dashboard">
       <aside className="admin-sidebar" aria-label="Admin navigation">
@@ -10407,44 +10870,50 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <button
                 type="button"
                 className="admin-create-button"
-                onClick={() => setIsCreateMenuOpen((open) => !open)}
-                aria-expanded={isCreateMenuOpen}
-                aria-haspopup="menu"
+                onClick={() => {
+                  if (createArticleDirectly) {
+                    startNewArticle();
+                    return;
+                  }
+                  setIsCreateMenuOpen((open) => !open);
+                }}
+                aria-expanded={createArticleDirectly ? undefined : isCreateMenuOpen}
+                aria-haspopup={createArticleDirectly ? undefined : "menu"}
               >
                 <Plus size={16} aria-hidden="true" />
-                Create
+                {createArticleDirectly ? "New Article" : "Create"}
               </button>
-              {isCreateMenuOpen && (
+              {!createArticleDirectly && isCreateMenuOpen && (
                 <div className="admin-create-menu-panel" role="menu" aria-label="Create content">
-                  <button type="button" role="menuitem" onClick={startNewArticle}>
+                  <button type="button" role="menuitem" aria-label="Create article, long-form editorial copy" onClick={startNewArticle}>
                     <BookOpenText size={15} aria-hidden="true" />
                     <span>
                       Article
                       <small>Long-form editorial copy</small>
                     </span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Exact content rows are for a specific app surface, date, chart factor, or relationship context.")}>
+                  <button type="button" role="menuitem" aria-label="Create exact content row" onClick={() => handleCreateAction("content", "Exact content rows are for a specific app surface, date, chart factor, or relationship context.")}>
                     <FileText size={15} aria-hidden="true" />
                     <span>
                       Exact content
                       <small>Specific reader-facing row</small>
                     </span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => handleCreateAction("vocabulary", "Vocabulary rows fill slots with reusable words, clauses, and short phrases.")}>
+                  <button type="button" role="menuitem" aria-label="Create reusable phrase or vocabulary row" onClick={() => handleCreateAction("vocabulary", "Vocabulary rows fill slots with reusable words, clauses, and short phrases.")}>
                     <Database size={15} aria-hidden="true" />
                     <span>
                       Reusable phrase
                       <small>Slot language or clause</small>
                     </span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => handleCreateAction("templates", "Templates control sentence structure and where slots appear.")}>
+                  <button type="button" role="menuitem" aria-label="Create template" onClick={() => handleCreateAction("templates", "Templates control sentence structure and where slots appear.")}>
                     <Sparkles size={15} aria-hidden="true" />
                     <span>
                       Template
                       <small>Mustache structure</small>
                     </span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Fallback hooks are the reusable safety-net templates used when richer content is unavailable.")}>
+                  <button type="button" role="menuitem" aria-label="Create fallback hook" onClick={() => handleCreateAction("knowledge", "Fallback hooks are the reusable safety-net templates used when richer content is unavailable.")}>
                     <KeyRound size={15} aria-hidden="true" />
                     <span>
                       Fallback hook
@@ -10874,8 +11343,32 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Composition</p>
                 <h2>Slots</h2>
-                <p>Use this when a template has <code>{"{{something}}"}</code> in it. Calculated slots are read-only; editable slots open Vocabulary or Fallback Hooks.</p>
+                <p>Use this only when you already know the placeholder you need to inspect, like <code>{"{{planet}}"}</code> or <code>{"{{livedScene}}"}</code>. For a confusing reader-facing page, start with Surface Map.</p>
               </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={() => navigateAdminPage("hooks")}>
+                  <LayoutDashboard size={16} aria-hidden="true" />
+                  Open Surface Map
+                </button>
+              </div>
+            </div>
+
+            <div className="admin-slot-usage-guide" aria-label="Slots versus surface map">
+              <article>
+                <span>Start here when</span>
+                <strong>You need to decode a template slot</strong>
+                <p>Slots tells you whether a placeholder is calculated, vocabulary-fed, fallback-fed, missing, or editable elsewhere.</p>
+              </article>
+              <article>
+                <span>Start in Surface Map when</span>
+                <strong>A public page reads wrong</strong>
+                <p>Surface Map tells you which product surface, prose layer, source file, and edit target created the copy.</p>
+              </article>
+              <article>
+                <span>Editing rule</span>
+                <strong>Do not edit by guessing a slot</strong>
+                <p>Find the surface first, then follow its edit target to Exact Content, Vocabulary, Knowledge, or Fallback Hooks.</p>
+              </article>
             </div>
 
             <div className="admin-slot-stat-row" aria-label="Slot dictionary coverage">
@@ -10915,7 +11408,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div className="admin-slot-info-row">
                 <details>
                   <summary>How slots work</summary>
-                  <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> come from chart or sky facts. Slots such as topic language, tone, lived scene, or practical action come from Vocabulary or Fallback Hooks.</p>
+                  <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> come from chart or sky facts. Slots such as topic language, tone, lived scene, or practical action come from Vocabulary or Fallback Hooks. This page explains ingredients; Surface Map explains which recipe used them.</p>
                 </details>
                 <button
                   type="button"
@@ -11986,7 +12479,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">App surfaces</p>
                 <h2>Surface Map</h2>
-                <p>Use this read-only map when the public app shows wrong copy. It tells you which hook was requested, which IDs it checks, and which fallback row can render.</p>
+                <p>Use this read-only map when the public app shows wrong copy. It shows the exact prose sources behind each surface and whether that surface is normalized into the two-layer writing model.</p>
               </div>
               <div className="admin-template-actions">
                 <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as JSON">
@@ -12004,18 +12497,234 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </div>
 
-            <div className="admin-fallback-usage" aria-label="How hooks resolve content">
+            <section className="admin-writing-source-map" aria-label="Writing surface source map">
+              <div className="admin-writing-map-quickstart" aria-label="How to use Surface Map">
+                <article>
+                  <span>1</span>
+                  <strong>Find the public surface</strong>
+                  <p>Filter by Friends, Natal, Sky, Transits, or System. Pick the card matching the screen where the copy appears.</p>
+                </article>
+                <article>
+                  <span>2</span>
+                  <strong>Check the prose layer</strong>
+                  <p>Source-grounded is authored or reviewed. Madlib fallback is a source-based sentence frame. Empty slots should be omitted.</p>
+                </article>
+                <article>
+                  <span>3</span>
+                  <strong>Open the edit target</strong>
+                  <p>Use the highlighted edit-source list before digging into render paths, hooks, or route diagnostics.</p>
+                </article>
+              </div>
+
+              <div className="admin-writing-map-flow" aria-label="Two-layer prose model">
+                <article>
+                  <span>Layer 1</span>
+                  <strong>Source-grounded</strong>
+                  <p>Authored, reviewed, or source-shaped prose already normalized into the surface slots.</p>
+                </article>
+                <article>
+                  <span>Layer 2</span>
+                  <strong>Madlib fallback</strong>
+                  <p>Sentence frames filled from source-based knowledge, phrase banks, vocabulary, and lived-experience lists.</p>
+                </article>
+                <article>
+                  <span>Never render</span>
+                  <strong>Raw material</strong>
+                  <p>Vocabulary arrays, authoring notes, directional scaffolds, and emergency placeholder paragraphs stay out of the reader UI.</p>
+                </article>
+              </div>
+
+              <div className="admin-writing-map-stats" aria-label="Surface normalization counts">
+                <article>
+                  <span>Total surfaces</span>
+                  <strong>{surfaceSourceStatusCounts.total}</strong>
+                </article>
+                <article>
+                  <span>Normalized</span>
+                  <strong>{surfaceSourceStatusCounts.normalized}</strong>
+                </article>
+                <article>
+                  <span>Partial</span>
+                  <strong>{surfaceSourceStatusCounts.partial}</strong>
+                </article>
+                <article>
+                  <span>Not normalized</span>
+                  <strong>{surfaceSourceStatusCounts["not-normalized"]}</strong>
+                </article>
+              </div>
+
+              <div className="admin-writing-map-controls admin-filter-toolbar" aria-label="Surface map filters">
+                <div className="admin-filter-toolbar-header">
+                  <div>
+                    <p className="admin-eyebrow">Browse surfaces</p>
+                    <strong>{filteredWritingSurfaces.length} of {writingSurfaceSourceMap.length}</strong>
+                  </div>
+                  {(writingSurfaceAreaFilter !== "all" || writingSurfaceStatusFilter !== "all") && (
+                    <button
+                      className="admin-filter-reset"
+                      type="button"
+                      onClick={() => {
+                        setWritingSurfaceAreaFilter("all");
+                        setWritingSurfaceStatusFilter("all");
+                      }}
+                    >
+                      <X size={15} aria-hidden="true" />
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <fieldset className="admin-slot-filter-group admin-segmented-filter" aria-label="Filter surfaces by area">
+                  <legend>Area</legend>
+                  <button
+                    type="button"
+                    className={writingSurfaceAreaFilter === "all" ? "active" : ""}
+                    aria-pressed={writingSurfaceAreaFilter === "all"}
+                    onClick={() => setWritingSurfaceAreaFilter("all")}
+                  >
+                    <span>All</span>
+                    <strong>{writingSurfaceSourceMap.length}</strong>
+                  </button>
+                  {writingSurfaceAreaOptions.map((area) => (
+                    <button
+                      key={area}
+                      type="button"
+                      className={writingSurfaceAreaFilter === area ? "active" : ""}
+                      aria-pressed={writingSurfaceAreaFilter === area}
+                      onClick={() => setWritingSurfaceAreaFilter(area)}
+                    >
+                      <span>{area}</span>
+                      <strong>{writingSurfaceSourceMap.filter((surface) => surface.area === area).length}</strong>
+                    </button>
+                  ))}
+                </fieldset>
+                <fieldset className="admin-slot-filter-group admin-segmented-filter" aria-label="Filter surfaces by normalization status">
+                  <legend>Status</legend>
+                  <button
+                    type="button"
+                    className={writingSurfaceStatusFilter === "all" ? "active" : ""}
+                    aria-pressed={writingSurfaceStatusFilter === "all"}
+                    onClick={() => setWritingSurfaceStatusFilter("all")}
+                  >
+                    <span>All</span>
+                    <strong>{writingSurfaceSourceMap.length}</strong>
+                  </button>
+                  {(["normalized", "partial", "not-normalized"] as WritingSurfaceStatus[]).map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      className={writingSurfaceStatusFilter === status ? "active" : ""}
+                      aria-pressed={writingSurfaceStatusFilter === status}
+                      onClick={() => setWritingSurfaceStatusFilter(status)}
+                    >
+                      <span>{writingSurfaceStatusLabels[status]}</span>
+                      <strong>{surfaceSourceStatusCounts[status]}</strong>
+                    </button>
+                  ))}
+                </fieldset>
+              </div>
+
+              <div className="admin-writing-map-groups">
+                {surfaceSourceGroups.map((group) => (
+                  <section className="admin-writing-map-group" key={group.area} aria-label={`${group.area} writing surfaces`}>
+                    <div className="admin-lunar-coverage-heading">
+                      <div>
+                        <p className="admin-eyebrow">{group.area}</p>
+                        <h3>{group.area} surfaces</h3>
+                      </div>
+                    </div>
+                    <div className="admin-writing-surface-grid">
+                      {group.items.map((surface) => {
+                        const editableSources = writingSurfaceEditableSources(surface);
+
+                        return (
+                          <article className="admin-writing-surface-card" key={surface.id}>
+                            <header>
+                              <div>
+                                <p className="admin-eyebrow">{surface.area}</p>
+                                <h4>{surface.surface}</h4>
+                              </div>
+                              <span className={`ui-pill admin-writing-status ${writingSurfaceStatusClass(surface.status)}`}>
+                                {writingSurfaceStatusLabels[surface.status]}
+                              </span>
+                            </header>
+
+                            <section className="admin-writing-edit-target" aria-label={`${surface.surface} edit target`}>
+                              <p className="admin-eyebrow">Edit target</p>
+                              <div className="admin-writing-edit-list">
+                                {editableSources.map((source) => (
+                                  <div key={`${surface.id}-editable-${source.path}`}>
+                                    <span>{writingSurfaceSourceRoleLabels[source.role]}</span>
+                                    <div className="admin-writing-edit-source-body">
+                                      <code>{source.path}</code>
+                                      <small>{writingSurfaceSourceActionHelp(source)}</small>
+                                      <button
+                                        className={writingSurfaceSourceActionClass(source)}
+                                        type="button"
+                                        disabled={!writingSurfaceSourceCanOpen(source)}
+                                        onClick={() => openWritingSurfaceSource(surface, source)}
+                                      >
+                                        <Pencil size={14} aria-hidden="true" />
+                                        {writingSurfaceSourceActionLabel(source)}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+
+                            <dl className="admin-writing-surface-facts">
+                              <div>
+                                <dt>Visible layer order</dt>
+                                <dd>{surface.visibleLayerOrder.map((layer) => writingLayerLabels[layer]).join(" -> ")}</dd>
+                              </div>
+                              <div>
+                                <dt>Required slots</dt>
+                                <dd>{surface.requiredSlots.join(", ")}</dd>
+                              </div>
+                              <div>
+                                <dt>Current path</dt>
+                                <dd>{surface.currentRenderPath}</dd>
+                              </div>
+                              <div>
+                                <dt>Risk</dt>
+                                <dd>{surface.risk}</dd>
+                              </div>
+                            </dl>
+
+                            <div className="admin-writing-source-list" aria-label={`${surface.surface} source files`}>
+                              {surface.sources.map((source) => (
+                                <div key={`${surface.id}-${source.path}`}>
+                                  <span>{writingSurfaceSourceRoleLabels[source.role]}</span>
+                                  <code>{source.path}</code>
+                                </div>
+                              ))}
+                            </div>
+
+                            <p className="admin-writing-next-action">{surface.nextAction}</p>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </section>
+                ))}
+                {filteredWritingSurfaces.length === 0 && (
+                  <p className="admin-template-note">No surfaces match the selected filters.</p>
+                )}
+              </div>
+            </section>
+
+            <div className="admin-fallback-usage admin-hook-resolution-legacy" aria-label="Legacy hook resolution">
               <article>
-                <span>1. Exact content</span>
-                <p>A published row for the specific card, date, chart factor, or relationship context wins first.</p>
+                <span>Hook catalog note</span>
+                <p>The table below is still useful for locating fallback-hook rows, but hooks should become routers and madlib inputs, not a third prose layer.</p>
               </article>
               <article>
-                <span>2. Phrase bank</span>
-                <p>If there is no exact row, the surface can assemble approved phrase-bank content from matching facts.</p>
+                <span>Source-grounded first</span>
+                <p>Exact authored rows, reviewed phrasebank records, and knowledge bundles should fill normalized surface slots before fallback runs.</p>
               </article>
               <article>
-                <span>3. Fallback hook</span>
-                <p>If authored knowledge misses, the hook renders the matching <code>fallback-hook/</code> template with live slot values.</p>
+                <span>Madlib second</span>
+                <p>Fallback rows should compose sentences from source-based phrases and lived-experience lists.</p>
               </article>
               <article>
                 <span>Use this for</span>
@@ -12953,15 +13662,15 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <section className="admin-content-toolbar" aria-label="Content controls">
               <div className="admin-content-toolbar-copy">
                 <p className="admin-eyebrow">Content library</p>
-                <h2>Phrasebank Content</h2>
+                <h2>Exact Content</h2>
                 <p>
                   {isLoading && visibleContentRecords.length === 0
                     ? "Loading phrasebank content."
                     : generatedContentPreviewMode === "emergency-floor"
-                    ? `${visibleContentRecords.length} fallback floor rows visible in localhost preview.`
+                    ? `${visibleContentRecords.length} fallback floor rows shown in preview.`
                     : generatedContentPreviewMode === "hide-emergency-floor"
-                    ? `${visibleContentRecords.length} rows with ${emergencyFloorRecords.length} fallback floor rows hidden for diagnostic review.`
-                    : `${cmsStatusCounts.all} reader-facing rows with the normal serving hierarchy.`
+                    ? `${visibleContentRecords.length} rows shown; fallback floor hidden.`
+                    : `${cmsStatusCounts.all} reader-facing rows shown.`
                   }
                 </p>
               </div>
@@ -12981,7 +13690,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <span>Preview</span>
                   <strong>{generatedContentPreviewModeLabel(generatedContentPreviewMode)}</strong>
                 </button>
-                <button type="button" onClick={() => setActivePage("reviewQueue")}>
+                <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
                 </button>
@@ -12989,23 +13698,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <Plus size={16} aria-hidden="true" />
                   New Article
                 </button>
-                <button type="button" onClick={() => setActivePage("articles")}>
+                <button type="button" onClick={() => navigateAdminPage("articles")}>
                   <BookOpenText size={16} aria-hidden="true" />
                   Articles
                 </button>
-                <button type="button" onClick={() => setActivePage("templates")}>
+                <button type="button" onClick={() => navigateAdminPage("templates")}>
                   <Sparkles size={16} aria-hidden="true" />
                   Templates
                 </button>
-                <button type="button" onClick={() => setActivePage("vocabulary")}>
+                <button type="button" onClick={() => navigateAdminPage("vocabulary")}>
                   <BookOpenText size={16} aria-hidden="true" />
                   Vocabulary
                 </button>
-                <button type="button" onClick={() => setActivePage("knowledge")}>
+                <button type="button" onClick={() => navigateAdminPage("knowledge")}>
                   <FileText size={16} aria-hidden="true" />
                   Fallback hooks
                 </button>
-                <button type="button" onClick={() => setActivePage("hooks")}>
+                <button type="button" onClick={() => navigateAdminPage("hooks")}>
                   <KeyRound size={16} aria-hidden="true" />
                   Surface Map
                 </button>
