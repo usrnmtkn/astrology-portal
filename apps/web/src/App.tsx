@@ -179,6 +179,7 @@ import {
   createManualChart,
   deleteManualChart,
   listCachedManualCharts,
+  listLocalManualChartUserIds,
   listManualCharts,
   migrateLocalManualChartsToRemote,
   updateManualChart
@@ -12538,7 +12539,8 @@ export function App() {
         await migrateLocalManualChartsToRemote(account.id, [
           cachedLocalProfile?.id,
           persistedProfileId,
-          account.id
+          account.id,
+          ...listLocalManualChartUserIds()
         ]);
       } catch (migrationError) {
         console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
@@ -12557,7 +12559,8 @@ export function App() {
       try {
         await migrateLocalManualChartsToRemote(account.id, [
           cachedLocalProfile?.id,
-          account.id
+          account.id,
+          ...listLocalManualChartUserIds()
         ]);
       } catch (migrationError) {
         console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
@@ -13385,7 +13388,8 @@ export function App() {
                     sunriseOrbDegrees={activeSunriseOrbDegrees}
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
-                    chartsReady={Boolean(remoteAccountId) || authAccountChecked}
+                    chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
+                    allowCachedChartsWhileLoading={!isAuthConfigured}
                     onOpenDetail={openSkyDetail}
                   />
                 </FriendsRoute>
@@ -17124,6 +17128,7 @@ function ManualChartsPanel({
   chartOwnerUserId,
   chartRefreshKey,
   chartsReady,
+  allowCachedChartsWhileLoading,
   onOpenDetail
 }: {
   profile: UserProfile;
@@ -17137,13 +17142,16 @@ function ManualChartsPanel({
   chartOwnerUserId: string;
   chartRefreshKey: number;
   chartsReady: boolean;
+  allowCachedChartsWhileLoading: boolean;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const initialCachedCharts = useMemo(
     () => listCachedManualCharts([chartOwnerUserId, profile.id]),
     [chartOwnerUserId, profile.id]
   );
-  const [charts, setCharts] = useState<ManualChart[]>(() => initialCachedCharts);
+  const [charts, setCharts] = useState<ManualChart[]>(() => (
+    allowCachedChartsWhileLoading ? initialCachedCharts : []
+  ));
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
@@ -17158,10 +17166,11 @@ function ManualChartsPanel({
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">(
-    () => initialCachedCharts.length > 0 ? "idle" : "loading"
+    () => allowCachedChartsWhileLoading && initialCachedCharts.length > 0 ? "idle" : "loading"
   );
   const [message, setMessage] = useState("");
   const chartsLoadedRef = useRef(false);
+  const chartOwnerUserIdRef = useRef(chartOwnerUserId);
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
   const isEventForm = form.chartType === "event";
@@ -17258,7 +17267,7 @@ function ManualChartsPanel({
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
-      ? false
+      ? Boolean(selectedChart?.natalChart)
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "compatibility"
@@ -17653,15 +17662,23 @@ function ManualChartsPanel({
 
   useEffect(() => {
     let cancelled = false;
+    const chartOwnerChanged = chartOwnerUserIdRef.current !== chartOwnerUserId;
+
+    if (chartOwnerChanged) {
+      chartOwnerUserIdRef.current = chartOwnerUserId;
+      chartsLoadedRef.current = false;
+      setSelectedChartId(null);
+    }
 
     if (!chartsReady) {
       const cachedCharts = listCachedManualCharts([chartOwnerUserId, profile.id]);
 
-      if (cachedCharts.length > 0) {
+      if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
         chartsLoadedRef.current = true;
         setCharts(cachedCharts);
         setStatus("idle");
       } else {
+        setCharts([]);
         setStatus("loading");
       }
 
@@ -17701,7 +17718,7 @@ function ManualChartsPanel({
     return () => {
       cancelled = true;
     };
-  }, [chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
+  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
 
   useEffect(() => {
     if (!chartsReady || charts.length === 0) {
