@@ -419,7 +419,7 @@ assert.ok(saturn, "Saturn proof fixture must exist.");
 assert.equal(saturn.originalTemplateId, "sky.planet_sign.detail");
 assert.equal(saturn.provenanceClassification, "SOURCE_GAP; stale snapshot inspected but not used as v2.3.0 authority");
 
-const adminSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/admin/GeneratedContentAdminDashboard.tsx"), "utf8");
+const adminSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.ok(adminSource.includes("source: \"snapshot\""), "Admin local snapshot rows must be classified as snapshot, not calculated.");
 assert.ok(adminSource.includes("Source-grounded generated snapshot"), "Admin must label snapshot provenance as source-grounded generated snapshot.");
 

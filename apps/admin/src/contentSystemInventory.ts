@@ -1,9 +1,9 @@
-import executableTemplateContract from "../content/templateHandoffV2/contracts/EXECUTABLE-TEMPLATE-CONTRACT.json";
-import surfaceResolutionMatrix from "../content/templateHandoffV2/contracts/SURFACE-RESOLUTION-MATRIX.json";
-import renderContractFixtures from "../content/templateHandoffV2/fixtures/render-contract-fixtures.json";
-import ccSourcePhrases from "../content/templateHandoffV2/sources/cc-source-phrases.json";
-import marieSourcePhrases from "../content/templateHandoffV2/sources/marie-source-phrases.json";
-import sourceDerivedClauseExemplars from "../content/templateHandoffV2/sources/source-derived-clause-exemplars.json";
+import executableTemplateContract from "../../web/src/content/templateHandoffV2/contracts/EXECUTABLE-TEMPLATE-CONTRACT.json";
+import surfaceResolutionMatrix from "../../web/src/content/templateHandoffV2/contracts/SURFACE-RESOLUTION-MATRIX.json";
+import renderContractFixtures from "../../web/src/content/templateHandoffV2/fixtures/render-contract-fixtures.json";
+import ccSourcePhrases from "../../web/src/content/templateHandoffV2/sources/cc-source-phrases.json";
+import marieSourcePhrases from "../../web/src/content/templateHandoffV2/sources/marie-source-phrases.json";
+import sourceDerivedClauseExemplars from "../../web/src/content/templateHandoffV2/sources/source-derived-clause-exemplars.json" with { type: "json" };
 
 export type InventorySlotStatus = "calculated" | "ready" | "draft" | "local" | "missing";
 export type InventorySlotEditableIn = "Calculated" | "Vocabulary" | "Fallback hooks";

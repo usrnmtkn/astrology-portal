@@ -90,7 +90,7 @@ Standard applied:
 
 ## Changes Made
 
-- Added a final admin UX/UI standard component layer in `apps/web/src/admin/admin.css`.
+- Added a final admin UX/UI standard component layer in `apps/admin/src/admin.css`.
 - Standardized semantic color tokens for admin controls.
 - Normalized buttons, forms, focus states, segmented controls, popovers, nav, status pills, table headers, code pills, and warning surfaces.
 - Preserved existing page structure to avoid risky large markup rewrites.

@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const webSrcRoot = path.join(repoRoot, "apps/web/src");
-const adminSrcRoot = path.join(webSrcRoot, "admin");
-const adminAppSrcRoot = path.join(repoRoot, "apps/admin/src");
+const legacyWebAdminSrcRoot = path.join(webSrcRoot, "admin");
+const adminSrcRoot = path.join(repoRoot, "apps/admin/src");
 const reportPath = path.join(repoRoot, "test-results/admin-web-boundary/latest.md");
 
 const sourceExtensions = new Set([".css", ".js", ".jsx", ".mjs", ".ts", ".tsx"]);
@@ -23,6 +23,10 @@ function toRepoPath(filePath) {
 }
 
 function walkFiles(root) {
+  if (!fs.existsSync(root)) {
+    return [];
+  }
+
   const files = [];
   for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
     const filePath = path.join(root, entry.name);
@@ -57,10 +61,11 @@ function lineFindings(filePath, patterns, classify) {
 }
 
 function publicAdminReferences() {
-  const files = walkFiles(webSrcRoot).filter((filePath) => !filePath.startsWith(`${adminSrcRoot}${path.sep}`));
+  const files = walkFiles(webSrcRoot).filter((filePath) => !filePath.startsWith(`${legacyWebAdminSrcRoot}${path.sep}`));
   const patterns = [
     /["'`]\.\/admin\b/,
     /["'`]\.\.\/admin\b/,
+    /["'`]\.\.\/\.\.\/admin\/src\b/,
     /admin\.css/,
     /\/api\/admin\//,
     /\/admin\/content/,
@@ -115,30 +120,10 @@ function adminPublicImports() {
   return findings;
 }
 
-function adminAppTemporaryImports() {
-  if (!fs.existsSync(adminAppSrcRoot)) {
-    return [];
-  }
-
-  const files = walkFiles(adminAppSrcRoot);
-  const patterns = [
-    /\.\.\/\.\.\/web\/src\/admin\/GeneratedContentAdminDashboard/,
-    /apps\/web\/src\/admin/
-  ];
-
-  return files.flatMap((filePath) =>
-    lineFindings(filePath, patterns, () => ({
-      status: "known-bridge",
-      reason: "temporary admin app shell bridge until dashboard source moves into apps/admin"
-    }))
-  );
-}
-
 const publicFindings = publicAdminReferences();
 const adminImportFindings = adminPublicImports();
-const adminAppFindings = adminAppTemporaryImports();
-const unexpected = [...publicFindings, ...adminImportFindings, ...adminAppFindings].filter((finding) => finding.status === "unexpected");
-const knownBridges = [...publicFindings, ...adminAppFindings].filter((finding) => finding.status === "known-bridge");
+const unexpected = [...publicFindings, ...adminImportFindings].filter((finding) => finding.status === "unexpected");
+const knownBridges = publicFindings.filter((finding) => finding.status === "known-bridge");
 
 const markdown = [
   "# Admin/Web Boundary Audit",
@@ -149,11 +134,9 @@ const markdown = [
   "",
   "## Scope",
   "",
-  "- Public app source: `apps/web/src`, excluding `apps/web/src/admin`.",
-  "- Admin dashboard source: `apps/web/src/admin`.",
-  "- Admin app shell: `apps/admin/src`.",
+  "- Public app source: `apps/web/src`.",
+  "- Admin app source: `apps/admin/src`.",
   "- Allowed temporary bridges: `apps/web/src/App.tsx` and `apps/web/src/main.tsx`.",
-  "- Allowed admin app bootstrap bridge: `apps/admin/src/main.tsx` importing the existing web dashboard.",
   "- Allowed admin support imports while extraction is in progress: `apps/web/src/content/*` and `apps/web/src/services/*`.",
   "",
   "## Unexpected Coupling",
@@ -170,7 +153,7 @@ const markdown = [
   "",
   "## Next Extraction Targets",
   "",
-  "1. Move dashboard source from `apps/web/src/admin` into `apps/admin/src`.",
+  "1. Extract shared content/services from `apps/web/src` into a package with an explicit public/admin contract.",
   "2. Remove the admin route shell from `apps/web/src/App.tsx` once traffic uses the admin app.",
   "3. Give admin API calls an explicit admin client boundary instead of raw `/api/admin/*` strings inside the dashboard component.",
   "4. Split admin Playwright flows and visual baselines into admin-owned scripts once `apps/admin` has its own Vite entry.",
