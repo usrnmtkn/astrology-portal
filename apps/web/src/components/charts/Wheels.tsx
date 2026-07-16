@@ -518,7 +518,7 @@ export const SkyWheel = memo(function SkyWheel({
               const marker = point(markerAngle, radius.transitPlanet);
               const tickOuter = point(tickAngle, radius.outer + 7);
               const tickInner = point(tickAngle, radius.outer + 5);
-              const degreeMarker = point(tickAngle, radius.transitDegree);
+              const degreeMarker = point(markerAngle, radius.transitDegree);
 
               return (
                 <g
