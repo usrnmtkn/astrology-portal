@@ -552,6 +552,51 @@ async function expectReaderFacingCopy(locator: ReturnType<Page["locator"]>, labe
   expect(text, `${label} does not surface directional or moralizing scaffold copy`).not.toMatch(directionalCopyPattern);
 }
 
+async function expectRelationshipWheelGeometry(page: Page, label: string) {
+  const wheel = page.getByLabel(label);
+
+  await expect(wheel).toBeVisible();
+  const geometry = await wheel.evaluate((element) => {
+    const center = 300;
+    const radiusSpread = (selector: string) => {
+      const radii = Array.from(element.querySelectorAll(selector))
+        .map((node) => {
+          const transform = node.getAttribute("transform") ?? "";
+          const match = transform.match(/translate\((-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\)/);
+
+          if (!match) {
+            return null;
+          }
+
+          const x = Number(match[1]);
+          const y = Number(match[2]);
+
+          return Math.hypot(x - center, y - center);
+        })
+        .filter((radius): radius is number => typeof radius === "number" && Number.isFinite(radius));
+
+      return {
+        count: radii.length,
+        spread: radii.length ? Math.max(...radii) - Math.min(...radii) : Number.POSITIVE_INFINITY
+      };
+    };
+
+    return {
+      outerTicks: element.querySelectorAll(".synastry-planet-tick--outer").length,
+      innerTicks: element.querySelectorAll(".synastry-planet-tick--inner").length,
+      outer: radiusSpread(".planet-marker-outer .planet-label-group"),
+      inner: radiusSpread(".planet-marker-inner .planet-label-group")
+    };
+  });
+
+  expect(geometry.outerTicks, `${label} renders outer degree tick lines`).toBeGreaterThanOrEqual(10);
+  expect(geometry.innerTicks, `${label} renders inner degree tick lines`).toBeGreaterThanOrEqual(10);
+  expect(geometry.outer.count, `${label} renders outer glyphs`).toBeGreaterThanOrEqual(10);
+  expect(geometry.inner.count, `${label} renders inner glyphs`).toBeGreaterThanOrEqual(10);
+  expect(geometry.outer.spread, `${label} outer glyphs stay on one radius arc`).toBeLessThan(1);
+  expect(geometry.inner.spread, `${label} inner glyphs stay on one radius arc`).toBeLessThan(1);
+}
+
 test.describe("client-facing user flow case studies", () => {
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
@@ -632,10 +677,19 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+
+    await page.getByRole("tab", { name: "Compatibility" }).click();
+    await expectRelationshipWheelGeometry(page, "Nikki compatibility chart wheel");
+
     await page.getByRole("tab", { name: "Natal" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toHaveAttribute("aria-selected", "true");
 
+    await page.getByRole("tab", { name: "Transits" }).click();
+    await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
+
     await page.getByRole("tab", { name: "Synastry" }).click();
+    await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();
 
     await page.getByRole("tab", { name: "Composite" }).click();
