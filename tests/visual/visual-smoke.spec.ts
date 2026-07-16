@@ -149,7 +149,7 @@ test.describe("visual smoke screens", () => {
   test("captures sky", async ({ page }) => {
     await preparePage(page);
     await page.goto("/#sky");
-    await expect(page.getByText("Today, simple.")).toBeVisible();
+    await expect(page.getByText("The sky today.")).toBeVisible();
     await capture(page, "sky-light");
   });
 

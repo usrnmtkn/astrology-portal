@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 let loadedLocalEnv = false;
 const localOverrideKeys = new Set([
@@ -24,9 +25,17 @@ export function loadLocalWebEnv() {
 
   loadedLocalEnv = true;
 
-  const envPath = resolve(process.cwd(), "apps/web/.env.local");
+  const apiLibDir = dirname(fileURLToPath(import.meta.url));
+  const repoRootFromApi = resolve(apiLibDir, "../..");
+  const envCandidates = [
+    resolve(process.cwd(), "apps/web/.env.local"),
+    resolve(process.cwd(), ".env.local"),
+    resolve(repoRootFromApi, "apps/web/.env.local"),
+    resolve(repoRootFromApi, ".env.local")
+  ];
+  const envPath = envCandidates.find((candidate) => existsSync(candidate));
 
-  if (!existsSync(envPath)) {
+  if (!envPath) {
     return;
   }
 

@@ -2,6 +2,7 @@ import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import { natalCardTagline } from "../../services/natalPlacementTaglines";
+import { isReaderFacingCopy } from "../../content/readerSafety";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -52,6 +53,16 @@ export const placementPlanetOrder = [...SKY_BODY_ORDER];
 const socialPlacementOrder = ["Sun", "Moon", "Ascendant", ...SKY_BODY_ORDER.slice(2)];
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
+type PlacementMicrocopyLayer = "source-grounded" | "madlib-fallback";
+
+type NormalizedPlacementMicrocopySection = {
+  slot: "description" | "dignity";
+  required: boolean;
+  layer: PlacementMicrocopyLayer;
+  tier: string;
+  sourceKeys: string[];
+  body: string;
+};
 
 const chartPlacementDescriptions: Record<string, string> = {
   Ascendant: "How this chart meets the world",
@@ -128,6 +139,28 @@ const dignityDescriptions: Record<EssentialDignity, string> = {
   detriment: "Detriment: the planet is opposite one of its own signs, so its topics may need translation, effort, or less familiar tools.",
   fall: "Fall: the planet is opposite its exaltation, so its topics can feel less supported and may need extra care or adjustment."
 };
+
+function normalizePlacementMicrocopySection(
+  slot: NormalizedPlacementMicrocopySection["slot"],
+  body: string,
+  sourceKeys: string[],
+  required = false
+): NormalizedPlacementMicrocopySection | null {
+  const copy = body.trim();
+
+  if (!isReaderFacingCopy(copy)) {
+    return null;
+  }
+
+  return {
+    slot,
+    required,
+    layer: "madlib-fallback",
+    tier: "source-based-local-placement-microcopy",
+    sourceKeys,
+    body: copy
+  };
+}
 
 type EssentialDignityValue = EssentialDignity | EssentialDignity[];
 
@@ -249,12 +282,18 @@ export function socialPlacementDegree(degree: number) {
 
 function placementDignityFromValue(dignity: EssentialDignity): PlacementDignity {
   const labelParts = dignityLabelParts[dignity];
+  const normalizedDescription = normalizePlacementMicrocopySection(
+    "dignity",
+    dignityDescriptions[dignity],
+    [`placement.dignity.${dignity}`],
+    false
+  );
 
   return {
     dignity,
     label: `${labelParts.adjective} · ${labelParts.name}`,
     tone: labelParts.tone,
-    description: dignityDescriptions[dignity]
+    description: normalizedDescription?.body ?? ""
   };
 }
 
@@ -281,19 +320,20 @@ export function placementTitleFromParts(planet: string, sign: string, retrograde
 }
 
 export function natalPlacementDescription(planet: string, context: PlacementDescriptionContext = "self", ownerName?: string) {
+  const sourceKeys = [`placement.description.${context}.${normalizeSkyBodyName(planet).toLowerCase().replace(/\s+/g, "-")}`];
+  let body = "";
+
   if (context === "person" && ownerName?.trim()) {
-    return namedPlacementDescription(planet, ownerName);
+    body = namedPlacementDescription(planet, ownerName);
+  } else if (context === "chart") {
+    body = chartPlacementDescriptions[planet] ?? "";
+  } else if (context === "composite") {
+    body = compositePlacementDescriptions[planet] ?? "";
+  } else {
+    body = natalCardTagline(planet);
   }
 
-  if (context === "chart") {
-    return chartPlacementDescriptions[planet] ?? "";
-  }
-
-  if (context === "composite") {
-    return compositePlacementDescriptions[planet] ?? "";
-  }
-
-  return natalCardTagline(planet);
+  return normalizePlacementMicrocopySection("description", body, sourceKeys, false)?.body ?? "";
 }
 
 export function InlineGlyphIcon({

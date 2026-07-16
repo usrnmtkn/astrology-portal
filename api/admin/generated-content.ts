@@ -64,6 +64,16 @@ function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string)
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
 }
 
+function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {
+  if (typeof blockType !== "string") return undefined;
+  const value = blockType.trim();
+  if (!value) return undefined;
+  if (value === "general_article") {
+    return surface === "sky" || mode === "article" ? "sky_article" : "essay";
+  }
+  return value;
+}
+
 function sourceSnapshotSourceType(sourceSnapshot: unknown) {
   return sourceSnapshot && typeof sourceSnapshot === "object" && !Array.isArray(sourceSnapshot)
     ? String((sourceSnapshot as Record<string, unknown>).sourceType ?? "")
@@ -355,6 +365,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     throw new Error("eventType is required.");
   }
 
+  const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const row = {
     content_key: body.contentKey.trim(),
     surface: body.surface,
@@ -370,7 +381,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     evergreen: Boolean(body.evergreen),
     evergreen_at: body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null,
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
-    ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
+    ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     provider: "claude",
     model: "manual",
@@ -427,6 +438,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     assertCanPublishGeneratedContent(body);
   }
 
+  const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   return {
     content_key: body.contentKey.trim(),
     surface: body.surface,
@@ -442,7 +454,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     evergreen: Boolean(body.evergreen),
     evergreen_at: body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null,
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
-    ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
+    ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     provider: typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : "claude",
     model: typeof body.model === "string" && body.model.trim() ? body.model.trim() : "manual",
@@ -677,7 +689,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (body.blockType !== undefined) {
-    patch.block_type = typeof body.blockType === "string" && body.blockType.trim() ? body.blockType.trim() : null;
+    patch.block_type = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode) ?? null;
   }
 
   if (typeof body.reviewerNotes === "string") {
