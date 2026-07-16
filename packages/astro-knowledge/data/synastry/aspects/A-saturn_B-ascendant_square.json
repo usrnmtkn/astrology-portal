@@ -1,0 +1,15 @@
+{
+  "id": "A-saturn_B-ascendant_square",
+  "kind": "interaspect",
+  "planetA": "saturn",
+  "planetB": "ascendant",
+  "aspect": "square",
+  "plainTranslation": "Their caution or criticism affects how freely you present yourself.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Merged from cc-synastry-web-bundle.json.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "authoringStatus": "draft",
+  "summaryShort": "Their caution or criticism affects how freely you present yourself.",
+  "summaryDeep": "Their caution or criticism affects how freely you present yourself. You may over-prepare, and feel watched. Show up as yourself; their approval isn't the bar."
+}
