@@ -10,7 +10,7 @@ cards. One quote per record. Her words are never seam/register-linted.
 
 Run AFTER builders + tone_pass.
 """
-import json, os, glob, re
+import json, os, glob, re, collections
 
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAP = 4  # max records per quote
@@ -112,7 +112,12 @@ def matches(tags, theme):
             any(a in angles for a in theme.get("angles", [])))
 
 def main():
-    corpus = json.load(open(os.path.join(PKG, "phrasebank", "marie-confirmed-quotes.json")))["quotes"]
+    all_quotes = json.load(open(os.path.join(PKG, "phrasebank", "marie-confirmed-quotes.json")))["quotes"]
+    corpus = [
+        q for q in all_quotes
+        if q.get("status") != "REFERENCE_ONLY"
+        and "do not serve" not in str(q.get("serving", "")).lower()
+    ]
     by_text = {q["text"]: q for q in corpus}
     def norm(s):
         return s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
@@ -165,8 +170,13 @@ def main():
     import sys as _sys
     _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from transit_pullquote_map import candidates as transit_candidates
-    TRANSIT_CAP = 7  # max transit records per quote (collision-checker verifies)
-    transit_use = {}
+    TRANSIT_CAP = 2  # max TOTAL transit records per quote (collision-checker verifies)
+    # seed usage with any transit-row quotes already placed by the THEME pass,
+    # so the cap bounds a line's TOTAL footprint on the transit surface.
+    transit_use = collections.Counter()
+    for r in recs:
+        if r["id"].startswith("cc/aspect-pair/") and isinstance(r.get("pull_quote"), dict):
+            transit_use[r["pull_quote"]["text"]] += 1
     transit_attached = 0
     transit_missing = set()
     for r in recs:
@@ -184,6 +194,8 @@ def main():
             q = find(sub)
             if q is None:
                 transit_missing.add(sub); continue
+            if q.get("scope", "universal") != "universal":
+                continue  # sign-scoped lines never enter the universal transit pool
             if transit_use.get(q["text"], 0) >= TRANSIT_CAP:
                 continue
             qn = norm(q["text"])[:40]

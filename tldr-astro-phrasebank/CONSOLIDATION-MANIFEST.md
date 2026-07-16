@@ -1,6 +1,6 @@
 # TLDR Astro — Consolidation Manifest
 
-_Generated 2026-07-15 from `phrasebank/` ground truth. Every count is read live._
+_Generated 2026-07-16 from `phrasebank/` ground truth. Every count is read live._
 
 
 ## Natal — placements
@@ -62,22 +62,22 @@ _Generated 2026-07-15 from `phrasebank/` ground truth. Every count is read live.
 
 | Surface | Records | Tier | Composer / source |
 |---|---:|---|---|
-| Synastry — inter-aspects + generic overlays | 99 | REVIEWED | `—` |
+| Synastry — inter-aspects + generic overlays | 1457 | REVIEWED | `—` |
 | Synastry — house overlays (10x12) | 120 | REVIEWED | `resolver/synastry_overlay.py` |
 | Composite — planet in sign/house | 130 | REVIEWED | `—` |
 | Composite — aspects, single-voice (fallback) | 225 | REVIEWED | `resolver/composite_aspect.py` |
 | Composite — aspects, 7 relationship types (partial: 6/45 pairs) | 882 | REVIEWED | `resolver/composite_typed.py` |
 
-**Relationships subtotal: 1456 records**
+**Relationships subtotal: 2814 records**
 
 ## Marie corpus (verbatim)
 
 | Surface | Records | Tier | Composer / source |
 |---|---:|---|---|
-| Confirmed pull-quotes | 127 | CONFIRMED | `—` |
+| Confirmed pull-quotes | 191 | CONFIRMED | `—` |
 | Article quotes | 15 | CONFIRMED | `—` |
 
-**Marie corpus (verbatim) subtotal: 142 records**
+**Marie corpus (verbatim) subtotal: 206 records**
 
 ## Authored library (fallback / slot / vocab)
 
@@ -106,10 +106,10 @@ _Generated 2026-07-15 from `phrasebank/` ground truth. Every count is read live.
 
 | Tier | Records | Meaning |
 |---|---:|---|
-| CONFIRMED | 182 | Marie's own words — serve verbatim, never re-linted |
-| REVIEWED | 6237 | Composed / authored — **awaiting Marie sign-off** |
+| CONFIRMED | 246 | Marie's own words — serve verbatim, never re-linted |
+| REVIEWED | 7595 | Composed / authored — **awaiting Marie sign-off** |
 | SESSION_APPROVED_DRAFT | 24 | Claude-drafted, Marie-reviewed — **DRAFT, pending dashboard confirmation** |
-| **All** | **6443** | |
+| **All** | **7865** | |
 
 ## Validation status
 
@@ -143,7 +143,7 @@ Each line is a surface whose copy is composed/authored in Marie's voice and rule
 - [ ] **Horoscope surface templates** (Sky / horoscope surfaces) — 6 records
 - [ ] **Marie site voice lines + templates** (Sky / horoscope surfaces) — 27 records
 - [ ] **Lunation by sign (authored)** (Sky / horoscope surfaces) — 20 records
-- [ ] **Synastry — inter-aspects + generic overlays** (Relationships) — 99 records
+- [ ] **Synastry — inter-aspects + generic overlays** (Relationships) — 1457 records
 - [ ] **Synastry — house overlays (10x12)** (Relationships) — 120 records
 - [ ] **Composite — planet in sign/house** (Relationships) — 130 records
 - [ ] **Composite — aspects, single-voice (fallback)** (Relationships) — 225 records

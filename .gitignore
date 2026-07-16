@@ -23,3 +23,6 @@ __pycache__/
 
 # Local reference screenshots used during template/content handoff work
 apps/web/src/content/templateHandoffV2/references/
+
+# Local raw source extraction scratchpads
+tldr-astro-phrasebank/_raw-lofthus-delineations.txt
