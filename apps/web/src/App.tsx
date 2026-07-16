@@ -10973,7 +10973,7 @@ function isAdminContentPath() {
 }
 
 const GeneratedContentAdminDashboard = lazy(() =>
-  import("./admin/GeneratedContentAdminDashboard").then((module) => ({
+  import("../../admin/src/GeneratedContentAdminDashboard").then((module) => ({
     default: module.GeneratedContentAdminDashboard
   }))
 );
