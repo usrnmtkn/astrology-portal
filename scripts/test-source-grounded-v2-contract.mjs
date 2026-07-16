@@ -265,6 +265,19 @@ for (const fixture of fixtures) {
     assert.equal(result.runtimeTrace.readerAuthority, result.readerAuthority, `${fixture.id} trace reader authority`);
     assert.equal(result.runtimeTrace.fallbackId ?? null, result.fallbackId ?? null, `${fixture.id} trace fallback id`);
     assert.ok(!result.finalVisibleStrings.join("\n").includes("Interpretation unavailable."), `${fixture.id} reader fallback cannot show unavailable copy`);
+    for (const text of Object.values(result.renderedFields)) {
+      for (const pattern of prohibited) {
+        assert.ok(!pattern.test(text), `${fixture.id} fallback field contains prohibited text ${pattern}`);
+      }
+    }
+    if (result.surface === "me.natal_placement") {
+      const title = result.renderedFields.factualPlacementTitle;
+      const body = result.renderedFields.integratedSignHouseStory ?? result.finalVisibleStrings.join("\n\n");
+      assert.ok(title, `${fixture.id} natal fallback must keep the factual title in the title field`);
+      assert.ok(!body.startsWith(title), `${fixture.id} natal fallback body must not duplicate the page title`);
+      assert.ok(!/\b(?:Moon|Sun|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto) in the \d+(?:st|nd|rd|th) house\b/i.test(body), `${fixture.id} natal fallback body must not split into generic planet/house dictionary sections`);
+      assert.ok(!/\banswers to\b/i.test(body), `${fixture.id} natal fallback body must not use the old ruler scaffold shell`);
+    }
     continue;
   }
 
