@@ -710,6 +710,19 @@
     letter-spacing: var(--tracking-tight);
   }
 
+  .mode-guest .nav-pill,
+  .mode-member .nav-pill,
+  .mode-profile .nav-pill,
+  .mode-friends .nav-pill,
+  .mode-settings .nav-pill,
+  .mode-account .nav-pill,
+  .mode-calendar .nav-pill,
+  .mode-detail .nav-pill {
+    align-items: center;
+    gap: 10px;
+    padding: 0 22px 0 8px;
+  }
+
   .theme-toggle {
     display: none;
   }
@@ -1330,6 +1343,19 @@
   .friend-kebab {
     grid-column: 2;
     justify-self: end;
+  }
+
+  .updates-aspect-row.friend-transit-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "content meta";
+  }
+
+  .friend-transit-row .updates-aspect-row__content {
+    grid-area: content;
+  }
+
+  .friend-transit-row .updates-aspect-row__meta {
+    grid-area: meta;
   }
 
   .you-profile-actions {

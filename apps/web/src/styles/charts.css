@@ -356,6 +356,45 @@
   filter: var(--filter-synastry-inner-glyph);
 }
 
+.sky-wheel .transit-planet-band {
+  stroke: none;
+}
+
+.sky-wheel-transit-overlay {
+  overflow: visible;
+}
+
+.sky-wheel .transit-planet-labels .planet-glyph,
+.sky-wheel .transit-planet-labels .planet-degree {
+  fill: var(--transit-wheel-glyph, var(--chart-glyph));
+}
+
+.sky-wheel .transit-planet-labels .planet-degree {
+  fill: var(--transit-wheel-degree, var(--chart-degree-label));
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+.sky-wheel .transit-planet-labels .planet-glyph-image {
+  filter: var(--transit-wheel-glyph-filter, var(--chart-glyph-filter));
+}
+
+.sky-wheel .transit-planet-labels .planet-hit-area {
+  fill: transparent;
+  opacity: 0;
+}
+
+.sky-wheel .transit-planet-tick {
+  stroke: var(--transit-wheel-tick, var(--chart-glyph));
+  stroke-width: 1.15;
+  opacity: 0.42;
+}
+
+.sky-wheel .transit-to-natal-aspect-lines line {
+  stroke-width: var(--aspect-line-width, 1.45);
+  opacity: max(var(--aspect-line-opacity, 0.5), 0.58);
+}
+
 .sky-wheel-synastry {
   --chart-sign-label-size: 11.5px;
   --chart-house-label-size: 11.5px;
