@@ -350,30 +350,6 @@ export function emergencySkyPlacementCopy(planet: string, sign: string, options:
   return safeComposedCopy(composed, fallback);
 }
 
-export function emergencyDetailFallbackCopy(title: string, context: string = "") {
-  const pointMatch = title.match(/\b(Chiron|Black Moon Lilith|Lilith|North Node|South Node)\b/i);
-
-  if (pointMatch) {
-    const signMatch = title.match(/\bin\s+([A-Za-z]+)\b/);
-    const pointCopy = emergencySkyPointPlacementCopy(pointMatch[1], signMatch?.[1]);
-
-    if (pointCopy) {
-      return pointCopy;
-    }
-  }
-
-  const titleCopy = title.trim();
-  const contextCopy = context.trim().toLowerCase();
-  const composed = titleCopy
-    ? `${titleCopy} is active here. Use the chart facts on this page as a starting point, then notice what is asking for a clearer response.`
-    : "This chart factor is active here. Use the visible chart facts as a starting point, then notice what is asking for a clearer response.";
-  const fallback = contextCopy
-    ? `This ${contextCopy} is active here. Notice what is asking for a clearer response.`
-    : "This chart factor is active here. Notice what is asking for a clearer response.";
-
-  return safeComposedCopy(composed, fallback);
-}
-
 export function emergencyNatalPlacementCopy({
   house,
   point,
@@ -390,7 +366,9 @@ export function emergencyNatalPlacementCopy({
   const signCopy = `${possessive} ${displayName(point)} is in ${sign}. This placement describes how ${emergencyPlanetFunction(point)} moves through ${emergencySignTone(sign)} conditions.`;
 
   if (!houseLabel) {
-    return safeComposedCopy(signCopy, `${possessive} ${displayName(point)} is in ${sign}. Notice how this placement asks for attention in real life.`);
+    const noHouseCopy = `${possessive} ${displayName(point)} is in ${sign}. In this placement, ${emergencyPlanetFunction(point)} takes on ${emergencySignTone(sign)} timing, tone, and style. Without a confirmed house, the sign still gives the clearest read on the placement's expression.`;
+
+    return safeComposedCopy(noHouseCopy, signCopy);
   }
 
   const houseArea = emergencyHouseArea(houseNumber) || "the part of life asking for attention";
@@ -500,11 +478,21 @@ export function emergencySynastryAspectCopy({
   const primaryTopic = emergencyPointFunction(primaryPoint);
   const comparisonTopic = emergencyPointFunction(comparisonPoint);
   const aspectBehavior = sentenceCase(emergencyAspectBehavior(aspect));
-  const composed = `${primaryLabel}'s ${displayName(primaryPoint)} ${aspectText} ${comparisonLabel} ${displayName(comparisonPoint)} puts ${primaryTopic} and ${comparisonTopic} in the same relationship field. ${aspectBehavior}. Name what each side needs before deciding what to do together.`;
+  const composed = `${primaryLabel}'s ${displayName(primaryPoint)} ${aspectText} ${comparisonLabel} ${displayName(comparisonPoint)} brings ${primaryTopic} into contact with ${comparisonTopic}. ${aspectBehavior}. Name what each side needs before deciding what to do together.`;
 
   return safeComposedCopy(
     composed,
     `${primaryLabel}'s ${displayName(primaryPoint)} ${aspectText} ${comparisonLabel} ${displayName(comparisonPoint)} is close enough to read. Name what each side needs, then choose one concrete way to handle it.`
+  );
+}
+
+export function emergencyDetailFallbackCopy(title: string) {
+  const cleanedTitle = cleanComposedCopy(title || "This chart factor");
+  const subject = cleanedTitle && !containsBannedPhrase(cleanedTitle) ? cleanedTitle : "This chart factor";
+
+  return safeComposedCopy(
+    `${subject} is active here. Notice what asks for attention, then choose one concrete response you can actually use.`,
+    "This chart factor is active here. Notice what asks for attention, then choose one concrete response you can actually use."
   );
 }
 

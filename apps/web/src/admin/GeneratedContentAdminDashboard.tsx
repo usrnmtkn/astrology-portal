@@ -9,6 +9,11 @@ import templateCopySeed from "../content/migration-seeds/template-copy-seed.json
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import { contentSystemWorkstreams } from "./contentSystemPlan";
 import {
+  contentSystemInventorySummary,
+  packageSlotInventoryRows,
+  packageTemplateInventoryRows
+} from "./contentSystemInventory";
+import {
   writingLayerLabels,
   writingSurfaceSourceMap,
   writingSurfaceSourceRoleLabels,
@@ -366,6 +371,15 @@ type AdminSlotDictionaryRow = {
   status: SlotDictionaryStatus;
   description: string;
   examples?: string[];
+  valueType?: string;
+  requirement?: "required" | "optional" | "conditional" | "observed";
+  templatesUsing?: string[];
+  surfacesUsing?: string[];
+  fallbackWhenMissing?: string;
+  conditions?: string[];
+  coverageCount?: number;
+  unresolvedCount?: number;
+  renderedPreview?: string;
   action?: {
     label: string;
     page: AdminDashboardPage;
@@ -2119,8 +2133,53 @@ function slotDictionarySearchText(row: AdminSlotDictionaryRow) {
     row.editableIn,
     row.status,
     row.description,
-    ...(row.examples ?? [])
+    row.valueType,
+    row.requirement,
+    row.fallbackWhenMissing,
+    row.renderedPreview,
+    ...(row.examples ?? []),
+    ...(row.templatesUsing ?? []),
+    ...(row.surfacesUsing ?? []),
+    ...(row.conditions ?? [])
   ].join(" ").toLowerCase();
+}
+
+function uniqueSlotValues(values: Array<string | null | undefined>, limit = 20) {
+  return [...new Set(values.map((value) => value?.trim()).filter(Boolean) as string[])].slice(0, limit);
+}
+
+function preferredSlotText(primary?: string, fallback?: string) {
+  const cleanPrimary = primary?.trim();
+  if (cleanPrimary) return cleanPrimary;
+  return fallback?.trim() ?? "";
+}
+
+function mergeSlotStatus(existing: SlotDictionaryStatus, incoming: SlotDictionaryStatus): SlotDictionaryStatus {
+  const rank: Record<SlotDictionaryStatus, number> = {
+    calculated: 5,
+    ready: 4,
+    draft: 3,
+    local: 2,
+    missing: 1
+  };
+
+  return rank[incoming] > rank[existing] ? incoming : existing;
+}
+
+function mergeSlotRequirement(
+  existing?: AdminSlotDictionaryRow["requirement"],
+  incoming?: AdminSlotDictionaryRow["requirement"]
+) {
+  const rank: Record<NonNullable<AdminSlotDictionaryRow["requirement"]>, number> = {
+    required: 4,
+    conditional: 3,
+    optional: 2,
+    observed: 1
+  };
+
+  if (!existing) return incoming;
+  if (!incoming) return existing;
+  return rank[incoming] > rank[existing] ? incoming : existing;
 }
 
 function slotDictionarySourcePrefix(source: string) {
@@ -2395,10 +2454,31 @@ function mergeSlotDictionaryRows(staticRows: AdminSlotDictionaryRow[], dynamicRo
       return;
     }
 
+    const examples = uniqueSlotValues([...(existing.examples ?? []), ...(row.examples ?? [])], 8);
+    const templatesUsing = uniqueSlotValues([...(existing.templatesUsing ?? []), ...(row.templatesUsing ?? [])], 24);
+    const surfacesUsing = uniqueSlotValues([...(existing.surfacesUsing ?? []), ...(row.surfacesUsing ?? [])], 24);
+    const conditions = uniqueSlotValues([...(existing.conditions ?? []), ...(row.conditions ?? [])], 12);
+    const coverageCount = Math.max(existing.coverageCount ?? 0, row.coverageCount ?? 0);
+    const unresolvedCount = Math.max(existing.unresolvedCount ?? 0, row.unresolvedCount ?? 0);
+
     rowsBySlot.set(row.slot, {
       ...existing,
-      status: existing.status === "calculated" ? existing.status : row.status,
-      examples: [...new Set([...(existing.examples ?? []), ...(row.examples ?? [])])].slice(0, 6)
+      label: preferredSlotText(existing.label, row.label),
+      source: preferredSlotText(existing.source, row.source),
+      editableIn: existing.editableIn === "Calculated" ? existing.editableIn : row.editableIn,
+      status: mergeSlotStatus(existing.status, row.status),
+      description: preferredSlotText(row.description, existing.description),
+      examples: examples.length ? examples : undefined,
+      valueType: existing.valueType ?? row.valueType,
+      requirement: mergeSlotRequirement(existing.requirement, row.requirement),
+      templatesUsing: templatesUsing.length ? templatesUsing : undefined,
+      surfacesUsing: surfacesUsing.length ? surfacesUsing : undefined,
+      fallbackWhenMissing: existing.fallbackWhenMissing ?? row.fallbackWhenMissing,
+      conditions: conditions.length ? conditions : undefined,
+      coverageCount: coverageCount > 0 ? coverageCount : undefined,
+      unresolvedCount: unresolvedCount > 0 ? unresolvedCount : undefined,
+      renderedPreview: existing.renderedPreview ?? row.renderedPreview,
+      action: existing.action ?? row.action
     });
   });
 
@@ -6633,10 +6713,20 @@ export function GeneratedContentAdminDashboard() {
       } satisfies AdminSlotDictionaryRow;
     });
     const reusableRows = [...vocabularyRows, ...taglineRows];
+    const inventoryRows = packageSlotInventoryRows.map((row) => {
+      const tokenName = row.slot.replace(/^{{\s*/, "").replace(/\s*}}$/, "");
+      return {
+        ...row,
+        action: slotDictionaryActionForDynamicToken(tokenName, row.editableIn, row.group)
+      } satisfies AdminSlotDictionaryRow;
+    });
     const dynamicRows = dynamicSlotDictionaryRowsFromTemplates(currentTemplateContentRows, reusableRows);
     const registryRows = slotDictionaryRowsFromRuntimeRegistry(currentTemplateContentRows, reusableRows);
 
-    return mergeSlotDictionaryRows(mergeSlotDictionaryRows(staticRows, registryRows), dynamicRows);
+    return mergeSlotDictionaryRows(
+      mergeSlotDictionaryRows(mergeSlotDictionaryRows(staticRows, inventoryRows), registryRows),
+      dynamicRows
+    );
   }, [currentTemplateContentRows, taglineRows, vocabularyRows]);
   const slotDictionaryCounts = useMemo(() => ({
     calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
@@ -10409,12 +10499,14 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setContentBlockFilter("sky_article");
     setContentSourceFilter("all");
     setContentStatusFilter("DRAFT");
-    setActivePage((currentPage) => currentPage === "articles" ? "articles" : "content");
+    navigateAdminPage("content");
     setAreGenerationInputsOpen(true);
     setIsCreateMenuOpen(false);
     setMessage("New article draft ready. Add the headline, summary, body, and article metadata, then save it as DRAFT.");
     window.setTimeout(() => {
-      document.querySelector<HTMLInputElement>(".admin-editor-drawer .admin-title-field input")?.focus();
+      const editor = document.querySelector<HTMLElement>(".admin-editor-drawer");
+      editor?.scrollIntoView({ block: "start", behavior: "smooth" });
+      editor?.querySelector<HTMLInputElement>(".admin-title-field input")?.focus();
     }, 0);
   }
 

@@ -1,6 +1,5 @@
 import sourceGroundedBundle from "./finalSourceGroundedDashboardRecords.json" with { type: "json" };
 import {
-  composeNatalAspect,
   composePersonalTransit,
   natalPlacementRecordId,
   recordKeyPart,
@@ -23,6 +22,11 @@ type SourceGroundedRecord = {
     text_you?: string;
   }>;
   family?: string;
+  sourceKeys?: string[];
+  templates?: {
+    compact?: string;
+    expanded?: string;
+  };
   validation?: {
     state?: string;
   };
@@ -50,6 +54,32 @@ function recordByKey(key: string) {
   return records.find((record) => record.canonicalKey === key);
 }
 
+function readerTextForClause(clause: SourceGroundedClause, perspective: OwnerPerspective) {
+  return perspective === "they"
+    ? clause.text_they?.trim() || clause.text_you?.trim() || ""
+    : clause.text_you?.trim() || clause.text_they?.trim() || "";
+}
+
+function orderedTemplateClauseNames(record: SourceGroundedRecord) {
+  const template = record.templates?.expanded ?? record.templates?.compact ?? "";
+  const names = Array.from(template.matchAll(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/gu))
+    .map((match) => match[1])
+    .filter((name, index, list) => list.indexOf(name) === index);
+
+  return names.length > 0 ? names : Object.keys(record.clauses ?? {});
+}
+
+function reviewedRecordText(record: SourceGroundedRecord, perspective: OwnerPerspective, clauseNames = orderedTemplateClauseNames(record)) {
+  return clauseNames
+    .map((name) => record.clauses?.[name])
+    .filter((clause): clause is SourceGroundedClause => Boolean(clause))
+    .map((clause) => readerTextForClause(clause, perspective))
+    .filter((text) => text && isReaderFacingCopy(text))
+    .join(" ")
+    .replace(/\s+/gu, " ")
+    .trim();
+}
+
 function isReviewedClauseStatus(value: unknown) {
   return typeof value === "string" && /^(reviewed|approved|published)$/iu.test(value);
 }
@@ -75,6 +105,10 @@ function hasEligibleReviewedRecord(key: string) {
     && clause.source_keys.some((sourceKey) => /^cc\/|^ms\//u.test(sourceKey))
     && hasSafeReviewedClauseText(clause)
   ));
+}
+
+function isLegacyNatalPlacementClause(value: string) {
+  return /\b(?:identity is a little outside the norm|sense of self needs the bigger view|shows how this chart makes choices|points attention toward|where the next useful choice needs to be specific|style or condition|easiest to see|answers to|describes)\b/iu.test(value);
 }
 
 function hasSourceGap(key: string) {
@@ -338,29 +372,40 @@ export function sourceGroundedNatalPlacementSections({
   if (isAnglePoint) return [];
 
   const supportedKey = supportedNatalPlacementKey(position, reliableBirthTime);
-  const result = resolveSourceGroundedV2("me.natal_placement", {
-    natalBody: position.planet,
-    natalSign: position.sign,
-    natalHouse: reliableBirthTime ? position.house : null,
-    degree: position.degree ? `${position.degree}°` : "",
-    ownerPerspective,
-    sect: reliableBirthTime ? chartSectFromNatalSky(natalSky) : "",
-    reliableBirthTime,
-    ...(supportedKey ? { sourceRecordKey: supportedKey } : {})
-  });
-  const body = detailBodyOnly(
-    result.expandedCopy ?? result.finalVisibleStrings.join("\n\n"),
-    `${position.planet} in ${position.sign}`,
-    "",
-    natalPlacementTitleAliases(position)
-  );
-  return body.length > 0
-    ? [{
-        heading: "Placement story",
+  const supportedRecord = supportedKey ? recordByKey(supportedKey) : null;
+  if (supportedRecord && hasEligibleReviewedRecord(supportedKey)) {
+    const coreBehavior = reviewedRecordText(supportedRecord, ownerPerspective, ["core_behavior"]);
+    const houseSynthesis = reliableBirthTime
+      ? reviewedRecordText(supportedRecord, ownerPerspective, ["house_synthesis"])
+      : "";
+    const sections: SourceGroundedSection[] = [];
+
+    if ([coreBehavior, houseSynthesis].some(isLegacyNatalPlacementClause)) {
+      return [];
+    }
+
+    if (coreBehavior) {
+      sections.push({
+        heading: `${position.planet} in ${position.sign}`,
         tldr: "",
-        body: body.join("\n\n")
-      }]
-    : [];
+        body: coreBehavior
+      });
+    }
+
+    if (houseSynthesis && position.house) {
+      sections.push({
+        heading: `${position.planet} in the ${ordinal(position.house)} house`,
+        tldr: "",
+        body: houseSynthesis
+      });
+    }
+
+    if (sections.length > 0) {
+      return sections;
+    }
+  }
+
+  return [];
 }
 
 export function sourceGroundedSkyPlacementParagraphs(position: PlanetPosition, duration?: string | null) {
@@ -397,7 +442,38 @@ export function sourceGroundedSkyPlacementSummary(position: PlanetPosition) {
 export function sourceGroundedNatalAspectComposition(aspect: AspectFact, ownerPerspective: OwnerPerspective): SourceGroundedComposition | null {
   const key = `dashboard.natal-aspect.${recordKeyPart(aspect.focalPlanet)}.${recordKeyPart(aspect.aspect)}.${recordKeyPart(aspect.otherPlanet)}`;
   if (!hasEligibleReviewedRecord(key)) return null;
-  return composeNatalAspect(aspect, ownerPerspective);
+  const record = recordByKey(key);
+  if (!record) return null;
+  const finalCopy = reviewedRecordText(record, ownerPerspective);
+  if (!finalCopy) return null;
+
+  return {
+    templateId: "natal-aspect-reviewed-v1",
+    templateVersion: SOURCE_GROUNDED_V2_TEMPLATE_VERSION,
+    recordId: key,
+    slots: Object.fromEntries(
+      orderedTemplateClauseNames(record)
+        .map((name) => {
+          const clause = record.clauses?.[name];
+          return clause
+            ? [name, { text: readerTextForClause(clause, ownerPerspective), sourceKeys: clause.source_keys ?? [] }]
+            : null;
+        })
+        .filter((entry): entry is [string, { text: string; sourceKeys: string[] }] => Boolean(entry))
+    ),
+    sourceKeys: record.sourceKeys ?? [],
+    finalCopy,
+    sections: [{
+      heading: `${aspect.focalPlanet} ${aspect.aspect} ${aspect.otherPlanet}`,
+      tldr: "",
+      body: finalCopy
+    }],
+    conditionalBranches: ["reviewed-record"],
+    provenance: {
+      initial: `source-grounded-record:${key}`,
+      hydrated: `source-grounded-record:${key}`
+    }
+  };
 }
 
 export function sourceGroundedSkyAspectParagraphs(aspect: AspectFact & { timing?: string | null }) {

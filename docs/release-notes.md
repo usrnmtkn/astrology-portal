@@ -2,6 +2,14 @@
 
 ## 2026-07-15: Whole Sign Houses And Global Timezones
 
+### Content Stability
+
+- Documented the content precedence contract: fallback copy is a floor, not a competing source.
+- Hardened the app against async copy downgrades where a broad `fallback-hook/...` or emergency template could replace specific authored, approved, or exact generated copy after content/registry loading finished.
+- Established the expected source order for reader-facing copy: personalized/generated exact content, exact live rows, authored or approved knowledge-bank copy, template fallback for blanks, then emergency copy only when no specific copy exists.
+- Added a non-blank neutral review state for unresolved copy so cards do not disappear into empty text or fake specificity.
+- Added the rule to the README so future content and UI work can reference it when wiring new surfaces.
+
 ### Chart Calculation Integrity
 
 - Standardized TLDR Astro on Whole Sign houses across web and API surfaces.

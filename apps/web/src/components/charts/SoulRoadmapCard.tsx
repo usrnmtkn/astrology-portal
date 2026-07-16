@@ -24,6 +24,8 @@ type SignRoadmap = {
   keywords: string[];
 };
 
+type SoulRoadmapLayer = "source-grounded" | "madlib-fallback";
+
 export type SoulRoadmapProfile = {
   label: string;
   title: string;
@@ -35,6 +37,9 @@ export type SoulRoadmapProfile = {
   sections: Array<{
     heading: string;
     body: string;
+    layer: SoulRoadmapLayer;
+    tier: string;
+    sourceKeys: string[];
   }>;
 };
 
@@ -268,6 +273,44 @@ function moonMissionSentence({
   return `${moonOpener}, which ${pronouns.helps} ${moonContribution}.`;
 }
 
+function readerFacingRoadmapText(value: string) {
+  const trimmed = value.replace(/\s+/g, " ").trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  if (/\bmore chart context\b/i.test(trimmed)) {
+    return "";
+  }
+
+  return trimmed;
+}
+
+function normalizedSoulRoadmapSection({
+  body,
+  heading,
+  sourceKeys
+}: {
+  body: string;
+  heading: string;
+  sourceKeys: string[];
+}) {
+  const normalizedBody = readerFacingRoadmapText(body);
+
+  if (!normalizedBody) {
+    return null;
+  }
+
+  return {
+    heading,
+    body: normalizedBody,
+    layer: "madlib-fallback" as const,
+    tier: "source-based-local-roadmap",
+    sourceKeys
+  };
+}
+
 function missionStatement({
   moonSign,
   moon,
@@ -308,10 +351,11 @@ function missionStatement({
   const sunSentence = `This gives ${pronouns.possessive} vitality a path through ${sunExpression}.`;
   const pathSentence = pathRoadmap && pathSign
     ? `${pathSign} helps that path develop through ${pathExpression}.`
-    : `The growth path can be named more clearly when more chart context is available.`;
+    : "";
   const moonSentence = `The ${moonSign} Moon keeps the work emotionally honest through ${moonStyle}.`;
 
   return [opener, sunSentence, pathSentence, moonSentence]
+    .filter(Boolean)
     .join(" ")
     .replace(/\s+/g, " ")
     .trim();
@@ -367,7 +411,26 @@ export function resolveSoulRoadmapProfile({
   const purposeHeading = ownerKind === "self" ? "Purpose pattern" : `${displayName}'s purpose pattern`;
   const developmentBody = pathRoadmap && pathSign
     ? `${pathSign} gives this purpose a direction through ${pathExpression}. The ${moonSign} Moon helps it stay honest by ${moonStyle}.`
-    : `The ${moonSign} Moon helps this purpose stay honest by ${moonStyle}. The growth path can be refined when more chart context is available.`;
+    : "";
+  const sections = [
+    normalizedSoulRoadmapSection({
+      heading: purposeHeading,
+      body: tldr,
+      sourceKeys: [
+        `soulRoadmap.sign.${sunSign}.sunExpression`,
+        `soulRoadmap.sign.${moonSign}.moonStyle`,
+        ...(pathSign ? [`soulRoadmap.sign.${pathSign}.pathExpression`] : [])
+      ]
+    }),
+    normalizedSoulRoadmapSection({
+      heading: "How it develops",
+      body: developmentBody,
+      sourceKeys: [
+        ...(pathSign ? [`soulRoadmap.sign.${pathSign}.pathExpression`] : []),
+        `soulRoadmap.sign.${moonSign}.moonStyle`
+      ]
+    })
+  ].filter((section): section is NonNullable<typeof section> => Boolean(section));
 
   return {
     label,
@@ -378,16 +441,7 @@ export function resolveSoulRoadmapProfile({
       { label: "Path", value: pathLabel },
       { label: "Moon", value: moonSign }
     ],
-    sections: [
-      {
-        heading: purposeHeading,
-        body: tldr
-      },
-      {
-        heading: "How it develops",
-        body: developmentBody
-      }
-    ]
+    sections
   };
 }
 

@@ -596,6 +596,9 @@ function YouTransitArticlePage({
     })
     .filter((section) => section.tldr || section.bodyParagraphs.length);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
+  const fallbackParagraph = hasReadableBody || article.relatedAspects?.rows.length
+    ? ""
+    : emergencyDetailFallbackCopy(article.title);
   const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(article);
 
@@ -669,17 +672,17 @@ function YouTransitArticlePage({
                 </section>
                 );
               })}
-              {!hasReadableBody ? (
-                <section className="article-section sky-detail-section">
-                  <p>{emergencyDetailFallbackCopy(article.title, article.subtitle)}</p>
-                </section>
-              ) : null}
               {article.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
                   <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>
                   <div className="article-related-aspects__list aspect-row-list">
                     {article.relatedAspects.rows}
                   </div>
+                </section>
+              ) : null}
+              {fallbackParagraph ? (
+                <section className="article-section sky-detail-section">
+                  <p>{fallbackParagraph}</p>
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>

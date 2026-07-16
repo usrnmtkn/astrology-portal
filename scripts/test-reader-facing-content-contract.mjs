@@ -40,10 +40,13 @@ const youPage = read("apps/web/src/features/you/YouPage.tsx");
 const app = read("apps/web/src/App.tsx");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts");
+const emergencyCopyRuntime = read("apps/web/src/content/emergencyCopy.ts");
 
 assert.match(youPage, /isReaderFacingCopy/, "You detail renderer must use reader-facing copy filtering.");
 assert.match(youPage, /isDuplicateArticleCopy/, "You detail renderer must dedupe TLDR, summary, and section body copy.");
-assert.match(youPage, /This interpretation is still being prepared\./, "Empty detail pages must render an honest placeholder.");
+assert.doesNotMatch(youPage, /This interpretation is still being prepared\./, "Empty detail pages must render real emergency fallback copy.");
+assert.doesNotMatch(app, /This interpretation is still being prepared\./, "Sky detail pages must render real emergency fallback copy.");
+assert.match(youPage, /emergencyDetailFallbackCopy/, "You detail renderer must use the real emergency fallback copy helper.");
 
 for (const requiredSource of [
   "cc-natal-aspect",
@@ -72,13 +75,21 @@ assert.match(generatedContent, /isNoProseGeneratedContent/, "Generated content r
 assert.match(generatedContent, /containsSingleBraceSlot/, "Generated content runtime must block raw single-brace fallback slots.");
 assert.match(generatedContent, /isReaderServableGeneratedContent\(content\)/, "Loaded content map must filter unsafe content rows before aliasing.");
 assert.match(app, /emergencySkyPlacementCopy\(position\.planet, position\.sign, \{ retrograde: isRetrograde \}\)/, "Sky placement detail/list rendering must build a local emergency fallback.");
-assert.match(app, /liveGeneratedBody\(generated, fallbackDetailParagraphs\)/, "Sky placement detail rendering must pass emergency fallback paragraphs into the body.");
+assert.match(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must use the real emergency fallback copy helper.");
+assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail rendering must resolve through the surface normalizer.");
+assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement detail rendering must include the source-based madlib fallback section.");
+assert.match(app, /emergencyFallbackParagraph/, "Sky detail renderer must render a final emergency fallback only when normalized slots are empty.");
+assert.match(emergencyCopyRuntime, /cc-source-phrases\.json/, "Emergency point fallback copy must stay grounded in the authored source phrase file.");
+assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/076/, "Lilith fallback must use the guide-phrase source for the Black Moon Lilith definition.");
+assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/255/, "Lilith fallback must use the guide-phrase source for the resistance/defiance/shadow-work copy.");
+assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/165/, "Lilith fallback must use the guide-phrase source for the wild-card awakening copy.");
 assert.doesNotMatch(app, /less patience for waiting/i, "Friends transit emergency summaries must not reuse the same generic angle sentence.");
 assert.match(app, /emergencyPointFunction\(transit\.natalPoint\)/, "Friends transit emergency summaries must include natal point vocabulary.");
-assert.match(app, /natalAspectContentKey\(transit\.transitPlanet, transit\.aspect, transit\.natalPoint\)/, "Transit-to-natal rendering must fall back to authored natal aspect content before templates.");
-assert.match(app, /isAuthoredTransitAspectContent\(generatedCandidate\)/, "Transit rendering must accept authored aspect rows instead of forcing generic templates.");
-assert.match(app, /sourceFile\.includes\("cc-planet-in-sign-reviewed"\)/, "Sky placement rendering must accept authored collective_shift rows.");
-assert.match(app, /sourceFile\.includes\("cc-sky-points-authored"\)/, "Sky placement rendering must accept authored Sky point collective_reading rows.");
+assert.match(app, /function normalizePersonalTransitSurface/, "Transit-to-natal rendering must resolve through the personal transit surface normalizer.");
+assert.match(app, /sourceGroundedPersonalTransitNormalizedSection/, "Transit-to-natal rendering must prefer source-grounded transit sections.");
+assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must fall back to the source-based madlib section.");
+assert.match(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must resolve authored planet/sign and sky point rows through source-grounded V2.");
+assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement rendering must fall back to source-based madlibs when source-grounded rows are absent.");
 assert.match(servedFieldsContract, /reader: \["reading"\]/, "Authored natal angle rows must render only the clean reading field.");
 assert.match(servedFieldsContract, /reader: \["collective_reading"\]/, "Authored Sky point rows must render only the clean collective reading field.");
 

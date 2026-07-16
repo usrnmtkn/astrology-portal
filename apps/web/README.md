@@ -30,6 +30,19 @@ VITE_TLDRASTRO_API_URL=http://127.0.0.1:8000
 
 For production, add the same Supabase variables in Vercel. In Supabase, enable the Google provider under Authentication, then add `https://astrology-portal.vercel.app` as an allowed redirect URL.
 
+### Google sign-in setup
+
+Google auth is brokered by Supabase, not by a Google client ID stored in this app. The app calls `supabase.auth.signInWithOAuth({ provider: "google" })`, then Supabase redirects to the Google OAuth client configured in the Supabase Dashboard.
+
+If Google shows `Access blocked: Authorization Error` with `Error 401: deleted_client`, the Google OAuth client configured in Supabase has been deleted or replaced. Fix it in Supabase, then redeploy/retest:
+
+1. In Google Cloud, create or restore a Web application OAuth client.
+2. Add Supabase's Google callback URL as an authorized redirect URI: `https://<supabase-project-ref>.supabase.co/auth/v1/callback`.
+3. In Supabase Dashboard, go to Authentication -> Providers -> Google.
+4. Replace the Google client ID and client secret with the active OAuth client values.
+5. Confirm Site URL and Redirect URLs include local and production app origins, such as `http://127.0.0.1:5173`, `http://localhost:5173`, and the production domain.
+6. Restart the local dev server or redeploy the app if environment origins changed.
+
 ## Integration points
 
 - Ephemeris provider: `src/services/ephemeris.ts`
