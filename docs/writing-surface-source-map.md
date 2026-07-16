@@ -14,11 +14,11 @@ The UI should not render raw vocab, directional scaffolding, emergency placehold
 ## Shared Runtime Files
 
 - `/Users/mprez/Code/tldrastro/apps/web/src/App.tsx`
-  Main app router and most prose assembly functions. This is where many legacy source-grounded, generated, registry, hook, and emergency paths still meet.
+  Main app router and most prose assembly functions. This is where normalized source-grounded rows and source-based madlib fallbacks meet before rendering.
 - `/Users/mprez/Code/tldrastro/apps/web/src/services/generatedContent.ts`
-  Loads live/generated interpretation rows and exposes helpers for summaries, paragraph bodies, sections, and source metadata.
+  Loads stored source rows from the `generated_interpretations` table and exposes helpers for summaries, paragraph bodies, sections, and source metadata.
 - `/Users/mprez/Code/tldrastro/apps/web/src/services/generatedContentKeys.ts`
-  Defines generated-content keys and slot-template keys used by fallback requests.
+  Defines stored source keys and slot-template keys used by fallback requests.
 - `/Users/mprez/Code/tldrastro/apps/web/src/content/sourceGroundedRuntime.ts`
   Source-grounded composition helpers for natal placements, natal aspects, sky placements, sky aspects, and personal transits.
 - `/Users/mprez/Code/tldrastro/apps/web/src/content/sourceGroundedModels.ts`
@@ -80,7 +80,7 @@ Primary prose files:
 Current status:
 
 - The lane rows now use the same normalized `synastry-contact` choke point as synastry detail copy.
-- Resolution order is authored bundle first, relationship knowledge second, source-based madlib fallback third.
+- Resolution order is source-grounded authored bundle/relationship knowledge first, then source-based madlib fallback.
 - The old direct hook/headliner fallback no longer feeds the row summary.
 
 ## Friends Synastry: Aspect Rows And Detail Pages
@@ -120,7 +120,7 @@ Current status:
 - `normalizeHouseOverlaySurface(...)` now controls this surface.
 - Relationship knowledge / phrasebank content renders first.
 - If no source-grounded relationship content exists, the fallback is an explicit overlay madlib frame.
-- Generated rows and fallback hooks no longer feed the visible overlay prose directly.
+- Stored source rows and fallback hooks no longer feed the visible overlay prose directly.
 - The row UI still needs visible per-row provenance for QA.
 
 ## Friends Composite
@@ -140,7 +140,7 @@ Current status:
 - `normalizeCompositePlacementSurface(...)` and `normalizeCompositeAspectSurface(...)` now control this surface.
 - Relationship knowledge / phrasebank content renders first.
 - If no source-grounded relationship content exists, the fallback is an explicit composite madlib frame.
-- Generated rows and fallback hooks no longer feed the visible composite placement/aspect prose directly.
+- Stored source rows and fallback hooks no longer feed the visible composite placement/aspect prose directly.
 - The prose is structurally normalized, but reviewed composite phrasebank coverage still needs editorial build-out.
 
 ## Natal Placement Detail Pages
@@ -183,7 +183,7 @@ Current status:
 - `normalizeNatalAspectSurface(...)` now controls this surface.
 - Reviewed source-grounded aspect records render first.
 - If reviewed source-grounded prose is unavailable, the fallback is a source-based madlib frame using planet-function and aspect-behavior material.
-- Generated content rows and registry hook prose no longer feed the detail article directly.
+- Generated content rows, registry hook prose, and private user-generated placement drafts no longer feed the detail article directly.
 - If neither layer can fill the required aspect meaning slot, the section is omitted.
 
 ## You / Friends: Soul Roadmap Card
@@ -336,10 +336,10 @@ Primary prose files:
 
 Current status:
 
-- `normalizeDailyTimingSurface(...)` now wraps generated daily timing sections before the Today/You timing writeup renders them.
+- `normalizeDailyTimingSurface(...)` now wraps stored source-grounded daily timing sections before the Today/You timing writeup renders them.
 - Sections without reader-facing bodies are omitted.
-- The older generic generated-article assemblers were removed.
-- Generated daily timing rows are currently treated as source-grounded generated rows; if any are unreviewed, they should be split into explicit madlib fallback rows or hidden by provenance.
+- The older generic article assemblers were removed.
+- Stored daily timing rows are currently treated as source-grounded rows; if any are unreviewed, they should be split into explicit madlib fallback rows or hidden by provenance.
 
 ## Sky Calendar: Event Cards
 
@@ -355,7 +355,7 @@ Primary prose files:
 Current status:
 
 - `normalizeCalendarEventSurface(...)` now controls event-card descriptions.
-- Exact generated event descriptions render first.
+- Exact stored source event descriptions render first.
 - If no exact generated event body exists, the card can use source-based madlib descriptions from emergency copy event frames.
 - If neither layer has real content, the description slot is omitted instead of showing filler.
 
@@ -373,6 +373,7 @@ Primary prose files:
 Current status:
 
 - `lunarDayResolver` now resolves each editorial field through `normalizedLunarSlot(...)`.
+- Source rows are tried first; saved fallback-hook rows and local static lunar beats are treated as madlib fallback, not a third layer.
 - Source rows render first, saved/rendered fallback-hook rows render second as madlib fallback.
 - Local fallback-hook definitions no longer become reader-facing prose directly.
 - When neither layer has content for a lunar field, that field returns `null` and is omitted.
@@ -439,7 +440,7 @@ Current status:
 
 - `normalizeTransitHouseSurface(...)` now controls this surface.
 - The visible row uses a source-based house activation madlib frame.
-- Generated rows and fallback hooks no longer feed the visible transit-through-house row directly.
+- Stored source rows and fallback hooks no longer feed the visible transit-through-house row directly.
 - This surface currently has only Layer 2 coverage until reviewed/source-grounded transit-through-house records exist.
 
 ## Phrasebank Specs And Builders
@@ -460,6 +461,6 @@ Builder and audit files:
 
 - Expose layer, tier, and sourceKeys in the client/admin QA UI for every normalized section.
 - Add reviewed/source-grounded rows for surfaces that currently have Layer 2 coverage only.
-- Keep fallback hooks as knowledge-id routers or saved/generated fallback inputs, not direct reader prose.
+- Keep fallback hooks as knowledge-id routers or saved fallback inputs, not direct reader prose.
 - Keep emergency copy as a phrase/knowledge/material bank, not as a direct third prose layer.
 - Add tests that fail when placeholder/directive copy reaches client-facing surfaces.

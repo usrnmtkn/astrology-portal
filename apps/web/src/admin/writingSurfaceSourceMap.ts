@@ -4,7 +4,7 @@ export type WritingSurfaceStatus = "normalized" | "partial" | "not-normalized";
 export type WritingSurfaceSource = {
   label: string;
   path: string;
-  role: "renderer" | "source-grounded" | "phrasebank" | "knowledge" | "madlib-material" | "generated" | "spec";
+  role: "renderer" | "source-grounded" | "phrasebank" | "knowledge" | "madlib-material" | "stored-source" | "spec";
 };
 
 export type WritingSurfaceMapItem = {
@@ -37,7 +37,7 @@ export const writingSurfaceSourceRoleLabels: Record<WritingSurfaceSource["role"]
   phrasebank: "Phrase bank",
   knowledge: "Knowledge bundle",
   "madlib-material": "Madlib material",
-  generated: "Generated rows",
+  "stored-source": "Stored source rows",
   spec: "Spec"
 };
 
@@ -67,7 +67,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     requiredSlots: ["scene"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
     currentRenderPath: "Rows use the same synastry-contact normalizer as synastry detail pages.",
-    risk: "The row title still depends on generated title slots; the body is normalized.",
+    risk: "The row title now names the actual aspect contact; row-level provenance still needs to be visible for QA.",
     nextAction: "Expose section-level layer/tier/sourceKeys in the row UI for QA.",
     sources: [
       { label: "CompatibilityTab.tsx", path: "apps/web/src/features/friends/CompatibilityTab.tsx", role: "renderer" },
@@ -84,7 +84,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["scene"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizeSynastryContactSurface resolves authored bundle, registry knowledge, then source-based madlib fallback.",
+    currentRenderPath: "normalizeSynastryContactSurface resolves source-grounded authored bundle/knowledge rows first, then source-based madlib fallback.",
     risk: "House overlays, composite, and relationship timing still have older paths, so Friends is not fully normalized yet.",
     nextAction: "Move detail provenance into the visible admin/debug trace and remove unused direct synastry fallback helpers after confirming no callers remain.",
     sources: [
@@ -108,7 +108,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "generated" },
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
       { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
     ]
   },
@@ -126,7 +126,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "relationshipRegistry.ts", path: "apps/web/src/content/relationshipRegistry.ts", role: "knowledge" },
       { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "generated" }
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
     ]
   },
   {
@@ -138,7 +138,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
     currentRenderPath: "normalizeNatalPlacementSurface resolves reviewed source-grounded placement or angle records, then reviewed natal aspects. If no source-grounded section exists, it can use the source-shaped placement scaffold fallback.",
     risk: "The page is normalized, but fallback scaffold prose still needs the same editorial scrutiny as other madlib fallback material.",
-    nextAction: "Expose the per-section layer/tier/sourceKeys in the UI and retire the now-unused legacy natal placement module helpers.",
+    nextAction: "Expose the per-section layer/tier/sourceKeys in the UI so QA can see which sections are source-grounded versus fallback.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
@@ -285,12 +285,12 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["daily timing body"],
     visibleLayerOrder: ["source-grounded"],
-    currentRenderPath: "normalizeDailyTimingSurface wraps generated daily timing sections before they are rendered in the Today/You timing writeup.",
-    risk: "The surface is normalized, but generated daily timing rows need clearer editorial tiering if they are not all reviewed.",
-    nextAction: "Expose layer/tier/sourceKeys in the Today QA view and split unreviewed generated rows into explicit madlib fallback if needed.",
+    currentRenderPath: "normalizeDailyTimingSurface wraps stored source-grounded daily timing sections before they are rendered in the Today/You timing writeup.",
+    risk: "The surface is normalized, but stored daily timing rows need clearer editorial tiering if they are not all reviewed.",
+    nextAction: "Expose layer/tier/sourceKeys in the Today QA view and split unreviewed stored rows into explicit madlib fallback if needed.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "generated" }
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
     ]
   },
   {
@@ -300,12 +300,12 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["event description"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizeCalendarEventSurface resolves exact generated event descriptions first, then source-based madlib event descriptions.",
-    risk: "Calendar cards now avoid empty filler, but generated event descriptions need visible per-card provenance for editorial QA.",
+    currentRenderPath: "normalizeCalendarEventSurface resolves exact stored source descriptions first, then source-based madlib event descriptions.",
+    risk: "Calendar cards now avoid empty filler, but stored event descriptions need visible per-card provenance for editorial QA.",
     nextAction: "Expose layer/tier/sourceKeys in calendar event cards.",
     sources: [
       { label: "LunarCalendar.tsx", path: "apps/web/src/features/calendar/LunarCalendar.tsx", role: "renderer" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "generated" },
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
       { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
     ]
   },
@@ -316,12 +316,12 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["lunar day body"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "lunarDayResolver resolves each editorial field through normalizedLunarSlot, with source rows first and saved fallback-hook rows second.",
+    currentRenderPath: "lunarDayResolver resolves each editorial field through normalizedLunarSlot, with source rows first, saved fallback-hook rows second, and local static lunar beats only as madlib fallback.",
     risk: "The resolver is normalized per slot, but the UI does not yet show which lunar editorial fields were omitted or came from fallback.",
     nextAction: "Expose slot-level layer/sourceKeys in the lunar calendar QA/admin view.",
     sources: [
       { label: "lunarDayResolver.ts", path: "apps/web/src/features/calendar/lunarDayResolver.ts", role: "renderer" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "generated" },
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
       { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" }
     ]
   },
@@ -331,7 +331,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Sky",
     status: "normalized",
     requiredSlots: ["day body"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    visibleLayerOrder: ["madlib-fallback"],
     currentRenderPath: "normalizeCalendarDaySurface resolves lunation, moon-sign, season, and transit-thread slots before dayCardBody renders them.",
     risk: "This surface currently has Layer 2 local calendar material only; reviewed/source-grounded day-card rows are not wired yet.",
     nextAction: "Add reviewed/source-grounded calendar day rows if this card needs Layer 1 coverage, and expose section provenance in QA.",
@@ -345,7 +345,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Sky",
     status: "normalized",
     requiredSlots: ["period summary", "reflection"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    visibleLayerOrder: ["madlib-fallback"],
     currentRenderPath: "getHoroscope renders the output of normalizeHoroscopeSurface for period summary, Moon context, and reflection slots.",
     risk: "This surface currently has Layer 2 local horoscope material only; reviewed/source-grounded horoscope rows are not wired yet.",
     nextAction: "Add reviewed/source-grounded horoscope rows if this surface should remain in product, and expose slot provenance in QA.",
@@ -359,7 +359,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Natal",
     status: "normalized",
     requiredSlots: ["placement label description"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    visibleLayerOrder: ["madlib-fallback"],
     currentRenderPath: "PlacementRows wraps placement descriptions and dignity tooltip text through normalizePlacementMicrocopySection before rendering.",
     risk: "Most of this is short UI explanatory text and currently Layer 2 local material.",
     nextAction: "Move any interpretive row descriptions that need editorial control into Layer 1 source-grounded records.",
@@ -387,7 +387,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Transits",
     status: "normalized",
     requiredSlots: ["house activation"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    visibleLayerOrder: ["madlib-fallback"],
     currentRenderPath: "normalizeTransitHouseSurface renders a source-based house activation madlib frame; no generated rows or fallback hooks feed the visible row.",
     risk: "This surface currently has only the madlib fallback layer because no reviewed transit-house source bundle is wired yet.",
     nextAction: "Add reviewed/source-grounded transit-through-house records if this row needs Layer 1 coverage.",
