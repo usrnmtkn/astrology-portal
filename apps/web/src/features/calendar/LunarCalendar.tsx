@@ -29,6 +29,39 @@ import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 
 type LunarCalendarStatus = "loading" | "ready" | "error";
 type LunarCalendarViewMode = "week" | "month";
+type CalendarEventProseLayer = "source-grounded" | "madlib-fallback";
+
+type NormalizedCalendarEventSection = {
+  slot: "description";
+  required: boolean;
+  layer: CalendarEventProseLayer;
+  tier: string;
+  sourceKeys: string[];
+  body: string;
+};
+
+type NormalizedCalendarEventSurface = {
+  surface: "calendar-event";
+  status: "servable" | "partial" | "not-servable";
+  sections: NormalizedCalendarEventSection[];
+};
+
+type CalendarDaySlot = "lunation" | "moon-sign" | "season" | "transit-thread";
+
+type NormalizedCalendarDaySection = {
+  slot: CalendarDaySlot;
+  required: boolean;
+  layer: CalendarEventProseLayer;
+  tier: string;
+  sourceKeys: string[];
+  body: string;
+};
+
+type NormalizedCalendarDaySurface = {
+  surface: "calendar-day";
+  status: "servable" | "partial" | "not-servable";
+  sections: NormalizedCalendarDaySection[];
+};
 
 type LunarCalendarProps = {
   location: LocationInput;
@@ -833,6 +866,80 @@ function liveCalendarEventContent(
   return null;
 }
 
+function calendarEventContentLayer(content: LiveGeneratedContent): CalendarEventProseLayer {
+  return content.contentKey.startsWith("fallback-hook/")
+    || content.contentKey.startsWith("ms/")
+    || content.eventType === "fallback-hook"
+    ? "madlib-fallback"
+    : "source-grounded";
+}
+
+function calendarEventMadlibDescription(event: LunarCalendarEvent) {
+  if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
+    const sign = event.toSign ?? event.sign ?? "a new sign";
+    return emergencyIngressCopy(event.planet, sign);
+  }
+
+  if (event.type === "station" && event.planet) {
+    const direction = event.title.toLowerCase().includes("direct") ? "direct" : "retrograde";
+    return emergencyStationCopy(event.planet, direction);
+  }
+
+  if (event.type === "aspect" && event.planets && event.aspect) {
+    const [first, second] = event.planets;
+    return emergencySkyAspectCopy(first, event.aspect, second);
+  }
+
+  return "";
+}
+
+function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveGeneratedContent | null): NormalizedCalendarEventSurface {
+  const generatedDescription = firstReaderFacingCopy([
+    content?.summary,
+    ...generatedContentParagraphs(content)
+  ]);
+
+  if (content && generatedDescription) {
+    const layer = calendarEventContentLayer(content);
+
+    return {
+      surface: "calendar-event",
+      status: layer === "source-grounded" ? "servable" : "partial",
+      sections: [{
+        slot: "description",
+        required: false,
+        layer,
+        tier: layer === "source-grounded" ? "stored-source" : "source-based-madlib",
+        sourceKeys: [content.contentKey],
+        body: generatedDescription
+      }]
+    };
+  }
+
+  const madlibDescription = calendarEventMadlibDescription(event);
+
+  if (!isReaderFacingCopy(madlibDescription)) {
+    return {
+      surface: "calendar-event",
+      status: "not-servable",
+      sections: []
+    };
+  }
+
+  return {
+    surface: "calendar-event",
+    status: "partial",
+    sections: [{
+      slot: "description",
+      required: false,
+      layer: "madlib-fallback",
+      tier: "source-based-madlib",
+      sourceKeys: [`emergencyCopy.calendarEvent.${event.type}`],
+      body: madlibDescription
+    }]
+  };
+}
+
 function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
   return content?.headline?.trim() || event.title;
 }
@@ -850,34 +957,6 @@ function calendarEventTitleWithSign(event: LunarCalendarEvent, title: string) {
   }
 
   return `${title} in ${event.sign}`;
-}
-
-function calendarEventDescription(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
-  const generatedDescription = firstReaderFacingCopy([
-    content?.summary,
-    ...generatedContentParagraphs(content)
-  ]) || "";
-
-  if (generatedDescription) {
-    return generatedDescription;
-  }
-
-  if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
-    const sign = event.toSign ?? event.sign ?? "a new sign";
-    return emergencyIngressCopy(event.planet, sign);
-  }
-
-  if (event.type === "station" && event.planet) {
-    const direction = event.title.toLowerCase().includes("direct") ? "direct" : "retrograde";
-    return emergencyStationCopy(event.planet, direction);
-  }
-
-  if (event.type === "aspect" && event.planets && event.aspect) {
-    const [first, second] = event.planets;
-    return emergencySkyAspectCopy(first, event.aspect, second);
-  }
-
-  return "";
 }
 
 function textParagraphs(value?: string | null) {
@@ -1319,38 +1398,6 @@ function seasonStoryPhaseDisplayLabel(phase: string) {
   return phase;
 }
 
-function generatedContentField(content: LiveGeneratedContent | undefined, field: "headline" | "body") {
-  const value = content?.[field]?.trim() || null;
-
-  if (field === "body") {
-    return firstReaderFacingCopy([value]);
-  }
-
-  return value;
-}
-
-function seasonArcCopyWithGeneratedFallbacks(
-  sign: string,
-  baseCopy: NonNullable<ReturnType<typeof seasonArcCopyForSign>>,
-  generatedContent?: Map<string, LiveGeneratedContent>
-) {
-  const signSlug = slugContentPart(sign);
-  const storyBody = generatedContentField(generatedContent?.get(`fallback-hook/season-arc/${signSlug}`), "body");
-
-  return {
-    story: storyBody ?? baseCopy.story,
-    phases: baseCopy.phases.map((phase) => {
-      const phaseRow = generatedContent?.get(`fallback-hook/season-arc/${signSlug}/${slugContentPart(phase.phase)}`);
-
-      return {
-        ...phase,
-        figure: generatedContentField(phaseRow, "headline") ?? phase.figure,
-        body: generatedContentField(phaseRow, "body") ?? phase.body
-      };
-    })
-  };
-}
-
 function isSeasonStart(day: LunarCalendarDay) {
   return day.events.some((event) => event.type === "ingress" && event.planet === "Sun");
 }
@@ -1433,26 +1480,84 @@ function lunationBodyForDay(day: LunarCalendarDay, lunation: LunarCalendarEvent,
   return [];
 }
 
-function dayCardBody(
+function normalizedCalendarDaySection(
+  slot: CalendarDaySlot,
+  body: string,
+  sourceKeys: string[],
+  required = false
+): NormalizedCalendarDaySection | null {
+  const copy = body.trim();
+
+  if (!isReaderFacingCopy(copy)) {
+    return null;
+  }
+
+  return {
+    slot,
+    required,
+    layer: "madlib-fallback",
+    tier: "source-based-local-calendar-day",
+    sourceKeys,
+    body: copy
+  };
+}
+
+function normalizeCalendarDaySurface(
   day: LunarCalendarDay,
   surfacedTransit: LunarCalendarEvent | undefined,
   timeZone: string,
   primaryLunation?: LunarCalendarEvent
-) {
+): NormalizedCalendarDaySurface {
   const seasonSign = seasonSignForDay(day, timeZone);
   const lunationRead = enableLunarArcContent && primaryLunation
     ? lunationBodyForDay(day, primaryLunation, timeZone)
     : [];
 
   if (lunationRead.length > 0) {
-    return lunationRead;
+    const sections = lunationRead
+      .map((body, index) => normalizedCalendarDaySection(
+        "lunation",
+        body,
+        [
+          `calendar-day.lunation.${primaryLunation?.title ?? "unknown"}`,
+          `calendar-day.lunation.${index + 1}`
+        ],
+        index === 0
+      ))
+      .filter((section): section is NormalizedCalendarDaySection => Boolean(section));
+
+    return {
+      surface: "calendar-day",
+      status: sections.length > 0 ? "partial" : "not-servable",
+      sections
+    };
   }
 
-  const moonRead = moonSignDescriptions[day.moonSign] ?? `${day.moonSign} shapes the Moon's tone for the day.`;
-  const seasonRead = seasonDescriptions[seasonSign] ?? `${seasonSign} season gives the day its larger setting.`;
+  const moonRead = moonSignDescriptions[day.moonSign] ?? "";
+  const seasonRead = seasonDescriptions[seasonSign] ?? "";
   const transitRead = surfacedTransit ? wovenTransitSentence(surfacedTransit, seasonSign) : "";
+  const sections = [
+    normalizedCalendarDaySection("moon-sign", moonRead, [`calendar-day.moon-sign.${day.moonSign}`], true),
+    normalizedCalendarDaySection("season", seasonRead, [`calendar-day.season.${seasonSign}`], false),
+    enableLunarArcContent && transitRead
+      ? normalizedCalendarDaySection("transit-thread", transitRead, [`calendar-day.transit.${surfacedTransit?.id ?? surfacedTransit?.title ?? "unknown"}`])
+      : null
+  ].filter((section): section is NormalizedCalendarDaySection => Boolean(section));
 
-  return [moonRead, enableLunarArcContent && transitRead ? `${seasonRead} ${transitRead}` : seasonRead];
+  return {
+    surface: "calendar-day",
+    status: sections.some((section) => section.required) ? "partial" : "not-servable",
+    sections
+  };
+}
+
+function dayCardBody(
+  day: LunarCalendarDay,
+  surfacedTransit: LunarCalendarEvent | undefined,
+  timeZone: string,
+  primaryLunation?: LunarCalendarEvent
+) {
+  return normalizeCalendarDaySurface(day, surfacedTransit, timeZone, primaryLunation).sections.map((section) => section.body);
 }
 
 function dayKeyToUtcTime(dateKey: string) {
@@ -1789,9 +1894,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
   const selectedSeasonArc = selectedLunarDay?.arc ?? null;
   const selectedSeasonStoryBase = selectedSeasonArc ? seasonArcCopyForSign(selectedSeasonArc.season.sign) : null;
-  const selectedSeasonStory = selectedSeasonArc && selectedSeasonStoryBase
-    ? seasonArcCopyWithGeneratedFallbacks(selectedSeasonArc.season.sign, selectedSeasonStoryBase, generatedContent)
-    : null;
+  const selectedSeasonStory = selectedSeasonArc && selectedSeasonStoryBase ? selectedSeasonStoryBase : null;
   const selectedSeasonStoryPhase = selectedDay ? seasonStoryPhaseLabel(selectedDay.moonPhase) : "";
   const selectedSeasonStoryCurrentPhase = selectedSeasonStory?.phases.find((phase) => phase.phase === selectedSeasonStoryPhase) ?? null;
   const selectedMoonArchetypeTitle = selectedLunarDay?.editorial.archetypeTitle ?? selectedDayBodyPresentation.loreTitle;
@@ -2476,7 +2579,8 @@ function TransitCard({
   const glyphParts = transitCardGlyphParts(event);
   const content = liveCalendarEventContent(generatedContent, event);
   const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
-  const description = calendarEventDescription(event, content);
+  const normalizedEvent = normalizeCalendarEventSurface(event, content);
+  const description = normalizedEvent.sections[0]?.body ?? "";
   const cardContent = (
     <>
       <span className="tx-glyphs" aria-hidden="true">

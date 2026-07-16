@@ -1,15 +1,25 @@
 import { skyBodyOrderIndex } from "../../astrologyConfig";
-import { fallbackHookByKey } from "../../content/fallbackHooks";
 import { lunarBeatArchetypeForKey, lunarBeatArchetypeLoreForKey, lunarBeatBodyForKey } from "../../content/lunarBeatCopy";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { interpolateTemplateString, type TemplateSlotValues } from "../../services/templateInterpolation";
+import type { TemplateSlotValues } from "../../services/templateInterpolation";
 import type { LocationInput } from "../../types";
 import type { LunarDay, LunarDayArcPoint, LunarDayCheckpointRole, LunarDayTransit, LunarDayTransitType } from "./lunarDayTypes";
 
 const dayMs = 86_400_000;
+
+type LunarProseLayer = "source-grounded" | "madlib-fallback";
+
+type NormalizedLunarSection = {
+  slot: string;
+  required: boolean;
+  layer: LunarProseLayer;
+  tier: string;
+  sourceKeys: string[];
+  body: string;
+};
 
 const seasonStartDates: Array<{ sign: string; month: number; day: number }> = [
   { sign: "Capricorn", month: 1, day: 1 },
@@ -549,6 +559,55 @@ function renderedContent(
   return null;
 }
 
+function normalizedLunarSection(
+  slot: string,
+  body: string | null | undefined,
+  layer: LunarProseLayer,
+  sourceKeys: string[],
+  tier = layer === "source-grounded" ? "stored-source" : "source-based-madlib",
+  required = false
+): NormalizedLunarSection | null {
+  const copy = body?.trim() ?? "";
+
+  if (!isReaderFacingCopy(copy)) {
+    return null;
+  }
+
+  return {
+    slot,
+    required,
+    layer,
+    tier,
+    sourceKeys,
+    body: copy
+  };
+}
+
+function normalizedLunarSlot(
+  slot: string,
+  sourceCandidates: Array<{ body: string | null | undefined; sourceKeys: string[]; tier?: string }>,
+  madlibCandidates: Array<{ body: string | null | undefined; sourceKeys: string[]; tier?: string }> = [],
+  required = false
+) {
+  for (const candidate of sourceCandidates) {
+    const section = normalizedLunarSection(slot, candidate.body, "source-grounded", candidate.sourceKeys, candidate.tier, required);
+
+    if (section) {
+      return section;
+    }
+  }
+
+  for (const candidate of madlibCandidates) {
+    const section = normalizedLunarSection(slot, candidate.body, "madlib-fallback", candidate.sourceKeys, candidate.tier, required);
+
+    if (section) {
+      return section;
+    }
+  }
+
+  return null;
+}
+
 function lunarBeatBody(keys: string[]): string | null {
   for (const key of keys) {
     const body = lunarBeatBodyForKey(key)?.trim();
@@ -583,22 +642,6 @@ function lunarBeatArchetypeLore(keys: string[]): string | null {
   }
 
   return null;
-}
-
-function renderedFallbackHookDefinitionBody(hookContentKey: string, slots: TemplateSlotValues): string | null {
-  const hook = fallbackHookByKey(hookContentKey.replace(/^fallback-hook\//, ""));
-  const body = hook?.copy.body.trim() ?? "";
-
-  if (!isReaderFacingCopy(body)) {
-    return null;
-  }
-
-  const rendered = interpolateTemplateString(body, slots, {
-    contentKey: hookContentKey,
-    field: "body"
-  }).trim();
-
-  return isReaderFacingCopy(rendered) ? rendered : null;
 }
 
 function renderedContentSection(
@@ -895,20 +938,152 @@ function editorialFor(
       "fallback-hook/lunar-calendar/arc-full-moon",
       "fallback-hook/sky.lunar-arc-full-moon"
     ], slots)
-      ?? renderedFallbackHookDefinitionBody("fallback-hook/lunar-calendar/arc-full-moon", slots)
     : null;
   const fallbackArcSeeded = hasExactLunationEvent && phaseType === "new-moon" && slots.sixMonthArcConnection
     ? renderedContentBody(generatedContent, [
       "fallback-hook/lunar-calendar/arc-new-moon",
       "fallback-hook/sky.lunar-arc-new-moon"
     ], slots)
-      ?? renderedFallbackHookDefinitionBody("fallback-hook/lunar-calendar/arc-new-moon", slots)
     : null;
   const fallbackDay = fallbackLunarDayContent(
     generatedContent,
     slots
   );
   const fallbackDayBody = isReaderFacingCopy(fallbackDay?.body) ? fallbackDay?.body.trim() ?? null : null;
+  const bodySection = normalizedLunarSlot("body", [
+    {
+      body: renderedContentBody(generatedContent, newBodyKeys, slots),
+      sourceKeys: newBodyKeys
+    },
+    {
+      body: contentBody(generatedContent, baseKeys.map((key) => `${key}.body`)),
+      sourceKeys: baseKeys.map((key) => `${key}.body`)
+    }
+  ], [
+    {
+      body: firstReaderFacingCopy([phaseFallbackContent?.body]),
+      sourceKeys: phaseFallbackHookKeys
+    },
+    {
+      body: fallbackDayBody,
+      sourceKeys: [
+        "fallback-hook/lunar-calendar/day",
+        "fallback-hook/sky.lunar-calendar-day"
+      ]
+    },
+    {
+      body: lunarBeatBody(phaseContentKeys),
+      sourceKeys: phaseContentKeys,
+      tier: "source-based-static-lunar-beat"
+    }
+  ], true);
+  const archetypeTitleSection = normalizedLunarSlot("archetype-title", [], [
+    {
+      body: phaseFallbackContent?.headline?.trim() || null,
+      sourceKeys: phaseFallbackHookKeys
+    },
+    {
+      body: lunarBeatArchetype(phaseContentKeys),
+      sourceKeys: phaseContentKeys,
+      tier: "source-based-static-lunar-beat"
+    }
+  ]);
+  const archetypeLoreSection = normalizedLunarSlot("archetype-lore", [], [
+    {
+      body: firstReaderFacingCopy([phaseFallbackContent?.summary]),
+      sourceKeys: phaseFallbackHookKeys
+    },
+    {
+      body: lunarBeatArchetypeLore(phaseContentKeys),
+      sourceKeys: phaseContentKeys,
+      tier: "source-based-static-lunar-beat"
+    }
+  ]);
+  const practiceSection = normalizedLunarSlot("practice", [
+    {
+      body: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
+      sourceKeys: baseKeys.map((key) => `${key}.practice`)
+    }
+  ]);
+  const reflectSection = normalizedLunarSlot("reflect", [
+    {
+      body: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
+      sourceKeys: baseKeys.map((key) => `${key}.reflect`)
+    }
+  ]);
+  const ritualSection = normalizedLunarSlot("ritual", [
+    {
+      body: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),
+      sourceKeys: baseKeys.map((key) => `${key}.ritual`)
+    }
+  ]);
+  const eclipseWitnessSection = normalizedLunarSlot("eclipse-witness", [
+    {
+      body: contentBody(generatedContent, eclipseKeys),
+      sourceKeys: eclipseKeys
+    }
+  ]);
+  const callbackSection = normalizedLunarSlot("callback", [
+    {
+      body: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
+      sourceKeys: baseKeys.map((key) => `${key}.callback`)
+    }
+  ]);
+  const arcLessonSection = normalizedLunarSlot("arc-lesson", [
+    {
+      body: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`)),
+      sourceKeys: arcKeys.map((key) => `${key}.lesson`)
+    }
+  ], [
+    {
+      body: fallbackArcLesson,
+      sourceKeys: [
+        "fallback-hook/lunar-calendar/arc-full-moon",
+        "fallback-hook/sky.lunar-arc-full-moon"
+      ]
+    }
+  ]);
+  const arcSeededSection = normalizedLunarSlot("arc-seeded", [
+    {
+      body: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`)),
+      sourceKeys: arcKeys.map((key) => `${key}.seeded`)
+    }
+  ], [
+    {
+      body: fallbackArcSeeded,
+      sourceKeys: [
+        "fallback-hook/lunar-calendar/arc-new-moon",
+        "fallback-hook/sky.lunar-arc-new-moon"
+      ]
+    }
+  ]);
+  const journalPromptSection = normalizedLunarSlot("journal-prompt", [
+    {
+      body: renderedContentSection(generatedContent, newBodyKeys, slots, "journalPrompt"),
+      sourceKeys: newBodyKeys
+    },
+    {
+      body: renderedContentSection(generatedContent, baseKeys.map((key) => `${key}.body`), slots, "journalPrompt"),
+      sourceKeys: baseKeys.map((key) => `${key}.body`)
+    }
+  ], [
+    {
+      body: renderedContentSection(generatedContent, [
+        "fallback-hook/lunar-calendar/day",
+        "fallback-hook/sky.lunar-calendar-day"
+      ], slots, "journalPrompt"),
+      sourceKeys: [
+        "fallback-hook/lunar-calendar/day",
+        "fallback-hook/sky.lunar-calendar-day"
+      ]
+    }
+  ]);
+  const seasonSection = normalizedLunarSlot("season", [
+    {
+      body: renderedContentBody(generatedContent, [`season/${seasonPart}`], slots),
+      sourceKeys: [`season/${seasonPart}`]
+    }
+  ]);
   const transitNotes = [
     ...transits.map((transit) => {
       const copyKey = `${slugContentPart(transit.title)}__${lunationSignPart}_lunation_${seasonPart}_season`;
@@ -943,29 +1118,18 @@ function editorialFor(
   ];
 
   return {
-    body: renderedContentBody(generatedContent, newBodyKeys, slots)
-      ?? firstReaderFacingCopy([phaseFallbackContent?.body])
-      ?? lunarBeatBody(phaseContentKeys)
-      ?? contentBody(generatedContent, baseKeys.map((key) => `${key}.body`))
-      ?? fallbackDayBody,
-    archetypeTitle: phaseFallbackContent?.headline?.trim() || lunarBeatArchetype(phaseContentKeys),
-    archetypeLore: firstReaderFacingCopy([phaseFallbackContent?.summary]) || lunarBeatArchetypeLore(phaseContentKeys),
-    practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
-    reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
-    ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),
-    eclipseWitness: contentBody(generatedContent, eclipseKeys),
-    callback: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
-    arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`))
-      ?? fallbackArcLesson,
-    arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`))
-      ?? fallbackArcSeeded,
-    journalPrompt: renderedContentSection(generatedContent, newBodyKeys, slots, "journalPrompt")
-      ?? renderedContentSection(generatedContent, baseKeys.map((key) => `${key}.body`), slots, "journalPrompt")
-      ?? renderedContentSection(generatedContent, [
-        "fallback-hook/lunar-calendar/day",
-        "fallback-hook/sky.lunar-calendar-day"
-      ], slots, "journalPrompt"),
-    season: renderedContentBody(generatedContent, [`season/${seasonPart}`], slots),
+    body: bodySection?.body ?? null,
+    archetypeTitle: archetypeTitleSection?.body ?? null,
+    archetypeLore: archetypeLoreSection?.body ?? null,
+    practice: practiceSection?.body ?? null,
+    reflect: reflectSection?.body ?? null,
+    ritual: ritualSection?.body ?? null,
+    eclipseWitness: eclipseWitnessSection?.body ?? null,
+    callback: callbackSection?.body ?? null,
+    arcLesson: arcLessonSection?.body ?? null,
+    arcSeeded: arcSeededSection?.body ?? null,
+    journalPrompt: journalPromptSection?.body ?? null,
+    season: seasonSection?.body ?? null,
     transitNotes
   };
 }

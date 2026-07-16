@@ -351,7 +351,7 @@ assert.equal(preHydrationSunCancer.body, postHydrationSunCancer.body, "Sun-in-Ca
 assert.deepEqual(preHydrationSunCancer.sourceSnapshot, postHydrationSunCancer.sourceSnapshot, "Sun-in-Cancer provenance must not change after hydration.");
 assert.equal(preHydrationSunMercuryAspect.body, postHydrationSunMercuryAspect.body, "Sun/Mercury conjunction body must not change after hydration.");
 assert.deepEqual(preHydrationSunMercuryAspect.sourceSnapshot, postHydrationSunMercuryAspect.sourceSnapshot, "Sun/Mercury conjunction provenance must not change after hydration.");
-assert.ok(preHydrationSunCancer.body.includes("Sun is in Cancer."), "Sun-in-Cancer normalized reader copy must render.");
+assert.ok(preHydrationSunCancer.body.includes("Sun in Cancer draws attention toward belonging"), "Sun-in-Cancer normalized reader copy must render.");
 assert.ok(preHydrationSunMercuryAspect.body.includes("The Sun and Mercury are together in Cancer."), "Sun/Mercury conjunction normalized reader copy must render.");
 assert.ok((normalizedCoverage["current-sky-placement"]?.READY ?? 0) >= 144, "Normalized source must cover every supported current-sky planet-in-sign placement.");
 assert.ok((normalizedCoverage["current-sky-aspect"]?.READY ?? 0) >= 330, "Normalized source must cover every supported current-sky aspect family.");
@@ -479,32 +479,44 @@ assert.ok(generatedContent.includes("hasUnresolvedTemplateSlots(rendered)"), "Ge
 assert.ok(generatedContent.includes("hasMissingGeneratedContentTemplateSlots(content, slots)"), "Generated template output must fail before interpolation when required slots are missing.");
 assert.ok(generatedContent.includes("hasReaderSafeRenderedTemplateOutput(rendered)"), "Generated template output must run reader safety after interpolation.");
 
-assert.ok(app.includes("readerFacingParagraphs(generatedContentParagraphs(generated))"), "Generated bodies must be reader-safety filtered.");
+assert.ok(
+  app.includes("generatedContentParagraphs(generated)")
+  && app.includes("readerFacingParagraphs([section.body])"),
+  "Generated and normalized bodies must be reader-safety filtered before display."
+);
 assert.ok(app.includes("hash.replace(/^#\\/?/, \"\")"), "Sky detail routes must accept both #sky/... and #/sky/... hash paths.");
-assert.ok(app.includes("skyPlacementFallbackChildKey(position)"), "Sky placement pages must request child fallback-hook placement rows before generic fallback.");
-assert.ok(app.includes("fallback-hook/sky.aspect-detail/${aspectPart}/feed"), "Sky aspect pages must request aspect fallback-hook child rows before generic fallback.");
 assert.ok(
-  app.includes("detailParagraphs: [emergencyPlacementCopy]")
-  && app.includes("const fallbackDetailParagraphs = [")
-  && app.includes("...content.detailParagraphs"),
-  "Sky placement pages must keep a safe local placement fallback."
+  app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel)")
+  && app.includes("function skyPlacementMadlibFallbackSection(")
+  && app.includes("emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde })"),
+  "Sky placement pages must resolve source-grounded copy through the normalizer before source-based madlib fallback."
 );
-assert.ok(app.includes("liveGeneratedBody(generated, fallbackDetailParagraphs)"), "Sky placement generated body must fall through to safe local emergency paragraphs.");
-const skyPlacementContentKeyIndex = app.indexOf("keys.add(skyPlacementContentKey(position.planet, position.sign))");
-const skyPlacementFallbackChildKeyIndex = app.indexOf("keys.add(skyPlacementFallbackChildKey(position))");
 assert.ok(
-  skyPlacementContentKeyIndex >= 0
-  && skyPlacementFallbackChildKeyIndex >= 0
-  && skyPlacementContentKeyIndex < skyPlacementFallbackChildKeyIndex,
-  "Sky placement details must try rich authored sky.placement rows before exact emergency fallback-hook child rows."
+  app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") >= 0
+  && app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")") >= 0
+  && app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") < app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")"),
+  "Sky placement normalizer must try source-grounded placement copy before madlib fallback."
 );
-assert.ok(app.includes("sourceGroundedSkyPlacementSummary(position)"), "Sky placement list rows must use the compact source-grounded package template.");
-assert.ok(app.includes("sourceGroundedSkyAspectSummary({"), "Sky aspect list and related rows must use the compact source-grounded package template.");
+assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel))"), "Sky placement list rows must use the normalized source-grounded surface preview.");
+assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyAspectSurface(aspect, generatedAt))"), "Sky aspect list and related rows must use the normalized source-grounded surface preview.");
 assert.ok(app.includes("sourceGroundedNatalPlacementSections({"), "Natal placement pages must use source-grounded package layers before emergency copy.");
+assert.ok(app.includes("options: { allowKnowledgeOnly?: boolean } = {}"), "Relationship knowledge fallback must require callers to opt into knowledge-only prose.");
+assert.ok(app.includes("const allowKnowledgeOnly = options.allowKnowledgeOnly ?? false;"), "Relationship source-grounded sections must not treat bare knowledge plainTranslation as public prose by default.");
+assert.ok(!app.includes("approvedVoiceOrKnowledgeFallback(contentKey, \"relationship\", true)"), "Relationship surfaces must not directly opt into knowledge-only prose.");
+assert.ok(!app.includes("loadOrSeedPlacementWriteup"), "Natal placement detail pages must not load or seed private generated writeups outside the placement normalizer.");
+assert.ok(!app.includes("you-natal-placement-v1"), "Natal placement detail pages must not depend on legacy user-generated placement writeup keys.");
+assert.ok(app.includes("return `${firstLabel} ${aspectLabel} ${secondLabel}`;"), "Synastry fallback titles must name the actual contact instead of generic challenge/flow labels.");
+assert.ok(!app.includes("You Challenge Each Other"), "Synastry rows must not fall back to generic boilerplate titles.");
+assert.ok(!app.includes("This Contact Stands Out"), "Synastry rows must not fall back to generic boilerplate titles.");
+assert.ok(!app.includes("generated-daily-timing"), "Normalized section tiers must not expose generated as a third reader-facing prose layer.");
 assert.ok(app.includes("emergencySkyPlacementCopy(position.planet, position.sign"), "Sky placement fallback must use the approved emergency placement copy.");
 assert.ok(app.includes("currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions)"), "Sky placement aspect rows must open current-sky aspect details.");
 assert.ok(app.includes("skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail)"), "URL-built Sky placement details must keep aspect-row navigation wired.");
-assert.ok(app.includes("fallbackFromHook(") && app.includes("sourceGroundedSkyAspectSummary({"), "Sky placement aspect rows must have safe local row copy.");
+assert.ok(
+  app.includes("normalizeSkyAspectSurface(aspect, generatedAt)")
+  && app.includes("function skyAspectMadlibFallbackSection("),
+  "Sky placement aspect rows must resolve through the sky-aspect normalizer before madlib fallback."
+);
 assert.ok(app.includes("dedupeTransitAxisContacts(rankedTransitItems"), "Friend transits must dedupe duplicate Ascendant/Descendant and MC/IC axis contacts before rendering.");
 assert.ok(app.includes("friendTransitFactLine(transit, selectedChart.displayName)"), "Friend transit cards must render owner-aware fact lines.");
 assert.ok(app.includes("transitAspectTechnicalVerb(transit.aspect)"), "Transit fact copy must use technical aspect verbs such as conjunct.");

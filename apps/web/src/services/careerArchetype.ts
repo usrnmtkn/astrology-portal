@@ -17,6 +17,8 @@ export type CareerVocabularyRow = {
   body: string;
 };
 
+export type CareerProseLayer = "source-grounded" | "madlib-fallback";
+
 export type CareerArchetypeSection = {
   key: string;
   label: string;
@@ -24,6 +26,9 @@ export type CareerArchetypeSection = {
   headline: string;
   body: string;
   meta: string;
+  layer: CareerProseLayer;
+  tier: string;
+  sourceKeys: string[];
 };
 
 export type CareerArchetypeProfile = {
@@ -282,6 +287,10 @@ function careerRow(vocabulary: Map<string, CareerVocabularyRow> | null, contentK
   return vocabulary?.get(contentKey) ?? fallbackRow(contentKey, headline);
 }
 
+function careerRowLayer(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string): CareerProseLayer {
+  return vocabulary?.has(contentKey) ? "source-grounded" : "madlib-fallback";
+}
+
 function possessiveOwnerName(name: string) {
   const trimmed = name.trim();
 
@@ -374,7 +383,10 @@ function section(
     contentKey,
     headline: ownerizeCareerCopy(row.headline || fallbackHeadline, context),
     body,
-    meta
+    meta,
+    layer: careerRowLayer(vocabulary, contentKey),
+    tier: careerRowLayer(vocabulary, contentKey) === "source-grounded" ? "stored-source-vocabulary" : "source-based-local-career",
+    sourceKeys: [contentKey]
   };
 }
 
@@ -482,10 +494,19 @@ export function resolveCareerArchetypeProfile(
   const section: CareerArchetypeSection = {
     key: "career-pattern",
     label: "Career pattern",
-    contentKey: "fallback-hook/career.pattern",
+    contentKey: "career.pattern",
     headline: title,
     body: summary,
-    meta: "Fallback career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers."
+    meta: "Career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers.",
+    layer: "madlib-fallback",
+    tier: "source-based-local-career",
+    sourceKeys: [
+      "career.midHeaven",
+      "career.midHeavenRuler",
+      "career.tenthHouse",
+      "career.workCondition",
+      "career.northNodeMode"
+    ]
   };
 
   return {
@@ -717,7 +738,7 @@ function saturnExplanation(saturn: PlanetPosition | undefined) {
   const signMeaning = signTone(saturn.sign);
   const houseMeaning = houseTheme(saturn.house);
   const housePhrase = houseMeaning ? `the part of life connected to ${houseMeaning}` : `house ${saturn.house}`;
-  const signPhrase = signMeaning ? ` In ${saturn.sign}, the lesson is not vague: ${signMeaning}` : "";
+  const signPhrase = signMeaning ? ` In ${saturn.sign}, that growth has a clear tone: ${signMeaning}` : "";
 
   return `In this chart, Saturn points to where authority is earned slowly. Saturn in ${saturn.sign} in house ${saturn.house} builds mastery through ${housePhrase}.${signPhrase} The growth edge is to stop treating pressure as proof of inadequacy; this placement becomes strong when responsibility turns into skill, boundaries, and lived competence.`;
 }
