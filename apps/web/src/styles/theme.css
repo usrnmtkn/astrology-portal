@@ -110,6 +110,13 @@
   --chart-degree-label: var(--color-wheel-degree-label);
   --chart-glyph: var(--wheel-glyph);
   --chart-glyph-filter: var(--filter-glyph-current);
+  --transit-wheel-glyph: var(--chart-glyph);
+  --transit-wheel-degree: var(--chart-degree-label);
+  --transit-wheel-tick: var(--chart-glyph);
+  --transit-wheel-glyph-filter: var(--chart-glyph-filter);
+  --transit-wheel-band-inner: color-mix(in srgb, var(--bg) 70%, var(--surface) 30%);
+  --transit-wheel-band-mid: color-mix(in srgb, var(--bg) 62%, var(--ink) 10%);
+  --transit-wheel-band-outer: color-mix(in srgb, var(--bg) 76%, var(--surface) 24%);
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
   --chart-sign-label-size: 14px;
@@ -757,6 +764,13 @@
   --chart-degree-label: var(--color-wheel-degree-label);
   --chart-glyph: var(--wheel-glyph);
   --chart-glyph-filter: var(--filter-glyph-current);
+  --transit-wheel-glyph: var(--chart-glyph);
+  --transit-wheel-degree: var(--chart-degree-label);
+  --transit-wheel-tick: var(--chart-glyph);
+  --transit-wheel-glyph-filter: var(--chart-glyph-filter);
+  --transit-wheel-band-inner: color-mix(in srgb, var(--bg) 78%, var(--surface) 22%);
+  --transit-wheel-band-mid: color-mix(in srgb, var(--bg) 72%, white 8%);
+  --transit-wheel-band-outer: color-mix(in srgb, var(--bg) 84%, var(--surface) 16%);
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
   --retrograde-bg: var(--color-retrograde-bg);

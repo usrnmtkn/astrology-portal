@@ -2105,15 +2105,15 @@
 }
 
 .app-shell.mode-friends .friend-view-tabs {
-  display: grid;
-  grid-template-columns: minmax(172px, 1.25fr) repeat(4, minmax(124px, 1fr));
+  justify-content: flex-start;
   min-height: 0;
   padding: var(--segmented-padding);
+  overflow-x: auto;
+  scroll-padding-inline: var(--segmented-padding);
 }
 
 .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
   box-sizing: border-box;
-  width: 100%;
   min-width: max-content;
 }
 
@@ -2174,7 +2174,7 @@
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
-  padding: clamp(20px, 3vw, 28px);
+  padding: clamp(18px, 3vw, 26px);
 }
 
 .compatibility-summary {
@@ -2195,7 +2195,6 @@
 
 .compatibility-summary h3,
 .compatibility-card h3,
-.compatibility-dynamics__group h3,
 .compatibility-dynamic-row h4 {
   margin: 0;
   color: var(--card-title-color);
@@ -2215,7 +2214,6 @@
 }
 
 .compatibility-summary__meta span,
-.compatibility-card__signs span,
 .compatibility-card__receipt {
   display: inline-flex;
   align-items: center;
@@ -2228,12 +2226,60 @@
   line-height: 1.2;
 }
 
+.compatibility-card__signs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-items: start;
+  gap: 8px 16px;
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.compatibility-card__signs > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.compatibility-card__signs strong {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.compatibility-sign-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.compatibility-sign-label img {
+  display: block;
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+}
+
 .compatibility-glance__list,
 .compatibility-card-list,
 .compatibility-card__body,
 .compatibility-dynamics {
   display: grid;
   gap: 14px;
+}
+
+.compatibility-card-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 0;
 }
 
 .compatibility-glance p,
@@ -2245,15 +2291,22 @@
 
 .compatibility-card__header {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  text-align: left;
 }
 
 .compatibility-card__header p,
 .compatibility-card__function,
 .compatibility-card__receipt {
   color: var(--muted);
+}
+
+.compatibility-card__header p {
+  max-width: 42rem;
+  line-height: 1.4;
 }
 
 .compatibility-card__glyph {
@@ -2269,8 +2322,23 @@
 }
 
 .compatibility-card__body {
-  border-top: 1px solid var(--card-border);
-  padding-top: 14px;
+  padding-top: 4px;
+}
+
+.compatibility-card__reading {
+  display: grid;
+  gap: 16px;
+}
+
+.compatibility-card__reading p {
+  color: var(--card-body-color);
+  font-size: var(--text-body-size);
+  line-height: 1.72;
+}
+
+.compatibility-card__verdict {
+  color: var(--card-title-color) !important;
+  font-weight: var(--weight-semibold);
 }
 
 .compatibility-card__receipt {
@@ -2288,19 +2356,38 @@
   font-size: var(--text-body-size);
 }
 
-@media (max-width: 560px) {
-  .app-shell.mode-friends .friend-view-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.updates-aspect-row.friend-transit-row {
+  grid-template-columns: minmax(0, 1fr) var(--updates-aspect-meta-width);
+  grid-template-areas: "content meta";
+}
 
+.friend-transit-row .updates-aspect-row__content {
+  grid-area: content;
+}
+
+.friend-transit-row .updates-aspect-row__meta {
+  grid-area: meta;
+}
+
+@media (max-width: 560px) {
   .compatibility-card__header {
-    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 8px;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .compatibility-card__glyph {
     width: 38px;
     height: 38px;
     font-size: 20px;
+  }
+
+  .compatibility-card__reading {
+    gap: 15px;
+  }
+
+  .compatibility-card__signs {
+    display: grid;
+    gap: 4px;
   }
 }
 

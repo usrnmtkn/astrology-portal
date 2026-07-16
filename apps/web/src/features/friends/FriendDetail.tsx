@@ -74,6 +74,7 @@ export function FriendDetail({
             onChange={onTabChange}
             ariaLabel="Chart profile sections"
             className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
+            scroll
           />
         ) : null}
 

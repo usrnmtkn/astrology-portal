@@ -59,6 +59,7 @@ import {
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import skyContentSnapshot from "./content/skyContentSnapshot.json";
+import compatibilityWriteupBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-writeups.json";
 import {
   emergencyAspectBehavior,
   emergencyDetailFallbackCopy,
@@ -97,6 +98,7 @@ import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
+import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -8138,6 +8140,32 @@ function synastryWheelAspectLines(profileNatalSky: SkySnapshot | null, chart: Ma
     }));
 }
 
+function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot | null, transits: TransitItem[]): InterChartAspectLine[] {
+  if (!natalSky) {
+    return [];
+  }
+
+  const transitPositionsByPlanet = new Map(currentSky.positions.map((position) => [position.planet, position]));
+  const natalTargetsByPoint = new Map(natalTransitTargets(natalSky).map((position) => [position.planet, position]));
+
+  return transits.flatMap((transit) => {
+    const transitPosition = transitPositionsByPlanet.get(transit.transitPlanet);
+    const natalPosition = natalTargetsByPoint.get(transit.natalPoint);
+
+    if (!transitPosition || !natalPosition) {
+      return [];
+    }
+
+    return [{
+      id: `transit-wheel-${transit.id}`,
+      fromLongitude: zodiacLongitude(transitPosition),
+      toLongitude: zodiacLongitude(natalPosition),
+      type: transit.aspect,
+      orb: transitOrbValue(transit)
+    }];
+  });
+}
+
 function houseOverlayPlanetMeaning(planet: string) {
   const meanings: Record<string, string> = {
     Sun: "attention, vitality, recognition, and the feeling of being seen",
@@ -9415,76 +9443,35 @@ function synastryContacts(
 
 const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
 
-const compatibilityPlanetTopics: Record<typeof compatibilityPlanets[number], string> = {
-  Sun: "identity, direction, confidence, visibility",
-  Moon: "safety, instinct, care, emotional rhythm",
-  Mercury: "thinking, communication, listening, learning",
-  Venus: "affection, preference, values, pleasure, repair",
-  Mars: "action, desire, conflict, boundaries",
-  Jupiter: "growth, faith, encouragement, opportunity",
-  Saturn: "commitment, limits, responsibility, trust over time"
+type CompatibilityWriteupBankEntry = {
+  glyph: string;
+  match: string;
+  function: string;
+  your_line: string;
+  their_line: string;
+  same_sign: boolean;
+  same_sign_line: string;
+  same_sign_quote: { text: string; source: string } | null;
+  verdict: string;
+  relationship: string;
+  tier?: string;
+  status?: string;
 };
 
-const signModalityMap: Record<string, "cardinal" | "fixed" | "mutable"> = {
-  Aries: "cardinal",
-  Cancer: "cardinal",
-  Libra: "cardinal",
-  Capricorn: "cardinal",
-  Taurus: "fixed",
-  Leo: "fixed",
-  Scorpio: "fixed",
-  Aquarius: "fixed",
-  Gemini: "mutable",
-  Virgo: "mutable",
-  Sagittarius: "mutable",
-  Pisces: "mutable"
+type CompatibilityWriteupBank = {
+  cards: Record<string, Record<string, Record<string, CompatibilityWriteupBankEntry>>>;
 };
 
-function compatibilityPractice(relationshipType?: string | null) {
-  const group = relationshipContextGroup(relationshipType);
-  const practices: Record<ReturnType<typeof relationshipContextGroup>, string> = {
-    friendship: "Try naming the pattern as a difference in style before deciding anyone is being difficult.",
-    romance: "Make one direct request instead of asking attraction to translate every need.",
-    family: "Separate the old role from what each of you is actually asking for now.",
-    work: "Agree on ownership, timing, and what done means before the pattern has to carry the whole task.",
-    home: "Name shared-space expectations while the issue is still small enough to adjust.",
-    neutral: "Use one specific example before turning the pattern into a conclusion."
-  };
+const compatibilityWriteupsByPlanet = (compatibilityWriteupBank as CompatibilityWriteupBank).cards;
 
-  return practices[group] ?? practices.neutral;
-}
-
-function signExpression(planet: string, sign: string, owner: "reader" | "friend", friendName: string) {
-  const subject = owner === "reader" ? "you" : friendName;
-  const possessive = owner === "reader" ? "your" : possessiveLabel(friendName);
-  const element = signElementMap[sign] ?? null;
-  const modality = signModalityMap[sign] ?? null;
-  const elementPhrase = element ? `${element.toLowerCase()}-led` : "distinct";
-  const modalityPhrase = modality ? `${modality} rhythm` : "personal rhythm";
-
-  return owner === "reader"
-    ? `tends to move through ${possessive} ${planet.toLowerCase()} topics with a ${elementPhrase}, ${modalityPhrase}.`
-    : `brings a ${elementPhrase}, ${modalityPhrase} to ${possessive} ${planet.toLowerCase()} topics.`;
-}
-
-function signRelationSentence(personASign: string, personBSign: string, friendName: string) {
-  if (personASign === personBSign) {
-    return `Both placements share ${personASign}'s style, which can create recognition while also repeating the same blind spot.`;
-  }
-
-  const personAElement = signElementMap[personASign];
-  const personBElement = signElementMap[personBSign];
-  if (personAElement && personAElement === personBElement) {
-    return `Both signs work through ${personAElement.toLowerCase()} logic, so translation may come more easily even when your timing differs.`;
-  }
-
-  const personAModality = signModalityMap[personASign];
-  const personBModality = signModalityMap[personBSign];
-  if (personAModality && personAModality === personBModality) {
-    return `The signs share a ${personAModality} pace, which can feel familiar and can also raise questions about who sets the method.`;
-  }
-
-  return `Your ${personASign} style and ${possessiveLabel(friendName)} ${personBSign} style may need explicit translation; difference is context, not a verdict.`;
+function compatibilityWriteupEntry(
+  planet: typeof compatibilityPlanets[number],
+  comparisonSign: string,
+  friendSign: string
+) {
+  return compatibilityWriteupsByPlanet[normalizeContentIdPart(planet)]
+    ?.[normalizeContentIdPart(comparisonSign)]
+    ?.[normalizeContentIdPart(friendSign)] ?? null;
 }
 
 function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
@@ -9496,34 +9483,12 @@ function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition:
     .sort((first, second) => first.orbValue - second.orbValue)[0] ?? null;
 }
 
-function compatibilityAspectVerb(aspect: string) {
-  const verbs: Record<string, string> = {
-    conjunction: "joins",
-    sextile: "opens",
-    trine: "supports",
-    square: "presses on",
-    opposition: "faces"
-  };
-
-  return verbs[aspect] ?? "contacts";
-}
-
-function compatibilityAspectDynamic(aspect: string) {
-  const dynamics: Record<string, string> = {
-    conjunction: "The two functions operate close together, so it helps to separate shared recognition from automatic agreement.",
-    sextile: "The opening becomes useful when one of you actively picks it up.",
-    trine: "Translation may come more easily here, though ease still needs attention to stay awake.",
-    square: "The friction asks for adjustment, clearer choices, and less mind-reading.",
-    opposition: "The pattern works best when both ends get named instead of one person carrying the contrast."
-  };
-
-  return dynamics[aspect] ?? "The contact describes one active thread in the relationship, not the whole relationship.";
-}
-
 function compatibilityPlanetCards(
   profileNatalSky: SkySnapshot | null,
   chart: ManualChart,
-  relationshipType?: string | null
+  relationshipType?: string | null,
+  comparisonName = "You",
+  comparisonIsSelf = true
 ): CompatibilityPlanetCard[] {
   const friendSky = chart.natalChart;
 
@@ -9541,41 +9506,68 @@ function compatibilityPlanetCards(
 
     const exactAspect = samePlanetExactAspect(yourPosition, friendPosition);
     const hasExactAspect = Boolean(exactAspect);
-    const synthesis = exactAspect
-      ? `Your ${planet} ${compatibilityAspectVerb(exactAspect.type)} ${possessiveLabel(chart.displayName)} ${planet} within ${wholeDegreeOrb(exactAspect.orbValue)}. ${compatibilityAspectDynamic(exactAspect.type)}`
-      : signRelationSentence(yourPosition.sign, friendPosition.sign, chart.displayName);
+    const comparisonLabel = comparisonIsSelf ? "You" : comparisonName;
+    const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
+    const writeup = compatibilityWriteupEntry(
+      planet,
+      yourPosition.sign,
+      friendPosition.sign
+    );
+
+    if (!writeup) {
+      return [];
+    }
 
     return [{
       id: `compatibility-${normalizeContentIdPart(planet)}`,
       glyph: yourPosition.glyph || pointGlyph(planet),
       planet,
-      topic: compatibilityPlanetTopics[planet],
+      comparisonLabel,
       youSign: yourPosition.sign,
       friendName: chart.displayName,
       friendSign: friendPosition.sign,
-      planetFunction: `${planet} describes ${compatibilityPlanetTopics[planet].split(", ").slice(0, 3).join(", ")} in the relationship.`,
-      yourStyle: `Your ${planet} in ${yourPosition.sign} ${signExpression(planet, yourPosition.sign, "reader", chart.displayName)}`,
-      friendStyle: `${possessiveLabel(chart.displayName)} ${planet} in ${friendPosition.sign} ${signExpression(planet, friendPosition.sign, "friend", chart.displayName)}`,
-      synthesis,
-      practice: compatibilityPractice(relationshipType),
+      goDeeper: {
+        glyph: writeup.glyph,
+        match: writeup.match,
+        function: writeup.function,
+        yourLine: writeup.your_line,
+        theirLine: writeup.their_line,
+        sameSign: writeup.same_sign,
+        sameSignLine: writeup.same_sign_line,
+        sameSignQuote: writeup.same_sign_quote,
+        verdict: writeup.verdict,
+        relationship: writeup.relationship,
+        contentTrace: `tier=${writeup.tier ?? "unknown"};status=${writeup.status ?? "unknown"};source=cc-compatibility-writeups;route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${writeup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
+      },
       exactAspectLabel: hasExactAspect && exactAspect
-        ? `Exact contact: your ${planet} ${exactAspect.type} ${possessiveLabel(chart.displayName)} ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
+        ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
         : undefined,
-      contentTrace: `tier=${hasExactAspect ? "safe-floor-exact-aspect" : "safe-floor-sign-relation"};route=friends.compatibility;planet=${planet};relationship=${normalizeRelationshipContextKey(relationshipType)}`
+      contentTrace: `tier=${writeup.tier ?? "unknown"};status=${writeup.status ?? "unknown"};source=cc-compatibility-writeups;route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${writeup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
     }];
   });
 }
 
-function compatibilityAtAGlance(cards: CompatibilityPlanetCard[]) {
-  const exactCard = cards.find((card) => card.exactAspectLabel);
-  const sameSignCard = cards.find((card) => card.youSign === card.friendSign);
-  const translationCard = cards.find((card) => card.youSign !== card.friendSign && signElementMap[card.youSign] !== signElementMap[card.friendSign]);
+function compatibilityDynamicHeading(aspect: string): CompatibilityDynamic["heading"] {
+  if (aspect === "trine" || aspect === "sextile") {
+    return "What flows";
+  }
 
-  return [
-    exactCard ? `${exactCard.planet} gives this comparison one concrete contact to work with: ${exactCard.synthesis}` : sameSignCard ? `${sameSignCard.planet} has a shared sign style, so recognition may come quickly without proving sameness everywhere.` : "",
-    translationCard ? `${translationCard.planet} may need translation because ${translationCard.youSign} and ${translationCard.friendSign} use different elemental languages.` : "",
-    cards[0]?.practice ?? ""
-  ].filter(Boolean).slice(0, 3);
+  if (aspect === "square" || aspect === "opposition") {
+    return "Challenges";
+  }
+
+  return "Mixed or charged dynamics";
+}
+
+function compatibilityDynamicsFromContacts(contacts: SynastryContact[]): CompatibilityDynamic[] {
+  return contacts.slice(0, 5).map((contact) => ({
+    id: `compatibility-dynamic-${contact.id}`,
+    heading: compatibilityDynamicHeading(contact.aspect),
+    glyphs: `${contact.friendPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.yourPoint.glyph}`,
+    title: relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect),
+    summary: contact.summary,
+    meta: wholeDegreeOrb(contact.orb)
+  }));
 }
 
 function synastryDetailCopy(
@@ -12881,6 +12873,7 @@ export function App() {
                       onUpdateProfile={setUserProfile}
                       transitForm={transitForm}
                       transitItems={activeTransits}
+                      currentSky={sky}
                       natalSky={profileNatalSky}
                       personalTiming={personalTiming}
                       personalTimingGenerated={personalTimingGenerated}
@@ -16389,6 +16382,7 @@ function ProfileView({
   profile,
   transitForm,
   transitItems,
+  currentSky,
   natalSky,
   personalTiming,
   personalTimingGenerated,
@@ -16406,6 +16400,7 @@ function ProfileView({
   onUpdateProfile: (profile: UserProfile) => void;
   transitForm: TransitForm;
   transitItems: TransitItem[];
+  currentSky: SkySnapshot | null;
   natalSky: SkySnapshot | null;
   personalTiming: PersonalTimingResponse | null;
   personalTimingGenerated: LiveGeneratedContent | null;
@@ -16509,6 +16504,9 @@ function ProfileView({
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
+  const updateTransitAspectLines = currentSky && natalSky
+    ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
+    : [];
   const elementalBalance = natalElementBalance(natalPositions);
   const elementalSummary = elementalBalanceSummary(elementalBalance);
   const plutoSignature = natalPositions.find((position) => position.planet === "Pluto");
@@ -17101,6 +17099,24 @@ function ProfileView({
       </div>
     </div>
   ) : null;
+  const updatesChart = natalSky && currentSky ? (
+    <div className="wheel natal-wheel chart-shell" id="wheel-updates-transits" aria-label="Transit chart wheel">
+      <div className="chart-frame">
+        <SkyWheel
+          positions={natalSky.positions}
+          aspects={[]}
+          transitPositions={currentSky.positions}
+          transitAspects={updateTransitAspectLines}
+          ascendant={natalSky.ascendant}
+          ascendantLongitude={natalSky.ascendantLongitude}
+          midheavenLongitude={natalSky.midheavenLongitude}
+          showHouses
+          houseSignLabelStyle={houseSignLabelStyle}
+          variant="natal"
+        />
+      </div>
+    </div>
+  ) : null;
 
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
@@ -17119,6 +17135,7 @@ function ProfileView({
         natalAspectRows={natalAspectItems}
         natalChart={natalChart}
         natalChartPending={!natalSky}
+        updatesChart={updatesChart}
         onCreateChart={onCreateChart}
         onOpenCareerDetail={careerArchetypeProfile ? openCareerDetail : undefined}
         onOpenSoulRoadmapDetail={soulRoadmapProfile ? openSoulRoadmapDetail : undefined}
@@ -17279,7 +17296,12 @@ function ManualChartsPanel({
     ? null
     : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
   const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
-  const selectedRelationshipRomantic = selectedChart ? isExplicitRomanticRelationship(selectedChart.relationshipType) : false;
+  const selectedRelationshipContextType = relationshipComparisonIsSelf
+    ? selectedChart?.relationshipType
+    : "friend";
+  const selectedRelationshipRomantic = selectedRelationshipContextType
+    ? isExplicitRomanticRelationship(selectedRelationshipContextType)
+    : false;
   const selectedSynastryContacts = selectedChart
     ? selectedChartIsEvent
       ? []
@@ -17292,15 +17314,21 @@ function ManualChartsPanel({
           relationshipComparisonIsSelf,
           relationshipComparisonPronouns,
           selectedRelationshipRomantic,
-          selectedChart.relationshipType
+          selectedRelationshipContextType
         ),
         lifeAreaFocus
       )
     : [];
   const selectedCompatibilityCards = selectedChart && !selectedChartIsEvent
-    ? compatibilityPlanetCards(relationshipComparisonSky, selectedChart, selectedChart.relationshipType)
+    ? compatibilityPlanetCards(
+        relationshipComparisonSky,
+        selectedChart,
+        selectedRelationshipContextType,
+        relationshipComparisonName,
+        relationshipComparisonIsSelf
+      )
     : [];
-  const selectedCompatibilityAtAGlance = compatibilityAtAGlance(selectedCompatibilityCards);
+  const selectedCompatibilityDynamics = compatibilityDynamicsFromContacts(selectedSynastryContacts);
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedChart && !selectedChartIsEvent
     ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
     : [];
@@ -17308,7 +17336,7 @@ function ManualChartsPanel({
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
-      ? false
+      ? Boolean(selectedChart?.natalChart)
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "compatibility"
@@ -17318,6 +17346,9 @@ function ManualChartsPanel({
       : Boolean(selectedCompositeSky);
   const selectedFriendTransits = selectedChart && !selectedChartIsEvent
     ? rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus).slice(0, 8)
+    : [];
+  const selectedFriendTransitAspectLines = selectedChart && !selectedChartIsEvent
+    ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
     : [];
   const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
   const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
@@ -17593,7 +17624,7 @@ function ManualChartsPanel({
     compareRelationship({
       personA,
       personB,
-      relationshipContext: relationshipContextFromRole(selectedChart.relationshipType),
+      relationshipContext: relationshipContextFromRole(selectedRelationshipContextType),
       settings: apiSettingsFromChartSettings(profile.settings),
       includeContentFacts: true
     })
@@ -17621,6 +17652,7 @@ function ManualChartsPanel({
     selectedChart?.birthTimeUnknown,
     selectedChart?.birthLocation?.label,
     selectedChart?.birthLocation?.timeZone,
+    selectedRelationshipContextType,
     selectedChartIsEvent,
     relationshipComparisonChartId,
     relationshipComparisonManualChart?.id,
@@ -17979,13 +18011,10 @@ function ManualChartsPanel({
     const displayName = form.displayName.trim();
     const birthDate = form.birthDate;
     const birthPlace = form.birthPlace.trim();
-    const birthLocation = birthPlace
-      ? form.birthLocation?.label === birthPlace
-        ? form.birthLocation.timeZone
-          ? form.birthLocation
-          : null
-        : null
+    const selectedBirthLocation = birthPlace && form.birthLocation?.label === birthPlace
+      ? form.birthLocation
       : null;
+    const birthLocation = selectedBirthLocation ? withTimeZone(selectedBirthLocation) : null;
 
     if (!displayName || !birthDate || !birthPlace || !birthLocation) {
       setMessage(!birthLocation && birthPlace ? "Choose a city from the birth place suggestions. If it is already selected, timezone lookup is unavailable." : formCopy.requiredMessage);
@@ -18285,6 +18314,26 @@ function ManualChartsPanel({
                   </div>
                 </div>
               )}
+              {friendProfileTab === "transits" && selectedChart.natalChart && (
+                <div className="friend-synastry-wheel-shell">
+                  <div className="chart-shell">
+                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} transit chart wheel`}>
+                      <SkyWheel
+                        positions={selectedChart.natalChart.positions}
+                        aspects={[]}
+                        transitPositions={currentSky.positions}
+                        transitAspects={selectedFriendTransitAspectLines}
+                        ascendant={selectedChart.natalChart.ascendant}
+                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                        showHouses
+                        houseSignLabelStyle={houseSignLabelStyle}
+                        variant="natal"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
               {friendProfileTab === "compatibility" && selectedChart.natalChart && relationshipComparisonSky && (
                 <div className="friend-synastry-wheel-shell">
                   <div className="chart-shell">
@@ -18392,17 +18441,9 @@ function ManualChartsPanel({
           {friendProfileTab === "compatibility" && (
             selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
-                atAGlance={selectedCompatibilityAtAGlance}
                 cards={selectedCompatibilityCards}
-                comparisonLabel={relationshipComparisonIsSelf ? "Compared with you" : `Compared with ${relationshipComparisonName}`}
-                dynamics={[]}
-                friendBigThree={[
-                  { label: "Sun", value: selectedFriendBigThree?.sun ?? "Pending" },
-                  { label: "Moon", value: selectedFriendBigThree?.moon ?? "Pending" },
-                  { label: "Rising", value: selectedFriendBigThree?.rising ?? "Rising pending" }
-                ].filter((item) => !/pending/i.test(item.value))}
+                dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
-                relationshipLabel={relationshipTypeLabel(selectedChart.relationshipType ?? undefined)}
               />
             ) : (
               <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${selectedChart.displayName} compatibility`}>
@@ -18410,7 +18451,7 @@ function ManualChartsPanel({
                   <article className="friends-logic-card">
                     <span>Compatibility</span>
                     <h3>Add both birth charts.</h3>
-                    <p>Compatibility appears when your chart and {possessiveLabel(selectedChart.displayName)} chart are both available. The comparison uses planets and signs without a score.</p>
+                    <p>Compatibility appears when {relationshipComparisonIsSelf ? "your chart" : `${possessiveLabel(relationshipComparisonName)} chart`} and {possessiveLabel(selectedChart.displayName)} chart are both available. The comparison uses planets and signs without a score.</p>
                   </article>
                 </div>
               </div>
@@ -18630,9 +18671,6 @@ function ManualChartsPanel({
 
                           return (
                             <article className="updates-aspect-row friend-transit-row" key={transit.id}>
-                              <span className="updates-aspect-row__glyphs" aria-hidden="true">
-                                <span className="aspect-row-glyphs">{transit.glyph}</span>
-                              </span>
                               <span className="updates-aspect-row__content">
                                 <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
                                 <p className="updates-aspect-row__description">{summary}</p>

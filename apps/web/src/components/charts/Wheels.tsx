@@ -141,6 +141,8 @@ function WheelPlanetGlyph({ position, yOffset = -4 }: { position: PlanetPosition
 type SkyWheelProps = {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  transitPositions?: PlanetPosition[];
+  transitAspects?: InterChartAspectLine[];
   ascendant?: string;
   ascendantLongitude?: number;
   midheavenLongitude?: number;
@@ -152,6 +154,8 @@ type SkyWheelProps = {
 export const SkyWheel = memo(function SkyWheel({
   positions,
   aspects,
+  transitPositions = [],
+  transitAspects = [],
   ascendant,
   ascendantLongitude,
   midheavenLongitude,
@@ -169,6 +173,10 @@ export const SkyWheel = memo(function SkyWheel({
     outer: 284,
     signInner: 240,
     planet: 200,
+    transitPlanet: 304,
+    transitBand: 314,
+    transitBandOuter: 344,
+    transitDegree: 330,
     aspect: 132,
     house: 240 * chartHouseLabelRadiusFactor,
     inner: 44
@@ -257,6 +265,9 @@ export const SkyWheel = memo(function SkyWheel({
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
+  const hasTransitOverlay = transitPositions.length > 0;
+  const angleAxisRadius = hasTransitOverlay ? radius.transitBandOuter + 16 : radius.outer + angleAxisOuterPadding;
+  const angularLabelRadius = hasTransitOverlay ? radius.transitBandOuter + 26 : radius.outer + angleLabelOuterPadding;
   const houseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -270,8 +281,8 @@ export const SkyWheel = memo(function SkyWheel({
     midheavenLongitude,
     angleForLongitude,
     center,
-    radius: radius.outer + angleLabelOuterPadding
-  }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored]);
+    radius: angularLabelRadius
+  }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored, angularLabelRadius]);
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
   const signLabels = useMemo(() => chartSignLabelGeometry({
@@ -300,18 +311,49 @@ export const SkyWheel = memo(function SkyWheel({
         : {})
     }
   ), [positions, ascendantLongitude, isAscendantAnchored]);
+  const transitLayouts = useMemo(() => wheelMarkerLayouts(
+    transitPositions,
+    (position) => position.planet,
+    (position) => angleForLongitude(zodiacLongitude(position)),
+    {
+      baseRadius: radius.transitPlanet,
+      center,
+      clusterThreshold: 7,
+      maxClusterSpan: 24,
+      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      maxClusterTangentOffset: relationshipClusterTangentLimit,
+      radialOffsets: [0],
+      minMarkerRadius: radius.outer + 11,
+      maxMarkerRadius: radius.outer + 30
+    }
+  ), [transitPositions, ascendantLongitude, isAscendantAnchored]);
+  const transitAspectPairs = useMemo(() => transitAspects.map((aspect) => ({
+    ...aspect,
+    className: aspectLineClass(aspect.type),
+    lineStyle: aspectLineStyle(aspect.type, aspect.orb)
+  })), [transitAspects]);
+  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : wheelViewBox;
 
   return (
     <>
-      <svg className={`sky-wheel sky-wheel-${variant}`} viewBox={wheelViewBox} role="img" aria-label="Planet positions">
+      <svg className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}`} viewBox={activeWheelViewBox} role="img" aria-label="Planet positions">
         <defs>
           <clipPath id={wheelClipId}>
             <circle cx={center} cy={center} r={radius.outer} />
           </clipPath>
+          <radialGradient id={`${wheelClipId}-transit-band-gradient`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="var(--transit-wheel-band-inner, var(--surface-muted))" stopOpacity="0" />
+            <stop offset="78%" stopColor="var(--transit-wheel-band-inner, var(--surface-muted))" stopOpacity="0" />
+            <stop offset="89%" stopColor="var(--transit-wheel-band-mid, var(--surface-muted))" stopOpacity="0.76" />
+            <stop offset="100%" stopColor="var(--transit-wheel-band-outer, var(--surface))" stopOpacity="0.42" />
+          </radialGradient>
           {signLabels.map(({ sign, path }) => (
             <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
           ))}
         </defs>
+        {hasTransitOverlay ? (
+          <circle className="transit-planet-band" cx={center} cy={center} r={radius.transitBandOuter} fill={`url(#${wheelClipId}-transit-band-gradient)`} />
+        ) : null}
         <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
         <g className="wheel-rings">
           <circle cx={center} cy={center} r={radius.outer} />
@@ -347,6 +389,20 @@ export const SkyWheel = memo(function SkyWheel({
             );
           })}
         </g>
+        {transitAspectPairs.length > 0 && (
+          <g className="aspect-lines transit-to-natal-aspect-lines" aria-label="Transit to natal aspects">
+            {transitAspectPairs.map(({ id, fromLongitude, toLongitude, type, className, lineStyle }) => {
+              const a = point(angleForLongitude(fromLongitude), radius.aspect);
+              const b = point(angleForLongitude(toLongitude), radius.aspect);
+
+              return (
+                <g key={id} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                </g>
+              );
+            })}
+          </g>
+        )}
         {hasAscendantAxis && (
           <g className="natal-angle-lines" aria-label="Chart angle axes">
             {(() => {
@@ -356,14 +412,14 @@ export const SkyWheel = memo(function SkyWheel({
 
               const ascAngle = angleForLongitude(ascendantLongitude);
               const dscAngle = angleForLongitude(ascendantLongitude + 180);
-              const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
-              const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
+              const asc = point(ascAngle, angleAxisRadius);
+              const dsc = point(dscAngle, angleAxisRadius);
               const midheavenAxis = typeof midheavenLongitude === "number"
                 ? (() => {
                     const mcAngle = angleForLongitude(midheavenLongitude);
                     const icAngle = angleForLongitude(midheavenLongitude + 180);
-                    const mc = point(mcAngle, radius.outer + angleAxisOuterPadding);
-                    const ic = point(icAngle, radius.outer + angleAxisOuterPadding);
+                    const mc = point(mcAngle, angleAxisRadius);
+                    const ic = point(icAngle, angleAxisRadius);
 
                     return <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={ic.x} y2={ic.y} />;
                   })()
@@ -452,6 +508,40 @@ export const SkyWheel = memo(function SkyWheel({
             );
           })}
         </g>
+        {transitPositions.length > 0 && (
+          <g className="planet-labels transit-planet-labels" aria-label="Current transiting planets">
+            {transitPositions.map((position) => {
+              const layout = transitLayouts.get(position.planet);
+              const tickAngle = planetAngle(position);
+              const layoutMarker = layout?.marker;
+              const markerAngle = layoutMarker
+                ? (Math.atan2(center - layoutMarker.y, layoutMarker.x - center) * 180) / Math.PI
+                : tickAngle;
+              const marker = point(markerAngle, radius.transitPlanet);
+              const tickOuter = point(tickAngle, radius.outer + 7);
+              const tickInner = point(tickAngle, radius.outer + 5);
+              const degreeMarker = point(tickAngle, radius.transitDegree);
+
+              return (
+                <g
+                  key={`transit-${position.planet}`}
+                  className="planet-marker planet-marker-transit"
+                  role="img"
+                  aria-label={`Current ${formatPlanetPlacementLine(position)}`}
+                >
+                  <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick transit-planet-tick" />
+                  <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+                    <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
+                    <WheelPlanetGlyph position={position} yOffset={-4} />
+                  </g>
+                  <text x={degreeMarker.x.toFixed(2)} y={degreeMarker.y.toFixed(2)} className="planet-degree wheel-placement__degree transit-planet-degree">
+                    {formatWheelDegree(position)}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        )}
         <g className="sign-labels">
           {signLabels.map(({ sign, isLong, x, y }) => {
             const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
@@ -473,9 +563,11 @@ export const SkyWheel = memo(function SkyWheel({
             );
           })}
         </g>
-        <text x={center} y={626} className="chart-house-system-label">
-          Houses: Whole Sign
-        </text>
+        {!hasTransitOverlay ? (
+          <text x={center} y={626} className="chart-house-system-label">
+            Houses: Whole Sign
+          </text>
+        ) : null}
       </svg>
       <FloatingTooltipPortal
         anchor={activeTooltipPlanet ? planetMarkerRefs.current.get(activeTooltipPlanet) ?? null : null}
@@ -536,8 +628,8 @@ export const SynastryWheel = memo(function SynastryWheel({
     innerRingInner: 110,
     innerPlanet: 140,
     innerHouse: 158,
-    aspect: 38,
-    inner: 36
+    aspect: 64,
+    inner: 28
   };
   const isNatalWheel = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
@@ -648,8 +740,8 @@ export const SynastryWheel = memo(function SynastryWheel({
     const truePoint = point(angle, baseRadius);
     const marker = layout?.marker ?? point(angle, baseRadius);
     const degreeOffset = ring === "outer"
-      ? { x: 0, y: 18 }
-      : { x: 0, y: 17 };
+        ? { x: 0, y: 18 }
+        : { x: 0, y: 17 };
     const markerDelta = Math.hypot(marker.x - truePoint.x, marker.y - truePoint.y);
     const hasDisplacement = Boolean(layout && (layout.clusterSize > 1 || markerDelta > 0.5));
 
