@@ -357,7 +357,17 @@
 }
 
 .sky-wheel .transit-planet-band {
-  stroke: none;
+  fill: none;
+  stroke: var(--transit-wheel-band-fill, color-mix(in srgb, var(--bg) 82%, var(--ink) 8%));
+  stroke-width: 60px;
+  opacity: 0.92;
+}
+
+.sky-wheel .transit-planet-band-outline {
+  fill: none;
+  stroke: var(--transit-wheel-band-stroke, color-mix(in srgb, var(--chart-line) 68%, var(--bg) 32%));
+  stroke-width: 1.2;
+  opacity: 0.72;
 }
 
 .sky-wheel-transit-overlay {

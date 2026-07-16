@@ -64,6 +64,7 @@ export type YouPageProps = {
   hasSavedCurrentCity: boolean;
   natalChart: ReactNode;
   natalChartPending: boolean;
+  updatesChart?: ReactNode;
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
@@ -219,14 +220,16 @@ function YouProfileSummary({
 }
 
 function YouNatalChartPanel({
+  ariaLabel = "Natal chart",
   natalChart,
   natalChartPending
 }: {
+  ariaLabel?: string;
   natalChart: ReactNode;
   natalChartPending: boolean;
 }) {
   return (
-    <aside className="chart-layout__visual" aria-label="Natal chart">
+    <aside className="chart-layout__visual" aria-label={ariaLabel}>
       {natalChart}
       {natalChartPending && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
@@ -704,6 +707,7 @@ export function YouPage({
   natalAspectRows,
   natalChart,
   natalChartPending,
+  updatesChart,
   onCreateChart,
   onCloseTransitArticle,
   onOpenCareerDetail,
@@ -723,6 +727,8 @@ export function YouPage({
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
+  const activeChart = profileTab === "transits" && updatesChart ? updatesChart : natalChart;
+  const activeChartLabel = profileTab === "transits" && updatesChart ? "Transit chart" : "Natal chart";
 
   if (!hasSavedBirthDetails) {
     return <YouEmptyState onCreateChart={onCreateChart} setupStepsLeft={setupStepsLeft} />;
@@ -735,7 +741,11 @@ export function YouPage({
   return (
     <section className="you-page you-chart-page page-shell" aria-label="You">
       <div className="chart-layout">
-        <YouNatalChartPanel natalChart={natalChart} natalChartPending={natalChartPending} />
+        <YouNatalChartPanel
+          ariaLabel={activeChartLabel}
+          natalChart={activeChart}
+          natalChartPending={natalChartPending}
+        />
 
         <main className="chart-layout__content">
           <YouProfileSummary
