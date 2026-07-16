@@ -1,0 +1,108 @@
+{
+  "_meta": {
+    "title": "Compatibility voiced descriptions (gift + book-grounded shadow)",
+    "tier": "voiced-original-grounded",
+    "status": "DRAFT",
+    "note": "Gift = natal_sign_story (Marie's reviewed voice). Shadow = grounded in As Above So Below's per-sign shadow lines ('an overly X sign energy can lead to...'); Virgo and Aquarius derived from the book's emphasis (perfection / rebellion). Tailored to each planet's domain."
+  },
+  "descriptions": {
+    "sun": {
+      "aries": "Your identity comes through bold and direct: you'd rather start something than wait to be asked, though you can act before you think and charge in on impulse.",
+      "taurus": "You know who you are slowly and solidly, and you don't move until it feels worth it, though you can dig in and resist change until it costs you progress.",
+      "gemini": "Your sense of self runs on curiosity and talk; you try on ideas the way others try on clothes, though you can spread yourself thin and skim the surface.",
+      "cancer": "You're most yourself when you're caring for something, and you lead with feeling, though you can lose yourself in caretaking and forget your own needs.",
+      "leo": "You come alive when you're seen; your identity wants warmth, play, and something to create, though you can let pride tip into arrogance and need too much of the spotlight.",
+      "virgo": "You know yourself through what you refine and improve; being useful is how you shine, though you can chase perfection and be hard on yourself.",
+      "libra": "Your identity forms in relationship; you find yourself in the space between you and another, though you can lose yourself in others and struggle to decide.",
+      "scorpio": "You're most yourself in the deep end, where things are real, private, and intense, though you can get guarded, controlling, and slow to trust.",
+      "sagittarius": "Your sense of self needs room to roam: a bigger view, a truth to chase, a horizon, though you can get careless and dodge responsibility.",
+      "capricorn": "You know who you are by what you build and take responsibility for, though you can go rigid and tie your worth to what you achieve.",
+      "aquarius": "Your identity is a little outside the norm; you want to build things that shift the status quo, though you can detach, rebel for its own sake, and dig in on being right.",
+      "pisces": "You're most yourself at the edges, where feeling, imagination, and compassion blur the lines, though you can drift, avoid, and let your boundaries blur."
+    },
+    "moon": {
+      "aries": "You feel things fast and hot, and you need to act on a mood before it cools, though you can flare up fast and act on a feeling before it cools.",
+      "taurus": "You settle when life is calm and physical; comfort, food, and steadiness soothe you, though you can get stuck in a mood and refuse to be moved.",
+      "gemini": "You process feelings by talking them out, and your mood shifts with the conversation, though you can talk around a feeling instead of actually feeling it.",
+      "cancer": "Your feelings run the show, and safety comes from home and the people who feel like yours, though you can over-give and neglect your own emotional needs.",
+      "leo": "You need warmth and a little spotlight to feel okay; affection lands loudest for you, though you can need too much reassurance and take a slight to heart.",
+      "virgo": "You feel safest when things are handled; a tidy detail can settle your whole mood, though you can pick your feelings apart and never feel done.",
+      "libra": "You feel steady when things are fair and harmonious, and conflict unsettles you fast, though you can keep the peace at the cost of your own needs.",
+      "scorpio": "Your feelings run deep and private, and you don't do shallow reassurance, though you can get jealous, guarded, and slow to let anyone in.",
+      "sagittarius": "You feel best with room to breathe and something to look forward to, though you can bolt from a heavy feeling and call it freedom.",
+      "capricorn": "You steady yourself with structure, and you'd rather handle a feeling than sit in it, though you can shut feelings down and call it fine before it is.",
+      "aquarius": "You need space to feel from a little distance; you process feelings by understanding them, though you can detach from your emotions and go cold.",
+      "pisces": "You soak up the emotional weather around you and feel everything at the edges, though you can soak up everyone else's feelings and lose your own."
+    },
+    "mercury": {
+      "aries": "You think fast and say it faster; your mind moves in quick, direct bursts, though you can speak before you think and cut people off.",
+      "taurus": "You think slowly and thoroughly, and once you've decided, you don't budge easily, though you can dig into an opinion and refuse to budge.",
+      "gemini": "Your mind is quick, curious, and everywhere at once; you learn by talking and linking ideas, though you can scatter across topics and skim the surface.",
+      "cancer": "You think with your feelings, and memory and mood color how you take things in, though you can let your mood color the facts.",
+      "leo": "You think in big, confident strokes, and you speak to be heard and to inspire, though you can talk over others and need to be the smartest in the room.",
+      "virgo": "Your mind is precise and analytical; you notice the error everyone else missed, though you can over-analyze and nitpick.",
+      "libra": "You think in comparisons and both-sides, weighing every option before you commit, though you can see every side and never land on a decision.",
+      "scorpio": "Your mind digs; you're not satisfied until you've found what's really going on, though you can get suspicious and read hidden motives everywhere.",
+      "sagittarius": "You think in big pictures and possibilities, sometimes past the inconvenient details, though you can talk in broad strokes and skip the details.",
+      "capricorn": "Your thinking is structured and practical; you want the plan, not the brainstorm, though you can go rigid and dismiss ideas that aren't practical.",
+      "aquarius": "You think in systems and original angles, wired to question the obvious, though you can argue just to be contrary and detach from how people feel.",
+      "pisces": "You think in images and intuition, following what feels true more than what's on paper, though you can drift, lose the thread, and mistake a hope for a fact."
+    },
+    "venus": {
+      "aries": "You love fast and direct, and you'd rather chase than be kept guessing, though you can chase the spark and lose interest once you've won.",
+      "taurus": "You love steadily and sensually; loyalty, touch, and the good things say it best, though you can get possessive and cling to comfort over growth.",
+      "gemini": "You love through words and wit, and a good conversation is your love language, though you can get restless and need constant novelty.",
+      "cancer": "You love by caring and being cared for; closeness means feeling safe with someone, though you can smother, cling, and fear being left.",
+      "leo": "You love generously and out loud; you want romance with a little grandeur, though you can need to be adored and make it about you.",
+      "virgo": "You love through the practical: showing up, fixing, remembering the small things, though you can pick at your partner and withhold when it's imperfect.",
+      "libra": "You love beauty, balance, and partnership itself; harmony is the point, though you can lose yourself in the other and avoid conflict at any cost.",
+      "scorpio": "You love all the way in: intense, loyal, and allergic to anything halfway, though you can get jealous, possessive, and controlling in love.",
+      "sagittarius": "You love freedom and adventure in a partner; keep it honest and keep it moving, though you can dodge commitment and keep one foot out the door.",
+      "capricorn": "You love with commitment and staying power; you invest where it can last, though you can treat love like a duty and hold back your warmth.",
+      "aquarius": "You love as a friend first, and you need freedom inside the closeness, though you can keep love at arm's length and stay detached.",
+      "pisces": "You love romantically and boundlessly, seeing the best in whoever you fall for, though you can lose your boundaries and idealize whoever you fall for."
+    },
+    "mars": {
+      "aries": "You go after what you want head-on, and sitting still is the hardest thing you do, though you can go off half-cocked and pick fights.",
+      "taurus": "You move slowly but you don't stop; your drive is stubborn and built to last, though you can dig in, stall, and refuse to move.",
+      "gemini": "Your energy goes into words and quick moves; you fight and flirt with your wit, though you can scatter your energy and argue instead of act.",
+      "cancer": "You act to protect what's yours, and your drive runs on feeling, not logic, though you can go passive-aggressive and act from hurt.",
+      "leo": "You act with flair and pride; you want your effort seen and your courage recognized, though you can make it about pride and sulk when unrecognized.",
+      "virgo": "Your energy goes into doing it right; you work hard and sweat the details, though you can nitpick and turn drive into anxious busywork.",
+      "libra": "You act through others and hate a fight, so you push by persuading, not shoving, though you can avoid conflict until it leaks out sideways.",
+      "scorpio": "Your drive is intense and strategic; you go quiet, then you go all the way, though you can get controlling and let anger go cold and vengeful.",
+      "sagittarius": "You chase the big goal with enthusiasm, sometimes overshooting the practical part, though you can act careless and burn out on impulse.",
+      "capricorn": "You work with discipline toward a real result; your ambition is patient and relentless, though you can grind past your limits and go cold.",
+      "aquarius": "You act on principle and your own timing, and you resist being told how to move, though you can rebel just to rebel and detach mid-fight.",
+      "pisces": "Your drive ebbs and flows with your mood; you move best toward something you believe in, though you can avoid confrontation and let your drive dissolve."
+    },
+    "jupiter": {
+      "aries": "You grow by going first and betting on yourself; boldness tends to pay off for you, though you can leap without looking and burn out fast.",
+      "taurus": "You grow through patience and building; abundance comes to you slowly and stays, though you can grow so slowly you slide into complacency.",
+      "gemini": "You grow through learning and connecting; your luck runs through ideas and people, though you can chase every idea and go a mile wide, an inch deep.",
+      "cancer": "You grow through care and roots; your good fortune lives in home and belonging, though you can cling to the familiar and mistake comfort for growth.",
+      "leo": "You grow by expressing yourself fully; confidence and creativity open your doors, though you can let confidence tip into arrogance and excess.",
+      "virgo": "You grow through craft and usefulness; small, careful improvements compound for you, though you can shrink your vision with over-analysis and doubt.",
+      "libra": "You grow through relationship and fairness; partnership expands your world, though you can over-accommodate and lose your own direction.",
+      "scorpio": "You grow through depth and transformation; you gain by letting the shallow things go, though you can fixate and refuse to let the shallow things go.",
+      "sagittarius": "You grow by reaching for meaning and horizon; faith and adventure are your fuel, though you can over-promise, overreach, and dodge the follow-through.",
+      "capricorn": "You grow through discipline and structure; you earn your expansion the real way, though you can gatekeep growth behind rules and grind.",
+      "aquarius": "You grow through vision and community; your luck runs through the unconventional, though you can chase novelty and detach from what's practical.",
+      "pisces": "You grow through faith, art, and compassion; you gain by trusting the current, though you can drift on faith without grounding it in anything real."
+    },
+    "saturn": {
+      "aries": "You build discipline around action: learning to start wisely, not just fast, though you can rush the work and resent the discipline.",
+      "taurus": "Your structure is around worth and security; you learn what's truly enough, though you can harden into stubbornness and fear of change.",
+      "gemini": "You build discipline around your mind and voice: say less, mean more, though you can scatter your focus and dodge the deep work.",
+      "cancer": "Your work is around emotional security: building a foundation you didn't inherit, though you can wall off your feelings in the name of security.",
+      "leo": "You learn to earn recognition rather than demand it; real confidence takes time, though you can let pride block the humility the lesson asks for.",
+      "virgo": "Your discipline is around service and standards: useful, not perfect, though you can turn discipline into perfectionism and self-criticism.",
+      "libra": "You build structure around commitment and fairness; you learn what you owe and are owed, though you can avoid the hard call and over-owe yourself to others.",
+      "scorpio": "Your work is around trust and control: learning what's safe to depend on, though you can grip for control and struggle to trust the process.",
+      "sagittarius": "You build discipline around belief: testing your faith instead of borrowing it, though you can dodge commitment and call it freedom.",
+      "capricorn": "Your structure is around authority and time; you become your own hard-won authority, though you can overwork, go cold, and tie your worth to output.",
+      "aquarius": "You build discipline around vision: turning ideals into things that actually hold, though you can rebel against structure and detach from the work.",
+      "pisces": "Your work is around faith and boundaries: giving form to the formless, though you can avoid the boundary and let responsibility dissolve."
+    }
+  }
+}

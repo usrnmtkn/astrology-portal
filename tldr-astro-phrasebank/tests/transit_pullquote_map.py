@@ -143,6 +143,54 @@ POOLS = {
  ("chiron","north node"):{"soft":["This is a chance to stop that cycle"], "hard":["Some of our most courageous people are also the most scared"]},
 }
 
+# ---------------------------------------------------------------------------
+# AUDIT pools: additional (transiting_body, natal_target) themes filled from the
+# full-corpus audit replacement lines (sources/marie-audit-replacements.json).
+# These target the pairs the base POOLS left empty. Challenge lines -> hard
+# aspects, affirming lines -> soft. All are scope=universal.
+AUDIT_POOLS = {
+ # MARS group -> drive / anger / courage / protection
+ ("mars","jupiter"):    {"hard":["Do it, but don't confuse busyness with progress"], "soft":["The courage to choose differently lives here"], "conj":["What are you willing to fight for"]},
+ ("mars","north node"): {"conj":["What are you willing to fight for"], "hard":["What are you willing to fight for"], "soft":["The courage to choose differently lives here"]},
+ ("uranus","mars"):     {"conj":["If something falls apart now, it likely needed to"], "hard":["If something falls apart now, it likely needed to"], "soft":["The courage to choose differently lives here"]},
+ ("jupiter","mars"):    {"conj":["The courage to choose differently lives here"], "hard":["Do it, but don't confuse busyness with progress"], "soft":["The courage to choose differently lives here"]},
+ ("mercury","mars"):    {"hard":["What was the fight for"], "soft":["Say it badly if you have to"], "conj":["The body holds what the mind"]},
+ ("neptune","mars"):    {"hard":["You are not meant to push harder right now"], "soft":["You're here to protect your energy"], "conj":["You are not meant to push harder right now"]},
+ ("pluto","mars"):      {"hard":["This is about stopping the war with who you already are"], "soft":["You're here to protect your energy"], "conj":["Transformation isn't the breakdown"]},
+ # MOON group -> emotional needs / care / receiving / home
+ ("moon","sun"):        {"conj":["You're allowed to soften"], "hard":["You can't do everything alone anymore"], "soft":["You're allowed to soften"]},
+ ("moon","venus"):      {"conj":["This is the kind of love that remembers your favorite song"], "hard":["You don't need to armor up to be loved"], "soft":["This is the kind of love that remembers your favorite song"]},
+ ("moon","jupiter"):    {"conj":["This is the Jupiter of wells, wombs, kitchens, and kin"], "hard":["Real care needs a structure"], "soft":["This is the Jupiter of wells, wombs, kitchens, and kin"]},
+ ("moon","mars"):       {"conj":["Mars in Cancer doesn't fight to win"], "hard":["The body holds what the mind"], "soft":["Mars in Cancer doesn't fight to win"]},
+ ("moon","pluto"):      {"conj":["Your emotions aren't symptoms to cure"], "hard":["You can't do everything alone anymore"], "soft":["Your emotions aren't symptoms to cure"]},
+ ("moon","uranus"):     {"conj":["You're allowed to soften"], "hard":["You can't do everything alone anymore"], "soft":["Success is remaining open when closing would have been easier"]},
+ ("moon","chiron"):     {"conj":["You don't need to armor up to be loved"], "hard":["Without a supportive foundation"], "soft":["You don't need to armor up to be loved"]},
+ ("moon","ic"):         {"conj":["This is the Jupiter of wells, wombs, kitchens, and kin"], "hard":["Without a supportive foundation"], "soft":["This is the Jupiter of wells, wombs, kitchens, and kin"]},
+ ("moon","north node"): {"conj":["Connection begins with honesty"], "hard":["Connection begins with honesty"], "soft":["Connection begins with honesty"]},
+ # MERCURY group -> mind / voice / being understood
+ ("mercury","sun"):     {"hard":["Stop minimizing what you know"], "soft":["This is when your words become your commitments"], "conj":["Stop minimizing what you know"]},
+ ("mercury","pluto"):   {"hard":["Words are choices that reveal alignment or avoidance"], "soft":["What do you know vs"], "conj":["The unspoken weighs heavy"]},
+ ("mercury","midheaven"):{"hard":["You might want to be liked more than you want to be heard"], "soft":["This is when your words become your commitments"], "conj":["This is when your words become your commitments"]},
+ ("mercury","chiron"):  {"hard":["Virgo's precision no longer needs to be a weapon"], "soft":["Your brain needs rest"], "conj":["Your brain needs rest"]},
+ ("neptune","mercury"): {"hard":["Not everything that sounds good is true"], "soft":["Sometimes the only move is to make peace with not knowing"], "conj":["Sometimes the only move is to make peace with not knowing"]},
+ # JUPITER group -> growth / faith / belonging / expansion
+ ("jupiter","chiron"):  {"hard":["What will you create from the ashes"], "soft":["Not one of us is too much for the right connections"], "conj":["Boundary work becomes sacred"]},
+ ("jupiter","ic"):      {"conj":["Jupiter in Cancer is about building trust"], "hard":["What will you create from the ashes"], "soft":["Jupiter in Cancer is about building trust"]},
+ ("saturn","jupiter"):  {"hard":["What do you long for"], "soft":["Breathe—give the situation time to unfold"], "conj":["This is the rhythm of becoming"]},
+ ("sun","jupiter"):     {"soft":["This world is deeply incomplete without your authentic voice"], "hard":["What do you long for"], "conj":["This world is deeply incomplete without your authentic voice"]},
+ ("venus","jupiter"):   {"soft":["Not one of us is too much for the right connections"], "hard":["What do you long for"], "conj":["Not one of us is too much for the right connections"]},
+ # NEPTUNE group -> surrender / intuition / disillusion
+ ("neptune","sun"):     {"conj":["You don't need to articulate what you're feeling"], "hard":["You can't control your way to peace"], "soft":["You don't need to articulate what you're feeling"]},
+ ("neptune","moon"):    {"conj":["This is where you let the ocean decide"], "hard":["You can't control your way to peace"], "soft":["This is where you let the ocean decide"]},
+ ("neptune","ascendant"):{"conj":["What's in motion now is still unfolding"], "hard":["But you don't get to simply float here"], "soft":["What's in motion now is still unfolding"]},
+ ("neptune","ic"):      {"conj":["This is the point where you let go"], "hard":["But you don't get to simply float here"], "soft":["This is where you let the ocean decide"]},
+ # PLUTO group -> power / endings / rebirth
+ ("pluto","sun"):       {"conj":["The old version of you is dead"], "hard":["The old version of you is dead"], "soft":["The past releases its grip"]},
+ ("pluto","moon"):      {"conj":["Scorpio doesn't kill what's alive"], "hard":["Scorpio doesn't kill what's alive"], "soft":["The past releases its grip"]},
+ ("pluto","ascendant"): {"conj":["The old version of you is dead"], "hard":["Transformation isn't the breakdown"], "soft":["What was once unclear now sharpens into focus"]},
+ ("pluto","midheaven"): {"conj":["The structures we once relied on are breaking"], "hard":["The structures we once relied on are breaking"], "soft":["What was once unclear now sharpens into focus"]},
+}
+
 HARD = {"square", "opposition"}
 SOFT = {"trine", "sextile"}
 
@@ -152,16 +200,24 @@ def valence_bucket(aspect):
     if aspect in SOFT: return "soft"
     return None
 
-def candidates(body, target, aspect):
-    """Ordered list of identifying substrings to try for this pair (best first),
-    starting with the aspect's own valence bucket then falling back."""
-    pool = POOLS.get((body, target))
-    if not pool:
-        return []
+def _pool_order(pool, aspect):
     b = valence_bucket(aspect)
     order, seen = [], set()
     for key in [b, "conj", "hard", "soft"]:
         for sub in (pool.get(key) or []):
+            if sub not in seen:
+                seen.add(sub); order.append(sub)
+    return order
+
+def candidates(body, target, aspect):
+    """Ordered list of identifying substrings to try for this pair (best first),
+    starting with the aspect's own valence bucket then falling back. The base
+    POOLS take priority; AUDIT_POOLS (fuller-corpus lines) fill what's left."""
+    order, seen = [], set()
+    for pool in (POOLS.get((body, target)), AUDIT_POOLS.get((body, target))):
+        if not pool:
+            continue
+        for sub in _pool_order(pool, aspect):
             if sub not in seen:
                 seen.add(sub); order.append(sub)
     return order
