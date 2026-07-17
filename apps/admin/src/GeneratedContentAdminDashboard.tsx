@@ -180,12 +180,14 @@ type AdminDraft = {
   promptVersion: string;
 };
 
-declare const __LOCAL_CONTENT_GENERATION_SECRET__: string | undefined;
-
 type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
 type AdminVocabularyCategoryFilter = AdminVocabularySection | "all";
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
+
+function getLocalContentGenerationSecret() {
+  return (globalThis as typeof globalThis & { __LOCAL_CONTENT_GENERATION_SECRET__?: string }).__LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
+}
 
 const vocabularySections: Array<{ key: AdminVocabularySection; label: string; description: string }> = [
   { key: "planets", label: "Planets", description: "Planet meanings, placements, and phase language." },
@@ -745,10 +747,12 @@ function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
 
 function useSavedSecret() {
   const [secret, setSecret] = useState(() => {
+    const localSecret = getLocalContentGenerationSecret();
+
     try {
-      return window.localStorage.getItem(adminSecretStorageKey) ?? __LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
+      return window.localStorage.getItem(adminSecretStorageKey) ?? localSecret;
     } catch {
-      return __LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
+      return localSecret;
     }
   });
 

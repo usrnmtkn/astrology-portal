@@ -246,9 +246,9 @@ test.describe("visual regression baseline", () => {
     await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible();
     await expect(page).toHaveScreenshot("admin-home-desktop.png", screenshotOptions);
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Exact Content" }).click();
-    await expect(page.locator("h1", { hasText: "Exact Content" })).toBeVisible();
-    await expect(page).toHaveScreenshot("admin-exact-content-desktop.png", screenshotOptions);
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
+    await expect(page.locator("h1", { hasText: "Content Library" })).toBeVisible();
+    await expect(page).toHaveScreenshot("admin-content-library-desktop.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/admin/content");
