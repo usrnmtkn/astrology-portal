@@ -911,9 +911,9 @@ function SynastryPlacementCard({
       <SynastryPlacementLead position={position} />
       <SynastryPlacementSign sign={position.sign} />
       <span className="synastry-placement-meta">
-        <span>{formatPlacementDegree(position)}</span>
-        <span aria-hidden="true">·</span>
-        <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
+        <span className="synastry-placement-degree">{formatPlacementDegree(position)}</span>
+        <span className="synastry-placement-meta-separator" aria-hidden="true">·</span>
+        <span className="synastry-placement-house">{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
       </span>
     </div>
   );

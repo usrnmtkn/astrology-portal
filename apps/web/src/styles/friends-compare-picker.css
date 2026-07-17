@@ -16,7 +16,7 @@
   border: 1px solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   overflow: hidden;
 }
 
@@ -40,9 +40,14 @@
 .friend-compare-customise {
   color: var(--muted);
   font-size: var(--type-label-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+}
+
+.friend-compare-selected-name {
+  color: var(--ink);
+  font-weight: var(--weight-medium);
 }
 
 .friend-compare-avatar {
