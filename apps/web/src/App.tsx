@@ -10998,7 +10998,11 @@ function isAdminContentPath() {
     return false;
   }
 
-  return window.location.pathname === "/admin/content" || window.location.pathname === "/admin/generated-content";
+  return (
+    window.location.pathname === "/admin/content" ||
+    window.location.pathname === "/admin/generated-content" ||
+    window.location.pathname === "/content/admin"
+  );
 }
 
 const GeneratedContentAdminDashboard = lazy(() =>

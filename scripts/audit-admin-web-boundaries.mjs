@@ -71,6 +71,7 @@ function publicAdminReferences() {
     /admin\.css/,
     /\/api\/admin\//,
     /\/admin\/content/,
+    /\/content\/admin/,
     /\/admin\/generated-content/,
     /GeneratedContentAdminDashboard/
   ];
