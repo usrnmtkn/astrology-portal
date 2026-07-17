@@ -194,6 +194,17 @@ function chartIdentity(chart: Pick<ManualChart, "chartType" | "displayName" | "b
   ].join("|");
 }
 
+function chartIdentityFromInput(input: ManualChartInput) {
+  return chartIdentity({
+    chartType: input.chartType ?? "person",
+    displayName: input.displayName,
+    birthDate: input.birthDate,
+    birthTime: input.birthTime,
+    birthTimeUnknown: input.birthTimeUnknown,
+    birthPlace: input.birthPlace
+  });
+}
+
 function dedupeManualCharts(charts: ManualChart[]) {
   const seen = new Set<string>();
   const dedupedCharts: ManualChart[] = [];
@@ -253,10 +264,21 @@ function clearLocalManualCharts(userId: string) {
 function createLocalManualChart(userId: string, input: ManualChartInput): ManualChart {
   const now = new Date().toISOString();
   const chartType = input.chartType ?? "person";
-  const nextChart: ManualChart = {
+  const normalizedInput = {
     ...input,
     chartType,
-    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType),
+    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
+  };
+  const existingChart = localManualChartOwnerIds(userId)
+    .flatMap((ownerId) => readLocalManualCharts(ownerId))
+    .find((chart) => chartIdentity(chart) === chartIdentityFromInput(normalizedInput));
+
+  if (existingChart) {
+    return existingChart;
+  }
+
+  const nextChart: ManualChart = {
+    ...normalizedInput,
     pronouns: normalizePronounChoice(input.pronouns ?? defaultPronounChoice),
     id: `manual-${Date.now()}`,
     ownerUserId: userId,
@@ -270,8 +292,44 @@ function createLocalManualChart(userId: string, input: ManualChartInput): Manual
   return nextChart;
 }
 
+function localManualChartOwnerIds(userId: string) {
+  return [...new Set([userId, ...listLocalManualChartUserIds()])];
+}
+
+function findLocalManualChart(userId: string, chartId: string) {
+  for (const ownerId of localManualChartOwnerIds(userId)) {
+    const chart = readLocalManualCharts(ownerId).find((candidate) => candidate.id === chartId);
+
+    if (chart) {
+      return { ownerId, chart };
+    }
+  }
+
+  return null;
+}
+
+function removeLocalManualChartsByIdentity(userIds: string[], identities: Set<string>) {
+  userIds.forEach((ownerId) => {
+    const nextCharts = readLocalManualCharts(ownerId).filter((chart) => (
+      !identities.has(chartIdentity(chart))
+    ));
+
+    if (nextCharts.length === 0) {
+      clearLocalManualCharts(ownerId);
+      return;
+    }
+
+    writeLocalManualCharts(ownerId, nextCharts);
+  });
+}
+
 function updateLocalManualChart(userId: string, chartId: string, input: ManualChartInput): ManualChart {
-  const charts = readLocalManualCharts(userId);
+  const ownerIds = localManualChartOwnerIds(userId);
+  const foundChart = findLocalManualChart(userId, chartId);
+  const targetOwnerId = foundChart?.ownerId ?? userId;
+  const charts = readLocalManualCharts(targetOwnerId);
+  const existingChart = foundChart?.chart ?? charts.find((chart) => chart.id === chartId);
+  const existingIdentity = existingChart ? chartIdentity(existingChart) : null;
   const updatedAt = new Date().toISOString();
   const chartType = input.chartType ?? "person";
   const normalizedInput = {
@@ -279,26 +337,48 @@ function updateLocalManualChart(userId: string, chartId: string, input: ManualCh
     chartType,
     relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
   };
+  const updatedIdentity = chartIdentityFromInput(normalizedInput);
   const nextCharts = charts.map((chart) => (
     chart.id === chartId
-      ? { ...chart, ...normalizedInput, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: userId, updatedAt }
+      ? { ...chart, ...normalizedInput, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: targetOwnerId, updatedAt }
       : chart
+  )).filter((chart) => (
+    chart.id === chartId || (
+      (!existingIdentity || chartIdentity(chart) !== existingIdentity) &&
+      chartIdentity(chart) !== updatedIdentity
+    )
   )).sort((first, second) => first.displayName.localeCompare(second.displayName));
   const nextChart = nextCharts.find((chart) => chart.id === chartId);
 
-  writeLocalManualCharts(userId, nextCharts);
+  writeLocalManualCharts(targetOwnerId, nextCharts);
   if (!nextChart) {
     throw new Error("Manual chart not found.");
   }
+
+  removeLocalManualChartsByIdentity(
+    ownerIds.filter((ownerId) => ownerId !== targetOwnerId),
+    new Set([...(existingIdentity ? [existingIdentity] : []), updatedIdentity])
+  );
 
   return nextChart;
 }
 
 function deleteLocalManualChart(userId: string, chartId: string) {
-  writeLocalManualCharts(
-    userId,
-    readLocalManualCharts(userId).filter((chart) => chart.id !== chartId)
-  );
+  const deletedChart = findLocalManualChart(userId, chartId)?.chart ?? null;
+  const deletedIdentity = deletedChart ? chartIdentity(deletedChart) : null;
+
+  localManualChartOwnerIds(userId).forEach((ownerId) => {
+    const nextCharts = readLocalManualCharts(ownerId).filter((chart) => (
+      chart.id !== chartId && (!deletedIdentity || chartIdentity(chart) !== deletedIdentity)
+    ));
+
+    if (nextCharts.length === 0) {
+      clearLocalManualCharts(ownerId);
+      return;
+    }
+
+    writeLocalManualCharts(ownerId, nextCharts);
+  });
 }
 
 export function listCachedManualCharts(userIds: string[]): ManualChart[] {
@@ -331,16 +411,9 @@ export function listLocalManualChartUserIds(): string[] {
 
 function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart) {
   const deletedIdentity = chartIdentity(deletedChart);
-  const nextCharts = readLocalManualCharts(userId).filter((chart) => (
-    chart.id !== deletedChart.id && chartIdentity(chart) !== deletedIdentity
-  ));
+  const ownerIds = localManualChartOwnerIds(userId);
 
-  if (nextCharts.length === 0) {
-    clearLocalManualCharts(userId);
-    return;
-  }
-
-  writeLocalManualCharts(userId, nextCharts);
+  removeLocalManualChartsByIdentity(ownerIds, new Set([deletedIdentity]));
 }
 
 async function hasRemoteUser(userId: string) {
@@ -362,6 +435,12 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
     throw new Error("Supabase auth is not configured.");
   }
   const remoteClient = client;
+  const existingRemoteChart = (await listManualCharts(userId))
+    .find((chart) => chartIdentity(chart) === chartIdentityFromInput(input));
+
+  if (existingRemoteChart) {
+    return existingRemoteChart;
+  }
 
   async function insertManualChartRow(options: { omitPronounsColumn?: boolean } = {}) {
     return remoteClient
@@ -489,6 +568,19 @@ export async function updateManualChart(userId: string, chartId: string, input: 
     return updateLocalManualChart(userId, chartId, input);
   }
   const remoteClient = client;
+  const { data: existingChartData, error: existingLookupError } = await client
+    .from("manual_charts")
+    .select("*")
+    .eq("id", chartId)
+    .eq("owner_user_id", userId)
+    .maybeSingle();
+
+  if (existingLookupError) {
+    throw existingLookupError;
+  }
+
+  const existingChart = existingChartData ? rowToManualChart(existingChartData as ManualChartRow) : null;
+  const existingIdentity = existingChart ? chartIdentity(existingChart) : null;
 
   async function updateManualChartRow(options: { omitPronounsColumn?: boolean } = {}) {
     return remoteClient
@@ -520,7 +612,51 @@ export async function updateManualChart(userId: string, chartId: string, input: 
     throw new Error(`Chart updated, but connection metadata could not be updated: ${connectionError.message}`);
   }
 
-  return rowToManualChart(data as ManualChartRow);
+  const updatedChart = rowToManualChart(data as ManualChartRow);
+
+  if (existingIdentity) {
+    const { data: ownerChartData, error: ownerChartsError } = await client
+      .from("manual_charts")
+      .select("*")
+      .eq("owner_user_id", userId);
+
+    if (ownerChartsError) {
+      throw ownerChartsError;
+    }
+
+    const updatedIdentity = chartIdentity(updatedChart);
+    const duplicateChartIds = (ownerChartData as ManualChartRow[])
+      .map(rowToManualChart)
+      .filter((chart) => (
+        chart.id !== updatedChart.id &&
+        (chartIdentity(chart) === existingIdentity || chartIdentity(chart) === updatedIdentity)
+      ))
+      .map((chart) => chart.id);
+
+    if (duplicateChartIds.length > 0) {
+      const { error: duplicateConnectionDeleteError } = await client
+        .from("connections")
+        .delete()
+        .eq("owner_user_id", userId)
+        .in("manual_chart_id", duplicateChartIds);
+
+      if (duplicateConnectionDeleteError) {
+        throw duplicateConnectionDeleteError;
+      }
+
+      const { error: duplicateChartDeleteError } = await client
+        .from("manual_charts")
+        .delete()
+        .eq("owner_user_id", userId)
+        .in("id", duplicateChartIds);
+
+      if (duplicateChartDeleteError) {
+        throw duplicateChartDeleteError;
+      }
+    }
+  }
+
+  return updatedChart;
 }
 
 export async function deleteManualChart(userId: string, chartId: string): Promise<void> {
@@ -547,11 +683,31 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
     throw lookupError;
   }
 
+  const deletedChart = deletedChartData ? rowToManualChart(deletedChartData as ManualChartRow) : null;
+  let chartIdsToDelete = [chartId];
+
+  if (deletedChart) {
+    const deletedIdentity = chartIdentity(deletedChart);
+    const { data: ownerChartData, error: ownerChartsError } = await client
+      .from("manual_charts")
+      .select("*")
+      .eq("owner_user_id", userId);
+
+    if (ownerChartsError) {
+      throw ownerChartsError;
+    }
+
+    chartIdsToDelete = (ownerChartData as ManualChartRow[])
+      .map(rowToManualChart)
+      .filter((chart) => chart.id === chartId || chartIdentity(chart) === deletedIdentity)
+      .map((chart) => chart.id);
+  }
+
   const { error: connectionDeleteError } = await client
     .from("connections")
     .delete()
     .eq("owner_user_id", userId)
-    .eq("manual_chart_id", chartId);
+    .in("manual_chart_id", chartIdsToDelete);
 
   if (connectionDeleteError) {
     throw connectionDeleteError;
@@ -560,15 +716,15 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
   const { error } = await client
     .from("manual_charts")
     .delete()
-    .eq("id", chartId)
-    .eq("owner_user_id", userId);
+    .eq("owner_user_id", userId)
+    .in("id", chartIdsToDelete);
 
   if (error) {
     throw error;
   }
 
-  if (deletedChartData) {
-    deleteLocalManualChartCopies(userId, rowToManualChart(deletedChartData as ManualChartRow));
+  if (deletedChart) {
+    deleteLocalManualChartCopies(userId, deletedChart);
   } else {
     deleteLocalManualChart(userId, chartId);
   }
