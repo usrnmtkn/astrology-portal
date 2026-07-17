@@ -35,6 +35,31 @@ assert.match(
   "Legacy local manual-chart owner discovery must only include TLDR manual-chart keys."
 );
 assert.match(
+  manualChartsSource,
+  /function dedupeManualCharts\(charts: ManualChart\[\]\)/,
+  "Friends chart loading must share one dedupe path for local cache and remote rows."
+);
+assert.match(
+  manualChartsSource,
+  /const key = chartIdentity\(chart\);/,
+  "Friends chart dedupe must use chart identity so copied legacy rows with different generated ids do not render twice."
+);
+assert.doesNotMatch(
+  manualChartsSource,
+  /const key = chart\.id \|\| chartIdentity\(chart\);/,
+  "Friends chart dedupe must not prefer generated ids over the stable chart identity."
+);
+assert.match(
+  manualChartsSource,
+  /return dedupeManualCharts\(userIds\.flatMap\(\(userId\) => readLocalManualCharts\(userId\)\)\);/,
+  "Cached Friends chart loading must dedupe duplicate charts across all local owner keys."
+);
+assert.match(
+  manualChartsSource,
+  /return dedupeManualCharts\(\(data as ManualChartRow\[\]\)\.map\(rowToManualChart\)\);/,
+  "Remote Friends chart loading must hide already-imported duplicate chart rows."
+);
+assert.match(
   appSource,
   /migrateLocalManualChartsToRemote\(account\.id,\s*\[\s*cachedLocalProfile\?\.id,\s*persistedProfileId,\s*account\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\s*\)/s,
   "Successful auth/profile loading must migrate charts from active, persisted, account, and legacy local owner ids before remote charts render."
