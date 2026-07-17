@@ -395,7 +395,7 @@ async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
 
 async function expectLunarSelectedCardEventAlignment(page: Page, label: string) {
   const result = await page.evaluate(() => {
-    const reference = document.querySelector(".lunar-selected-card__void, .lunar-selected-card__body");
+    const reference = document.querySelector(".lunar-selected-card__void, .lunar-selected-card__body, .lunar-selected-card__daily-events");
     const contentTrack = document.querySelector(".lunar-selected-card__copy");
     const body = document.querySelector(".lunar-selected-card__body");
     const after = document.querySelector(".lunar-selected-card__after");
@@ -437,7 +437,7 @@ async function expectLunarSelectedCardEventAlignment(page: Page, label: string) 
   });
 
   expect(result.checked, `${label} has lunar event rows to align`).toBeGreaterThan(0);
-  expect(result.failures, `${label} aligns lunar event rows with the Moon VOC/body card`).toEqual([]);
+  expect(result.failures, `${label} aligns lunar event rows with the selected-card content track`).toEqual([]);
 }
 
 async function expectPopoverTextNotBold(page: Page, selector: string, label: string, maxWeight = 500) {

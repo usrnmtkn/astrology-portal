@@ -2041,6 +2041,49 @@
   opacity: 0.92;
 }
 
+.friend-chart-delete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.friend-chart-delete-actions button {
+  min-height: 46px;
+  border-radius: var(--radius-pill);
+  padding: 0 calc(var(--space-6) + var(--space-1) / 2);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-number);
+  cursor: pointer;
+}
+
+.friend-chart-delete-actions .secondary-button {
+  border: 1px solid var(--control-border);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.friend-chart-delete-actions .manual-chart-delete-confirm {
+  border: 0;
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.friend-chart-delete-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.friend-chart-delete-actions button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .manual-chart-form-heading,
 .friend-chart-modal-heading {
   display: grid;
