@@ -445,7 +445,7 @@ export const fallbackHookDefinitions = [
     description: "Current transit hitting a natal planet or angle on the You page.",
     knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{natalPoint}", "{transitPlanet}-{aspect}-{natalPoint}"],
     requiredFacts: ["transitPlanet", "aspect", "natalPoint", "orb/timing optional"],
-    slotKeys: ["transitPlanet", "aspect", "natalPoint", "transitPlanetTopic", "natalPointTopic", "transitPlanetWeather", "aspectTone", "personalActivation", "activatedHouse", "activatedHouseTopic", "timingIntensity", "timingPhase"],
+    slotKeys: ["transitPlanet", "aspect", "aspectAdj", "natalPoint", "transitPlanetTopic", "natalPointTopic", "transitPlanetWeather", "aspectTone", "personalActivation", "activatedHouse", "activatedHouseTopic", "timingIntensity", "timingPhase"],
     copy: emptyFallbackHookCopy
   },
   {

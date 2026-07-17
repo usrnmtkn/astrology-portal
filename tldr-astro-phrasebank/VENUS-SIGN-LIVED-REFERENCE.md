@@ -52,3 +52,18 @@ attractive, and what they value. Write final copy in your voice per WRITING-STAN
   idealizes, loses their boundaries, clings or drifts.
   Marie: "You love romantically and boundlessly, seeing the best in whoever you fall for, though you can
   lose your boundaries and idealize whoever you fall for."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Love Is), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — passionate, at first sight, physical
+- **Taurus** — trust, respect, richer over time
+- **Gemini** — fun, being connected, being heard
+- **Cancer** — giving, compassionate, safe
+- **Leo** — exciting, passionate, intense
+- **Virgo** — independence, healing, intuitive
+- **Libra** — togetherness, peaceful, working as one
+- **Scorpio** — intimate, private, intense
+- **Sagittarius** — friendship, growth, inspirational
+- **Capricorn** — supportive, patient, better with time
+- **Aquarius** — freedom, empathy, generous
+- **Pisces** — spiritual, for all, truth

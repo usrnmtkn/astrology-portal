@@ -56,3 +56,18 @@ list) for the concrete thing. The Moon = how a person feels, soothes, and what t
   boundaries and not knowing whose feelings it's carrying.
   Marie: "You soak up the emotional weather around you and feel everything at the edges, though you can
   soak up everyone else's feelings and lose your own."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Keywords), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — confident, adventurous, independent, reactive
+- **Taurus** — dependable, consistent, nurturing, romantic
+- **Gemini** — thinker, creative, storyteller, thoughtful
+- **Cancer** — soft, nurturing, intuitive, sensitive
+- **Leo** — easygoing, creative, generous, fun
+- **Virgo** — sensitive, healer, thinker, logical
+- **Libra** — diplomatic, balanced, compassionate
+- **Scorpio** — deep, psychic, sensitive, intense
+- **Sagittarius** — open-minded, philosophical, independent
+- **Capricorn** — practical, wise, moral, responsible
+- **Aquarius** — eclectic, humanitarian, healer
+- **Pisces** — intuitive, musical, spiritual, compassionate

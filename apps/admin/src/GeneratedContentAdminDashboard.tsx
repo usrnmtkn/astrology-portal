@@ -180,6 +180,8 @@ type AdminDraft = {
   promptVersion: string;
 };
 
+declare const __LOCAL_CONTENT_GENERATION_SECRET__: string | undefined;
+
 type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
 type AdminVocabularyCategoryFilter = AdminVocabularySection | "all";
 
@@ -725,9 +727,9 @@ function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
 function useSavedSecret() {
   const [secret, setSecret] = useState(() => {
     try {
-      return window.localStorage.getItem(adminSecretStorageKey) ?? "";
+      return window.localStorage.getItem(adminSecretStorageKey) ?? __LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
     } catch {
-      return "";
+      return __LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
     }
   });
 
@@ -804,6 +806,10 @@ export function GeneratedContentAdminDashboard() {
   );
   const phrasebankRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "phrasebank"),
+    [visibleRows]
+  );
+  const articleRows = useMemo(
+    () => visibleRows.filter((row) => row.mode === "article" || row.block_type === "sky_article"),
     [visibleRows]
   );
   const compositeRows = useMemo(
@@ -1512,7 +1518,7 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Article rows">
-                {renderContentTable(filteredRows.filter((row) => row.mode === "article" || row.block_type === "sky_article"))}
+                {renderContentTable(articleRows)}
               </aside>
             </section>
           </section>
@@ -1534,7 +1540,7 @@ export function GeneratedContentAdminDashboard() {
             {renderFallbackTabs()}
             <label className="admin-field-wide">
               <span>Search fallback hooks</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Hook name, key, surface, or body" />
+              <input aria-label="Search fallback hooks" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Hook name, key, surface, or body" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -1625,7 +1631,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
             <label className="admin-field-wide">
               <span>Search vocabulary</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Namespace, phrase, key" />
+              <input aria-label="Search vocabulary" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Namespace, phrase, key" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -1650,7 +1656,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <label className="admin-field-wide">
               <span>Search templates</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Template name, key, or body" />
+              <input aria-label="Search templates" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Template name, key, or body" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -1676,7 +1682,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
             <label className="admin-field-wide">
               <span>Search slot-backed rows</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Slot, vocab, fallback, or template key" />
+              <input aria-label="Search slot-backed rows" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Slot, vocab, fallback, or template key" />
             </label>
             <div className="admin-studio-map">
               {["Calculated facts", "Vocabulary rows", "Fallback rows", "Template slots"].map((label) => (
@@ -1860,25 +1866,25 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-review-filter-grid">
           <label>
             <span>Category</span>
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
+            <select aria-label="Category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
               {categoryFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
           <label>
             <span>Content class</span>
-            <select value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
+            <select aria-label="Content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
               {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
           <label>
             <span>Tier</span>
-            <select value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+            <select aria-label="Tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
               {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
           <label>
             <span>Search content</span>
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Title, app area, content key" />
+            <input aria-label="Search content" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Title, app area, content key" />
           </label>
           <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
@@ -1900,6 +1906,7 @@ export function GeneratedContentAdminDashboard() {
         <label className="admin-access-inline-field">
           <span>Secret</span>
           <input
+            aria-label="Secret"
             type="password"
             value={secret}
             onChange={(event) => setSecret(event.target.value)}

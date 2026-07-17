@@ -41,6 +41,8 @@ const app = read("apps/web/src/App.tsx");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts");
 const emergencyCopyRuntime = read("apps/web/src/content/emergencyCopy.ts");
+const fallbackHooks = read("apps/web/src/content/fallbackHooks.ts");
+const emergencyCopyJson = read("apps/web/src/content/emergencyCopy.json");
 
 assert.match(youPage, /isReaderFacingCopy/, "You detail renderer must use reader-facing copy filtering.");
 assert.match(youPage, /isDuplicateArticleCopy/, "You detail renderer must dedupe TLDR, summary, and section body copy.");
@@ -88,6 +90,10 @@ assert.match(app, /emergencyPointFunction\(transit\.natalPoint\)/, "Friends tran
 assert.match(app, /function normalizePersonalTransitSurface/, "Transit-to-natal rendering must resolve through the personal transit surface normalizer.");
 assert.match(app, /sourceGroundedPersonalTransitNormalizedSection/, "Transit-to-natal rendering must prefer source-grounded transit sections.");
 assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must fall back to the source-based madlib section.");
+assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
+assert.match(fallbackHooks, /key:\s*"you\.transit-to-natal"[\s\S]*slotKeys:\s*\[[^\]]*"aspectAdj"/, "Transit-to-natal fallback hook must declare the aspectAdj slot.");
+assert.match(emergencyCopyJson, /"you\.transit-to-natal":\s*"[^"]*\{\{aspectAdj\}\}/, "Transit-to-natal emergency copy must render the aspect word slot.");
+assert.match(emergencyCopyRuntime, /function emergencyTransitToNatalCopy[\s\S]*aspectAdj:\s*emergencyAspectAdjective\(aspect\)/, "Transit-to-natal emergency helper must provide the aspectAdj slot.");
 assert.match(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must resolve authored planet/sign and sky point rows through source-grounded V2.");
 assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement rendering must fall back to source-based madlibs when source-grounded rows are absent.");
 assert.match(servedFieldsContract, /reader: \["reading"\]/, "Authored natal angle rows must render only the clean reading field.");

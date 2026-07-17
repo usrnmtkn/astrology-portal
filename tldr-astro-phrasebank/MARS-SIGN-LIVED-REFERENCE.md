@@ -53,3 +53,18 @@ WRITING-STANDARD.md and lint every line.
   shadow: fizzles out, avoids confrontation, escapes instead of pushing.
   Marie: "Your drive ebbs and flows with your mood; you move best toward something you believe in, though
   you can avoid confrontation and let your drive dissolve."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Motivation), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — to create and lead others
+- **Taurus** — slow and steady wins the race
+- **Gemini** — think your way through
+- **Cancer** — make love, not war
+- **Leo** — self-belief
+- **Virgo** — independence
+- **Libra** — justice for all
+- **Scorpio** — inner knowing
+- **Sagittarius** — freedom
+- **Capricorn** — ambition
+- **Aquarius** — helping others
+- **Pisces** — ease

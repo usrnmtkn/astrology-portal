@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -70,18 +70,28 @@ function localApiRoutePlugin() {
   };
 }
 
-export default defineConfig({
-  plugins: [localApiRoutePlugin(), react()],
-  assetsInclude: ["**/*.wasm"],
-  server: {
-    host: "127.0.0.1",
-    port: 5174,
-    strictPort: true,
-    fs: {
-      allow: [repoRoot]
+export default defineConfig(({ command, mode }) => {
+  const webEnv = loadEnv(mode, resolve(repoRoot, "apps/web"), "");
+  const localContentSecret = command === "serve"
+    ? process.env.CONTENT_GENERATION_SECRET ?? webEnv.CONTENT_GENERATION_SECRET ?? ""
+    : "";
+
+  return {
+    plugins: [localApiRoutePlugin(), react()],
+    assetsInclude: ["**/*.wasm"],
+    define: {
+      __LOCAL_CONTENT_GENERATION_SECRET__: JSON.stringify(localContentSecret)
+    },
+    server: {
+      host: "127.0.0.1",
+      port: 5174,
+      strictPort: true,
+      fs: {
+        allow: [repoRoot]
+      }
+    },
+    optimizeDeps: {
+      exclude: ["swisseph-wasm"]
     }
-  },
-  optimizeDeps: {
-    exclude: ["swisseph-wasm"]
   }
 });

@@ -8,6 +8,22 @@ Directional: "you" = the reader's Moon, "{friend}" = the other person's Moon. Th
 3. **Connection, then how each reacts when hurt:** Because {sign relationship}, you {how you connect},
    but when you're hurt you {your reaction} and {friend} {their reaction}, so {concrete outcome}.
 
-Only sign facts are stated (element, axis, modality). The measured aspect (trine, square, with orb) comes
-from the actual chart and is a separate slot the app fills when the two Moons are within orb; it is not
-claimed here. "Mirror" is used only for oppositions.
+Use sign-level facts only: element, modality, axis/opposition, and rulership. The measured aspect
+(trine, square, conjunction, opposition, with orb) comes from the actual chart and is a separate
+slot the app fills when the two placements are within orb; it is not claimed here. "Mirror" is used
+only for oppositions.
+
+Directional rendering is TBD: these pairings are written as ordered reader-to-friend copy and need
+an app resolver that preserves the reader/friend direction when the signs are loaded in reverse
+order. Resolver confirmation required before production use.
+
+## Compatibility vs synastry (two separate sections)
+
+This template is the **compatibility** section: same-planet, sign-to-sign (your Moon vs their Moon),
+Co-Star style, three beats. It needs **no birth time** because it reads from signs alone. Every planet
+gets its own card (Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn).
+
+The **synastry** section is separate and lives in ASPECT-MEANINGS-REFERENCE.md: cross-planet aspects
+(your Venus to their Mars, your Moon to their Saturn). It requires **both birth times**, because an
+aspect depends on real degrees. If either time is missing, approximate, or rounded, the synastry layer
+is hidden for that pair. Never fold cross-planet aspects into these compatibility cards.
