@@ -6,6 +6,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const webSrcRoot = path.join(repoRoot, "apps/web/src");
 const legacyWebAdminSrcRoot = path.join(webSrcRoot, "admin");
 const adminSrcRoot = path.join(repoRoot, "apps/admin/src");
+const webViteConfigPath = path.join(repoRoot, "apps/web/vite.config.ts");
+const adminViteConfigPath = path.join(repoRoot, "apps/admin/vite.config.ts");
 const reportPath = path.join(repoRoot, "test-results/admin-web-boundary/latest.md");
 
 const sourceExtensions = new Set([".css", ".js", ".jsx", ".mjs", ".ts", ".tsx"]);
@@ -120,9 +122,53 @@ function adminPublicImports() {
   return findings;
 }
 
+function devServerPortFindings() {
+  const findings = [];
+  const webViteConfig = fs.readFileSync(webViteConfigPath, "utf8");
+  const adminViteConfig = fs.readFileSync(adminViteConfigPath, "utf8");
+
+  [
+    {
+      app: "public web",
+      file: toRepoPath(webViteConfigPath),
+      source: webViteConfig,
+      expectedPort: 5173
+    },
+    {
+      app: "admin",
+      file: toRepoPath(adminViteConfigPath),
+      source: adminViteConfig,
+      expectedPort: 5174
+    }
+  ].forEach(({ app, file, source, expectedPort }) => {
+    if (!new RegExp(`port:\\s*${expectedPort}\\b`).test(source)) {
+      findings.push({
+        file,
+        line: 1,
+        text: "vite dev server config",
+        status: "unexpected",
+        reason: `${app} Vite config must reserve port ${expectedPort}`
+      });
+    }
+
+    if (!/strictPort:\s*true\b/.test(source)) {
+      findings.push({
+        file,
+        line: 1,
+        text: "vite dev server config",
+        status: "unexpected",
+        reason: `${app} Vite config must set strictPort so it cannot drift onto the other app's port`
+      });
+    }
+  });
+
+  return findings;
+}
+
 const publicFindings = publicAdminReferences();
 const adminImportFindings = adminPublicImports();
-const unexpected = [...publicFindings, ...adminImportFindings].filter((finding) => finding.status === "unexpected");
+const devServerFindings = devServerPortFindings();
+const unexpected = [...publicFindings, ...adminImportFindings, ...devServerFindings].filter((finding) => finding.status === "unexpected");
 const knownBridges = publicFindings.filter((finding) => finding.status === "known-bridge");
 
 const markdown = [
@@ -136,6 +182,7 @@ const markdown = [
   "",
   "- Public app source: `apps/web/src`.",
   "- Admin app source: `apps/admin/src`.",
+  "- Dev server ports: public web must stay on `127.0.0.1:5173`; admin must stay on `127.0.0.1:5174`.",
   "- Allowed temporary bridges: `apps/web/src/App.tsx` and `apps/web/src/main.tsx`.",
   "- Allowed admin support imports while extraction is in progress: `apps/web/src/content/*` and `apps/web/src/services/*`.",
   "",
