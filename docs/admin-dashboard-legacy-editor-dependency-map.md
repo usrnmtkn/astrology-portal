@@ -67,3 +67,122 @@ This maps the legacy Content editor state that should not be refactored until th
 - `deleteReviewRecord` resets `draft` and `selectedId`, then calls `loadRows` after deleting a global row at `apps/admin/src/GeneratedContentAdminDashboard.tsx:6281`.
 - Review draft generation writes `selectedId` and `draft` from a saved row at `apps/admin/src/GeneratedContentAdminDashboard.tsx:6493`.
 - The content table `openRecord` handler writes `selectedId` and `draft` from `record.rawGlobalRow`, then calls `loadRowDetails` at `apps/admin/src/GeneratedContentAdminDashboard.tsx:8837`.
+
+## Legacy Writing Cleanup Notes
+
+Updated: 2026-07-17
+
+These notes are for resolving the current legacy/removal risk without accidentally deleting runtime safety nets.
+
+### Active Files To Keep Until Replaced
+
+Do not remove these files as part of a generic legacy cleanup:
+
+- `apps/web/src/content/fallbackHooks.ts`
+- `apps/web/src/content/emergencyCopy.json`
+- `apps/web/src/content/skyContentSnapshot.json`
+- `apps/web/src/content/sourceGroundedV2.ts`
+- `apps/web/src/content/finalSourceGroundedDashboardRecords.json`
+
+Resolution path:
+
+1. Replace each active dependency with an explicit package or dashboard-backed source, not by deleting it in place.
+2. Add a source map entry showing the replacement source and the app surfaces it feeds.
+3. Run the reader-facing and admin QA suites before removing the old file.
+4. Remove only after `rg` shows no runtime imports from `apps/web/src`, `apps/admin/src`, `api`, `scripts`, or tests.
+
+Exit criteria:
+
+- `npm run qa:admin-report` passes.
+- `node scripts/test-reader-facing-content-contract.mjs` passes.
+- `node scripts/test-sky-placement-regressions.mjs` passes.
+- The fallback coverage audit either passes or has an explicit accepted finding for the surface being changed.
+
+### Legacy DB Rows: Archive Before Delete
+
+The safest cleanup target is not a source file. It is old generated database row classes:
+
+- retired local composer wording
+- legacy generic fallback templates
+- local-normalized dashboard source rows
+- source-grounded generated snapshot rows
+- migration-seed rows that are no longer meant to be reader-facing
+
+Resolution path:
+
+1. Query candidate rows by `provider`, `prompt_version`, `source_snapshot.sourceType`, `content_key`, `status`, `lane`, and `review_state`.
+2. Export the candidate list before changing anything.
+3. Archive candidates first by setting `status = ARCHIVED` and a clear `review_state`, for example `legacy_archived`.
+4. Keep archived rows through one QA/release cycle.
+5. Delete only after proving no reader route, admin filter, import script, or fallback audit still expects them.
+
+Do not delete first. Deleting fallback floors before authored coverage is complete can leave reader surfaces blank, or force the app into lower-quality emergency paths.
+
+### Emergency Floors Are Not Legacy Trash
+
+The admin API currently treats these key families as emergency floor content:
+
+- `fallback-hook/`
+- `slot-template/`
+- `vocab/`
+- `fallback-vocab/`
+- `guide-phrase/`
+
+Resolution path:
+
+1. Keep these rows available until a reviewed authored row exists for the same surface and key family.
+2. For replacements, create the new row as `DRAFT`, review it in the dashboard, then publish it.
+3. Archive the older floor row only after confirming the reader route resolves the replacement.
+4. Keep `fallback-vocab` and `guide-phrase` rows unless the template/fallback composer no longer uses their slots.
+
+Risk if removed early:
+
+- blank cards or missing sections
+- raw template slots leaking into reader-facing copy
+- app routes falling back to generic emergency text
+- QA losing the ability to distinguish missing authored coverage from broken routing
+
+### Synastry Fallback Helpers
+
+The writing surface map flags direct synastry fallback helpers as future cleanup candidates, but the app still has active synastry fallback and relationship routing paths.
+
+Resolution path:
+
+1. Add visible provenance for Friends/Synastry rows so QA can see whether text came from authored source, knowledge rows, or fallback.
+2. Confirm all active relationship contexts resolve through the normalized source-grounded or dashboard-authored path.
+3. Search for active callers of synastry fallback helpers with `rg "synastry.*fallback|fallback.*synastry|synastryDetailCopy|synastryEmergency" apps scripts tests`.
+4. Remove helper code only when the caller search is empty or every caller has been replaced.
+5. Keep relationship-specific tests proving no romantic-only copy leaks into family, coworker, friend, or ex contexts.
+
+Exit criteria:
+
+- Friends/Synastry routes render without direct helper calls.
+- Relationship context tests pass.
+- `scripts/test-sky-placement-regressions.mjs` still passes the relationship knowledge fallback guard.
+- The admin Surface Map shows the new source path clearly enough for editorial QA.
+
+### Current Open Risk
+
+`scripts/audit-fallback-runtime-coverage.mjs` still reports major hook families as missing complete authored reader copy. That means the fallback layer is wired, but coverage is not complete enough to remove fallback floors broadly.
+
+Before any broad legacy cleanup, resolve or explicitly waive the missing authored coverage by family:
+
+- Sky planet-in-sign placements
+- planetary ingresses
+- retrogrades and stations
+- current-sky aspects
+- natal planet-in-sign placements
+- natal planet-in-house placements
+- angles
+- natal aspects
+- transits through houses
+- transits to natal planets
+- transits to angles
+
+Recommended order:
+
+1. Finish authored rows for one family.
+2. Publish only reviewed rows for that family.
+3. Run the fallback runtime coverage audit.
+4. Archive the superseded legacy/floor rows for that family.
+5. Repeat family by family instead of doing one broad deletion pass.
