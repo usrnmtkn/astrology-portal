@@ -2484,11 +2484,6 @@
   line-height: var(--leading-body);
 }
 
-.compatibility-card__verdict {
-  color: var(--card-title-color) !important;
-  font-weight: var(--weight-semibold);
-}
-
 .compatibility-card__summary {
   gap: 16px;
 }
