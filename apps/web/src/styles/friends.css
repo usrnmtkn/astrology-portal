@@ -724,6 +724,11 @@
   --friend-detail-no-chart-max: min(980px, calc(100vw - clamp(32px, 8vw, 144px)));
 }
 
+.friend-transit-inline-wheel {
+  align-self: center;
+  width: min(100%, var(--shared-chart-size));
+}
+
 .relationship-detail-no-chart > .friend-detail-chart-column {
   display: none;
 }
@@ -1240,9 +1245,10 @@
   --row-bg: var(--card-bg);
 
   display: grid;
-  grid-template-columns: minmax(42px, 62px) minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(58px, max-content) 34px minmax(86px, max-content);
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: var(--space-4);
   padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
   border: 1px solid var(--card-border);
   border-bottom: 0;
@@ -1279,11 +1285,13 @@
 }
 
 .synastry-placement-lead {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: 34px auto;
   align-items: center;
+  justify-content: center;
+  justify-items: start;
+  gap: 6px;
   min-width: 0;
-  gap: 2px;
 }
 
 .synastry-placement-glyph {
@@ -1313,11 +1321,13 @@
 
 .synastry-placement-rx-mark {
   color: var(--wheel-glyph);
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
+  font-family: var(--font-display);
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-body);
+  letter-spacing: var(--tracking-label);
   line-height: var(--leading-label);
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .synastry-placement-column-inner .synastry-rx-glyph-svg,
@@ -1325,13 +1335,17 @@
   filter: var(--filter-synastry-inner-glyph);
 }
 
+.synastry-placement-column-inner .synastry-placement-rx-mark,
+.synastry-placement-row-inner .synastry-placement-rx-mark {
+  color: var(--synastry-accent);
+}
+
 :is(.theme-dark, [data-theme="dark"]) .synastry-rx-glyph-svg,
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-rx-glyph-svg {
   opacity: 1;
 }
 
-.synastry-placement-sign,
-.synastry-placement-copy {
+.synastry-placement-sign {
   min-width: 0;
 }
 
@@ -1347,13 +1361,6 @@
   white-space: nowrap;
 }
 
-.synastry-placement-copy {
-  display: grid;
-  gap: 6px;
-  justify-items: start;
-}
-
-.synastry-placement-planet,
 .synastry-placement-chip b {
   display: block;
   color: var(--ink);
@@ -1366,8 +1373,8 @@
 
 .synastry-placement-sign-svg {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
 }
 
