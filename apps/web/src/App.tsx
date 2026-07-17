@@ -11191,6 +11191,8 @@ export function App() {
   const [remoteAccountId, setRemoteAccountId] = useState<string | null>(null);
   const [remoteProfileReady, setRemoteProfileReady] = useState(false);
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
+  const appliedAuthAccountIdRef = useRef<string | null>(null);
+  const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
@@ -12477,9 +12479,16 @@ export function App() {
       return;
     }
 
+    if (account && appliedAuthAccountIdRef.current === account.id && remoteProfileReadyRef.current) {
+      setAuthAccountChecked(true);
+      return;
+    }
+
     setAuthAccountChecked(false);
 
     if (!account) {
+      appliedAuthAccountIdRef.current = null;
+      remoteProfileReadyRef.current = false;
       setRemoteAccountId(null);
       setRemoteProfileReady(false);
       lastRemoteProfileSaveRef.current = "";
@@ -12488,6 +12497,8 @@ export function App() {
       return;
     }
 
+    appliedAuthAccountIdRef.current = account.id;
+    remoteProfileReadyRef.current = false;
     setRemoteAccountId(account.id);
     setRemoteProfileReady(false);
 
@@ -12547,6 +12558,7 @@ export function App() {
       }
       clearPendingSignupForm();
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
+      remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
       setAuthAccountChecked(true);
     } catch (error) {
@@ -12567,6 +12579,7 @@ export function App() {
       }
       clearPendingSignupForm();
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
+      remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
       setAuthAccountChecked(true);
     }
@@ -12662,8 +12675,10 @@ export function App() {
   }, [hasLocationPreference]);
 
   useEffect(() => {
-    function refreshSky() {
-      setSkyRefreshKey(Date.now());
+    function refreshSky(event: PageTransitionEvent) {
+      if (event.persisted) {
+        setSkyRefreshKey(Date.now());
+      }
     }
 
     window.addEventListener("pageshow", refreshSky);
