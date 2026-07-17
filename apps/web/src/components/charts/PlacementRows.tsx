@@ -10,6 +10,7 @@ import {
   pointGlyph,
   pointIconFiles,
   pointRetrogradeIconFiles,
+  signGlyph,
   zodiacAssetHref,
   zodiacSignIconFiles
 } from "./chartAssets";
@@ -780,7 +781,25 @@ export function FriendPlacementTable({
   );
 }
 
-const relationshipPlacementOrder = [...SKY_BODY_ORDER];
+const relationshipPlacementOrder = ["Sun", "Moon", "Ascendant", ...SKY_BODY_ORDER.slice(2)];
+
+function relationshipAscendantPlacement(sky: SkySnapshot): PlanetPosition {
+  const longitude = typeof sky.ascendantLongitude === "number" ? normalizedAngle(sky.ascendantLongitude) : undefined;
+
+  return {
+    planet: "Ascendant",
+    glyph: pointGlyph("Ascendant"),
+    longitude,
+    latitude: null,
+    speed: null,
+    sign: sky.ascendant,
+    signGlyph: signGlyph(sky.ascendant),
+    degree: typeof longitude === "number" ? longitude % 30 : 0,
+    house: 1,
+    houseSystem: "whole_sign",
+    motion: "direct"
+  };
+}
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   if (!sky) {
@@ -788,7 +807,13 @@ function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   }
 
   return relationshipPlacementOrder
-    .map((planet) => sky.positions.find((position) => normalizeSkyBodyName(position.planet) === planet))
+    .map((planet) => {
+      if (planet === "Ascendant") {
+        return relationshipAscendantPlacement(sky);
+      }
+
+      return sky.positions.find((position) => normalizeSkyBodyName(position.planet) === planet);
+    })
     .filter((position): position is PlanetPosition => Boolean(position))
     .slice(0, 8);
 }
@@ -879,11 +904,12 @@ function SynastryPlacementCard({
   }
 
   return (
-    <div className={`synastry-placement-row synastry-placement-row-${variant}${position.motion === "retrograde" ? " is-retrograde" : ""}`}>
+    <div
+      className={`synastry-placement-row synastry-placement-row-${variant}${position.motion === "retrograde" ? " is-retrograde" : ""}`}
+      aria-label={`${position.planet}${position.motion === "retrograde" ? " retrograde" : ""} in ${position.sign}, ${formatPlacementDegree(position)}${typeof position.house === "number" ? `, house ${position.house}` : ""}`}
+    >
       <SynastryPlacementLead position={position} />
-      <span className="synastry-placement-copy">
-        <SynastryPlacementSign sign={position.sign} />
-      </span>
+      <SynastryPlacementSign sign={position.sign} />
       <span className="synastry-placement-meta">
         <span>{formatPlacementDegree(position)}</span>
         <span aria-hidden="true">·</span>
@@ -915,11 +941,7 @@ function SynastryPlacementLead({ position }: { position: PlanetPosition }) {
   return (
     <span className="synastry-placement-lead" aria-hidden="true">
       <span className="synastry-placement-glyph">
-        {iconHref ? (
-          <img className="synastry-rx-glyph-svg" src={iconHref} alt="" aria-hidden="true" />
-        ) : (
-          position.glyph
-        )}
+        {iconHref ? <img className="synastry-rx-glyph-svg" src={iconHref} alt="" aria-hidden="true" /> : position.glyph}
       </span>
       {isRetrograde ? <span className="synastry-placement-rx-mark">Rx</span> : null}
     </span>
