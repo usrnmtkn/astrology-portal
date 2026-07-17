@@ -408,6 +408,10 @@ function draftIsVocabulary(draft: AdminDraft) {
   return draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/");
 }
 
+function draftIsArticle(draft: AdminDraft) {
+  return draft.mode === "article" || draft.blockType === "sky_article" || draft.contentKey.startsWith("sky/article/");
+}
+
 function titleFromKey(contentKey: string) {
   return contentKey
     .split("/")
@@ -1416,14 +1420,14 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-review-filter-grid">
                 <label>
                   <span>Status</span>
-                  <select value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+                  <select aria-label="Review status" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
                     <option value="all">All statuses</option>
                     {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
                   </select>
                 </label>
                 <label>
                   <span>Evergreen</span>
-                  <select>
+                  <select aria-label="Evergreen">
                     <option>All rows</option>
                     <option>Evergreen only</option>
                     <option>Hide evergreen</option>
@@ -1431,13 +1435,13 @@ export function GeneratedContentAdminDashboard() {
                 </label>
                 <label>
                   <span>Content class</span>
-                  <select value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
+                  <select aria-label="Review content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
                     {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
                   </select>
                 </label>
                 <label>
                   <span>Tier</span>
-                  <select value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+                  <select aria-label="Review tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
                     {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
                   </select>
                 </label>
@@ -1445,7 +1449,7 @@ export function GeneratedContentAdminDashboard() {
                   <span>Search</span>
                   <div className="admin-search-input-shell">
                     <Search size={15} aria-hidden="true" />
-                    <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
+                    <input aria-label="Search review queue" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
                   </div>
                 </label>
               </div>
@@ -2099,6 +2103,7 @@ export function GeneratedContentAdminDashboard() {
     if (!currentDraft) return null;
 
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
+    const isArticleDraft = draftIsArticle(currentDraft);
     const isNewDraft = !currentDraft.id;
     const vocabularySection = vocabularySectionFromKey(currentDraft.contentKey);
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
@@ -2121,8 +2126,20 @@ export function GeneratedContentAdminDashboard() {
       <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor">
         <div className="admin-editor-toolbar">
           <div>
-            <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : "Post editor"}</p>
-            <h2>{currentDraft.id ? (isVocabularyDraft ? "Edit phrase" : "Edit saved row") : (isVocabularyDraft ? "Create reusable phrase" : "Author new row")}</h2>
+            <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : isArticleDraft ? "Article editor" : "Content editor"}</p>
+            <h2>
+              {currentDraft.id
+                ? isVocabularyDraft
+                  ? "Edit phrase"
+                  : isArticleDraft
+                    ? "Edit article"
+                    : "Edit saved row"
+                : isVocabularyDraft
+                  ? "Create reusable phrase"
+                  : isArticleDraft
+                    ? "Create article"
+                    : "Author new row"}
+            </h2>
           </div>
           <div className="admin-editor-toolbar-actions">
             <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
@@ -2171,36 +2188,36 @@ export function GeneratedContentAdminDashboard() {
           <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
-              <select value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })}>
+              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Surface</span>
-              <select value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })}>
+              <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })}>
                 {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Mode</span>
-              <select value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })}>
+              <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })}>
                 {["feed", "in_depth", "article", "card"].map((mode) => <option key={mode} value={mode}>{mode}</option>)}
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Lane</span>
-              <select value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })}>
+              <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })}>
                 <option value="serving">serving</option>
                 <option value="reference">reference</option>
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Review state</span>
-              <input value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} />
+              <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} />
             </label>
             <label className="admin-metadata-field">
               <span>Block type</span>
-              <input value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} />
+              <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} />
             </label>
           </fieldset>
           <div className="admin-toolbar-actions">
