@@ -7743,6 +7743,14 @@ body,
   --admin-ui-focus: 0 0 0 3px rgba(63, 207, 142, 0.24);
   --admin-ui-radius: 6px;
   --admin-ui-radius-lg: 8px;
+  --admin-ui-type-label: var(--admin-type-11);
+  --admin-ui-type-caption: var(--admin-type-12);
+  --admin-ui-type-hint: var(--admin-type-13);
+  --admin-ui-type-body: var(--admin-type-14);
+  --admin-ui-type-lede: var(--admin-type-16);
+  --admin-ui-type-brand: var(--admin-type-18);
+  --admin-ui-type-panel-title: var(--admin-type-22);
+  --admin-ui-type-stat: calc(var(--admin-type-24) + var(--space-1) / 2);
   --admin-sidebar: var(--admin-ui-sidebar);
   --admin-panel: var(--admin-ui-surface);
   --admin-panel-2: var(--admin-ui-surface-2);
@@ -7781,7 +7789,7 @@ body,
 }
 
 .admin-dashboard .admin-brand strong {
-  font-size: 18px;
+  font-size: var(--admin-ui-type-brand);
   letter-spacing: 0;
 }
 
@@ -7802,9 +7810,9 @@ body,
 .admin-dashboard :where(.admin-breadcrumb, .admin-eyebrow, label span, .admin-metadata-field span, .admin-field-wide > span) {
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
-  font-size: 11px;
+  font-size: var(--admin-ui-type-label);
   font-weight: var(--weight-medium);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   line-height: 1.2;
   margin: 0;
   padding: 0;
@@ -7890,7 +7898,7 @@ body,
 }
 
 .admin-dashboard .admin-dashboard-header p:not(.admin-breadcrumb) {
-  font-size: 16px;
+  font-size: var(--admin-ui-type-lede);
   line-height: 1.5;
   max-width: 760px;
 }
@@ -7972,6 +7980,25 @@ body,
   padding: 16px;
 }
 
+.admin-dashboard .admin-status-card {
+  align-items: start;
+  column-gap: var(--space-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: var(--space-2);
+}
+
+.admin-dashboard .admin-status-card > span,
+.admin-dashboard .admin-status-card > small {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-status-card > small {
+  color: var(--admin-ui-muted);
+  grid-column: 1 / -1;
+  line-height: var(--leading-meta);
+}
+
 .admin-dashboard .admin-studio-map :where(button, article) {
   align-items: start;
   display: grid;
@@ -7989,7 +8016,7 @@ body,
 .admin-dashboard .admin-stat-value,
 .admin-dashboard .admin-status-card .admin-stat-value {
   color: var(--admin-ui-text);
-  font-size: 26px;
+  font-size: var(--admin-ui-type-stat);
   line-height: 1;
 }
 
@@ -8002,7 +8029,7 @@ body,
   cursor: pointer;
   display: inline-flex;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--admin-ui-type-body);
   font-weight: var(--weight-medium);
   justify-content: center;
   min-height: 36px;
@@ -8112,7 +8139,7 @@ body,
 
 .admin-dashboard .admin-create-menu-panel small {
   color: var(--admin-ui-muted);
-  font-size: 12px;
+  font-size: var(--admin-ui-type-caption);
   line-height: 1.35;
   max-width: 220px;
   white-space: normal;
@@ -8124,7 +8151,7 @@ body,
   border-radius: var(--admin-ui-radius);
   color: var(--admin-ui-text);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--admin-ui-type-body);
   font-weight: var(--weight-regular);
   min-height: 38px;
 }
@@ -8174,7 +8201,7 @@ body,
   border: 1px solid var(--admin-ui-border);
   border-radius: var(--admin-radius-pill);
   color: var(--admin-ui-muted);
-  font-size: 12px;
+  font-size: var(--admin-ui-type-caption);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
 }
@@ -8327,9 +8354,9 @@ body,
   background: #151817;
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
-  font-size: 11px;
+  font-size: var(--admin-ui-type-label);
   font-weight: var(--weight-medium);
-  letter-spacing: 0.13em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -8551,7 +8578,7 @@ body,
 }
 
 .admin-dashboard .admin-editor-toolbar h2 {
-  font-size: 22px;
+  font-size: var(--admin-ui-type-panel-title);
   line-height: 1.15;
   margin: 6px 0 0;
 }
@@ -8567,7 +8594,7 @@ body,
 .admin-dashboard .admin-editor-guidance p,
 .admin-dashboard .admin-field-hint {
   color: var(--admin-ui-muted);
-  font-size: 13px;
+  font-size: var(--admin-ui-type-hint);
   line-height: 1.45;
   margin: 0;
 }
