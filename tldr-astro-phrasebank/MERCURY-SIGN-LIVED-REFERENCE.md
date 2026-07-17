@@ -22,7 +22,7 @@ needs to be understood. Write final copy in your voice per WRITING-STANDARD.md a
 - **Leo** — Lived: thinks big and speaks with confidence, organized and persuasive; shadow: fixed on
   being right, proud of their opinions.
   Marie: "You think in big, confident strokes, and you speak to be heard and to inspire, though you can
-  talk over others and need to be the smartest in the room."
+  talk over others and need to be the one who's right."
 - **Virgo** — Lived: precise and analytical, quick to spot the flaw, practical; shadow: nit-picks,
   over-analyzes, worries, nags.
   Marie: "Your mind is precise and analytical; you notice the error everyone else missed, though you can
