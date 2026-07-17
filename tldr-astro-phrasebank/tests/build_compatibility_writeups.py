@@ -31,6 +31,7 @@ SIGNS = CC["signs"]
 ORDER = list(SIGNS.keys())
 PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 GLYPH = {"sun":"☉","moon":"☽","mercury":"☿","venus":"♀","mars":"♂","jupiter":"♃","saturn":"♄"}
+MOON_CARDS = os.path.join(PKG, "MOON-COMPATIBILITY-CARDS.md")
 
 MATCH = {"same_sign":"Two of a kind", "same_element":"Naturally in sync", "complementary":"Easy chemistry",
          "opposition":"Opposites that complete", "friction":"Takes work", "mixed":"Mixed signals"}
@@ -104,6 +105,222 @@ def compose(planet, a, b):
         "status": "DRAFT",
     }
 
+def split_sentences(text):
+    return re.split(r"(?<=[.!?])\s+", text.strip())
+
+def ensure_sentence(text):
+    text = text.strip()
+    return text if re.search(r"[.!?]$", text) else f"{text}."
+
+def swap_moon_signs(text, you_sign, friend_sign):
+    you_title = you_sign.title()
+    friend_title = friend_sign.title()
+    replacements = [
+        (f"Your Moon in {you_title}", "__YOUR_MOON__"),
+        (f"your Moon in {you_title}", "__YOUR_MOON_LOWER__"),
+        (f"{{friend}}'s Moon in {friend_title}", "__FRIEND_MOON__"),
+        (f"{{friend}}'s moon in {friend_title}", "__FRIEND_MOON_LOWER__"),
+    ]
+    for old, new in replacements:
+        text = text.replace(old, new)
+    return (text
+        .replace("__YOUR_MOON__", f"Your Moon in {friend_title}")
+        .replace("__YOUR_MOON_LOWER__", f"your Moon in {friend_title}")
+        .replace("__FRIEND_MOON__", f"{{friend}}'s Moon in {you_title}")
+        .replace("__FRIEND_MOON_LOWER__", f"{{friend}}'s Moon in {you_title}"))
+
+def swap_reader_friend(text):
+    replacements = [
+        (r"\byou each\b", "__EACH__"),
+        (r"\byou'd\b", "__YOUD__"),
+        (r"\byou both\b", "__BOTH__"),
+        (r"\byou're\b", "__FRIEND_BE__"),
+        (r"\bYou're\b", "__FRIEND_BE_CAP__"),
+        (r"\byou've\b", "__FRIEND_HAVE__"),
+        (r"\bYou've\b", "__FRIEND_HAVE_CAP__"),
+        (r"\byour\b", "__FRIEND_POS__"),
+        (r"\bYour\b", "__FRIEND_POS_CAP__"),
+        (r"\byou\b", "__FRIEND__"),
+        (r"\bYou\b", "__FRIEND_CAP__"),
+        (r"\{friend\}'s", "__YOUR_POS__"),
+        (r"\{friend\}", "__YOU__"),
+    ]
+    for pattern, placeholder in replacements:
+        text = re.sub(pattern, placeholder, text)
+    return (text
+        .replace("__FRIEND_BE__", "{friend} is")
+        .replace("__FRIEND_BE_CAP__", "{friend} is")
+        .replace("__FRIEND_HAVE__", "{friend} has")
+        .replace("__FRIEND_HAVE_CAP__", "{friend} has")
+        .replace("__FRIEND_POS__", "{friend}'s")
+        .replace("__FRIEND_POS_CAP__", "{friend}'s")
+        .replace("__FRIEND__", "{friend}")
+        .replace("__FRIEND_CAP__", "{friend}")
+        .replace("__YOUR_POS__", "your")
+        .replace("__YOU__", "you")
+        .replace("__BOTH__", "you both")
+        .replace("__EACH__", "you each")
+        .replace("__YOUD__", "you'd"))
+
+def clean_swapped_copy(text):
+    fixes = [
+        (r"\{friend\} feel\b", "{friend} feels"),
+        (r"\{friend\} need\b", "{friend} needs"),
+        (r"\{friend\} retreat\b", "{friend} retreats"),
+        (r"\{friend\} go\b", "{friend} goes"),
+        (r"\{friend\} hold\b", "{friend} holds"),
+        (r"\{friend\} act\b", "{friend} acts"),
+        (r"\{friend\} react\b", "{friend} reacts"),
+        (r"\{friend\} calm\b", "{friend} calms"),
+        (r"\{friend\} handle\b", "{friend} handles"),
+        (r"\{friend\} process\b", "{friend} processes"),
+        (r"\{friend\} talk\b", "{friend} talks"),
+        (r"\{friend\} keep\b", "{friend} keeps"),
+        (r"\{friend\} want\b", "{friend} wants"),
+        (r"\{friend\} get\b", "{friend} gets"),
+        (r"\{friend\} make\b", "{friend} makes"),
+        (r"\{friend\} plant\b", "{friend} plants"),
+        (r"\{friend\} bolt\b", "{friend} bolts"),
+        (r"\{friend\} plants \{friend\}'s feet\b", "{friend} plants their feet"),
+        (r"\{friend\} bring\b", "{friend} brings"),
+        (r"\{friend\} step\b", "{friend} steps"),
+        (r"\byou needs\b", "you need"),
+        (r"\byou goes\b", "you go"),
+        (r"\byou wants\b", "you want"),
+        (r"\byou bolts\b", "you bolt"),
+        (r"\byou retreats\b", "you retreat"),
+        (r"\byou holds\b", "you hold"),
+        (r"\{friend\} both\b", "you both"),
+    ]
+    for pattern, replacement in fixes:
+        text = re.sub(pattern, replacement, text)
+    return text
+
+def clean_reader_copy(text):
+    fixes = [
+        (r"\bYou wants\b", "You want"),
+        (r"\bYou handles\b", "You handle"),
+        (r"\bYou feels\b", "You feel"),
+        (r"\bYou keeps\b", "You keep"),
+        (r"\bYou needs\b", "You need"),
+    ]
+    for pattern, replacement in fixes:
+        text = re.sub(pattern, replacement, text)
+    return text
+
+def friend_clause_to_reader(text):
+    return ensure_sentence(clean_reader_copy(text.strip()
+        .replace("{friend}'s", "Your")
+        .replace("{friend}", "You")))
+
+def reader_clause_to_friend(text):
+    text = text.strip()
+    replacements = [
+        (r"^You need\b", "{friend} needs"),
+        (r"^You act\b", "{friend} acts"),
+        (r"^You react\b", "{friend} reacts"),
+        (r"^You burn\b", "{friend} burns"),
+        (r"^You say\b", "{friend} says"),
+        (r"^You calm\b", "{friend} calms"),
+        (r"^You root\b", "{friend} roots"),
+        (r"^You keep\b", "{friend} keeps"),
+        (r"^You want\b", "{friend} wants"),
+        (r"^You warm\b", "{friend} warms"),
+        (r"^You bring\b", "{friend} brings"),
+        (r"^You process\b", "{friend} processes"),
+        (r"^You talk\b", "{friend} talks"),
+        (r"^You feel\b", "{friend} feels"),
+        (r"^You handle\b", "{friend} handles"),
+        (r"^You fix\b", "{friend} fixes"),
+        (r"^You smooth\b", "{friend} smooths"),
+        (r"^You go\b", "{friend} goes"),
+        (r"^You hold\b", "{friend} holds"),
+        (r"^You loosen\b", "{friend} loosens"),
+        (r"^You run\b", "{friend} runs"),
+        (r"^You step\b", "{friend} steps"),
+        (r"^You can\b", "{friend} can"),
+        (r"^You get\b", "{friend} gets"),
+        (r"^You reach\b", "{friend} reaches"),
+        (r"^Your\b", "{friend}'s"),
+    ]
+    for pattern, replacement in replacements:
+        text = re.sub(pattern, replacement, text)
+    return ensure_sentence(clean_swapped_copy(text))
+
+def reverse_moon_card(card, you_sign, friend_sign):
+    return {
+        **card,
+        "function": ensure_sentence(swap_moon_signs(card["function"], you_sign, friend_sign)),
+        "your_line": friend_clause_to_reader(card["their_line"]),
+        "their_line": reader_clause_to_friend(card["your_line"]),
+        "same_sign": False,
+        "same_sign_line": "",
+        "verdict": clean_swapped_copy(swap_reader_friend(card["verdict"])),
+        "synthesis": clean_swapped_copy(swap_reader_friend(card["verdict"])),
+        "relationship": relationship(friend_sign, you_sign),
+        "tier": "authored Moon-to-Moon compatibility write-up; sign-only; reversed from authored reader-to-friend pair",
+    }
+
+def parse_moon_compatibility_cards():
+    if not os.path.exists(MOON_CARDS):
+        return {}
+
+    source = open(MOON_CARDS, encoding="utf-8").read()
+    pattern = re.compile(
+        r"^\*\*([A-Za-z]+) \+ ([A-Za-z]+)\*\* — (.+)$",
+        re.MULTILINE
+    )
+    entries = {}
+
+    for match in pattern.finditer(source):
+        you_sign = match.group(1).lower()
+        friend_sign = match.group(2).lower()
+        body = match.group(3).strip()
+        sentences = split_sentences(body)
+
+        if len(sentences) != 3:
+            raise ValueError(f"Moon compatibility card must have exactly 3 sentences: {you_sign}+{friend_sign}")
+
+        function, placement_sentence, verdict = sentences
+        same = you_sign == friend_sign
+        your_line = placement_sentence
+        their_line = ""
+        same_sign_line = ""
+
+        if not same:
+            parts = placement_sentence.split("; ", 1)
+            if len(parts) != 2:
+                raise ValueError(f"Moon compatibility card needs a semicolon-separated placement sentence: {you_sign}+{friend_sign}")
+            your_line, their_line = parts
+            your_line = ensure_sentence(your_line)
+            their_line = ensure_sentence(their_line)
+
+        entries.setdefault(you_sign, {})[friend_sign] = {
+            "glyph": GLYPH["moon"],
+            "match": MATCH[relationship(you_sign, friend_sign)],
+            "function": function,
+            "your_line": your_line,
+            "their_line": their_line,
+            "same_sign": same,
+            "same_sign_line": same_sign_line,
+            "same_sign_quote": None,
+            "verdict": verdict,
+            "synthesis": verdict,
+            "relationship": relationship(you_sign, friend_sign),
+            "tier": "authored Moon-to-Moon compatibility write-up; sign-only; directional reader-to-friend copy",
+            "status": "DRAFT",
+        }
+
+    for you_sign, friend_cards in list(entries.items()):
+        for friend_sign, card in list(friend_cards.items()):
+            if you_sign == friend_sign:
+                continue
+            if entries.get(friend_sign, {}).get(you_sign):
+                continue
+            entries.setdefault(friend_sign, {})[you_sign] = reverse_moon_card(card, you_sign, friend_sign)
+
+    return entries
+
 cards = {}
 missing = []
 for planet in PLANETS:
@@ -114,8 +331,12 @@ for planet in PLANETS:
             missing.append((planet, a, b)); continue
         cards[planet].setdefault(a, {})[b] = c
 
+authored_moon_cards = parse_moon_compatibility_cards()
+for you_sign, friend_cards in authored_moon_cards.items():
+    cards.setdefault("moon", {}).setdefault(you_sign, {}).update(friend_cards)
+
 out = {"_meta": {"title": "Compatibility long-form write-ups (Co-Star style)",
-        "model": "function + your_line (her verbatim, framed) + their_line (pronoun-shifted) + synthesis + match label",
+        "model": "function + your_line + their_line/same_sign_line + verdict; Moon uses authored Moon-to-Moon compatibility cards where available",
         "planets": PLANETS, "status": "DRAFT — pending editorial sign-off",
         "note": CC["_meta"]["provenance"]},
        "cards": cards}
