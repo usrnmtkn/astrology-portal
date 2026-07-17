@@ -36,7 +36,7 @@ export const contentSystemWorkstreams: ContentSystemWorkstream[] = [
     state: "WORKING",
     scope: "Write, Composition, App Surfaces, Publish, and System are the primary admin paths.",
     nextAction:
-      "Keep exact content, articles, vocabulary, templates, fallback hooks, and diagnostics in separate editors.",
+      "Keep the full content library, articles, vocabulary, templates, fallback hooks, and diagnostics in separate editors.",
   },
   {
     id: "surface-editors",
@@ -67,7 +67,7 @@ export const contentSystemWorkstreams: ContentSystemWorkstream[] = [
     id: "creation-flows",
     title: "Creation flows",
     state: "PARTIAL",
-    scope: "New article, new exact content, new reusable phrase or clause, and import.",
+    scope: "New article, new content row, new reusable phrase or clause, and import.",
     nextAction:
       "Make creation entry points visible from the main dashboard and route each draft to the correct editor.",
   },
@@ -88,7 +88,7 @@ export const dashboardSurfaceNavigation: DashboardSurfaceNavigationGroup[] = [
     description: "Create or edit reader-facing material.",
     items: [
       { label: "New article", page: "articles" },
-      { label: "Exact content", page: "content" },
+      { label: "Content library", page: "content" },
       { label: "Reusable phrase or clause", page: "vocabulary" },
       { label: "Import", page: "content" },
     ],
@@ -105,7 +105,7 @@ export const dashboardSurfaceNavigation: DashboardSurfaceNavigationGroup[] = [
   },
   {
     label: "App Surfaces",
-    description: "Audit the public surfaces and their exact content paths.",
+    description: "Audit the public surfaces and their content paths.",
     items: [
       { label: "Surface map", page: "hooks" },
       { label: "Sky", page: "content" },

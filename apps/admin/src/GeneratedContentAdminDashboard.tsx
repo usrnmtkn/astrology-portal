@@ -180,7 +180,18 @@ type AdminDraft = {
   promptVersion: string;
 };
 
+type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
+type AdminVocabularyCategoryFilter = AdminVocabularySection | "all";
+
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
+
+const vocabularySections: Array<{ key: AdminVocabularySection; label: string; description: string }> = [
+  { key: "planets", label: "Planets", description: "Planet meanings, placements, and phase language." },
+  { key: "signs", label: "Signs", description: "Sign tone, style, needs, and expression." },
+  { key: "natal", label: "Natal", description: "Birth-chart phrases, houses, angles, and placements." },
+  { key: "relationship", label: "Relationship", description: "Synastry, composite, friends, romantic, and family phrases." },
+  { key: "career", label: "Career", description: "Work, vocation, money, and public-facing purpose phrases." }
+];
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   overview: "home",
@@ -215,7 +226,7 @@ const adminNavGroups: Array<{
     items: [
       { page: "overview", label: "Studio Home", icon: LayoutDashboard },
       { page: "reviewQueue", label: "Review Queue", icon: Check },
-      { page: "content", label: "Exact Content", icon: BookOpenText },
+      { page: "content", label: "Content Library", icon: BookOpenText },
       { page: "articles", label: "Articles", icon: FileText },
       { page: "compositeByType", label: "Composite Review", icon: Users },
       { page: "users", label: "Users", icon: Users }
@@ -297,7 +308,7 @@ function parseAdminHash() {
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Articles";
-    case "content": return "Exact Content";
+    case "content": return "Content Library";
     case "reviewQueue": return "Review Queue";
     case "compositeByType": return "Composite Review";
     case "connection": return "Connection";
@@ -316,7 +327,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Admin / Write / Articles";
-    case "content": return "Admin / Write / Exact content";
+    case "content": return "Admin / Write / Content library";
     case "reviewQueue": return "Admin / Publish / Review queue";
     case "compositeByType": return "Admin / Write / Composite review";
     case "connection": return "Admin / Connection";
@@ -337,7 +348,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "reviewQueue":
       return "Phrasebank-first publishing queue with content-class, tier, evergreen, and bulk sign-off controls.";
     case "content":
-      return "Reader-facing rows by surface, key family, runtime readiness, and source provenance.";
+      return "The full editable library: saved content rows plus source rows ready to review, filter, edit, or promote.";
     case "knowledge":
       return "Saved fallback rows only. Local runtime hooks live in the Hook Catalog until they are authored.";
     case "vocabulary":
@@ -347,7 +358,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "users":
       return "Read-mostly user-generated rows by subject, surface, status, and latest update.";
     default:
-      return "A rebuilt admin dashboard organized around review, phrasebank content, fallback rows, vocab, and user output.";
+      return "A rebuilt admin dashboard organized around review, the full content library, fallback rows, vocab, and user output.";
   }
 }
 
@@ -359,6 +370,40 @@ function contentStatusLabel(status: GeneratedContentStatus) {
 
 function normalizeText(value: string | null | undefined) {
   return (value ?? "").trim();
+}
+
+function slugifyContentPart(value: string) {
+  return normalizeText(value)
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    || "new-phrase";
+}
+
+function vocabularySectionFromKey(contentKey: string): AdminVocabularySection {
+  const rawSection = contentKey.match(/^vocab\/([^/]+)/)?.[1];
+  if (rawSection && vocabularySections.some((section) => section.key === rawSection)) {
+    return rawSection as AdminVocabularySection;
+  }
+  const normalized = contentKey.replace(/[-_/.:]+/g, " ").toLowerCase();
+  if (/\b(relationship|relationships|synastry|composite|friends|romantic|family|coworker|exes)\b/.test(normalized)) return "relationship";
+  if (/\b(career|work|mission|purpose|money|calling)\b/.test(normalized)) return "career";
+  if (/\b(aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces|sign)\b/.test(normalized)) return "signs";
+  if (/\b(natal|house|ascendant|midheaven|descendant|angle)\b/.test(normalized)) return "natal";
+  return "planets";
+}
+
+function isVocabularySection(value: string): value is AdminVocabularySection {
+  return vocabularySections.some((section) => section.key === value);
+}
+
+function vocabularyContentKey(section: AdminVocabularySection, headline: string) {
+  return `vocab/${section}/${slugifyContentPart(headline)}`;
+}
+
+function draftIsVocabulary(draft: AdminDraft) {
+  return draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/");
 }
 
 function titleFromKey(contentKey: string) {
@@ -390,9 +435,25 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
   const provider = "content_key" in row ? row.provider : row.provider;
   const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
   const flags = Array.isArray(sourceSnapshot?.flags) ? sourceSnapshot.flags.join(" ") : JSON.stringify(sourceSnapshot ?? {});
+  const sourceContentType = typeof sourceSnapshot?.contentType === "string" ? sourceSnapshot.contentType : "";
+  const sourceBucket = typeof sourceSnapshot?.bucket === "string" ? sourceSnapshot.bucket : "";
+  const sourceTargetFamily = typeof sourceSnapshot?.targetContentFamily === "string" ? sourceSnapshot.targetContentFamily : "";
+  const eventType = "content_key" in row ? row.event_type : row.eventType;
 
   if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_template" || promptVersion === "fallback-hook-template-v1") return "fallback-hook";
-  if (contentKey.startsWith("vocab/") || contentKey.startsWith("fallback-vocab/") || promptVersion === "vocab-v1" || promptVersion === "tagline-v1") return "vocab";
+  if (
+    contentKey.startsWith("vocab/") ||
+    contentKey.startsWith("vocab.") ||
+    contentKey.startsWith("fallback-vocab/") ||
+    contentKey.startsWith("guide-phrase/") ||
+    eventType === "vocab" ||
+    sourceContentType === "vocab" ||
+    sourceBucket === "vocab" ||
+    sourceTargetFamily === "vocab" ||
+    blockType === "vocabulary_phrase" ||
+    promptVersion === "vocab-v1" ||
+    promptVersion === "tagline-v1"
+  ) return "vocab";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
   if (provider && !/phrasebank|migration|local-normalized-dashboard-source/i.test(provider)) return "legacy";
   if (/^(natal|composite|transit|sky|synastry|relationship|you)[./-]/i.test(contentKey)) return "phrasebank";
@@ -593,6 +654,26 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   return payload as T;
 }
 
+async function loadAllGeneratedContentRows(secret: string) {
+  const pageSize = 1000;
+  const allRows: AdminGeneratedContentRow[] = [];
+
+  for (let offset = 0; offset < 10000; offset += pageSize) {
+    const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?status=all&limit=${pageSize}&offset=${offset}`,
+      secret
+    );
+    const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
+
+    allRows.push(...pageRows);
+    if (pageRows.length < pageSize) {
+      break;
+    }
+  }
+
+  return allRows;
+}
+
 function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
   if (!payload || !Array.isArray(payload.rows)) {
     throw new AdminRequestError("Invalid response schema.", {
@@ -688,7 +769,7 @@ export function GeneratedContentAdminDashboard() {
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
-  const [vocabularyCategory, setVocabularyCategory] = useState("planets");
+  const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -712,6 +793,13 @@ export function GeneratedContentAdminDashboard() {
   );
   const vocabRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "vocab"),
+    [visibleRows]
+  );
+  const slotEditableRows = useMemo(
+    () => visibleRows.filter((row) => {
+      const contentClass = contentClassForRow(row);
+      return contentClass === "vocab" || contentClass === "fallback-hook" || row.content_key.startsWith("slot-template/");
+    }),
     [visibleRows]
   );
   const phrasebankRows = useMemo(
@@ -785,12 +873,45 @@ export function GeneratedContentAdminDashboard() {
       && (!query.trim() || haystack.includes(query.trim().toLowerCase()));
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
-    fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter
-  )), [savedFallbackRows, fallbackSectionFilter]);
+    (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
+      && (!query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase()))
+  )), [savedFallbackRows, fallbackSectionFilter, query]);
   const filteredHookCatalog = useMemo(() => hookCatalogItems.filter((item) => (
     (fallbackSectionFilter === "all" || item.section === fallbackSectionFilter)
       && (!query.trim() || `${item.key} ${item.label}`.toLowerCase().includes(query.trim().toLowerCase()))
   )), [hookCatalogItems, fallbackSectionFilter, query]);
+  const templateRows = useMemo(
+    () => rows.filter((row) => row.content_key.startsWith("slot-template/")),
+    [rows]
+  );
+  const filteredTemplateRows = useMemo(
+    () => templateRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    [templateRows, query]
+  );
+  const vocabularyCategoryRows = useMemo(() => {
+    const categoryNeedles: Record<string, string[]> = {
+      planets: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "north node", "south node", "chiron"],
+      signs: ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"],
+      natal: ["natal", "house", "ascendant", "midheaven", "ic", "descendant"],
+      relationship: ["relationship", "relationships", "synastry", "composite", "friends", "romantic", "family", "coworker", "coworkers", "exes"],
+      career: ["career", "work", "mission", "purpose", "money", "calling"]
+    };
+    const needles = categoryNeedles[vocabularyCategory] ?? [];
+    return vocabRows.filter((row) => {
+      const haystack = `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""} ${JSON.stringify(row.source_snapshot ?? {})}`
+        .toLowerCase()
+        .replace(/[-_/.:]+/g, " ");
+      return needles.length === 0 || needles.some((needle) => new RegExp(`(^|\\s)${needle.replace(/\s+/g, "\\s+")}(\\s|$)`).test(haystack));
+    });
+  }, [vocabRows, vocabularyCategory]);
+  const filteredVocabularyRows = useMemo(
+    () => vocabularyCategoryRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    [vocabularyCategoryRows, query]
+  );
+  const filteredSlotEditableRows = useMemo(
+    () => slotEditableRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    [slotEditableRows, query]
+  );
   const selectedSavedRows = useMemo(
     () => rows.filter((row) => selectedIds.has(row.id)),
     [rows, selectedIds]
@@ -804,6 +925,7 @@ export function GeneratedContentAdminDashboard() {
       if (handledHashRef.current === hash) return;
       handledHashRef.current = hash;
       const { page, params } = parseAdminHash();
+      closeEditor();
       setActivePage(page);
 
       const category = params.get("category") as AdminContentCategoryFilter | null;
@@ -815,7 +937,7 @@ export function GeneratedContentAdminDashboard() {
 
       if (category && categoryFilters.some((filter) => filter.key === category)) setCategoryFilter(category);
       if (source && contentClassFilters.some((filter) => filter.key === source)) setContentClassFilter(source);
-      if (search !== null) setQuery(search);
+      setQuery(search ?? "");
       if (section && fallbackSections.some((filter) => filter.key === section)) setFallbackSectionFilter(section);
       if (area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area)) setSurfaceAreaFilter(area);
       if (status && ["all", "complete", "partial", "missing"].includes(status)) setSurfaceStatusFilter(status);
@@ -859,6 +981,9 @@ export function GeneratedContentAdminDashboard() {
     if (!options.keepEditorOpen) {
       closeEditor();
     }
+    if (page !== activePage && !params?.has("q")) {
+      setQuery("");
+    }
     setActivePage(page);
     setAdminHash(adminHashForPage(page, params));
   }
@@ -878,7 +1003,7 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const [generatedResult, reviewResult, usersResult] = await Promise.allSettled([
-        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content?status=all&limit=1000", secret),
+        loadAllGeneratedContentRows(secret),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", secret),
         adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", secret)
       ]);
@@ -887,10 +1012,9 @@ export function GeneratedContentAdminDashboard() {
         throw generatedResult.reason;
       }
 
-      const generated = generatedResult.value;
       const review: { ok?: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown } = reviewResult.status === "fulfilled" ? reviewResult.value : { rows: [] };
       const usersPayload = usersResult.status === "fulfilled" ? usersResult.value : { rows: [] };
-      const generatedRows = assertRowsPayload<AdminGeneratedContentRow>(generated, "/api/admin/generated-content");
+      const generatedRows = generatedResult.value;
       const reviewRowsPayload = review.rows ?? review.records ?? [];
       setRows(generatedRows);
       setReviewRows(reviewRowsPayload.map((record: AdminReviewRecord) => {
@@ -1027,7 +1151,7 @@ export function GeneratedContentAdminDashboard() {
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
     setMessage(nextMessage);
-    if (page === "content" || page === "articles") {
+    if (page === "articles") {
       setDraft({
         id: null,
         contentKey: "sky/article/new-row",
@@ -1044,10 +1168,28 @@ export function GeneratedContentAdminDashboard() {
       });
       return;
     }
-    if (page === "vocabulary") {
+    if (page === "content") {
       setDraft({
         id: null,
-        contentKey: "vocab/manual/new-phrase",
+        contentKey: "content/manual/new-row",
+        surface: "sky",
+        mode: "feed",
+        status: "DRAFT",
+        headline: "",
+        summary: "",
+        body: "",
+        lane: "serving",
+        reviewState: "EDITORIAL_REVIEW_REQUIRED",
+        blockType: "essay",
+        promptVersion: "manual-admin"
+      });
+      return;
+    }
+    if (page === "vocabulary") {
+      const section: AdminVocabularySection = isVocabularySection(vocabularyCategory) ? vocabularyCategory : "planets";
+      setDraft({
+        id: null,
+        contentKey: vocabularyContentKey(section, ""),
         surface: "you",
         mode: "feed",
         status: "DRAFT",
@@ -1165,15 +1307,15 @@ export function GeneratedContentAdminDashboard() {
             </button>
             {isCreateMenuOpen && (
               <div className="admin-create-menu-panel" role="menu">
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Create article opened in Exact Content.")}>
+                <button type="button" role="menuitem" onClick={() => handleCreateAction("articles", "Create article opened in Articles.")}>
                   <FileText size={16} aria-hidden="true" />
                   <span>Create article</span>
                   <small>Author a reader-facing row</small>
                 </button>
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Create exact content row opened.")}>
+                <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Create content row opened.")}>
                   <BookOpenText size={16} aria-hidden="true" />
-                  <span>Create exact content row</span>
-                  <small>Phrasebank or runtime copy</small>
+                  <span>Create content row</span>
+                  <small>Add a saved row to the library</small>
                 </button>
                 <button type="button" role="menuitem" onClick={() => handleCreateAction("vocabulary", "Create reusable phrase opened in Vocabulary.")}>
                   <Sparkles size={16} aria-hidden="true" />
@@ -1226,7 +1368,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-studio-map">
               {[
                 { page: "reviewQueue" as const, icon: Check, label: "Review Queue", text: "Bulk sign-off, status changes, evergreen locks, and reader-safety checks." },
-                { page: "content" as const, icon: BookOpenText, label: "Phrasebank Content", text: "The real readings, filtered by content class, tier, category, and key." },
+                { page: "content" as const, icon: BookOpenText, label: "Content Library", text: "All editable saved and source rows, with filters for type, status, category, and key." },
                 { page: "knowledge" as const, icon: Flag, label: "Fallback Rows", text: "Only saved fallback-hook rows. Local placeholders are kept out of this list." },
                 { page: "hooks" as const, icon: KeyRound, label: "Hook Catalog", text: "Every route the runtime can request, with saved coverage and authoring entry points." },
                 { page: "vocabulary" as const, icon: Sparkles, label: "Vocab", text: "Reusable phrase namespaces, natal taglines, relationship context, and style rows." },
@@ -1311,9 +1453,9 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar" aria-label="Content controls">
               <div className="admin-content-toolbar-copy">
-                <p className="admin-eyebrow">Phrasebank-first library</p>
-                <h2>Reader-facing content</h2>
-                <p>{filteredRows.length} rows shown. Runtime serves only Published rows in the serving lane with no review hold.</p>
+                <p className="admin-eyebrow">Full content library</p>
+                <h2>All editable content rows</h2>
+                <p>{filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.</p>
               </div>
               <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
@@ -1362,7 +1504,7 @@ export function GeneratedContentAdminDashboard() {
                 <h2>Articles</h2>
                 <p>Article rows are stored in the same saved content table, filtered to article mode and sky article blocks.</p>
               </div>
-              <button type="button" onClick={() => handleCreateAction("content", "New article draft started.")}>
+              <button type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
                 <Plus size={16} aria-hidden="true" />
                 New Article
               </button>
@@ -1390,6 +1532,10 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </section>
             {renderFallbackTabs()}
+            <label className="admin-field-wide">
+              <span>Search fallback hooks</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Hook name, key, surface, or body" />
+            </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Saved fallback hook rows">
@@ -1405,7 +1551,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Runtime coverage</p>
                 <h2>Surface Map</h2>
-                <p>Public surfaces and exact content paths are mapped to saved rows, local hooks, vocab, and source material.</p>
+                <p>Public surfaces and content paths are mapped to saved rows, local hooks, vocab, and source material.</p>
               </div>
               <span className="ui-pill admin-status">{savedHookKeys.size}/{hookCatalogItems.length} saved</span>
             </section>
@@ -1471,13 +1617,7 @@ export function GeneratedContentAdminDashboard() {
               <span className="ui-pill admin-status">{vocabRows.length} vocab rows</span>
             </section>
             <div className="admin-template-tabs" role="tablist" aria-label="Vocabulary categories">
-              {[
-                ["planets", "Planets"],
-                ["signs", "Signs"],
-                ["natal", "Natal"],
-                ["relationship", "Relationship"],
-                ["career", "Career"]
-              ].map(([key, label]) => (
+              {vocabularySections.map(({ key, label }) => (
                 <button key={key} type="button" role="tab" aria-selected={vocabularyCategory === key} className={vocabularyCategory === key ? "active" : ""} onClick={() => setVocabularyCategory(key)}>
                   {label}
                 </button>
@@ -1490,7 +1630,7 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Vocabulary rows">
-                {renderContentTable(vocabRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())))}
+                {renderContentTable(filteredVocabularyRows)}
               </aside>
             </section>
           </section>
@@ -1505,13 +1645,17 @@ export function GeneratedContentAdminDashboard() {
                   <h2>Mustache templates and voice scaffolds</h2>
                   <p>Templates now support the phrasebank review flow instead of competing with it as a generation workflow.</p>
                 </div>
-                <span className="ui-pill admin-status">{rows.filter((row) => row.content_key.startsWith("slot-template/")).length} saved</span>
+                <span className="ui-pill admin-status">{templateRows.length} saved</span>
               </div>
             </section>
+            <label className="admin-field-wide">
+              <span>Search templates</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Template name, key, or body" />
+            </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Template rows">
-                {renderContentTable(rows.filter((row) => row.content_key.startsWith("slot-template/")))}
+                {renderContentTable(filteredTemplateRows)}
               </aside>
             </section>
           </section>
@@ -1527,9 +1671,13 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             <div className="admin-status-pills">
-              <button type="button" className="active"><span>All sources</span><strong>{facts.length + rows.length}</strong></button>
+              <button type="button" className="active"><span>Editable slot rows</span><strong>{slotEditableRows.length}</strong></button>
               <button type="button"><span>Needs rows</span><strong>{Math.max(0, hookCatalogItems.length - savedHookKeys.size)}</strong></button>
             </div>
+            <label className="admin-field-wide">
+              <span>Search slot-backed rows</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Slot, vocab, fallback, or template key" />
+            </label>
             <div className="admin-studio-map">
               {["Calculated facts", "Vocabulary rows", "Fallback rows", "Template slots"].map((label) => (
                 <article key={label}>
@@ -1539,6 +1687,12 @@ export function GeneratedContentAdminDashboard() {
                 </article>
               ))}
             </div>
+            <section className="admin-workbench admin-review-workspace">
+              {renderEditor()}
+              <aside className="admin-list-panel" aria-label="Editable slot-backed rows">
+                {renderContentTable(filteredSlotEditableRows)}
+              </aside>
+            </section>
           </section>
         )}
 
@@ -1683,7 +1837,7 @@ export function GeneratedContentAdminDashboard() {
               <article className="admin-template-card">
                 <p className="admin-eyebrow">Dashboard</p>
                 <h3>Phrasebank-first rebuild</h3>
-                <p>Legacy generation controls are no longer the main organizing principle. Review, exact content, fallback rows, hook catalog, vocab, composite variants, and users are separated.</p>
+                <p>Legacy generation controls are no longer the main organizing principle. Review, the content library, fallback rows, hook catalog, vocab, composite variants, and users are separated.</p>
               </article>
             </div>
           </section>
@@ -1937,12 +2091,31 @@ export function GeneratedContentAdminDashboard() {
     const currentDraft = draft ?? (selectedRow ? draftFromRow(selectedRow) : null);
     if (!currentDraft) return null;
 
+    const isVocabularyDraft = draftIsVocabulary(currentDraft);
+    const isNewDraft = !currentDraft.id;
+    const vocabularySection = vocabularySectionFromKey(currentDraft.contentKey);
+    const updateVocabularySection = (nextSection: AdminVocabularySection) => {
+      setDraft({
+        ...currentDraft,
+        contentKey: isNewDraft ? vocabularyContentKey(nextSection, currentDraft.headline) : currentDraft.contentKey
+      });
+    };
+    const updateHeadline = (headline: string) => {
+      setDraft({
+        ...currentDraft,
+        headline,
+        contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
+      });
+    };
+
     return (
-      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-label="Generated content editor">
+      <>
+      <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} />
+      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor">
         <div className="admin-editor-toolbar">
           <div>
-            <p className="admin-eyebrow">Post editor</p>
-            <h2>{currentDraft.id ? "Edit saved row" : "Author new row"}</h2>
+            <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : "Post editor"}</p>
+            <h2>{currentDraft.id ? (isVocabularyDraft ? "Edit phrase" : "Edit saved row") : (isVocabularyDraft ? "Create reusable phrase" : "Author new row")}</h2>
           </div>
           <div className="admin-editor-toolbar-actions">
             <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
@@ -1952,22 +2125,42 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </div>
         <section className="admin-post-editor">
+          {isVocabularyDraft && (
+            <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
+              <strong>How vocabulary phrases are organized</strong>
+              <p>Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard.</p>
+            </div>
+          )}
+          {isVocabularyDraft && (
+            <label className="admin-title-field">
+              <span>Phrase section</span>
+              <select aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
+                {vocabularySections.map((section) => <option key={section.key} value={section.key}>{section.label}</option>)}
+              </select>
+              <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
+            </label>
+          )}
           <label className="admin-title-field">
-            <span>Content key</span>
-            <input value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id)} />
-          </label>
-          <label className="admin-title-field">
-            <span>Headline</span>
-            <input value={currentDraft.headline} onChange={(event) => setDraft({ ...currentDraft, headline: event.target.value })} />
+            <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
+            <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+            {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
           </label>
           <label className="admin-review-copy-editor">
-            <span>Summary</span>
-            <textarea value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} />
+            <span>{isVocabularyDraft ? "Editor note or grouping detail" : "Summary"}</span>
+            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} />
           </label>
           <label className="admin-review-copy-editor">
-            <span>Body</span>
-            <textarea value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} />
+            <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
+            <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
           </label>
+          <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
+            <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
+            <label className="admin-title-field">
+              <span>{isVocabularyDraft ? "Generated key" : "Content key"}</span>
+              <input aria-label={isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft} />
+              {isVocabularyDraft && <small className="admin-field-hint">Generated from section + title. Existing rows keep their original key so published content stays connected.</small>}
+            </label>
+          </details>
           <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
@@ -2031,6 +2224,7 @@ export function GeneratedContentAdminDashboard() {
           )}
         </section>
       </aside>
+      </>
     );
   }
 }
