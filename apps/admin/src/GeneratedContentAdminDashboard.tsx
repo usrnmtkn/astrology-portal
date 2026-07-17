@@ -471,6 +471,21 @@ function contentClassLabel(value: AdminContentClass) {
   return contentClassFilters.find((filter) => filter.key === value)?.label ?? "Other";
 }
 
+function draftEventType(draft: AdminDraft) {
+  if (draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) return "fallback-hook";
+  if (draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/") || draft.contentKey.startsWith("fallback-vocab/") || draft.contentKey.startsWith("guide-phrase/")) return "vocab";
+  if (draft.blockType === "template" || draft.contentKey.startsWith("slot-template/")) return "slot-template";
+  if (draft.blockType === "sky_article" || draft.mode === "article") return "sky_article";
+  return draft.blockType || "manual-content";
+}
+
+function draftSourceSnapshot(draft: AdminDraft) {
+  if (draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) {
+    return { contentType: "template", hook: draft.contentKey.replace(/^fallback-hook\//, "") };
+  }
+  return { contentType: draftEventType(draft), authoringSource: "admin-dashboard" };
+}
+
 function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhrasebankTier {
   const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
   const raw = sourceSnapshot?.tier ?? sourceSnapshot?.phrasebankTier ?? sourceSnapshot?.provenanceTier ?? sourceSnapshot?.sourceTier;
@@ -1070,8 +1085,8 @@ export function GeneratedContentAdminDashboard() {
         reviewState: status === "LIVE" || status === "REVIEWED" ? null : draft.reviewState || null,
         blockType: draft.blockType || null,
         promptVersion: draft.promptVersion || "manual-admin",
-        eventType: draft.blockType === "fallback_template" ? "fallback-hook" : undefined,
-        sourceSnapshot: draft.blockType === "fallback_template" ? { contentType: "template", hook: draft.contentKey.replace(/^fallback-hook\//, "") } : undefined
+        eventType: draftEventType(draft),
+        sourceSnapshot: draftSourceSnapshot(draft)
       };
       const method = draft.id ? "PATCH" : "POST";
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -1233,7 +1248,7 @@ export function GeneratedContentAdminDashboard() {
     if (page === "knowledge") {
       setDraft({
         id: null,
-        contentKey: "fallback/manual/new-hook",
+        contentKey: "fallback-hook/manual/new-hook",
         surface: "sky",
         mode: "feed",
         status: "DRAFT",
@@ -1242,8 +1257,8 @@ export function GeneratedContentAdminDashboard() {
         body: "",
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
-        blockType: "fallback_hook",
-        promptVersion: "manual-admin"
+        blockType: "fallback_template",
+        promptVersion: "fallback-hook-template-v1"
       });
     }
   }
@@ -1472,9 +1487,9 @@ export function GeneratedContentAdminDashboard() {
                   <Check size={16} aria-hidden="true" />
                   Review Queue
                 </button>
-                <button type="button" onClick={() => handleCreateAction("content", "New article draft started.")}>
+                <button type="button" onClick={() => handleCreateAction("content", "New content row started.")}>
                   <Plus size={16} aria-hidden="true" />
-                  New Article
+                  New content row
                 </button>
                 <button type="button" onClick={() => navigateAdminPage("knowledge")}>
                   <FileText size={16} aria-hidden="true" />
