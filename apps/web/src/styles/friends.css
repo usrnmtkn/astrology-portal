@@ -2207,8 +2207,8 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.72fr) minmax(0, 0.98fr) minmax(0, 1.08fr);
   justify-content: stretch;
   min-height: 0;
-  gap: 4px;
-  padding: 7px;
+  gap: var(--space-1);
+  padding: calc(var(--segmented-padding) + var(--space-1) / 2);
   overflow: hidden;
 }
 
@@ -2217,7 +2217,7 @@
   min-width: 0;
   height: 52px;
   padding-inline: clamp(8px, 1vw, 16px);
-  border-radius: calc(var(--segmented-radius) - 6px);
+  border-radius: calc(var(--segmented-radius) - var(--segmented-gap));
   font-size: clamp(15px, 1.18vw, 18px);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
@@ -2232,7 +2232,7 @@
   .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
     height: 48px;
     font-size: clamp(13px, 1.35vw, 16px);
-    padding-inline: 6px;
+    padding-inline: var(--segmented-gap);
   }
 }
 
