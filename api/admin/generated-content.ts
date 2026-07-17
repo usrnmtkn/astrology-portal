@@ -211,6 +211,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
+  const offset = Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = [
     "id",
     "content_key",
@@ -244,7 +245,8 @@ async function listGeneratedContent(req: IncomingMessage) {
   const params = new URLSearchParams({
     select: selectColumns.join(","),
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
-    limit: id ? "1" : String(limit)
+    limit: id ? "1" : String(limit),
+    offset: id ? "0" : String(offset)
   });
 
   if (id) {
