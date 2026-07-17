@@ -59,6 +59,16 @@ assert.match(
   /\.\.\.listLocalManualChartUserIds\(\)/,
   "Auth migration must sweep older local manual-chart keys before showing the remote Friends chart list."
 );
+assert.match(
+  appSource,
+  /account && appliedAuthAccountIdRef\.current === account\.id && remoteProfileReadyRef\.current/,
+  "Repeated same-account auth wakeups must not reset remote profile readiness or reload Friends charts."
+);
+assert.match(
+  appSource,
+  /function refreshSky\(event: PageTransitionEvent\)\s*{\s*if \(event\.persisted\) {\s*setSkyRefreshKey\(Date\.now\(\)\);/s,
+  "Ordinary tab focus/pageshow events must not refresh the sky and cascade a Friends page reload."
+);
 
 console.log(JSON.stringify({
   status: "PASS",

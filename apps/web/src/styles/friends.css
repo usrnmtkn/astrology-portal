@@ -720,15 +720,6 @@
   max-width: var(--friend-detail-no-chart-max);
 }
 
-.friend-chart-page--transits.relationship-detail-no-chart {
-  --friend-detail-no-chart-max: min(980px, calc(100vw - clamp(32px, 8vw, 144px)));
-}
-
-.friend-transit-inline-wheel {
-  align-self: center;
-  width: min(100%, var(--shared-chart-size));
-}
-
 .relationship-detail-no-chart > .friend-detail-chart-column {
   display: none;
 }
@@ -2169,16 +2160,37 @@
 }
 
 .app-shell.mode-friends .friend-view-tabs {
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.72fr) minmax(0, 0.98fr) minmax(0, 1.08fr);
+  justify-content: stretch;
   min-height: 0;
-  padding: var(--segmented-padding);
-  overflow-x: auto;
-  scroll-padding-inline: var(--segmented-padding);
+  gap: 4px;
+  padding: 7px;
+  overflow: hidden;
 }
 
 .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
   box-sizing: border-box;
-  min-width: max-content;
+  min-width: 0;
+  height: 52px;
+  padding-inline: clamp(8px, 1vw, 16px);
+  border-radius: calc(var(--segmented-radius) - 6px);
+  font-size: clamp(15px, 1.18vw, 18px);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.app-shell.mode-friends .friend-view-tabs .segmented-control__item.segmented-control__item--active {
+  font-weight: var(--weight-medium);
+}
+
+@media (max-width: 1180px) {
+  .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
+    height: 48px;
+    font-size: clamp(13px, 1.35vw, 16px);
+    padding-inline: 6px;
+  }
 }
 
 @media (min-width: 1040px) {
