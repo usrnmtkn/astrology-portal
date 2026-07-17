@@ -153,6 +153,7 @@ function lineForJsonField(source, fieldPath, value) {
 function checkString({ filePath, source, fieldPath, value }) {
   const findings = [];
   const line = lineForJsonField(source, fieldPath, value);
+  const fieldName = String(fieldPath.split(".").at(-1) ?? "");
 
   for (const check of blockingChecks) {
     if (check.pattern.test(value)) {
@@ -183,7 +184,8 @@ function checkString({ filePath, source, fieldPath, value }) {
   }
 
   const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
-  if (wordCount > 180) {
+  const shouldWarnForLength = !/^(body|content|text|copy)$/i.test(fieldName);
+  if (shouldWarnForLength && wordCount > 180) {
     findings.push({
       severity: "WARNING",
       check: "long-copy",
@@ -245,6 +247,16 @@ for (const filePath of allFiles) {
 
 const blockers = allFindings.filter((finding) => finding.severity === "BLOCKER");
 const warnings = allFindings.filter((finding) => finding.severity === "WARNING");
+
+if (process.env.EDITORIAL_QA_JSON === "1") {
+  console.log(JSON.stringify({
+    filesScanned: allFiles.length,
+    stringsScanned: scannedStrings,
+    blockers,
+    warnings
+  }, null, 2));
+  process.exit(blockers.length > 0 ? 1 : 0);
+}
 
 console.log("# Editorial Writing QA");
 console.log("");

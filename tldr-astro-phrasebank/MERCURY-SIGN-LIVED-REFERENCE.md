@@ -51,3 +51,18 @@ needs to be understood. Write final copy in your voice per WRITING-STANDARD.md a
   vague, forgetful, skips the detail, easily swayed.
   Marie: "You think in images and intuition, following what feels right more than what's on paper, though
   you can drift, lose your place, and mistake a hope for a fact."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Inspired By), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — working out, mental stimulation
+- **Taurus** — rest, contemplation
+- **Gemini** — journaling, sharing ideas, reading
+- **Cancer** — alone time, familiar environments
+- **Leo** — creative projects, being heard
+- **Virgo** — mental stimulation, organizing
+- **Libra** — collaborating with others
+- **Scorpio** — divination, nature, introspection
+- **Sagittarius** — traveling, learning, teaching
+- **Capricorn** — researching, fact-checking
+- **Aquarius** — being independent, trial and error
+- **Pisces** — music, retreat

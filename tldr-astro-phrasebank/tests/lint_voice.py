@@ -26,9 +26,15 @@ PHRASES = [
     "holding space", "leaning into", "your journey", "this energy invites",
     "the connection asks", "moves through your topics", "this placement becomes",
     "this is about", "the thread",
-    # room-as-social-setting metaphor (NOT "room to breathe/roam", which is space)
-    "the room", "a room", "room's", "in the room", "read the room", "reads the room",
-    "the whole room", "everyone in the room",
+    # room-as-AI-cliche ONLY. "the room" / "make the room rearrange itself" are Marie's own and allowed.
+    "read the room", "reads the room", "smartest in the room", "no one in the room",
+    # approved this-instead-of-that swaps (MARIE-VOICE-BANK.md): ban the right-hand constructions
+    "performing normalcy", "performing confidence", "performing charm", "performing authority",
+    "revolutionary act", "someone else's blueprint", "even flow needs banks", "flow needs banks",
+    "self-abandonment", "mental loops",
+    # write-the-lived-moment: name the proof/job/request, never the abstraction (MARIE-VOICE-BANK.md)
+    "reassurance", "reassured", "reassure", "to stay safe", "stay safe",
+    "leaned on", "feels leaned on", "feel leaned on", "say the need", "the need out loud",
 ]
 
 REGEXES = []

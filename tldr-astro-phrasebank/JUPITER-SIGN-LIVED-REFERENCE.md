@@ -53,3 +53,18 @@ lint every line.
   giving; shadow: escapism, gives past their own limits.
   Marie: "You grow through faith, art, and compassion; you gain by trusting the current, though you can
   drift on faith without grounding it in anything solid."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Gift), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — independent self-starter
+- **Taurus** — steady success
+- **Gemini** — thoughtful communication
+- **Cancer** — compassionate protector
+- **Leo** — creative confidence
+- **Virgo** — natural healer
+- **Libra** — understanding others
+- **Scorpio** — strong intuition
+- **Sagittarius** — positive mind-set
+- **Capricorn** — dedicated ambition
+- **Aquarius** — seeing the bigger picture
+- **Pisces** — paving your own way

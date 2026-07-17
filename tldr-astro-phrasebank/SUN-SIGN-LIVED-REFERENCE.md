@@ -53,3 +53,18 @@ or feel (Moon). Write final copy in your voice per WRITING-STANDARD.md and lint 
   boundary-less, slips into self-pity.
   Marie: "You're most yourself at the edges, where feeling, imagination, and compassion blur the lines,
   though you can drift, avoid, and let your boundaries blur."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Motivation), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — to develop a strong sense of self
+- **Taurus** — to find true self-worth
+- **Gemini** — to share wisdom and knowledge
+- **Cancer** — to find a sense of belonging
+- **Leo** — to share your creative visions
+- **Virgo** — self-discovery through being of service
+- **Libra** — to see the self in others
+- **Scorpio** — to regenerate through life’s experiences
+- **Sagittarius** — to find meaning through life
+- **Capricorn** — to strive for better
+- **Aquarius** — to lift others
+- **Pisces** — to advance in consciousness

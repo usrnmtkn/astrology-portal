@@ -1637,6 +1637,7 @@ function transitToNatalTemplateSlots(transit: TransitItem, natalVariant: PlanetT
     transitPlanet: transit.transitPlanet,
     transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
+    aspectAdj: transitAspectTechnicalVerb(transit.aspect),
     aspectTone: aspectTonePhrase(transit.aspect),
     natalPoint: transit.natalPoint,
     natalPointTopic,
@@ -17316,7 +17317,7 @@ function ManualChartsPanel({
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
-      ? Boolean(selectedChart?.natalChart)
+      ? false
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "compatibility"

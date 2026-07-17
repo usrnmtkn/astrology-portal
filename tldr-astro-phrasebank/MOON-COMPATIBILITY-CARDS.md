@@ -2,7 +2,7 @@
 
 Built on MOON-COMPATIBILITY-TEMPLATE.md. Directional (you = reader's Moon, {friend} = the other person).
 Three sentences: shared sign relationship → each Moon in its own words → connection plus how each reacts
-when hurt. Sign facts only (element, axis); the measured aspect is an app slot, not claimed here. 78 pairings.
+when hurt. Sign facts only: element, modality, axis/opposition, and rulership. The measured aspect is an app slot, not claimed here. Directional rendering is TBD; these 78 pairings are currently written as ordered reader-to-friend copy and need resolver confirmation before production use.
 
 ## Moon in Aries + …
 
@@ -48,7 +48,7 @@ when hurt. Sign facts only (element, axis); the measured aspect is an app slot, 
 
 **Taurus + Sagittarius** — Your Moon in Taurus and {friend}'s Moon in Sagittarius are earth and fire, so one of you stays and one of you goes. You want the familiar and unrushed; {friend} wants room and somewhere new. Because {friend} can pull you out of a rut and you can give {friend} a home to come back to, you help each other, but when you're hurt you plant your feet and {friend} bolts, so what feels safe to you feels like a cage to {friend}.
 
-**Taurus + Capricorn** — Your Moon in Taurus and {friend}'s Moon in Capricorn are both earth signs, so you understand each other on sight. You handle feeling through the physical; {friend} handles it through control and work. Because neither of you needs constant reassurance, you build something solid, but when you're hurt you both keep the softer stuff to yourselves.
+**Taurus + Capricorn** — Your Moon in Taurus and {friend}'s Moon in Capricorn are both earth signs, so you understand each other on sight. You handle feeling through the physical; {friend} handles it through control and work. Because neither of you needs the other to keep proving it, you build something solid, but when you're hurt you both keep the softer stuff to yourselves.
 
 **Taurus + Aquarius** — Your Moon in Taurus and {friend}'s Moon in Aquarius are earth and air, so you reach for closeness where {friend} reaches for distance. You warm up through the body; {friend} keeps feeling at arm's length in the mind. Because you're both fixed and loyal, once you're in you stay, but when you're hurt you dig in and {friend} detaches, and you can hold your opposite positions a long time.
 
@@ -60,7 +60,7 @@ when hurt. Sign facts only (element, axis); the measured aspect is an app slot, 
 
 **Gemini + Cancer** — Your Moon in Gemini and {friend}'s Moon in Cancer are air and water, so you go to your head where {friend} goes to the body. You talk a feeling out; {friend} feels it and needs to be cared for, not analyzed. Because you can help {friend} name what's wrong and {friend} can teach you to actually feel it, you round each other out, but when you're hurt you keep talking while {friend} retreats, so you talk right past what {friend} needs.
 
-**Gemini + Leo** — Your Moon in Gemini and {friend}'s Moon in Leo are air and fire, so together you're lively and warm. You bring the words; {friend} brings the heat and needs to feel adored. Because you spark each other and keep it playful, it's easy, but when you're hurt you go up into your head and {friend} goes quiet waiting to be reassured, and you can both keep it upbeat and skip the hard stuff.
+**Gemini + Leo** — Your Moon in Gemini and {friend}'s Moon in Leo are air and fire, so together you're lively and warm. You bring the words; {friend} brings the heat and needs to feel adored. Because you spark each other and keep it playful, it's easy, but when you're hurt you go up into your head and {friend} goes quiet waiting for you to show you still care, and you can both keep it upbeat and skip the hard stuff.
 
 **Gemini + Virgo** — Your Moon in Gemini and {friend}'s Moon in Virgo are air and earth, and you both process through the head, so you get how the other thinks. You keep it light and moving; {friend} digs into what's wrong. Because Mercury runs you both, you can balance each other, but when you're hurt you scatter and {friend} picks it apart, so {friend} finds you careless and you find {friend} picky.
 
@@ -80,7 +80,7 @@ when hurt. Sign facts only (element, axis); the measured aspect is an app slot, 
 
 **Cancer + Cancer** — Your Moon and {friend}'s Moon are both in Cancer, so you read each other's moods before a word and home and safety mean everything to you both. You pick up the mood of whoever you're around, and so does {friend}. Because you take care of each other without being asked, it feels instantly familiar, but when you're both hurt you both retreat into your shells and wait to be coaxed out.
 
-**Cancer + Leo** — Your Moon in Cancer and {friend}'s Moon in Leo are water and fire, so you need safety where {friend} needs to feel adored. You feel it and need to feel close; {friend} needs attention and affection. Because you give the devotion {friend} wants and {friend} gives you someone to pour into, your needs can meet, but when you're hurt you go moody right when {friend} needs affection back, and {friend} misses how much reassurance you need.
+**Cancer + Leo** — Your Moon in Cancer and {friend}'s Moon in Leo are water and fire, so you need safety where {friend} needs to feel adored. You feel it and need to feel close; {friend} needs attention and affection. Because you give the devotion {friend} wants and {friend} gives you someone to pour into, your needs can meet, but when you're hurt you go moody right when {friend} needs affection back, and {friend} misses how much you need to hear you're still wanted.
 
 **Cancer + Virgo** — Your Moon in Cancer and {friend}'s Moon in Virgo are water and earth, so you feel it and {friend} fixes it. You bring the care; {friend} brings the order. Because you look after each other well, one emotionally and one practically, it works, but when you're hurt your care and {friend}'s fixing both turn into worry.
 
@@ -92,21 +92,21 @@ when hurt. Sign facts only (element, axis); the measured aspect is an app slot, 
 
 **Cancer + Capricorn** — Your Moon in Cancer and {friend}'s Moon in Capricorn sit opposite each other, so this axis is the classic complement. You need to feel and be felt; {friend} keeps it together and copes alone. Because you bring the feeling {friend} buries and {friend} brings the structure you need, you can balance out, but when it's hard you reach to be held and {friend} goes cold, so one of you feels shut out and the other feels crowded.
 
-**Cancer + Aquarius** — Your Moon in Cancer and {friend}'s Moon in Aquarius are water and air, so you move toward where {friend} moves back. You want closeness and reassurance; {friend} keeps feeling at a distance. Because {friend} can give you perspective and you can thaw {friend} a little, you stretch each other, but when you're hurt you reach in and {friend} pulls away, so you feel shut out and {friend} feels crowded.
+**Cancer + Aquarius** — Your Moon in Cancer and {friend}'s Moon in Aquarius are water and air, so you move toward where {friend} moves back. You want closeness and to know you're still wanted; {friend} keeps feeling at a distance. Because {friend} can give you perspective and you can thaw {friend} a little, you stretch each other, but when you're hurt you reach in and {friend} pulls away, so you feel shut out and {friend} feels crowded.
 
 **Cancer + Pisces** — Your Moon in Cancer and {friend}'s Moon in Pisces are both water signs, so you soak up everything, each other included. You need safety; {friend} needs to dissolve into something bigger. Because you can feel completely understood, it's deep and soft, but when you're hurt you both take on more feeling than you can hold.
 
 ## Moon in Leo + …
 
-**Leo + Leo** — Your Moon and {friend}'s Moon are both in Leo, so you need the same thing, to feel wanted and seen, and you recognize it in each other right away. You come alive when someone's paying attention, and so does {friend}. Because you shine together, there's a lot of heat and play, but when you're both hurt you both wait to be reassured, and neither of you reaches first.
+**Leo + Leo** — Your Moon and {friend}'s Moon are both in Leo, so you need the same thing, to feel wanted and seen, and you recognize it in each other right away. You come alive when someone's paying attention, and so does {friend}. Because you shine together, there's a lot of heat and play, but when you're both hurt you both wait for the other to show they still care, and neither of you reaches first.
 
 **Leo + Virgo** — Your Moon in Leo and {friend}'s Moon in Virgo are fire and earth, so you want it out loud where {friend} shows it quietly. You need attention and to feel appreciated; {friend} shows care by fixing and worrying. Because {friend} will quietly take care of you and you can warm {friend} up, you meet in the middle, but when you're hurt you read {friend}'s criticism as coldness, and {friend} finds your need for praise a lot to keep up with.
 
-**Leo + Libra** — Your Moon in Leo and {friend}'s Moon in Libra are fire and air, so you both love the social, romantic side of things. You need to be adored; {friend} needs harmony and a partner. Because you make each other feel wanted, it's warm and easy, but when you're hurt you go quiet waiting to be reassured and {friend} keeps the peace, so you both dodge the ugly conversation.
+**Leo + Libra** — Your Moon in Leo and {friend}'s Moon in Libra are fire and air, so you both love the social, romantic side of things. You need to be adored; {friend} needs harmony and a partner. Because you make each other feel wanted, it's warm and easy, but when you're hurt you go quiet waiting to be told you're still wanted and {friend} keeps the peace, so you both dodge the ugly conversation.
 
 **Leo + Scorpio** — Your Moon in Leo and {friend}'s Moon in Scorpio are fire and water, so you want it out in the open where {friend} keeps it private. You need to be admired; {friend} feels it deep and intense. Because you're both fixed and loyal and the pull runs hot, it's charged, but when you're hurt you sulk in the light and {friend} broods in the dark, so it turns into a standoff.
 
-**Leo + Sagittarius** — Your Moon in Leo and {friend}'s Moon in Sagittarius are both fire signs, so you feel alive around each other. You need to be adored; {friend} needs to be free. Because you give each other plenty of both, it's generous and warm, but when it gets heavy you go quiet for reassurance and {friend} bolts, and you both dodge the quieter feeling.
+**Leo + Sagittarius** — Your Moon in Leo and {friend}'s Moon in Sagittarius are both fire signs, so you feel alive around each other. You need to be adored; {friend} needs to be free. Because you give each other plenty of both, it's generous and warm, but when it gets heavy you go quiet waiting to be shown you still matter and {friend} bolts, and you both dodge the quieter feeling.
 
 **Leo + Capricorn** — Your Moon in Leo and {friend}'s Moon in Capricorn are fire and earth, so you run warm where {friend} runs cold. You want to be seen; {friend} keeps it controlled. Because you bring the heart and {friend} brings the backbone, you can build something with real respect, but when you're hurt you need it out loud and {friend} holds it in, so you feel unappreciated and {friend} feels worn out by the need for praise.
 
@@ -138,7 +138,7 @@ when hurt. Sign facts only (element, axis); the measured aspect is an app slot, 
 
 **Libra + Sagittarius** — Your Moon in Libra and {friend}'s Moon in Sagittarius are air and fire, so you're an easy, social pair. You want harmony and company; {friend} wants freedom and honesty. Because you enjoy each other and keep it light, it flows, but when you're hurt you want more togetherness than {friend} wants to give.
 
-**Libra + Capricorn** — Your Moon in Libra and {friend}'s Moon in Capricorn are air and earth, so you reach for a partner where {friend} reaches for composure. You need harmony and closeness; {friend} needs control and gets on with it alone. Because you can warm {friend} and {friend} can give you something solid to lean on, you help each other, but when you're hurt you reach in and {friend} closes off, so you feel unmet and {friend} feels leaned on.
+**Libra + Capricorn** — Your Moon in Libra and {friend}'s Moon in Capricorn are air and earth, so you reach for a partner where {friend} reaches for composure. You need harmony and closeness; {friend} needs control and gets on with it alone. Because you can warm {friend} and {friend} can give you something solid to lean on, you help each other, but when you're hurt you reach in and {friend} closes off, so you feel unmet and {friend} feels responsible for holding you up.
 
 **Libra + Aquarius** — Your Moon in Libra and {friend}'s Moon in Aquarius are both air signs, so you meet in the head easily and both need to talk and understand before you feel okay. You need fairness; {friend} needs space. Because you give each other room and never cling, it's easy, but when you're hurt you both stay so reasonable that a real hurt never gets aired.
 
