@@ -54,3 +54,18 @@ haul. Write final copy in your voice per WRITING-STANDARD.md and lint every line
   being swallowed by other people's needs; shadow: overwhelmed by duty, slipping into escape.
   Marie: "Your work is around faith and boundaries: giving form to the formless, though you can avoid the
   boundary and let responsibility dissolve."
+
+## Modern cross-check (Tanaaz Chubb, *The Ultimate Guide to Astrology*, 2022)
+Modern plain-language descriptors (Karmic Lesson), for voice and confirmation alongside Parker/Lofthus:
+- **Aries** — expanding and deepening how you define yourself
+- **Taurus** — knowing your true self-worth and what you value
+- **Gemini** — speaking your truth and using your voice
+- **Cancer** — creating boundaries even with those you love
+- **Leo** — putting yourself and your ideas out there
+- **Virgo** — creating healthy habits
+- **Libra** — building healthy relationships
+- **Scorpio** — trusting your inner knowing
+- **Sagittarius** — expanding what you already know
+- **Capricorn** — redefining success
+- **Aquarius** — listening to your own needs
+- **Pisces** — balancing discipline and creativity

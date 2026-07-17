@@ -441,6 +441,7 @@ export function emergencyTransitToNatalCopy({
     Planet: displayName(transitPlanet),
     TransitPlanet: displayName(transitPlanet),
     aspect: aspectText,
+    aspectAdj: emergencyAspectAdjective(aspect),
     aspectFeel: emergencyAspectBehavior(aspect),
     aspectBehavior: sentenceCase(emergencyAspectBehavior(aspect)),
     natalPoint: displayName(natalPoint),
