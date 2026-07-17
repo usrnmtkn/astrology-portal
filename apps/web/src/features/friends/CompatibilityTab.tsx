@@ -61,9 +61,30 @@ function CompatibilitySignLabel({ sign }: { sign: string }) {
 }
 
 function compatibilityFriendCopy(copy: string, friendName: string) {
-  return copy
-    .replaceAll("{friend}'s", `${friendName}'s`)
-    .replaceAll("{friend}", friendName);
+  let friendMentions = 0;
+  const namedCopy = copy.replace(/\{friend\}('s)?/g, (_match, possessive: string | undefined) => {
+    friendMentions += 1;
+
+    if (friendMentions === 1) {
+      return possessive ? `${friendName}'s` : friendName;
+    }
+
+    return possessive ? "their" : "they";
+  });
+
+  return namedCopy
+    .replace(/\bthey is\b/g, "they are")
+    .replace(/\bthey was\b/g, "they were")
+    .replace(/\bthey needs\b/g, "they need")
+    .replace(/\bthey wants\b/g, "they want")
+    .replace(/\bthey feels\b/g, "they feel")
+    .replace(/\bthey handles\b/g, "they handle")
+    .replace(/\bthey keeps\b/g, "they keep")
+    .replace(/\bthey pulls\b/g, "they pull")
+    .replace(/\bthey retreats\b/g, "they retreat")
+    .replace(/\bthey bolts\b/g, "they bolt")
+    .replace(/\bthey goes\b/g, "they go")
+    .replace(/\bthey holds\b/g, "they hold");
 }
 
 export function CompatibilityTab({

@@ -134,6 +134,7 @@ def swap_reader_friend(text):
         (r"\byou each\b", "__EACH__"),
         (r"\byou'd\b", "__YOUD__"),
         (r"\byou both\b", "__BOTH__"),
+        (r"\bboth of you\b", "__BOTH_OF_YOU__"),
         (r"\byou're\b", "__FRIEND_BE__"),
         (r"\bYou're\b", "__FRIEND_BE_CAP__"),
         (r"\byou've\b", "__FRIEND_HAVE__"),
@@ -159,6 +160,7 @@ def swap_reader_friend(text):
         .replace("__YOUR_POS__", "your")
         .replace("__YOU__", "you")
         .replace("__BOTH__", "you both")
+        .replace("__BOTH_OF_YOU__", "both of you")
         .replace("__EACH__", "you each")
         .replace("__YOUD__", "you'd"))
 
@@ -182,6 +184,8 @@ def clean_swapped_copy(text):
         (r"\{friend\} plant\b", "{friend} plants"),
         (r"\{friend\} bolt\b", "{friend} bolts"),
         (r"\{friend\} plants \{friend\}'s feet\b", "{friend} plants their feet"),
+        (r"\{friend\} keeps each other's\b", "you keep each other's"),
+        (r"\bboth of \{friend\}\b", "both of you"),
         (r"\{friend\} bring\b", "{friend} brings"),
         (r"\{friend\} step\b", "{friend} steps"),
         (r"\byou needs\b", "you need"),
@@ -250,6 +254,7 @@ def reader_clause_to_friend(text):
 def reverse_moon_card(card, you_sign, friend_sign):
     return {
         **card,
+        "match": "Moon-to-Moon",
         "function": ensure_sentence(swap_moon_signs(card["function"], you_sign, friend_sign)),
         "your_line": friend_clause_to_reader(card["their_line"]),
         "their_line": reader_clause_to_friend(card["your_line"]),
@@ -297,7 +302,7 @@ def parse_moon_compatibility_cards():
 
         entries.setdefault(you_sign, {})[friend_sign] = {
             "glyph": GLYPH["moon"],
-            "match": MATCH[relationship(you_sign, friend_sign)],
+            "match": "Moon-to-Moon",
             "function": function,
             "your_line": your_line,
             "their_line": their_line,
@@ -324,6 +329,13 @@ def parse_moon_compatibility_cards():
 cards = {}
 missing = []
 for planet in PLANETS:
+    if planet == "moon":
+        moon_cards = parse_moon_compatibility_cards()
+        if sum(len(row) for row in moon_cards.values()) != len(ORDER) ** 2:
+            missing.append(("moon", "authored-source", "144 directional pairs"))
+        cards[planet] = moon_cards
+        continue
+
     cards[planet] = {}
     for a, b in itertools.product(ORDER, repeat=2):
         c = compose(planet, a, b)
@@ -331,12 +343,8 @@ for planet in PLANETS:
             missing.append((planet, a, b)); continue
         cards[planet].setdefault(a, {})[b] = c
 
-authored_moon_cards = parse_moon_compatibility_cards()
-for you_sign, friend_cards in authored_moon_cards.items():
-    cards.setdefault("moon", {}).setdefault(you_sign, {}).update(friend_cards)
-
 out = {"_meta": {"title": "Compatibility long-form write-ups (Co-Star style)",
-        "model": "function + your_line + their_line/same_sign_line + verdict; Moon uses authored Moon-to-Moon compatibility cards where available",
+        "model": "function + your_line + their_line/same_sign_line + verdict; Moon is source-only from MOON-COMPATIBILITY-CARDS.md",
         "planets": PLANETS, "status": "DRAFT — pending editorial sign-off",
         "note": CC["_meta"]["provenance"]},
        "cards": cards}
