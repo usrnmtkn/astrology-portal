@@ -404,6 +404,54 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("new content actions save with required admin API metadata", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: { method: string; payload: Record<string, unknown> }[] = [];
+    await seedAdminApi(page, {
+      onGeneratedContentWrite: (write) => {
+        writes.push(write);
+      }
+    });
+
+    const createCases = [
+      { action: "Create article", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
+      { action: "Create content row", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
+      { action: "Create reusable phrase", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
+      { action: "Create template", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
+      { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_template", contentKey: "fallback-hook/manual/new-hook" }
+    ];
+
+    await openAdminCreateMenuHost(page);
+
+    for (const createCase of createCases) {
+      await openCreateMenu(page);
+      await page.getByRole("menuitem", { name: createCase.action }).click();
+      const editor = page.locator(".admin-editor-panel");
+      await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
+      if (createCase.phraseEditor) {
+        await editor.getByLabel("Phrase title").fill(`${createCase.action} QA row`);
+        await editor.getByLabel("Reusable phrase text").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+      } else {
+        await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
+        await editor.getByLabel("Headline").fill(`${createCase.action} QA row`);
+        await editor.getByLabel("Body").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+      }
+      await editor.getByRole("button", { name: "Save" }).click();
+
+      await expect.poll(() => writes.at(-1)).toMatchObject({
+        method: "POST",
+        payload: {
+          contentKey: createCase.contentKey,
+          eventType: createCase.eventType,
+          blockType: createCase.blockType
+        }
+      });
+      await openAdminCreateMenuHost(page);
+    }
+
+    await assertNoBrowserErrors();
+  });
+
   test("content editor saves row changes through the admin API", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     let generatedContentWrite: { method: string; payload: Record<string, unknown> } | null = null;
@@ -420,7 +468,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await savedRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.locator(".admin-editor-panel");
     await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
-    await expect(editor.getByRole("heading", { name: "Edit saved row" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
