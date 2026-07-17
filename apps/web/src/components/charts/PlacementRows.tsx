@@ -442,8 +442,17 @@ export function DignityBadge({ dignity, uppercase = false }: { dignity: Placemen
   );
 }
 
-function placementTableMeta(house?: number | null, degree?: string | null) {
-  const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : degree ? "House pending" : null;
+function displayHouseForPoint(house?: number | null, pointName?: string) {
+  if (typeof house === "number" && house > 0) {
+    return house;
+  }
+
+  return pointName === "Ascendant" ? 1 : null;
+}
+
+function placementTableMeta(house?: number | null, degree?: string | null, pointName?: string) {
+  const displayHouse = displayHouseForPoint(house, pointName);
+  const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : degree ? "House pending" : null;
 
   if (degree && houseLabel) {
     return `${houseLabel} · ${degree}`;
@@ -511,7 +520,7 @@ export function PlacementTableRow({
   title: string;
   variant?: "natal" | "friend" | "composite";
 }) {
-  const meta = placementTableMeta(house, degree);
+  const meta = placementTableMeta(house, degree, pointName);
   const dignityItems = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
   const hasDignity = dignityItems.length > 0;
   const className = [
@@ -644,7 +653,8 @@ export function PlanetPlacementRow({
   const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
   const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
   const timingStatuses = statuses.filter((status) => status.tone !== "retrograde");
-  const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
+  const displayHouse = displayHouseForPoint(house, pointName);
+  const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : "House pending";
   const rowClassName = [
     "sky-card",
     "planet-placement-row",
