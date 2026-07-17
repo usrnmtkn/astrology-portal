@@ -5473,6 +5473,16 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
+type SkyPlacementAppDisplaySource = "dashboard-article" | "reviewed-phrasebank" | "madlib-fallback";
+
+function skyPlacementAppDisplaySource(content: LiveGeneratedContent | null): SkyPlacementAppDisplaySource {
+  const value = content?.sourceSnapshot?.appDisplaySource ?? content?.sourceSnapshot?.runtimeRenderer;
+
+  return value === "reviewed-phrasebank" || value === "madlib-fallback" || value === "dashboard-article"
+    ? value
+    : "dashboard-article";
+}
+
 function sourceGroundedSkyPlacementNormalizedSection(
   position: PlanetPosition,
   duration?: string | null
@@ -5514,6 +5524,48 @@ function sourceGroundedSkyPlacementNormalizedSection(
   };
 }
 
+function savedSkyPlacementNormalizedSection(
+  position: PlanetPosition,
+  generatedContent: GeneratedContentMap | undefined
+): NormalizedSkyPlacementSection | null {
+  if (!generatedContent) {
+    return null;
+  }
+
+  const contentKey = skyPlacementContentKey(position.planet, position.sign);
+  const generated = liveGeneratedContent(generatedContent, contentKey);
+
+  if (
+    !generated
+    || skyPlacementAppDisplaySource(generated) !== "dashboard-article"
+    || isLocalNormalizedGeneratedContent(generated)
+    || isEmergencySkyFallbackContent(generated)
+  ) {
+    return null;
+  }
+
+  const title = skyPlacementDisplayTitle(position);
+  const bodyParagraphs = generatedContentParagraphs(generated);
+  const summaryParagraph = firstReaderFacingCopy([generated.summary]);
+  const paragraphs = bodyParagraphs.length > 0
+    ? bodyParagraphs
+    : readerFacingParagraphs(summaryParagraph ? [stripTldrPrefix(summaryParagraph)] : []);
+
+  if (paragraphs.length === 0) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "source-grounded",
+    tier: "dashboard-authored",
+    sourceKeys: [contentKey],
+    heading: generated.headline || title,
+    body: paragraphs.join("\n\n")
+  };
+}
+
 function skyPlacementMadlibFallbackSection(
   position: PlanetPosition,
   isRetrograde: boolean
@@ -5541,17 +5593,30 @@ function skyPlacementMadlibFallbackSection(
 
 function normalizeSkyPlacementSurface(
   position: PlanetPosition,
-  duration?: string | null
+  duration?: string | null,
+  generatedContent?: GeneratedContentMap
 ): NormalizedSkyPlacementArticle {
-  const sourceGroundedSection = sourceGroundedSkyPlacementNormalizedSection(position, duration);
-  const fallbackSection = sourceGroundedSection
+  const contentKey = skyPlacementContentKey(position.planet, position.sign);
+  const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
+  const appDisplaySource = skyPlacementAppDisplaySource(generated);
+  const savedSection = savedSkyPlacementNormalizedSection(position, generatedContent);
+  const sourceGroundedSection = savedSection || appDisplaySource === "madlib-fallback"
+    ? null
+    : sourceGroundedSkyPlacementNormalizedSection(position, duration);
+  const fallbackSection = savedSection || sourceGroundedSection
     ? null
     : skyPlacementMadlibFallbackSection(position, position.motion === "retrograde");
-  const sections = sourceGroundedSection ? [sourceGroundedSection] : fallbackSection ? [fallbackSection] : [];
+  const sections = savedSection
+    ? [savedSection]
+    : sourceGroundedSection
+      ? [sourceGroundedSection]
+      : fallbackSection
+        ? [fallbackSection]
+        : [];
 
   return {
     surface: "sky-placement",
-    status: sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: savedSection || sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
     sections
   };
 }
@@ -5577,7 +5642,7 @@ function currentSkyPlacementDetailArticle({
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
-  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel);
+  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent);
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => readerFacingParagraphs([section.body]));
   const sourceGroundedBody = normalized.sections
@@ -14603,7 +14668,7 @@ function currentSkyRetrogradeDetailData(
     : null;
   const timelineLines = retrogradeTimelineLines(position);
   const retrogradeTiming = compactRetrogradeTiming(position);
-  const normalized = normalizeSkyPlacementSurface(position, retrogradeTiming);
+  const normalized = normalizeSkyPlacementSurface(position, retrogradeTiming, generatedContent);
   const normalizedBody = normalized.sections.flatMap((section) => readerFacingParagraphs([section.body]));
   const tldr = normalizedSurfacePreview(normalized);
   const baseGeneratedBodyParagraphs = stripRetrogradeGeneratedHeaderParagraphs(
@@ -15353,7 +15418,7 @@ function PlacementTable({
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
-          const rowSummary = normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel));
+          const rowSummary = normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent));
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
             aspects,
             generatedAt,

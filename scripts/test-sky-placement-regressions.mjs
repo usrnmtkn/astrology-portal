@@ -486,18 +486,24 @@ assert.ok(
 );
 assert.ok(app.includes("hash.replace(/^#\\/?/, \"\")"), "Sky detail routes must accept both #sky/... and #/sky/... hash paths.");
 assert.ok(
-  app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel)")
+  app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent)")
   && app.includes("function skyPlacementMadlibFallbackSection(")
   && app.includes("emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde })"),
-  "Sky placement pages must resolve source-grounded copy through the normalizer before source-based madlib fallback."
+  "Sky placement pages must resolve dashboard-authored and source-grounded copy through the normalizer before source-based madlib fallback."
 );
 assert.ok(
-  app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") >= 0
+  app.includes("liveGeneratedContent(generatedContent, contentKey)")
+  && app.includes("skyPlacementContentKey(position.planet, position.sign)")
+  && app.includes("skyPlacementAppDisplaySource(generated)")
+  && app.includes("appDisplaySource === \"madlib-fallback\"")
+  && app.indexOf("savedSkyPlacementNormalizedSection(position, generatedContent)") >= 0
+  && app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") >= 0
   && app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")") >= 0
+  && app.indexOf("savedSkyPlacementNormalizedSection(position, generatedContent)") < app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)")
   && app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") < app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")"),
-  "Sky placement normalizer must try source-grounded placement copy before madlib fallback."
+  "Sky placement normalizer must try dashboard-authored placement copy before source-grounded copy and madlib fallback."
 );
-assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel))"), "Sky placement list rows must use the normalized source-grounded surface preview.");
+assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"), "Sky placement list rows must use the normalized dashboard/source-grounded surface preview.");
 assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyAspectSurface(aspect, generatedAt))"), "Sky aspect list and related rows must use the normalized source-grounded surface preview.");
 assert.ok(app.includes("sourceGroundedNatalPlacementSections({"), "Natal placement pages must use source-grounded package layers before emergency copy.");
 assert.ok(app.includes("options: { allowKnowledgeOnly?: boolean } = {}"), "Relationship knowledge fallback must require callers to opt into knowledge-only prose.");
