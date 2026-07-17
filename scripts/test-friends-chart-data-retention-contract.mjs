@@ -60,6 +60,96 @@ assert.match(
   "Remote Friends chart loading must hide already-imported duplicate chart rows."
 );
 assert.match(
+  manualChartsSource,
+  /function chartIdentityFromInput\(input: ManualChartInput\)/,
+  "Friends chart CRUD must have a typed identity helper for input payloads."
+);
+assert.match(
+  manualChartsSource,
+  /const existingChart = localManualChartOwnerIds\(userId\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(normalizedInput\)\);/,
+  "Creating a local Friends chart must reuse an exact existing chart across current and legacy owner keys."
+);
+assert.match(
+  manualChartsSource,
+  /function localManualChartOwnerIds\(userId: string\)/,
+  "Local Friends chart CRUD must include current and legacy owner keys."
+);
+assert.match(
+  manualChartsSource,
+  /function findLocalManualChart\(userId: string, chartId: string\)/,
+  "Local Friends chart update/delete must resolve the owner key that actually stores the selected chart."
+);
+assert.match(
+  manualChartsSource,
+  /function removeLocalManualChartsByIdentity\(userIds: string\[\], identities: Set<string>\)/,
+  "Local Friends chart update/delete must be able to sweep duplicates across owner keys by identity."
+);
+assert.match(
+  manualChartsSource,
+  /const existingRemoteChart = \(await listManualCharts\(userId\)\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(input\)\);/,
+  "Creating a remote Friends chart must reuse an exact existing chart instead of adding a duplicate row."
+);
+assert.match(
+  manualChartsSource,
+  /function updateLocalManualChart\(userId: string, chartId: string, input: ManualChartInput\)[\s\S]*const targetOwnerId = foundChart\?\.ownerId \?\? userId;[\s\S]*const existingIdentity = existingChart \? chartIdentity\(existingChart\) : null;/,
+  "Updating a local Friends chart must know its previous identity so hidden old duplicates can be removed."
+);
+assert.match(
+  manualChartsSource,
+  /const updatedIdentity = chartIdentityFromInput\(normalizedInput\);/,
+  "Updating a local Friends chart must know its new identity so hidden new duplicates can be removed."
+);
+assert.match(
+  manualChartsSource,
+  /chartIdentity\(chart\) !== updatedIdentity/,
+  "Updating a local Friends chart must remove duplicate rows matching the edited chart's new identity."
+);
+assert.match(
+  manualChartsSource,
+  /removeLocalManualChartsByIdentity\(\s*ownerIds\.filter\(\(ownerId\) => ownerId !== targetOwnerId\),\s*new Set\(\[\.\.\.\(existingIdentity \? \[existingIdentity\] : \[\]\), updatedIdentity\]\)\s*\);/s,
+  "Updating a local Friends chart must clear old and new duplicate identities from other local owner keys."
+);
+assert.match(
+  manualChartsSource,
+  /const \{ data: existingChartData, error: existingLookupError \} = await client[\s\S]*\.maybeSingle\(\);/,
+  "Updating a remote Friends chart must look up the previous row before editing."
+);
+assert.match(
+  manualChartsSource,
+  /\(chartIdentity\(chart\) === existingIdentity \|\| chartIdentity\(chart\) === updatedIdentity\)/,
+  "Updating a remote Friends chart must delete hidden duplicates matching either the old or new identity."
+);
+assert.match(
+  manualChartsSource,
+  /function deleteLocalManualChart\(userId: string, chartId: string\)[\s\S]*const deletedChart = findLocalManualChart\(userId, chartId\)\?\.chart \?\? null;[\s\S]*const deletedIdentity = deletedChart \? chartIdentity\(deletedChart\) : null;/,
+  "Deleting a local Friends chart must identify duplicate local copies by stable chart identity."
+);
+assert.match(
+  manualChartsSource,
+  /localManualChartOwnerIds\(userId\)\.forEach\(\(ownerId\) => \{/,
+  "Deleting a local Friends chart must sweep current and legacy local owner keys."
+);
+assert.match(
+  manualChartsSource,
+  /let chartIdsToDelete = \[chartId\];/,
+  "Remote Friends chart delete must track every matching duplicate chart id."
+);
+assert.match(
+  manualChartsSource,
+  /\.filter\(\(chart\) => chart\.id === chartId \|\| chartIdentity\(chart\) === deletedIdentity\)/,
+  "Remote Friends chart delete must include duplicate rows with the same chart identity."
+);
+assert.match(
+  manualChartsSource,
+  /\.in\("manual_chart_id", chartIdsToDelete\)/,
+  "Remote Friends chart delete must remove connection rows for every duplicate chart id."
+);
+assert.match(
+  manualChartsSource,
+  /\.in\("id", chartIdsToDelete\)/,
+  "Remote Friends chart delete must remove every duplicate manual_charts row so refresh cannot restore it."
+);
+assert.match(
   appSource,
   /migrateLocalManualChartsToRemote\(account\.id,\s*\[\s*cachedLocalProfile\?\.id,\s*persistedProfileId,\s*account\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\s*\)/s,
   "Successful auth/profile loading must migrate charts from active, persisted, account, and legacy local owner ids before remote charts render."
