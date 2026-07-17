@@ -559,6 +559,35 @@ function isLegacyLiveWritingRow(row: Pick<GeneratedContentRow, "content_key" | "
     || sourceType === "source-grounded-generated-snapshot";
 }
 
+function generatedRowSectionCopyValues(sections: unknown): string[] {
+  if (typeof sections === "string") {
+    return [sections];
+  }
+
+  if (Array.isArray(sections)) {
+    return sections.flatMap((section) => {
+      if (!section || typeof section !== "object" || Array.isArray(section)) {
+        return [];
+      }
+
+      const record = section as Record<string, unknown>;
+
+      return [record.body, record.text]
+        .filter((value): value is string => typeof value === "string" && value.trim().length > 0);
+    });
+  }
+
+  if (sections && typeof sections === "object") {
+    const record = sections as Record<string, unknown>;
+    const nestedSections = Array.isArray(record.sections) ? generatedRowSectionCopyValues(record.sections) : [];
+
+    return [record.body, record.text, ...nestedSections]
+      .filter((value): value is string => typeof value === "string" && value.trim().length > 0);
+  }
+
+  return [];
+}
+
 export function generatedContentParagraphs(content?: LiveGeneratedContent | null) {
   if (content && isNoProseGeneratedContent(content)) {
     return [];
@@ -863,10 +892,9 @@ export function isReaderServableGeneratedContentRow(
     ...(Array.isArray(row.flags) ? row.flags : [])
   ].join(" ").toLowerCase();
   const copyValues = [
-    row.headline,
     row.summary,
     row.body,
-    typeof row.sections === "string" ? row.sections : JSON.stringify(row.sections ?? {})
+    ...generatedRowSectionCopyValues(row.sections)
   ];
   const unsafeMetadataMarkers = [
     "legacy",

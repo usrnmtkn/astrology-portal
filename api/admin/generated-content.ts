@@ -596,7 +596,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new Error("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
   }
 
-  const patch: Record<string, unknown> = {};
+  const patch: Record<string, unknown> = {
+    updated_at: new Date().toISOString()
+  };
 
   if (body.status) {
     if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
