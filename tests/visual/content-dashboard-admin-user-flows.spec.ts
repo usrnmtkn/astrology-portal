@@ -288,6 +288,18 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
 }
 
 test.describe("content dashboard admin user flow case studies", () => {
+  test("legacy content/admin path opens the admin dashboard instead of the reader app", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.goto("/content/admin");
+
+    await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
+    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expect(page.getByRole("button", { name: "TLDR Astro home" })).toHaveCount(0);
+
+    await assertNoBrowserErrors();
+  });
+
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
