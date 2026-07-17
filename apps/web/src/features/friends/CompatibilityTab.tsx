@@ -60,6 +60,12 @@ function CompatibilitySignLabel({ sign }: { sign: string }) {
   );
 }
 
+function compatibilityFriendCopy(copy: string, friendName: string) {
+  return copy
+    .replaceAll("{friend}'s", `${friendName}'s`)
+    .replaceAll("{friend}", friendName);
+}
+
 export function CompatibilityTab({
   cards,
   dynamics,
@@ -84,6 +90,11 @@ export function CompatibilityTab({
           {cards.map((card) => {
             const writeup = card.goDeeper;
             const sameSign = writeup.sameSign;
+            const functionCopy = compatibilityFriendCopy(writeup.function, card.friendName);
+            const yourLine = compatibilityFriendCopy(writeup.yourLine, card.friendName);
+            const theirLine = compatibilityFriendCopy(writeup.theirLine, card.friendName);
+            const sameSignLine = compatibilityFriendCopy(writeup.sameSignLine, card.friendName);
+            const verdict = compatibilityFriendCopy(writeup.verdict, card.friendName);
 
             return (
             <article className="compatibility-card" key={card.id} data-content-trace={writeup.contentTrace ?? card.contentTrace}>
@@ -99,19 +110,19 @@ export function CompatibilityTab({
                 <span><strong>{card.friendName}</strong>: <CompatibilitySignLabel sign={card.friendSign} /></span>
               </div>
               <div className="compatibility-card__body compatibility-card__reading">
-                <p>{writeup.function}</p>
+                <p>{functionCopy}</p>
                 {sameSign ? (
                   <>
-                    <p>{writeup.yourLine}</p>
-                    {writeup.sameSignLine ? <p>{writeup.sameSignLine}</p> : null}
+                    <p>{yourLine}</p>
+                    {sameSignLine ? <p>{sameSignLine}</p> : null}
                   </>
                 ) : (
                   <>
-                    <p>{writeup.yourLine}</p>
-                    <p>{writeup.theirLine}</p>
+                    <p>{yourLine}</p>
+                    <p>{theirLine}</p>
                   </>
                 )}
-                <p className="compatibility-card__verdict">{writeup.verdict}</p>
+                <p className="compatibility-card__verdict">{verdict}</p>
               </div>
               {card.exactAspectLabel ? (
                 <p className="compatibility-card__receipt">{card.exactAspectLabel}</p>
