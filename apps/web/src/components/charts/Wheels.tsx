@@ -310,12 +310,9 @@ export const SkyWheel = memo(function SkyWheel({
       center,
       clusterThreshold: 6,
       maxClusterSpan: 24,
-      ...(variant === "composite"
-        ? {
-            clusterTangentSpacing: relationshipClusterTangentSpacing,
-            maxClusterTangentOffset: relationshipClusterTangentLimit
-          }
-        : {})
+      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      maxClusterTangentOffset: relationshipClusterTangentLimit,
+      useClusterLane: true,
     }
   ), [positions, ascendantLongitude, isAscendantAnchored]);
   const transitLayouts = useMemo(() => wheelMarkerLayouts(
@@ -329,6 +326,7 @@ export const SkyWheel = memo(function SkyWheel({
       maxClusterSpan: 24,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
+      useClusterLane: true,
       radialOffsets: [0],
       minMarkerRadius: radius.outer + 11,
       maxMarkerRadius: radius.outer + 30
@@ -720,6 +718,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
+      useClusterLane: true,
       radialOffsets: relationshipOuterClusterRadialOffsets,
       minMarkerRadius: radius.innerRingOuter + 10,
       maxMarkerRadius: radius.signInner - 14
@@ -736,6 +735,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
+      useClusterLane: true,
       radialOffsets: relationshipInnerClusterRadialOffsets,
       minMarkerRadius: radius.innerRingInner + 12,
       maxMarkerRadius: radius.innerRingOuter - 12
