@@ -116,7 +116,12 @@ const reviewRecordRows = generatedContentRows.map((row) => ({
   rawGlobalRow: row
 }));
 
-async function seedAdminApi(page: Page) {
+async function seedAdminApi(
+  page: Page,
+  options: {
+    onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
+  } = {}
+) {
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
       status: 200,
@@ -167,6 +172,34 @@ async function seedAdminApi(page: Page) {
     }
 
     if (pathname.endsWith("/generated-content")) {
+      const method = route.request().method();
+      if (method === "POST" || method === "PATCH") {
+        const payload = route.request().postDataJSON() as Record<string, unknown>;
+        options.onGeneratedContentWrite?.({ method, payload });
+        const updatedRow = {
+          ...generatedContentRows[0],
+          id: typeof payload.id === "string" ? payload.id : generatedContentRows[0].id,
+          content_key: typeof payload.contentKey === "string" ? payload.contentKey : generatedContentRows[0].content_key,
+          surface: typeof payload.surface === "string" ? payload.surface : generatedContentRows[0].surface,
+          mode: typeof payload.mode === "string" ? payload.mode : generatedContentRows[0].mode,
+          status: typeof payload.status === "string" ? payload.status : generatedContentRows[0].status,
+          headline: typeof payload.headline === "string" ? payload.headline : generatedContentRows[0].headline,
+          summary: typeof payload.summary === "string" ? payload.summary : generatedContentRows[0].summary,
+          body: typeof payload.body === "string" ? payload.body : generatedContentRows[0].body,
+          lane: typeof payload.lane === "string" ? payload.lane : generatedContentRows[0].lane,
+          review_state: typeof payload.reviewState === "string" ? payload.reviewState : null,
+          block_type: typeof payload.blockType === "string" ? payload.blockType : generatedContentRows[0].block_type,
+          prompt_version: typeof payload.promptVersion === "string" ? payload.promptVersion : generatedContentRows[0].prompt_version
+        };
+
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true, rows: [updatedRow] })
+        });
+        return;
+      }
+
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -356,6 +389,42 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openCreateMenu(page);
     await page.getByRole("menuitem", { name: /Create fallback hook/ }).click();
     await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await assertNoBrowserErrors();
+  });
+
+  test("content editor saves row changes through the admin API", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    let generatedContentWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    await seedAdminApi(page, {
+      onGeneratedContentWrite: (write) => {
+        generatedContentWrite = write;
+      }
+    });
+    await page.goto("/admin/content#exact-content");
+
+    await page.getByLabel("Search content").fill("qa/sky/sun-cancer");
+    const savedRow = page.locator(".admin-content-row", { hasText: "qa/sky/sun-cancer" });
+    await expect(savedRow).toHaveCount(1);
+    await savedRow.getByRole("button", { name: "Edit" }).click();
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByRole("heading", { name: "Edit saved row" })).toBeVisible();
+    await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
+    await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
+    await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
+    await editor.getByRole("button", { name: "Save" }).click();
+
+    await expect.poll(() => generatedContentWrite).toMatchObject({
+      method: "PATCH",
+      payload: {
+        id: "qa-sky-row",
+        contentKey: "qa/sky/sun-cancer",
+        headline: "Sun in Cancer QA edit",
+        summary: "Updated summary from the visual admin editor.",
+        body: "Updated body from the visual admin editor.",
+        status: "LIVE"
+      }
+    });
+    await expect(page.getByRole("status")).toContainText("qa/sky/sun-cancer saved as Published");
     await assertNoBrowserErrors();
   });
 

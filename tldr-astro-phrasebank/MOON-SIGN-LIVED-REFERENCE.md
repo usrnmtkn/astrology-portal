@@ -30,7 +30,7 @@ list) for the concrete thing. The Moon = how a person feels, soothes, and what t
   others, never feeling it's good enough.
   Marie: "You feel safest when things are handled; a tidy detail can lift your whole mood, though you can
   pick your feelings apart and never feel done."
-- **Libra** — Lived: needs harmony and a partner, hates tension in the room; shadow: avoiding conflict,
+- **Libra** — Lived: needs harmony and a partner, hates it when things get tense; shadow: avoiding conflict,
   over-accommodating, losing itself in the other person.
   Marie: "You feel calm when things are fair, and conflict unsettles you fast, though you can keep the
   peace at the cost of your own needs."
@@ -52,7 +52,7 @@ list) for the concrete thing. The Moon = how a person feels, soothes, and what t
   coldness, dissociation.
   Marie: "You need space to feel from a little distance; you process feelings by understanding them,
   though you can detach from your emotions and go cold."
-- **Pisces** — Lived: soaks up whatever feeling is in the room, empathic; shadow: losing its own
+- **Pisces** — Lived: soaks up whatever the people around it are feeling, empathic; shadow: losing its own
   boundaries and not knowing whose feelings it's carrying.
   Marie: "You soak up the emotional weather around you and feel everything at the edges, though you can
   soak up everyone else's feelings and lose your own."

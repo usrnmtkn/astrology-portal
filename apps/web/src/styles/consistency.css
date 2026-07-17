@@ -11,7 +11,9 @@
   .placements-heading .eyebrow,
   .settings-group-label,
   .article-eyebrow,
-  .article-section__eyebrow
+  .article-section__eyebrow,
+  .admin-eyebrow,
+  .admin-nav-section-label
 ) {
   display: block;
   margin: var(--label-eyebrow-margin);

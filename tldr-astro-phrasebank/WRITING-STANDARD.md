@@ -54,13 +54,48 @@ lines in her actual writing, not a generic idea of "astrology voice."
   - Yes: "Marie's Sun is in the 9th house. She needs room to question what she was taught and decide what
     she believes for herself."
 
+## Source the facts from the matching surface
+
+Voice can come from anywhere Marie wrote. **Astrological facts must come from the same kind of
+placement.** A natal Moon in a sign is a fixed trait; a Full Moon / New Moon / lunation in a sign is a
+transit, and in Marie's horoscopes it's keyed to the reader's Sun/Rising *houses*, not to a natal
+placement. Never anchor natal copy in transit/lunation writing — they mean different things.
+
+- Natal Moon in a sign → Forrest's *The Book of the Moon* (Moon-in-sign), Lofthus, *As Above, So Below*,
+  and the natal phrasebank. Not the Full Moon horoscopes.
+- The remedy/advice for a natal placement derives from that placement's own healing direction (e.g.
+  Forrest's "Secret of Happiness & Healing" per Moon sign), not from a transit article.
+
+## Sentence mechanics (from the MarieSatori.com passages + As Above, So Below)
+
+Match how the sentences move, not just the word list. From the source:
+
+1. **The chart fact leads the sentence.** Name the placement first, then the behavior it produces, in
+   second person: "With Aries driving your identity here, you're quick to start things and slow to wait."
+   Not "you are quick to start things; this comes from Aries."
+2. **The shadow turns on one hinge.** "But that same drive can make you act before you've thought it
+   through, leading you to start fights you didn't mean to." One sentence: same-trait → "can/may" →
+   participle consequence ("leading you to…"). Don't stack a separate balanced clause for the flaw.
+3. **Behavior gets a concrete range, not a keyword.** "wants to be first at everything, from a work
+   deadline to a pickup game," not "competitive, assertive, driven."
+4. **Vary length: a developed sentence, then a short flat one that lands it.** "Stop wearing burnout
+   like a badge of honor. It's just burnout." The second beat is deadpan and final.
+5. **Possibility stays conditional** with may / can / might whenever the chart supports a range, not a
+   certainty.
+6. **Close on a concrete cost or move, never an abstraction.** "…and you feel what that silence costs,"
+   not "…and growth becomes possible."
+7. **Stop once the pattern and its reason are clear.** No summary sentence restating the point.
+
 ## Do not use
 
 Em dashes. One-sentence paragraphs. "Real"/"true" as vague intensifiers. "Settle," "settles,"
 "steady," "steadiness," "comfort," "warmth" (as standalone abstractions — say the concrete thing:
 food on the table, a routine that holds, being touched, someone checking in). This ban overrides the
-source phrasebank: if her own line uses a banned word, replace it. "The catch" (use "the challenge").
-"The upside?" / "The catch?"
+source phrasebank: if her own line uses a banned word, replace it. **The "room" metaphor** — "in the
+room," "a room's mood," "the smartest in the room," "no one in the room," "read the room." Say who or
+what plainly (the people around you, whoever's with you). ("Room to breathe / room to roam" is fine —
+that's space, not a setting.) "The catch" (use "the challenge"). "The upside?" / "The catch?" "On the
+one hand / on the other hand." "The danger is…"
 "This is about…" "This placement becomes…" "This part of the chart…" "The connection asks you to…"
 "Alignment," "activation," "holding space," "navigating," "leaning into," "your journey," "a version of
 yourself," "the thread," "moves through your topics." Repeated "one placement does X while the other does

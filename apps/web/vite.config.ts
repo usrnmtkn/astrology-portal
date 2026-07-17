@@ -6,6 +6,20 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const apiRoot = resolve(repoRoot, "api");
+const adminAppRoot = resolve(repoRoot, "apps/admin");
+
+function suppressUnrelatedMonorepoHotUpdatesPlugin() {
+  return {
+    name: "tldr-suppress-unrelated-monorepo-hot-updates",
+    handleHotUpdate(context) {
+      if (context.file.startsWith(`${apiRoot}/`) || context.file.startsWith(`${adminAppRoot}/`)) {
+        return [];
+      }
+
+      return undefined;
+    }
+  };
+}
 
 function localApiRoutePlugin() {
   return {
@@ -71,7 +85,7 @@ function localApiRoutePlugin() {
 }
 
 export default defineConfig({
-  plugins: [localApiRoutePlugin(), react()],
+  plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
   assetsInclude: ["**/*.wasm"],
   build: {
     modulePreload: {

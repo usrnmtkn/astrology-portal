@@ -12,17 +12,26 @@ BANNED = [
     "steady", "steadier", "steadiness",
     "comfort", "comforts", "comforting", "comfortable",
     "warmth", "cool", "cools", "cooled", "cooling",
-    "real", "really", "true", "truly", "truth", "truthful",
-    "energy", "alignment", "activation", "navigating", "native",
-    "physical",  # as in "life is physical"
+    "alignment", "activation",
+    # words Marie explicitly rejected in context (feelings), keep banned:
+    "settle", "settles", "settled", "settling", "steady", "steadier", "steadiness",
+    "shrink", "shrinks", "shrinking",
 ]
-# phrase-level bans
+# NOTE: "real / actually / truth / energy / comfort / navigate / performing / the version of you /
+# healing / transformation / meaningful" are NOT banned. Marie uses them in her own posts. The old
+# blocklist was banning her own vocabulary. Match the mechanics (WRITING-STANDARD.md), not a word list.
+# phrase-level bans — only genuine generic-AI-astrology tells Marie does NOT use,
+# plus the room-as-setting metaphor she flagged.
 PHRASES = [
-    "the catch", "holding space", "leaning into", "your journey", "the thread",
-    "this is about", "this placement", "moves through your topics",
-    "emotional clarity", "lasting stability", "meaningful growth",
-    "of a thing", "the whole truth", "at its core", "the essence of",
+    "holding space", "leaning into", "your journey", "this energy invites",
+    "the connection asks", "moves through your topics", "this placement becomes",
+    "this is about", "the thread",
+    # room-as-social-setting metaphor (NOT "room to breathe/roam", which is space)
+    "the room", "a room", "room's", "in the room", "read the room", "reads the room",
+    "the whole room", "everyone in the room",
 ]
+
+REGEXES = []
 
 def lint(text):
     hits = []
@@ -35,6 +44,10 @@ def lint(text):
         i = low.find(p)
         if i != -1:
             hits.append((p, text[max(0, i-15):i+len(p)+15].replace("\n", " ").strip()))
+    for pat, label in REGEXES:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            hits.append((label, m.group(0).replace("\n", " ").strip()))
     if "—" in text:
         hits.append(("em dash", "— present"))
     return hits

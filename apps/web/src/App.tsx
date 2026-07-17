@@ -3151,6 +3151,24 @@ function readCachedSkySnapshot(cacheKey: string) {
   }
 }
 
+function readMostRecentCachedSkySnapshot() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const snapshots = Object.keys(window.sessionStorage)
+      .filter((key) => key.startsWith(`${skySnapshotSessionStoragePrefix}:`))
+      .map((key) => readCachedSkySnapshot(key))
+      .filter((snapshot): snapshot is SkySnapshot => Boolean(snapshot))
+      .sort((a, b) => Date.parse(b.generatedAt) - Date.parse(a.generatedAt));
+
+    return snapshots[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function writeCachedSkySnapshot(cacheKey: string, snapshot: SkySnapshot) {
   if (typeof window === "undefined") {
     return;
@@ -11208,7 +11226,7 @@ export function App() {
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
-  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
+  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey) ?? readMostRecentCachedSkySnapshot();
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "ready" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
@@ -11858,6 +11876,15 @@ export function App() {
     if (cachedSky) {
       setSky(cachedSky);
       setSkyStatus("ready");
+    } else if (isFriendsMode) {
+      const recentSky = readMostRecentCachedSkySnapshot();
+
+      if (recentSky) {
+        setSky((currentSky) => currentSky ?? recentSky);
+        setSkyStatus((currentStatus) => currentStatus === "ready" ? currentStatus : "loading");
+      } else {
+        setSkyStatus("loading");
+      }
     } else {
       setSkyStatus("loading");
     }
@@ -12153,7 +12180,7 @@ export function App() {
   ]);
 
   useEffect(() => {
-    if (!userProfile || !isTldrAstroApiConfigured) {
+    if (!isProfileMode || !userProfile || !isTldrAstroApiConfigured) {
       setPersonalTiming(null);
       setPersonalTimingStatus("idle");
       return;
@@ -12218,13 +12245,14 @@ export function App() {
     userProfile?.currentLocation,
     userProfile?.currentLocationData?.label,
     userProfile?.currentLocationData?.timeZone,
+    isProfileMode,
     skyDate
   ]);
 
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!userProfile || !remoteAccountId || !primaryChart || !personalTiming || personalTimingStatus !== "ready") {
+    if (!isProfileMode || !userProfile || !remoteAccountId || !primaryChart || !personalTiming || personalTimingStatus !== "ready") {
       setPersonalTimingGenerated(null);
       setPersonalTimingGeneratedStatus("idle");
       return;
@@ -12315,6 +12343,7 @@ export function App() {
     personalTiming,
     personalTimingStatus,
     remoteAccountId,
+    isProfileMode,
     skyDate,
     userProfile?.id,
     userProfile?.name,
@@ -12327,7 +12356,7 @@ export function App() {
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!userProfile || !remoteAccountId || !primaryChart || !transitsDrawn) {
+    if (!isProfileMode || !userProfile || !remoteAccountId || !primaryChart || !transitsDrawn) {
       setPersonalTransitGeneratedContent(new Map());
       return;
     }
@@ -12462,6 +12491,7 @@ export function App() {
   }, [
     profileTransits,
     remoteAccountId,
+    isProfileMode,
     skyDate,
     transitForm.chartDate,
     transitsDrawn,
@@ -17544,7 +17574,9 @@ function ManualChartsPanel({
   }, [friendProfileTab, selectedChartIsEvent]);
 
   useEffect(() => {
-    if (!isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
+    const shouldLoadRelationshipCompare = friendProfileTab === "synastry" || friendProfileTab === "composite";
+
+    if (!shouldLoadRelationshipCompare || !isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
       setRelationshipCompare(null);
       setRelationshipCompareStatus("idle");
       return;
@@ -17604,6 +17636,7 @@ function ManualChartsPanel({
     relationshipComparisonManualChart?.birthTimeUnknown,
     relationshipComparisonManualChart?.birthLocation?.label,
     relationshipComparisonManualChart?.birthLocation?.timeZone,
+    friendProfileTab,
     profile.id,
     profile.name,
     profile.settings,
@@ -17686,7 +17719,11 @@ function ManualChartsPanel({
     }
 
     if (!chartsReady) {
-      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profile.id]);
+      const cachedCharts = listCachedManualCharts([
+        chartOwnerUserId,
+        profile.id,
+        ...listLocalManualChartUserIds()
+      ]);
 
       if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
         chartsLoadedRef.current = true;

@@ -849,8 +849,16 @@ export function GeneratedContentAdminDashboard() {
     handledHashRef.current = "";
   }
 
-  function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams) {
+  function closeEditor() {
+    setSelectedRowId(null);
+    setDraft(null);
+  }
+
+  function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
     setIsCreateMenuOpen(false);
+    if (!options.keepEditorOpen) {
+      closeEditor();
+    }
     setActivePage(page);
     setAdminHash(adminHashForPage(page, params));
   }
@@ -1001,12 +1009,10 @@ export function GeneratedContentAdminDashboard() {
   function openRow(row: AdminGeneratedContentRow) {
     setSelectedRowId(row.id);
     setDraft(draftFromRow(row));
-    window.requestAnimationFrame(() => {
-      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
   }
 
   function openHookDraft(item: HookCatalogItem) {
+    navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
     const saved = savedFallbackRows.find((row) => row.content_key === canonicalFallbackContentKey(item.key) || hookKeyFromSavedRow(row) === item.key);
     if (saved) {
       openRow(saved);
@@ -1014,17 +1020,10 @@ export function GeneratedContentAdminDashboard() {
       setSelectedRowId(null);
       setDraft(emptyDraftForHook(item));
     }
-    navigateAdminPage("knowledge");
-  }
-
-  function scrollEditorIntoView() {
-    window.requestAnimationFrame(() => {
-      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
   }
 
   function handleCreateAction(page: AdminDashboardPage, nextMessage: string) {
-    navigateAdminPage(page);
+    navigateAdminPage(page, undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
     setMessage(nextMessage);
@@ -1043,7 +1042,6 @@ export function GeneratedContentAdminDashboard() {
         blockType: "sky_article",
         promptVersion: "manual-admin"
       });
-      scrollEditorIntoView();
       return;
     }
     if (page === "vocabulary") {
@@ -1061,7 +1059,6 @@ export function GeneratedContentAdminDashboard() {
         blockType: "vocabulary_phrase",
         promptVersion: "manual-admin"
       });
-      scrollEditorIntoView();
       return;
     }
     if (page === "templates") {
@@ -1079,7 +1076,6 @@ export function GeneratedContentAdminDashboard() {
         blockType: "template",
         promptVersion: "manual-admin"
       });
-      scrollEditorIntoView();
       return;
     }
     if (page === "knowledge") {
@@ -1097,7 +1093,6 @@ export function GeneratedContentAdminDashboard() {
         blockType: "fallback_hook",
         promptVersion: "manual-admin"
       });
-      scrollEditorIntoView();
     }
   }
 
@@ -1936,22 +1931,14 @@ export function GeneratedContentAdminDashboard() {
 
   function renderEditor() {
     if (!draft && !selectedRow) {
-      return (
-        <aside ref={editorRef} className="admin-editor-panel admin-review-detail" aria-label="Generated content record detail">
-          <div className="admin-editor-empty-state">
-            <p className="admin-eyebrow">Visual editor</p>
-            <h2>Select a row to edit it</h2>
-            <p>Use the Edit button in any row, or create a new content row from the Create menu.</p>
-          </div>
-        </aside>
-      );
+      return null;
     }
 
     const currentDraft = draft ?? (selectedRow ? draftFromRow(selectedRow) : null);
     if (!currentDraft) return null;
 
     return (
-      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" aria-label="Generated content record detail">
+      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-label="Generated content editor">
         <div className="admin-editor-toolbar">
           <div>
             <p className="admin-eyebrow">Post editor</p>
@@ -1959,8 +1946,8 @@ export function GeneratedContentAdminDashboard() {
           </div>
           <div className="admin-editor-toolbar-actions">
             <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
-            <button type="button" onClick={() => { setSelectedRowId(null); setDraft(null); }}>
-              Clear
+            <button type="button" onClick={closeEditor}>
+              Close
             </button>
           </div>
         </div>
