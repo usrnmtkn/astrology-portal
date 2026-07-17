@@ -7,7 +7,7 @@ const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-fl
 const adminPages = [
   { nav: "Studio Home", title: "Content Studio", breadcrumb: "Admin / Home", hash: "home" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
-  { nav: "Exact Content", title: "Exact Content", breadcrumb: "Admin / Write / Exact content", hash: "exact-content" },
+  { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
   { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
   { nav: "Slots", title: "Slots", breadcrumb: "Admin / Composition / Slots", hash: "slots" },
@@ -321,7 +321,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     }
 
     await openAdminDeepLink("#exact-content?category=Relationship&source=phrasebank&q=synastry");
-    await expectAdminHeader(page, "Exact Content", "Admin / Write / Exact content");
+    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await expect(page.locator("section[aria-label='Content list filters']").getByLabel("Category")).toHaveValue("Relationship");
     await expect(page.locator("section[aria-label='Content list filters']").getByLabel("Content class")).toHaveValue("phrasebank");
@@ -365,13 +365,13 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openCreateMenu(page);
     await page.getByRole("menuitem", { name: /Create article/ }).click();
-    await expectAdminHeader(page, "Exact Content", "Admin / Write / Exact content");
+    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     await expect(page.locator(".admin-review-workspace, .admin-workbench").first()).toBeVisible();
 
     await openAdminCreateMenuHost(page);
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create exact content row/ }).click();
-    await expectAdminHeader(page, "Exact Content", "Admin / Write / Exact content");
+    await page.getByRole("menuitem", { name: /Create content row/ }).click();
+    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.locator("section[aria-label='Content controls']")).toBeVisible();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
 
@@ -407,6 +407,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(savedRow).toHaveCount(1);
     await savedRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.locator(".admin-editor-panel");
+    await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
     await expect(editor.getByRole("heading", { name: "Edit saved row" })).toBeVisible();
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
@@ -433,7 +434,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
     await page.goto("/admin/content");
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Exact Content" }).click();
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await expect(page.locator("[aria-label='Status']")).toBeVisible();
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Draft/ })).toBeVisible();
@@ -460,7 +461,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Slots" }).click();
     await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
-    await expect(page.getByRole("button", { name: "All sources" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Editable slot rows/ })).toBeVisible();
     await expect(page.getByRole("button", { name: "Needs rows" })).toBeVisible();
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Vocabulary & Phrases" }).click();
@@ -474,7 +475,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Surface Map" }).click();
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
-    await expect(page.getByText(/public surfaces|exact content paths/i)).toBeVisible();
+    await expect(page.getByText(/public surfaces|content paths/i)).toBeVisible();
 
     await assertNoBrowserErrors();
   });
@@ -490,7 +491,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Admin desktop home");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-content-studio.png") });
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Exact Content" }).click();
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("main.admin-dashboard")).not.toContainText(forbiddenReaderPreviewCopy);
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
 
