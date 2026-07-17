@@ -1120,7 +1120,7 @@
   margin: 0 auto;
   color: var(--ink);
   font-size: var(--text-section-label-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);
   text-align: center;
@@ -1153,11 +1153,12 @@
   background: color-mix(in srgb, var(--synastry-accent) 28%, transparent);
 }
 
-.friend-chart-legend strong {
+.friend-chart-legend-item > span {
   display: block;
   max-width: none;
   overflow: visible;
   color: var(--ink);
+  font-weight: var(--weight-regular);
   text-overflow: clip;
   white-space: normal;
 }
@@ -1243,9 +1244,10 @@
 
 .synastry-placement-row {
   --row-bg: var(--card-bg);
+  --synastry-placement-meta-width: 104px;
 
   display: grid;
-  grid-template-columns: minmax(58px, max-content) 34px minmax(86px, max-content);
+  grid-template-columns: minmax(58px, max-content) 34px var(--synastry-placement-meta-width);
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
@@ -1391,15 +1393,51 @@
 
 .synastry-placement-degree,
 .synastry-placement-house {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1em;
   color: var(--muted);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-h1);
+  line-height: var(--leading-label);
   text-align: right;
   white-space: nowrap;
 }
 
-.synastry-placement-meta,
+.synastry-placement-degree {
+  justify-content: flex-end;
+}
+
+.synastry-placement-house {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.synastry-placement-meta {
+  display: grid;
+  grid-template-columns: minmax(52px, 1fr) 4px 28px;
+  align-items: center;
+  justify-self: end;
+  justify-content: end;
+  column-gap: var(--space-2);
+  width: var(--synastry-placement-meta-width);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.synastry-placement-meta-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-meta-color);
+  line-height: var(--leading-label);
+}
+
 .synastry-placement-chip small,
 .synastry-placement-empty {
   display: flex;
