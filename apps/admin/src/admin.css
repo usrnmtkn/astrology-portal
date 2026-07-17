@@ -400,8 +400,14 @@ body,
 .admin-create-menu-panel small {
   color: var(--admin-muted);
   font-size: var(--type-hint-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   line-height: var(--leading-meta);
+}
+
+.admin-access-inline-field {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: min(360px, 100%);
 }
 
 .admin-api-indicator {
@@ -8748,5 +8754,381 @@ body,
 
   .admin-dashboard .admin-studio-map :where(button, article) {
     min-height: 86px;
+  }
+}
+
+/* Rebuilt phrasebank dashboard layout. Keep these overrides last so the
+   old generated-content dashboard styles cannot collapse the new IA. */
+.admin-dashboard {
+  overflow-x: hidden;
+}
+
+.admin-dashboard .admin-main {
+  min-width: 0;
+  overflow-x: hidden;
+  padding: clamp(28px, 4vw, 48px);
+  width: 100%;
+}
+
+.admin-dashboard .admin-dashboard-header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--admin-space-5xl);
+  justify-content: space-between;
+  margin: 0 0 var(--admin-space-8xl);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-dashboard-header > div:first-child {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-dashboard-header h1 {
+  font-size: clamp(34px, 3.2vw, 48px);
+  line-height: 1.05;
+  margin: var(--admin-space-lg) 0 var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-dashboard-header p:not(.admin-breadcrumb) {
+  max-width: 980px;
+}
+
+.admin-dashboard .admin-create-menu {
+  flex: 0 0 auto;
+  margin-left: auto;
+  max-width: 240px;
+  position: relative;
+  z-index: 5;
+}
+
+.admin-dashboard .admin-create-button {
+  justify-content: center;
+  min-width: 132px;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-template-page {
+  display: grid;
+  gap: var(--admin-space-5xl);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-status-grid {
+  display: grid;
+  gap: var(--admin-space-xl);
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  max-width: 100%;
+}
+
+.admin-dashboard .admin-status-card {
+  align-content: start;
+  background: var(--admin-ui-panel);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+  display: grid;
+  gap: var(--admin-space-sm);
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 104px;
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-status-card span,
+.admin-dashboard .admin-status-card small {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-status-card small {
+  color: var(--admin-ui-muted);
+  grid-column: 1 / -1;
+  line-height: var(--leading-description);
+}
+
+.admin-dashboard .admin-status-card .admin-stat-value {
+  color: var(--admin-ui-text);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.admin-dashboard .admin-content-toolbar,
+.admin-dashboard .admin-reader-safety-panel,
+.admin-dashboard .admin-phrasebook-panel {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-5xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--admin-space-5xl);
+}
+
+.admin-dashboard .admin-content-toolbar > *,
+.admin-dashboard .admin-reader-safety-panel > *,
+.admin-dashboard .admin-phrasebook-panel > * {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-toolbar button,
+.admin-dashboard .admin-content-toolbar .admin-new-actions button {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-toolbar p,
+.admin-dashboard .admin-phrasebook-panel p,
+.admin-dashboard .admin-template-card p {
+  line-height: var(--leading-description);
+  max-width: 760px;
+}
+
+.admin-dashboard .admin-content-table-scroll {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.admin-dashboard .admin-content-table {
+  min-width: 1040px;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.admin-dashboard .admin-content-table th,
+.admin-dashboard .admin-content-table td {
+  overflow: hidden;
+  padding: var(--admin-space-xl);
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+.admin-dashboard .admin-content-title-cell,
+.admin-dashboard .admin-content-row-key,
+.admin-dashboard .admin-content-location {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-title-cell {
+  display: grid;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-content-row-key {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-dashboard .admin-template-card-list {
+  display: grid;
+  gap: var(--admin-space-xl);
+  max-width: 100%;
+}
+
+.admin-dashboard .admin-template-card {
+  background: var(--admin-ui-panel);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+  display: grid;
+  gap: var(--admin-space-xl);
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--admin-space-5xl);
+}
+
+.admin-dashboard .admin-template-card .admin-eyebrow,
+.admin-dashboard .admin-content-toolbar .admin-eyebrow,
+.admin-dashboard .admin-phrasebook-panel .admin-eyebrow {
+  margin: 0 0 var(--admin-space-lg);
+  position: static;
+}
+
+.admin-dashboard .admin-studio-map {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-studio-map :where(button, article) {
+  background: var(--admin-ui-panel);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+}
+
+.admin-dashboard .admin-review-queue-layout,
+.admin-dashboard .admin-workbench {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-workspace {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-4xl);
+  grid-template-columns: minmax(360px, 0.45fr) minmax(0, 1fr);
+}
+
+.admin-dashboard .admin-list-panel {
+  max-height: none;
+  min-width: 0;
+  overflow: visible;
+}
+
+.admin-dashboard .admin-editor-panel {
+  background: var(--admin-ui-panel);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+  display: grid;
+  gap: var(--admin-space-3xl);
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--admin-space-4xl);
+  position: sticky;
+  top: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-editor-empty-state {
+  display: grid;
+  gap: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-editor-empty-state h2,
+.admin-dashboard .admin-editor-toolbar h2 {
+  font-size: 24px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.admin-dashboard .admin-editor-toolbar,
+.admin-dashboard .admin-editor-toolbar-actions {
+  align-items: start;
+  display: flex;
+  gap: var(--admin-space-lg);
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-toolbar-actions {
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.admin-dashboard .admin-post-editor {
+  display: grid;
+  gap: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-title-field,
+.admin-dashboard .admin-review-copy-editor,
+.admin-dashboard .admin-metadata-field,
+.admin-dashboard .admin-field-wide {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: 0;
+  position: static;
+}
+
+.admin-dashboard .admin-title-field > span,
+.admin-dashboard .admin-review-copy-editor > span,
+.admin-dashboard .admin-metadata-field > span,
+.admin-dashboard .admin-field-wide > span {
+  display: block;
+  line-height: var(--leading-label);
+  margin: 0;
+  padding: 0;
+  position: static;
+  transform: none;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-title-field input,
+.admin-dashboard .admin-review-copy-editor textarea,
+.admin-dashboard .admin-metadata-field :where(input, select),
+.admin-dashboard .admin-field-wide input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.admin-dashboard .admin-review-copy-editor textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.admin-dashboard .admin-metadata-fields {
+  border: 0;
+  display: grid;
+  gap: var(--admin-space-xl);
+  grid-template-columns: 1fr;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.admin-dashboard .admin-edit-row-button {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 34px;
+  min-width: 64px;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-row-check input {
+  height: 16px;
+  width: 16px;
+}
+
+.admin-dashboard .admin-content-table td:last-child,
+.admin-dashboard .admin-content-table th:last-child {
+  text-align: right;
+  width: 88px;
+}
+
+.admin-dashboard .admin-save-toast {
+  bottom: var(--admin-space-7xl);
+  max-width: min(420px, calc(100vw - 48px));
+  right: var(--admin-space-7xl);
+}
+
+@media (max-width: 1180px) {
+  .admin-dashboard .admin-status-grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  .admin-dashboard .admin-content-toolbar,
+  .admin-dashboard .admin-reader-safety-panel,
+  .admin-dashboard .admin-phrasebook-panel,
+  .admin-dashboard .admin-review-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .admin-editor-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-dashboard .admin-main {
+    padding: var(--admin-space-5xl);
+  }
+
+  .admin-dashboard .admin-dashboard-header {
+    display: grid;
+  }
+
+  .admin-dashboard .admin-create-menu,
+  .admin-dashboard .admin-create-button {
+    max-width: none;
+    width: 100%;
+  }
+
+  .admin-dashboard .admin-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .admin-content-table {
+    min-width: 760px;
   }
 }
