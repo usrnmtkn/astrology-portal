@@ -182,6 +182,7 @@ export function wheelMarkerLayouts<T>(
     maxClusterSpan = 24,
     clusterTangentSpacing,
     maxClusterTangentOffset = 24,
+    useClusterLane = false,
     radialOffsets,
     minMarkerRadius,
     maxMarkerRadius
@@ -192,6 +193,7 @@ export function wheelMarkerLayouts<T>(
     maxClusterSpan?: number;
     clusterTangentSpacing?: number;
     maxClusterTangentOffset?: number;
+    useClusterLane?: boolean;
     radialOffsets?: number[];
     minMarkerRadius?: number;
     maxMarkerRadius?: number;
@@ -244,10 +246,18 @@ export function wheelMarkerLayouts<T>(
   const layouts = new Map<string, WheelMarkerLayout>();
   groups.forEach((group) => {
     const tangentOffsets = clusterTangentOffsets(group.length, clusterTangentSpacing, maxClusterTangentOffset);
+    const clusterAnchor = group[0]?.angle ?? 0;
+    const clusterCenterAngle = group.length > 1
+      ? normalizedAngle(
+          group.reduce((total, entry) => total + unwrapFrom(clusterAnchor, entry.angle), 0) / group.length
+        )
+      : clusterAnchor;
 
     group.forEach((entry, index) => {
-      const visualAngle = entry.angle;
-      const radialOffset = radialOffsets?.[index % radialOffsets.length] ?? clusterRadialOffset(index, group.length);
+      const visualAngle = useClusterLane && group.length > 1 ? clusterCenterAngle : entry.angle;
+      const radialOffset = useClusterLane && group.length > 1
+        ? 0
+        : radialOffsets?.[index % radialOffsets.length] ?? clusterRadialOffset(index, group.length);
       const markerRadius = boundedRadius(baseRadius + radialOffset, minMarkerRadius, maxMarkerRadius);
       const markerBase = polarToCartesian(center, center, markerRadius, visualAngle);
       const tangentRad = ((visualAngle + 90) * Math.PI) / 180;
