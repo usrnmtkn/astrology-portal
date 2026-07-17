@@ -62,6 +62,13 @@ const signIconSize = 27;
 const longSignIconSize = 29;
 const relationshipClusterTangentSpacing = 23;
 const relationshipClusterTangentLimit = 40;
+const relationshipOuterClusterRadialOffsets = [0, 16, -12, 30, -24, 42, -34];
+const relationshipInnerClusterRadialOffsets = [0, -14, 14, -28, 28, -40, 40];
+
+type ChartPoint = {
+  x: number;
+  y: number;
+};
 
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
@@ -94,10 +101,6 @@ function formatPlanetPlacementTitle(position: PlanetPosition) {
 
 function formatPlanetPlacementLine(position: PlanetPosition) {
   return `${formatPlanetPlacementTitle(position)} ${formatPlanetDegree(position)}`;
-}
-
-function angleFromCenter(center: number, point: { x: number; y: number }) {
-  return ((Math.atan2(center - point.y, point.x - center) * 180) / Math.PI + 360) % 360;
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
@@ -717,7 +720,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
-      radialOffsets: [0],
+      radialOffsets: relationshipOuterClusterRadialOffsets,
       minMarkerRadius: radius.innerRingOuter + 10,
       maxMarkerRadius: radius.signInner - 14
     }
@@ -733,11 +736,122 @@ export const SynastryWheel = memo(function SynastryWheel({
       maxClusterSpan: 22,
       clusterTangentSpacing: relationshipClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
-      radialOffsets: [0],
+      radialOffsets: relationshipInnerClusterRadialOffsets,
       minMarkerRadius: radius.innerRingInner + 12,
       maxMarkerRadius: radius.innerRingOuter - 12
     }
   ), [innerPositions, ascendantLongitude, isNatalWheel]);
+  const planetCollisionGeometry = useMemo(() => {
+    function collisionItems(positions: PlanetPosition[], ring: "outer" | "inner") {
+      const isOuter = ring === "outer";
+      const layouts = isOuter ? outerPlanetLayouts : innerPlanetLayouts;
+      const baseRadius = isOuter ? radius.outerPlanet : radius.innerPlanet;
+      const tickInnerRadius = isOuter ? radius.signInner - 17 : radius.innerRingOuter - 17;
+      const tickOuterRadius = isOuter ? radius.signInner - 5 : radius.innerRingOuter - 5;
+      const degreeDistance = isOuter ? 19 : 18;
+
+      return positions.map((position) => {
+        const angle = angleForLongitude(zodiacLongitude(position));
+        const marker = layouts.get(position.planet)?.marker ?? point(angle, baseRadius);
+        const degreeOffset = inwardMarkerOffset(center, marker, degreeDistance);
+
+        return {
+          degree: {
+            x: marker.x + degreeOffset.x,
+            y: marker.y + degreeOffset.y
+          },
+          tick: {
+            start: point(angle, tickInnerRadius),
+            end: point(angle, tickOuterRadius)
+          }
+        };
+      });
+    }
+
+    return {
+      outer: collisionItems(outerPositions, "outer"),
+      inner: collisionItems(innerPositions, "inner")
+    };
+  }, [outerPositions, innerPositions, outerPlanetLayouts, innerPlanetLayouts, ascendantLongitude, isNatalWheel]);
+
+  function distanceToSegment(pointToCheck: ChartPoint, start: ChartPoint, end: ChartPoint) {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const lengthSquared = dx * dx + dy * dy;
+
+    if (lengthSquared === 0) {
+      return Math.hypot(pointToCheck.x - start.x, pointToCheck.y - start.y);
+    }
+
+    const progress = Math.max(0, Math.min(1, ((pointToCheck.x - start.x) * dx + (pointToCheck.y - start.y) * dy) / lengthSquared));
+    const projected = {
+      x: start.x + progress * dx,
+      y: start.y + progress * dy
+    };
+
+    return Math.hypot(pointToCheck.x - projected.x, pointToCheck.y - projected.y);
+  }
+
+  function adjustedHouseLabels(
+    labels: typeof outerHouseLabels,
+    ring: "outer" | "inner"
+  ) {
+    const collisions = planetCollisionGeometry[ring];
+    const baseRadius = ring === "outer" ? houseLabelRadius.outer : houseLabelRadius.inner;
+    const minRadius = ring === "outer" ? radius.innerRingOuter + 10 : radius.innerRingInner + 20;
+    const maxRadius = ring === "outer" ? radius.signInner - 24 : radius.innerRingOuter - 8;
+    const radialOffsets = ring === "outer" ? [0, -18, 18, -30, 30, -10, 10] : [0, -16, 12, -28, 24, -8, 8];
+    const tangentOffsets = [0, -14, 14, -24, 24];
+
+    function score(candidate: ChartPoint) {
+      return collisions.reduce((total, collision) => {
+        const degreeDistance = Math.hypot(candidate.x - collision.degree.x, candidate.y - collision.degree.y);
+        const tickDistance = distanceToSegment(candidate, collision.tick.start, collision.tick.end);
+        const degreeOverlap = Math.max(0, 21 - degreeDistance);
+        const tickOverlap = Math.max(0, 15 - tickDistance);
+
+        return total + degreeOverlap * degreeOverlap + tickOverlap * tickOverlap;
+      }, 0);
+    }
+
+    return labels.map((label) => {
+      const candidates = radialOffsets.flatMap((radialOffset) => {
+        const candidateRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius + radialOffset));
+        const radialPoint = point(label.angle, candidateRadius);
+        const tangentRad = ((label.angle + 90) * Math.PI) / 180;
+
+        return tangentOffsets.map((tangentOffset) => ({
+          x: radialPoint.x + Math.cos(tangentRad) * tangentOffset,
+          y: radialPoint.y - Math.sin(tangentRad) * tangentOffset
+        }));
+      });
+      const best = candidates.reduce((bestCandidate, candidate) => {
+        const candidateScore = score(candidate);
+
+        if (candidateScore < bestCandidate.score) {
+          return { point: candidate, score: candidateScore };
+        }
+
+        return bestCandidate;
+      }, { point: { x: label.x, y: label.y }, score: score({ x: label.x, y: label.y }) });
+      const adjustedDistance = Math.hypot(best.point.x - label.x, best.point.y - label.y);
+
+      return {
+        ...label,
+        x: best.point.x,
+        y: best.point.y,
+        collisionAdjusted: adjustedDistance > 0.5
+      };
+    });
+  }
+  const adjustedOuterHouseLabels = useMemo(
+    () => adjustedHouseLabels(outerHouseLabels, "outer"),
+    [outerHouseLabels, planetCollisionGeometry, houseLabelRadius.outer]
+  );
+  const adjustedInnerHouseLabels = useMemo(
+    () => adjustedHouseLabels(innerHouseLabels, "inner"),
+    [innerHouseLabels, planetCollisionGeometry, houseLabelRadius.inner]
+  );
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
@@ -745,16 +859,14 @@ export const SynastryWheel = memo(function SynastryWheel({
     const baseRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
     const truePoint = point(angle, baseRadius);
     const rawMarker = layout?.marker ?? point(angle, baseRadius);
-    const marker = point(angleFromCenter(center, rawMarker), baseRadius);
+    const marker = rawMarker;
     const tickInner = ring === "outer"
       ? point(angle, radius.signInner - 17)
       : point(angle, radius.innerRingOuter - 17);
     const tickOuter = ring === "outer"
       ? point(angle, radius.signInner - 5)
       : point(angle, radius.innerRingOuter - 5);
-    const degreeOffset = ring === "outer"
-        ? { x: 0, y: 18 }
-        : { x: 0, y: 17 };
+    const degreeOffset = inwardMarkerOffset(center, marker, ring === "outer" ? 19 : 18);
     const markerDelta = Math.hypot(marker.x - truePoint.x, marker.y - truePoint.y);
     const hasDisplacement = Boolean(layout && (layout.clusterSize > 1 || markerDelta > 0.5));
 
@@ -882,15 +994,29 @@ export const SynastryWheel = memo(function SynastryWheel({
         </g>
       )}
       <g className="house-labels synastry-house-labels synastry-outer-house-labels" aria-label={ascendant ? "Outer chart whole sign houses" : "Outer chart natural house labels"}>
-        {outerHouseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--outer" aria-label={`Outer chart ${ariaLabel}`}>
+        {adjustedOuterHouseLabels.map(({ house, x, y, ariaLabel, collisionAdjusted }) => (
+          <text
+            key={house}
+            x={x}
+            y={y}
+            className={`zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--outer${collisionAdjusted ? " synastry-house-number--collision-adjusted" : ""}`}
+            aria-label={`Outer chart ${ariaLabel}`}
+            data-collision-adjusted={collisionAdjusted ? "true" : undefined}
+          >
             {house}
           </text>
         ))}
       </g>
       <g className="house-labels synastry-house-labels synastry-inner-house-labels" aria-label={innerAscendant ? "Inner chart whole sign houses" : "Inner chart natural house labels"}>
-        {innerHouseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--inner" aria-label={`Inner chart ${ariaLabel}`}>
+        {adjustedInnerHouseLabels.map(({ house, x, y, ariaLabel, collisionAdjusted }) => (
+          <text
+            key={house}
+            x={x}
+            y={y}
+            className={`zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--inner${collisionAdjusted ? " synastry-house-number--collision-adjusted" : ""}`}
+            aria-label={`Inner chart ${ariaLabel}`}
+            data-collision-adjusted={collisionAdjusted ? "true" : undefined}
+          >
             {house}
           </text>
         ))}
@@ -921,12 +1047,6 @@ export const SynastryWheel = memo(function SynastryWheel({
           })}
         </g>
       )}
-      <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
-        {outerPositions.map((position) => renderPlanet(position, "outer"))}
-      </g>
-      <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
-        {innerPositions.map((position) => renderPlanet(position, "inner"))}
-      </g>
       <g className="sign-labels">
         {signLabels.map(({ sign, isLong, x, y }) => {
           const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
@@ -947,6 +1067,12 @@ export const SynastryWheel = memo(function SynastryWheel({
             </g>
           );
         })}
+      </g>
+      <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
+        {outerPositions.map((position) => renderPlanet(position, "outer"))}
+      </g>
+      <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
+        {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
       <text x={center} y={626} className="chart-house-system-label">
         Whole-sign houses · angles exact

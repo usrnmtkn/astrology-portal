@@ -511,8 +511,7 @@
   opacity: max(var(--aspect-line-opacity, 0.48), 0.56);
 }
 
-.sky-wheel-synastry .planet-label-group--displaced .planet-glyph:not(.planet-glyph-image),
-.sky-wheel-synastry .planet-label-group--displaced .planet-degree {
+.sky-wheel-synastry .planet-label-group--displaced .planet-glyph:not(.planet-glyph-image) {
   stroke: color-mix(in srgb, var(--surface) 88%, transparent);
   stroke-width: 3px;
   paint-order: stroke fill;

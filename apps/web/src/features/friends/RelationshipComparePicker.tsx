@@ -44,11 +44,11 @@ export function RelationshipComparePicker({
         <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
           <span className="friend-chart-legend-item friend-chart-legend-item-outer">
             <b aria-hidden="true" />
-            <strong>{outerName ?? outerInitials ?? "Outer"} · outer ring</strong>
+            <span>{outerName ?? outerInitials ?? "Outer"} · outer ring</span>
           </span>
           <span className="friend-chart-legend-item friend-chart-legend-item-inner">
             <b aria-hidden="true" />
-            <strong>{selectedOption.displayName} · inner ring</strong>
+            <span>{selectedOption.displayName} · inner ring</span>
           </span>
         </div>
       )}
@@ -62,7 +62,7 @@ export function RelationshipComparePicker({
         <span className="friend-compare-pill-inner">
           <span className="friend-compare-customise">With</span>
           <span className="friend-compare-avatar" aria-hidden="true">{selectedOption.initials}</span>
-          <strong>{selectedOption.displayName}</strong>
+          <span className="friend-compare-selected-name">{selectedOption.displayName}</span>
           <ChevronDown size={18} aria-hidden="true" />
         </span>
       </button>

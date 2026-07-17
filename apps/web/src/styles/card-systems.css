@@ -41,8 +41,7 @@
 .planet-placement-row__title,
 .sky-pl-title,
 .ro-screen .sky-pl-title,
-.placement-section .planet-placement-row__title,
-.synastry-placement-column-inner .synastry-placement-planet {
+.placement-section .planet-placement-row__title {
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--natal-card-title-size);

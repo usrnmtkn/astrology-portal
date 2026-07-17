@@ -558,7 +558,29 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   await expect(wheel).toBeVisible();
   const geometry = await wheel.evaluate((element) => {
     const center = 300;
-    const radiusSpread = (selector: string) => {
+    const numberAttr = (node: Element, name: string) => Number(node.getAttribute(name) ?? Number.NaN);
+    const distanceToSegment = (
+      point: { x: number; y: number },
+      start: { x: number; y: number },
+      end: { x: number; y: number }
+    ) => {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const lengthSquared = dx * dx + dy * dy;
+
+      if (!lengthSquared) {
+        return Math.hypot(point.x - start.x, point.y - start.y);
+      }
+
+      const progress = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+      const projected = {
+        x: start.x + progress * dx,
+        y: start.y + progress * dy
+      };
+
+      return Math.hypot(point.x - projected.x, point.y - projected.y);
+    };
+    const radiusStats = (selector: string) => {
       const radii = Array.from(element.querySelectorAll(selector))
         .map((node) => {
           const transform = node.getAttribute("transform") ?? "";
@@ -577,15 +599,69 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
 
       return {
         count: radii.length,
+        min: radii.length ? Math.min(...radii) : Number.POSITIVE_INFINITY,
+        max: radii.length ? Math.max(...radii) : Number.NEGATIVE_INFINITY,
         spread: radii.length ? Math.max(...radii) - Math.min(...radii) : Number.POSITIVE_INFINITY
+      };
+    };
+    const houseCollisionStats = () => {
+      const degreePoints = Array.from(element.querySelectorAll(".planet-label-group"))
+        .map((group) => {
+          const transform = group.getAttribute("transform") ?? "";
+          const match = transform.match(/translate\((-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\)/);
+          const degree = group.querySelector(".planet-degree");
+
+          if (!match || !degree) {
+            return null;
+          }
+
+          return {
+            x: Number(match[1]) + numberAttr(degree, "x"),
+            y: Number(match[2]) + numberAttr(degree, "y")
+          };
+        })
+        .filter((point): point is { x: number; y: number } => Boolean(point) && Number.isFinite(point.x) && Number.isFinite(point.y));
+      const tickSegments = Array.from(element.querySelectorAll(".synastry-planet-tick"))
+        .map((tick) => ({
+          start: { x: numberAttr(tick, "x1"), y: numberAttr(tick, "y1") },
+          end: { x: numberAttr(tick, "x2"), y: numberAttr(tick, "y2") }
+        }))
+        .filter((segment) => (
+          Number.isFinite(segment.start.x) &&
+          Number.isFinite(segment.start.y) &&
+          Number.isFinite(segment.end.x) &&
+          Number.isFinite(segment.end.y)
+        ));
+      const houses = Array.from(element.querySelectorAll(".synastry-house-number"))
+        .map((house) => ({
+          adjusted: house.getAttribute("data-collision-adjusted") === "true",
+          point: { x: numberAttr(house, "x"), y: numberAttr(house, "y") }
+        }))
+        .filter((house) => Number.isFinite(house.point.x) && Number.isFinite(house.point.y));
+      const nearest = houses.map(({ point }) => {
+        const degree = degreePoints.length
+          ? Math.min(...degreePoints.map((degreePoint) => Math.hypot(point.x - degreePoint.x, point.y - degreePoint.y)))
+          : Number.POSITIVE_INFINITY;
+        const tick = tickSegments.length
+          ? Math.min(...tickSegments.map((segment) => distanceToSegment(point, segment.start, segment.end)))
+          : Number.POSITIVE_INFINITY;
+
+        return { degree, tick };
+      });
+
+      return {
+        adjusted: houses.filter((house) => house.adjusted).length,
+        degreeMin: nearest.length ? Math.min(...nearest.map((item) => item.degree)) : Number.POSITIVE_INFINITY,
+        tickMin: nearest.length ? Math.min(...nearest.map((item) => item.tick)) : Number.POSITIVE_INFINITY
       };
     };
 
     return {
       outerTicks: element.querySelectorAll(".synastry-planet-tick--outer").length,
       innerTicks: element.querySelectorAll(".synastry-planet-tick--inner").length,
-      outer: radiusSpread(".planet-marker-outer .planet-label-group"),
-      inner: radiusSpread(".planet-marker-inner .planet-label-group")
+      outer: radiusStats(".planet-marker-outer .planet-label-group"),
+      inner: radiusStats(".planet-marker-inner .planet-label-group"),
+      houses: houseCollisionStats()
     };
   });
 
@@ -593,8 +669,15 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   expect(geometry.innerTicks, `${label} renders inner degree tick lines`).toBeGreaterThanOrEqual(10);
   expect(geometry.outer.count, `${label} renders outer glyphs`).toBeGreaterThanOrEqual(10);
   expect(geometry.inner.count, `${label} renders inner glyphs`).toBeGreaterThanOrEqual(10);
-  expect(geometry.outer.spread, `${label} outer glyphs stay on one radius arc`).toBeLessThan(1);
-  expect(geometry.inner.spread, `${label} inner glyphs stay on one radius arc`).toBeLessThan(1);
+  expect(geometry.outer.min, `${label} outer glyphs stay outside the inner ring`).toBeGreaterThanOrEqual(180);
+  expect(geometry.outer.max, `${label} outer glyphs stay inside the zodiac band`).toBeLessThanOrEqual(240);
+  expect(geometry.inner.min, `${label} inner glyphs stay outside the aspect well`).toBeGreaterThanOrEqual(108);
+  expect(geometry.inner.max, `${label} inner glyphs stay inside the inner ring`).toBeLessThanOrEqual(180);
+  expect(geometry.outer.spread, `${label} outer glyph cluster lanes stay bounded`).toBeLessThanOrEqual(56);
+  expect(geometry.inner.spread, `${label} inner glyph cluster lanes stay bounded`).toBeLessThanOrEqual(72);
+  expect(geometry.houses.adjusted, `${label} marks house labels that were moved away from degree collisions`).toBeGreaterThanOrEqual(1);
+  expect(geometry.houses.degreeMin, `${label} keeps house labels clear of planet degree text`).toBeGreaterThanOrEqual(9);
+  expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
 
 test.describe("client-facing user flow case studies", () => {
@@ -691,6 +774,9 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Synastry" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();
+    await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
+    await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
+    await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
 
     await page.getByRole("tab", { name: "Composite" }).click();
     await expect(page.getByText("What a composite chart is")).toBeVisible();
