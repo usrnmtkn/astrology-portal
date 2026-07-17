@@ -66,6 +66,49 @@ type ManualChartRow = {
 
 const localManualChartsKey = (userId: string) => `tldrastro:manualCharts:${userId}`;
 const localManualChartsKeyPrefix = "tldrastro:manualCharts:";
+const manualChartMetadataKey = "__tldrastroManualChart";
+
+type ManualChartMetadataSnapshot = SkySnapshot & {
+  [manualChartMetadataKey]?: {
+    pronouns?: PronounChoice | null;
+  };
+};
+
+function pronounsFromNatalChart(natalChart: SkySnapshot | null | undefined) {
+  const metadata = (natalChart as ManualChartMetadataSnapshot | null | undefined)?.[manualChartMetadataKey];
+
+  return metadata?.pronouns ?? null;
+}
+
+function natalChartWithPronouns(natalChart: SkySnapshot | null | undefined, pronouns: PronounChoice) {
+  if (!natalChart) {
+    return null;
+  }
+
+  const existingMetadata = (natalChart as ManualChartMetadataSnapshot)[manualChartMetadataKey] ?? {};
+
+  return {
+    ...natalChart,
+    [manualChartMetadataKey]: {
+      ...existingMetadata,
+      pronouns
+    }
+  } as ManualChartMetadataSnapshot;
+}
+
+function isMissingManualChartPronounsColumn(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const maybeError = error as { code?: unknown; message?: unknown };
+  const message = typeof maybeError.message === "string" ? maybeError.message : "";
+
+  return (
+    (maybeError.code === "42703" && message.includes("manual_charts") && message.includes("pronouns")) ||
+    (maybeError.code === "PGRST204" && message.includes("pronouns") && message.includes("manual_charts"))
+  );
+}
 
 function rowToManualChart(row: ManualChartRow): ManualChart {
   const chartType = row.relationship_type === "event" ? "event" : "person";
@@ -78,7 +121,7 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
     displayName: row.display_name,
     firstName: row.first_name,
     lastName: row.last_name,
-    pronouns: normalizePronounChoice(row.pronouns),
+    pronouns: normalizePronounChoice(row.pronouns ?? pronounsFromNatalChart(row.natal_chart)),
     relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(row.relationship_type),
     birthDate: row.birth_date,
     birthTime: row.birth_time,
@@ -97,13 +140,13 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
   };
 }
 
-function inputToRow(userId: string, input: ManualChartInput, options: { storageRelationship?: boolean } = {}) {
-  return {
+function inputToRow(userId: string, input: ManualChartInput, options: { omitPronounsColumn?: boolean; storageRelationship?: boolean } = {}) {
+  const pronouns = normalizePronounChoice(input.pronouns);
+  const row = {
     owner_user_id: userId,
     display_name: input.displayName,
     first_name: input.firstName ?? null,
     last_name: input.lastName ?? null,
-    pronouns: normalizePronounChoice(input.pronouns),
     relationship_type: input.chartType === "event"
       ? "event"
       : options.storageRelationship
@@ -116,9 +159,11 @@ function inputToRow(userId: string, input: ManualChartInput, options: { storageR
     birth_latitude: input.birthLocation.latitude,
     birth_longitude: input.birthLocation.longitude,
     birth_timezone: input.birthLocation.timeZone ?? null,
-    natal_chart: input.natalChart ?? null,
+    natal_chart: natalChartWithPronouns(input.natalChart, pronouns),
     notes: input.notes ?? null
   };
+
+  return options.omitPronounsColumn ? row : { ...row, pronouns };
 }
 
 function manualChartToInput(chart: ManualChart): ManualChartInput {
@@ -314,12 +359,21 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
   if (!client) {
     throw new Error("Supabase auth is not configured.");
   }
+  const remoteClient = client;
 
-  const { data, error } = await client
-    .from("manual_charts")
-    .insert(inputToRow(userId, input, { storageRelationship: true }))
-    .select("*")
-    .single();
+  async function insertManualChartRow(options: { omitPronounsColumn?: boolean } = {}) {
+    return remoteClient
+      .from("manual_charts")
+      .insert(inputToRow(userId, input, { ...options, storageRelationship: true }))
+      .select("*")
+      .single();
+  }
+
+  let { data, error } = await insertManualChartRow();
+
+  if (error && isMissingManualChartPronounsColumn(error)) {
+    ({ data, error } = await insertManualChartRow({ omitPronounsColumn: true }));
+  }
 
   if (error) {
     throw error;
@@ -432,14 +486,23 @@ export async function updateManualChart(userId: string, chartId: string, input: 
   if (!client) {
     return updateLocalManualChart(userId, chartId, input);
   }
+  const remoteClient = client;
 
-  const { data, error } = await client
-    .from("manual_charts")
-    .update(inputToRow(userId, input, { storageRelationship: true }))
-    .eq("id", chartId)
-    .eq("owner_user_id", userId)
-    .select("*")
-    .single();
+  async function updateManualChartRow(options: { omitPronounsColumn?: boolean } = {}) {
+    return remoteClient
+      .from("manual_charts")
+      .update(inputToRow(userId, input, { ...options, storageRelationship: true }))
+      .eq("id", chartId)
+      .eq("owner_user_id", userId)
+      .select("*")
+      .single();
+  }
+
+  let { data, error } = await updateManualChartRow();
+
+  if (error && isMissingManualChartPronounsColumn(error)) {
+    ({ data, error } = await updateManualChartRow({ omitPronounsColumn: true }));
+  }
 
   if (error) {
     throw error;
