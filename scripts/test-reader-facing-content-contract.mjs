@@ -38,6 +38,7 @@ for (const file of publicFallbackFiles) {
 
 const youPage = read("apps/web/src/features/you/YouPage.tsx");
 const app = read("apps/web/src/App.tsx");
+const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts");
 const emergencyCopyRuntime = read("apps/web/src/content/emergencyCopy.ts");
@@ -76,6 +77,8 @@ assert.match(generatedContent, /servedFieldSections/, "Generated content runtime
 assert.match(generatedContent, /isNoProseGeneratedContent/, "Generated content runtime must block no-prose rows.");
 assert.match(generatedContent, /containsSingleBraceSlot/, "Generated content runtime must block raw single-brace fallback slots.");
 assert.match(generatedContent, /isReaderServableGeneratedContent\(content\)/, "Loaded content map must filter unsafe content rows before aliasing.");
+assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated content row safety must inspect actual section body copy instead of serialized metadata.");
+assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
 assert.match(app, /emergencySkyPlacementCopy\(position\.planet, position\.sign, \{ retrograde: isRetrograde \}\)/, "Sky placement detail/list rendering must build a local emergency fallback.");
 assert.match(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must use the real emergency fallback copy helper.");
 assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail rendering must resolve through the surface normalizer.");
@@ -96,6 +99,12 @@ assert.match(emergencyCopyJson, /"you\.transit-to-natal":\s*"[^"]*\{\{aspectAdj\
 assert.match(emergencyCopyRuntime, /function emergencyTransitToNatalCopy[\s\S]*aspectAdj:\s*emergencyAspectAdjective\(aspect\)/, "Transit-to-natal emergency helper must provide the aspectAdj slot.");
 assert.match(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must resolve authored planet/sign and sky point rows through source-grounded V2.");
 assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement rendering must fall back to source-based madlibs when source-grounded rows are absent.");
+assert.match(adminDashboard, /App Display Source/, "Admin Sky placement editor must label source choice as App Display Source.");
+assert.match(adminDashboard, /Content Level/, "Admin Sky placement editor must show derived Content Level separately.");
+assert.doesNotMatch(adminDashboard, /<span>Content level<\/span>[\s\S]*<select/, "Admin editor must not present content level as the editable source dropdown.");
+assert.match(adminDashboard, /aria-label="Article filters"/, "Articles admin surface must include dedicated filters.");
+assert.match(adminDashboard, /Article app display source/, "Articles admin filters must include app display source.");
+assert.match(adminDashboard, /filteredArticleRows/, "Articles admin table must render the filtered article row set.");
 assert.match(servedFieldsContract, /reader: \["reading"\]/, "Authored natal angle rows must render only the clean reading field.");
 assert.match(servedFieldsContract, /reader: \["collective_reading"\]/, "Authored Sky point rows must render only the clean collective reading field.");
 

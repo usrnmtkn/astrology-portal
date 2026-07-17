@@ -8584,7 +8584,8 @@ body,
 }
 
 .admin-dashboard .admin-editor-guidance,
-.admin-dashboard .admin-editor-key-details {
+.admin-dashboard .admin-editor-key-details,
+.admin-dashboard .admin-display-source-panel {
   background: var(--admin-ui-surface-2);
   border: 1px solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-lg);
@@ -8592,11 +8593,38 @@ body,
 }
 
 .admin-dashboard .admin-editor-guidance p,
+.admin-dashboard .admin-display-source-panel p,
 .admin-dashboard .admin-field-hint {
   color: var(--admin-ui-muted);
   font-size: var(--admin-ui-type-hint);
   line-height: 1.45;
   margin: 0;
+}
+
+.admin-dashboard .admin-display-source-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard .admin-display-source-panel h3 {
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.2;
+  margin: 4px 0 6px;
+}
+
+.admin-dashboard .admin-content-level-readout {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-content-level-readout > span {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .admin-dashboard :where(.admin-title-field, .admin-review-copy-editor, .admin-metadata-field, .admin-field-wide) {
@@ -8613,7 +8641,7 @@ body,
   white-space: normal;
 }
 
-.admin-dashboard :where(.admin-title-field input, .admin-review-copy-editor textarea, .admin-metadata-field :where(input, select), .admin-field-wide input) {
+.admin-dashboard :where(.admin-title-field :where(input, select), .admin-review-copy-editor textarea, .admin-metadata-field :where(input, select), .admin-field-wide input) {
   box-sizing: border-box;
   width: 100%;
 }

@@ -55,6 +55,7 @@ type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angle
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
+type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -164,6 +165,7 @@ type HookCatalogItem =
   | { type: "fallback"; key: string; label: string; section: AdminFallbackHookSectionFilter; definition: FallbackHookDefinition }
   | { type: "lunar"; key: string; label: string; section: "lunar-calendar"; definition: LunarCalendarContentKeyDefinition };
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
+type AdminAppDisplaySource = "dashboard-article" | "reviewed-phrasebank" | "madlib-fallback";
 
 type AdminDraft = {
   id: string | null;
@@ -178,6 +180,8 @@ type AdminDraft = {
   reviewState: string;
   blockType: string;
   promptVersion: string;
+  appDisplaySource: AdminAppDisplaySource;
+  sourceSnapshot: Record<string, unknown> | null;
 };
 
 type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
@@ -291,6 +295,26 @@ const fallbackSections: Array<{ key: AdminFallbackHookSectionFilter; label: stri
   { key: "friends", label: "Friends" },
   { key: "lunar-calendar", label: "Lunar Calendar" },
   { key: "settings", label: "Settings" }
+];
+const articlePointFilters: Array<{ key: AdminArticlePointFilter; label: string }> = [
+  { key: "all", label: "All planets and points" },
+  { key: "sun", label: "Sun" },
+  { key: "moon", label: "Moon" },
+  { key: "mercury", label: "Mercury" },
+  { key: "venus", label: "Venus" },
+  { key: "mars", label: "Mars" },
+  { key: "jupiter", label: "Jupiter" },
+  { key: "saturn", label: "Saturn" },
+  { key: "uranus", label: "Uranus" },
+  { key: "neptune", label: "Neptune" },
+  { key: "pluto", label: "Pluto" },
+  { key: "other", label: "Other articles" }
+];
+const appDisplaySourceFilters: Array<{ key: AdminAppDisplaySource | "all"; label: string }> = [
+  { key: "all", label: "All display sources" },
+  { key: "dashboard-article", label: "This dashboard article" },
+  { key: "reviewed-phrasebank", label: "Reviewed phrasebank copy" },
+  { key: "madlib-fallback", label: "Simple fallback copy" }
 ];
 const relationshipTypes = ["romantic", "friendship", "family", "coworkers", "creative", "exes", "complicated"];
 
@@ -414,6 +438,36 @@ function draftIsArticle(draft: AdminDraft) {
   return draft.mode === "article" || draft.blockType === "sky_article" || draft.contentKey.startsWith("sky/article/");
 }
 
+function draftIsSkyPlacement(draft: AdminDraft) {
+  return draft.surface === "sky" && draft.contentKey.startsWith("sky.placement.");
+}
+
+function normalizeAppDisplaySource(value: unknown): AdminAppDisplaySource {
+  return value === "reviewed-phrasebank" || value === "madlib-fallback" || value === "dashboard-article"
+    ? value
+    : "dashboard-article";
+}
+
+function appDisplaySourceFromSnapshot(sourceSnapshot: Record<string, unknown> | null | undefined): AdminAppDisplaySource {
+  return normalizeAppDisplaySource(sourceSnapshot?.appDisplaySource ?? sourceSnapshot?.runtimeRenderer);
+}
+
+function contentLevelForAppDisplaySource(source: AdminAppDisplaySource) {
+  return source === "madlib-fallback" ? "madlib-fallback" : "source-grounded";
+}
+
+function articlePointForRow(row: AdminGeneratedContentRow): AdminArticlePointFilter {
+  const normalizedKey = row.content_key.toLowerCase();
+  const keyMatch = normalizedKey.match(/^sky[./-](?:placement|article)[./-]([a-z-]+)/);
+  const headlineMatch = normalizeText(row.headline).toLowerCase().match(/^(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)\b/);
+  const candidate = keyMatch?.[1]?.replace(/-/g, " ") || headlineMatch?.[1] || "";
+  const point = candidate.split(/\s+/)[0];
+
+  return articlePointFilters.some((filter) => filter.key === point) && point !== "all"
+    ? point as AdminArticlePointFilter
+    : "other";
+}
+
 function titleFromKey(contentKey: string) {
   return contentKey
     .split("/")
@@ -483,9 +537,19 @@ function draftEventType(draft: AdminDraft) {
 
 function draftSourceSnapshot(draft: AdminDraft) {
   if (draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) {
-    return { contentType: "template", hook: draft.contentKey.replace(/^fallback-hook\//, "") };
+    return {
+      ...(draft.sourceSnapshot ?? {}),
+      contentType: "template",
+      hook: draft.contentKey.replace(/^fallback-hook\//, "")
+    };
   }
-  return { contentType: draftEventType(draft), authoringSource: "admin-dashboard" };
+
+  return {
+    ...(draft.sourceSnapshot ?? {}),
+    contentType: draftEventType(draft),
+    authoringSource: "admin-dashboard",
+    appDisplaySource: draft.appDisplaySource
+  };
 }
 
 function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhrasebankTier {
@@ -723,7 +787,9 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     lane: row.lane ?? "serving",
     reviewState: row.review_state ?? "",
     blockType: row.block_type ?? "",
-    promptVersion: row.prompt_version ?? "manual-admin"
+    promptVersion: row.prompt_version ?? "manual-admin",
+    appDisplaySource: appDisplaySourceFromSnapshot(row.source_snapshot),
+    sourceSnapshot: row.source_snapshot ?? null
   };
 }
 
@@ -741,7 +807,9 @@ function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
     lane: "serving",
     reviewState: "EDITORIAL_REVIEW_REQUIRED",
     blockType: "fallback_template",
-    promptVersion: "fallback-hook-template-v1"
+    promptVersion: "fallback-hook-template-v1",
+    appDisplaySource: "dashboard-article",
+    sourceSnapshot: null
   };
 }
 
@@ -795,6 +863,10 @@ export function GeneratedContentAdminDashboard() {
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
+  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
+  const [articleDisplaySourceFilter, setArticleDisplaySourceFilter] = useState<AdminAppDisplaySource | "all">("all");
+  const [articleQuery, setArticleQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -835,6 +907,24 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter((row) => row.mode === "article" || row.block_type === "sky_article"),
     [visibleRows]
   );
+  const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
+    const articleSearch = articleQuery.trim().toLowerCase();
+    const haystack = [
+      row.content_key,
+      row.headline,
+      row.summary,
+      row.body,
+      row.surface,
+      row.mode,
+      row.block_type,
+      row.prompt_version
+    ].join(" ").toLowerCase();
+
+    return (articleStatusFilter === "all" || row.status === articleStatusFilter)
+      && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
+      && (articleDisplaySourceFilter === "all" || appDisplaySourceFromSnapshot(row.source_snapshot) === articleDisplaySourceFilter)
+      && (!articleSearch || haystack.includes(articleSearch));
+  }), [articleRows, articleStatusFilter, articlePointFilter, articleDisplaySourceFilter, articleQuery]);
   const compositeRows = useMemo(
     () => visibleRows.filter(isCompositeRelationshipRow),
     [visibleRows]
@@ -1193,7 +1283,9 @@ export function GeneratedContentAdminDashboard() {
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "sky_article",
-        promptVersion: "manual-admin"
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: null
       });
       return;
     }
@@ -1210,7 +1302,9 @@ export function GeneratedContentAdminDashboard() {
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "essay",
-        promptVersion: "manual-admin"
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: null
       });
       return;
     }
@@ -1228,7 +1322,9 @@ export function GeneratedContentAdminDashboard() {
         lane: "reference",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "vocabulary_phrase",
-        promptVersion: "manual-admin"
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: null
       });
       return;
     }
@@ -1245,7 +1341,9 @@ export function GeneratedContentAdminDashboard() {
         lane: "reference",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "template",
-        promptVersion: "manual-admin"
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: null
       });
       return;
     }
@@ -1262,7 +1360,9 @@ export function GeneratedContentAdminDashboard() {
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "fallback_template",
-        promptVersion: "fallback-hook-template-v1"
+        promptVersion: "fallback-hook-template-v1",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: null
       });
     }
   }
@@ -1531,17 +1631,18 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Article writing</p>
                 <h2>Articles</h2>
-                <p>Article rows are stored in the same saved content table, filtered to article mode and sky article blocks.</p>
+                <p>{filteredArticleRows.length} of {articleRows.length} article rows shown. Filter by status, planet, display source, or text.</p>
               </div>
               <button type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
                 <Plus size={16} aria-hidden="true" />
                 New Article
               </button>
             </section>
+            {renderArticleFilters()}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Article rows">
-                {renderContentTable(articleRows)}
+                {renderContentTable(filteredArticleRows)}
               </aside>
             </section>
           </section>
@@ -1918,6 +2019,49 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function renderArticleFilters() {
+    return (
+      <section className="admin-content-filters" aria-label="Article filters">
+        <div className="admin-review-filter-grid">
+          <label>
+            <span>Status</span>
+            <select aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+              <option value="all">All statuses</option>
+              {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Planet or point</span>
+            <select aria-label="Article planet or point" value={articlePointFilter} onChange={(event) => setArticlePointFilter(event.target.value as AdminArticlePointFilter)}>
+              {articlePointFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>App display source</span>
+            <select aria-label="Article app display source" value={articleDisplaySourceFilter} onChange={(event) => setArticleDisplaySourceFilter(event.target.value as AdminAppDisplaySource | "all")}>
+              {appDisplaySourceFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Search articles</span>
+            <input aria-label="Search articles" value={articleQuery} onChange={(event) => setArticleQuery(event.target.value)} placeholder="Title, content key, body" />
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setArticleStatusFilter("all");
+              setArticlePointFilter("all");
+              setArticleDisplaySourceFilter("all");
+              setArticleQuery("");
+            }}
+          >
+            Clear filters
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   function renderAccessGate() {
     return (
       <section className="admin-content-toolbar admin-review-queue-hero" aria-label="Admin access required">
@@ -2123,8 +2267,10 @@ export function GeneratedContentAdminDashboard() {
 
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
+    const isSkyPlacementDraft = draftIsSkyPlacement(currentDraft);
     const isNewDraft = !currentDraft.id;
     const vocabularySection = vocabularySectionFromKey(currentDraft.contentKey);
+    const contentLevel = contentLevelForAppDisplaySource(currentDraft.appDisplaySource);
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -2204,6 +2350,43 @@ export function GeneratedContentAdminDashboard() {
               {isVocabularyDraft && <small className="admin-field-hint">Generated from section + title. Existing rows keep their original key so published content stays connected.</small>}
             </label>
           </details>
+          {isSkyPlacementDraft && (
+            <section className="admin-display-source-panel" aria-label="Sky placement display source">
+              <div>
+                <p className="admin-eyebrow">Runtime display</p>
+                <h3>App Display Source</h3>
+                <p>Choose where the reader-facing Sky placement words come from. Content level is derived from this source.</p>
+              </div>
+              <label className="admin-title-field">
+                <span>App display source</span>
+                <select
+                  aria-label="App display source"
+                  value={currentDraft.appDisplaySource}
+                  onChange={(event) => setDraft({
+                    ...currentDraft,
+                    appDisplaySource: event.target.value as AdminAppDisplaySource
+                  })}
+                >
+                  <option value="dashboard-article">This dashboard article</option>
+                  <option value="reviewed-phrasebank">Reviewed phrasebank copy</option>
+                  <option value="madlib-fallback">Simple fallback copy</option>
+                </select>
+                <small className="admin-field-hint">
+                  {currentDraft.appDisplaySource === "dashboard-article"
+                    ? "Uses the saved text from this row."
+                    : currentDraft.appDisplaySource === "reviewed-phrasebank"
+                      ? "Ignores this row's prose and uses reviewed built-in phrasebank wording."
+                      : "Ignores saved/reviewed prose and uses the local madlib fallback."}
+                </small>
+              </label>
+              <div className="admin-content-level-readout">
+                <span>Content Level</span>
+                <strong className={`ui-pill admin-status ${contentLevel === "source-grounded" ? "status-live" : "status-draft"}`}>
+                  {contentLevel}
+                </strong>
+              </div>
+            </section>
+          )}
           <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
