@@ -194,6 +194,24 @@ function chartIdentity(chart: Pick<ManualChart, "chartType" | "displayName" | "b
   ].join("|");
 }
 
+function dedupeManualCharts(charts: ManualChart[]) {
+  const seen = new Set<string>();
+  const dedupedCharts: ManualChart[] = [];
+
+  charts.forEach((chart) => {
+    const key = chartIdentity(chart);
+
+    if (seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+    dedupedCharts.push(chart);
+  });
+
+  return dedupedCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+}
+
 function readLocalManualCharts(userId: string): ManualChart[] {
   try {
     const savedCharts = window.localStorage.getItem(localManualChartsKey(userId));
@@ -284,23 +302,7 @@ function deleteLocalManualChart(userId: string, chartId: string) {
 }
 
 export function listCachedManualCharts(userIds: string[]): ManualChart[] {
-  const seen = new Set<string>();
-  const charts: ManualChart[] = [];
-
-  userIds.forEach((userId) => {
-    readLocalManualCharts(userId).forEach((chart) => {
-      const key = chart.id || chartIdentity(chart);
-
-      if (seen.has(key)) {
-        return;
-      }
-
-      seen.add(key);
-      charts.push(chart);
-    });
-  });
-
-  return charts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+  return dedupeManualCharts(userIds.flatMap((userId) => readLocalManualCharts(userId)));
 }
 
 export function listLocalManualChartUserIds(): string[] {
@@ -423,7 +425,7 @@ export async function listManualCharts(userId: string): Promise<ManualChart[]> {
     throw error;
   }
 
-  return (data as ManualChartRow[]).map(rowToManualChart);
+  return dedupeManualCharts((data as ManualChartRow[]).map(rowToManualChart));
 }
 
 export async function createManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
