@@ -796,6 +796,50 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
   };
 }
 
+const manualChartSelectWithPronouns =
+  "id,owner_user_id,display_name,pronouns,relationship_type,birth_date,birth_time,birth_time_unknown,birth_place,birth_latitude,birth_longitude,birth_timezone,natal_chart,updated_at";
+const manualChartSelectLegacy =
+  "id,owner_user_id,display_name,relationship_type,birth_date,birth_time,birth_time_unknown,birth_place,birth_latitude,birth_longitude,birth_timezone,natal_chart,updated_at";
+
+function isMissingManualChartPronounsColumn(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return false;
+  }
+
+  const maybeError = payload as { code?: unknown; message?: unknown };
+  const message = typeof maybeError.message === "string" ? maybeError.message : "";
+  return (
+    maybeError.code === "42703" &&
+    message.includes("manual_charts") &&
+    message.includes("pronouns")
+  );
+}
+
+function manualChartSearchParams(query: string, select: string) {
+  const params = new URLSearchParams({
+    select,
+    limit: "20"
+  });
+
+  if (/^[0-9a-f-]{36}$/i.test(query)) {
+    params.set("id", `eq.${query}`);
+  } else {
+    params.set("display_name", `ilike.*${query.replace(/[%*]/g, "")}*`);
+  }
+
+  return params;
+}
+
+async function fetchManualCharts(query: string, select: string) {
+  const params = manualChartSearchParams(query, select);
+  const response = await fetch(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
+    headers: adminHeaders()
+  });
+  const payload = await response.json().catch(() => null);
+
+  return { response, payload };
+}
+
 async function findManualCharts(query: string) {
   const trimmed = query.trim();
 
@@ -803,27 +847,30 @@ async function findManualCharts(query: string) {
     return [];
   }
 
-  const params = new URLSearchParams({
-    select: "id,owner_user_id,display_name,pronouns,relationship_type,birth_date,birth_time,birth_time_unknown,birth_place,birth_latitude,birth_longitude,birth_timezone,natal_chart,updated_at",
-    limit: "20"
-  });
+  const firstAttempt = await fetchManualCharts(trimmed, manualChartSelectWithPronouns);
 
-  if (/^[0-9a-f-]{36}$/i.test(trimmed)) {
-    params.set("id", `eq.${trimmed}`);
-  } else {
-    params.set("display_name", `ilike.*${trimmed.replace(/[%*]/g, "")}*`);
+  if (firstAttempt.response.ok) {
+    return (firstAttempt.payload ?? []) as ManualChartRow[];
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
-    headers: adminHeaders()
-  });
-  const payload = await response.json().catch(() => null);
+  if (firstAttempt.response.status === 400 && isMissingManualChartPronounsColumn(firstAttempt.payload)) {
+    const fallbackAttempt = await fetchManualCharts(trimmed, manualChartSelectLegacy);
 
-  if (!response.ok) {
-    throw new Error(`Supabase manual chart lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+    if (fallbackAttempt.response.ok) {
+      return ((fallbackAttempt.payload ?? []) as ManualChartRow[]).map((row) => ({
+        ...row,
+        pronouns: "name_only"
+      }));
+    }
+
+    throw new Error(
+      `Supabase manual chart lookup failed with ${fallbackAttempt.response.status}: ${JSON.stringify(fallbackAttempt.payload)}`
+    );
   }
 
-  return (payload ?? []) as ManualChartRow[];
+  throw new Error(
+    `Supabase manual chart lookup failed with ${firstAttempt.response.status}: ${JSON.stringify(firstAttempt.payload)}`
+  );
 }
 
 function chartNeedsNatal(chart: ManualChartRow) {
