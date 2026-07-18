@@ -2,6 +2,8 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 const localAdminOrigin = "http://127.0.0.1:5174";
+const blankRestoreReloadKey = "tldrastro:blankRestoreReloadAt";
+const blankRestoreReloadCooldownMs = 10000;
 
 function isAdminContentPath() {
   return (
@@ -49,6 +51,44 @@ async function startApp() {
       <App />
     </React.StrictMode>
   );
+
+  setupBlankRestoreRecovery();
+}
+
+function setupBlankRestoreRecovery() {
+  const shouldReload = () => {
+    const root = document.getElementById("root");
+
+    return Boolean(root && (!root.firstElementChild || !root.querySelector(".app-shell")));
+  };
+
+  const reloadOnce = () => {
+    const now = Date.now();
+    const previous = Number(window.sessionStorage.getItem(blankRestoreReloadKey) ?? "0");
+
+    if (Number.isFinite(previous) && now - previous < blankRestoreReloadCooldownMs) {
+      return;
+    }
+
+    window.sessionStorage.setItem(blankRestoreReloadKey, String(now));
+    window.location.reload();
+  };
+
+  const checkAfterRestore = () => {
+    window.setTimeout(() => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+
+      if (shouldReload()) {
+        reloadOnce();
+      }
+    }, 250);
+  };
+
+  window.addEventListener("pageshow", checkAfterRestore);
+  window.addEventListener("focus", checkAfterRestore);
+  document.addEventListener("visibilitychange", checkAfterRestore);
 }
 
 void startApp();
