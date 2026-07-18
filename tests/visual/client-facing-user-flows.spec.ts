@@ -705,6 +705,26 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("restored tabs recover if the React shell is blank", async ({ page }) => {
+    await seedClientState(page);
+    await page.goto("/#sky");
+    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+
+    await page.evaluate(() => {
+      window.sessionStorage.removeItem("tldrastro:blankRestoreReloadAt");
+      const root = document.getElementById("root");
+
+      if (root) {
+        root.innerHTML = "";
+      }
+
+      window.dispatchEvent(new Event("focus"));
+    });
+
+    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator(".app-shell")).toBeVisible();
+  });
+
   test("guest can navigate public calendar and settings surfaces", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
