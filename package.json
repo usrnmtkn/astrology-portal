@@ -32,6 +32,7 @@
     "qa:friends-data-retention": "node scripts/test-friends-chart-data-retention-contract.mjs",
     "qa:visual-baseline": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts",
     "qa:visual-baseline:update": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts --update-snapshots",
+    "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "preview": "npm run preview -w @tldr/web",
     "preview:admin": "npm run preview -w @tldr/admin",
     "typecheck": "npm run typecheck -w @tldr/web",

@@ -49,12 +49,13 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["function", "yourLine", "theirLine or sameSignLine", "verdict"],
     visibleLayerOrder: ["source-grounded"],
-    currentRenderPath: "normalizeCompatibilityCardSurface resolves authored compatibility writeup slots and omits cards missing required fields.",
+    currentRenderPath: "normalizeCompatibilityCardSurface resolves LIVE dashboard compatibility rows first, then falls back to authored phrasebank writeup slots and omits cards missing required fields.",
     risk: "The card is source-grounded only; no madlib fallback is currently defined for missing compatibility card pairs.",
-    nextAction: "Expose per-slot provenance in the row UI and decide whether compatibility cards need a madlib fallback layer.",
+    nextAction: "Import/materialize new planet libraries as dashboard rows when they need admin editing.",
     sources: [
       { label: "CompatibilityTab.tsx", path: "apps/web/src/features/friends/CompatibilityTab.tsx", role: "renderer" },
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "generated_interpretations compatibility.* rows", path: "generated_interpretations:compatibility.{planet}.{readerSign}.{otherSign}", role: "stored-source" },
       { label: "cc-compatibility-writeups.json", path: "tldr-astro-phrasebank/phrasebank/cc-compatibility-writeups.json", role: "phrasebank" },
       { label: "cc-compatibility-cards.json", path: "tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json", role: "phrasebank" }
     ]

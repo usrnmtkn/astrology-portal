@@ -1,0 +1,1311 @@
+{
+  "version": "1.1.0",
+  "planet": "venus",
+  "scope": "General reader-facing Venus sign comparisons.",
+  "coverage": {
+    "ordered_sign_pairs": 144,
+    "same_sign_pairs": 12,
+    "different_sign_directional_pairs": 132
+  },
+  "planet_domain": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.",
+  "source_model": {
+    "version": "1.1.0",
+    "planet": "venus",
+    "planet_domain": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.",
+    "name_handling": {
+      "source_rows": "No names or name tokens are stored in sign profiles or pair overrides.",
+      "renderer": "Insert {{other_name}}. Use the other person when no display name is available."
+    },
+    "different_sign_template": "{{planet_domain}}\n\n{{reader_profile}}\n\n{{other_name}}’s Venus is in {{other_sign}}. {{other_profile}}\n\n{{pair_close}}",
+    "same_sign_template": "{{planet_domain}}\n\nYou and {{other_name}} both have Venus in {{sign}}. {{shared_intro}}\n\n{{shared_body}}\n\n{{shared_close}}",
+    "sign_profiles": {
+      "aries": {
+        "reader": "With your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.",
+        "other": "They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.",
+        "same_intro": "With Venus in Aries, both of you tend to make your interest clear and act before the moment passes.",
+        "same_body": "You may be quick to invite each other, say what you want, or turn a passing idea into a plan. Neither of you needs much encouragement to show enthusiasm.",
+        "same_close": "You both show interest quickly. A quieter response can be easy to miss because each of you is used to seeing enthusiasm right away.",
+        "other_contribution": "They make their interest easy for you to read.",
+        "reader_contribution": "You make your interest easy for them to read."
+      },
+      "taurus": {
+        "reader": "With your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.",
+        "other": "They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.",
+        "same_intro": "With Venus in Taurus, both of you tend to show appreciation through time, comfort, and consistency.",
+        "same_body": "You may settle into familiar routines, remember each other’s favorite places or foods, and enjoy time together without needing a special occasion.",
+        "same_close": "You both show care by staying consistent. A lot may be assumed because each of you expects continued presence to say enough.",
+        "other_contribution": "They give you steady attention and make time together feel easy.",
+        "reader_contribution": "You give them steady attention and make time together feel easy."
+      },
+      "gemini": {
+        "reader": "With your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.",
+        "other": "They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.",
+        "same_intro": "With Venus in Gemini, both of you tend to show appreciation through conversation and curiosity.",
+        "same_body": "You may trade jokes, send each other links, ask follow-up questions, or make a simple plan more interesting along the way.",
+        "same_close": "You both keep each other interested. Attention can scatter when a new topic, person, or invitation pulls both of you elsewhere.",
+        "other_contribution": "They keep talking to you and make the time you share more interesting.",
+        "reader_contribution": "You keep talking to them and make the time you share more interesting."
+      },
+      "cancer": {
+        "reader": "With your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.",
+        "other": "They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.",
+        "same_intro": "With Venus in Cancer, both of you tend to show appreciation by remembering, checking in, and making someone feel included.",
+        "same_body": "You may notice each other’s moods, remember important dates, or make room for each other among the people you trust.",
+        "same_close": "You both know how to make someone feel included. A lot can go unspoken because each of you expects the other person to notice when more care is needed.",
+        "other_contribution": "They remember what helps you feel cared for.",
+        "reader_contribution": "You remember what helps them feel cared for."
+      },
+      "leo": {
+        "reader": "With your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.",
+        "other": "They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.",
+        "same_intro": "With Venus in Leo, both of you tend to say what you appreciate and make sure the other person knows.",
+        "same_body": "You may celebrate and amplify each other’s wins, say what you admire, or make sure credit is given where it belongs.",
+        "same_close": "You both know how to make the other person feel noticed. A quieter response can feel more personal because each of you wants a clear sign that your appreciation was understood.",
+        "other_contribution": "They make sure you know you matter.",
+        "reader_contribution": "You make sure they know they matter."
+      },
+      "virgo": {
+        "reader": "With your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.",
+        "other": "They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.",
+        "same_intro": "With Venus in Virgo, both of you tend to show appreciation by noticing what would help and doing something about it.",
+        "same_body": "You may remember details, solve small problems, or make the other person’s day easier without asking for much attention.",
+        "same_close": "You both show care through effort. A lot can be missed because each of you may notice what still needs work before acknowledging what has already been done.",
+        "other_contribution": "They notice what would make your day easier and help with it.",
+        "reader_contribution": "You notice what would make their day easier and help with it."
+      },
+      "libra": {
+        "reader": "With your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.",
+        "other": "They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.",
+        "same_intro": "With Venus in Libra, both of you tend to show appreciation by making room for the other person’s preferences.",
+        "same_body": "You may choose plans together, ask what the other person prefers, or make sure neither person is left out of the decision.",
+        "same_close": "You both try to include the other person. A choice can take longer when each of you is waiting for the other person to say what they want.",
+        "other_contribution": "They make room for your preferences.",
+        "reader_contribution": "You make room for their preferences."
+      },
+      "scorpio": {
+        "reader": "With your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.",
+        "other": "They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.",
+        "same_intro": "With Venus in Scorpio, both of you may take longer to trust, but you remember what the other person tells you and keep it private.",
+        "same_body": "You may pay attention to what is shared quietly, remember what the other person trusted you with, and take loyalty seriously.",
+        "same_close": "You both take trust seriously. A lot can remain unspoken because each of you may wait for the other person to share more first.",
+        "other_contribution": "They keep what you tell them private.",
+        "reader_contribution": "You keep what they tell you private."
+      },
+      "sagittarius": {
+        "reader": "With your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.",
+        "other": "They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.",
+        "same_intro": "With Venus in Sagittarius, both of you tend to show appreciation through honesty, humor, and new plans.",
+        "same_body": "You may make each other laugh, suggest a trip or event, or encourage a choice that feels more honest and less restricted.",
+        "same_close": "You both give each other room to make your own choices. Plans may stay loose because neither of you wants the other person to feel tied down.",
+        "other_contribution": "They bring humor, honesty, and new plans into your life.",
+        "reader_contribution": "You bring humor, honesty, and new plans into their life."
+      },
+      "capricorn": {
+        "reader": "With your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.",
+        "other": "They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.",
+        "same_intro": "With Venus in Capricorn, both of you tend to take affection seriously.",
+        "same_body": "You may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. Neither of you needs to make a big announcement about the effort you are making.",
+        "same_close": "You both show care by making room for each other and following through. A lot can go unspoken because each of you expects the other person to notice the effort.",
+        "other_contribution": "They show you that you can count on them.",
+        "reader_contribution": "You show them they can count on you."
+      },
+      "aquarius": {
+        "reader": "With your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.",
+        "other": "They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.",
+        "same_intro": "With Venus in Aquarius, both of you tend to show appreciation by accepting difference and giving each other room.",
+        "same_body": "You may share unusual interests, introduce each other to new groups, or support choices that other people do not understand.",
+        "same_close": "You both make room for separate interests, friends, and plans. A lot can go unspoken because each of you may assume that giving space says enough.",
+        "other_contribution": "They give you room to be yourself.",
+        "reader_contribution": "You give them room to be themselves."
+      },
+      "pisces": {
+        "reader": "With your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.",
+        "other": "They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.",
+        "same_intro": "With Venus in Pisces, both of you tend to show appreciation by listening closely and noticing changes in each other’s moods.",
+        "same_body": "You may share music, notice when the other person is having a hard day, or offer comfort before either person has explained what is wrong.",
+        "same_close": "You both notice subtle changes in each other. Each of you may adjust to the other person before saying what you want.",
+        "other_contribution": "They notice when your mood changes and respond with care.",
+        "reader_contribution": "You notice when their mood changes and respond with care."
+      }
+    },
+    "pair_overrides": {
+      "capricorn.vs.scorpio": "You both take trust seriously. They keep what you tell them private, and you do what you said you would do.",
+      "scorpio.vs.capricorn": "You both take trust seriously. They do what they said they would do, and you keep what they tell you private.",
+      "capricorn.vs.leo": "They make sure you know you matter. You show them they can count on you.",
+      "leo.vs.capricorn": "They show you that you can count on them. You make sure they know they matter."
+    },
+    "pair_close_fallback": "Use the other sign’s complete other_contribution sentence, followed by the reader sign’s complete reader_contribution sentence.",
+    "rules": [
+      "Keep the language neutral across friendship, family, work, dating, and other close relationships.",
+      "Use they, them, and their unless saved pronouns are available.",
+      "State both Venus signs before describing the comparison.",
+      "Keep the card inside Venus territory: appreciation, affection, attention, pleasure, reciprocity, and how someone knows they matter.",
+      "Use complete everyday sentences in all source fields.",
+      "Do not store names in sign profiles or pair overrides.",
+      "Do not score compatibility or declare a pairing good or bad.",
+      "Do not add advice or a repair paragraph.",
+      "Do not force conflict into every card.",
+      "Keep Venus-to-Venus aspects and house overlays in separate modifier layers.",
+      "End with what each person offers or with a blind spot that follows naturally from the pair.",
+      "Do not use vague or formal phrases when a normal everyday phrase is available."
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "venus.aries.vs.aries",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "aries",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Aries. With Venus in Aries, both of you tend to make your interest clear and act before the moment passes.\n\nYou may be quick to invite each other, say what you want, or turn a passing idea into a plan. Neither of you needs much encouragement to show enthusiasm.\n\nYou both show interest quickly. A quieter response can be easy to miss because each of you is used to seeing enthusiasm right away."
+    },
+    {
+      "id": "venus.aries.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.leo",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.libra",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.aries.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "aries",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aries, you may show someone they matter by making the first move, saying what you want, and acting before the moment passes. You look for someone who answers clearly and does not leave you guessing for long.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You make your interest easy for them to read."
+    },
+    {
+      "id": "venus.taurus.vs.aries",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "taurus",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Taurus. With Venus in Taurus, both of you tend to show appreciation through time, comfort, and consistency.\n\nYou may settle into familiar routines, remember each other’s favorite places or foods, and enjoy time together without needing a special occasion.\n\nYou both show care by staying consistent. A lot may be assumed because each of you expects continued presence to say enough."
+    },
+    {
+      "id": "venus.taurus.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.leo",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.libra",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.taurus.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "taurus",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Taurus, you may show someone they matter by making time for them, helping them feel comfortable, and remembering the food, music, places, or routines they enjoy. You look for steady attention and someone whose treatment of you does not change without warning.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You give them steady attention and make time together feel easy."
+    },
+    {
+      "id": "venus.gemini.vs.aries",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "gemini",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Gemini. With Venus in Gemini, both of you tend to show appreciation through conversation and curiosity.\n\nYou may trade jokes, send each other links, ask follow-up questions, or make a simple plan more interesting along the way.\n\nYou both keep each other interested. Attention can scatter when a new topic, person, or invitation pulls both of you elsewhere."
+    },
+    {
+      "id": "venus.gemini.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.leo",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.libra",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.gemini.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "gemini",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Gemini, you may show someone they matter by asking questions, sending a joke or link that made you think of them, and continuing the conversation. You look for someone who stays curious about you and keeps giving you reasons to talk.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You keep talking to them and make the time you share more interesting."
+    },
+    {
+      "id": "venus.cancer.vs.aries",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "cancer",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Cancer. With Venus in Cancer, both of you tend to show appreciation by remembering, checking in, and making someone feel included.\n\nYou may notice each other’s moods, remember important dates, or make room for each other among the people you trust.\n\nYou both know how to make someone feel included. A lot can go unspoken because each of you expects the other person to notice when more care is needed."
+    },
+    {
+      "id": "venus.cancer.vs.leo",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.libra",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.cancer.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "cancer",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Cancer, you may show someone they matter by checking in, remembering what helps them feel comfortable, and making room for them among the people you trust. You look for care that feels personal and remembers what has already happened between you.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You remember what helps them feel cared for."
+    },
+    {
+      "id": "venus.leo.vs.aries",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.leo",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "leo",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Leo. With Venus in Leo, both of you tend to say what you appreciate and make sure the other person knows.\n\nYou may celebrate and amplify each other’s wins, say what you admire, or make sure credit is given where it belongs.\n\nYou both know how to make the other person feel noticed. A quieter response can feel more personal because each of you wants a clear sign that your appreciation was understood."
+    },
+    {
+      "id": "venus.leo.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.libra",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You make sure they know they matter."
+    },
+    {
+      "id": "venus.leo.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "leo",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Leo, you may show someone they matter by saying what you admire, celebrating and amplifying their wins, and making sure they receive credit. You look for a response that shows they understood how much you wanted to celebrate them.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You make sure they know they matter."
+    },
+    {
+      "id": "venus.virgo.vs.aries",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.leo",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "virgo",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Virgo. With Venus in Virgo, both of you tend to show appreciation by noticing what would help and doing something about it.\n\nYou may remember details, solve small problems, or make the other person’s day easier without asking for much attention.\n\nYou both show care through effort. A lot can be missed because each of you may notice what still needs work before acknowledging what has already been done."
+    },
+    {
+      "id": "venus.virgo.vs.libra",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.virgo.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "virgo",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Virgo, you may show someone they matter by remembering the details, helping with a problem, and noticing what would make their day easier. You look for attention that is specific and useful.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You notice what would make their day easier and help with it."
+    },
+    {
+      "id": "venus.libra.vs.aries",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.leo",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.libra",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "libra",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Libra. With Venus in Libra, both of you tend to show appreciation by making room for the other person’s preferences.\n\nYou may choose plans together, ask what the other person prefers, or make sure neither person is left out of the decision.\n\nYou both try to include the other person. A choice can take longer when each of you is waiting for the other person to say what they want."
+    },
+    {
+      "id": "venus.libra.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You make room for their preferences."
+    },
+    {
+      "id": "venus.libra.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "libra",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Libra, you may show someone they matter by asking what they prefer, choosing plans both of you can enjoy, and considering how a decision will affect each person. You look for someone who listens to your preferences and gives as much as they receive.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You make room for their preferences."
+    },
+    {
+      "id": "venus.scorpio.vs.aries",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.leo",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.libra",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "scorpio",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Scorpio. With Venus in Scorpio, both of you may take longer to trust, but you remember what the other person tells you and keep it private.\n\nYou may pay attention to what is shared quietly, remember what the other person trusted you with, and take loyalty seriously.\n\nYou both take trust seriously. A lot can remain unspoken because each of you may wait for the other person to share more first."
+    },
+    {
+      "id": "venus.scorpio.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nYou both take trust seriously. They do what they said they would do, and you keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You keep what they tell you private."
+    },
+    {
+      "id": "venus.scorpio.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "scorpio",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Scorpio, you may show someone they matter by letting them into parts of your life you keep private, remembering what they trusted you with, and staying loyal when the stakes are higher. You look for someone who keeps private information private and does not use your openness against you.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You keep what they tell you private."
+    },
+    {
+      "id": "venus.sagittarius.vs.aries",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.leo",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.libra",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "sagittarius",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Sagittarius. With Venus in Sagittarius, both of you tend to show appreciation through honesty, humor, and new plans.\n\nYou may make each other laugh, suggest a trip or event, or encourage a choice that feels more honest and less restricted.\n\nYou both give each other room to make your own choices. Plans may stay loose because neither of you wants the other person to feel tied down."
+    },
+    {
+      "id": "venus.sagittarius.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.sagittarius.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "sagittarius",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Sagittarius, you may show someone they matter by inviting them somewhere new, making them laugh, and encouraging them to take a chance on themselves. You look for honesty and someone who gives you room to make your own choices.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You bring humor, honesty, and new plans into their life."
+    },
+    {
+      "id": "venus.capricorn.vs.aries",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.leo",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.libra",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nYou both take trust seriously. They keep what you tell them private, and you do what you said you would do."
+    },
+    {
+      "id": "venus.capricorn.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "capricorn",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Capricorn. With Venus in Capricorn, both of you tend to take affection seriously.\n\nYou may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. Neither of you needs to make a big announcement about the effort you are making.\n\nYou both show care by making room for each other and following through. A lot can go unspoken because each of you expects the other person to notice the effort."
+    },
+    {
+      "id": "venus.capricorn.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You show them they can count on you."
+    },
+    {
+      "id": "venus.capricorn.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "capricorn",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Capricorn, you may show someone they matter by making time for them, remembering what they need, and doing what you said you would do. You look for someone who follows through and keeps their word.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You show them they can count on you."
+    },
+    {
+      "id": "venus.aquarius.vs.aries",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.leo",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.libra",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You give them room to be themselves."
+    },
+    {
+      "id": "venus.aquarius.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "aquarius",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Aquarius. With Venus in Aquarius, both of you tend to show appreciation by accepting difference and giving each other room.\n\nYou may share unusual interests, introduce each other to new groups, or support choices that other people do not understand.\n\nYou both make room for separate interests, friends, and plans. A lot can go unspoken because each of you may assume that giving space says enough."
+    },
+    {
+      "id": "venus.aquarius.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "aquarius",
+      "other_sign": "pisces",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Aquarius, you may show someone they matter by taking their unusual interests seriously, giving them room for separate friends and activities, and supporting choices other people may not understand. You look for someone who respects your independence and does not tell you what role you are supposed to play.\n\n{{other_name}}’s Venus is in Pisces. They may notice that your mood has changed, send you a song, or offer comfort before you explain what is wrong. When someone matters to them, they try to understand what that person is feeling, not only what they say.\n\nThey notice when your mood changes and respond with care. You give them room to be themselves."
+    },
+    {
+      "id": "venus.pisces.vs.aries",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "aries",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Aries. They may invite you first, say they want to see you, or turn a passing idea into a plan. When someone matters to them, they usually make it obvious.\n\nThey make their interest easy for you to read. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.taurus",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "taurus",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Taurus. They may choose a place they know you like, bring something you enjoy, or make time without rushing you. When someone matters to them, they keep showing up in familiar ways.\n\nThey give you steady attention and make time together feel easy. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.gemini",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "gemini",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Gemini. They may send you a joke, ask another question, or invite you into a plan that breaks the routine. When someone matters to them, they keep finding reasons to include that person in the conversation.\n\nThey keep talking to you and make the time you share more interesting. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.cancer",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "cancer",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Cancer. They may remember a difficult day, bring food, ask if you got home safely, or make room for you among the people they trust. When someone matters to them, they remember the small details that help that person feel cared for.\n\nThey remember what helps you feel cared for. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.leo",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "leo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Leo. They may tell you exactly what they like about you, celebrate and amplify your wins, or make a point of giving you credit. When they appreciate you, they do not want you to have to guess.\n\nThey make sure you know you matter. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.virgo",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "virgo",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Virgo. They may help you prepare, remember how you take your coffee, or handle a small task you almost forgot. When someone matters to them, they pay attention to what would actually help.\n\nThey notice what would make your day easier and help with it. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.libra",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "libra",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Libra. They may include you in the decision, choose a place both of you will enjoy, or help an awkward moment feel easier. When someone matters to them, they do not want that person to feel left out.\n\nThey make room for your preferences. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.scorpio",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "scorpio",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Scorpio. They may take longer to decide who they trust, but they remember what you tell them and keep it private. When someone matters to them, they pay attention to what that person is willing to share.\n\nThey keep what you tell them private. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.sagittarius",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "sagittarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Sagittarius. They may suggest a new place, share an honest opinion, or invite you to try something you have not done before. When someone matters to them, they want life with that person to keep growing.\n\nThey bring humor, honesty, and new plans into your life. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.capricorn",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "capricorn",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Capricorn. They may remember what matters to you, keep the plans they make, and make room for you in their schedule. When someone matters to them, they keep showing up even when it is just a regular day.\n\nThey show you that you can count on them. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.aquarius",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "aquarius",
+      "same_sign": false,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nWith your Venus in Pisces, you may show someone they matter by listening closely, making room for their feelings, and sharing music or art that says what is hard to put into words. You look for kindness and someone who notices a change in your mood without needing every detail explained.\n\n{{other_name}}’s Venus is in Aquarius. They may take an unusual interest of yours seriously, introduce you to people or ideas outside your usual circle, or give you space without assuming you are pulling away. When someone matters to them, they want that person to stay themselves.\n\nThey give you room to be yourself. You notice when their mood changes and respond with care."
+    },
+    {
+      "id": "venus.pisces.vs.pisces",
+      "planet": "venus",
+      "reader_sign": "pisces",
+      "other_sign": "pisces",
+      "same_sign": true,
+      "writeup": "Venus shows how you show someone they matter, what makes you feel appreciated, and what you notice when deciding whether someone’s care can be trusted.\n\nYou and {{other_name}} both have Venus in Pisces. With Venus in Pisces, both of you tend to show appreciation by listening closely and noticing changes in each other’s moods.\n\nYou may share music, notice when the other person is having a hard day, or offer comfort before either person has explained what is wrong.\n\nYou both notice subtle changes in each other. Each of you may adjust to the other person before saying what you want."
+    }
+  ],
+  "future_layers": {
+    "venus_venus_aspect": "Separate modifier. Same sign does not prove a close conjunction.",
+    "venus_house_overlay": "Separate modifier used only when reliable birth times are available."
+  }
+}

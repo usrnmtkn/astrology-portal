@@ -2288,12 +2288,12 @@
 .compatibility-card,
 .compatibility-dynamics__group {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
-  padding: clamp(18px, 3vw, 26px);
+  padding: clamp(16px, 2.5vw, 22px);
 }
 
 .compatibility-summary {
@@ -2350,7 +2350,7 @@
   align-items: center;
   flex-wrap: wrap;
   justify-items: start;
-  gap: 8px 16px;
+  gap: 6px 10px;
   color: var(--muted);
   font-size: var(--text-meta-size);
   letter-spacing: 0;
@@ -2361,7 +2361,7 @@
 .compatibility-card__signs > span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .compatibility-card__signs strong {
@@ -2373,7 +2373,7 @@
 .compatibility-sign-label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   line-height: var(--leading-label);
   vertical-align: middle;
 }
@@ -2442,7 +2442,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   justify-items: start;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   text-align: left;
 }
 
@@ -2470,12 +2470,12 @@
 }
 
 .compatibility-card__body {
-  padding-top: var(--space-1);
+  padding-top: 0;
 }
 
 .compatibility-card__reading {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .compatibility-card__reading p {
@@ -2527,6 +2527,11 @@
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.friend-compatibility-stage .compatibility-dynamic-row {
+  --aspect-row-glyph-gap: 4px;
+  --aspect-row-glyph-width: 68px;
 }
 
 .compatibility-dynamic-row h4 {

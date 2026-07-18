@@ -9891,6 +9891,56 @@ function compatibilityWriteupEntry(
     ?.[normalizeContentIdPart(friendSign)] ?? null;
 }
 
+function compatibilityDashboardContentKey(
+  planet: typeof compatibilityPlanets[number],
+  comparisonSign: string,
+  friendSign: string
+) {
+  return `compatibility.${normalizeContentIdPart(planet)}.${normalizeContentIdPart(comparisonSign)}.${normalizeContentIdPart(friendSign)}`;
+}
+
+function compatibilityDashboardWriteupEntry(
+  generatedContent: GeneratedContentMap | undefined,
+  planet: typeof compatibilityPlanets[number],
+  comparisonSign: string,
+  friendSign: string,
+  phrasebankWriteup: CompatibilityWriteupBankEntry | null
+): CompatibilityWriteupBankEntry | null {
+  if (!generatedContent || !phrasebankWriteup) {
+    return null;
+  }
+
+  const contentKey = compatibilityDashboardContentKey(planet, comparisonSign, friendSign);
+  const dashboardContent = generatedContent.get(contentKey);
+
+  if (!dashboardContent) {
+    return null;
+  }
+
+  const appDisplaySource = dashboardContent.sourceSnapshot?.appDisplaySource;
+
+  if (appDisplaySource && appDisplaySource !== "dashboard-article") {
+    return null;
+  }
+
+  const paragraphs = generatedContentParagraphs(dashboardContent);
+
+  if (paragraphs.length < 4) {
+    return null;
+  }
+
+  return {
+    ...phrasebankWriteup,
+    function: paragraphs[0],
+    your_line: paragraphs[1],
+    their_line: phrasebankWriteup.same_sign ? "" : paragraphs[2],
+    same_sign_line: phrasebankWriteup.same_sign ? paragraphs[2] : "",
+    verdict: paragraphs[3],
+    tier: String(dashboardContent.sourceSnapshot?.tier ?? phrasebankWriteup.tier ?? "dashboard-article"),
+    status: "LIVE"
+  };
+}
+
 function compatibilitySummaryEntry(
   planet: typeof compatibilityPlanets[number],
   comparisonSign: string,
@@ -9990,6 +10040,7 @@ function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition:
 function compatibilityPlanetCards(
   profileNatalSky: SkySnapshot | null,
   chart: ManualChart,
+  generatedContent?: GeneratedContentMap,
   relationshipType?: string | null,
   comparisonName = "You",
   comparisonIsSelf = true
@@ -10017,6 +10068,14 @@ function compatibilityPlanetCards(
       yourPosition.sign,
       friendPosition.sign
     );
+    const dashboardWriteup = compatibilityDashboardWriteupEntry(
+      generatedContent,
+      planet,
+      yourPosition.sign,
+      friendPosition.sign,
+      writeup
+    );
+    const resolvedWriteup = dashboardWriteup ?? writeup;
     const summary = compatibilitySummaryEntry(
       planet,
       yourPosition.sign,
@@ -10026,10 +10085,10 @@ function compatibilityPlanetCards(
       comparisonSign: yourPosition.sign,
       friendSign: friendPosition.sign,
       planet,
-      writeup
+      writeup: resolvedWriteup
     });
 
-    if (!writeup || normalized.status === "not-servable") {
+    if (!resolvedWriteup || normalized.status === "not-servable") {
       return [];
     }
 
@@ -10044,16 +10103,16 @@ function compatibilityPlanetCards(
       friendName: chart.displayName,
       friendSign: friendPosition.sign,
       goDeeper: {
-        glyph: writeup.glyph,
-        match: writeup.match,
+        glyph: resolvedWriteup.glyph,
+        match: resolvedWriteup.match,
         function: sectionBySlot.get("function") ?? "",
         yourLine: sectionBySlot.get("your-line") ?? "",
         theirLine: sectionBySlot.get("their-line") ?? "",
-        sameSign: writeup.same_sign,
+        sameSign: resolvedWriteup.same_sign,
         sameSignLine: sectionBySlot.get("same-sign-line") ?? "",
         verdict: sectionBySlot.get("verdict") ?? "",
-        relationship: writeup.relationship,
-        contentTrace: `tier=${writeup.tier ?? "unknown"};status=${writeup.status ?? "unknown"};source=cc-compatibility-writeups;route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${writeup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
+        relationship: resolvedWriteup.relationship,
+        contentTrace: `tier=${resolvedWriteup.tier ?? "unknown"};status=${resolvedWriteup.status ?? "unknown"};source=${dashboardWriteup ? "dashboard-generated-content" : "cc-compatibility-writeups"};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${resolvedWriteup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
       },
       summary: summary ? {
         function: summary.function,
@@ -10068,7 +10127,7 @@ function compatibilityPlanetCards(
       exactAspectLabel: hasExactAspect && exactAspect
         ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
         : undefined,
-      contentTrace: `tier=${writeup.tier ?? "unknown"};status=${writeup.status ?? "unknown"};source=cc-compatibility-writeups;route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${writeup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
+      contentTrace: `tier=${resolvedWriteup.tier ?? "unknown"};status=${resolvedWriteup.status ?? "unknown"};source=${dashboardWriteup ? "dashboard-generated-content" : "cc-compatibility-writeups"};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${resolvedWriteup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
     }];
   });
 }
@@ -17362,6 +17421,7 @@ function ManualChartsPanel({
     ? compatibilityPlanetCards(
         relationshipComparisonSky,
         selectedChart,
+        relationshipGeneratedContent,
         selectedRelationshipContextType,
         relationshipComparisonName,
         relationshipComparisonIsSelf

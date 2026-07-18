@@ -32,6 +32,7 @@ ORDER = list(SIGNS.keys())
 PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 GLYPH = {"sun":"☉","moon":"☽","mercury":"☿","venus":"♀","mars":"♂","jupiter":"♃","saturn":"♄"}
 MOON_CARDS = os.path.join(PKG, "MOON-COMPATIBILITY-CARDS.md")
+VENUS_LIBRARY = os.path.join(PKG, "sources", "venus-compatibility-library.json")
 
 MATCH = {"same_sign":"Two of a kind", "same_element":"Naturally in sync", "complementary":"Easy chemistry",
          "opposition":"Opposites that complete", "friction":"Takes work", "mixed":"Mixed signals"}
@@ -326,6 +327,49 @@ def parse_moon_compatibility_cards():
 
     return entries
 
+def normalize_name_token(text):
+    return text.replace("{{other_name}}’s", "{friend}'s").replace("{{other_name}}'s", "{friend}'s").replace("{{other_name}}", "{friend}")
+
+def parse_authored_library_card_writeup(writeup, row_id):
+    paragraphs = [normalize_name_token(part.strip()) for part in writeup.split("\n\n") if part.strip()]
+    if len(paragraphs) != 4:
+        raise ValueError(f"Authored compatibility card must have exactly 4 paragraphs: {row_id}")
+    return paragraphs
+
+def parse_venus_compatibility_cards():
+    if not os.path.exists(VENUS_LIBRARY):
+        return {}
+
+    source = json.load(open(VENUS_LIBRARY, encoding="utf-8"))
+    entries = {}
+    comparisons = source.get("comparisons", [])
+
+    for row in comparisons:
+        if row.get("planet") != "venus":
+            continue
+        you_sign = row["reader_sign"]
+        friend_sign = row["other_sign"]
+        function, your_line, their_or_same_line, verdict = parse_authored_library_card_writeup(row["writeup"], row["id"])
+        same = bool(row.get("same_sign"))
+
+        entries.setdefault(you_sign, {})[friend_sign] = {
+            "glyph": GLYPH["venus"],
+            "match": "Venus-to-Venus",
+            "function": function,
+            "your_line": your_line,
+            "their_line": "" if same else their_or_same_line,
+            "same_sign": same,
+            "same_sign_line": their_or_same_line if same else "",
+            "same_sign_quote": None,
+            "verdict": verdict,
+            "synthesis": verdict,
+            "relationship": relationship(you_sign, friend_sign),
+            "tier": "authored Venus-to-Venus compatibility write-up; sign-only; directional reader-to-friend copy",
+            "status": "DRAFT",
+        }
+
+    return entries
+
 cards = {}
 missing = []
 for planet in PLANETS:
@@ -334,6 +378,12 @@ for planet in PLANETS:
         if sum(len(row) for row in moon_cards.values()) != len(ORDER) ** 2:
             missing.append(("moon", "authored-source", "144 directional pairs"))
         cards[planet] = moon_cards
+        continue
+    if planet == "venus":
+        venus_cards = parse_venus_compatibility_cards()
+        if sum(len(row) for row in venus_cards.values()) != len(ORDER) ** 2:
+            missing.append(("venus", "authored-source", "144 directional pairs"))
+        cards[planet] = venus_cards
         continue
 
     cards[planet] = {}
@@ -344,7 +394,7 @@ for planet in PLANETS:
         cards[planet].setdefault(a, {})[b] = c
 
 out = {"_meta": {"title": "Compatibility long-form write-ups (Co-Star style)",
-        "model": "function + your_line + their_line/same_sign_line + verdict; Moon is source-only from MOON-COMPATIBILITY-CARDS.md",
+        "model": "function + your_line + their_line/same_sign_line + verdict; Moon and Venus are source-only authored compatibility libraries",
         "planets": PLANETS, "status": "DRAFT — pending editorial sign-off",
         "note": CC["_meta"]["provenance"]},
        "cards": cards}
