@@ -17382,7 +17382,7 @@ function ManualChartsPanel({
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
-      ? false
+      ? Boolean(selectedChart?.natalChart)
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "compatibility"
