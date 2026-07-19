@@ -34,12 +34,14 @@ export function buildAstrologyFactsApiResponse(
   sky: Awaited<ReturnType<typeof getAstrodienstSky>>,
   includeAspectPatterns = false,
   includeAspectPatternCopy = false,
-  includeAspectPatternActivation = false
+  includeAspectPatternActivation = false,
+  includeAspectPatternActivationContexts = false
 ) {
   const aspectPatterns = includeAspectPatterns
     ? aspectPatternsFromSkySnapshot(sky, {
         includeCopy: includeAspectPatternCopy,
         includeActivation: includeAspectPatternActivation,
+        includeActivationContexts: includeAspectPatternActivationContexts,
         calculatedFor: sky.generatedAt
       })
     : undefined;
@@ -104,12 +106,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const includeAspectPatterns = booleanParam(requestUrl, "includeAspectPatterns");
     const includeAspectPatternCopy = includeAspectPatterns && booleanParam(requestUrl, "includeAspectPatternCopy");
     const includeAspectPatternActivation = includeAspectPatterns && booleanParam(requestUrl, "includeAspectPatternActivation");
+    const includeAspectPatternActivationContexts = includeAspectPatternActivation && booleanParam(requestUrl, "includeAspectPatternActivationContexts");
     const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
     const { body } = buildAstrologyFactsApiResponse(
       sky,
       includeAspectPatterns,
       includeAspectPatternCopy,
-      includeAspectPatternActivation
+      includeAspectPatternActivation,
+      includeAspectPatternActivationContexts
     );
 
     if (!body.validation.ok) {

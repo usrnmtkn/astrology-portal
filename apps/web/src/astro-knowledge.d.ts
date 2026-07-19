@@ -284,6 +284,22 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
       currentDisplayPriority: number;
     }>;
     currentDisplayOrder: string[];
+    interpretationContexts?: AspectPatternActivationInterpretationContext[];
+  };
+
+  export type AspectPatternActivationInterpretationContext = {
+    version: string;
+    patternId: string;
+    patternType: AspectPatternType;
+    natalInterpretationContextId: string;
+    calculatedFor: string;
+    display: Record<string, unknown>;
+    triggers: Array<Record<string, unknown>>;
+    primaryTrigger: Record<string, unknown>;
+    activationSummary: Record<string, unknown>;
+    ranking: Record<string, unknown>;
+    copyInstructions: Record<string, unknown>;
+    provenance: Record<string, unknown>;
   };
 
   export type AspectPatternInterpretationContext = {
@@ -350,6 +366,11 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     context?: Record<string, unknown>
   ): AspectPatternInterpretationContext[];
 
+  export function buildAspectPatternActivationInterpretationContexts(
+    detectionResult: AspectPatternDetectionResult,
+    options?: Record<string, unknown>
+  ): AspectPatternActivationInterpretationContext[];
+
   export function buildPatternActivations(
     detectionResult: AspectPatternDetectionResult,
     transitAspects?: Array<Record<string, unknown>>,
@@ -364,6 +385,7 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     detectPatterns: typeof detectPatterns;
     rankAspectPatterns: typeof rankAspectPatterns;
     buildAspectPatternInterpretationContexts: typeof buildAspectPatternInterpretationContexts;
+    buildAspectPatternActivationInterpretationContexts: typeof buildAspectPatternActivationInterpretationContexts;
     buildPatternActivations: typeof buildPatternActivations;
     resolveAspectPatternCopies: typeof resolveAspectPatternCopies;
   };
