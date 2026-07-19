@@ -8186,6 +8186,16 @@ body,
   color: var(--admin-ui-text);
 }
 
+.admin-dashboard .admin-template-tabs button {
+  gap: 8px;
+}
+
+.admin-dashboard .admin-template-tabs button strong {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: var(--weight-medium);
+}
+
 .admin-dashboard .admin-status-pills button.active,
 .admin-dashboard .admin-status-pills button[aria-selected="true"],
 .admin-dashboard .admin-template-tabs button.active,
@@ -8668,9 +8678,406 @@ body,
   right: 24px;
 }
 
+.admin-dashboard .admin-panel {
+  background: var(--admin-ui-surface);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  box-shadow: none;
+  min-width: 0;
+  padding: 24px;
+}
+
+.admin-dashboard .aspect-diagnostics-page,
+.admin-dashboard .aspect-coverage-page {
+  max-width: 1280px;
+}
+
+.admin-dashboard .aspect-diagnostics-controls,
+.admin-dashboard .aspect-coverage-header {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-dashboard .aspect-diagnostics-controls h2,
+.admin-dashboard .aspect-coverage-header h2,
+.admin-dashboard .aspect-coverage-table h3,
+.admin-dashboard .aspect-coverage-record h3,
+.admin-dashboard .aspect-coverage-record h4,
+.admin-dashboard .aspect-diagnostics-display-order h3,
+.admin-dashboard .aspect-relationship-table h3,
+.admin-dashboard .aspect-diagnostics-raw h3,
+.admin-dashboard .aspect-pattern-card h3,
+.admin-dashboard .aspect-pattern-card h4 {
+  margin: 0;
+}
+
+.admin-dashboard .aspect-diagnostics-controls p,
+.admin-dashboard .aspect-coverage-header p,
+.admin-dashboard .aspect-diagnostics-empty p,
+.admin-dashboard .aspect-diagnostics-error p {
+  color: var(--admin-ui-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.admin-dashboard .aspect-diagnostics-mode {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-dashboard .aspect-diagnostics-mode button {
+  background: transparent;
+  border-color: var(--admin-ui-border);
+  color: var(--admin-ui-muted);
+  min-height: 34px;
+}
+
+.admin-dashboard .aspect-diagnostics-mode button.active {
+  background: var(--admin-ui-neutral-soft);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .aspect-diagnostics-real-chart {
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+}
+
+.admin-dashboard .aspect-diagnostics-request {
+  color: var(--admin-ui-muted);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-diagnostics-copy-toggle {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.admin-dashboard .aspect-diagnostics-copy-toggle input {
+  height: 18px;
+  width: 18px;
+}
+
+.admin-dashboard .aspect-diagnostics-empty,
+.admin-dashboard .aspect-diagnostics-error {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-dashboard .aspect-diagnostics-error {
+  border-color: rgba(226, 104, 96, 0.36);
+}
+
+.admin-dashboard .aspect-diagnostics-display-order {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard .aspect-diagnostics-display-order ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.admin-dashboard .aspect-warning-list,
+.admin-dashboard .aspect-reason-list {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-dashboard .aspect-warning-list span,
+.admin-dashboard .aspect-reason-list span {
+  color: var(--admin-ui-muted);
+  line-height: 1.4;
+}
+
+.admin-dashboard .aspect-pattern-card-list {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-dashboard .aspect-pattern-card {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-dashboard .aspect-pattern-card header {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .aspect-pattern-card header p {
+  color: var(--admin-ui-muted);
+  margin: 6px 0 10px;
+}
+
+.admin-dashboard .aspect-pattern-card code,
+.admin-dashboard .aspect-diagnostics-request,
+.admin-dashboard .aspect-diagnostics-raw pre {
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .aspect-pattern-card-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-dashboard .aspect-pattern-card-grid > section,
+.admin-dashboard .aspect-source-aspects,
+.admin-dashboard .aspect-derived-points,
+.admin-dashboard .aspect-contained-links {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.admin-dashboard .aspect-pattern-card dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.admin-dashboard .aspect-pattern-card dl > div,
+.admin-dashboard .aspect-pattern-card-grid dl {
+  min-width: 0;
+}
+
+.admin-dashboard .aspect-pattern-card dt {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+}
+
+.admin-dashboard .aspect-pattern-card dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-source-aspects ul,
+.admin-dashboard .aspect-derived-points ul {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-dashboard .aspect-source-aspects li,
+.admin-dashboard .aspect-derived-points li {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(180px, 1fr) minmax(90px, 0.4fr) minmax(130px, 0.5fr) minmax(90px, 0.4fr);
+  min-width: 0;
+}
+
+.admin-dashboard .aspect-derived-points li {
+  grid-template-columns: minmax(160px, 0.4fr) minmax(180px, 1fr);
+}
+
+.admin-dashboard .aspect-source-aspects span,
+.admin-dashboard .aspect-derived-points span,
+.admin-dashboard .aspect-contained-links p {
+  color: var(--admin-ui-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.admin-dashboard .aspect-relationship-table {
+  overflow-x: auto;
+}
+
+.admin-dashboard .aspect-relationship-table table,
+.admin-dashboard .aspect-coverage-table table {
+  border-collapse: collapse;
+  min-width: 720px;
+  width: 100%;
+}
+
+.admin-dashboard .aspect-relationship-table th,
+.admin-dashboard .aspect-relationship-table td,
+.admin-dashboard .aspect-coverage-table th,
+.admin-dashboard .aspect-coverage-table td {
+  border-bottom: 1px solid var(--admin-ui-border);
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-dashboard .aspect-coverage-header {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .aspect-coverage-table {
+  overflow-x: auto;
+}
+
+.admin-dashboard .aspect-coverage-records {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-dashboard .aspect-coverage-record {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-dashboard .aspect-coverage-record header,
+.admin-dashboard .aspect-coverage-preview header {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .aspect-coverage-record header p {
+  color: var(--admin-ui-muted);
+  margin: 6px 0 0;
+}
+
+.admin-dashboard .aspect-coverage-record h3,
+.admin-dashboard .aspect-coverage-record code,
+.admin-dashboard .aspect-coverage-preview code {
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-coverage-record-grid {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 14px;
+}
+
+.admin-dashboard .aspect-coverage-record dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.admin-dashboard .aspect-coverage-record dt {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+}
+
+.admin-dashboard .aspect-coverage-record dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-coverage-claims {
+  border-top: 1px solid var(--admin-ui-border);
+  padding-top: 12px;
+}
+
+.admin-dashboard .aspect-coverage-claims summary {
+  cursor: pointer;
+}
+
+.admin-dashboard .aspect-coverage-claims ul,
+.admin-dashboard .aspect-coverage-copy-compare ul {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.admin-dashboard .aspect-coverage-previews {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.admin-dashboard .aspect-coverage-preview {
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.admin-dashboard .aspect-coverage-preview header span {
+  color: var(--admin-ui-muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.admin-dashboard .aspect-coverage-preview-meta {
+  color: var(--admin-ui-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  line-height: 1.4;
+}
+
+.admin-dashboard .aspect-coverage-copy-compare {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .aspect-coverage-copy-compare section {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius);
+  min-width: 0;
+  padding: 14px;
+}
+
+.admin-dashboard .aspect-coverage-copy-compare h5 {
+  margin: 0 0 8px;
+}
+
+.admin-dashboard .aspect-coverage-copy-compare p,
+.admin-dashboard .aspect-coverage-copy-compare li {
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-diagnostics-raw {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-dashboard .aspect-diagnostics-raw details {
+  border-top: 1px solid var(--admin-ui-border);
+  padding-top: 12px;
+}
+
+.admin-dashboard .aspect-diagnostics-raw summary {
+  cursor: pointer;
+}
+
+.admin-dashboard .aspect-diagnostics-raw pre {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius);
+  margin: 12px 0 0;
+  max-height: 420px;
+  overflow: auto;
+  padding: 14px;
+}
+
 @media (max-width: 1180px) {
   .admin-dashboard .admin-status-grid {
     grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+
+  .admin-dashboard .aspect-pattern-card-grid,
+  .admin-dashboard .aspect-coverage-record-grid,
+  .admin-dashboard .aspect-diagnostics-real-chart {
+    grid-template-columns: 1fr 1fr;
   }
 
   .admin-dashboard :where(.admin-content-toolbar, .admin-reader-safety-panel, .admin-phrasebook-panel, .admin-dashboard-header) {
@@ -8700,6 +9107,15 @@ body,
 
   .admin-dashboard .admin-status-grid,
   .admin-dashboard .admin-studio-map {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .aspect-pattern-card-grid,
+  .admin-dashboard .aspect-coverage-header,
+  .admin-dashboard .aspect-coverage-record-grid,
+  .admin-dashboard .aspect-coverage-copy-compare,
+  .admin-dashboard .aspect-diagnostics-real-chart,
+  .admin-dashboard .aspect-source-aspects li {
     grid-template-columns: 1fr;
   }
 

@@ -129,11 +129,20 @@ const aspectDefinitions = [
   ["sextile", 60],
   ["square", 90],
   ["trine", 120],
+  ["quincunx", 150],
   ["opposition", 180]
 ] as const;
 
-const calendarAspectDefinitions = aspectDefinitions.filter(([, degrees]) => degrees <= 180);
+const calendarAspectDefinitions = aspectDefinitions.filter(([type, degrees]) => type !== "quincunx" && degrees <= 180);
 const cazimiOrbDegrees = 1;
+const aspectOrbCaps = {
+  conjunction: 5,
+  sextile: 5,
+  square: 5,
+  trine: 5,
+  quincunx: 3,
+  opposition: 5
+} satisfies Record<(typeof aspectDefinitions)[number][0], number>;
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
 
@@ -2033,7 +2042,7 @@ function angularSeparation(first: number, second: number) {
 function aspectForSeparation(separation: number) {
   return aspectDefinitions
     .map(([type, exact]) => ({ type, orb: Math.abs(separation - exact) }))
-    .filter(({ orb }) => orb <= 5)
+    .filter(({ type, orb }) => orb <= aspectOrbCaps[type])
     .sort((a, b) => a.orb - b.orb)[0];
 }
 
@@ -2066,6 +2075,9 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
         const separation = angularSeparation(from.longitude, to.longitude);
 
         aspects.push({
+          id: `aspect.${from.planet.toLowerCase().replaceAll(" ", "_")}.${aspect.type}.${to.planet.toLowerCase().replaceAll(" ", "_")}`,
+          bodyA: from.planet,
+          bodyB: to.planet,
           from: from.planet,
           to: to.planet,
           type: aspect.type,

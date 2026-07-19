@@ -1,7 +1,16 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { detectPatterns } = require("../engine/aspect-patterns");
+const {
+  ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
+  ASPECT_PATTERN_DETECTOR_VERSION,
+  buildAspectPatternInterpretationContexts,
+  detectPatterns,
+  rankAspectPatterns,
+  resolveAspectPatternCopies,
+  resolveAspectPatternCopy,
+  validateAspectPatternCopyRecord
+} = require("../engine/aspect-patterns");
 const { fixtures } = require("../engine/aspect-patterns/fixtures");
 
 function patternsOf(result, type) {
@@ -35,6 +44,91 @@ function relationshipExists(result, parentPatternId, childPatternId, relationshi
       && item.childPatternId === childPatternId
       && item.relationship === relationship;
   });
+}
+
+function rankingFor(ranking, patternId) {
+  const found = ranking.rankings.find((item) => item.patternId === patternId);
+  assert.ok(found, `Missing ranking for ${patternId}`);
+  return found;
+}
+
+function hasReason(ranking, code, planet) {
+  return ranking.reasons.some((reason) => {
+    return reason.code === code && (planet === undefined || reason.planet === planet);
+  });
+}
+
+function rankedDetection(fixture, context = {}) {
+  const detection = detectPatterns(fixture);
+  const ranking = rankAspectPatterns(detection, {
+    planets: fixture.planets,
+    ascendantSign: "aries",
+    ascendantLongitude: 0,
+    midheavenLongitude: 270,
+    ...context
+  });
+  return {
+    ...detection,
+    ranking
+  };
+}
+
+function interpretationContextsFor(fixture, context = {}) {
+  const detection = rankedDetection(fixture, context);
+  return buildAspectPatternInterpretationContexts(detection, {
+    planets: fixture.planets,
+    ascendantSign: "aries",
+    ascendantLongitude: 0,
+    midheavenLongitude: 270,
+    ...context
+  });
+}
+
+function contextFor(contexts, type) {
+  const matches = contexts.filter((context) => context.patternType === type);
+  assert.equal(matches.length, 1, `Expected one ${type} interpretation context`);
+  return matches[0];
+}
+
+function copyText(copy) {
+  return [
+    copy.content.eyebrow,
+    copy.content.headline,
+    copy.content.overview,
+    ...copy.content.sections.map((section) => section.body)
+  ].filter(Boolean).join(" ");
+}
+
+function authoredRecordFor(context, overrides = {}) {
+  return {
+    id: `authored-test:${context.patternType}`,
+    version: "1.0.0",
+    patternType: context.patternType,
+    contentLevel: "authored",
+    status: "approved",
+    eligibility: { confidence: ["exact", "strong", "wide", "partial"], houseMode: "any" },
+    templates: {
+      eyebrow: "{{pattern_name}}",
+      headline: "Authored {{pattern_name}} for {{member_planets}}",
+      overview: "Authored governed overview for {{member_planets}}.",
+      sections: [
+        {
+          id: "how_it_works",
+          template: "Authored governed section for {{pattern_name}}.",
+          required: true
+        }
+      ]
+    },
+    languageRules: {
+      allowedCertainty: context.copyInstructions.allowedCertainty,
+      prohibitedClaims: [],
+      prohibitedTerms: []
+    },
+    provenance: {
+      sourceIds: ["test:authored"]
+    },
+    ...overrides
+  };
 }
 
 {
@@ -159,6 +253,314 @@ function relationshipExists(result, parentPatternId, childPatternId, relationshi
     assert.equal(pattern.geometry.orbPolicyId, result.orbPolicyId);
     assert.ok(pattern.sourceAspectIds.length > 0, `${pattern.id} missing source aspect IDs`);
   }
+}
+
+{
+  const result = detectPatterns(fixtures.grand_square);
+  const ranking = rankAspectPatterns(result, {
+    planets: fixtures.grand_square.planets,
+    ascendantSign: "aries",
+    ascendantLongitude: 0,
+    midheavenLongitude: 270
+  });
+  const grandSquare = findPattern(result, "grand_square");
+  const tSquares = patternsOf(result, "t_square");
+  const grandSquareRanking = rankingFor(ranking, grandSquare.id);
+
+  assert.equal(ranking.policyId, "natal_pattern_ranking_v1");
+  assert.equal(ranking.rankings.length, result.patterns.length);
+  assert.equal(new Set(ranking.displayOrder).size, result.patterns.length);
+  assert.deepEqual(new Set(ranking.displayOrder), new Set(result.patterns.map((pattern) => pattern.id)));
+  assert.equal(ranking.displayOrder[0], grandSquare.id);
+  assert.ok(hasReason(grandSquareRanking, "parent_pattern"));
+  assert.ok(hasReason(grandSquareRanking, "contains_sun", "sun"));
+  assert.ok(hasReason(grandSquareRanking, "contains_moon", "moon"));
+  assert.ok(hasReason(grandSquareRanking, "contains_personal_planet", "mars"));
+  assert.ok(hasReason(grandSquareRanking, "contains_chart_ruler", "mars"));
+  assert.ok(hasReason(grandSquareRanking, "planet_near_angle", "sun"));
+  assert.ok(hasReason(grandSquareRanking, "repeated_planet", "sun"));
+
+  for (const tSquare of tSquares) {
+    const tSquareRanking = rankingFor(ranking, tSquare.id);
+    assert.ok(grandSquareRanking.score.baseDisplayPriority > tSquareRanking.score.baseDisplayPriority);
+    assert.ok(hasReason(tSquareRanking, "contained_pattern"));
+  }
+}
+
+{
+  const result = detectPatterns(fixtures.kite);
+  const ranking = rankAspectPatterns(result, {
+    planets: fixtures.kite.planets,
+    ascendantSign: "aries"
+  });
+  const kite = findPattern(result, "kite");
+  const grandTrine = findPattern(result, "grand_trine");
+  assert.ok(ranking.displayOrder.indexOf(kite.id) < ranking.displayOrder.indexOf(grandTrine.id));
+  assert.ok(hasReason(rankingFor(ranking, kite.id), "parent_pattern"));
+  assert.ok(hasReason(rankingFor(ranking, grandTrine.id), "contained_pattern"));
+}
+
+{
+  const tight = rankAspectPatterns(detectPatterns(fixtures.grand_trine), {
+    planets: fixtures.grand_trine.planets
+  }).rankings[0];
+  const wide = rankAspectPatterns(detectPatterns(fixtures.wide_grand_trine), {
+    planets: fixtures.wide_grand_trine.planets
+  }).rankings[0];
+  assert.ok(tight.score.baseDisplayPriority > wide.score.baseDisplayPriority);
+}
+
+{
+  const withAngles = rankAspectPatterns(detectPatterns(fixtures.t_square), {
+    planets: fixtures.t_square.planets,
+    ascendantSign: "aries",
+    ascendantLongitude: 100
+  });
+  const withoutBirthTime = rankAspectPatterns(detectPatterns(fixtures.t_square), {
+    planets: fixtures.t_square.planets
+  });
+  const pattern = findPattern(detectPatterns(fixtures.t_square), "t_square");
+  assert.ok(rankingFor(withAngles, pattern.id).score.natalProminence > rankingFor(withoutBirthTime, pattern.id).score.natalProminence);
+  assert.equal(rankingFor(withoutBirthTime, pattern.id).score.geometry, rankingFor(withAngles, pattern.id).score.geometry);
+  assert.equal(JSON.stringify(withoutBirthTime), JSON.stringify(rankAspectPatterns(detectPatterns(fixtures.t_square), {
+    planets: fixtures.t_square.planets.slice().reverse()
+  })));
+}
+
+{
+  const result = detectPatterns({
+    planets: fixtures.t_square.planets.concat([{ id: "ceres", longitude: 10, sign: "aries" }]),
+    aspects: fixtures.t_square.aspects
+  });
+  const ranking = rankAspectPatterns(result, {
+    planets: fixtures.t_square.planets.concat([{ id: "ceres", longitude: 10, sign: "aries" }]),
+    ascendantSign: "unknown"
+  });
+  assert.equal(ranking.rankings.length, result.patterns.length);
+}
+
+{
+  const detection = rankedDetection(fixtures.grand_square);
+  const before = JSON.stringify(detection);
+  const contexts = buildAspectPatternInterpretationContexts(detection, {
+    planets: fixtures.grand_square.planets,
+    ascendantSign: "aries",
+    ascendantLongitude: 0,
+    midheavenLongitude: 270
+  });
+
+  assert.equal(JSON.stringify(detection), before, "Context builder must not mutate detector or ranking output");
+  assert.equal(contexts.length, detection.ranking.rankings.length, "Every ranking record needs one interpretation context");
+  assert.deepEqual(contexts.map((context) => context.patternId), detection.ranking.displayOrder);
+  assert.ok(contexts[0].display.isPrimary);
+
+  for (const context of contexts) {
+    const pattern = detection.patterns.find((item) => item.id === context.patternId);
+    assert.ok(pattern, `Missing pattern for context ${context.patternId}`);
+    assert.deepEqual(context.geometry.sourceAspectIds, pattern.sourceAspectIds);
+    assert.equal(context.provenance.detectorVersion, ASPECT_PATTERN_DETECTOR_VERSION);
+    assert.equal(context.provenance.contextBuilderVersion, ASPECT_PATTERN_CONTEXT_BUILDER_VERSION);
+    assert.equal(context.provenance.orbPolicyId, pattern.geometry.orbPolicyId);
+    assert.equal(context.provenance.rankingPolicyId, detection.ranking.policyId);
+    assert.ok(context.copyInstructions.primaryJob);
+    assert.ok(!JSON.stringify(context).match(/\bYou\b|\byour\b/i), "Context must not contain finished second-person interpretation copy");
+  }
+
+  const grandSquare = contexts.find((context) => context.patternType === "grand_square");
+  assert.ok(grandSquare);
+  assert.equal(grandSquare.roles.apex, undefined);
+  assert.ok(grandSquare.display.childPatternIds.some((patternId) => patternId.includes("t_square")));
+  assert.ok(grandSquare.members.every((member) => member.roles.includes("opposition_axis")));
+}
+
+{
+  const contexts = interpretationContextsFor(fixtures.t_square);
+  const tSquare = contextFor(contexts, "t_square");
+  assert.equal(tSquare.roles.apex, "mars");
+  assert.ok(tSquare.members.find((member) => member.planet === "mars").roles.includes("apex"));
+  assert.ok(tSquare.derivedPoints.some((point) => point.type === "empty_leg"));
+}
+
+{
+  const contexts = interpretationContextsFor(fixtures.yod);
+  const yod = contextFor(contexts, "yod");
+  assert.deepEqual(yod.roles.basePlanets, ["moon", "venus"]);
+  assert.equal(yod.roles.apex, "saturn");
+  assert.ok(yod.derivedPoints.some((point) => point.type === "fallout_point"));
+  assert.ok(yod.members.find((member) => member.planet === "saturn").roles.includes("apex"));
+  assert.ok(yod.members.find((member) => member.planet === "moon").roles.includes("base"));
+}
+
+{
+  const contexts = interpretationContextsFor(fixtures.kite);
+  const kite = contextFor(contexts, "kite");
+  const grandTrine = contextFor(contexts, "grand_trine");
+  assert.ok(kite.display.childPatternIds.includes(grandTrine.patternId));
+  assert.ok(grandTrine.display.parentPatternIds.includes(kite.patternId));
+  assert.ok(kite.members.find((member) => member.planet === "saturn").roles.includes("focal_planet"));
+}
+
+{
+  const contexts = interpretationContextsFor(fixtures.mystic_rectangle);
+  const rectangle = contextFor(contexts, "mystic_rectangle");
+  assert.equal(rectangle.roles.apex, undefined);
+  assert.ok(rectangle.members.every((member) => member.roles.includes("opposition_axis")));
+}
+
+{
+  const detection = rankedDetection(fixtures.wide_grand_trine);
+  const contexts = buildAspectPatternInterpretationContexts(detection, {
+    planets: fixtures.wide_grand_trine.planets
+  });
+  assert.equal(contexts[0].geometry.confidence, "wide");
+  assert.ok(contexts[0].geometry.warnings.includes("wide_orb_pattern"));
+  assert.equal(contexts[0].copyInstructions.allowedCertainty, "qualified");
+}
+
+{
+  const detection = rankedDetection(fixtures.t_square);
+  detection.patterns[0].geometry.warnings.push("new_warning_code_from_future");
+  detection.ranking.rankings[0].reasons.push({ code: "new_ranking_code_from_future", planet: "mars", value: 1 });
+  const contexts = buildAspectPatternInterpretationContexts(detection, {
+    planets: fixtures.t_square.planets
+  });
+  assert.ok(contexts[0].geometry.warnings.includes("new_warning_code_from_future"));
+  assert.ok(contexts[0].ranking.reasons.some((reason) => reason.code === "new_ranking_code_from_future"));
+}
+
+{
+  const forward = interpretationContextsFor(fixtures.grand_square);
+  const reversed = interpretationContextsFor(reverseFixture(fixtures.grand_square));
+  assert.equal(JSON.stringify(reversed), JSON.stringify(forward));
+}
+
+{
+  const examples = [
+    ["t_square", interpretationContextsFor(fixtures.t_square)],
+    ["grand_square", interpretationContextsFor(fixtures.grand_square)],
+    ["grand_trine", interpretationContextsFor(fixtures.grand_trine)],
+    ["kite", interpretationContextsFor(fixtures.kite)],
+    ["yod", interpretationContextsFor(fixtures.yod)],
+    ["mystic_rectangle", interpretationContextsFor(fixtures.mystic_rectangle)]
+  ];
+  for (const [type, contexts] of examples) {
+    const context = contextFor(contexts, type);
+    const resolved = resolveAspectPatternCopy(context);
+    assert.equal(resolved.patternId, context.patternId);
+    assert.equal(resolved.patternType, context.patternType);
+    assert.ok(resolved.content.headline);
+    assert.ok(resolved.content.overview);
+    assert.ok(resolved.content.sections.length > 0);
+    assert.ok(resolved.source.recordId);
+    assert.ok(resolved.source.contentLevel);
+    assert.equal(JSON.stringify(resolveAspectPatternCopy(context)), JSON.stringify(resolved), "Copy resolution must be deterministic");
+  }
+}
+
+{
+  const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
+  const authored = authoredRecordFor(context);
+  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [authored] });
+  assert.equal(resolved.source.contentLevel, "authored");
+  assert.equal(resolved.source.recordId, authored.id);
+}
+
+{
+  const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
+  const authored = authoredRecordFor(context, {
+    id: "authored-test:invalid-slot",
+    templates: {
+      eyebrow: "{{pattern_name}}",
+      headline: "Broken {{unknown_slot}}",
+      overview: "Broken {{member_planets}}.",
+      sections: [{ id: "how_it_works", template: "Broken.", required: true }]
+    }
+  });
+  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [authored] });
+  assert.equal(resolved.source.contentLevel, "source_grounded_template");
+  assert.notEqual(resolved.source.recordId, authored.id);
+  const validation = validateAspectPatternCopyRecord(authored, context);
+  assert.ok(validation.errors.includes("unknown_required_slot:headline"));
+  assert.ok(validation.unknownSlots.includes("unknown_slot"));
+}
+
+{
+  const tSquare = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
+  const tSquareCopy = resolveAspectPatternCopy(tSquare);
+  const text = copyText(tSquareCopy);
+  assert.match(text, /Mars/);
+  assert.match(text, /empty leg/i);
+  assert.match(text, /Taurus|Scorpio|Aquarius|Leo|Aries|Cancer|Gemini|Virgo|Libra|Sagittarius|Capricorn|Pisces/);
+}
+
+{
+  const grandSquare = contextFor(interpretationContextsFor(fixtures.grand_square), "grand_square");
+  const mysticRectangle = contextFor(interpretationContextsFor(fixtures.mystic_rectangle), "mystic_rectangle");
+  assert.doesNotMatch(copyText(resolveAspectPatternCopy(grandSquare)), /\bapex\b/i);
+  assert.doesNotMatch(copyText(resolveAspectPatternCopy(mysticRectangle)), /\bapex\b/i);
+}
+
+{
+  const kiteContexts = interpretationContextsFor(fixtures.kite);
+  const kite = contextFor(kiteContexts, "kite");
+  const grandTrine = contextFor(kiteContexts, "grand_trine");
+  const text = copyText(resolveAspectPatternCopy(kite));
+  assert.match(text, /Grand Trine/i);
+  assert.match(text, /opposition/i);
+  assert.ok(kite.display.childPatternIds.includes(grandTrine.patternId));
+  const copies = resolveAspectPatternCopies(kiteContexts);
+  assert.equal(copies.length, kiteContexts.length);
+  assert.ok(copies.some((copy) => copy.patternId === grandTrine.patternId));
+}
+
+{
+  const yod = contextFor(interpretationContextsFor(fixtures.yod), "yod");
+  const yodCopy = resolveAspectPatternCopy(yod);
+  const text = copyText(yodCopy);
+  assert.match(yodCopy.content.headline, /adjustment|possible/i);
+  assert.equal(yodCopy.source.contentLevel, "authored");
+  assert.match(text, /fallout point/i);
+  assert.doesNotMatch(text, /\b(Finger of God|fate|destiny|chosen|special mission|unavoidable calling)\b/i);
+}
+
+{
+  const wide = buildAspectPatternInterpretationContexts(rankedDetection(fixtures.wide_grand_trine), {
+    planets: fixtures.wide_grand_trine.planets
+  })[0];
+  const copy = resolveAspectPatternCopy(wide);
+  assert.equal(copy.source.contentLevel, "authored");
+  assert.equal(copy.source.status, "approved");
+  assert.match(copyText(copy), /\bwide\b/i);
+}
+
+{
+  const partial = contextFor(interpretationContextsFor(fixtures.partial_t_square), "t_square");
+  const copy = resolveAspectPatternCopy(partial);
+  assert.match(copyText(copy), /\bpartial\b/i);
+}
+
+{
+  const noHouse = contextFor(interpretationContextsFor(fixtures.t_square, { planets: fixtures.t_square.planets.map(({ house, ...planet }) => planet) }), "t_square");
+  const copy = resolveAspectPatternCopy(noHouse);
+  assert.match(copyText(copy), /empty leg points toward/i);
+  assert.doesNotMatch(copyText(copy), /\bhouse undefined\b|undefined/i);
+}
+
+{
+  const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
+  const malformed = { ...context, roles: { type: "t_square" }, derivedPoints: [] };
+  const emergency = resolveAspectPatternCopy(malformed);
+  assert.equal(emergency.source.contentLevel, "emergency_fallback");
+  assert.ok(emergency.content.headline);
+  assert.ok(emergency.content.overview);
+}
+
+{
+  const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
+  const before = JSON.stringify(context);
+  const copy = resolveAspectPatternCopy(context);
+  assert.equal(JSON.stringify(context), before, "Copy resolver must not mutate context input");
+  assert.doesNotMatch(copyText(copy), /baseDisplayPriority|structuralContext|sourceAspectIds|tight_geometry|contains_sun/);
 }
 
 console.log("Aspect pattern engine tests passed.");

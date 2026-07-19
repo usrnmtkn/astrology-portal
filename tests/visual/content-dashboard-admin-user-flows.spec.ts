@@ -7,6 +7,7 @@ const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-fl
 const adminPages = [
   { nav: "Studio Home", title: "Content Studio", breadcrumb: "Admin / Home", hash: "home" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
+  { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
   { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
@@ -27,7 +28,7 @@ const now = "2026-07-16T12:00:00.000Z";
 const generatedContentRows = [
   {
     id: "qa-sky-row",
-    content_key: "qa/sky/sun-cancer",
+    content_key: "sky.placement.sun.cancer",
     surface: "sky",
     mode: "feed",
     status: "LIVE",
@@ -45,7 +46,7 @@ const generatedContentRows = [
     evergreen_by: "qa",
     facts: { body: "Sun", sign: "Cancer" },
     knowledge_ids: ["qa-sky-source"],
-    source_snapshot: null,
+    source_snapshot: { appDisplaySource: "dashboard-article", contentType: "sky_article", authoringSource: "qa-fixture" },
     reviewer_notes: "QA fixture row.",
     prompt_version: "qa-admin-flow",
     provider: "qa-fixture",
@@ -78,6 +79,126 @@ const generatedContentRows = [
     source_snapshot: null,
     reviewer_notes: "QA fixture row.",
     prompt_version: "qa-admin-flow",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: null,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-compatibility-content-row",
+    content_key: "compatibility.sun.aries.libra",
+    surface: "relationship",
+    mode: "card",
+    status: "LIVE",
+    event_type: "friends.compatibility.planet-card",
+    target_date: null,
+    headline: "Sun compatibility / Aries and Libra",
+    summary: "Compatibility card copy for an Aries reader and Libra friend.",
+    body: "Aries and Libra can learn timing from each other: one starts the motion, the other checks the mutual field before the next step.",
+    sections: [],
+    block_type: "compatibility_planet_card",
+    lane: "serving",
+    review_state: "reviewed",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { planet: "sun", readerSign: "aries", otherSign: "libra" },
+    knowledge_ids: ["compatibility.sun.aries.libra"],
+    source_snapshot: { contentType: "friends.compatibility.planet-card", appDisplaySource: "dashboard-article", contentLevel: "source-grounded", planet: "sun", readerSign: "aries", otherSign: "libra" },
+    reviewer_notes: "QA compatibility fixture row.",
+    prompt_version: "qa-admin-flow",
+    provider: "phrasebank-dashboard-materialization",
+    model: null,
+    reviewed_at: now,
+    published_at: now,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-compatibility-fallback-row",
+    content_key: "fallback-hook/friends.compatibility.planet-card",
+    surface: "friends",
+    mode: "card",
+    status: "REVIEWED",
+    event_type: "fallback-hook",
+    target_date: null,
+    headline: "Compatibility card fallback",
+    summary: "Fallback hook for compatibility cards.",
+    body: "When no reviewed compatibility card is saved yet, use the simple relationship pattern without inventing intimacy.",
+    sections: [],
+    block_type: "fallback_template",
+    lane: "serving",
+    review_state: "reviewed",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { planet: "sun" },
+    knowledge_ids: ["fallback-hook/friends.compatibility.planet-card"],
+    source_snapshot: { contentType: "template", hook: "friends.compatibility.planet-card", contentLevel: "madlib-fallback" },
+    reviewer_notes: "QA compatibility fallback fixture row.",
+    prompt_version: "fallback-hook-template-v1",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: null,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-compatibility-vocab-row",
+    content_key: "vocab/relationship/compatibility-repair",
+    surface: "relationship",
+    mode: "feed",
+    status: "LIVE",
+    event_type: "vocab",
+    target_date: null,
+    headline: "Compatibility repair phrase",
+    summary: "Reusable phrase for compatibility repair moments.",
+    body: "Name the mismatch without making either person the problem.",
+    sections: [],
+    block_type: "vocabulary_phrase",
+    lane: "serving",
+    review_state: "reviewed",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { family: "compatibility", planet: "venus" },
+    knowledge_ids: ["vocab/relationship/compatibility-repair"],
+    source_snapshot: { contentType: "vocab", bucket: "vocab", contentLevel: "source-grounded", planet: "venus" },
+    reviewer_notes: "QA compatibility vocab fixture row.",
+    prompt_version: "vocab-v1",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: now,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-compatibility-slot-row",
+    content_key: "slot-template/compatibility/planet-card",
+    surface: "relationship",
+    mode: "card",
+    status: "REVIEWED",
+    event_type: "slot-template",
+    target_date: null,
+    headline: "Compatibility planet card slot",
+    summary: "Template slot for compatibility card assembly.",
+    body: "{{readerSign}} and {{otherSign}} meet through {{planetTheme}}.",
+    sections: [],
+    block_type: "template",
+    lane: "reference",
+    review_state: "EDITORIAL_REVIEW_REQUIRED",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { family: "compatibility", planet: "sun" },
+    knowledge_ids: ["slot-template/compatibility/planet-card"],
+    source_snapshot: { contentType: "template", contentFamily: "friends.compatibility.planet-card", contentLevel: "source-grounded", planet: "sun" },
+    reviewer_notes: "QA compatibility slot fixture row.",
+    prompt_version: "slot-template-v1",
     provider: "qa-fixture",
     model: null,
     reviewed_at: now,
@@ -462,13 +583,18 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await page.goto("/admin/content#exact-content");
 
-    await page.getByLabel("Search content").fill("qa/sky/sun-cancer");
-    const savedRow = page.locator(".admin-content-row", { hasText: "qa/sky/sun-cancer" });
+    await page.getByLabel("Search content").fill("sky.placement.sun.cancer");
+    const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
     await expect(savedRow).toHaveCount(1);
     await savedRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.locator(".admin-editor-panel");
+    const displaySourcePanel = editor.locator("section[aria-label='Sky placement display source']");
     await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
     await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+    await expect(displaySourcePanel).toBeVisible();
+    await expect(displaySourcePanel.getByText("Content Level", { exact: true })).toBeVisible();
+    await editor.getByLabel("App display source").selectOption("madlib-fallback");
+    await expect(displaySourcePanel).toContainText("madlib-fallback");
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
@@ -478,14 +604,176 @@ test.describe("content dashboard admin user flow case studies", () => {
       method: "PATCH",
       payload: {
         id: "qa-sky-row",
-        contentKey: "qa/sky/sun-cancer",
+        contentKey: "sky.placement.sun.cancer",
         headline: "Sun in Cancer QA edit",
         summary: "Updated summary from the visual admin editor.",
         body: "Updated body from the visual admin editor.",
-        status: "LIVE"
+        status: "LIVE",
+        sourceSnapshot: {
+          appDisplaySource: "madlib-fallback"
+        }
       }
     });
-    await expect(page.getByRole("status")).toContainText("qa/sky/sun-cancer saved as Published");
+    await expect(page.getByRole("status")).toContainText("sky.placement.sun.cancer saved as Published");
+    await assertNoBrowserErrors();
+  });
+
+  test("article filters narrow by point, display source, and text search", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.goto("/admin/content#articles");
+
+    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
+    const articleFilters = page.locator("section[aria-label='Article filters']");
+    await expect(articleFilters).toBeVisible();
+    await expect(articleFilters.getByLabel("Article status")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article app display source")).toHaveValue("all");
+
+    await articleFilters.getByLabel("Article planet or point").selectOption("sun");
+    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
+    await expect(page.locator(".admin-dashboard h2").filter({ hasText: "Articles" })).toBeVisible();
+
+    await articleFilters.getByLabel("Search articles").fill("cancer");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("Sun in Cancer");
+
+    await articleFilters.getByLabel("Article app display source").selectOption("madlib-fallback");
+    await expect(page.locator(".admin-content-row")).toHaveCount(0);
+    await expect(page.getByText("No rows match these filters.")).toBeVisible();
+
+    await page.getByRole("button", { name: "Clear filters" }).click();
+    await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article app display source")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Search articles")).toHaveValue("");
+    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
+
+    await assertNoBrowserErrors();
+  });
+
+  test("compatibility workspace searches, sorts, and groups content support rows", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.goto("/admin/content#compatibility");
+
+    await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
+    await expect(page.getByRole("tablist", { name: "Compatibility sections" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: /App card copy/ })).toContainText(/[1-9]\d*/);
+    await expect(page.getByRole("tab", { name: /Simple fallbacks/ })).toContainText(/[1-9]\d*/);
+    await expect(page.getByRole("tab", { name: /Reusable phrases/ })).toContainText(/[1-9]\d*/);
+    await expect(page.getByRole("tab", { name: /Templates & slots/ })).toContainText(/[1-9]\d*/);
+
+    const compatibilityFilters = page.locator("section[aria-label='Compatibility filters']");
+    await expect(compatibilityFilters.getByLabel("Compatibility status")).toHaveValue("all");
+    await expect(compatibilityFilters.getByLabel("Compatibility planet or point")).toHaveValue("all");
+    await expect(compatibilityFilters.getByLabel("Compatibility sort")).toHaveValue("updated-desc");
+
+    await compatibilityFilters.getByLabel("Compatibility planet or point").selectOption("sun");
+    await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
+    await expect(page.locator(".admin-content-row", { hasText: "slot-template/compatibility/planet-card" })).toHaveCount(1);
+
+    await compatibilityFilters.getByLabel("Search compatibility").fill("aries libra");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("Sun compatibility / Aries and Libra");
+
+    await page.getByRole("tab", { name: /Simple fallbacks/ }).click();
+    await compatibilityFilters.getByLabel("Search compatibility").fill("");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
+
+    await page.getByRole("tab", { name: /Reusable phrases/ }).click();
+    await compatibilityFilters.getByLabel("Compatibility planet or point").selectOption("venus");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
+
+    await compatibilityFilters.getByLabel("Compatibility sort").selectOption("title-asc");
+    await page.getByRole("button", { name: "Clear filters" }).click();
+    await expect(compatibilityFilters.getByLabel("Compatibility sort")).toHaveValue("updated-desc");
+    await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
+
+    await page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" }).getByRole("button", { name: "Edit" }).click();
+    await expect(page.locator(".admin-editor-panel").getByRole("heading", { name: "Edit saved row" })).toBeVisible();
+    await page.locator(".admin-editor-panel").getByRole("button", { name: "Close" }).click();
+    await expect(page.locator(".admin-editor-panel")).toBeHidden();
+
+    const compatibilityShortcuts = page.locator("[aria-label='Compatibility shortcuts']");
+    await compatibilityShortcuts.getByRole("button", { name: "Card copy" }).click();
+    await expect(page.locator(".admin-editor-panel").getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(page.locator(".admin-editor-panel").getByLabel("Content key")).toHaveValue("compatibility.venus.aries.libra");
+    await page.locator(".admin-editor-panel").getByRole("button", { name: "Close" }).click();
+
+    await compatibilityShortcuts.getByRole("button", { name: "Phrase", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByRole("heading", { name: "Create reusable phrase" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Phrase section")).toHaveValue("relationship");
+    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Phrase title")).toHaveValue("Compatibility phrase");
+    await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close" }).click();
+
+    await compatibilityShortcuts.getByRole("button", { name: "Fallback" }).click();
+    await expect(page.locator(".admin-editor-panel").getByLabel("Content key")).toHaveValue("fallback-hook/friends.compatibility.planet-card");
+
+    await assertNoBrowserErrors();
+  });
+
+  test("surface map filters keep visible hook rows aligned to the selected surface", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.goto("/admin/content#surface-map");
+
+    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+
+    const areaFilters = page.getByRole("group", { name: "Filter surfaces by area" });
+    const statusFilters = page.getByRole("group", { name: "Filter surfaces by normalization status" });
+
+    await areaFilters.getByRole("button", { name: "Friends" }).click();
+    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(1);
+    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" })).toHaveCount(0);
+
+    await statusFilters.getByRole("button", { name: "Complete" }).click();
+    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(1);
+    await expect(page.locator(".admin-fallback-row", { hasText: "Needs row" })).toHaveCount(0);
+
+    await statusFilters.getByRole("button", { name: "Missing" }).click();
+    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(0);
+    await expect(page.locator(".admin-fallback-row").first()).toContainText("Friends");
+
+    await statusFilters.getByRole("button", { name: "All" }).click();
+    await areaFilters.getByRole("button", { name: "Calendar" }).click();
+    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" }).first()).toBeVisible();
+    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(0);
+
+    await assertNoBrowserErrors();
+  });
+
+  test("composition filters keep vocabulary, hooks, templates, and slots aligned to visible rows", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+
+    await page.goto("/admin/content#vocabulary");
+    await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
+    await page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" }).click();
+    await page.getByLabel("Search vocabulary").fill("compatibility repair");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
+
+    await page.goto("/admin/content#fallback-hooks");
+    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await page.getByRole("tablist", { name: "Fallback hook sections" }).getByRole("tab", { name: "Friends" }).click();
+    await page.getByLabel("Search fallback hooks").fill("compatibility card");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
+
+    await page.goto("/admin/content#templates");
+    await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
+    await page.getByLabel("Search templates").fill("compatibility planet card");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("slot-template/compatibility/planet-card");
+
+    await page.goto("/admin/content#slots");
+    await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
+    await page.getByLabel("Search slot-backed rows").fill("template slot");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-content-row")).toContainText("slot-template/compatibility/planet-card");
+
     await assertNoBrowserErrors();
   });
 

@@ -835,7 +835,9 @@ export async function loadLiveGeneratedContentForSurfaces(
 
     const emergencyFloorRow = isEmergencyFloorGeneratedRow(row);
 
-    if (previewMode === "emergency-floor" && !emergencyFloorRow) {
+    const compatibilityPlanetCardRow = row.event_type === "friends.compatibility.planet-card";
+
+    if (previewMode === "emergency-floor" && !emergencyFloorRow && !compatibilityPlanetCardRow) {
       continue;
     }
 

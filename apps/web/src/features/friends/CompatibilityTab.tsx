@@ -11,6 +11,7 @@ export type CompatibilityPlanetCard = {
   goDeeper: {
     glyph: string;
     match: string;
+    body?: string;
     function: string;
     yourLine: string;
     theirLine: string;
@@ -61,18 +62,9 @@ function CompatibilitySignLabel({ sign }: { sign: string }) {
 }
 
 function compatibilityFriendCopy(copy: string, friendName: string) {
-  let friendMentions = 0;
-  const namedCopy = copy.replace(/\{friend\}('s)?/g, (_match, possessive: string | undefined) => {
-    friendMentions += 1;
-
-    if (friendMentions === 1) {
-      return possessive ? `${friendName}'s` : friendName;
-    }
-
-    return possessive ? "their" : "they";
-  });
-
-  return namedCopy
+  return copy.replace(/\{friend\}('s)?/g, (_match, possessive: string | undefined) => (
+    possessive ? `${friendName}'s` : friendName
+  ))
     .replace(/\bthey is\b/g, "they are")
     .replace(/\bthey was\b/g, "they were")
     .replace(/\bthey needs\b/g, "they need")
@@ -85,6 +77,26 @@ function compatibilityFriendCopy(copy: string, friendName: string) {
     .replace(/\bthey bolts\b/g, "they bolt")
     .replace(/\bthey goes\b/g, "they go")
     .replace(/\bthey holds\b/g, "they hold");
+}
+
+function compatibilityContentSourceLabel(contentTrace?: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  if (!["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)) {
+    return null;
+  }
+
+  if (contentTrace?.includes("source=dashboard-generated-content")) {
+    return "Admin";
+  }
+
+  if (contentTrace?.includes("source=cc-compatibility-writeups")) {
+    return "Fallback";
+  }
+
+  return null;
 }
 
 export function CompatibilityTab({
@@ -110,7 +122,11 @@ export function CompatibilityTab({
           </div>
           {cards.map((card) => {
             const writeup = card.goDeeper;
+            const contentTrace = writeup.contentTrace ?? card.contentTrace;
+            const sourceLabel = compatibilityContentSourceLabel(contentTrace);
             const sameSign = writeup.sameSign;
+            const bodyCopy = writeup.body ? compatibilityFriendCopy(writeup.body, card.friendName) : "";
+            const bodyParagraphs = bodyCopy.split(/\n\n+/).map((paragraph) => paragraph.trim()).filter(Boolean);
             const functionCopy = compatibilityFriendCopy(writeup.function, card.friendName);
             const yourLine = compatibilityFriendCopy(writeup.yourLine, card.friendName);
             const theirLine = compatibilityFriendCopy(writeup.theirLine, card.friendName);
@@ -118,11 +134,18 @@ export function CompatibilityTab({
             const verdict = compatibilityFriendCopy(writeup.verdict, card.friendName);
 
             return (
-            <article className="compatibility-card" key={card.id} data-content-trace={writeup.contentTrace ?? card.contentTrace}>
+            <article className="compatibility-card" key={card.id} data-content-trace={contentTrace}>
               <header className="compatibility-card__header">
                 <span className="compatibility-card__glyph" aria-hidden="true">{writeup.glyph || card.glyph}</span>
                 <div>
-                  <h3>{card.planet}</h3>
+                  <div className="compatibility-card__title-row">
+                    <h3>{card.planet}</h3>
+                    {sourceLabel ? (
+                      <span className="compatibility-card__source" title={contentTrace ?? undefined}>
+                        {sourceLabel}
+                      </span>
+                    ) : null}
+                  </div>
                   <p>{writeup.match}</p>
                 </div>
               </header>
@@ -131,19 +154,31 @@ export function CompatibilityTab({
                 <span><strong>{card.friendName}</strong>: <CompatibilitySignLabel sign={card.friendSign} /></span>
               </div>
               <div className="compatibility-card__body compatibility-card__reading">
-                <p>{functionCopy}</p>
-                {sameSign ? (
+                {bodyCopy ? (
                   <>
-                    <p>{yourLine}</p>
-                    {sameSignLine ? <p>{sameSignLine}</p> : null}
+                    {bodyParagraphs.map((paragraph, index) => (
+                      <p className={index === bodyParagraphs.length - 1 ? "compatibility-card__verdict" : undefined} key={`${card.id}-body-${index}`}>
+                        {paragraph}
+                      </p>
+                    ))}
                   </>
                 ) : (
                   <>
-                    <p>{yourLine}</p>
-                    <p>{theirLine}</p>
+                    <p>{functionCopy}</p>
+                    {sameSign ? (
+                      <>
+                        <p>{yourLine}</p>
+                        {sameSignLine ? <p>{sameSignLine}</p> : null}
+                      </>
+                    ) : (
+                      <>
+                        <p>{yourLine}</p>
+                        <p>{theirLine}</p>
+                      </>
+                    )}
+                    <p className="compatibility-card__verdict">{verdict}</p>
                   </>
                 )}
-                <p className="compatibility-card__verdict">{verdict}</p>
               </div>
               {card.exactAspectLabel ? (
                 <p className="compatibility-card__receipt">{card.exactAspectLabel}</p>

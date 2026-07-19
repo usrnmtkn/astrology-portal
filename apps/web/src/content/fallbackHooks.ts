@@ -521,6 +521,30 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "friends.compatibility.planet-card",
+    label: "Friends > Compatibility Card",
+    surface: "friends",
+    domain: "relationship",
+    mode: "in_depth",
+    description: "Planet-by-planet compatibility cards on the Friends chart page, such as Sun, Moon, Venus, and Mars sign-pair writeups.",
+    knowledgeIdTemplates: [
+      "compatibility-{planet}-{readerSign}-{friendSign}",
+      "relationship-compatibility-{planet}-{readerSign}-{friendSign}",
+      "compatibility-{planet}"
+    ],
+    requiredFacts: ["planet", "reader sign", "friend sign", "relationship context"],
+    slotKeys: [
+      "planet",
+      "readerSign",
+      "friendSign",
+      "comparisonSign",
+      "relationshipContext",
+      "friendName",
+      "readerName"
+    ],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "friends.synastry-contact",
     label: "Friends > Synastry Contact",
     surface: "friends",

@@ -37,7 +37,10 @@ PHRASES = [
     "leaned on", "feels leaned on", "feel leaned on", "say the need", "the need out loud",
 ]
 
-REGEXES = []
+# "a thing" placeholder — Marie flagged; name the actual thing, never "a thing"
+REGEXES = [
+    (r"\ba thing\b", "a thing (placeholder)"),
+]
 
 def lint(text):
     hits = []

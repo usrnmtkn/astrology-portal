@@ -94,6 +94,9 @@ export type SkySnapshot = {
   dominantElement: "Fire" | "Earth" | "Air" | "Water";
   positions: PlanetPosition[];
   aspects: Array<{
+    id?: string;
+    bodyA?: string;
+    bodyB?: string;
     from: string;
     to: string;
     type: string;

@@ -2446,6 +2446,27 @@
   text-align: left;
 }
 
+.compatibility-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compatibility-card__source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  color: var(--muted);
+  background: var(--control-bg);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+}
+
 .compatibility-card__header p,
 .compatibility-card__function,
 .compatibility-card__receipt {

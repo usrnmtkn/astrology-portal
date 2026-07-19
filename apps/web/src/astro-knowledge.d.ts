@@ -213,10 +213,43 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
       }>;
       warnings: string[];
     };
+    ranking?: {
+      policyId: string;
+      rankings: Array<{
+        patternId: string;
+        score: {
+          geometry: number;
+          natalProminence: number;
+          structuralContext: number;
+          baseDisplayPriority: number;
+        };
+        reasons: Array<{
+          code:
+            | "tight_geometry"
+            | "contains_sun"
+            | "contains_moon"
+            | "contains_personal_planet"
+            | "contains_chart_ruler"
+            | "planet_near_angle"
+            | "repeated_planet"
+            | "parent_pattern"
+            | "contained_pattern";
+          planet?: string;
+          value: number;
+        }>;
+      }>;
+      displayOrder: string[];
+    };
   };
 
   export function detectPatterns(input: {
     planets: NormalizedPlanet[];
     aspects: NormalizedAspect[];
   }): AspectPatternDetectionResult;
+
+  export function rankAspectPatterns(
+    detectionResult: AspectPatternDetectionResult,
+    context?: Record<string, unknown>,
+    policy?: Record<string, unknown>
+  ): NonNullable<AspectPatternDetectionResult["ranking"]>;
 }

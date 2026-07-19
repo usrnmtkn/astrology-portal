@@ -44,6 +44,7 @@ const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts"
 const emergencyCopyRuntime = read("apps/web/src/content/emergencyCopy.ts");
 const fallbackHooks = read("apps/web/src/content/fallbackHooks.ts");
 const emergencyCopyJson = read("apps/web/src/content/emergencyCopy.json");
+const materializeCompatibilityRows = read("scripts/materialize-compatibility-dashboard-rows.mjs");
 
 assert.match(youPage, /isReaderFacingCopy/, "You detail renderer must use reader-facing copy filtering.");
 assert.match(youPage, /isDuplicateArticleCopy/, "You detail renderer must dedupe TLDR, summary, and section body copy.");
@@ -105,6 +106,15 @@ assert.doesNotMatch(adminDashboard, /<span>Content level<\/span>[\s\S]*<select/,
 assert.match(adminDashboard, /aria-label="Article filters"/, "Articles admin surface must include dedicated filters.");
 assert.match(adminDashboard, /Article app display source/, "Articles admin filters must include app display source.");
 assert.match(adminDashboard, /filteredArticleRows/, "Articles admin table must render the filtered article row set.");
+assert.match(adminDashboard, /aria-label="Compatibility filters"/, "Compatibility admin surface must include dedicated filters.");
+assert.match(adminDashboard, /Compatibility sections/, "Compatibility admin must group content, fallback hooks, vocabulary, and slots.");
+assert.match(adminDashboard, /filteredCompatibilityRows/, "Compatibility admin table must render the filtered compatibility row set.");
+assert.match(adminDashboard, /handleCompatibilityCreateAction/, "Compatibility admin must open connected compatibility-specific drafts.");
+assert.match(fallbackHooks, /friends\.compatibility\.planet-card/, "Friends compatibility fallback hook must be discoverable in the admin hook catalog.");
+assert.match(app, /phrasebankWriteup \?\? \{/, "Compatibility dashboard rows must render even before a matching static phrasebank row exists.");
+assert.match(materializeCompatibilityRows, /contentLevel:\s*"source-grounded"/, "Compatibility materialized rows must use the source-grounded content level.");
+assert.doesNotMatch(materializeCompatibilityRows, /contentLevel:\s*"dashboard-authored"/, "Compatibility materialized rows must not invent a third content level.");
+assert.match(materializeCompatibilityRows, /block_type:\s*"compatibility_planet_card"/, "Compatibility materialized rows must use the compatibility card block type.");
 assert.match(servedFieldsContract, /reader: \["reading"\]/, "Authored natal angle rows must render only the clean reading field.");
 assert.match(servedFieldsContract, /reader: \["collective_reading"\]/, "Authored Sky point rows must render only the clean collective reading field.");
 
