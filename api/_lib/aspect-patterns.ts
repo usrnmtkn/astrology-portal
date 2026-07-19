@@ -14,6 +14,7 @@ const {
   buildPatternActivations,
   detectPatterns,
   rankAspectPatterns,
+  resolveAspectPatternActivationCopies,
   resolveAspectPatternCopies
 } = require("../../packages/astro-knowledge/engine/aspect-patterns/index.js") as {
   buildAspectPatternActivationInterpretationContexts(
@@ -39,6 +40,9 @@ const {
   ): NonNullable<AspectPatternDetectionResult["activation"]>;
   resolveAspectPatternCopies(
     contexts: NonNullable<AspectPatternDetectionResult["interpretationContexts"]>
+  ): Array<Record<string, unknown>>;
+  resolveAspectPatternActivationCopies(
+    contexts: NonNullable<NonNullable<AspectPatternDetectionResult["activation"]>["interpretationContexts"]>
   ): Array<Record<string, unknown>>;
 };
 
@@ -133,7 +137,7 @@ function transitActivationAspectsFromSnapshot(snapshot: SkySnapshot): TransitToN
 
 export function aspectPatternsFromSkySnapshot(
   snapshot: SkySnapshot,
-  options: { includeCopy?: boolean; includeActivation?: boolean; includeActivationContexts?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
+  options: { includeCopy?: boolean; includeActivation?: boolean; includeActivationContexts?: boolean; includeActivationCopy?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
 ): AspectPatternDetectionResult {
   const planets = normalizedAspectPatternPlanets(snapshot);
   const detection = detectPatterns({
@@ -173,9 +177,15 @@ export function aspectPatternsFromSkySnapshot(
               )
             }
           : activation;
+        const activationWithCopy = options.includeActivationCopy && activationWithContexts.interpretationContexts
+          ? {
+              ...activationWithContexts,
+              resolvedCopy: resolveAspectPatternActivationCopies(activationWithContexts.interpretationContexts)
+            }
+          : activationWithContexts;
         return {
           ...result,
-          activation: activationWithContexts
+          activation: activationWithCopy
         };
       })()
     : result;

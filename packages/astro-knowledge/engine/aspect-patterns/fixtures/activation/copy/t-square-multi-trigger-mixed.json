@@ -1,0 +1,98 @@
+{
+  "fixtureId": "t-square-multi-trigger-mixed",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternType": "t_square",
+  "primaryTrigger": {
+    "movingBody": "mars",
+    "targetNatalPlanet": "mars",
+    "aspectType": "square",
+    "orb": 0.2,
+    "applying": true,
+    "targetRole": "apex"
+  },
+  "triggerCount": 2,
+  "targetRole": "apex",
+  "timingState": "mixed",
+  "natalConfidence": "exact",
+  "triggerMode": "multiple",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+    "patternType": "t_square",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.mars.square.mars.aspect-pattern:t_square:sun-moon:apex-mars",
+      "triggerCount": 2,
+      "movingBodies": [
+        "jupiter",
+        "mars"
+      ],
+      "targetedNatalPlanets": [
+        "mars",
+        "sun"
+      ],
+      "timingState": "mixed"
+    },
+    "content": {
+      "eyebrow": "T-square in motion",
+      "headline": "Mars is contacting Mars",
+      "overview": "Mars is contacting the apex in your T-square, so you may notice more around how this pattern handles pressure.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Mars is making a square to Mars, close by 0.2 degrees."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "There is also contact from Jupiter, so read this as one combined moment rather than separate unrelated hits."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Mars is the apex here. That helps show where you may notice the pressure first, and how you may start responding to it."
+        },
+        {
+          "id": "timing",
+          "body": "Several contacts are involved, and they are not all at the same stage."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice how this contact draws attention to an existing natal setup without changing it."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "linked_patterns",
+        "timing"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:t_square:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "linked_patterns",
+    "timing"
+  ],
+  "validationWarnings": []
+}

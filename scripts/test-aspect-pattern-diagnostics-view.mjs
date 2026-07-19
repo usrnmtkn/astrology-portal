@@ -17,6 +17,10 @@ const styles = read("apps/admin/src/admin.css");
 assert.match(component, /function canonicalAspectPatterns\(response: AspectPatternsResponse \| null\) {\n  return response\?\.sky\?\.aspectPatterns \?\? null;\n}/);
 assert.match(component, /includeAspectPatterns=true/);
 assert.match(component, /includeAspectPatternCopy=true/);
+assert.match(component, /includeAspectPatternActivation=true/);
+assert.match(component, /includeAspectPatternActivationContexts=true/);
+assert.match(component, /includeAspectPatternActivationCopy=true/);
+assert.match(component, /Resolved activation copy/);
 assert.match(component, /fetch\(url, \{ method: "GET" \}\)/);
 assert.doesNotMatch(component, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/);
 assert.match(component, /No API request is made until you ask for it/);
@@ -35,6 +39,7 @@ assert.match(dashboard, /Aspect Diagnostics/);
 
 assert.match(fixtureEndpoint, /req\.method !== "GET"/);
 assert.match(fixtureEndpoint, /includeAspectPatternCopy/);
+assert.match(fixtureEndpoint, /includeAspectPatternActivationCopy/);
 assert.match(fixtureEndpoint, /sky: {\n      aspects:/);
 assert.match(fixtureEndpoint, /aspectPatterns/);
 

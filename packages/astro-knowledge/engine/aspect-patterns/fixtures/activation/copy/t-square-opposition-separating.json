@@ -1,0 +1,94 @@
+{
+  "fixtureId": "t-square-opposition-separating",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternType": "t_square",
+  "primaryTrigger": {
+    "movingBody": "saturn",
+    "targetNatalPlanet": "sun",
+    "aspectType": "opposition",
+    "orb": 1.2,
+    "applying": false,
+    "targetRole": "opposition_axis"
+  },
+  "triggerCount": 1,
+  "targetRole": "opposition_axis",
+  "timingState": "separating",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+    "patternType": "t_square",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.saturn.opposition.sun.aspect-pattern:t_square:sun-moon:apex-mars",
+      "triggerCount": 1,
+      "movingBodies": [
+        "saturn"
+      ],
+      "targetedNatalPlanets": [
+        "sun"
+      ],
+      "timingState": "separating"
+    },
+    "content": {
+      "eyebrow": "T-square in motion",
+      "headline": "Saturn is contacting Sun",
+      "overview": "Saturn is contacting the opposition member in your T-square, so you may notice more around how this pattern handles pressure.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Saturn is making an opposition to Sun, close by 1.2 degrees."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Sun is the opposition member here. That helps show where you may notice the pressure first, and how you may start responding to it."
+        },
+        {
+          "id": "timing",
+          "body": "The closest contact has passed, but you may still be noticing what it brought up."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice how this contact draws attention to an existing natal setup without changing it."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:t_square:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "linked_patterns",
+        "timing",
+        "transit_trigger"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:t_square:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "linked_patterns",
+    "timing",
+    "transit_trigger"
+  ],
+  "validationWarnings": []
+}

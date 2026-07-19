@@ -44,6 +44,38 @@ type AspectPatternsPayload = {
     rankings?: RankingRecord[];
     displayOrder?: string[];
   };
+  activation?: {
+    calculatedFor?: string;
+    activations?: Array<Record<string, unknown>>;
+    interpretationContexts?: Array<Record<string, unknown>>;
+    resolvedCopy?: ResolvedActivationCopy[];
+    [key: string]: unknown;
+  };
+};
+
+type ResolvedActivationCopy = {
+  patternId: string;
+  patternType: string;
+  calculatedFor: string;
+  source: {
+    recordId: string;
+    contentLevel: string;
+    status: string;
+    resolverVersion: string;
+  };
+  content: {
+    eyebrow?: string;
+    headline: string;
+    overview: string;
+    sections: Array<{ id: string; body: string }>;
+  };
+  diagnostics: {
+    templateId: string;
+    usedFallback: boolean;
+    missingSlots: string[];
+    skippedSections: string[];
+    validationWarnings: string[];
+  };
 };
 
 type PatternRecord = {
@@ -247,6 +279,7 @@ export function AspectPatternDiagnostics() {
   const [latitude, setLatitude] = useState("40.7128");
   const [longitude, setLongitude] = useState("-74.006");
   const [includeCopy, setIncludeCopy] = useState(false);
+  const [includeActivationCopy, setIncludeActivationCopy] = useState(false);
   const [response, setResponse] = useState<AspectPatternsResponse | null>(null);
   const [requestedUrl, setRequestedUrl] = useState("");
   const [error, setError] = useState("");
@@ -265,9 +298,12 @@ export function AspectPatternDiagnostics() {
     setResponse(null);
 
     const copyParam = includeCopy ? "&includeAspectPatternCopy=true" : "";
+    const activationCopyParam = includeActivationCopy
+      ? "&includeAspectPatternActivation=true&includeAspectPatternActivationContexts=true&includeAspectPatternActivationCopy=true"
+      : "";
     const url = mode === "fixture"
-      ? `/api/admin/aspect-pattern-fixtures?fixture=${encodeURIComponent(fixture)}${copyParam}`
-      : `/api/astrology-facts?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&date=${encodeURIComponent(`${date}T${time}:00`)}&includeAspectPatterns=true${copyParam}`;
+      ? `/api/admin/aspect-pattern-fixtures?fixture=${encodeURIComponent(fixture)}${copyParam}${activationCopyParam}`
+      : `/api/astrology-facts?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&date=${encodeURIComponent(`${date}T${time}:00`)}&includeAspectPatterns=true${copyParam}${activationCopyParam}`;
 
     setRequestedUrl(url);
 
@@ -327,6 +363,10 @@ export function AspectPatternDiagnostics() {
         <label className="admin-metadata-field aspect-diagnostics-copy-toggle">
           <span>Resolved copy</span>
           <input type="checkbox" checked={includeCopy} onChange={(event) => setIncludeCopy(event.target.checked)} />
+        </label>
+        <label className="admin-metadata-field aspect-diagnostics-copy-toggle">
+          <span>Resolved activation copy</span>
+          <input type="checkbox" checked={includeActivationCopy} onChange={(event) => setIncludeActivationCopy(event.target.checked)} />
         </label>
         <div className="admin-toolbar-actions">
           <button className="admin-primary-button" type="button" onClick={() => void runDiagnostics()} disabled={isLoading}>
@@ -431,14 +471,53 @@ export function AspectPatternDiagnostics() {
 
           <section className="admin-panel aspect-diagnostics-raw" aria-label="Raw JSON">
             <h3>Raw output</h3>
+            {payload.activation?.resolvedCopy && <ActivationCopyDiagnostics copies={payload.activation.resolvedCopy} />}
             <RawJson title="patterns" value={payload.patterns ?? []} />
             <RawJson title="relationships" value={payload.relationships ?? []} />
             <RawJson title="ranking" value={payload.ranking ?? null} />
+            <RawJson title="activation" value={payload.activation ?? null} />
             <RawJson title="diagnostics" value={payload.diagnostics ?? null} />
             <RawJson title="complete aspectPatterns response" value={payload} />
           </section>
         </>
       )}
+    </section>
+  );
+}
+
+function ActivationCopyDiagnostics({ copies }: { copies: ResolvedActivationCopy[] }) {
+  return (
+    <section className="aspect-activation-copy-diagnostics" aria-label="Resolved activation copy">
+      <h4>Resolved activation copy</h4>
+      {copies.map((copy) => (
+        <article key={`${copy.patternId}-${copy.source.recordId}`}>
+          <header>
+            <strong>{titlePart(copy.patternType)}</strong>
+            <span>{copy.source.contentLevel}</span>
+            <code>{copy.diagnostics.templateId}</code>
+          </header>
+          <p>{copy.content.eyebrow}</p>
+          <h5>{copy.content.headline}</h5>
+          <p>{copy.content.overview}</p>
+          <ul>
+            {copy.content.sections.map((section) => (
+              <li key={section.id}>
+                <strong>{titlePart(section.id)}</strong>
+                <span>{section.body}</span>
+              </li>
+            ))}
+          </ul>
+          <dl>
+            <dt>Missing slots</dt>
+            <dd>{copy.diagnostics.missingSlots.length ? copy.diagnostics.missingSlots.join(", ") : "none"}</dd>
+            <dt>Skipped sections</dt>
+            <dd>{copy.diagnostics.skippedSections.length ? copy.diagnostics.skippedSections.join(", ") : "none"}</dd>
+            <dt>Validation warnings</dt>
+            <dd>{copy.diagnostics.validationWarnings.length ? copy.diagnostics.validationWarnings.join(", ") : "none"}</dd>
+          </dl>
+          <RawJson title="raw resolved activation copy" value={copy} />
+        </article>
+      ))}
     </section>
   );
 }

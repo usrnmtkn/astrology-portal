@@ -1,0 +1,94 @@
+{
+  "fixtureId": "grand-trine-separating",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:grand_trine:sun-moon-mars",
+  "patternId": "aspect-pattern:grand_trine:sun-moon-mars",
+  "patternType": "grand_trine",
+  "primaryTrigger": {
+    "movingBody": "venus",
+    "targetNatalPlanet": "moon",
+    "aspectType": "trine",
+    "orb": 1.1,
+    "applying": false,
+    "targetRole": "pattern_member"
+  },
+  "triggerCount": 1,
+  "targetRole": "pattern_member",
+  "timingState": "separating",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:grand_trine:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:grand_trine:sun-moon-mars",
+    "patternType": "grand_trine",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:grand_trine:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.venus.trine.moon.aspect-pattern:grand_trine:sun-moon-mars",
+      "triggerCount": 1,
+      "movingBodies": [
+        "venus"
+      ],
+      "targetedNatalPlanets": [
+        "moon"
+      ],
+      "timingState": "separating"
+    },
+    "content": {
+      "eyebrow": "Grand Trine in motion",
+      "headline": "Venus is contacting Moon",
+      "overview": "Venus may make an already familiar response inside your Grand Trine easier to notice or use.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Venus is making a trine to Moon, close by 1.1 degrees."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Moon belongs to a lower-friction natal circuit, so the contact may highlight a response that is already familiar."
+        },
+        {
+          "id": "timing",
+          "body": "The closest contact has passed, but you may still be noticing what it brought up."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice whether a familiar response is easier to reach, without turning that into a promise of luck or success."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:grand_trine:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "linked_patterns",
+        "timing",
+        "transit_trigger"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:grand_trine:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "linked_patterns",
+    "timing",
+    "transit_trigger"
+  ],
+  "validationWarnings": []
+}

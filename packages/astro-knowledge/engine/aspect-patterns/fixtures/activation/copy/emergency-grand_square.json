@@ -1,0 +1,76 @@
+{
+  "fixtureId": "emergency-grand_square",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:grand_square:sun-moon-mars-saturn",
+  "patternId": "aspect-pattern:grand_square:sun-moon-mars-saturn",
+  "patternType": "grand_square",
+  "primaryTrigger": {
+    "movingBody": "saturn",
+    "targetNatalPlanet": "moon",
+    "aspectType": "square",
+    "orb": 0.5,
+    "applying": true,
+    "targetRole": "opposition_axis"
+  },
+  "triggerCount": 1,
+  "targetRole": "opposition_axis",
+  "timingState": "applying",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "emergency_fallback",
+  "templateId": "aspect-pattern-activation-copy:emergency:grand_square:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:grand_square:sun-moon-mars-saturn",
+    "patternType": "grand_square",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:emergency:grand_square:v1",
+      "contentLevel": "emergency_fallback",
+      "status": "approved",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.saturn.square.moon.aspect-pattern:grand_square:sun-moon-mars-saturn",
+      "triggerCount": 1,
+      "movingBodies": [
+        "saturn"
+      ],
+      "targetedNatalPlanets": [
+        "moon"
+      ],
+      "timingState": "applying"
+    },
+    "content": {
+      "eyebrow": "Grand Square in motion",
+      "headline": "Saturn is contacting Moon",
+      "overview": "Saturn is making a square to Moon, which may make your Grand Square easier to notice for now.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is a temporary note about an existing natal setup."
+        },
+        {
+          "id": "timing",
+          "body": "This contact is still building."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:emergency:grand_square:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "timing"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:emergency:grand_square:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "timing"
+  ],
+  "validationWarnings": []
+}
