@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.js";
 import { validateAstrologyFacts } from "../apps/web/src/services/astrologyFacts.js";
 import type { LocationInput } from "../apps/web/src/types.js";
+import { aspectPatternsFromSkySnapshot } from "./_lib/aspect-patterns.js";
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -21,6 +22,12 @@ function stringParam(url: URL, key: string) {
   const value = url.searchParams.get(key)?.trim();
 
   return value || null;
+}
+
+function booleanParam(url: URL, key: string) {
+  const value = url.searchParams.get(key)?.trim().toLowerCase();
+
+  return value === "true" || value === "1" || value === "yes";
 }
 
 function parseDate(value: string | null) {
@@ -63,7 +70,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const requestUrl = new URL(req.url ?? "/api/astrology-facts", "http://localhost");
     const date = parseDate(requestUrl.searchParams.get("date"));
     const location = parseLocation(requestUrl);
+    const includeAspectPatterns = booleanParam(requestUrl, "includeAspectPatterns");
     const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
+    const aspectPatterns = includeAspectPatterns ? aspectPatternsFromSkySnapshot(sky) : undefined;
+    const skyResponse = aspectPatterns ? { ...sky, aspectPatterns } : sky;
     const facts = sky.facts ?? [];
     const validation = validateAstrologyFacts(facts);
 
@@ -82,8 +92,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       generatedAt: sky.generatedAt,
       provenance: sky.calculationProvenance,
       validation,
-      sky,
-      facts
+      sky: skyResponse,
+      facts,
+      ...(aspectPatterns ? { aspectPatterns } : {})
     });
   } catch (error) {
     sendJson(res, 400, {
