@@ -5,8 +5,10 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
+import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { emergencyDetailFallbackCopy } from "../../content/emergencyCopy";
 import { isReaderFacingCopy } from "../../content/readerSafety";
+import { NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
 
 type YouTab = "transits" | "chart";
 
@@ -64,6 +66,8 @@ export type YouPageProps = {
   hasSavedCurrentCity: boolean;
   natalChart: ReactNode;
   natalChartPending: boolean;
+  natalAspectPatternItems?: NatalAspectPatternReaderItem[];
+  natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   updatesChart?: ReactNode;
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
@@ -252,6 +256,8 @@ function YouNatalTab({
   elementalSummarySentence,
   emptyHouseRows,
   natalAspectRows,
+  natalAspectPatternItems,
+  natalAspectPatternStatus,
   onOpenCareerDetail,
   onOpenSoulRoadmapDetail,
   planetRows,
@@ -269,6 +275,8 @@ function YouNatalTab({
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
   natalAspectRows: ReactNode[];
+  natalAspectPatternItems?: NatalAspectPatternReaderItem[];
+  natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenCareerDetail?: () => void;
   onOpenSoulRoadmapDetail?: () => void;
   planetRows: ReactNode[];
@@ -308,6 +316,13 @@ function YouNatalTab({
 
       {careerArchetypeProfile && careerArchetypeProfile.sections.length > 0 && (
         <CareerArchetypeCard onOpenDetail={onOpenCareerDetail} profile={careerArchetypeProfile} />
+      )}
+
+      {natalAspectPatternStatus && (
+        <NatalAspectPatternsSection
+          items={natalAspectPatternItems ?? []}
+          status={natalAspectPatternStatus}
+        />
       )}
 
       <span className="eyebrow section-label">Big Three</span>
@@ -708,6 +723,8 @@ export function YouPage({
   hasSavedBirthDetails,
   hasSavedCurrentCity,
   natalAspectRows,
+  natalAspectPatternItems,
+  natalAspectPatternStatus,
   natalChart,
   natalChartPending,
   updatesChart,
@@ -785,6 +802,8 @@ export function YouPage({
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
               natalAspectRows={natalAspectRows}
+              natalAspectPatternItems={natalAspectPatternItems}
+              natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenCareerDetail={onOpenCareerDetail}
               onOpenSoulRoadmapDetail={onOpenSoulRoadmapDetail}
               planetRows={planetRows}

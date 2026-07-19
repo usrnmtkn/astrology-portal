@@ -7,6 +7,7 @@
   .you-signatures-card,
   .soul-roadmap-card,
   .career-archetype-card,
+  .natal-pattern-card,
   .friend-signature-card,
   .manual-chart-row,
   .daily-horoscope-summary,
@@ -32,6 +33,145 @@
   gap: 0;
   overflow: hidden;
   border: 1px solid var(--card-border);
+}
+
+.natal-patterns-section,
+.natal-patterns-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.natal-pattern-card {
+  border: 1px solid var(--card-border);
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+.natal-pattern-card--primary {
+  border-color: color-mix(in srgb, var(--card-border) 70%, var(--card-title-color) 30%);
+}
+
+.natal-pattern-card--collapsed summary,
+.natal-pattern-card__supporting-item summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  list-style: none;
+  min-height: 58px;
+  padding: var(--space-4) var(--card-padding);
+}
+
+.natal-pattern-card--collapsed summary::-webkit-details-marker,
+.natal-pattern-card__supporting-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.natal-pattern-card--collapsed summary span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.natal-pattern-card--collapsed summary em,
+.natal-pattern-card__header span {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.natal-pattern-card--collapsed summary strong {
+  color: var(--card-title-color);
+  font-size: var(--type-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  overflow-wrap: anywhere;
+}
+
+.natal-pattern-card__header {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--card-padding);
+}
+
+.natal-pattern-card__header h3 {
+  color: var(--card-title-color);
+  font-size: var(--type-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.natal-pattern-card__header p,
+.natal-pattern-card__section p {
+  color: var(--card-body-color);
+  font-size: var(--type-md);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
+.natal-pattern-card__sections {
+  border-top: 1px solid var(--card-border);
+  display: grid;
+}
+
+.natal-pattern-card__section {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--card-padding);
+}
+
+.natal-pattern-card__section + .natal-pattern-card__section {
+  border-top: 1px solid var(--card-border);
+}
+
+.natal-pattern-card__section h4,
+.natal-pattern-card__supporting h4 {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.natal-pattern-card__supporting {
+  border-top: 1px solid var(--card-border);
+  display: grid;
+  gap: 0;
+  padding-top: var(--space-4);
+}
+
+.natal-pattern-card__supporting > h4 {
+  padding: 0 var(--card-padding) var(--space-3);
+}
+
+.natal-pattern-card__supporting-item {
+  border-top: 1px solid var(--card-border);
+}
+
+.natal-pattern-card__supporting-item summary span {
+  color: var(--card-title-color);
+  font-size: var(--type-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.natal-pattern-card__supporting-item .natal-pattern-card__header h3 {
+  font-size: var(--type-lg);
+}
+
+.natal-pattern-card__supporting-item .natal-pattern-card__header {
+  padding-top: var(--space-4);
 }
 
 .soul-roadmap-card--button,

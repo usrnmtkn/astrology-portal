@@ -37,6 +37,7 @@
     "test:aspect-patterns-real": "node scripts/test-real-aspect-pattern-fixtures.mjs",
     "test:aspect-patterns-copy": "node scripts/test-aspect-pattern-copy-fixtures.mjs",
     "test:aspect-patterns-authored": "node scripts/test-aspect-pattern-authored-copy.mjs",
+    "test:natal-aspect-pattern-reader": "node scripts/test-natal-aspect-pattern-reader-contract.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "preview": "npm run preview -w @tldr/web",
     "preview:admin": "npm run preview -w @tldr/admin",

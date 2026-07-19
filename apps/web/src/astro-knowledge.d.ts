@@ -240,6 +240,56 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
       }>;
       displayOrder: string[];
     };
+    interpretationContexts?: AspectPatternInterpretationContext[];
+    resolvedCopy?: ResolvedAspectPatternCopy[];
+  };
+
+  export type AspectPatternInterpretationContext = {
+    version: string;
+    patternId: string;
+    patternType: AspectPatternType;
+    display: {
+      rank: number;
+      isPrimary: boolean;
+      isContained: boolean;
+      parentPatternIds: string[];
+      childPatternIds: string[];
+    };
+    members: Array<Record<string, unknown>>;
+    geometry: Record<string, unknown>;
+    roles: Record<string, unknown>;
+    derivedPoints: Array<Record<string, unknown>>;
+    ranking: Record<string, unknown>;
+    copyInstructions: Record<string, unknown>;
+    provenance: Record<string, unknown>;
+  };
+
+  export type ResolvedAspectPatternCopy = {
+    patternId: string;
+    patternType: AspectPatternType;
+    source: {
+      recordId: string;
+      contentLevel: string;
+      status: string;
+      resolverVersion: string;
+    };
+    content: {
+      eyebrow?: string;
+      headline: string;
+      overview: string;
+      sections: Array<{
+        id: string;
+        body: string;
+      }>;
+    };
+    diagnostics: {
+      templateId: string;
+      usedFallback: boolean;
+      missingSlots: string[];
+      skippedSections: string[];
+      validationWarnings?: string[];
+      attemptedRecordIds?: string[];
+    };
   };
 
   export function detectPatterns(input: {
@@ -252,4 +302,22 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     context?: Record<string, unknown>,
     policy?: Record<string, unknown>
   ): NonNullable<AspectPatternDetectionResult["ranking"]>;
+
+  export function buildAspectPatternInterpretationContexts(
+    detectionResult: AspectPatternDetectionResult,
+    context?: Record<string, unknown>
+  ): AspectPatternInterpretationContext[];
+
+  export function resolveAspectPatternCopies(
+    contexts: AspectPatternInterpretationContext[]
+  ): ResolvedAspectPatternCopy[];
+
+  const aspectPatternEngine: {
+    detectPatterns: typeof detectPatterns;
+    rankAspectPatterns: typeof rankAspectPatterns;
+    buildAspectPatternInterpretationContexts: typeof buildAspectPatternInterpretationContexts;
+    resolveAspectPatternCopies: typeof resolveAspectPatternCopies;
+  };
+
+  export default aspectPatternEngine;
 }
