@@ -242,6 +242,48 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     };
     interpretationContexts?: AspectPatternInterpretationContext[];
     resolvedCopy?: ResolvedAspectPatternCopy[];
+    activation?: AspectPatternActivationResult;
+  };
+
+  export type AspectPatternActivationResult = {
+    version: string;
+    policyId: string;
+    calculatedFor: string;
+    activations: Array<{
+      id: string;
+      patternId: string;
+      calculatedFor: string;
+      trigger: {
+        movingBody: string;
+        targetNatalPlanet: string;
+        targetRoles: string[];
+        aspectType: string;
+        orb: number;
+        applying: boolean;
+        exactAt?: string;
+        sourceAspectId?: string;
+      };
+      linkedPatternIds: string[];
+      score: {
+        aspectWeight: number;
+        exactnessWeight: number;
+        applyingWeight: number;
+        roleWeight: number;
+        sharedPlanetWeight: number;
+        total: number;
+      };
+      reasons: Array<{
+        code: string;
+        value: number;
+      }>;
+    }>;
+    currentRankings: Array<{
+      patternId: string;
+      natalBasePriority: number;
+      activationScore: number;
+      currentDisplayPriority: number;
+    }>;
+    currentDisplayOrder: string[];
   };
 
   export type AspectPatternInterpretationContext = {
@@ -308,6 +350,12 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     context?: Record<string, unknown>
   ): AspectPatternInterpretationContext[];
 
+  export function buildPatternActivations(
+    detectionResult: AspectPatternDetectionResult,
+    transitAspects?: Array<Record<string, unknown>>,
+    options?: Record<string, unknown>
+  ): AspectPatternActivationResult;
+
   export function resolveAspectPatternCopies(
     contexts: AspectPatternInterpretationContext[]
   ): ResolvedAspectPatternCopy[];
@@ -316,6 +364,7 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     detectPatterns: typeof detectPatterns;
     rankAspectPatterns: typeof rankAspectPatterns;
     buildAspectPatternInterpretationContexts: typeof buildAspectPatternInterpretationContexts;
+    buildPatternActivations: typeof buildPatternActivations;
     resolveAspectPatternCopies: typeof resolveAspectPatternCopies;
   };
 
