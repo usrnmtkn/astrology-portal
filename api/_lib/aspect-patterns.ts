@@ -7,11 +7,27 @@ type NormalizedAspect = import("../../packages/astro-knowledge/engine/aspect-pat
 type NormalizedPlanet = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedPlanet;
 
 const require = createRequire(import.meta.url);
-const { detectPatterns } = require("../../packages/astro-knowledge/engine/aspect-patterns/index.js") as {
+const {
+  buildAspectPatternInterpretationContexts,
+  detectPatterns,
+  rankAspectPatterns,
+  resolveAspectPatternCopies
+} = require("../../packages/astro-knowledge/engine/aspect-patterns/index.js") as {
+  buildAspectPatternInterpretationContexts(
+    detectionResult: AspectPatternDetectionResult,
+    context: Record<string, unknown>
+  ): NonNullable<AspectPatternDetectionResult["interpretationContexts"]>;
   detectPatterns(input: {
     planets: NormalizedPlanet[];
     aspects: NormalizedAspect[];
   }): AspectPatternDetectionResult;
+  rankAspectPatterns(
+    detectionResult: AspectPatternDetectionResult,
+    context: Record<string, unknown>
+  ): NonNullable<AspectPatternDetectionResult["ranking"]>;
+  resolveAspectPatternCopies(
+    contexts: NonNullable<AspectPatternDetectionResult["interpretationContexts"]>
+  ): Array<Record<string, unknown>>;
 };
 
 const aspectPatternPlanetIds = new Set([
@@ -90,9 +106,33 @@ function normalizedAspectPatternAspects(snapshot: SkySnapshot): NormalizedAspect
   });
 }
 
-export function aspectPatternsFromSkySnapshot(snapshot: SkySnapshot): AspectPatternDetectionResult {
-  return detectPatterns({
-    planets: normalizedAspectPatternPlanets(snapshot),
+export function aspectPatternsFromSkySnapshot(snapshot: SkySnapshot, options: { includeCopy?: boolean } = {}): AspectPatternDetectionResult {
+  const planets = normalizedAspectPatternPlanets(snapshot);
+  const detection = detectPatterns({
+    planets,
     aspects: normalizedAspectPatternAspects(snapshot)
   });
+  const rankingContext = {
+    planets,
+    ascendantSign: snapshot.ascendant,
+    ascendantLongitude: snapshot.ascendantLongitude,
+    midheavenLongitude: snapshot.midheavenLongitude
+  };
+  const ranking = rankAspectPatterns(detection, rankingContext);
+  const rankedDetection = {
+    ...detection,
+    ranking
+  };
+
+  const interpretationContexts = buildAspectPatternInterpretationContexts(rankedDetection, rankingContext);
+  const result = {
+    ...rankedDetection,
+    interpretationContexts
+  };
+  return options.includeCopy
+    ? {
+        ...result,
+        resolvedCopy: resolveAspectPatternCopies(interpretationContexts)
+      } as AspectPatternDetectionResult & { resolvedCopy: Array<Record<string, unknown>> }
+    : result;
 }

@@ -2,9 +2,10 @@
 
 const {
   CANONICAL_PAIR_ORDER,
+  shortestArc,
   normalizeDegrees
 } = require("../timing/aspects");
-const { SIGNS } = require("../timing/constants");
+const { SIGNS, TRADITIONAL_RULERS } = require("../timing/constants");
 
 const PLANET_IDS = Object.freeze(CANONICAL_PAIR_ORDER.slice());
 const PLANET_SET = new Set(PLANET_IDS);
@@ -36,6 +37,164 @@ const DEFAULT_ORB_POLICY = Object.freeze({
   patternTolerance: 1,
   allowOutOfSign: true
 });
+
+const DEFAULT_RANKING_POLICY = Object.freeze({
+  id: "natal_pattern_ranking_v1",
+  version: "1.0.0",
+  weights: Object.freeze({
+    geometryConfidence: 1,
+    tightness: 1,
+    luminary: 8,
+    personalPlanet: 4,
+    angularity: 6,
+    chartRuler: 7,
+    repeatedPlanet: 2,
+    parentPattern: 12,
+    containedPattern: -4
+  })
+});
+const ASPECT_PATTERN_DETECTOR_VERSION = "aspect_pattern_detector_v1";
+const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION = "aspect_pattern_interpretation_context_v1";
+const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "aspect_pattern_copy_resolver_v1";
+
+const PERSONAL_PLANETS = new Set(["mercury", "venus", "mars"]);
+const LUMINARIES = new Set(["sun", "moon"]);
+const ANGULAR_ORB_DEGREES = 5;
+const COPY_CONTEXT_DERIVED_POINT_TYPES = new Set([
+  "empty_leg",
+  "fallout_point",
+  "opposite_apex",
+  "pattern_midpoint"
+]);
+const ASPECT_PATTERN_CONTENT_LEVELS = Object.freeze([
+  "authored",
+  "source_grounded_template",
+  "madlib_fallback",
+  "emergency_fallback"
+]);
+const COPY_SECTION_IDS = Object.freeze([
+  "how_it_works",
+  "planet_roles",
+  "pressure_or_support",
+  "derived_point",
+  "watch_for",
+  "confidence_note"
+]);
+const APPROVED_COPY_SLOTS = Object.freeze([
+  "pattern_name",
+  "member_planets",
+  "member_count",
+  "apex_planet",
+  "base_planets",
+  "opposition_axis_one",
+  "opposition_axis_two",
+  "focal_planet",
+  "opposed_trine_planet",
+  "resource_planets",
+  "empty_leg_sign",
+  "empty_leg_house",
+  "fallout_sign",
+  "fallout_house",
+  "element_consistency",
+  "rectangle_variant",
+  "confidence",
+  "maximum_orb",
+  "is_primary",
+  "parent_pattern_name",
+  "child_pattern_names"
+]);
+
+const PATTERN_COPY_JOBS = Object.freeze({
+  t_square: Object.freeze({
+    primaryJob: "Explain how the opposition creates recurring pressure that is acted through the apex.",
+    supportingJobs: Object.freeze([
+      "Name both ends of the opposition.",
+      "Explain the apex as the place where the person is most likely to act.",
+      "Describe the empty leg as an underused response, not a guaranteed solution."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not call the apex the only outlet.",
+      "Do not predict constant crisis.",
+      "Do not treat the empty leg as another natal planet."
+    ])
+  }),
+  grand_square: Object.freeze({
+    primaryJob: "Explain how pressure moves among four connected planetary functions.",
+    supportingJobs: Object.freeze([
+      "Name both opposition axes.",
+      "Explain that resolving one side may bring another side into focus.",
+      "Describe endurance as a possibility, not a guaranteed strength."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not assign one permanent apex.",
+      "Do not write four separate T-square summaries as the main interpretation.",
+      "Do not predict unavoidable crisis."
+    ])
+  }),
+  grand_trine: Object.freeze({
+    primaryJob: "Explain how three planetary functions cooperate with relatively little friction.",
+    supportingJobs: Object.freeze([
+      "Name what may come naturally.",
+      "Explain that ease may reduce urgency.",
+      "Mention element consistency only when established by the geometry."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not promise talent, success, or genius.",
+      "Do not describe ease as universally beneficial.",
+      "Do not invent a missing challenge."
+    ])
+  }),
+  kite: Object.freeze({
+    primaryJob: "Explain how the opposition gives direction to the underlying Grand Trine.",
+    supportingJobs: Object.freeze([
+      "Name the focal planet and opposed trine planet.",
+      "Explain the resource planets as supportive routes.",
+      "Preserve the underlying Grand Trine as a separate child pattern."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not treat the focal planet as equivalent to a T-square apex.",
+      "Do not erase the opposition.",
+      "Do not guarantee productive use of the trines."
+    ])
+  }),
+  yod: Object.freeze({
+    primaryJob: "Explain how two planets that work together require repeated adjustment through the apex.",
+    supportingJobs: Object.freeze([
+      "Name the sextile base.",
+      "Name the apex.",
+      "Explain the fallout point as a derived point opposite the apex.",
+      "Emphasize timing and repeated recalibration."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not use fate, destiny, or Finger of God language.",
+      "Do not treat the fallout point as a natal placement.",
+      "Do not promise a single final resolution."
+    ])
+  }),
+  mystic_rectangle: Object.freeze({
+    primaryJob: "Explain how two oppositions are connected through supportive routes.",
+    supportingJobs: Object.freeze([
+      "Name both opposition axes.",
+      "Explain how trines and sextiles help movement between the two polarities.",
+      "Preserve both sides of each opposition."
+    ]),
+    avoidClaims: Object.freeze([
+      "Do not assign an apex.",
+      "Do not describe the pattern as automatically balanced.",
+      "Do not erase the tension of the oppositions."
+    ])
+  })
+});
+const PATTERN_DISPLAY_NAMES = Object.freeze({
+  t_square: "T-square",
+  grand_square: "Grand Square",
+  grand_trine: "Grand Trine",
+  kite: "Kite",
+  yod: "Yod",
+  mystic_rectangle: "Mystic Rectangle"
+});
+const AUTHORED_ASPECT_PATTERN_RECORDS = Object.freeze(buildAuthoredAspectPatternRecords());
+const GOVERNED_COPY_RECORDS = Object.freeze(buildDefaultCopyRecords());
 
 const ELEMENT_BY_SIGN = Object.freeze({
   aries: "fire",
@@ -701,11 +860,1054 @@ function sortDetectionResult(result) {
   };
 }
 
+function normalizeRankingPolicy(policy) {
+  const merged = {
+    ...DEFAULT_RANKING_POLICY,
+    ...(policy || {}),
+    weights: {
+      ...DEFAULT_RANKING_POLICY.weights,
+      ...((policy && policy.weights) || {})
+    }
+  };
+  return Object.freeze({
+    id: merged.id,
+    version: merged.version,
+    weights: Object.freeze({ ...merged.weights })
+  });
+}
+
+function confidenceValue(confidence) {
+  return {
+    exact: 30,
+    strong: 22,
+    wide: 12,
+    partial: 4
+  }[confidence] || 0;
+}
+
+function scoreGeometry(pattern, weights) {
+  const reasons = [];
+  const confidenceScore = confidenceValue(pattern.geometry.confidence) * weights.geometryConfidence;
+  const tightnessScore = Math.max(0, 10 - pattern.geometry.maximumOrb) * weights.tightness;
+  const value = roundNumber(confidenceScore + tightnessScore);
+  if (value !== 0) {
+    reasons.push({
+      code: "tight_geometry",
+      value
+    });
+  }
+  return { value, reasons };
+}
+
+function normalizeRankingContext(context = {}) {
+  const planetById = new Map();
+  const planets = Array.isArray(context.planets) ? context.planets : [];
+  for (const input of planets) {
+    const planet = normalizePlanet(input);
+    if (planet) planetById.set(planet.id, planet);
+  }
+
+  const ascendantSign = normalizeToken(context.ascendantSign || context.ascendant);
+  const chartRuler = normalizeToken(context.chartRuler || context.ascendantRuler || (ascendantSign && TRADITIONAL_RULERS[ascendantSign]));
+  const angles = normalizeAngles(context);
+
+  return {
+    planetById,
+    chartRuler: PLANET_SET.has(chartRuler) ? chartRuler : null,
+    angles
+  };
+}
+
+function normalizeAngles(context) {
+  const angles = [];
+  const pushAngle = (angle, longitude) => {
+    if (typeof longitude === "number" && Number.isFinite(longitude)) {
+      angles.push({ angle, longitude: normalizeDegrees(longitude) });
+    }
+  };
+  pushAngle("asc", context.ascendantLongitude);
+  pushAngle("mc", context.midheavenLongitude);
+  pushAngle("dsc", context.descendantLongitude);
+  pushAngle("ic", context.imumCoeliLongitude || context.icLongitude);
+
+  if (typeof context.ascendantLongitude === "number" && !angles.some((angle) => angle.angle === "dsc")) {
+    pushAngle("dsc", context.ascendantLongitude + 180);
+  }
+  if (typeof context.midheavenLongitude === "number" && !angles.some((angle) => angle.angle === "ic")) {
+    pushAngle("ic", context.midheavenLongitude + 180);
+  }
+
+  return angles;
+}
+
+function repeatedPlanetCounts(patterns) {
+  const counts = new Map();
+  for (const pattern of patterns) {
+    for (const planet of pattern.planets) {
+      counts.set(planet, (counts.get(planet) || 0) + 1);
+    }
+  }
+  return counts;
+}
+
+function scoreNatalProminence(pattern, patterns, rankingContext, weights) {
+  const reasons = [];
+  let value = 0;
+  const repeatedCounts = repeatedPlanetCounts(patterns);
+
+  for (const planet of pattern.planets) {
+    if (planet === "sun") {
+      value += weights.luminary;
+      reasons.push({ code: "contains_sun", planet, value: weights.luminary });
+    } else if (planet === "moon") {
+      value += weights.luminary;
+      reasons.push({ code: "contains_moon", planet, value: weights.luminary });
+    } else if (PERSONAL_PLANETS.has(planet)) {
+      value += weights.personalPlanet;
+      reasons.push({ code: "contains_personal_planet", planet, value: weights.personalPlanet });
+    }
+
+    if (rankingContext.chartRuler && planet === rankingContext.chartRuler) {
+      value += weights.chartRuler;
+      reasons.push({ code: "contains_chart_ruler", planet, value: weights.chartRuler });
+    }
+
+    const repeatedCount = repeatedCounts.get(planet) || 0;
+    if (repeatedCount > 1) {
+      const repeatedValue = weights.repeatedPlanet * (repeatedCount - 1);
+      value += repeatedValue;
+      reasons.push({ code: "repeated_planet", planet, value: repeatedValue });
+    }
+
+    const angularValue = angularityValue(planet, rankingContext, weights);
+    if (angularValue > 0) {
+      value += angularValue;
+      reasons.push({ code: "planet_near_angle", planet, value: angularValue });
+    }
+  }
+
+  reasons.sort(compareReasons);
+  return { value: roundNumber(value), reasons };
+}
+
+function angularityValue(planet, rankingContext, weights) {
+  const position = rankingContext.planetById.get(planet);
+  if (!position || typeof position.longitude !== "number" || rankingContext.angles.length === 0) return 0;
+  const nearest = Math.min(...rankingContext.angles.map((angle) => shortestArc(position.longitude, angle.longitude)));
+  if (nearest > ANGULAR_ORB_DEGREES) return 0;
+  return roundNumber(weights.angularity * ((ANGULAR_ORB_DEGREES - nearest) / ANGULAR_ORB_DEGREES));
+}
+
+function scoreStructuralContext(pattern, relationships, weights) {
+  const reasons = [];
+  let value = 0;
+  const isParent = relationships.some((relationship) => relationship.parentPatternId === pattern.id && relationship.relationship === "contains");
+  const isContained = relationships.some((relationship) => relationship.childPatternId === pattern.id && relationship.relationship === "contains");
+
+  if (isParent) {
+    value += weights.parentPattern;
+    reasons.push({ code: "parent_pattern", value: weights.parentPattern });
+  }
+
+  if (isContained) {
+    value += weights.containedPattern;
+    reasons.push({ code: "contained_pattern", value: weights.containedPattern });
+  }
+
+  return { value: roundNumber(value), reasons };
+}
+
+function compareReasons(first, second) {
+  return first.code.localeCompare(second.code)
+    || String(first.planet || "").localeCompare(String(second.planet || ""))
+    || first.value - second.value;
+}
+
+function rankAspectPatterns(detectionResult, context = {}, policy = DEFAULT_RANKING_POLICY) {
+  const rankingPolicy = normalizeRankingPolicy(policy);
+  const patterns = Array.isArray(detectionResult && detectionResult.patterns) ? detectionResult.patterns : [];
+  const relationships = Array.isArray(detectionResult && detectionResult.relationships) ? detectionResult.relationships : [];
+  const rankingContext = normalizeRankingContext(context);
+
+  const rankings = patterns.map((pattern) => {
+    const geometry = scoreGeometry(pattern, rankingPolicy.weights);
+    const natalProminence = scoreNatalProminence(pattern, patterns, rankingContext, rankingPolicy.weights);
+    const structuralContext = scoreStructuralContext(pattern, relationships, rankingPolicy.weights);
+    const baseDisplayPriority = roundNumber(geometry.value + natalProminence.value + structuralContext.value);
+
+    return {
+      patternId: pattern.id,
+      score: {
+        geometry: geometry.value,
+        natalProminence: natalProminence.value,
+        structuralContext: structuralContext.value,
+        baseDisplayPriority
+      },
+      reasons: geometry.reasons
+        .concat(natalProminence.reasons)
+        .concat(structuralContext.reasons)
+        .sort(compareReasons)
+    };
+  }).sort((first, second) => {
+    return second.score.baseDisplayPriority - first.score.baseDisplayPriority
+      || second.score.geometry - first.score.geometry
+      || first.patternId.localeCompare(second.patternId);
+  });
+
+  return {
+    policyId: rankingPolicy.id,
+    rankings,
+    displayOrder: rankings.map((ranking) => ranking.patternId)
+  };
+}
+
+function buildAspectPatternInterpretationContexts(detectionResult, context = {}) {
+  const patterns = Array.isArray(detectionResult && detectionResult.patterns) ? detectionResult.patterns : [];
+  const relationships = Array.isArray(detectionResult && detectionResult.relationships) ? detectionResult.relationships : [];
+  const ranking = context.ranking || (detectionResult && detectionResult.ranking);
+  const rankingContext = normalizeRankingContext(context);
+  const patternById = new Map(patterns.map((pattern) => [pattern.id, pattern]));
+  const rankingById = new Map((ranking && Array.isArray(ranking.rankings) ? ranking.rankings : []).map((item) => [item.patternId, item]));
+  const displayOrder = ranking && Array.isArray(ranking.displayOrder)
+    ? ranking.displayOrder.filter((patternId) => patternById.has(patternId))
+    : patterns.map((pattern) => pattern.id);
+  const orderedPatternIds = displayOrder.concat(patterns.map((pattern) => pattern.id).filter((patternId) => !displayOrder.includes(patternId)));
+
+  return orderedPatternIds.map((patternId, index) => {
+    const pattern = patternById.get(patternId);
+    const patternRanking = rankingById.get(patternId) || emptyPatternRanking(patternId);
+    const parentPatternIds = relationshipPatternIds(relationships, pattern.id, "parent");
+    const childPatternIds = relationshipPatternIds(relationships, pattern.id, "child");
+    const copyJob = PATTERN_COPY_JOBS[pattern.type] || {
+      primaryJob: "Use only the supplied structured aspect-pattern facts.",
+      supportingJobs: [],
+      avoidClaims: ["Do not add claims that are not present in the structured facts."]
+    };
+
+    return {
+      version: "1.0.0",
+      patternId: pattern.id,
+      patternType: pattern.type,
+      display: {
+        rank: index + 1,
+        isPrimary: index === 0,
+        isContained: relationships.some((relationship) => relationship.relationship === "contains" && relationship.childPatternId === pattern.id),
+        parentPatternIds,
+        childPatternIds
+      },
+      members: buildContextMembers(pattern, rankingContext),
+      geometry: {
+        confidence: pattern.geometry.confidence,
+        maximumOrb: pattern.geometry.maximumOrb,
+        averageOrb: pattern.geometry.averageOrb,
+        warnings: pattern.geometry.warnings.slice(),
+        sourceAspectIds: pattern.sourceAspectIds.slice()
+      },
+      roles: copyValue(pattern.roles),
+      derivedPoints: pattern.derivedPoints
+        .filter((point) => COPY_CONTEXT_DERIVED_POINT_TYPES.has(point.type))
+        .map((point) => copyValue(point)),
+      ranking: {
+        geometry: patternRanking.score.geometry,
+        natalProminence: patternRanking.score.natalProminence,
+        structuralContext: patternRanking.score.structuralContext,
+        baseDisplayPriority: patternRanking.score.baseDisplayPriority,
+        reasons: copyValue(patternRanking.reasons)
+      },
+      copyInstructions: {
+        primaryJob: copyJob.primaryJob,
+        supportingJobs: copyJob.supportingJobs.slice(),
+        avoidClaims: copyJob.avoidClaims.slice(),
+        allowedCertainty: allowedCertaintyFor(pattern)
+      },
+      provenance: {
+        detectorVersion: ASPECT_PATTERN_DETECTOR_VERSION,
+        orbPolicyId: pattern.geometry.orbPolicyId || detectionResult.orbPolicyId,
+        rankingPolicyId: ranking && ranking.policyId ? ranking.policyId : DEFAULT_RANKING_POLICY.id,
+        contextBuilderVersion: ASPECT_PATTERN_CONTEXT_BUILDER_VERSION
+      }
+    };
+  });
+}
+
+function emptyPatternRanking(patternId) {
+  return {
+    patternId,
+    score: {
+      geometry: 0,
+      natalProminence: 0,
+      structuralContext: 0,
+      baseDisplayPriority: 0
+    },
+    reasons: []
+  };
+}
+
+function relationshipPatternIds(relationships, patternId, direction) {
+  const ids = relationships.flatMap((relationship) => {
+    if (!["contains", "completes"].includes(relationship.relationship)) return [];
+    if (direction === "parent" && relationship.childPatternId === patternId) return [relationship.parentPatternId];
+    if (direction === "child" && relationship.parentPatternId === patternId) return [relationship.childPatternId];
+    return [];
+  });
+  return unique(ids).sort();
+}
+
+function buildContextMembers(pattern, rankingContext) {
+  return pattern.planets.map((planet) => {
+    const source = rankingContext.planetById.get(planet) || { id: planet };
+    const member = {
+      planet,
+      sign: source.sign || "unknown",
+      longitude: typeof source.longitude === "number" ? roundNumber(source.longitude) : 0,
+      roles: memberRolesFor(pattern, planet),
+      isLuminary: LUMINARIES.has(planet),
+      isPersonalPlanet: PERSONAL_PLANETS.has(planet)
+    };
+    if (typeof source.house === "number") member.house = source.house;
+    if (rankingContext.chartRuler === planet) member.isChartRuler = true;
+    const angularProximity = nearestAngularProximity(source, rankingContext);
+    if (angularProximity) member.angularProximity = angularProximity;
+    return member;
+  });
+}
+
+function memberRolesFor(pattern, planet) {
+  const roles = [];
+  const push = (role) => {
+    if (!roles.includes(role)) roles.push(role);
+  };
+
+  if (pattern.type === "t_square") {
+    if (pattern.roles.apex === planet) push("apex");
+    if (pattern.roles.oppositionAxis.includes(planet)) push("opposition_axis");
+  } else if (pattern.type === "grand_square") {
+    if (pattern.roles.oppositionAxes.some((axis) => axis.includes(planet))) push("opposition_axis");
+  } else if (pattern.type === "kite") {
+    if (pattern.roles.focalPlanet === planet) push("focal_planet");
+    if (pattern.roles.spine.includes(planet)) push("spine");
+    if (pattern.roles.resourcePlanets.includes(planet)) push("resource_planet");
+  } else if (pattern.type === "yod") {
+    if (pattern.roles.apex === planet) push("apex");
+    if (pattern.roles.basePlanets.includes(planet)) push("base");
+  } else if (pattern.type === "mystic_rectangle") {
+    if (pattern.roles.oppositionAxes.some((axis) => axis.includes(planet))) push("opposition_axis");
+  }
+
+  return roles;
+}
+
+function nearestAngularProximity(position, rankingContext) {
+  if (!position || typeof position.longitude !== "number" || rankingContext.angles.length === 0) return null;
+  const nearest = rankingContext.angles
+    .map((angle) => ({
+      angle: angle.angle,
+      orb: roundNumber(shortestArc(position.longitude, angle.longitude))
+    }))
+    .sort((a, b) => a.orb - b.orb || a.angle.localeCompare(b.angle))[0];
+  return nearest && nearest.orb <= ANGULAR_ORB_DEGREES ? nearest : null;
+}
+
+function allowedCertaintyFor(pattern) {
+  return pattern.geometry.confidence === "wide"
+    || pattern.geometry.confidence === "partial"
+    || pattern.geometry.warnings.length > 0
+    ? "qualified"
+    : "direct";
+}
+
+function copyValue(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function resolveAspectPatternCopy(context, options = {}) {
+  const sourceRecords = Array.isArray(options.records) ? options.records : [];
+  const authoredRecords = Array.isArray(options.authoredRecords)
+    ? options.authoredRecords
+    : AUTHORED_ASPECT_PATTERN_RECORDS;
+  const records = normalizeAuthoredRecords(sourceRecords.concat(authoredRecords)).concat(GOVERNED_COPY_RECORDS);
+  const attemptedRecords = [];
+
+  for (const record of records) {
+    if (!record || record.patternType !== context.patternType) continue;
+    attemptedRecords.push(record.id);
+    const result = resolveCopyRecord(context, record);
+    if (result) {
+      result.diagnostics.attemptedRecordIds = attemptedRecords.slice();
+      return result;
+    }
+  }
+
+  const emergency = emergencyCopyRecord(context.patternType);
+  const result = resolveCopyRecord(context, emergency, { force: true });
+  result.diagnostics.attemptedRecordIds = attemptedRecords.concat(emergency.id);
+  return result;
+}
+
+function resolveAspectPatternCopies(contexts, options = {}) {
+  return contexts.map((context) => resolveAspectPatternCopy(context, options));
+}
+
+function normalizeAuthoredRecords(records) {
+  return records
+    .filter((record) => record && (record.contentLevel === "authored" || record.content))
+    .map(authoredRecordToCopyRecord);
+}
+
+function authoredRecordToCopyRecord(record) {
+  if (!record || record.contentLevel || !record.content) return record;
+  return {
+    id: record.id,
+    version: record.version,
+    patternType: record.patternType,
+    contentLevel: "authored",
+    status: record.status,
+    eligibility: {
+      confidence: record.eligibility && record.eligibility.confidence,
+      houseMode: record.eligibility && record.eligibility.houseMode,
+      allowedVariants: record.eligibility && record.eligibility.variants
+    },
+    templates: record.content,
+    languageRules: {
+      allowedCertainty: record.languageRules && record.languageRules.certainty,
+      prohibitedClaims: record.languageRules && record.languageRules.prohibitedClaims,
+      prohibitedTerms: record.languageRules && record.languageRules.prohibitedTerms
+    },
+    provenance: record.provenance
+  };
+}
+
+function resolveCopyRecord(context, record, options = {}) {
+  if (!options.force && !copyRecordEligible(context, record)) return null;
+  const slots = aspectPatternCopySlots(context);
+  const validation = validateAspectPatternCopyRecord(record, context, slots);
+  if (!options.force && validation.errors.length > 0) return null;
+
+  const missingSlots = new Set(validation.missingSlots);
+  const skippedSections = [];
+  const content = {};
+  for (const key of ["eyebrow", "headline", "overview"]) {
+    const template = record.templates[key];
+    if (typeof template === "string") {
+      const rendered = renderTemplate(template, slots, missingSlots);
+      if (rendered !== null) content[key] = rendered;
+    }
+  }
+  if (!content.headline || !content.overview) return null;
+
+  const sections = [];
+  for (const section of record.templates.sections || []) {
+    const sectionValidation = validateTemplate(section.template, slots);
+    for (const slot of sectionValidation.missingSlots) missingSlots.add(slot);
+    if (!conditionsPass(section.conditions, slots)) {
+      skippedSections.push(section.id);
+      continue;
+    }
+    if (sectionValidation.unknownSlots.length > 0 || sectionValidation.missingSlots.length > 0) {
+      skippedSections.push(section.id);
+      if (section.required && !options.force) return null;
+      continue;
+    }
+    const body = renderTemplate(section.template, slots, missingSlots);
+    if (body) {
+      sections.push({
+        id: section.id,
+        body
+      });
+    } else {
+      skippedSections.push(section.id);
+      if (section.required && !options.force) return null;
+    }
+  }
+
+  const resolved = {
+    patternId: context.patternId,
+    patternType: context.patternType,
+    source: {
+      recordId: record.id,
+      contentLevel: record.contentLevel,
+      status: record.status,
+      resolverVersion: ASPECT_PATTERN_COPY_RESOLVER_VERSION
+    },
+    content: {
+      ...content,
+      sections
+    },
+    diagnostics: {
+      templateId: record.id,
+      usedFallback: record.contentLevel !== "authored",
+      missingSlots: [...missingSlots].sort(),
+      skippedSections: unique(skippedSections).sort(),
+      validationWarnings: validation.warnings.slice().sort()
+    }
+  };
+  if (!resolved.content.eyebrow) delete resolved.content.eyebrow;
+  return resolved;
+}
+
+function aspectPatternCopySlots(context) {
+  const roles = context.roles || {};
+  const derivedByType = new Map((context.derivedPoints || []).map((point) => [point.type, point]));
+  const slots = {
+    pattern_name: PATTERN_DISPLAY_NAMES[context.patternType] || titleToken(context.patternType),
+    member_planets: joinList(context.members.map((member) => titleToken(member.planet))),
+    member_count: context.members.length,
+    confidence: context.geometry.confidence,
+    maximum_orb: `${formatCopyNumber(context.geometry.maximumOrb)} degrees`,
+    is_primary: Boolean(context.display.isPrimary)
+  };
+
+  if (context.display.parentPatternIds.length > 0) {
+    slots.parent_pattern_name = context.display.parentPatternIds.map(patternNameFromId).join(", ");
+  }
+  if (context.display.childPatternIds.length > 0) {
+    slots.child_pattern_names = context.display.childPatternIds.map(patternNameFromId).join(", ");
+  }
+
+  if (context.patternType === "t_square") {
+    slots.apex_planet = titleToken(roles.apex);
+    slots.opposition_axis_one = pairLabel(roles.oppositionAxis);
+    addZodiacPointSlots(slots, "empty_leg", roles.emptyLeg || derivedByType.get("empty_leg"));
+  } else if (context.patternType === "grand_square") {
+    slots.opposition_axis_one = pairLabel(roles.oppositionAxes && roles.oppositionAxes[0]);
+    slots.opposition_axis_two = pairLabel(roles.oppositionAxes && roles.oppositionAxes[1]);
+  } else if (context.patternType === "grand_trine") {
+    slots.element_consistency = elementConsistencyLabel(roles.elementConsistency);
+  } else if (context.patternType === "kite") {
+    slots.focal_planet = titleToken(roles.focalPlanet);
+    slots.opposed_trine_planet = titleToken(roles.opposedTrinePlanet);
+    slots.resource_planets = joinList((roles.resourcePlanets || []).map(titleToken));
+    slots.opposition_axis_one = pairLabel(roles.spine);
+    slots.child_pattern_names = slots.child_pattern_names || "the underlying Grand Trine";
+  } else if (context.patternType === "yod") {
+    slots.base_planets = pairLabel(roles.basePlanets);
+    slots.apex_planet = titleToken(roles.apex);
+    addZodiacPointSlots(slots, "fallout", roles.falloutPoint || derivedByType.get("fallout_point"));
+  } else if (context.patternType === "mystic_rectangle") {
+    slots.opposition_axis_one = pairLabel(roles.oppositionAxes && roles.oppositionAxes[0]);
+    slots.opposition_axis_two = pairLabel(roles.oppositionAxes && roles.oppositionAxes[1]);
+    slots.rectangle_variant = elementConsistencyLabel(roles.variant);
+  }
+
+  return slots;
+}
+
+function addZodiacPointSlots(slots, prefix, point) {
+  if (!point) return;
+  if (point.sign) slots[`${prefix}_sign`] = titleToken(point.sign);
+  if (typeof point.house === "number") slots[`${prefix}_house`] = ordinal(point.house);
+}
+
+function copyRecordEligible(context, record) {
+  if (!ASPECT_PATTERN_CONTENT_LEVELS.includes(record.contentLevel)) return false;
+  if (!["draft", "reviewed", "approved", "deprecated"].includes(record.status)) return false;
+  if (record.status === "deprecated") return false;
+  if (record.contentLevel === "authored" && !isEligibleAuthoredRecord(record, context)) return false;
+  if (record.languageRules.allowedCertainty === "direct" && certaintyForContext(context) === "qualified") return false;
+  const eligibility = record.eligibility || {};
+  if (Array.isArray(eligibility.confidence) && !eligibility.confidence.includes(context.geometry.confidence)) return false;
+  if (eligibility.houseMode === "with_houses" && !contextHasHouseData(context)) return false;
+  if (eligibility.houseMode === "without_houses" && contextHasHouseData(context)) return false;
+  if (eligibility.requiresHouses && !context.members.some((member) => typeof member.house === "number")) return false;
+  if (eligibility.requiresAngles && !context.members.some((member) => member.angularProximity)) return false;
+  if (Array.isArray(eligibility.allowedVariants) && eligibility.allowedVariants.length > 0) {
+    const variant = context.roles && (context.roles.variant || context.roles.elementConsistency);
+    if (!eligibility.allowedVariants.includes(variant)) return false;
+  }
+  return true;
+}
+
+function isEligibleAuthoredRecord(record, context) {
+  const copyRecord = authoredRecordToCopyRecord(record);
+  const eligibility = copyRecord && copyRecord.eligibility ? copyRecord.eligibility : {};
+  return Boolean(
+    copyRecord
+    && copyRecord.status === "approved"
+    && copyRecord.patternType === context.patternType
+    && Array.isArray(eligibility.confidence)
+    && eligibility.confidence.includes(context.geometry.confidence)
+  );
+}
+
+function contextHasHouseData(context) {
+  const slots = aspectPatternCopySlots(context);
+  return Boolean(
+    context.members.some((member) => typeof member.house === "number")
+    || slots.empty_leg_house
+    || slots.fallout_house
+  );
+}
+
+function certaintyForContext(context) {
+  if (context.patternType === "yod") return "qualified";
+  if (context.geometry.confidence === "wide" || context.geometry.confidence === "partial") return "qualified";
+  return context.copyInstructions.allowedCertainty;
+}
+
+function validateAspectPatternCopyRecord(record, context, slots = aspectPatternCopySlots(context)) {
+  const copyRecord = authoredRecordToCopyRecord(record);
+  const errors = [];
+  const warnings = [];
+  const missingSlots = [];
+  const unknownSlots = [];
+  const templates = [];
+  for (const key of ["eyebrow", "headline", "overview"]) {
+    if (typeof copyRecord.templates[key] === "string") templates.push({ id: key, template: copyRecord.templates[key], required: key !== "eyebrow" });
+  }
+  for (const section of copyRecord.templates.sections || []) {
+    templates.push(section);
+    if (!COPY_SECTION_IDS.includes(section.id)) errors.push(`unknown_section:${section.id}`);
+  }
+  for (const item of templates) {
+    if (item.conditions && !conditionsPass(item.conditions, slots)) continue;
+    const validation = validateTemplate(item.template, slots);
+    unknownSlots.push(...validation.unknownSlots);
+    missingSlots.push(...validation.missingSlots);
+    if (item.required && validation.unknownSlots.length > 0) errors.push(`unknown_required_slot:${item.id}`);
+    if (item.required && validation.missingSlots.length > 0) errors.push(`missing_required_slot:${item.id}`);
+  }
+  if (copyRecord.languageRules.allowedCertainty === "direct" && certaintyForContext(context) === "qualified") {
+    errors.push("direct_certainty_for_qualified_context");
+  }
+
+  const combined = templates.map((item) => item.template).join(" ");
+  const prohibited = (copyRecord.languageRules.prohibitedClaims || []).concat(copyRecord.languageRules.prohibitedTerms || []);
+  for (const phrase of prohibited) {
+    if (phrase && containsTerm(combined, phrase)) errors.push(`prohibited_language:${phrase}`);
+  }
+  if ((context.patternType === "grand_square" || context.patternType === "mystic_rectangle") && containsTerm(combined, "apex")) {
+    errors.push("apex_language_for_non_apex_pattern");
+  }
+  if (context.patternType === "yod" && /\b(finger of god|fate|destiny|chosen|special mission)\b/i.test(combined)) {
+    errors.push("yod_fate_language");
+  }
+  if (/\b(structuralContext|baseDisplayPriority|sourceAspectIds|ranking reasons?|warning codes?|derived point|resource planet|element consistency|geometry confidence|source aspect|display priority)\b/i.test(combined)) {
+    errors.push("internal_diagnostics_leak");
+  }
+  if (unknownSlots.length > 0) warnings.push("unknown_slots_present");
+  if (missingSlots.length > 0) warnings.push("missing_slots_present");
+
+  return {
+    ok: errors.length === 0,
+    errors: unique(errors).sort(),
+    warnings: unique(warnings).sort(),
+    missingSlots: unique(missingSlots).sort(),
+    unknownSlots: unique(unknownSlots).sort()
+  };
+}
+
+function validateAuthoredAspectPatternRecord(record, context, slots = aspectPatternCopySlots(context)) {
+  return validateAspectPatternCopyRecord(authoredRecordToCopyRecord(record), context, slots);
+}
+
+function validateTemplate(template, slots) {
+  const slotNames = templateSlotNames(template);
+  return {
+    unknownSlots: slotNames.filter((slot) => !APPROVED_COPY_SLOTS.includes(slot)),
+    missingSlots: slotNames.filter((slot) => APPROVED_COPY_SLOTS.includes(slot) && (slots[slot] === undefined || slots[slot] === null || slots[slot] === ""))
+  };
+}
+
+function renderTemplate(template, slots, missingSlots) {
+  const validation = validateTemplate(template, slots);
+  if (validation.unknownSlots.length > 0) return null;
+  for (const slot of validation.missingSlots) missingSlots.add(slot);
+  if (validation.missingSlots.length > 0) return null;
+  return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, slotName) => String(slots[slotName]));
+}
+
+function conditionsPass(conditions, slots) {
+  if (!Array.isArray(conditions) || conditions.length === 0) return true;
+  return conditions.every((condition) => {
+    if (!condition || !condition.slot) return true;
+    if (condition.exists === true) return slots[condition.slot] !== undefined && slots[condition.slot] !== "";
+    if (condition.exists === false) return slots[condition.slot] === undefined || slots[condition.slot] === "";
+    if (Object.prototype.hasOwnProperty.call(condition, "equals")) return slots[condition.slot] === condition.equals;
+    return true;
+  });
+}
+
+function templateSlotNames(template) {
+  const slots = [];
+  String(template || "").replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, slotName) => {
+    slots.push(slotName);
+    return "";
+  });
+  return unique(slots);
+}
+
+function containsTerm(text, term) {
+  const escaped = String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escaped}\\b`, "i").test(text);
+}
+
+function buildAuthoredAspectPatternRecords() {
+  return Object.freeze(Object.keys(PATTERN_DISPLAY_NAMES).map(authoredRecordForPattern));
+}
+
+function authoredRecordForPattern(patternType) {
+  const templates = authoredTemplatesForPattern(patternType);
+  const prohibitedClaims = (PATTERN_COPY_JOBS[patternType] && PATTERN_COPY_JOBS[patternType].avoidClaims.slice()) || [];
+  const prohibitedTerms = patternType === "yod"
+    ? ["Finger of God", "fate", "destiny", "chosen", "calling", "special mission", "unavoidable calling"]
+    : [];
+  return Object.freeze({
+    id: `aspect-pattern-authored:${patternType}:pattern:v1`,
+    version: "1.0.0",
+    patternType,
+    status: "approved",
+    eligibility: {
+      confidence: ["exact", "strong", "wide", "partial"],
+      houseMode: "any",
+      variants: []
+    },
+    content: templates,
+    languageRules: {
+      certainty: "qualified",
+      prohibitedClaims,
+      prohibitedTerms
+    },
+    provenance: {
+      sourceIds: [`internal:authored-aspect-pattern:${patternType}:v1`],
+      editorialStatus: "editorial_synthesis",
+      reviewedBy: "tldr-astro-editorial",
+      reviewedAt: "2026-07-19"
+    }
+  });
+}
+
+function authoredTemplatesForPattern(patternType) {
+  if (patternType === "t_square") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} with {{apex_planet}} at the action point",
+      overview: "{{member_planets}} form a pressure pattern that asks for a response through {{apex_planet}}, while the opposite side of the pattern points toward {{empty_leg_sign}}.",
+      sections: [
+        { id: "how_it_works", template: "{{opposition_axis_one}} can describe a repeating pull in two directions. {{apex_planet}} is where the chart tends to act first when that pull needs somewhere to go.", required: true },
+        { id: "planet_roles", template: "The empty leg points toward {{empty_leg_house}} in {{empty_leg_sign}}. The empty leg is a reference point for another response, not a missing planet or a guaranteed solution.", required: false, conditions: [{ slot: "empty_leg_house", exists: true }] },
+        { id: "planet_roles", template: "The empty leg points toward {{empty_leg_sign}}. The empty leg is a reference point for another response, not a missing planet or a guaranteed solution.", required: true, conditions: [{ slot: "empty_leg_house", exists: false }] },
+        { id: "watch_for", template: "The useful question is how {{apex_planet}} reacts under pressure, and whether the chart can make room for the quieter response named by the empty leg.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  if (patternType === "grand_square") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} across {{member_planets}}",
+      overview: "{{member_planets}} are tied into a four-part pattern where pressure can move around the whole square instead of staying in one simple conflict.",
+      sections: [
+        { id: "how_it_works", template: "The two major pairs are {{opposition_axis_one}}, plus {{opposition_axis_two}}. Each pair matters, and no single planet should be treated as the whole story.", required: true },
+        { id: "pressure_or_support", template: "When one side asks for attention, another side may answer back. The pattern is easier to read as a system than as four separate problems.", required: true },
+        { id: "watch_for", template: "Do not reduce this to one outlet or one crisis story. The work is noticing how the four planets keep handing the pressure to one another.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  if (patternType === "grand_trine") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} linking {{member_planets}}",
+      overview: "{{member_planets}} can move together with less friction, which may feel familiar before it feels impressive.",
+      sections: [
+        { id: "how_it_works", template: "The signs are {{element_consistency}}, so these planets tend to share a style of response. That can make the pattern easy to lean on.", required: true },
+        { id: "pressure_or_support", template: "Ease does not automatically mean talent or success. It means these parts of the chart may cooperate before the person has to explain why.", required: true },
+        { id: "watch_for", template: "The soft spot is passivity: because the pattern can feel natural, it may not create much urgency on its own.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  if (patternType === "kite") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} with {{focal_planet}} drawing the pattern forward",
+      overview: "This Kite keeps {{child_pattern_names}} in place, while the opposition between {{opposition_axis_one}} gives the easier flow a direction to answer.",
+      sections: [
+        { id: "how_it_works", template: "{{focal_planet}} stands across from {{opposed_trine_planet}}, so the pattern is not only ease. The opposition gives the trines something to organize around.", required: true },
+        { id: "planet_roles", template: "{{resource_planets}} help support the shape, while {{focal_planet}} becomes the point that draws attention. This is not the same role as a T-square apex.", required: true },
+        { id: "watch_for", template: "The helpful move is to preserve both parts: the underlying Grand Trine and the opposition that keeps asking for direction.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  if (patternType === "yod") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} with {{apex_planet}} requiring adjustment",
+      overview: "{{base_planets}} can work together, but {{apex_planet}} keeps asking the pattern to recalibrate instead of settling into one fixed answer.",
+      sections: [
+        { id: "how_it_works", template: "The base between {{base_planets}} gives the pattern something to work with. The quincunx links to {{apex_planet}} make the response less straightforward and more timing-sensitive.", required: true },
+        { id: "derived_point", template: "The fallout point is opposite {{apex_planet}}, in {{fallout_house}} in {{fallout_sign}}. It is a reference point for release and perspective, not another natal placement.", required: false, conditions: [{ slot: "fallout_house", exists: true }] },
+        { id: "derived_point", template: "The fallout point is opposite {{apex_planet}}, in {{fallout_sign}}. It is a reference point for release and perspective, not another natal placement.", required: true, conditions: [{ slot: "fallout_house", exists: false }] },
+        { id: "watch_for", template: "Keep the reading practical: repeated adjustment, awkward timing, and learning what response is actually being asked for.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  if (patternType === "mystic_rectangle") {
+    return {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} holding two linked pairs",
+      overview: "This Mystic Rectangle connects {{member_planets}} through two oppositions and supportive routes, so the pattern has movement without becoming automatic balance.",
+      sections: [
+        { id: "how_it_works", template: "The two major pairs are {{opposition_axis_one}}, plus {{opposition_axis_two}}. The side links help the pairs speak to each other without erasing their tension.", required: true },
+        { id: "pressure_or_support", template: "The supportive routes are {{rectangle_variant}}, which can make the pattern more workable when both sides of each opposition stay included.", required: true },
+        { id: "watch_for", template: "The risk is smoothing over the tension too quickly. The oppositions still need to be named and worked with directly.", required: true },
+        { id: "confidence_note", template: "Read this with {{confidence}} confidence; the widest link is {{maximum_orb}}.", required: true }
+      ]
+    };
+  }
+  return {
+    eyebrow: "{{pattern_name}}",
+    headline: "{{pattern_name}} involving {{member_planets}}",
+    overview: "{{member_planets}} form a confirmed aspect pattern.",
+    sections: [{ id: "how_it_works", template: "Read this through the confirmed pattern roles.", required: true }]
+  };
+}
+
+function buildDefaultCopyRecords() {
+  const records = [];
+  for (const type of Object.keys(PATTERN_DISPLAY_NAMES)) {
+    records.push(sourceGroundedRecord(type, "direct"));
+    records.push(sourceGroundedRecord(type, "qualified"));
+    records.push(madlibCopyRecord(type));
+    records.push(emergencyCopyRecord(type));
+  }
+  return records;
+}
+
+function sourceGroundedRecord(patternType, certainty) {
+  const qualified = certainty === "qualified";
+  const level = "source_grounded_template";
+  const base = recordBase(patternType, level, certainty);
+  const templates = templatesForPattern(patternType, qualified, level);
+  return {
+    ...base,
+    id: `aspect-pattern-copy:${level}:${patternType}:${certainty}:v1`,
+    eligibility: {
+      confidence: qualified && patternType === "yod" ? ["exact", "strong", "wide", "partial"] : qualified ? ["wide", "partial"] : ["exact", "strong"]
+    },
+    templates
+  };
+}
+
+function madlibCopyRecord(patternType) {
+  const level = "madlib_fallback";
+  return {
+    ...recordBase(patternType, level, "qualified"),
+    id: `aspect-pattern-copy:${level}:${patternType}:v1`,
+    eligibility: {},
+    templates: templatesForPattern(patternType, true, level)
+  };
+}
+
+function emergencyCopyRecord(patternType) {
+  const level = "emergency_fallback";
+  return {
+    ...recordBase(patternType, level, "qualified"),
+    id: `aspect-pattern-copy:${level}:${patternType}:v1`,
+    eligibility: {},
+    templates: {
+      eyebrow: "{{pattern_name}}",
+      headline: "{{pattern_name}} involving {{member_planets}}",
+      overview: "This temporary note is for a {{pattern_name}} involving {{member_planets}}.",
+      sections: [
+        {
+          id: "how_it_works",
+          template: "This fallback names the pattern and keeps the explanation limited to the confirmed planets.",
+          required: true
+        },
+        {
+          id: "watch_for",
+          template: "Use this as temporary copy until a reviewed pattern note is available.",
+          required: true
+        }
+      ]
+    }
+  };
+}
+
+function recordBase(patternType, contentLevel, certainty) {
+  const prohibitedClaims = (PATTERN_COPY_JOBS[patternType] && PATTERN_COPY_JOBS[patternType].avoidClaims.slice()) || [];
+  const prohibitedTerms = patternType === "yod"
+    ? ["Finger of God", "fate", "destiny", "chosen", "special mission", "unavoidable calling"]
+    : [];
+  return {
+    version: "1.0.0",
+    patternType,
+    contentLevel,
+    status: contentLevel === "source_grounded_template" ? "reviewed" : "approved",
+    languageRules: {
+      allowedCertainty: certainty,
+      prohibitedClaims,
+      prohibitedTerms
+    },
+    provenance: {
+      sourceIds: [`internal:${contentLevel}:${patternType}:v1`]
+    }
+  };
+}
+
+function templatesForPattern(patternType, qualified, level) {
+  const intro = qualified ? qualifiedIntro(patternType) : directIntro(patternType);
+  const confidenceNote = qualified
+    ? confidenceTemplate(patternType)
+    : "The links are tight enough to read this pattern directly; the widest one is {{maximum_orb}}.";
+  const common = {
+    eyebrow: "{{pattern_name}}",
+    headline: headlineTemplate(patternType, qualified),
+    overview: intro,
+    sections: []
+  };
+
+  if (patternType === "t_square") {
+    common.sections = [
+      { id: "how_it_works", template: "{{opposition_axis_one}} can pull in different directions, and {{apex_planet}} is where the chart most often tries to do something with that pressure.", required: true },
+      { id: "planet_roles", template: "{{apex_planet}} is the action point. The empty leg points toward {{empty_leg_house}} in {{empty_leg_sign}}.", required: false, conditions: [{ slot: "empty_leg_house", exists: true }] },
+      { id: "planet_roles", template: "{{apex_planet}} is the action point. The empty leg points toward {{empty_leg_sign}}.", required: true, conditions: [{ slot: "empty_leg_house", exists: false }] },
+      { id: "derived_point", template: "The empty leg is a reference point, not another natal planet. It names a response that may be less familiar.", required: true },
+      { id: "watch_for", template: "This does not mean life is always in crisis, and it does not make one response the guaranteed answer.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: qualified }
+    ];
+  } else if (patternType === "grand_square") {
+    common.sections = [
+      { id: "how_it_works", template: "{{member_planets}} are tied together through two major pairs: {{opposition_axis_one}}, plus {{opposition_axis_two}}.", required: true },
+      { id: "pressure_or_support", template: "When one pair gets activated, another part of the pattern may ask for attention too.", required: true },
+      { id: "watch_for", template: "This pattern should not be reduced to one problem, one outlet, or one permanent way of handling pressure.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: qualified }
+    ];
+  } else if (patternType === "grand_trine") {
+    common.sections = [
+      { id: "how_it_works", template: "{{member_planets}} can work together more easily than they would in a harder pattern.", required: true },
+      { id: "pressure_or_support", template: "The signs are {{element_consistency}}, which means the pattern has a consistent style.", required: true },
+      { id: "watch_for", template: "Ease here is not a promise of talent, success, or an easy life; it only describes the way these planets connect.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: qualified }
+    ];
+  } else if (patternType === "kite") {
+    common.sections = [
+      { id: "how_it_works", template: "This Kite includes {{child_pattern_names}}, but the opposition between {{opposition_axis_one}} keeps it from being only easy flow.", required: true },
+      { id: "planet_roles", template: "{{focal_planet}} draws the pattern forward, {{opposed_trine_planet}} stands across from it, and {{resource_planets}} help support the shape.", required: true },
+      { id: "watch_for", template: "Do not treat this as a Grand Trine with an extra planet. The opposition is part of the pattern.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: qualified }
+    ];
+  } else if (patternType === "yod") {
+    common.sections = [
+      { id: "how_it_works", template: "{{base_planets}} can cooperate, but {{apex_planet}} asks the pattern to keep adjusting rather than settling once and for all.", required: true },
+      { id: "derived_point", template: "The fallout point is opposite {{apex_planet}}, in {{fallout_house}} in {{fallout_sign}}. It is a reference point, not another natal planet.", required: false, conditions: [{ slot: "fallout_house", exists: true }] },
+      { id: "derived_point", template: "The fallout point is opposite {{apex_planet}}, in {{fallout_sign}}. It is a reference point, not another natal planet.", required: true, conditions: [{ slot: "fallout_house", exists: false }] },
+      { id: "watch_for", template: "Keep this language about repeated timing and adjustment, not one final answer.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: true }
+    ];
+  } else if (patternType === "mystic_rectangle") {
+    common.sections = [
+      { id: "how_it_works", template: "The Mystic Rectangle holds two pairs at once: {{opposition_axis_one}}, plus {{opposition_axis_two}}.", required: true },
+      { id: "pressure_or_support", template: "The side links can help the two pairs speak to each other; this version is {{rectangle_variant}}.", required: true },
+      { id: "watch_for", template: "Do not describe this as automatic balance. The oppositions still matter.", required: true },
+      { id: "confidence_note", template: confidenceNote, required: qualified }
+    ];
+  }
+
+  if (level === "madlib_fallback") {
+    common.overview = "{{pattern_name}} with {{member_planets}} is present at {{confidence}} confidence.";
+  }
+  return common;
+}
+
+function headlineTemplate(patternType, qualified) {
+  const prefix = qualified ? qualifiedHeadlinePrefix(patternType) : PATTERN_DISPLAY_NAMES[patternType];
+  return `${prefix}: {{member_planets}}`;
+}
+
+function qualifiedHeadlinePrefix(patternType) {
+  return patternType === "yod"
+    ? "A Yod asking for adjustment"
+    : patternType === "t_square"
+      ? "A possible T-square"
+      : `A possible ${PATTERN_DISPLAY_NAMES[patternType]}`;
+}
+
+function qualifiedIntro(patternType) {
+  if (patternType === "yod") return "This {{confidence}} Yod may connect {{member_planets}} through repeated adjustment.";
+  if (patternType === "t_square") return "This {{confidence}} T-square may show {{member_planets}} working through pressure and response.";
+  if (patternType === "grand_trine") return "This {{confidence}} Grand Trine may show {{member_planets}} working together with less friction.";
+  return "This {{confidence}} {{pattern_name}} may connect {{member_planets}}.";
+}
+
+function directIntro(patternType) {
+  if (patternType === "t_square") return "This T-square shows {{member_planets}} working through pressure and response.";
+  if (patternType === "grand_square") return "This Grand Square ties {{member_planets}} into one connected pressure pattern.";
+  if (patternType === "grand_trine") return "This Grand Trine shows {{member_planets}} working together with less friction.";
+  if (patternType === "kite") return "This Kite connects {{member_planets}} through ease and an important opposition.";
+  if (patternType === "yod") return "This Yod may connect {{member_planets}} through repeated adjustment.";
+  if (patternType === "mystic_rectangle") return "This Mystic Rectangle connects {{member_planets}} through two oppositions and supporting links.";
+  return "This {{pattern_name}} connects {{member_planets}}.";
+}
+
+function confidenceTemplate() {
+  return "Because this pattern is {{confidence}}, keep the wording flexible; the widest link is {{maximum_orb}}.";
+}
+
+function patternNameFromId(patternId) {
+  const match = String(patternId).match(/^aspect-pattern:([^:]+)/);
+  return match ? PATTERN_DISPLAY_NAMES[match[1]] || titleToken(match[1]) : "related pattern";
+}
+
+function titleToken(value) {
+  return String(value || "")
+    .replace(/_/g, " ")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function pairLabel(value) {
+  return Array.isArray(value) ? value.map(titleToken).join(" and ") : undefined;
+}
+
+function joinList(items) {
+  const values = items.filter(Boolean);
+  if (values.length <= 2) return values.join(" and ");
+  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+}
+
+function elementConsistencyLabel(value) {
+  if (value === "same_element") return "the same element";
+  if (value === "out_of_sign") return "out of sign";
+  if (value === "mixed_element") return "mixed";
+  if (value === "trine_sextile") return "trines and sextiles";
+  if (value === "other_harmonic") return "mixed supportive links";
+  return undefined;
+}
+
+function ordinal(number) {
+  const suffix = number % 10 === 1 && number % 100 !== 11
+    ? "st"
+    : number % 10 === 2 && number % 100 !== 12
+      ? "nd"
+      : number % 10 === 3 && number % 100 !== 13
+        ? "rd"
+        : "th";
+  return `${number}${suffix} house`;
+}
+
+function formatCopyNumber(value) {
+  return typeof value === "number" ? value.toFixed(value % 1 === 0 ? 0 : 1) : "unknown";
+}
+
 module.exports = {
+  ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
+  ASPECT_PATTERN_CONTENT_LEVELS,
+  ASPECT_PATTERN_COPY_RESOLVER_VERSION,
+  ASPECT_PATTERN_DETECTOR_VERSION,
+  APPROVED_COPY_SLOTS,
+  AUTHORED_ASPECT_PATTERN_RECORDS,
   DEFAULT_ORB_POLICY,
+  DEFAULT_RANKING_POLICY,
+  GOVERNED_COPY_RECORDS,
+  PATTERN_COPY_JOBS,
   PLANET_IDS,
   SUPPORTED_ASPECTS,
   buildAspectGraph,
+  buildAspectPatternInterpretationContexts,
   buildRelationships,
   detectGrandSquares,
   detectGrandTrines,
@@ -714,5 +1916,11 @@ module.exports = {
   detectPatterns,
   detectTSquares,
   detectYods,
-  normalizeOrbPolicy
+  normalizeOrbPolicy,
+  normalizeRankingPolicy,
+  rankAspectPatterns,
+  resolveAspectPatternCopies,
+  resolveAspectPatternCopy,
+  validateAuthoredAspectPatternRecord,
+  validateAspectPatternCopyRecord
 };

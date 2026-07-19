@@ -98,6 +98,13 @@ function rowFromCard(planet, readerSign, otherSign, card) {
   const readerLabel = titleCase(readerSign);
   const otherLabel = titleCase(otherSign);
   const paragraphs = cardParagraphs(card);
+  const format = typeof card.format === "string" && card.format.trim() ? card.format.trim() : null;
+  const authoredBody = typeof card.body === "string"
+    ? card.body.trim().split(/\n\n+/).map((paragraph) => paragraph.trim().replace(/[ \t]+/g, " ")).filter(Boolean).join("\n\n")
+    : "";
+  const body = (format === "single-paragraph" || format === "multi-paragraph") && authoredBody
+    ? authoredBody
+    : paragraphs.join("\n\n");
   const now = new Date().toISOString();
 
   return {
@@ -109,14 +116,14 @@ function rowFromCard(planet, readerSign, otherSign, card) {
     target_date: null,
     headline: `${planetLabel} compatibility: ${readerLabel} + ${otherLabel}`,
     summary: `${planetLabel}-to-${planetLabel} compatibility for ${readerLabel} and ${otherLabel}.`,
-    body: paragraphs.join("\n\n"),
+    body,
     sections: [
       { heading: `${planetLabel} function`, body: paragraphs[0] },
       { heading: `${planetLabel} for you`, body: paragraphs[1] },
       { heading: card.same_sign ? `${planetLabel} shared pattern` : `${planetLabel} for them`, body: paragraphs[2] },
       { heading: `${planetLabel} verdict`, body: paragraphs[3] }
     ],
-    block_type: "essay",
+    block_type: "compatibility_planet_card",
     lane: "serving",
     review_state: options.status === "LIVE" || options.status === "REVIEWED" ? null : "dashboard_confirmation_required",
     evergreen: true,
@@ -130,6 +137,7 @@ function rowFromCard(planet, readerSign, otherSign, card) {
       planet,
       readerSign,
       otherSign,
+      format,
       sameSign: Boolean(card.same_sign),
       relationship: card.relationship ?? null
     },
@@ -143,10 +151,11 @@ function rowFromCard(planet, readerSign, otherSign, card) {
       sourceKey: `cards.${planet}.${readerSign}.${otherSign}`,
       sourceType: "authored-phrasebank-dashboard-row",
       tier: card.tier ?? null,
-      status: card.status ?? null,
+      status: options.status,
       planet,
       readerSign,
       otherSign,
+      format,
       sameSign: Boolean(card.same_sign),
       relationship: card.relationship ?? null,
       route: "friends.compatibility"
@@ -202,10 +211,43 @@ async function upsertRows(rows) {
     prefer: "resolution=merge-duplicates,return=representation"
   };
   const upserted = [];
+  const protectedContentKeys = new Set();
 
   for (let index = 0; index < rows.length; index += 100) {
-    const batch = rows.slice(index, index + 100);
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+    const keys = rows.slice(index, index + 100).map((row) => row.content_key);
+    const query = new URLSearchParams({
+      select: "content_key,provider,source_snapshot,prompt_version,evergreen_by",
+      content_key: `in.(${keys.join(",")})`
+    });
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${query}`, {
+      headers
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(`Compatibility dashboard protection check failed with ${response.status}: ${JSON.stringify(payload)}`);
+    }
+
+    for (const row of payload ?? []) {
+      const sourceSnapshot = row.source_snapshot && typeof row.source_snapshot === "object"
+        ? row.source_snapshot
+        : {};
+      const authoringSource = sourceSnapshot.authoringSource ?? sourceSnapshot.authoring_source;
+      const materialized = row.provider === "phrasebank-dashboard-materialization"
+        || row.prompt_version === "compatibility-dashboard-materialization-v1"
+        || row.evergreen_by === "compatibility-dashboard-materialization";
+
+      if (authoringSource === "admin-dashboard" || !materialized) {
+        protectedContentKeys.add(row.content_key);
+      }
+    }
+  }
+
+  const rowsToUpsert = rows.filter((row) => !protectedContentKeys.has(row.content_key));
+
+  for (let index = 0; index < rowsToUpsert.length; index += 100) {
+    const batch = rowsToUpsert.slice(index, index + 100);
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key`, {
       method: "POST",
       headers,
       body: JSON.stringify(batch)
@@ -219,7 +261,7 @@ async function upsertRows(rows) {
     upserted.push(...payload);
   }
 
-  return upserted;
+  return { upserted, protectedCount: protectedContentKeys.size };
 }
 
 const rows = materializeRows();
@@ -236,6 +278,6 @@ fs.writeFileSync(options.outPath, `${JSON.stringify({
 console.log(`materialized ${rows.length} ${options.planet} compatibility dashboard rows -> ${path.relative(repoRoot, options.outPath)}`);
 
 if (options.apply) {
-  const upserted = await upsertRows(rows);
-  console.log(`upserted ${upserted.length} rows into generated_interpretations`);
+  const { upserted, protectedCount } = await upsertRows(rows);
+  console.log(`upserted ${upserted.length} rows into generated_interpretations${protectedCount ? `; preserved ${protectedCount} existing dashboard-edited rows` : ""}`);
 }

@@ -32,6 +32,7 @@ ORDER = list(SIGNS.keys())
 PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 GLYPH = {"sun":"☉","moon":"☽","mercury":"☿","venus":"♀","mars":"♂","jupiter":"♃","saturn":"♄"}
 MOON_CARDS = os.path.join(PKG, "MOON-COMPATIBILITY-CARDS.md")
+MOON_LIBRARY = os.path.join(PKG, "sources", "moon-compatibility-library.json")
 VENUS_LIBRARY = os.path.join(PKG, "sources", "venus-compatibility-library.json")
 
 MATCH = {"same_sign":"Two of a kind", "same_element":"Naturally in sync", "complementary":"Easy chemistry",
@@ -253,6 +254,8 @@ def reader_clause_to_friend(text):
     return ensure_sentence(clean_swapped_copy(text))
 
 def reverse_moon_card(card, you_sign, friend_sign):
+    body = clean_swapped_copy(swap_reader_friend(swap_moon_signs(card.get("body", ""), you_sign, friend_sign))) if card.get("body") else ""
+
     return {
         **card,
         "match": "Moon-to-Moon",
@@ -264,10 +267,56 @@ def reverse_moon_card(card, you_sign, friend_sign):
         "verdict": clean_swapped_copy(swap_reader_friend(card["verdict"])),
         "synthesis": clean_swapped_copy(swap_reader_friend(card["verdict"])),
         "relationship": relationship(friend_sign, you_sign),
+        "body": body,
+        "format": card.get("format", "single-paragraph"),
         "tier": "authored Moon-to-Moon compatibility write-up; sign-only; reversed from authored reader-to-friend pair",
     }
 
 def parse_moon_compatibility_cards():
+    if os.path.exists(MOON_LIBRARY):
+        source = json.load(open(MOON_LIBRARY, encoding="utf-8"))
+        entries = {}
+
+        for row in source:
+            you_sign = row["reader_moon"].lower()
+            friend_sign = row["other_moon"].lower()
+            body = "\n\n".join(
+                re.sub(r"[ \t]+", " ", paragraph.strip())
+                for paragraph in row["text"].strip().split("\n\n")
+                if paragraph.strip()
+            )
+            paragraphs = body.split("\n\n")
+
+            if len(paragraphs) != 4:
+                raise ValueError(f"Moon compatibility library row must have exactly 4 paragraphs: {you_sign}+{friend_sign}")
+
+            function, your_line, other_line, verdict = paragraphs
+            same = you_sign == friend_sign
+            their_line = "" if same else other_line
+            same_sign_line = other_line if same else ""
+
+            entries.setdefault(you_sign, {})[friend_sign] = {
+                "glyph": GLYPH["moon"],
+                "match": "Moon-to-Moon",
+                "function": function,
+                "your_line": your_line,
+                "their_line": their_line,
+                "same_sign": same,
+                "same_sign_line": same_sign_line,
+                "same_sign_quote": None,
+                "verdict": verdict,
+                "synthesis": verdict,
+                "relationship": relationship(you_sign, friend_sign),
+                "body": body,
+                "format": row.get("format", "multi-paragraph"),
+                "moon_relation": row.get("relation"),
+                "source": row.get("source"),
+                "tier": "authored Moon-to-Moon compatibility library; sign-only; 144 resolved records",
+                "status": "DRAFT",
+            }
+
+        return entries
+
     if not os.path.exists(MOON_CARDS):
         return {}
 
@@ -293,7 +342,15 @@ def parse_moon_compatibility_cards():
         their_line = ""
         same_sign_line = ""
 
-        if not same:
+        if same:
+            shared_marker = ", and so does {friend}."
+
+            if placement_sentence.endswith(shared_marker):
+                your_line = ensure_sentence(placement_sentence[:-len(shared_marker)])
+                same_sign_line = "So does {friend}."
+            else:
+                same_sign_line = placement_sentence
+        else:
             parts = placement_sentence.split("; ", 1)
             if len(parts) != 2:
                 raise ValueError(f"Moon compatibility card needs a semicolon-separated placement sentence: {you_sign}+{friend_sign}")
@@ -313,6 +370,8 @@ def parse_moon_compatibility_cards():
             "verdict": verdict,
             "synthesis": verdict,
             "relationship": relationship(you_sign, friend_sign),
+            "body": body,
+            "format": "single-paragraph",
             "tier": "authored Moon-to-Moon compatibility write-up; sign-only; directional reader-to-friend copy",
             "status": "DRAFT",
         }

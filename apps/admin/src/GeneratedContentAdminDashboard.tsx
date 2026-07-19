@@ -1,6 +1,7 @@
 import {
   Activity,
   Archive,
+  BarChart3,
   BookOpenText,
   Check,
   Database,
@@ -19,6 +20,8 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { AspectPatternCoverage } from "./AspectPatternCoverage";
+import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import {
   fallbackHookDefinitions,
   lunarCalendarContentKeyDefinitions,
@@ -35,6 +38,7 @@ type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
   | "overview"
   | "articles"
+  | "compatibility"
   | "content"
   | "reviewQueue"
   | "compositeByType"
@@ -45,6 +49,8 @@ type AdminDashboardPage =
   | "knowledge"
   | "templates"
   | "hooks"
+  | "aspectPatternCoverage"
+  | "aspectDiagnostics"
   | "users"
   | "releaseNotes";
 type AdminContentClass = "phrasebank" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
@@ -56,6 +62,9 @@ type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
+type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
+type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
+type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -204,6 +213,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   overview: "home",
   articles: "articles",
+  compatibility: "compatibility",
   content: "exact-content",
   reviewQueue: "review-queue",
   compositeByType: "composite-review",
@@ -214,6 +224,8 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
+  aspectPatternCoverage: "content/aspect-patterns",
+  aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
   releaseNotes: "release-notes"
 };
@@ -236,6 +248,7 @@ const adminNavGroups: Array<{
       { page: "reviewQueue", label: "Review Queue", icon: Check },
       { page: "content", label: "Content Library", icon: BookOpenText },
       { page: "articles", label: "Articles", icon: FileText },
+      { page: "compatibility", label: "Compatibility", icon: Users },
       { page: "compositeByType", label: "Composite Review", icon: Users },
       { page: "users", label: "Users", icon: Users }
     ]
@@ -246,6 +259,7 @@ const adminNavGroups: Array<{
       { page: "templates", label: "Templates", icon: Sparkles },
       { page: "slotDictionary", label: "Slots", icon: KeyRound },
       { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
+      { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
       { page: "knowledge", label: "Fallback Hooks", icon: FileText },
       { page: "hooks", label: "Surface Map", icon: Flag }
     ]
@@ -255,6 +269,7 @@ const adminNavGroups: Array<{
     items: [
       { page: "connection", label: "Connection", icon: Server },
       { page: "appBehavior", label: "App Behavior", icon: Activity },
+      { page: "aspectDiagnostics", label: "Aspect Diagnostics", icon: BarChart3 },
       { page: "releaseNotes", label: "Release Notes", icon: Archive }
     ]
   }
@@ -316,6 +331,20 @@ const appDisplaySourceFilters: Array<{ key: AdminAppDisplaySource | "all"; label
   { key: "reviewed-phrasebank", label: "Reviewed phrasebank copy" },
   { key: "madlib-fallback", label: "Simple fallback copy" }
 ];
+const compatibilitySections: Array<{ key: AdminCompatibilitySectionFilter; label: string; description: string }> = [
+  { key: "all", label: "All compatibility", description: "Every saved row that supports compatibility copy." },
+  { key: "content", label: "App card copy", description: "Reader-facing compatibility rows that can replace the built-in phrasebank copy." },
+  { key: "fallback-hooks", label: "Simple fallbacks", description: "Saved fallback routes used only when reviewed prose is unavailable." },
+  { key: "vocabulary", label: "Reusable phrases", description: "Relationship and compatibility phrase rows available to templates and review." },
+  { key: "slots", label: "Templates & slots", description: "Mustache templates and slot-backed rows used to assemble compatibility copy." }
+];
+const compatibilitySortOptions: Array<{ key: AdminCompatibilitySort; label: string }> = [
+  { key: "updated-desc", label: "Newest updated" },
+  { key: "updated-asc", label: "Oldest updated" },
+  { key: "title-asc", label: "Title A-Z" },
+  { key: "status", label: "Status" },
+  { key: "source", label: "Source class" }
+];
 const relationshipTypes = ["romantic", "friendship", "family", "coworkers", "creative", "exes", "complicated"];
 
 function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
@@ -336,6 +365,7 @@ function parseAdminHash() {
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Articles";
+    case "compatibility": return "Compatibility";
     case "content": return "Content Library";
     case "reviewQueue": return "Review Queue";
     case "compositeByType": return "Composite Review";
@@ -346,6 +376,8 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "knowledge": return "Fallback Hooks";
     case "templates": return "Templates";
     case "hooks": return "Surface Map";
+    case "aspectPatternCoverage": return "Aspect Patterns";
+    case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
     case "users": return "Users";
     case "releaseNotes": return "Release Notes";
     default: return "Content Studio";
@@ -355,6 +387,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Admin / Write / Articles";
+    case "compatibility": return "Admin / Write / Compatibility";
     case "content": return "Admin / Write / Content library";
     case "reviewQueue": return "Admin / Publish / Review queue";
     case "compositeByType": return "Admin / Write / Composite review";
@@ -365,6 +398,8 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "knowledge": return "Admin / Composition / Fallback hooks";
     case "templates": return "Admin / Composition / Templates";
     case "hooks": return "Admin / App surfaces / Surface map";
+    case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
+    case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
     case "users": return "Admin / Users";
     case "releaseNotes": return "Admin / Release notes";
     default: return "Admin / Home";
@@ -381,8 +416,20 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Saved fallback rows only. Local runtime hooks live in the Hook Catalog until they are authored.";
     case "vocabulary":
       return "Reusable vocab namespaces and phrase rows for generation, taglines, and relationship context.";
+    case "slotDictionary":
+      return "Editable source rows that fill app slots: reusable vocab, fallback hooks, and template scaffolds.";
+    case "templates":
+      return "Mustache scaffolds and structured templates used to assemble app copy.";
+    case "compositeByType":
+      return "Composite relationship copy grouped by relationship type, with gated romantic variants separated.";
+    case "compatibility":
+      return "Compatibility content, fallback hooks, vocabulary, slots, and templates in one searchable review surface.";
     case "hooks":
       return "Every public surface and runtime hook request, with saved coverage separated from local placeholders.";
+    case "aspectPatternCoverage":
+      return "Read-only coverage and previews for authored aspect-pattern copy against the accepted fallback resolver.";
+    case "aspectDiagnostics":
+      return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
     case "users":
       return "Read-mostly user-generated rows by subject, surface, status, and latest update.";
     default:
@@ -468,6 +515,77 @@ function articlePointForRow(row: AdminGeneratedContentRow): AdminArticlePointFil
     : "other";
 }
 
+function rowSearchText(row: AdminGeneratedContentRow) {
+  return [
+    row.content_key,
+    row.headline,
+    row.summary,
+    row.body,
+    row.surface,
+    row.mode,
+    row.block_type,
+    row.event_type,
+    row.prompt_version,
+    row.provider,
+    JSON.stringify(row.facts ?? {}),
+    JSON.stringify(row.source_snapshot ?? {})
+  ].join(" ").toLowerCase();
+}
+
+function matchesAdminSearch(haystack: string, search: string) {
+  const normalizeSearchText = (value: string) => value.toLowerCase().replace(/[-_/.:,"{}[\]]+/g, " ");
+  const tokens = search
+    .trim()
+    .toLowerCase()
+    .replace(/[-_/.:,"{}[\]]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (tokens.length === 0) return true;
+  const normalizedHaystack = normalizeSearchText(haystack);
+  return tokens.every((token) => normalizedHaystack.includes(token));
+}
+
+function isCompatibilityRow(row: AdminGeneratedContentRow) {
+  const identity = [
+    row.content_key,
+    row.event_type,
+    row.block_type,
+    row.prompt_version,
+    row.headline
+  ].join(" ").toLowerCase().replace(/[-_/.:]+/g, " ");
+  return row.content_key.startsWith("compatibility.")
+    || row.event_type === "friends.compatibility.planet-card"
+    || row.block_type === "compatibility_planet_card"
+    || /\bcompatibility\b/.test(identity)
+    || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(row.content_key)
+    || row.content_key.startsWith("vocab/relationship/")
+    || row.content_key.startsWith("slot-template/compatibility/");
+}
+
+function compatibilitySectionForRow(row: AdminGeneratedContentRow): AdminCompatibilitySectionFilter {
+  const contentClass = contentClassForRow(row);
+  if (contentClass === "fallback-hook") return "fallback-hooks";
+  if (contentClass === "vocab") return "vocabulary";
+  if (row.content_key.startsWith("slot-template/") || row.block_type === "template") return "slots";
+  return "content";
+}
+
+function compatibilityPlanetForRow(row: AdminGeneratedContentRow): AdminArticlePointFilter {
+  const sourceSnapshot = row.source_snapshot ?? {};
+  const facts = row.facts ?? {};
+  const explicitPlanet = typeof sourceSnapshot.planet === "string" ? sourceSnapshot.planet : typeof facts.planet === "string" ? facts.planet : "";
+  const normalized = `${explicitPlanet} ${rowSearchText(row)}`.toLowerCase().replace(/[-_/.:]+/g, " ");
+  const planet = articlePointFilters.find((filter) => filter.key !== "all" && filter.key !== "other" && new RegExp(`\\b${filter.key}\\b`).test(normalized));
+  return planet?.key ?? "other";
+}
+
+function compatibilitySortValue(row: AdminGeneratedContentRow, sort: AdminCompatibilitySort) {
+  if (sort === "title-asc") return rowTitle(row).toLowerCase();
+  if (sort === "status") return `${row.status}-${rowTitle(row).toLowerCase()}`;
+  if (sort === "source") return `${contentClassForRow(row)}-${rowTitle(row).toLowerCase()}`;
+  return row.updated_at ?? row.created_at ?? "";
+}
+
 function titleFromKey(contentKey: string) {
   return contentKey
     .split("/")
@@ -516,8 +634,9 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
     promptVersion === "vocab-v1" ||
     promptVersion === "tagline-v1"
   ) return "vocab";
+  if (contentKey.startsWith("compatibility.") || eventType === "friends.compatibility.planet-card") return "phrasebank";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
-  if (provider && !/phrasebank|migration|local-normalized-dashboard-source/i.test(provider)) return "legacy";
+  if (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider)) return "legacy";
   if (/^(natal|composite|transit|sky|synastry|relationship|you)[./-]/i.test(contentKey)) return "phrasebank";
   if (contentKey.includes("aspect") || contentKey.includes("placement") || contentKey.includes("synastry")) return "phrasebank";
   return "other";
@@ -594,6 +713,11 @@ function fallbackSectionForKey(key: string, surface?: string): AdminFallbackHook
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
   return "sky";
+}
+
+function surfaceAreaForFallbackSection(section: AdminFallbackHookSectionFilter): WritingSurfaceAreaFilter {
+  if (section === "lunar-calendar") return "calendar";
+  return section;
 }
 
 function canonicalFallbackContentKey(key: string) {
@@ -867,6 +991,11 @@ export function GeneratedContentAdminDashboard() {
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [articleDisplaySourceFilter, setArticleDisplaySourceFilter] = useState<AdminAppDisplaySource | "all">("all");
   const [articleQuery, setArticleQuery] = useState("");
+  const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
+  const [compatibilityStatusFilter, setCompatibilityStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [compatibilityPlanetFilter, setCompatibilityPlanetFilter] = useState<AdminArticlePointFilter>("all");
+  const [compatibilitySort, setCompatibilitySort] = useState<AdminCompatibilitySort>("updated-desc");
+  const [compatibilityQuery, setCompatibilityQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -925,6 +1054,39 @@ export function GeneratedContentAdminDashboard() {
       && (articleDisplaySourceFilter === "all" || appDisplaySourceFromSnapshot(row.source_snapshot) === articleDisplaySourceFilter)
       && (!articleSearch || haystack.includes(articleSearch));
   }), [articleRows, articleStatusFilter, articlePointFilter, articleDisplaySourceFilter, articleQuery]);
+  const compatibilityRows = useMemo(
+    () => visibleRows.filter(isCompatibilityRow),
+    [visibleRows]
+  );
+  const compatibilityCounts = useMemo(() => {
+    const counts: Record<AdminCompatibilitySectionFilter, number> = {
+      all: compatibilityRows.length,
+      content: 0,
+      "fallback-hooks": 0,
+      vocabulary: 0,
+      slots: 0
+    };
+    compatibilityRows.forEach((row) => {
+      counts[compatibilitySectionForRow(row)] += 1;
+    });
+    return counts;
+  }, [compatibilityRows]);
+  const filteredCompatibilityRows = useMemo(() => {
+    const compatibilitySearch = compatibilityQuery.trim().toLowerCase();
+    return compatibilityRows
+      .filter((row) => (
+        (compatibilitySectionFilter === "all" || compatibilitySectionForRow(row) === compatibilitySectionFilter)
+        && (compatibilityStatusFilter === "all" || row.status === compatibilityStatusFilter)
+        && (compatibilityPlanetFilter === "all" || compatibilityPlanetForRow(row) === compatibilityPlanetFilter)
+        && matchesAdminSearch(rowSearchText(row), compatibilitySearch)
+      ))
+      .sort((a, b) => {
+        if (compatibilitySort === "updated-desc") {
+          return compatibilitySortValue(b, compatibilitySort).localeCompare(compatibilitySortValue(a, compatibilitySort));
+        }
+        return compatibilitySortValue(a, compatibilitySort).localeCompare(compatibilitySortValue(b, compatibilitySort));
+      });
+  }, [compatibilityRows, compatibilitySectionFilter, compatibilityStatusFilter, compatibilityPlanetFilter, compatibilitySort, compatibilityQuery]);
   const compositeRows = useMemo(
     () => visibleRows.filter(isCompositeRelationshipRow),
     [visibleRows]
@@ -948,6 +1110,10 @@ export function GeneratedContentAdminDashboard() {
   const savedHookKeys = useMemo(
     () => new Set(savedFallbackRows.map((row) => hookKeyFromSavedRow(row)).concat(savedFallbackRows.map((row) => row.content_key))),
     [savedFallbackRows]
+  );
+  const savedHookCatalogCount = useMemo(
+    () => hookCatalogItems.filter((item) => savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key))).length,
+    [hookCatalogItems, savedHookKeys]
   );
   const selectedRow = visibleRows.find((row) => row.id === selectedRowId) ?? null;
   const statusCounts = useMemo(() => {
@@ -978,33 +1144,45 @@ export function GeneratedContentAdminDashboard() {
     const rowTier = tierForRow(row);
     const rowCategory = contentCategoryForRow(row);
 
+    const search = query.trim().toLowerCase();
+
     return (contentStatusFilter === "all" || row.status === contentStatusFilter)
       && (contentClassFilter === "all" || rowClass === contentClassFilter)
       && (tierFilter === "all" || rowTier === tierFilter)
       && (categoryFilter === "all" || rowCategory === categoryFilter)
-      && (!query.trim() || haystack.includes(query.trim().toLowerCase()));
+      && matchesAdminSearch(haystack, search);
   }), [visibleRows, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
   const filteredReviewRows = useMemo(() => reviewRows.filter((row) => {
     const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType].join(" ").toLowerCase();
     return (reviewStatusFilter === "all" || row.status === reviewStatusFilter)
       && (contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
       && (tierFilter === "all" || tierForRow(row) === tierFilter)
-      && (!query.trim() || haystack.includes(query.trim().toLowerCase()));
+      && matchesAdminSearch(haystack, query);
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
-      && (!query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase()))
+      && matchesAdminSearch(`${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`, query)
   )), [savedFallbackRows, fallbackSectionFilter, query]);
-  const filteredHookCatalog = useMemo(() => hookCatalogItems.filter((item) => (
-    (fallbackSectionFilter === "all" || item.section === fallbackSectionFilter)
-      && (!query.trim() || `${item.key} ${item.label}`.toLowerCase().includes(query.trim().toLowerCase()))
-  )), [hookCatalogItems, fallbackSectionFilter, query]);
+  const filteredHookCatalog = useMemo(() => {
+    const search = query.trim().toLowerCase();
+
+    return hookCatalogItems.filter((item) => {
+      const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+      const itemArea = surfaceAreaForFallbackSection(item.section);
+      const itemStatus: WritingSurfaceStatusFilter = saved ? "complete" : "missing";
+
+      return (fallbackSectionFilter === "all" || item.section === fallbackSectionFilter)
+        && (surfaceAreaFilter === "all" || itemArea === surfaceAreaFilter)
+        && (surfaceStatusFilter === "all" || itemStatus === surfaceStatusFilter)
+        && (!search || matchesAdminSearch(`${item.key} ${item.label} ${item.section} ${item.type}`, search));
+    });
+  }, [hookCatalogItems, savedHookKeys, fallbackSectionFilter, surfaceAreaFilter, surfaceStatusFilter, query]);
   const templateRows = useMemo(
     () => rows.filter((row) => row.content_key.startsWith("slot-template/")),
     [rows]
   );
   const filteredTemplateRows = useMemo(
-    () => templateRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    () => templateRows.filter((row) => matchesAdminSearch(`${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`, query)),
     [templateRows, query]
   );
   const vocabularyCategoryRows = useMemo(() => {
@@ -1024,11 +1202,11 @@ export function GeneratedContentAdminDashboard() {
     });
   }, [vocabRows, vocabularyCategory]);
   const filteredVocabularyRows = useMemo(
-    () => vocabularyCategoryRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    () => vocabularyCategoryRows.filter((row) => matchesAdminSearch(`${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`, query)),
     [vocabularyCategoryRows, query]
   );
   const filteredSlotEditableRows = useMemo(
-    () => slotEditableRows.filter((row) => !query.trim() || `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`.toLowerCase().includes(query.trim().toLowerCase())),
+    () => slotEditableRows.filter((row) => matchesAdminSearch(`${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""}`, query)),
     [slotEditableRows, query]
   );
   const selectedSavedRows = useMemo(
@@ -1053,6 +1231,9 @@ export function GeneratedContentAdminDashboard() {
       const section = params.get("section") as AdminFallbackHookSectionFilter | null;
       const area = params.get("area") as WritingSurfaceAreaFilter | null;
       const status = params.get("status") as WritingSurfaceStatusFilter | null;
+      const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
+      const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
+      const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
 
       if (category && categoryFilters.some((filter) => filter.key === category)) setCategoryFilter(category);
       if (source && contentClassFilters.some((filter) => filter.key === source)) setContentClassFilter(source);
@@ -1061,6 +1242,13 @@ export function GeneratedContentAdminDashboard() {
       if (area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area)) setSurfaceAreaFilter(area);
       if (status && ["all", "complete", "partial", "missing"].includes(status)) setSurfaceStatusFilter(status);
       if (page === "vocabulary" && params.get("category") === "relationship") setVocabularyCategory("relationship");
+      if (page === "compatibility") {
+        if (compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection)) setCompatibilitySectionFilter(compatibilitySection);
+        if (status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus))) setCompatibilityStatusFilter(status as GeneratedContentStatus | "all");
+        if (compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet)) setCompatibilityPlanetFilter(compatibilityPlanet);
+        if (compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam)) setCompatibilitySort(compatibilitySortParam);
+        setCompatibilityQuery(search ?? "");
+      }
     }
 
     applyHash();
@@ -1367,6 +1555,128 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
+    navigateAdminPage("compatibility", undefined, { keepEditorOpen: true });
+    setIsCreateMenuOpen(false);
+    setSelectedRowId(null);
+    setCompatibilitySectionFilter(kind === "fallback-hook" ? "fallback-hooks" : kind === "vocabulary" ? "vocabulary" : kind === "template" ? "slots" : "content");
+    setCompatibilityPlanetFilter("venus");
+    setMessage(
+      kind === "content" ? "New compatibility card copy started."
+      : kind === "vocabulary" ? "New compatibility phrase started."
+      : kind === "fallback-hook" ? "New compatibility fallback hook started."
+      : "New compatibility template started."
+    );
+
+    if (kind === "content") {
+      setDraft({
+        id: null,
+        contentKey: "compatibility.venus.aries.libra",
+        surface: "relationship",
+        mode: "card",
+        status: "DRAFT",
+        headline: "Venus compatibility: Aries + Libra",
+        summary: "Reader-facing compatibility card copy for Venus between Aries and Libra.",
+        body: "",
+        lane: "serving",
+        reviewState: "EDITORIAL_REVIEW_REQUIRED",
+        blockType: "compatibility_planet_card",
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: {
+          contentType: "friends.compatibility.planet-card",
+          appDisplaySource: "dashboard-article",
+          contentLevel: "source-grounded",
+          authoringSource: "admin-dashboard",
+          route: "friends.compatibility",
+          planet: "venus",
+          readerSign: "aries",
+          otherSign: "libra"
+        }
+      });
+      return;
+    }
+
+    if (kind === "vocabulary") {
+      setDraft({
+        id: null,
+        contentKey: "vocab/relationship/compatibility-phrase",
+        surface: "relationship",
+        mode: "feed",
+        status: "DRAFT",
+        headline: "Compatibility phrase",
+        summary: "Reusable phrase for compatibility writing and templates.",
+        body: "",
+        lane: "reference",
+        reviewState: "EDITORIAL_REVIEW_REQUIRED",
+        blockType: "vocabulary_phrase",
+        promptVersion: "manual-admin",
+        appDisplaySource: "dashboard-article",
+        sourceSnapshot: {
+          contentType: "vocab",
+          bucket: "vocab",
+          contentLevel: "source-grounded",
+          authoringSource: "admin-dashboard",
+          family: "compatibility",
+          route: "friends.compatibility",
+          planet: "venus"
+        }
+      });
+      return;
+    }
+
+    if (kind === "fallback-hook") {
+      setDraft({
+        id: null,
+        contentKey: "fallback-hook/friends.compatibility.planet-card",
+        surface: "friends",
+        mode: "card",
+        status: "DRAFT",
+        headline: "Compatibility card fallback",
+        summary: "Simple fallback route for compatibility cards when reviewed copy is unavailable.",
+        body: "",
+        lane: "serving",
+        reviewState: "EDITORIAL_REVIEW_REQUIRED",
+        blockType: "fallback_template",
+        promptVersion: "fallback-hook-template-v1",
+        appDisplaySource: "madlib-fallback",
+        sourceSnapshot: {
+          contentType: "template",
+          hook: "friends.compatibility.planet-card",
+          appDisplaySource: "madlib-fallback",
+          contentLevel: "madlib-fallback",
+          authoringSource: "admin-dashboard",
+          route: "friends.compatibility"
+        }
+      });
+      return;
+    }
+
+    setDraft({
+      id: null,
+      contentKey: "slot-template/compatibility/planet-card",
+      surface: "relationship",
+      mode: "card",
+      status: "DRAFT",
+      headline: "Compatibility planet card template",
+      summary: "Template or slot scaffold used by compatibility card copy.",
+      body: "",
+      lane: "reference",
+      reviewState: "EDITORIAL_REVIEW_REQUIRED",
+      blockType: "template",
+      promptVersion: "manual-admin",
+      appDisplaySource: "reviewed-phrasebank",
+      sourceSnapshot: {
+        contentType: "template",
+        contentFamily: "friends.compatibility.planet-card",
+        contentLevel: "source-grounded",
+        authoringSource: "admin-dashboard",
+        route: "friends.compatibility",
+        planet: "venus"
+      }
+    });
+  }
+
   function toggleRowSelection(id: string) {
     setSelectedIds((current) => {
       const next = new Set(current);
@@ -1490,7 +1800,7 @@ export function GeneratedContentAdminDashboard() {
               </article>
               <article className="admin-status-card">
                 <span>Hook catalog</span>
-                <strong className="admin-stat-value">{hookCatalogItems.length - savedHookKeys.size}</strong>
+                <strong className="admin-stat-value">{Math.max(0, hookCatalogItems.length - savedHookCatalogCount)}</strong>
                 <small>Routes still local or missing</small>
               </article>
             </div>
@@ -1498,6 +1808,7 @@ export function GeneratedContentAdminDashboard() {
               {[
                 { page: "reviewQueue" as const, icon: Check, label: "Review Queue", text: "Bulk sign-off, status changes, evergreen locks, and reader-safety checks." },
                 { page: "content" as const, icon: BookOpenText, label: "Content Library", text: "All editable saved and source rows, with filters for type, status, category, and key." },
+                { page: "compatibility" as const, icon: Users, label: "Compatibility", text: "Compatibility content, fallback hooks, vocab, slots, and templates in one filtered workspace." },
                 { page: "knowledge" as const, icon: Flag, label: "Fallback Rows", text: "Only saved fallback-hook rows. Local placeholders are kept out of this list." },
                 { page: "hooks" as const, icon: KeyRound, label: "Hook Catalog", text: "Every route the runtime can request, with saved coverage and authoring entry points." },
                 { page: "vocabulary" as const, icon: Sparkles, label: "Vocab", text: "Reusable phrase namespaces, natal taglines, relationship context, and style rows." },
@@ -1648,6 +1959,58 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
+        {activePage === "compatibility" && (
+          <section className="admin-template-page">
+            <section className="admin-content-toolbar">
+              <div>
+                <p className="admin-eyebrow">Compatibility workspace</p>
+                <h2>Compatibility</h2>
+                <p>{filteredCompatibilityRows.length} of {compatibilityRows.length} compatibility rows shown across content, fallback hooks, vocabulary, slots, and templates.</p>
+              </div>
+              <div className="admin-new-actions" aria-label="Compatibility shortcuts">
+                <button type="button" onClick={() => handleCompatibilityCreateAction("content")}>
+                  <Plus size={16} aria-hidden="true" />
+                  Card copy
+                </button>
+                <button type="button" onClick={() => handleCompatibilityCreateAction("vocabulary")}>
+                  <Sparkles size={16} aria-hidden="true" />
+                  Phrase
+                </button>
+                <button type="button" onClick={() => handleCompatibilityCreateAction("fallback-hook")}>
+                  <FileText size={16} aria-hidden="true" />
+                  Fallback
+                </button>
+                <button type="button" onClick={() => handleCompatibilityCreateAction("template")}>
+                  <KeyRound size={16} aria-hidden="true" />
+                  Template
+                </button>
+              </div>
+            </section>
+            <section className="admin-reader-safety-panel" aria-label="Compatibility sections summary">
+              <div>
+                <p className="admin-eyebrow">Compatibility sections</p>
+                <h3>Search and edit the full support system</h3>
+                <p>Use this surface when a compatibility card needs app copy, reusable phrases, a simple fallback, or a template reviewed together.</p>
+              </div>
+              <div className="admin-reader-safety-grid admin-compatibility-summary-grid">
+                {compatibilitySections.filter((section) => section.key !== "all").map((section) => (
+                  <article key={section.key} className={compatibilityCounts[section.key] ? "reader-ready" : ""}>
+                    <span>{section.label}</span>
+                    <strong>{compatibilityCounts[section.key]}</strong>
+                  </article>
+                ))}
+              </div>
+            </section>
+            {renderCompatibilityFilters()}
+            <section className="admin-workbench admin-review-workspace">
+              {renderEditor()}
+              <aside className="admin-list-panel" aria-label="Compatibility rows">
+                {renderContentTable(filteredCompatibilityRows)}
+              </aside>
+            </section>
+          </section>
+        )}
+
         {activePage === "knowledge" && (
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
@@ -1683,7 +2046,7 @@ export function GeneratedContentAdminDashboard() {
                 <h2>Surface Map</h2>
                 <p>Public surfaces and content paths are mapped to saved rows, local hooks, vocab, and source material.</p>
               </div>
-              <span className="ui-pill admin-status">{savedHookKeys.size}/{hookCatalogItems.length} saved</span>
+              <span className="ui-pill admin-status">{savedHookCatalogCount}/{hookCatalogItems.length} saved</span>
             </section>
             <div className="admin-status-pills" role="group" aria-label="Filter surfaces by area">
               {[
@@ -1802,7 +2165,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <div className="admin-status-pills">
               <button type="button" className="active"><span>Editable slot rows</span><strong>{slotEditableRows.length}</strong></button>
-              <button type="button"><span>Needs rows</span><strong>{Math.max(0, hookCatalogItems.length - savedHookKeys.size)}</strong></button>
+              <button type="button"><span>Needs rows</span><strong>{Math.max(0, hookCatalogItems.length - savedHookCatalogCount)}</strong></button>
             </div>
             <label className="admin-field-wide">
               <span>Search slot-backed rows</span>
@@ -1910,6 +2273,10 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </section>
         )}
+
+        {activePage === "aspectPatternCoverage" && <AspectPatternCoverage />}
+
+        {activePage === "aspectDiagnostics" && <AspectPatternDiagnostics />}
 
         {activePage === "users" && (
           <section className="admin-template-page">
@@ -2053,6 +2420,66 @@ export function GeneratedContentAdminDashboard() {
               setArticlePointFilter("all");
               setArticleDisplaySourceFilter("all");
               setArticleQuery("");
+            }}
+          >
+            Clear filters
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  function renderCompatibilityFilters() {
+    return (
+      <section className="admin-content-filters" aria-label="Compatibility filters">
+        <div className="admin-template-tabs" role="tablist" aria-label="Compatibility sections">
+          {compatibilitySections.map((section) => (
+            <button
+              key={section.key}
+              type="button"
+              role="tab"
+              aria-selected={compatibilitySectionFilter === section.key}
+              className={compatibilitySectionFilter === section.key ? "active" : ""}
+              title={section.description}
+              onClick={() => setCompatibilitySectionFilter(section.key)}
+            >
+              <span>{section.label}</span>
+              <strong>{compatibilityCounts[section.key]}</strong>
+            </button>
+          ))}
+        </div>
+        <div className="admin-review-filter-grid">
+          <label>
+            <span>Status</span>
+            <select aria-label="Compatibility status" value={compatibilityStatusFilter} onChange={(event) => setCompatibilityStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+              <option value="all">All statuses</option>
+              {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Planet or point</span>
+            <select aria-label="Compatibility planet or point" value={compatibilityPlanetFilter} onChange={(event) => setCompatibilityPlanetFilter(event.target.value as AdminArticlePointFilter)}>
+              {articlePointFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Sort</span>
+            <select aria-label="Compatibility sort" value={compatibilitySort} onChange={(event) => setCompatibilitySort(event.target.value as AdminCompatibilitySort)}>
+              {compatibilitySortOptions.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Search compatibility</span>
+            <input aria-label="Search compatibility" value={compatibilityQuery} onChange={(event) => setCompatibilityQuery(event.target.value)} placeholder="Sign pair, planet, hook, vocab, slot, or key" />
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setCompatibilitySectionFilter("all");
+              setCompatibilityStatusFilter("all");
+              setCompatibilityPlanetFilter("all");
+              setCompatibilitySort("updated-desc");
+              setCompatibilityQuery("");
             }}
           >
             Clear filters

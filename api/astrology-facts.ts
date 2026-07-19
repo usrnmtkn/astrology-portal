@@ -30,6 +30,32 @@ function booleanParam(url: URL, key: string) {
   return value === "true" || value === "1" || value === "yes";
 }
 
+export function buildAstrologyFactsApiResponse(
+  sky: Awaited<ReturnType<typeof getAstrodienstSky>>,
+  includeAspectPatterns = false,
+  includeAspectPatternCopy = false
+) {
+  const aspectPatterns = includeAspectPatterns
+    ? aspectPatternsFromSkySnapshot(sky, { includeCopy: includeAspectPatternCopy })
+    : undefined;
+  const skyResponse = aspectPatterns ? { ...sky, aspectPatterns } : sky;
+  const facts = sky.facts ?? [];
+  const validation = validateAstrologyFacts(facts);
+
+  return {
+    aspectPatterns,
+    body: {
+      ok: true,
+      generatedAt: sky.generatedAt,
+      provenance: sky.calculationProvenance,
+      validation,
+      sky: skyResponse,
+      facts,
+      ...(aspectPatterns ? { aspectPatterns } : {})
+    }
+  };
+}
+
 function parseDate(value: string | null) {
   if (!value) {
     return new Date();
@@ -71,31 +97,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const date = parseDate(requestUrl.searchParams.get("date"));
     const location = parseLocation(requestUrl);
     const includeAspectPatterns = booleanParam(requestUrl, "includeAspectPatterns");
+    const includeAspectPatternCopy = includeAspectPatterns && booleanParam(requestUrl, "includeAspectPatternCopy");
     const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
-    const aspectPatterns = includeAspectPatterns ? aspectPatternsFromSkySnapshot(sky) : undefined;
-    const skyResponse = aspectPatterns ? { ...sky, aspectPatterns } : sky;
-    const facts = sky.facts ?? [];
-    const validation = validateAstrologyFacts(facts);
+    const { body } = buildAstrologyFactsApiResponse(sky, includeAspectPatterns, includeAspectPatternCopy);
 
-    if (!validation.ok) {
+    if (!body.validation.ok) {
       sendJson(res, 422, {
         ok: false,
         error: "Calculated astrology facts failed validation.",
-        diagnostics: validation.diagnostics,
+        diagnostics: body.validation.diagnostics,
         facts: []
       });
       return;
     }
 
-    sendJson(res, 200, {
-      ok: true,
-      generatedAt: sky.generatedAt,
-      provenance: sky.calculationProvenance,
-      validation,
-      sky: skyResponse,
-      facts,
-      ...(aspectPatterns ? { aspectPatterns } : {})
-    });
+    sendJson(res, 200, body);
   } catch (error) {
     sendJson(res, 400, {
       ok: false,

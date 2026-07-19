@@ -28,7 +28,7 @@ when hurt. Sign facts only: element, modality, axis/opposition, and rulership. T
 
 **Aries + Aquarius** — Your Moon in Aries and {friend}'s Moon in Aquarius are fire and air, so you both hate being managed. You act on heat; {friend} steps back to understand the feeling. Because you both refuse to be managed, {friend}'s distance can calm you down, but when you're hurt you flare and {friend} detaches, so {friend} can leave you feeling met with a shrug.
 
-**Aries + Pisces** — Your Moon in Aries and {friend}'s Moon in Pisces are fire and water, so you're sharp where {friend} is soft. You say it straight; {friend} soaks up everything and bruises easily. Because {friend} feels you completely and you can be protective of something so tender, you move toward each other fast, but when you're blunt it wounds {friend} without you noticing, and {friend} goes quiet and hurt while you've moved on.
+**Aries + Pisces** — Your Moon in Aries and {friend}'s Moon in Pisces are fire and water, so you're sharp where {friend} is soft. You say it straight; {friend} soaks up everything and bruises easily. Because {friend} feels you completely and you can be protective of something so tender, you move toward each other fast, but when you're blunt it wounds {friend} without you noticing, and {friend} goes quiet and hurt while you've moved past the issue.
 
 ## Moon in Taurus + …
 
@@ -86,7 +86,7 @@ when hurt. Sign facts only: element, modality, axis/opposition, and rulership. T
 
 **Cancer + Libra** — Your Moon in Cancer and {friend}'s Moon in Libra are water and air, both cardinal, so you need to feel close where {friend} needs things fair and calm. You need safety and closeness; {friend} needs peace and a partner. Because you're both gentle and neither wants a fight, it stays pleasant, but when you're hurt you retreat and {friend} smooths it over, so a real hurt sits unsaid.
 
-**Cancer + Scorpio** — Your Moon in Cancer and {friend}'s Moon in Scorpio are both water signs, so you feel everything and rarely need it explained. You need safety and home; {friend}'s feelings go all the way in or not at all. Because you can go as deep as {friend} needs, which few people can, it's a rare closeness, but when you're hurt you retreat and {friend} goes guarded, so a hurt neither of you names can sit for weeks.
+**Cancer + Scorpio** — Your Moon in Cancer and {friend}'s Moon in Scorpio are both water signs, so you feel everything and rarely need it explained. You need safety and home; {friend}'s feelings go all the way in or not at all. Because you can go as deep as {friend} needs, which few people can, it's a rare closeness, but when you're hurt you retreat and {friend} puts their guard up, so a hurt neither of you talks about can sit for weeks.
 
 **Cancer + Sagittarius** — Your Moon in Cancer and {friend}'s Moon in Sagittarius are water and fire, so you cling where {friend} runs. You want closeness and home; {friend} wants room and a way out. Because {friend} can lighten you and you can give {friend} a soft place to land, you each get what you're short on, but when it hurts you hold on and {friend} bolts, so you feel left and {friend} feels held down.
 
