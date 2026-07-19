@@ -2,6 +2,8 @@ import { createRequire } from "node:module";
 import type { SkySnapshot } from "../../apps/web/src/types.js";
 
 type AspectPatternDetectionResult = import("../../packages/astro-knowledge/engine/aspect-patterns").AspectPatternDetectionResult;
+type AuthoredAspectPatternActivationRecord = import("../../packages/astro-knowledge/engine/aspect-patterns").AuthoredAspectPatternActivationRecord;
+type AuthoredAspectPatternRecord = import("../../packages/astro-knowledge/engine/aspect-patterns").AuthoredAspectPatternRecord;
 type AspectType = import("../../packages/astro-knowledge/engine/aspect-patterns").AspectType;
 type NormalizedAspect = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedAspect;
 type NormalizedPlanet = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedPlanet;
@@ -39,10 +41,12 @@ const {
     options: { calculatedFor?: string }
   ): NonNullable<AspectPatternDetectionResult["activation"]>;
   resolveAspectPatternCopies(
-    contexts: NonNullable<AspectPatternDetectionResult["interpretationContexts"]>
+    contexts: NonNullable<AspectPatternDetectionResult["interpretationContexts"]>,
+    options?: { authoredRecords?: AuthoredAspectPatternRecord[] }
   ): Array<Record<string, unknown>>;
   resolveAspectPatternActivationCopies(
-    contexts: NonNullable<NonNullable<AspectPatternDetectionResult["activation"]>["interpretationContexts"]>
+    contexts: NonNullable<NonNullable<AspectPatternDetectionResult["activation"]>["interpretationContexts"]>,
+    options?: { authoredRecords?: AuthoredAspectPatternActivationRecord[] }
   ): Array<Record<string, unknown>>;
 };
 
@@ -137,7 +141,16 @@ function transitActivationAspectsFromSnapshot(snapshot: SkySnapshot): TransitToN
 
 export function aspectPatternsFromSkySnapshot(
   snapshot: SkySnapshot,
-  options: { includeCopy?: boolean; includeActivation?: boolean; includeActivationContexts?: boolean; includeActivationCopy?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
+  options: {
+    includeCopy?: boolean;
+    includeActivation?: boolean;
+    includeActivationContexts?: boolean;
+    includeActivationCopy?: boolean;
+    calculatedFor?: string;
+    transitAspects?: TransitToNatalActivationAspect[];
+    authoredRecords?: AuthoredAspectPatternRecord[];
+    activationAuthoredRecords?: AuthoredAspectPatternActivationRecord[];
+  } = {}
 ): AspectPatternDetectionResult {
   const planets = normalizedAspectPatternPlanets(snapshot);
   const detection = detectPatterns({
@@ -180,7 +193,9 @@ export function aspectPatternsFromSkySnapshot(
         const activationWithCopy = options.includeActivationCopy && activationWithContexts.interpretationContexts
           ? {
               ...activationWithContexts,
-              resolvedCopy: resolveAspectPatternActivationCopies(activationWithContexts.interpretationContexts)
+              resolvedCopy: resolveAspectPatternActivationCopies(activationWithContexts.interpretationContexts, options.activationAuthoredRecords
+                ? { authoredRecords: options.activationAuthoredRecords }
+                : undefined)
             }
           : activationWithContexts;
         return {
@@ -193,7 +208,9 @@ export function aspectPatternsFromSkySnapshot(
   return options.includeCopy
     ? {
         ...resultWithActivation,
-        resolvedCopy: resolveAspectPatternCopies(interpretationContexts)
+        resolvedCopy: resolveAspectPatternCopies(interpretationContexts, options.authoredRecords
+          ? { authoredRecords: options.authoredRecords }
+          : undefined)
       } as AspectPatternDetectionResult & { resolvedCopy: Array<Record<string, unknown>> }
     : resultWithActivation;
 }

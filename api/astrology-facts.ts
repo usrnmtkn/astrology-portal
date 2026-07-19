@@ -3,6 +3,7 @@ import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.js";
 import { validateAstrologyFacts } from "../apps/web/src/services/astrologyFacts.js";
 import type { LocationInput } from "../apps/web/src/types.js";
 import { aspectPatternsFromSkySnapshot } from "./_lib/aspect-patterns.js";
+import { loadAspectPatternProductionAuthoredRecords } from "./_lib/aspect-pattern-writeup-records.js";
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -36,7 +37,9 @@ export function buildAstrologyFactsApiResponse(
   includeAspectPatternCopy = false,
   includeAspectPatternActivation = false,
   includeAspectPatternActivationContexts = false,
-  includeAspectPatternActivationCopy = false
+  includeAspectPatternActivationCopy = false,
+  authoredRecords?: Parameters<typeof aspectPatternsFromSkySnapshot>[1]["authoredRecords"],
+  activationAuthoredRecords?: Parameters<typeof aspectPatternsFromSkySnapshot>[1]["activationAuthoredRecords"]
 ) {
   const aspectPatterns = includeAspectPatterns
     ? aspectPatternsFromSkySnapshot(sky, {
@@ -44,7 +47,9 @@ export function buildAstrologyFactsApiResponse(
         includeActivation: includeAspectPatternActivation,
         includeActivationContexts: includeAspectPatternActivationContexts,
         includeActivationCopy: includeAspectPatternActivationCopy,
-        calculatedFor: sky.generatedAt
+        calculatedFor: sky.generatedAt,
+        authoredRecords,
+        activationAuthoredRecords
       })
     : undefined;
   const skyResponse = aspectPatterns ? { ...sky, aspectPatterns } : sky;
@@ -111,13 +116,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const includeAspectPatternActivationContexts = includeAspectPatternActivation && booleanParam(requestUrl, "includeAspectPatternActivationContexts");
     const includeAspectPatternActivationCopy = includeAspectPatternActivationContexts && booleanParam(requestUrl, "includeAspectPatternActivationCopy");
     const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
+    const authoredRecords = includeAspectPatternCopy
+      ? await loadAspectPatternProductionAuthoredRecords("natal")
+      : undefined;
+    const activationAuthoredRecords = includeAspectPatternActivationCopy
+      ? await loadAspectPatternProductionAuthoredRecords("activation")
+      : undefined;
     const { body } = buildAstrologyFactsApiResponse(
       sky,
       includeAspectPatterns,
       includeAspectPatternCopy,
       includeAspectPatternActivation,
       includeAspectPatternActivationContexts,
-      includeAspectPatternActivationCopy
+      includeAspectPatternActivationCopy,
+      authoredRecords,
+      activationAuthoredRecords
     );
 
     if (!body.validation.ok) {
