@@ -5,10 +5,12 @@ type AspectPatternDetectionResult = import("../../packages/astro-knowledge/engin
 type AspectType = import("../../packages/astro-knowledge/engine/aspect-patterns").AspectType;
 type NormalizedAspect = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedAspect;
 type NormalizedPlanet = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedPlanet;
+type TransitToNatalActivationAspect = import("../../packages/astro-knowledge/engine/aspect-patterns").TransitToNatalActivationAspect;
 
 const require = createRequire(import.meta.url);
 const {
   buildAspectPatternInterpretationContexts,
+  buildPatternActivations,
   detectPatterns,
   rankAspectPatterns,
   resolveAspectPatternCopies
@@ -25,6 +27,11 @@ const {
     detectionResult: AspectPatternDetectionResult,
     context: Record<string, unknown>
   ): NonNullable<AspectPatternDetectionResult["ranking"]>;
+  buildPatternActivations(
+    detectionResult: AspectPatternDetectionResult,
+    transitAspects: TransitToNatalActivationAspect[],
+    options: { calculatedFor?: string }
+  ): NonNullable<AspectPatternDetectionResult["activation"]>;
   resolveAspectPatternCopies(
     contexts: NonNullable<AspectPatternDetectionResult["interpretationContexts"]>
   ): Array<Record<string, unknown>>;
@@ -106,7 +113,23 @@ function normalizedAspectPatternAspects(snapshot: SkySnapshot): NormalizedAspect
   });
 }
 
-export function aspectPatternsFromSkySnapshot(snapshot: SkySnapshot, options: { includeCopy?: boolean } = {}): AspectPatternDetectionResult {
+function transitActivationAspectsFromSnapshot(snapshot: SkySnapshot): TransitToNatalActivationAspect[] {
+  const candidate = snapshot as SkySnapshot & {
+    transitToNatalAspects?: TransitToNatalActivationAspect[];
+    transitsToNatal?: TransitToNatalActivationAspect[];
+    personalTransits?: TransitToNatalActivationAspect[];
+  };
+
+  if (Array.isArray(candidate.transitToNatalAspects)) return candidate.transitToNatalAspects;
+  if (Array.isArray(candidate.transitsToNatal)) return candidate.transitsToNatal;
+  if (Array.isArray(candidate.personalTransits)) return candidate.personalTransits;
+  return [];
+}
+
+export function aspectPatternsFromSkySnapshot(
+  snapshot: SkySnapshot,
+  options: { includeCopy?: boolean; includeActivation?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
+): AspectPatternDetectionResult {
   const planets = normalizedAspectPatternPlanets(snapshot);
   const detection = detectPatterns({
     planets,
@@ -129,10 +152,21 @@ export function aspectPatternsFromSkySnapshot(snapshot: SkySnapshot, options: { 
     ...rankedDetection,
     interpretationContexts
   };
-  return options.includeCopy
+  const resultWithActivation = options.includeActivation
     ? {
         ...result,
+        activation: buildPatternActivations(
+          result,
+          options.transitAspects ?? transitActivationAspectsFromSnapshot(snapshot),
+          { calculatedFor: options.calculatedFor ?? snapshot.generatedAt }
+        )
+      }
+    : result;
+
+  return options.includeCopy
+    ? {
+        ...resultWithActivation,
         resolvedCopy: resolveAspectPatternCopies(interpretationContexts)
       } as AspectPatternDetectionResult & { resolvedCopy: Array<Record<string, unknown>> }
-    : result;
+    : resultWithActivation;
 }

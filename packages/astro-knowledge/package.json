@@ -42,6 +42,7 @@
     "test:timing": "node scripts/test-timing-engine.js",
     "test:aspect-patterns": "node scripts/test-aspect-pattern-engine.js",
     "fixtures:aspect-patterns": "node scripts/print-aspect-pattern-fixtures.js",
+    "fixtures:aspect-pattern-activations": "node scripts/print-aspect-pattern-activation-fixtures.js",
     "import:authored-placements": "node scripts/import-authored-placements.js"
   },
   "license": "UNLICENSED",

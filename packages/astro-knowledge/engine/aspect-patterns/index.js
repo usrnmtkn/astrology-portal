@@ -56,10 +56,39 @@ const DEFAULT_RANKING_POLICY = Object.freeze({
 const ASPECT_PATTERN_DETECTOR_VERSION = "aspect_pattern_detector_v1";
 const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION = "aspect_pattern_interpretation_context_v1";
 const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "aspect_pattern_copy_resolver_v1";
+const ASPECT_PATTERN_ACTIVATION_VERSION = "aspect_pattern_activation_v1";
 
 const PERSONAL_PLANETS = new Set(["mercury", "venus", "mars"]);
 const LUMINARIES = new Set(["sun", "moon"]);
 const ANGULAR_ORB_DEGREES = 5;
+const DEFAULT_ACTIVATION_POLICY = Object.freeze({
+  id: "aspect_pattern_activation_v1",
+  version: "1.0.0",
+  weights: Object.freeze({
+    aspects: Object.freeze({
+      conjunction: 10,
+      opposition: 9,
+      square: 8,
+      trine: 5,
+      sextile: 4,
+      quincunx: 6
+    }),
+    maximumOrb: 5,
+    applying: 2,
+    luminary: 3,
+    repeatedPlanet: 2,
+    parentPattern: 1,
+    containedPattern: 1,
+    roles: Object.freeze({
+      apex: 4,
+      focal_planet: 4,
+      opposition_axis: 2,
+      base: 1,
+      resource_planet: 1,
+      spine: 1
+    })
+  })
+});
 const COPY_CONTEXT_DERIVED_POINT_TYPES = new Set([
   "empty_leg",
   "fallout_point",
@@ -1220,6 +1249,237 @@ function copyValue(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
+function normalizeActivationPolicy(policy) {
+  const weights = (policy && policy.weights) || {};
+  return Object.freeze({
+    id: (policy && policy.id) || DEFAULT_ACTIVATION_POLICY.id,
+    version: (policy && policy.version) || DEFAULT_ACTIVATION_POLICY.version,
+    weights: Object.freeze({
+      aspects: Object.freeze({
+        ...DEFAULT_ACTIVATION_POLICY.weights.aspects,
+        ...(weights.aspects || {})
+      }),
+      maximumOrb: typeof weights.maximumOrb === "number" ? weights.maximumOrb : DEFAULT_ACTIVATION_POLICY.weights.maximumOrb,
+      applying: typeof weights.applying === "number" ? weights.applying : DEFAULT_ACTIVATION_POLICY.weights.applying,
+      luminary: typeof weights.luminary === "number" ? weights.luminary : DEFAULT_ACTIVATION_POLICY.weights.luminary,
+      repeatedPlanet: typeof weights.repeatedPlanet === "number" ? weights.repeatedPlanet : DEFAULT_ACTIVATION_POLICY.weights.repeatedPlanet,
+      parentPattern: typeof weights.parentPattern === "number" ? weights.parentPattern : DEFAULT_ACTIVATION_POLICY.weights.parentPattern,
+      containedPattern: typeof weights.containedPattern === "number" ? weights.containedPattern : DEFAULT_ACTIVATION_POLICY.weights.containedPattern,
+      roles: Object.freeze({
+        ...DEFAULT_ACTIVATION_POLICY.weights.roles,
+        ...(weights.roles || {})
+      })
+    })
+  });
+}
+
+function normalizeActivationAspect(input, index) {
+  if (!input || typeof input !== "object") return null;
+
+  const movingBody = normalizeToken(input.movingBody || input.transitPlanet || input.transitingPlanet || input.bodyA || input.from);
+  const targetNatalPlanet = normalizeToken(input.targetNatalPlanet || input.natalPoint || input.natalPlanet || input.bodyB || input.to || input.target);
+  const aspectType = normalizeToken(input.aspectType || input.type || input.aspect);
+  const orb = typeof input.orb === "number"
+    ? input.orb
+    : typeof input.orbValue === "number"
+      ? input.orbValue
+      : typeof input.orbDegrees === "number"
+        ? input.orbDegrees
+        : Number.parseFloat(String(input.orb ?? ""));
+
+  if (!PLANET_SET.has(movingBody) || !PLANET_SET.has(targetNatalPlanet) || !aspectType || !Number.isFinite(orb)) {
+    return null;
+  }
+
+  const applying = typeof input.applying === "boolean"
+    ? input.applying
+    : input.direction === "applying"
+      ? true
+      : input.direction === "separating"
+        ? false
+        : typeof input.conditions?.applying === "boolean"
+          ? input.conditions.applying
+          : false;
+  const id = String(input.id || `transit.aspect.${movingBody}.${aspectType}.${targetNatalPlanet}.${index}`);
+
+  return {
+    sourceAspectId: id,
+    movingBody,
+    targetNatalPlanet,
+    aspectType,
+    orb: roundNumber(Math.max(0, orb)),
+    applying,
+    exactAt: typeof input.exactAt === "string" ? input.exactAt : typeof input.exact_at === "string" ? input.exact_at : undefined
+  };
+}
+
+function relationshipContextFor(pattern, relationships) {
+  return relationships.reduce((context, relationship) => {
+    if (relationship.relationship !== "contains") return context;
+    if (relationship.parentPatternId === pattern.id) context.isParent = true;
+    if (relationship.childPatternId === pattern.id) context.isContained = true;
+    return context;
+  }, { isParent: false, isContained: false });
+}
+
+function activationLinkedPatternIds(pattern, targetNatalPlanet, patterns, relationships) {
+  const ids = new Set();
+  for (const candidate of patterns) {
+    if (candidate.id !== pattern.id && Array.isArray(candidate.planets) && candidate.planets.includes(targetNatalPlanet)) {
+      ids.add(candidate.id);
+    }
+  }
+  for (const relationship of relationships) {
+    if (!["contains", "completes"].includes(relationship.relationship)) continue;
+    if (relationship.parentPatternId === pattern.id) ids.add(relationship.childPatternId);
+    if (relationship.childPatternId === pattern.id) ids.add(relationship.parentPatternId);
+  }
+  return [...ids].sort();
+}
+
+function activationScoreFor({ aspect, pattern, targetRoles, repeatedCount, relationships }, policy) {
+  const weights = policy.weights;
+  const reasons = [];
+  const aspectWeight = roundNumber(weights.aspects[aspect.aspectType] ?? 1);
+  const exactnessWeight = roundNumber(Math.max(0, weights.maximumOrb - aspect.orb));
+  const applyingWeight = aspect.applying ? weights.applying : 0;
+  const roleWeight = roundNumber(targetRoles.reduce((total, role) => total + (weights.roles[role] || 0), 0));
+  const sharedPlanetWeight = repeatedCount > 1 ? roundNumber(weights.repeatedPlanet * (repeatedCount - 1)) : 0;
+  const structuralContext = relationshipContextFor(pattern, relationships);
+
+  if (exactnessWeight > 0) reasons.push({ code: "exact_or_tight", value: exactnessWeight });
+  if (applyingWeight > 0) reasons.push({ code: "applying", value: applyingWeight });
+  if (targetRoles.includes("apex")) reasons.push({ code: "targets_apex", value: weights.roles.apex || 0 });
+  if (targetRoles.includes("focal_planet")) reasons.push({ code: "targets_focal_planet", value: weights.roles.focal_planet || 0 });
+  if (LUMINARIES.has(aspect.targetNatalPlanet)) reasons.push({ code: "targets_luminary", value: weights.luminary });
+  if (sharedPlanetWeight > 0) reasons.push({ code: "targets_repeated_planet", value: sharedPlanetWeight });
+  if (structuralContext.isParent) reasons.push({ code: "activates_parent_pattern", value: weights.parentPattern });
+  if (structuralContext.isContained) reasons.push({ code: "activates_contained_pattern", value: weights.containedPattern });
+
+  const luminaryWeight = LUMINARIES.has(aspect.targetNatalPlanet) ? weights.luminary : 0;
+  const structuralWeight = (structuralContext.isParent ? weights.parentPattern : 0) + (structuralContext.isContained ? weights.containedPattern : 0);
+  const total = roundNumber(aspectWeight + exactnessWeight + applyingWeight + roleWeight + sharedPlanetWeight + luminaryWeight + structuralWeight);
+
+  return {
+    score: {
+      aspectWeight,
+      exactnessWeight,
+      applyingWeight,
+      roleWeight,
+      sharedPlanetWeight,
+      total
+    },
+    reasons: reasons
+      .filter((reason) => reason.value > 0)
+      .sort(compareReasons)
+  };
+}
+
+function activationId(policyId, calculatedFor, aspect, patternId) {
+  return [
+    "activation",
+    policyId,
+    calculatedFor,
+    aspect.movingBody,
+    aspect.aspectType,
+    aspect.targetNatalPlanet,
+    patternId
+  ].map((part) => String(part).replace(/[^a-z0-9_.:-]+/gi, "_")).join(".");
+}
+
+function buildPatternActivations(detectionResult, transitAspects = [], options = {}) {
+  const policy = normalizeActivationPolicy(options.policy);
+  const calculatedFor = typeof options.calculatedFor === "string" && options.calculatedFor
+    ? options.calculatedFor
+    : new Date(0).toISOString();
+  const patterns = Array.isArray(detectionResult && detectionResult.patterns) ? detectionResult.patterns : [];
+  const relationships = Array.isArray(detectionResult && detectionResult.relationships) ? detectionResult.relationships : [];
+  const ranking = detectionResult && detectionResult.ranking;
+  const baseRankingById = new Map((ranking && Array.isArray(ranking.rankings) ? ranking.rankings : []).map((item) => [item.patternId, item]));
+  const repeatedCounts = repeatedPlanetCounts(patterns);
+  const normalizedAspects = (Array.isArray(transitAspects) ? transitAspects : [])
+    .map(normalizeActivationAspect)
+    .filter(Boolean)
+    .sort((first, second) => {
+      return first.movingBody.localeCompare(second.movingBody)
+        || first.targetNatalPlanet.localeCompare(second.targetNatalPlanet)
+        || first.aspectType.localeCompare(second.aspectType)
+        || first.orb - second.orb
+        || first.sourceAspectId.localeCompare(second.sourceAspectId);
+    });
+
+  const activations = [];
+  for (const aspect of normalizedAspects) {
+    const targetPatterns = patterns
+      .filter((pattern) => Array.isArray(pattern.planets) && pattern.planets.includes(aspect.targetNatalPlanet))
+      .sort((first, second) => first.id.localeCompare(second.id));
+
+    for (const pattern of targetPatterns) {
+      const targetRoles = memberRolesFor(pattern, aspect.targetNatalPlanet).sort();
+      const scored = activationScoreFor({
+        aspect,
+        pattern,
+        targetRoles,
+        repeatedCount: repeatedCounts.get(aspect.targetNatalPlanet) || 0,
+        relationships
+      }, policy);
+
+      activations.push({
+        id: activationId(policy.id, calculatedFor, aspect, pattern.id),
+        patternId: pattern.id,
+        calculatedFor,
+        trigger: {
+          movingBody: aspect.movingBody,
+          targetNatalPlanet: aspect.targetNatalPlanet,
+          targetRoles,
+          aspectType: aspect.aspectType,
+          orb: aspect.orb,
+          applying: aspect.applying,
+          ...(aspect.exactAt ? { exactAt: aspect.exactAt } : {}),
+          sourceAspectId: aspect.sourceAspectId
+        },
+        linkedPatternIds: activationLinkedPatternIds(pattern, aspect.targetNatalPlanet, patterns, relationships),
+        score: scored.score,
+        reasons: scored.reasons
+      });
+    }
+  }
+
+  activations.sort((first, second) => first.id.localeCompare(second.id));
+  const activationScoreByPattern = activations.reduce((scores, activation) => {
+    scores.set(activation.patternId, roundNumber((scores.get(activation.patternId) || 0) + activation.score.total));
+    return scores;
+  }, new Map());
+  const rankedPatternIds = ranking && Array.isArray(ranking.displayOrder)
+    ? ranking.displayOrder.filter((patternId) => patterns.some((pattern) => pattern.id === patternId))
+    : patterns.map((pattern) => pattern.id);
+  const allPatternIds = unique(rankedPatternIds.concat(patterns.map((pattern) => pattern.id)));
+  const currentRankings = allPatternIds.map((patternId) => {
+    const natalBasePriority = baseRankingById.get(patternId)?.score?.baseDisplayPriority ?? 0;
+    const activationScore = activationScoreByPattern.get(patternId) || 0;
+    return {
+      patternId,
+      natalBasePriority: roundNumber(natalBasePriority),
+      activationScore: roundNumber(activationScore),
+      currentDisplayPriority: roundNumber(natalBasePriority + activationScore)
+    };
+  }).sort((first, second) => {
+    return second.currentDisplayPriority - first.currentDisplayPriority
+      || second.activationScore - first.activationScore
+      || second.natalBasePriority - first.natalBasePriority
+      || first.patternId.localeCompare(second.patternId);
+  });
+
+  return {
+    version: ASPECT_PATTERN_ACTIVATION_VERSION,
+    policyId: policy.id,
+    calculatedFor,
+    activations,
+    currentRankings,
+    currentDisplayOrder: currentRankings.map((rankingItem) => rankingItem.patternId)
+  };
+}
+
 function resolveAspectPatternCopy(context, options = {}) {
   const sourceRecords = Array.isArray(options.records) ? options.records : [];
   const authoredRecords = Array.isArray(options.authoredRecords)
@@ -1894,12 +2154,14 @@ function formatCopyNumber(value) {
 }
 
 module.exports = {
+  ASPECT_PATTERN_ACTIVATION_VERSION,
   ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
   ASPECT_PATTERN_CONTENT_LEVELS,
   ASPECT_PATTERN_COPY_RESOLVER_VERSION,
   ASPECT_PATTERN_DETECTOR_VERSION,
   APPROVED_COPY_SLOTS,
   AUTHORED_ASPECT_PATTERN_RECORDS,
+  DEFAULT_ACTIVATION_POLICY,
   DEFAULT_ORB_POLICY,
   DEFAULT_RANKING_POLICY,
   GOVERNED_COPY_RECORDS,
@@ -1908,6 +2170,7 @@ module.exports = {
   SUPPORTED_ASPECTS,
   buildAspectGraph,
   buildAspectPatternInterpretationContexts,
+  buildPatternActivations,
   buildRelationships,
   detectGrandSquares,
   detectGrandTrines,
@@ -1917,6 +2180,7 @@ module.exports = {
   detectTSquares,
   detectYods,
   normalizeOrbPolicy,
+  normalizeActivationPolicy,
   normalizeRankingPolicy,
   rankAspectPatterns,
   resolveAspectPatternCopies,

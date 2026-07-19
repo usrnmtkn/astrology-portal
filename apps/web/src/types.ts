@@ -106,6 +106,31 @@ export type SkySnapshot = {
     applying?: boolean;
     conditions?: AspectConditions;
   }>;
+  transitToNatalAspects?: Array<{
+    id?: string;
+    movingBody?: string;
+    transitPlanet?: string;
+    transitingPlanet?: string;
+    targetNatalPlanet?: string;
+    natalPoint?: string;
+    natalPlanet?: string;
+    aspectType?: string;
+    type?: string;
+    aspect?: string;
+    orb?: number | string;
+    orbValue?: number;
+    orbDegrees?: number;
+    applying?: boolean;
+    direction?: "applying" | "separating" | string;
+    exactAt?: string;
+    bodyA?: string;
+    bodyB?: string;
+    from?: string;
+    to?: string;
+    conditions?: {
+      applying?: boolean;
+    };
+  }>;
   aspectPatterns?: import("@tldr/astro-knowledge/aspect-pattern-engine").AspectPatternDetectionResult;
   facts?: import("./services/astrologyFacts").AstrologyFact[];
 };
