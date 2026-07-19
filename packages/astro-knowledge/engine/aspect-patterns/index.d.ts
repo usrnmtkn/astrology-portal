@@ -303,6 +303,91 @@ export interface AspectPatternActivationResult {
   activations: PatternActivation[];
   currentRankings: ActivatedPatternRanking[];
   currentDisplayOrder: string[];
+  interpretationContexts?: AspectPatternActivationInterpretationContext[];
+}
+
+export type ActivationPrimaryTriggerSelectionReason =
+  | "highest_activation_score"
+  | "tightest_orb"
+  | "applying_over_separating"
+  | "deterministic_tiebreak";
+
+export type ActivationTimingState = "exact" | "applying" | "separating" | "mixed";
+
+export type ActivationCopyJob =
+  | "describe_current_emphasis"
+  | "name_transit_trigger"
+  | "explain_target_planet_role"
+  | "explain_shared_planet_fanout"
+  | "preserve_parent_child_structure"
+  | "describe_timing_state";
+
+export type ActivationAvoidClaim =
+  | "do_not_predict_event"
+  | "do_not_change_natal_geometry"
+  | "do_not_treat_activation_as_permanent"
+  | "do_not_claim_every_linked_pattern_is_equally_noticeable"
+  | "do_not_treat_score_as_life_importance";
+
+export interface AspectPatternActivationInterpretationContext {
+  version: string;
+  patternId: string;
+  patternType: AspectPatternType;
+  natalInterpretationContextId: string;
+  calculatedFor: string;
+  display: {
+    natalRank: number;
+    currentRank: number;
+    isCurrentlyPrimary: boolean;
+    parentPatternIds: string[];
+    childPatternIds: string[];
+  };
+  triggers: Array<{
+    activationId: string;
+    sourceAspectId?: string;
+    movingBody: string;
+    targetNatalPlanet: string;
+    targetRoles: string[];
+    aspectType: string;
+    orb: number;
+    applying: boolean;
+    exactAt?: string;
+    score: number;
+    reasons: Array<{
+      code: PatternActivationReasonCode;
+      value: number;
+    }>;
+  }>;
+  primaryTrigger: {
+    activationId: string;
+    selectionReason: ActivationPrimaryTriggerSelectionReason;
+  };
+  activationSummary: {
+    triggerCount: number;
+    movingBodies: string[];
+    targetedNatalPlanets: string[];
+    targetedRoles: string[];
+    linkedPatternIds: string[];
+    timingState: ActivationTimingState;
+    sharedPlanetFanout: boolean;
+  };
+  ranking: {
+    natalBasePriority: number;
+    activationScore: number;
+    currentDisplayPriority: number;
+  };
+  copyInstructions: {
+    jobs: ActivationCopyJob[];
+    avoidClaims: ActivationAvoidClaim[];
+    allowedCertainty: "qualified";
+  };
+  provenance: {
+    detectorVersion: string;
+    rankingPolicyId: string;
+    activationPolicyId: string;
+    natalContextBuilderVersion: string;
+    activationContextBuilderVersion: string;
+  };
 }
 
 export type AspectPatternMemberRole =
@@ -542,6 +627,7 @@ export const ASPECT_PATTERN_DETECTOR_VERSION: string;
 export const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION: string;
 export const ASPECT_PATTERN_COPY_RESOLVER_VERSION: string;
 export const ASPECT_PATTERN_ACTIVATION_VERSION: string;
+export const ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION: string;
 export const ASPECT_PATTERN_CONTENT_LEVELS: readonly AspectPatternContentLevel[];
 export const APPROVED_COPY_SLOTS: readonly string[];
 export const AUTHORED_ASPECT_PATTERN_RECORDS: readonly AuthoredAspectPatternRecord[];
@@ -572,6 +658,13 @@ export function buildAspectPatternInterpretationContexts(
   detectionResult: AspectPatternDetectionResult,
   context?: AspectPatternRankingInput
 ): AspectPatternInterpretationContext[];
+export function buildAspectPatternActivationInterpretationContexts(
+  detectionResult: AspectPatternDetectionResult,
+  options?: {
+    activation?: AspectPatternActivationResult;
+    natalContexts?: AspectPatternInterpretationContext[];
+  }
+): AspectPatternActivationInterpretationContext[];
 export function buildPatternActivations(
   detectionResult: AspectPatternDetectionResult,
   transitAspects?: TransitToNatalActivationAspect[],

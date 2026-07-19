@@ -1,6 +1,8 @@
 "use strict";
 
 const {
+  buildAspectPatternActivationInterpretationContexts,
+  buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   detectPatterns,
   rankAspectPatterns
@@ -11,9 +13,16 @@ const calculatedFor = "2026-07-19T12:00:00.000Z";
 
 function rankedDetection(fixture) {
   const detection = detectPatterns(fixture);
-  return {
+  const ranked = {
     ...detection,
     ranking: rankAspectPatterns(detection, {
+      planets: fixture.planets,
+      ascendantSign: "aries"
+    })
+  };
+  return {
+    ...ranked,
+    interpretationContexts: buildAspectPatternInterpretationContexts(ranked, {
       planets: fixture.planets,
       ascendantSign: "aries"
     })
@@ -22,6 +31,7 @@ function rankedDetection(fixture) {
 
 function activationFixture(id, fixture, transitAspects) {
   const detection = rankedDetection(fixture);
+  const activation = buildPatternActivations(detection, transitAspects, { calculatedFor });
   return {
     id,
     patternIds: detection.patterns.map((pattern) => ({
@@ -29,7 +39,10 @@ function activationFixture(id, fixture, transitAspects) {
       type: pattern.type,
       planets: pattern.planets
     })),
-    activation: buildPatternActivations(detection, transitAspects, { calculatedFor })
+    activation: {
+      ...activation,
+      interpretationContexts: buildAspectPatternActivationInterpretationContexts({ ...detection, activation })
+    }
   };
 }
 

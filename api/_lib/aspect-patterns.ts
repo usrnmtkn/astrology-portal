@@ -9,12 +9,17 @@ type TransitToNatalActivationAspect = import("../../packages/astro-knowledge/eng
 
 const require = createRequire(import.meta.url);
 const {
+  buildAspectPatternActivationInterpretationContexts,
   buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   detectPatterns,
   rankAspectPatterns,
   resolveAspectPatternCopies
 } = require("../../packages/astro-knowledge/engine/aspect-patterns/index.js") as {
+  buildAspectPatternActivationInterpretationContexts(
+    detectionResult: AspectPatternDetectionResult,
+    options: Record<string, unknown>
+  ): NonNullable<NonNullable<AspectPatternDetectionResult["activation"]>["interpretationContexts"]>;
   buildAspectPatternInterpretationContexts(
     detectionResult: AspectPatternDetectionResult,
     context: Record<string, unknown>
@@ -128,7 +133,7 @@ function transitActivationAspectsFromSnapshot(snapshot: SkySnapshot): TransitToN
 
 export function aspectPatternsFromSkySnapshot(
   snapshot: SkySnapshot,
-  options: { includeCopy?: boolean; includeActivation?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
+  options: { includeCopy?: boolean; includeActivation?: boolean; includeActivationContexts?: boolean; calculatedFor?: string; transitAspects?: TransitToNatalActivationAspect[] } = {}
 ): AspectPatternDetectionResult {
   const planets = normalizedAspectPatternPlanets(snapshot);
   const detection = detectPatterns({
@@ -153,14 +158,26 @@ export function aspectPatternsFromSkySnapshot(
     interpretationContexts
   };
   const resultWithActivation = options.includeActivation
-    ? {
-        ...result,
-        activation: buildPatternActivations(
+    ? (() => {
+        const activation = buildPatternActivations(
           result,
           options.transitAspects ?? transitActivationAspectsFromSnapshot(snapshot),
           { calculatedFor: options.calculatedFor ?? snapshot.generatedAt }
-        )
-      }
+        );
+        const activationWithContexts = options.includeActivationContexts
+          ? {
+              ...activation,
+              interpretationContexts: buildAspectPatternActivationInterpretationContexts(
+                { ...result, activation },
+                { activation, natalContexts: interpretationContexts }
+              )
+            }
+          : activation;
+        return {
+          ...result,
+          activation: activationWithContexts
+        };
+      })()
     : result;
 
   return options.includeCopy
