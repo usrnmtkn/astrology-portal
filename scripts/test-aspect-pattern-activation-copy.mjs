@@ -57,6 +57,14 @@ function copyText(copy) {
   ].filter(Boolean).join(" ");
 }
 
+function resolveFallbackActivationCopy(context, options = {}) {
+  return resolveAspectPatternActivationCopy(context, { ...options, authoredRecords: [] });
+}
+
+function resolveFallbackActivationCopies(contexts, options = {}) {
+  return resolveAspectPatternActivationCopies(contexts, { ...options, authoredRecords: [] });
+}
+
 function assertNoLeakage(copy) {
   const text = copyText(copy);
   assert.doesNotMatch(text, /\b(activationId|sourceAspectId|reason code|policy|builder|score|rank|currentDisplayPriority|sharedPlanetFanout|fan-out|target role|source aspect|warning code|geometry confidence)\b/i);
@@ -95,7 +103,7 @@ function activationCopySnapshot(fixtureCase) {
   const records = fixtureCase.contentLevel === "emergency_fallback"
     ? GOVERNED_ACTIVATION_COPY_RECORDS.filter((record) => record.contentLevel === "emergency_fallback")
     : undefined;
-  const copy = resolveAspectPatternActivationCopy(context, records ? { records, authoredRecords: [] } : {});
+  const copy = resolveAspectPatternActivationCopy(context, records ? { records, authoredRecords: [] } : { authoredRecords: [] });
   const primaryTrigger = context.triggers.find((trigger) => trigger.activationId === context.primaryTrigger.activationId) || context.triggers[0];
   return {
     fixtureId: fixtureCase.id,
@@ -319,7 +327,7 @@ const fixturesByType = {
 }
 
 {
-  const copies = resolveAspectPatternActivationCopies(Object.values(fixturesByType));
+  const copies = resolveFallbackActivationCopies(Object.values(fixturesByType));
   assert.equal(copies.length, 6);
   for (const copy of copies) {
     assert.ok(copy.content.headline);
@@ -336,7 +344,7 @@ const fixturesByType = {
     { id: "transit.mars.square.mars", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 0.2, applying: true },
     { id: "transit.jupiter.trine.sun", movingBody: "jupiter", targetNatalPlanet: "sun", aspectType: "trine", orb: 1.5, applying: false }
   ])[0];
-  const copy = resolveAspectPatternActivationCopy(context);
+  const copy = resolveFallbackActivationCopy(context);
   assert.equal(copy.triggerSummary.triggerCount, 2);
   assert.equal(copy.triggerSummary.primaryActivationId, context.primaryTrigger.activationId);
   assert.equal(copy.patternId, context.patternId);
@@ -348,34 +356,34 @@ const fixturesByType = {
   const tSquareOpposition = contextsFor(fixtures.t_square, [
     { id: "transit.saturn.opposition.sun", movingBody: "saturn", targetNatalPlanet: "sun", aspectType: "opposition", orb: 1.2, applying: false }
   ])[0];
-  const apexText = copyText(resolveAspectPatternActivationCopy(tSquareApex));
-  const oppositionText = copyText(resolveAspectPatternActivationCopy(tSquareOpposition));
+  const apexText = copyText(resolveFallbackActivationCopy(tSquareApex));
+  const oppositionText = copyText(resolveFallbackActivationCopy(tSquareOpposition));
   assert.notEqual(apexText, oppositionText);
   assert.match(apexText, /apex|action point/i);
   assert.match(oppositionText, /opposition member/i);
 }
 
 {
-  const grandSquareText = copyText(resolveAspectPatternActivationCopy(fixturesByType.grand_square));
-  const rectangleText = copyText(resolveAspectPatternActivationCopy(fixturesByType.mystic_rectangle));
+  const grandSquareText = copyText(resolveFallbackActivationCopy(fixturesByType.grand_square));
+  const rectangleText = copyText(resolveFallbackActivationCopy(fixturesByType.mystic_rectangle));
   assert.doesNotMatch(grandSquareText, /\bapex\b/i);
   assert.doesNotMatch(rectangleText, /\bapex\b/i);
 }
 
 {
-  const kiteText = copyText(resolveAspectPatternActivationCopy(fixturesByType.kite));
+  const kiteText = copyText(resolveFallbackActivationCopy(fixturesByType.kite));
   assert.match(kiteText, /Grand Trine/i);
   assert.match(kiteText, /opposition/i);
   assert.doesNotMatch(kiteText, /T-square apex/i);
 }
 
 {
-  const yodText = copyText(resolveAspectPatternActivationCopy(fixturesByType.yod));
+  const yodText = copyText(resolveFallbackActivationCopy(fixturesByType.yod));
   assert.doesNotMatch(yodText, /\b(fate|destiny|Finger of God|chosen|calling|special mission|meant to happen|unavoidable|karmic test|turning point)\b/i);
 }
 
 {
-  const fanoutText = copyText(resolveAspectPatternActivationCopy(fixturesByType.grand_square));
+  const fanoutText = copyText(resolveFallbackActivationCopy(fixturesByType.grand_square));
   assert.match(fanoutText, /without being equally loud/i);
   assert.doesNotMatch(fanoutText, /equally active|equally intense/i);
 }
@@ -387,15 +395,15 @@ const fixturesByType = {
   const partialContext = contextsFor(fixtures.partial_t_square, [
     { id: "transit.mars.square.mars", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: true }
   ])[0];
-  assert.match(copyText(resolveAspectPatternActivationCopy(wideContext)), /less consistent or less obvious/i);
-  assert.match(copyText(resolveAspectPatternActivationCopy(partialContext)), /less consistent or less obvious/i);
+  assert.match(copyText(resolveFallbackActivationCopy(wideContext)), /less consistent or less obvious/i);
+  assert.match(copyText(resolveFallbackActivationCopy(partialContext)), /less consistent or less obvious/i);
 }
 
 {
-  const exact = resolveAspectPatternActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.exact", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 0, applying: true }])[0]);
-  const applying = resolveAspectPatternActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.applying", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: true }])[0]);
-  const separating = resolveAspectPatternActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.separating", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: false }])[0]);
-  const mixed = resolveAspectPatternActivationCopy(contextsFor(fixtures.t_square, [
+  const exact = resolveFallbackActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.exact", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 0, applying: true }])[0]);
+  const applying = resolveFallbackActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.applying", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: true }])[0]);
+  const separating = resolveFallbackActivationCopy(contextsFor(fixtures.t_square, [{ id: "transit.separating", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: false }])[0]);
+  const mixed = resolveFallbackActivationCopy(contextsFor(fixtures.t_square, [
     { id: "transit.applying", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: true },
     { id: "transit.separating", movingBody: "jupiter", targetNatalPlanet: "sun", aspectType: "trine", orb: 1, applying: false }
   ])[0]);
@@ -408,12 +416,12 @@ const fixturesByType = {
 {
   const context = fixturesByType.t_square;
   const before = JSON.stringify(context);
-  const first = resolveAspectPatternActivationCopy(context);
-  const second = resolveAspectPatternActivationCopy(context);
+  const first = resolveFallbackActivationCopy(context);
+  const second = resolveFallbackActivationCopy(context);
   assert.equal(JSON.stringify(context), before);
   assert.equal(JSON.stringify(first), JSON.stringify(second));
   const reversed = { ...context, triggers: context.triggers.slice().reverse() };
-  assert.equal(JSON.stringify(resolveAspectPatternActivationCopy(reversed)), JSON.stringify(first));
+  assert.equal(JSON.stringify(resolveFallbackActivationCopy(reversed)), JSON.stringify(first));
 }
 
 {
@@ -430,7 +438,7 @@ const fixturesByType = {
   const validation = validateAspectPatternActivationCopyRecord(badRecord, fixturesByType.t_square);
   assert.equal(validation.ok, false);
   assert.ok(validation.errors.some((error) => error.includes("unknown_required_slot")));
-  const copy = resolveAspectPatternActivationCopy(fixturesByType.t_square, { records: [badRecord], authoredRecords: [] });
+  const copy = resolveFallbackActivationCopy(fixturesByType.t_square, { records: [badRecord] });
   assert.notEqual(copy.source.recordId, "bad-required-slot");
 }
 
@@ -444,7 +452,7 @@ const fixturesByType = {
   }
 }
 
-assert.deepEqual(resolveAspectPatternActivationCopies([]), []);
+assert.deepEqual(resolveFallbackActivationCopies([]), []);
 
 function titlePart(value) {
   return String(value)

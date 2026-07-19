@@ -283,7 +283,7 @@ const PATTERN_DISPLAY_NAMES = Object.freeze({
 const AUTHORED_ASPECT_PATTERN_RECORDS = Object.freeze(buildAuthoredAspectPatternRecords());
 const GOVERNED_COPY_RECORDS = Object.freeze(buildDefaultCopyRecords());
 const GOVERNED_ACTIVATION_COPY_RECORDS = Object.freeze(buildDefaultActivationCopyRecords());
-const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS = Object.freeze([]);
+const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS = Object.freeze(buildAuthoredAspectPatternActivationRecords());
 
 const ELEMENT_BY_SIGN = Object.freeze({
   aries: "fire",
@@ -1706,7 +1706,8 @@ function activationContextJobs(linkedPatternIds, parentPatternIds, childPatternI
 function resolveAspectPatternActivationCopy(context, options = {}) {
   const sourceRecords = Array.isArray(options.records) ? options.records : [];
   const authoredRecords = Array.isArray(options.authoredRecords) ? options.authoredRecords : AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS;
-  const records = sourceRecords.concat(authoredRecords).concat(GOVERNED_ACTIVATION_COPY_RECORDS);
+  const authoredCandidates = selectEligibleAuthoredActivationRecords(authoredRecords, context);
+  const records = sourceRecords.concat(authoredCandidates).concat(GOVERNED_ACTIVATION_COPY_RECORDS);
   const attemptedRecords = [];
 
   for (const record of records) {
@@ -1727,6 +1728,71 @@ function resolveAspectPatternActivationCopy(context, options = {}) {
 
 function resolveAspectPatternActivationCopies(contexts, options = {}) {
   return (Array.isArray(contexts) ? contexts : []).map((context) => resolveAspectPatternActivationCopy(context, options));
+}
+
+function selectEligibleAuthoredActivationRecords(records, context) {
+  return normalizeAuthoredActivationRecords(records)
+    .filter((record) => isEligibleAuthoredActivationRecord(record, context))
+    .sort((a, b) => compareAuthoredActivationRecords(a, b, context));
+}
+
+function normalizeAuthoredActivationRecords(records) {
+  return (Array.isArray(records) ? records : [])
+    .map(authoredActivationRecordToCopyRecord)
+    .filter(Boolean);
+}
+
+function authoredActivationRecordToCopyRecord(record) {
+  if (!record) return null;
+  if (record.contentLevel) return record;
+  return {
+    ...record,
+    contentLevel: "authored"
+  };
+}
+
+function isEligibleAuthoredActivationRecord(record, context) {
+  const primaryRole = primaryActivationRole(context);
+  if (record.status !== "approved") return false;
+  if (record.patternType !== context.patternType) return false;
+  if (!primaryRole) return false;
+  const eligibility = record.eligibility || {};
+  const targetRoles = eligibility.targetRoles || eligibility.allowedTargetRoles || [];
+  if (!targetRoles.includes(primaryRole)) return false;
+  if (Array.isArray(eligibility.timingStates) && !eligibility.timingStates.includes(context.activationSummary.timingState)) return false;
+  if (Array.isArray(eligibility.patternConfidence) && !eligibility.patternConfidence.includes(context.natalPattern?.confidence || "exact")) return false;
+  if (Array.isArray(eligibility.triggerModes) && !eligibility.triggerModes.includes(activationTriggerMode(context))) return false;
+  return true;
+}
+
+function compareAuthoredActivationRecords(a, b, context) {
+  const role = primaryActivationRole(context);
+  return exactRoleScore(b, role) - exactRoleScore(a, role)
+    || eligibilityWidth(a.eligibility?.patternConfidence) - eligibilityWidth(b.eligibility?.patternConfidence)
+    || eligibilityWidth(a.eligibility?.timingStates) - eligibilityWidth(b.eligibility?.timingStates)
+    || (Number(b.priority || b.authoredPriority || 0) - Number(a.priority || a.authoredPriority || 0))
+    || String(a.id).localeCompare(String(b.id));
+}
+
+function exactRoleScore(record, role) {
+  const targetRoles = record.eligibility?.targetRoles || record.eligibility?.allowedTargetRoles || [];
+  return targetRoles.length === 1 && targetRoles[0] === role ? 1 : 0;
+}
+
+function eligibilityWidth(values) {
+  return Array.isArray(values) && values.length > 0 ? values.length : 999;
+}
+
+function primaryActivationRole(context) {
+  const primary = primaryTriggerContext(context);
+  const role = primary.targetRoles && primary.targetRoles[0] ? primary.targetRoles[0] : "";
+  if (!role) return "pattern_member";
+  return role === "spine" ? "resource_planet" : role;
+}
+
+function activationTriggerMode(context) {
+  if (context.activationSummary?.sharedPlanetFanout) return "shared_planet";
+  return (context.activationSummary?.triggerCount || context.triggers?.length || 0) > 1 ? "multiple" : "single";
 }
 
 function resolveActivationCopyRecord(context, record, options = {}) {
@@ -1862,9 +1928,14 @@ function activationCopyRecordEligible(context, record) {
   }
   if (eligibility.requiresSharedPlanetFanout && !context.activationSummary.sharedPlanetFanout) return false;
   if (Array.isArray(eligibility.allowedTargetRoles) && eligibility.allowedTargetRoles.length > 0) {
-    const roles = context.activationSummary.targetedRoles || [];
+    const roles = (context.activationSummary.targetedRoles || []).map((role) => role === "spine" ? "resource_planet" : role);
     if (!roles.some((role) => eligibility.allowedTargetRoles.includes(role))) return false;
   }
+  if (Array.isArray(eligibility.targetRoles) && eligibility.targetRoles.length > 0) {
+    const role = primaryActivationRole(context);
+    if (!eligibility.targetRoles.includes(role)) return false;
+  }
+  if (Array.isArray(eligibility.triggerModes) && !eligibility.triggerModes.includes(activationTriggerMode(context))) return false;
   return true;
 }
 
@@ -1919,6 +1990,29 @@ function validateAspectPatternActivationCopyRecord(record, context, slots = aspe
   };
 }
 
+function validateAuthoredAspectPatternActivationRecord(record, context, slots) {
+  const normalized = authoredActivationRecordToCopyRecord(record);
+  if (!normalized) {
+    return {
+      ok: false,
+      errors: ["missing_authored_activation_record"],
+      warnings: [],
+      missingSlots: [],
+      unknownSlots: []
+    };
+  }
+  const validation = validateAspectPatternActivationCopyRecord(normalized, context, slots);
+  const errors = validation.errors.slice();
+  const eligibility = normalized.eligibility || {};
+  const targetRoles = eligibility.targetRoles || eligibility.allowedTargetRoles || [];
+  if (!Array.isArray(targetRoles) || targetRoles.length === 0) errors.push("missing_target_role_eligibility");
+  return {
+    ...validation,
+    ok: errors.length === 0,
+    errors: unique(errors).sort()
+  };
+}
+
 function validateActivationTemplate(template, slots) {
   const slotNames = templateSlotNames(template);
   return {
@@ -1947,6 +2041,111 @@ function buildDefaultActivationCopyRecords() {
     records.push(emergencyActivationCopyRecord(type));
   }
   return records;
+}
+
+function buildAuthoredAspectPatternActivationRecords() {
+  return Object.freeze([
+    authoredActivationRecord("t_square", "apex", {
+      headline: "{{primary_moving_body}} is pressing on your T-square response point",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}}, the apex of your T-square. That can make the place where you usually respond to pressure easier to notice for now.",
+      role: "{{primary_target_planet}} is often where this T-square looks for action when the other two sides pull in different directions. This does not make it the only outlet; it names the part being contacted first.",
+      watch: "Notice what asks for a response before treating it as a forced choice."
+    }),
+    authoredActivationRecord("t_square", "opposition_axis", {
+      route: "opposition-member",
+      headline: "{{primary_moving_body}} is contacting one side of your T-square",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}}, one side of the opposition inside your T-square. That may make one half of an existing push-pull more noticeable for now.",
+      role: "{{primary_target_planet}} is part of the opposition axis here, so this contact points to one side of the pattern rather than the response point.",
+      watch: "Notice which side of the existing push-pull is easier to feel, without assuming the whole pattern is equally loud."
+    }),
+    authoredActivationRecord("grand_square", "opposition_axis", {
+      route: "member",
+      headline: "{{primary_moving_body}} is contacting one corner of your Grand Square",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Square. One corner of the four-part setup may stand out without reducing the pattern to one component.",
+      role: "{{primary_target_planet}} is one member of the four-planet structure. It is a doorway into the wider pattern, not a single outlet.",
+      watch: "Notice which corner asks for attention first, without assuming all four sides have the same volume."
+    }),
+    authoredActivationRecord("grand_trine", "pattern_member", {
+      route: "member",
+      headline: "{{primary_moving_body}} is contacting a familiar circuit",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Trine. A response that already comes with less friction may be easier to notice or use for now.",
+      role: "{{primary_target_planet}} belongs to the lower-friction circuit, so this contact may show where the familiar response begins.",
+      watch: "Notice what is easier to reach without turning that into a promise of luck, success, or opportunity."
+    }),
+    authoredActivationRecord("kite", "focal_planet", {
+      headline: "{{primary_moving_body}} is contacting the focal planet in your Kite",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}}, the focal planet in your Kite. The underlying Grand Trine and the opposition both remain part of what is being emphasized.",
+      role: "{{primary_target_planet}} gives the Kite a point of direction through the opposition, while the Grand Trine remains the easier support structure.",
+      watch: "Notice what gains direction without treating the focal planet as an apex or a fixed outcome."
+    }),
+    authoredActivationRecord("kite", "resource_planet", {
+      headline: "{{primary_moving_body}} is contacting a resource planet in your Kite",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}}, a resource planet in your Kite. The contact may make one supportive part of the larger figure easier to notice.",
+      role: "{{primary_target_planet}} supports the Kite through the Grand Trine while the opposition still gives the pattern its direction.",
+      watch: "Notice the support that is easier to reach without treating it as solving the opposition."
+    }),
+    authoredActivationRecord("yod", "apex", {
+      headline: "{{primary_moving_body}} is contacting the adjustment point in your Yod",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}}, the apex of your Yod. That may bring more attention to timing, coordination, and repeated adjustment.",
+      role: "{{primary_target_planet}} is where the two unlike parts of the Yod have to coordinate, so the contact may make the adjustment work more noticeable.",
+      watch: "Notice repeated adjustment rather than looking for one final answer."
+    }),
+    authoredActivationRecord("mystic_rectangle", "opposition_axis", {
+      route: "member",
+      headline: "{{primary_moving_body}} is contacting one side of your Mystic Rectangle",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} within your Mystic Rectangle. One part of the two-opposition structure may be easier to notice for now.",
+      role: "{{primary_target_planet}} belongs to one of the opposition axes, while the supportive routes around the rectangle remain part of the structure.",
+      watch: "Notice the contacted side without assuming automatic balance, harmony, or resolution."
+    })
+  ]);
+}
+
+function authoredActivationRecord(patternType, targetRole, copy) {
+  const route = copy.route || targetRole;
+  return {
+    id: `aspect-pattern-activation-authored:${patternType}:${route}:v1`,
+    version: "1.0.0",
+    patternType,
+    status: "approved",
+    priority: 10,
+    eligibility: {
+      targetRoles: [targetRole],
+      patternConfidence: ["exact", "strong", "wide", "partial"],
+      triggerModes: ["single", "multiple", "shared_planet"]
+    },
+    content: {
+      eyebrow: "{{pattern_name}} in motion",
+      headline: copy.headline,
+      overview: copy.overview,
+      sections: [
+        { id: "current_emphasis", template: "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while.", required: true },
+        { id: "transit_trigger", template: "{{primary_moving_body}} is making {{primary_aspect_with_article}} to {{primary_target_planet}}, close by {{primary_orb}}.", required: true },
+        { id: "transit_trigger", template: "There is also contact from {{additional_moving_bodies}}, so read this as one combined moment rather than separate unrelated hits.", required: false, conditions: [{ slot: "additional_moving_bodies", exists: true }] },
+        { id: "pattern_role", template: copy.role, required: true },
+        { id: "linked_patterns", template: "{{primary_target_planet}} also belongs to {{linked_pattern_names}}, so several connected parts of the chart may feel more noticeable at the same time without being equally loud.", required: false, conditions: [{ slot: "linked_pattern_names", exists: true }] },
+        { id: "timing", template: TIMING_LANGUAGE.exact, required: false, conditions: [{ slot: "timing_state", equals: "exact" }] },
+        { id: "timing", template: TIMING_LANGUAGE.applying, required: false, conditions: [{ slot: "timing_state", equals: "applying" }] },
+        { id: "timing", template: TIMING_LANGUAGE.separating, required: false, conditions: [{ slot: "timing_state", equals: "separating" }] },
+        { id: "timing", template: TIMING_LANGUAGE.mixed, required: false, conditions: [{ slot: "timing_state", equals: "mixed" }] },
+        { id: "watch_for", template: copy.watch, required: true },
+        { id: "confidence_note", template: "This is a wider natal pattern, so the connection may be less consistent or less obvious.", required: false, conditions: [{ slot: "pattern_confidence", equals: "wide" }] },
+        { id: "confidence_note", template: "This is a partial natal pattern, so the connection may be less consistent or less obvious.", required: false, conditions: [{ slot: "pattern_confidence", equals: "partial" }] }
+      ]
+    },
+    languageRules: {
+      certainty: "qualified",
+      prohibitedClaims: ACTIVATION_CONTEXT_AVOID_CLAIMS.slice(),
+      prohibitedTerms: patternType === "yod"
+        ? ["Finger of God", "fate", "destiny", "chosen", "calling", "special mission", "meant to happen", "unavoidable", "karmic test", "turning point"]
+        : []
+    },
+    provenance: {
+      sourceIds: [`internal:authored-activation:${patternType}:${route}:v1`],
+      editorialStatus: "editorial_synthesis",
+      reviewedBy: "codex",
+      reviewedAt: "2026-07-19"
+    }
+  };
 }
 
 function sourceGroundedActivationCopyRecord(patternType) {
@@ -2814,6 +3013,7 @@ module.exports = {
   resolveAspectPatternCopy,
   resolveAspectPatternActivationCopies,
   resolveAspectPatternActivationCopy,
+  validateAuthoredAspectPatternActivationRecord,
   validateAspectPatternActivationCopyRecord,
   validateAuthoredAspectPatternRecord,
   validateAspectPatternCopyRecord
