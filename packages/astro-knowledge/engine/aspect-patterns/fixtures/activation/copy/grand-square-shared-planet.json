@@ -1,0 +1,96 @@
+{
+  "fixtureId": "grand-square-shared-planet",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:grand_square:sun-moon-mars-saturn",
+  "patternId": "aspect-pattern:grand_square:sun-moon-mars-saturn",
+  "patternType": "grand_square",
+  "primaryTrigger": {
+    "movingBody": "saturn",
+    "targetNatalPlanet": "moon",
+    "aspectType": "square",
+    "orb": 0.5,
+    "applying": true,
+    "targetRole": "opposition_axis"
+  },
+  "triggerCount": 1,
+  "targetRole": "opposition_axis",
+  "timingState": "applying",
+  "natalConfidence": "exact",
+  "triggerMode": "shared_planet",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:grand_square:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:grand_square:sun-moon-mars-saturn",
+    "patternType": "grand_square",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:grand_square:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.saturn.square.moon.aspect-pattern:grand_square:sun-moon-mars-saturn",
+      "triggerCount": 1,
+      "movingBodies": [
+        "saturn"
+      ],
+      "targetedNatalPlanets": [
+        "moon"
+      ],
+      "timingState": "applying"
+    },
+    "content": {
+      "eyebrow": "Grand Square in motion",
+      "headline": "Saturn is contacting Moon",
+      "overview": "Saturn is contacting one member of your Grand Square, so one doorway into the wider four-part setup may stand out for now.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Saturn is making a square to Moon, close by 0.5 degrees."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Moon is one member of the four-part configuration. That does not make it the single outlet or reduce the wider setup to one component."
+        },
+        {
+          "id": "linked_patterns",
+          "body": "Moon also belongs to four T-squares, so several connected parts of the chart may feel more noticeable at the same time without being equally loud."
+        },
+        {
+          "id": "timing",
+          "body": "This contact is still building."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice which part of the setup asks for attention first, without assuming every side has the same volume."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:grand_square:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "timing",
+        "transit_trigger"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:grand_square:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "timing",
+    "transit_trigger"
+  ],
+  "validationWarnings": []
+}

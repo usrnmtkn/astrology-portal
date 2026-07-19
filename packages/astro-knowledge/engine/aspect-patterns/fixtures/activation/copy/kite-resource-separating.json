@@ -1,0 +1,96 @@
+{
+  "fixtureId": "kite-resource-separating",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:kite:sun-moon-mars:focal-saturn",
+  "patternId": "aspect-pattern:kite:sun-moon-mars:focal-saturn",
+  "patternType": "kite",
+  "primaryTrigger": {
+    "movingBody": "sun",
+    "targetNatalPlanet": "mars",
+    "aspectType": "trine",
+    "orb": 1,
+    "applying": false,
+    "targetRole": "resource_planet"
+  },
+  "triggerCount": 1,
+  "targetRole": "resource_planet",
+  "timingState": "separating",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:kite:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:kite:sun-moon-mars:focal-saturn",
+    "patternType": "kite",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:kite:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.sun.trine.mars.aspect-pattern:kite:sun-moon-mars:focal-saturn",
+      "triggerCount": 1,
+      "movingBodies": [
+        "sun"
+      ],
+      "targetedNatalPlanets": [
+        "mars"
+      ],
+      "timingState": "separating"
+    },
+    "content": {
+      "eyebrow": "Kite in motion",
+      "headline": "Sun is contacting Mars",
+      "overview": "Sun is contacting your Kite without removing either part of its structure: the underlying Grand Trine and the opposition.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Sun is making a trine to Mars, close by 1 degree."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Mars is the resource planet in this Kite. The Grand Trine and the opposition both remain part of what you are noticing."
+        },
+        {
+          "id": "linked_patterns",
+          "body": "Mars also belongs to Grand Trine, so several connected parts of the chart may feel more noticeable at the same time without being equally loud."
+        },
+        {
+          "id": "timing",
+          "body": "The closest contact has passed, but you may still be noticing what it brought up."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice how the opposition gives direction to the easier Grand Trine movement."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:kite:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "timing",
+        "transit_trigger"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:kite:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "timing",
+    "transit_trigger"
+  ],
+  "validationWarnings": []
+}

@@ -5,7 +5,8 @@ const {
   buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   detectPatterns,
-  rankAspectPatterns
+  rankAspectPatterns,
+  resolveAspectPatternActivationCopies
 } = require("../engine/aspect-patterns");
 const { fixtures } = require("../engine/aspect-patterns/fixtures");
 
@@ -32,6 +33,7 @@ function rankedDetection(fixture) {
 function activationFixture(id, fixture, transitAspects) {
   const detection = rankedDetection(fixture);
   const activation = buildPatternActivations(detection, transitAspects, { calculatedFor });
+  const interpretationContexts = buildAspectPatternActivationInterpretationContexts({ ...detection, activation });
   return {
     id,
     patternIds: detection.patterns.map((pattern) => ({
@@ -41,7 +43,8 @@ function activationFixture(id, fixture, transitAspects) {
     })),
     activation: {
       ...activation,
-      interpretationContexts: buildAspectPatternActivationInterpretationContexts({ ...detection, activation })
+      interpretationContexts,
+      resolvedCopy: resolveAspectPatternActivationCopies(interpretationContexts)
     }
   };
 }
