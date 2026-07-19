@@ -21,6 +21,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AspectPatternCoverage } from "./AspectPatternCoverage";
+import { AspectPatternActivationCoverage } from "./AspectPatternActivationCoverage";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import {
   fallbackHookDefinitions,
@@ -50,6 +51,7 @@ type AdminDashboardPage =
   | "templates"
   | "hooks"
   | "aspectPatternCoverage"
+  | "aspectPatternActivationCoverage"
   | "aspectDiagnostics"
   | "users"
   | "releaseNotes";
@@ -225,6 +227,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   templates: "templates",
   hooks: "surface-map",
   aspectPatternCoverage: "content/aspect-patterns",
+  aspectPatternActivationCoverage: "content/aspect-pattern-activation",
   aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
   releaseNotes: "release-notes"
@@ -260,6 +263,7 @@ const adminNavGroups: Array<{
       { page: "slotDictionary", label: "Slots", icon: KeyRound },
       { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
       { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
+      { page: "aspectPatternActivationCoverage", label: "Aspect Pattern Activation", icon: Activity },
       { page: "knowledge", label: "Fallback Hooks", icon: FileText },
       { page: "hooks", label: "Surface Map", icon: Flag }
     ]
@@ -377,6 +381,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "templates": return "Templates";
     case "hooks": return "Surface Map";
     case "aspectPatternCoverage": return "Aspect Patterns";
+    case "aspectPatternActivationCoverage": return "Aspect Pattern Activation";
     case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
     case "users": return "Users";
     case "releaseNotes": return "Release Notes";
@@ -399,6 +404,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "templates": return "Admin / Composition / Templates";
     case "hooks": return "Admin / App surfaces / Surface map";
     case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
+    case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
     case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
     case "users": return "Admin / Users";
     case "releaseNotes": return "Admin / Release notes";
@@ -428,6 +434,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Every public surface and runtime hook request, with saved coverage separated from local placeholders.";
     case "aspectPatternCoverage":
       return "Read-only coverage and previews for authored aspect-pattern copy against the accepted fallback resolver.";
+    case "aspectPatternActivationCoverage":
+      return "Read-only coverage and previews for authored aspect-pattern activation copy against the accepted fallback resolver.";
     case "aspectDiagnostics":
       return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
     case "users":
@@ -2275,6 +2283,8 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "aspectPatternCoverage" && <AspectPatternCoverage />}
+
+        {activePage === "aspectPatternActivationCoverage" && <AspectPatternActivationCoverage />}
 
         {activePage === "aspectDiagnostics" && <AspectPatternDiagnostics />}
 
