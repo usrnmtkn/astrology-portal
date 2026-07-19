@@ -103,6 +103,7 @@ export type SkySnapshot = {
     applying?: boolean;
     conditions?: AspectConditions;
   }>;
+  aspectPatterns?: import("@tldr/astro-knowledge/aspect-pattern-engine").AspectPatternDetectionResult;
   facts?: import("./services/astrologyFacts").AstrologyFact[];
 };
 
