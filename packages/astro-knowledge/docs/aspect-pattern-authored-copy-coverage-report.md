@@ -6,10 +6,10 @@ This report summarizes the first authored aspect-pattern copy registry.
 
 | Pattern | Authored | Approved authored | Source template | Madlib | Emergency | Golden fixtures | Status |
 | --- | ---: | ---: | --- | --- | --- | ---: | --- |
-| T-square | 1 | 1 | yes | yes | yes | 3 | covered |
-| Grand Square | 1 | 1 | yes | yes | yes | 2 | covered |
-| Grand Trine | 1 | 1 | yes | yes | yes | 2 | covered |
-| Kite | 1 | 1 | yes | yes | yes | 2 | covered |
+| T-square | 1 | 1 | yes | yes | yes | 4 | covered |
+| Grand Square | 1 | 1 | yes | yes | yes | 1 | covered |
+| Grand Trine | 1 | 1 | yes | yes | yes | 3 | covered |
+| Kite | 1 | 1 | yes | yes | yes | 1 | covered |
 | Yod | 1 | 1 | yes | yes | yes | 3 | covered |
 | Mystic Rectangle | 1 | 1 | yes | yes | yes | 1 | covered |
 
