@@ -470,6 +470,24 @@ export interface AspectPatternActivationCopyRecord {
   };
 }
 
+export interface AuthoredAspectPatternActivationRecord {
+  id: string;
+  version: string;
+  patternType: AspectPatternType;
+  status: "draft" | "reviewed" | "approved" | "deprecated";
+  priority?: number;
+  authoredPriority?: number;
+  eligibility: {
+    targetRoles: string[];
+    timingStates?: ActivationTimingState[];
+    patternConfidence?: Array<"exact" | "strong" | "wide" | "partial">;
+    triggerModes?: Array<"single" | "multiple" | "shared_planet">;
+  };
+  content: AspectPatternActivationCopyRecord["content"];
+  languageRules: AspectPatternActivationCopyRecord["languageRules"];
+  provenance: AspectPatternActivationCopyRecord["provenance"];
+}
+
 export interface ResolvedAspectPatternActivationCopy {
   patternId: string;
   patternType: AspectPatternType;
@@ -746,7 +764,7 @@ export const ASPECT_PATTERN_ACTIVATION_CONTENT_LEVELS: readonly AspectPatternAct
 export const ASPECT_PATTERN_CONTENT_LEVELS: readonly AspectPatternContentLevel[];
 export const APPROVED_ACTIVATION_COPY_SLOTS: readonly string[];
 export const APPROVED_COPY_SLOTS: readonly string[];
-export const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS: readonly AspectPatternActivationCopyRecord[];
+export const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS: readonly AuthoredAspectPatternActivationRecord[];
 export const AUTHORED_ASPECT_PATTERN_RECORDS: readonly AuthoredAspectPatternRecord[];
 export const DEFAULT_ACTIVATION_POLICY: PatternActivationPolicy;
 export const DEFAULT_ORB_POLICY: OrbPolicy;
@@ -801,14 +819,25 @@ export function resolveAspectPatternCopies(
 ): ResolvedAspectPatternCopy[];
 export function resolveAspectPatternActivationCopy(
   context: AspectPatternActivationInterpretationContext,
-  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: AspectPatternActivationCopyRecord[] }
+  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: Array<AspectPatternActivationCopyRecord | AuthoredAspectPatternActivationRecord> }
 ): ResolvedAspectPatternActivationCopy;
 export function resolveAspectPatternActivationCopies(
   contexts: AspectPatternActivationInterpretationContext[],
-  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: AspectPatternActivationCopyRecord[] }
+  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: Array<AspectPatternActivationCopyRecord | AuthoredAspectPatternActivationRecord> }
 ): ResolvedAspectPatternActivationCopy[];
 export function validateAspectPatternActivationCopyRecord(
   record: AspectPatternActivationCopyRecord,
+  context: AspectPatternActivationInterpretationContext,
+  slots?: Partial<AspectPatternActivationCopySlots>
+): {
+  ok: boolean;
+  errors: string[];
+  warnings: string[];
+  missingSlots: string[];
+  unknownSlots: string[];
+};
+export function validateAuthoredAspectPatternActivationRecord(
+  record: AuthoredAspectPatternActivationRecord,
   context: AspectPatternActivationInterpretationContext,
   slots?: Partial<AspectPatternActivationCopySlots>
 ): {
