@@ -185,6 +185,13 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import {
+  fetchNatalAspectPatternsWithCopy,
+  natalAspectPatternReaderEnabled,
+  natalAspectPatternReaderItems,
+  natalAspectPatternReaderStatus,
+  skyWithNatalAspectPatternCopy
+} from "./services/natalAspectPatterns";
 import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
@@ -11374,6 +11381,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
+  const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
   const [personalTiming, setPersonalTiming] = useState<PersonalTimingResponse | null>(null);
   const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
@@ -11401,6 +11409,7 @@ export function App() {
   const activeHouseSignLabelStyle = userProfile
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
     : guestHouseSignLabelStyle;
+  const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
@@ -12258,6 +12267,7 @@ export function App() {
 
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       setProfileNatalSky(null);
+      setProfileNatalAspectPatternStatus("idle");
       return;
     }
 
@@ -12267,17 +12277,19 @@ export function App() {
     const birthDateTime = zonedDateTimeToUtc(birthDate, unknownBirthTime ? "12:00 PM" : birthTime, birthLocation.timeZone);
 
     getAstrodienstSky(birthLocation, birthDateTime)
-      .then((natalSky) => {
+      .then((calculatedNatalSky) => {
         if (cancelled) {
           return;
         }
 
+        const natalSky = calculatedNatalSky;
         const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
         const nextTransits = sky
           ? rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees)
           : [];
 
         setProfileNatalSky(natalSky);
+        setProfileNatalAspectPatternStatus(showNatalAspectPatterns ? "loading" : "idle");
         setProfileTransits(nextTransits);
         setTransitsDrawn(true);
         setSelectedTransitId((currentId) => (
@@ -12314,6 +12326,28 @@ export function App() {
               : currentProfile.charts
           };
         });
+
+        if (showNatalAspectPatterns) {
+          fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime)
+            .then((aspectPatterns) => {
+              if (cancelled) {
+                return;
+              }
+
+              setProfileNatalSky((currentSky) => (
+                currentSky?.generatedAt === calculatedNatalSky.generatedAt
+                  ? skyWithNatalAspectPatternCopy(currentSky, aspectPatterns)
+                  : currentSky
+              ));
+              setProfileNatalAspectPatternStatus("ready");
+            })
+            .catch((error) => {
+              if (!cancelled) {
+                console.warn("Natal aspect-pattern copy request failed.", error);
+                setProfileNatalAspectPatternStatus("unavailable");
+              }
+            });
+        }
       })
       .catch(() => {
         return;
@@ -12333,7 +12367,8 @@ export function App() {
     userProfile?.charts[0]?.birthLocation?.label,
     userProfile?.charts[0]?.birthLocation?.timeZone,
     sky?.generatedAt,
-    activeSunriseOrbDegrees
+    activeSunriseOrbDegrees,
+    showNatalAspectPatterns
   ]);
 
   useEffect(() => {
@@ -13549,6 +13584,7 @@ export function App() {
                       transitItems={activeTransits}
                       currentSky={sky}
                       natalSky={profileNatalSky}
+                      natalAspectPatternLoadStatus={profileNatalAspectPatternStatus}
                       personalTiming={personalTiming}
                       personalTimingGenerated={personalTimingGenerated}
                       personalTimingGeneratedStatus={personalTimingGeneratedStatus}
@@ -16746,6 +16782,7 @@ function ProfileView({
   transitItems,
   currentSky,
   natalSky,
+  natalAspectPatternLoadStatus,
   personalTiming,
   personalTimingGenerated,
   personalTimingGeneratedStatus,
@@ -16764,6 +16801,7 @@ function ProfileView({
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
   natalSky: SkySnapshot | null;
+  natalAspectPatternLoadStatus: "idle" | "loading" | "ready" | "unavailable";
   personalTiming: PersonalTimingResponse | null;
   personalTimingGenerated: LiveGeneratedContent | null;
   personalTimingGeneratedStatus: PersonalTimingStatus;
@@ -16830,6 +16868,10 @@ function ProfileView({
     .filter((position): position is PlanetPosition => Boolean(position));
   const natalAnglePositions = [natalAscendantPosition, natalMidheavenPosition].filter((position): position is PlanetPosition => Boolean(position));
   const routeableNatalPositions = [natalSun, natalMoon, ...natalAnglePositions, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
+  const chartSettings = normalizeChartSettings(profile.settings);
+  const lifeAreaFocus = chartSettings.lifeAreaFocus;
+  const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
+  const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const occupiedNatalHouses = new Set(
     routeableNatalPositions
       .map((position) => position.house)
@@ -16841,6 +16883,12 @@ function ProfileView({
     .slice()
     .sort((first, second) => first.orb - second.orb)
     .slice(0, 8);
+  const natalAspectPatternItems = showNatalAspectPatterns
+    ? natalAspectPatternReaderItems(natalSky)
+    : [];
+  const natalAspectPatternStatus = showNatalAspectPatterns
+    ? natalAspectPatternReaderStatus(showNatalAspectPatterns, natalSky, !natalSky, natalAspectPatternLoadStatus)
+    : undefined;
   const careerArchetypeProfile = resolveCareerArchetypeProfile(natalSky);
   const natalNorthNode = natalPositions.find((position) => /north\s*node|true\s*node/i.test(position.planet));
   const soulRoadmapProfile = resolveSoulRoadmapProfile({
@@ -16860,9 +16908,6 @@ function ProfileView({
       setTransitArticle(soulRoadmapYouArticle(soulRoadmapProfile));
     }
   };
-  const chartSettings = normalizeChartSettings(profile.settings);
-  const lifeAreaFocus = chartSettings.lifeAreaFocus;
-  const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
@@ -17254,6 +17299,8 @@ function ProfileView({
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
         natalAspectRows={natalAspectItems}
+        natalAspectPatternItems={natalAspectPatternItems}
+        natalAspectPatternStatus={natalAspectPatternStatus}
         natalChart={natalChart}
         natalChartPending={!natalSky}
         updatesChart={updatesChart}
