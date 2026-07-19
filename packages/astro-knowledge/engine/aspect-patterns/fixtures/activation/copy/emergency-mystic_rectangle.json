@@ -1,0 +1,76 @@
+{
+  "fixtureId": "emergency-mystic_rectangle",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+  "patternId": "aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+  "patternType": "mystic_rectangle",
+  "primaryTrigger": {
+    "movingBody": "mercury",
+    "targetNatalPlanet": "moon",
+    "aspectType": "sextile",
+    "orb": 2.2,
+    "applying": false,
+    "targetRole": "opposition_axis"
+  },
+  "triggerCount": 1,
+  "targetRole": "opposition_axis",
+  "timingState": "separating",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "emergency_fallback",
+  "templateId": "aspect-pattern-activation-copy:emergency:mystic_rectangle:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+    "patternType": "mystic_rectangle",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:emergency:mystic_rectangle:v1",
+      "contentLevel": "emergency_fallback",
+      "status": "approved",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.mercury.sextile.moon.aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+      "triggerCount": 1,
+      "movingBodies": [
+        "mercury"
+      ],
+      "targetedNatalPlanets": [
+        "moon"
+      ],
+      "timingState": "separating"
+    },
+    "content": {
+      "eyebrow": "Mystic Rectangle in motion",
+      "headline": "Mercury is contacting Moon",
+      "overview": "Mercury is making a sextile to Moon, which may make your Mystic Rectangle easier to notice for now.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is a temporary note about an existing natal setup."
+        },
+        {
+          "id": "timing",
+          "body": "The closest contact has passed, but you may still be noticing what it brought up."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:emergency:mystic_rectangle:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "timing"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:emergency:mystic_rectangle:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "timing"
+  ],
+  "validationWarnings": []
+}

@@ -1,0 +1,94 @@
+{
+  "fixtureId": "mystic-rectangle-member-separating",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+  "patternId": "aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+  "patternType": "mystic_rectangle",
+  "primaryTrigger": {
+    "movingBody": "mercury",
+    "targetNatalPlanet": "moon",
+    "aspectType": "sextile",
+    "orb": 2.2,
+    "applying": false,
+    "targetRole": "opposition_axis"
+  },
+  "triggerCount": 1,
+  "targetRole": "opposition_axis",
+  "timingState": "separating",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "source_grounded_template",
+  "templateId": "aspect-pattern-activation-copy:source-grounded:mystic_rectangle:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+    "patternType": "mystic_rectangle",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:source-grounded:mystic_rectangle:v1",
+      "contentLevel": "source_grounded_template",
+      "status": "reviewed",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.mercury.sextile.moon.aspect-pattern:mystic_rectangle:moon-saturn_sun-mars",
+      "triggerCount": 1,
+      "movingBodies": [
+        "mercury"
+      ],
+      "targetedNatalPlanets": [
+        "moon"
+      ],
+      "timingState": "separating"
+    },
+    "content": {
+      "eyebrow": "Mystic Rectangle in motion",
+      "headline": "Mercury is contacting Moon",
+      "overview": "Mercury is contacting one part of the two-opposition structure in your Mystic Rectangle.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while."
+        },
+        {
+          "id": "transit_trigger",
+          "body": "Mercury is making a sextile to Moon, close by 2.2 degrees."
+        },
+        {
+          "id": "pattern_role",
+          "body": "Moon is part of one opposition axis in this rectangle, so the contact may bring that side of the structure into focus."
+        },
+        {
+          "id": "timing",
+          "body": "The closest contact has passed, but you may still be noticing what it brought up."
+        },
+        {
+          "id": "watch_for",
+          "body": "Notice the contacted opposition without assuming automatic balance or resolution."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:source-grounded:mystic_rectangle:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "confidence_note",
+        "linked_patterns",
+        "timing",
+        "transit_trigger"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:source-grounded:mystic_rectangle:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "confidence_note",
+    "linked_patterns",
+    "timing",
+    "transit_trigger"
+  ],
+  "validationWarnings": []
+}

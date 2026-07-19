@@ -58,6 +58,7 @@ const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION = "aspect_pattern_interpretation_co
 const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "aspect_pattern_copy_resolver_v1";
 const ASPECT_PATTERN_ACTIVATION_VERSION = "aspect_pattern_activation_v1";
 const ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION = "aspect_pattern_activation_interpretation_context_v1";
+const ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION = "aspect_pattern_activation_copy_resolver_v1";
 
 const PERSONAL_PLANETS = new Set(["mercury", "venus", "mars"]);
 const LUMINARIES = new Set(["sun", "moon"]);
@@ -77,6 +78,47 @@ const ACTIVATION_CONTEXT_AVOID_CLAIMS = Object.freeze([
   "do_not_claim_every_linked_pattern_is_equally_noticeable",
   "do_not_treat_score_as_life_importance"
 ]);
+const ASPECT_PATTERN_ACTIVATION_CONTENT_LEVELS = Object.freeze([
+  "authored",
+  "source_grounded_template",
+  "madlib_fallback",
+  "emergency_fallback"
+]);
+const ACTIVATION_COPY_SECTION_IDS = Object.freeze([
+  "current_emphasis",
+  "transit_trigger",
+  "pattern_role",
+  "linked_patterns",
+  "timing",
+  "watch_for",
+  "confidence_note"
+]);
+const APPROVED_ACTIVATION_COPY_SLOTS = Object.freeze([
+  "pattern_name",
+  "primary_moving_body",
+  "primary_target_planet",
+  "primary_aspect_name",
+  "primary_aspect_with_article",
+  "primary_target_role",
+  "primary_orb",
+  "trigger_count",
+  "additional_moving_bodies",
+  "targeted_planets",
+  "timing_state",
+  "exact_at",
+  "shared_planet_fanout",
+  "linked_pattern_names",
+  "parent_pattern_name",
+  "child_pattern_names",
+  "pattern_confidence",
+  "is_currently_primary"
+]);
+const TIMING_LANGUAGE = Object.freeze({
+  exact: "This transit is at or near its closest contact.",
+  applying: "This contact is still building.",
+  separating: "The closest contact has passed, but you may still be noticing what it brought up.",
+  mixed: "Several contacts are involved, and they are not all at the same stage."
+});
 const DEFAULT_ACTIVATION_POLICY = Object.freeze({
   id: "aspect_pattern_activation_v1",
   version: "1.0.0",
@@ -240,6 +282,8 @@ const PATTERN_DISPLAY_NAMES = Object.freeze({
 });
 const AUTHORED_ASPECT_PATTERN_RECORDS = Object.freeze(buildAuthoredAspectPatternRecords());
 const GOVERNED_COPY_RECORDS = Object.freeze(buildDefaultCopyRecords());
+const GOVERNED_ACTIVATION_COPY_RECORDS = Object.freeze(buildDefaultActivationCopyRecords());
+const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS = Object.freeze([]);
 
 const ELEMENT_BY_SIGN = Object.freeze({
   aries: "fire",
@@ -1560,6 +1604,9 @@ function buildAspectPatternActivationInterpretationContexts(detectionResult, opt
         parentPatternIds,
         childPatternIds
       },
+      natalPattern: {
+        confidence: natalContext?.geometry?.confidence || pattern.geometry?.confidence || "exact"
+      },
       triggers: triggerContexts,
       primaryTrigger: {
         activationId: primary.id,
@@ -1654,6 +1701,363 @@ function activationContextJobs(linkedPatternIds, parentPatternIds, childPatternI
   if (linkedPatternIds.length > 0) jobs.push(ACTIVATION_CONTEXT_SHARED_COPY_JOB);
   if (parentPatternIds.length > 0 || childPatternIds.length > 0) jobs.push(ACTIVATION_CONTEXT_STRUCTURE_COPY_JOB);
   return jobs;
+}
+
+function resolveAspectPatternActivationCopy(context, options = {}) {
+  const sourceRecords = Array.isArray(options.records) ? options.records : [];
+  const authoredRecords = Array.isArray(options.authoredRecords) ? options.authoredRecords : AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS;
+  const records = sourceRecords.concat(authoredRecords).concat(GOVERNED_ACTIVATION_COPY_RECORDS);
+  const attemptedRecords = [];
+
+  for (const record of records) {
+    if (!record || record.patternType !== context.patternType) continue;
+    attemptedRecords.push(record.id);
+    const result = resolveActivationCopyRecord(context, record);
+    if (result) {
+      result.diagnostics.attemptedRecordIds = attemptedRecords.slice();
+      return result;
+    }
+  }
+
+  const emergency = emergencyActivationCopyRecord(context.patternType);
+  const result = resolveActivationCopyRecord(context, emergency, { force: true });
+  result.diagnostics.attemptedRecordIds = attemptedRecords.concat(emergency.id);
+  return result;
+}
+
+function resolveAspectPatternActivationCopies(contexts, options = {}) {
+  return (Array.isArray(contexts) ? contexts : []).map((context) => resolveAspectPatternActivationCopy(context, options));
+}
+
+function resolveActivationCopyRecord(context, record, options = {}) {
+  if (!options.force && !activationCopyRecordEligible(context, record)) return null;
+  const slots = aspectPatternActivationCopySlots(context);
+  const validation = validateAspectPatternActivationCopyRecord(record, context, slots);
+  if (!options.force && validation.errors.length > 0) return null;
+
+  const missingSlots = new Set(validation.missingSlots);
+  const skippedSections = [];
+  const content = {};
+  for (const key of ["eyebrow", "headline", "overview"]) {
+    const template = record.content && record.content[key];
+    if (typeof template === "string") {
+      const rendered = renderActivationTemplate(template, slots, missingSlots);
+      if (rendered !== null) content[key] = rendered;
+    }
+  }
+  if (!content.headline || !content.overview) return null;
+
+  const sections = [];
+  for (const section of (record.content && record.content.sections) || []) {
+    if (!activationConditionsPass(section.conditions, slots)) {
+      skippedSections.push(section.id);
+      continue;
+    }
+    const sectionValidation = validateActivationTemplate(section.template, slots);
+    for (const slot of sectionValidation.missingSlots) missingSlots.add(slot);
+    if (sectionValidation.unknownSlots.length > 0 || sectionValidation.missingSlots.length > 0) {
+      skippedSections.push(section.id);
+      if (section.required && !options.force) return null;
+      continue;
+    }
+    const body = renderActivationTemplate(section.template, slots, missingSlots);
+    if (body) {
+      sections.push({ id: section.id, body });
+    } else {
+      skippedSections.push(section.id);
+      if (section.required && !options.force) return null;
+    }
+  }
+
+  const resolved = {
+    patternId: context.patternId,
+    patternType: context.patternType,
+    calculatedFor: context.calculatedFor,
+    source: {
+      recordId: record.id,
+      contentLevel: record.contentLevel,
+      status: record.status,
+      resolverVersion: ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION
+    },
+    triggerSummary: {
+      primaryActivationId: context.primaryTrigger.activationId,
+      triggerCount: context.activationSummary.triggerCount,
+      movingBodies: context.activationSummary.movingBodies.slice(),
+      targetedNatalPlanets: context.activationSummary.targetedNatalPlanets.slice(),
+      timingState: context.activationSummary.timingState
+    },
+    content: {
+      ...content,
+      sections
+    },
+    diagnostics: {
+      templateId: record.id,
+      usedFallback: record.contentLevel !== "authored",
+      missingSlots: [...missingSlots].sort(),
+      skippedSections: unique(skippedSections).sort(),
+      validationWarnings: validation.warnings.slice().sort()
+    }
+  };
+  if (!resolved.content.eyebrow) delete resolved.content.eyebrow;
+  return resolved;
+}
+
+function aspectPatternActivationCopySlots(context) {
+  const primary = primaryTriggerContext(context);
+  const role = primary.targetRoles && primary.targetRoles[0] ? primary.targetRoles[0] : "";
+  const additionalMovingBodies = (context.activationSummary.movingBodies || []).filter((body) => body !== primary.movingBody);
+  const linkedPatternNames = patternNameListFromIds(context.activationSummary.linkedPatternIds || []);
+  const parentPatternNames = (context.display.parentPatternIds || []).map(patternNameFromId);
+  const childPatternNames = (context.display.childPatternIds || []).map(patternNameFromId);
+  const aspectName = lowerToken(primary.aspectType);
+  const slots = {
+    pattern_name: PATTERN_DISPLAY_NAMES[context.patternType] || titleToken(context.patternType),
+    primary_moving_body: titleToken(primary.movingBody),
+    primary_target_planet: titleToken(primary.targetNatalPlanet),
+    primary_aspect_name: aspectName,
+    primary_aspect_with_article: `${articleFor(aspectName)} ${aspectName}`,
+    primary_orb: degreePhrase(primary.orb),
+    trigger_count: context.activationSummary.triggerCount || context.triggers.length,
+    targeted_planets: joinList((context.activationSummary.targetedNatalPlanets || []).map(titleToken)),
+    timing_state: context.activationSummary.timingState,
+    shared_planet_fanout: Boolean(context.activationSummary.sharedPlanetFanout),
+    pattern_confidence: context.natalPattern?.confidence || "exact",
+    is_currently_primary: Boolean(context.display.isCurrentlyPrimary)
+  };
+  if (role) slots.primary_target_role = activationRoleLabel(role);
+  if (primary.exactAt) slots.exact_at = primary.exactAt;
+  if (additionalMovingBodies.length > 0) slots.additional_moving_bodies = joinList(additionalMovingBodies.map(titleToken));
+  if (linkedPatternNames.length > 0) slots.linked_pattern_names = joinList(linkedPatternNames);
+  if (parentPatternNames.length > 0) slots.parent_pattern_name = joinList(parentPatternNames);
+  if (childPatternNames.length > 0) slots.child_pattern_names = joinList(childPatternNames);
+  return slots;
+}
+
+function primaryTriggerContext(context) {
+  return (context.triggers || []).find((trigger) => trigger.activationId === context.primaryTrigger.activationId)
+    || (context.triggers || [])[0]
+    || {};
+}
+
+function activationRoleLabel(role) {
+  if (role === "opposition_axis") return "opposition member";
+  if (role === "focal_planet") return "focal planet";
+  if (role === "spine") return "resource planet";
+  if (role === "resource_planet") return "resource planet";
+  return lowerToken(role);
+}
+
+function activationCopyRecordEligible(context, record) {
+  if (!ASPECT_PATTERN_ACTIVATION_CONTENT_LEVELS.includes(record.contentLevel)) return false;
+  if (!["draft", "reviewed", "approved", "deprecated"].includes(record.status)) return false;
+  if (record.status === "deprecated") return false;
+  if (record.contentLevel === "authored" && record.status !== "approved") return false;
+  const eligibility = record.eligibility || {};
+  if (Array.isArray(eligibility.timingStates) && !eligibility.timingStates.includes(context.activationSummary.timingState)) return false;
+  if (Array.isArray(eligibility.patternConfidence) && !eligibility.patternConfidence.includes(context.natalPattern?.confidence || "exact")) return false;
+  if (eligibility.triggerCount) {
+    const count = context.activationSummary.triggerCount || context.triggers.length;
+    if (typeof eligibility.triggerCount.min === "number" && count < eligibility.triggerCount.min) return false;
+    if (typeof eligibility.triggerCount.max === "number" && count > eligibility.triggerCount.max) return false;
+  }
+  if (eligibility.requiresSharedPlanetFanout && !context.activationSummary.sharedPlanetFanout) return false;
+  if (Array.isArray(eligibility.allowedTargetRoles) && eligibility.allowedTargetRoles.length > 0) {
+    const roles = context.activationSummary.targetedRoles || [];
+    if (!roles.some((role) => eligibility.allowedTargetRoles.includes(role))) return false;
+  }
+  return true;
+}
+
+function validateAspectPatternActivationCopyRecord(record, context, slots = aspectPatternActivationCopySlots(context)) {
+  const errors = [];
+  const warnings = [];
+  const missingSlots = [];
+  const unknownSlots = [];
+  const templates = [];
+  for (const key of ["eyebrow", "headline", "overview"]) {
+    if (typeof record.content?.[key] === "string") templates.push({ id: key, template: record.content[key], required: key !== "eyebrow" });
+  }
+  for (const section of record.content?.sections || []) {
+    templates.push(section);
+    if (!ACTIVATION_COPY_SECTION_IDS.includes(section.id)) errors.push(`unknown_section:${section.id}`);
+  }
+  for (const item of templates) {
+    if (!activationConditionsPass(item.conditions, slots)) continue;
+    const validation = validateActivationTemplate(item.template, slots);
+    unknownSlots.push(...validation.unknownSlots);
+    missingSlots.push(...validation.missingSlots);
+    if (item.required && validation.unknownSlots.length > 0) errors.push(`unknown_required_slot:${item.id}`);
+    if (item.required && validation.missingSlots.length > 0) errors.push(`missing_required_slot:${item.id}`);
+  }
+  if (record.languageRules?.certainty !== "qualified") errors.push("activation_copy_must_be_qualified");
+
+  const combined = templates.map((item) => item.template).join(" ");
+  for (const phrase of (record.languageRules?.prohibitedClaims || []).concat(record.languageRules?.prohibitedTerms || [])) {
+    if (phrase && containsTerm(combined, phrase)) errors.push(`prohibited_language:${phrase}`);
+  }
+  if (/\b(will|guarantees?|causes?|forces?|must happen|will happen)\b/i.test(combined)) errors.push("event_prediction_language");
+  if (/\b(permanent|changes your natal|rewrites|new geometry)\b/i.test(combined)) errors.push("changes_natal_geometry_language");
+  if ((context.patternType === "grand_square" || context.patternType === "mystic_rectangle") && containsTerm(combined, "apex")) {
+    errors.push("apex_language_for_non_apex_pattern");
+  }
+  if (context.patternType === "yod" && /\b(finger of god|fate|destiny|chosen|calling|special mission|meant to happen|unavoidable|karmic test|turning point)\b/i.test(combined)) {
+    errors.push("yod_prohibited_language");
+  }
+  if (/\b(equally active|equally intense|same intensity)\b/i.test(combined)) errors.push("equal_linked_pattern_intensity_claim");
+  if (/\b(activationId|sourceAspectId|reason code|policy|builder|score|rank|currentDisplayPriority|sharedPlanetFanout)\b/i.test(combined)) {
+    errors.push("internal_activation_diagnostics_leak");
+  }
+  if (unknownSlots.length > 0) warnings.push("unknown_slots_present");
+  if (missingSlots.length > 0) warnings.push("missing_slots_present");
+
+  return {
+    ok: errors.length === 0,
+    errors: unique(errors).sort(),
+    warnings: unique(warnings).sort(),
+    missingSlots: unique(missingSlots).sort(),
+    unknownSlots: unique(unknownSlots).sort()
+  };
+}
+
+function validateActivationTemplate(template, slots) {
+  const slotNames = templateSlotNames(template);
+  return {
+    unknownSlots: slotNames.filter((slot) => !APPROVED_ACTIVATION_COPY_SLOTS.includes(slot)),
+    missingSlots: slotNames.filter((slot) => APPROVED_ACTIVATION_COPY_SLOTS.includes(slot) && (slots[slot] === undefined || slots[slot] === null || slots[slot] === ""))
+  };
+}
+
+function renderActivationTemplate(template, slots, missingSlots) {
+  const validation = validateActivationTemplate(template, slots);
+  if (validation.unknownSlots.length > 0) return null;
+  for (const slot of validation.missingSlots) missingSlots.add(slot);
+  if (validation.missingSlots.length > 0) return null;
+  return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, slotName) => String(slots[slotName]));
+}
+
+function activationConditionsPass(conditions, slots) {
+  return conditionsPass(conditions, slots);
+}
+
+function buildDefaultActivationCopyRecords() {
+  const records = [];
+  for (const type of Object.keys(PATTERN_DISPLAY_NAMES)) {
+    records.push(sourceGroundedActivationCopyRecord(type));
+    records.push(madlibActivationCopyRecord(type));
+    records.push(emergencyActivationCopyRecord(type));
+  }
+  return records;
+}
+
+function sourceGroundedActivationCopyRecord(patternType) {
+  return {
+    ...activationRecordBase(patternType, "source_grounded_template"),
+    id: `aspect-pattern-activation-copy:source-grounded:${patternType}:v1`,
+    eligibility: { patternConfidence: ["exact", "strong", "wide", "partial"] },
+    content: activationTemplatesForPattern(patternType, "source_grounded_template")
+  };
+}
+
+function madlibActivationCopyRecord(patternType) {
+  return {
+    ...activationRecordBase(patternType, "madlib_fallback"),
+    id: `aspect-pattern-activation-copy:madlib:${patternType}:v1`,
+    eligibility: {},
+    content: activationTemplatesForPattern(patternType, "madlib_fallback")
+  };
+}
+
+function emergencyActivationCopyRecord(patternType) {
+  return {
+    ...activationRecordBase(patternType, "emergency_fallback"),
+    id: `aspect-pattern-activation-copy:emergency:${patternType}:v1`,
+    eligibility: {},
+    content: {
+      eyebrow: "{{pattern_name}} in motion",
+      headline: "{{primary_moving_body}} is contacting {{primary_target_planet}}",
+      overview: "{{primary_moving_body}} is making {{primary_aspect_with_article}} to {{primary_target_planet}}, which may make your {{pattern_name}} easier to notice for now.",
+      sections: [
+        { id: "current_emphasis", template: "This is a temporary note about an existing natal setup.", required: true },
+        { id: "timing", template: TIMING_LANGUAGE.exact, required: false, conditions: [{ slot: "timing_state", equals: "exact" }] },
+        { id: "timing", template: TIMING_LANGUAGE.applying, required: false, conditions: [{ slot: "timing_state", equals: "applying" }] },
+        { id: "timing", template: TIMING_LANGUAGE.separating, required: false, conditions: [{ slot: "timing_state", equals: "separating" }] },
+        { id: "timing", template: TIMING_LANGUAGE.mixed, required: false, conditions: [{ slot: "timing_state", equals: "mixed" }] }
+      ]
+    }
+  };
+}
+
+function activationRecordBase(patternType, contentLevel) {
+  return {
+    version: "1.0.0",
+    patternType,
+    contentLevel,
+    status: contentLevel === "source_grounded_template" ? "reviewed" : "approved",
+    languageRules: {
+      certainty: "qualified",
+      prohibitedClaims: ACTIVATION_CONTEXT_AVOID_CLAIMS.slice(),
+      prohibitedTerms: patternType === "yod"
+        ? ["Finger of God", "fate", "destiny", "chosen", "calling", "special mission", "meant to happen", "unavoidable", "karmic test", "turning point"]
+        : []
+    },
+    provenance: {
+      sourceIds: [`internal:activation-copy:${contentLevel}:${patternType}:v1`],
+      editorialStatus: contentLevel === "source_grounded_template" ? "source_grounded" : "editorial_synthesis"
+    }
+  };
+}
+
+function activationTemplatesForPattern(patternType, level) {
+  const genericOverview = "{{primary_moving_body}} is making {{primary_aspect_with_article}} to {{primary_target_planet}}, which may make your {{pattern_name}} easier to notice for now.";
+  const base = {
+    eyebrow: "{{pattern_name}} in motion",
+    headline: "{{primary_moving_body}} is contacting {{primary_target_planet}}",
+    overview: level === "madlib_fallback" ? genericOverview : activationOverview(patternType),
+    sections: [
+      { id: "current_emphasis", template: "This is temporary contact with a natal setup you already have, so it may make something familiar easier to notice for a while.", required: true },
+      { id: "transit_trigger", template: "{{primary_moving_body}} is making {{primary_aspect_with_article}} to {{primary_target_planet}}, close by {{primary_orb}}.", required: true },
+      { id: "transit_trigger", template: "There is also contact from {{additional_moving_bodies}}, so read this as one combined moment rather than separate unrelated hits.", required: false, conditions: [{ slot: "additional_moving_bodies", exists: true }] },
+      { id: "pattern_role", template: activationRoleTemplate(patternType), required: true },
+      { id: "linked_patterns", template: "{{primary_target_planet}} also belongs to {{linked_pattern_names}}, so several connected parts of the chart may feel more noticeable at the same time without being equally loud.", required: false, conditions: [{ slot: "linked_pattern_names", exists: true }] },
+      { id: "timing", template: TIMING_LANGUAGE.exact, required: false, conditions: [{ slot: "timing_state", equals: "exact" }] },
+      { id: "timing", template: TIMING_LANGUAGE.applying, required: false, conditions: [{ slot: "timing_state", equals: "applying" }] },
+      { id: "timing", template: TIMING_LANGUAGE.separating, required: false, conditions: [{ slot: "timing_state", equals: "separating" }] },
+      { id: "timing", template: TIMING_LANGUAGE.mixed, required: false, conditions: [{ slot: "timing_state", equals: "mixed" }] },
+      { id: "watch_for", template: activationWatchForTemplate(patternType), required: true },
+      { id: "confidence_note", template: "This is a wider natal pattern, so the connection may be less consistent or less obvious.", required: false, conditions: [{ slot: "pattern_confidence", equals: "wide" }] },
+      { id: "confidence_note", template: "This is a partial natal pattern, so the connection may be less consistent or less obvious.", required: false, conditions: [{ slot: "pattern_confidence", equals: "partial" }] }
+    ]
+  };
+  return base;
+}
+
+function activationOverview(patternType) {
+  if (patternType === "t_square") return "{{primary_moving_body}} is contacting the {{primary_target_role}} in your T-square, so you may notice more around how this pattern handles pressure.";
+  if (patternType === "grand_square") return "{{primary_moving_body}} is contacting one member of your Grand Square, so one doorway into the wider four-part setup may stand out for now.";
+  if (patternType === "grand_trine") return "{{primary_moving_body}} may make an already familiar response inside your Grand Trine easier to notice or use.";
+  if (patternType === "kite") return "{{primary_moving_body}} is contacting your Kite without removing either part of its structure: the underlying Grand Trine and the opposition.";
+  if (patternType === "yod") return "{{primary_moving_body}} may make the timing and adjustment work in your Yod more noticeable without making it a fixed outcome.";
+  if (patternType === "mystic_rectangle") return "{{primary_moving_body}} is contacting one part of the two-opposition structure in your Mystic Rectangle.";
+  return "{{primary_moving_body}} is contacting {{primary_target_planet}}, which may make your {{pattern_name}} easier to notice for now.";
+}
+
+function activationRoleTemplate(patternType) {
+  if (patternType === "t_square") return "{{primary_target_planet}} is the {{primary_target_role}} here. That helps show where you may notice the pressure first, and how you may start responding to it.";
+  if (patternType === "grand_square") return "{{primary_target_planet}} is one member of the four-part configuration. That does not make it the single outlet or reduce the wider setup to one component.";
+  if (patternType === "grand_trine") return "{{primary_target_planet}} belongs to a lower-friction natal circuit, so the contact may highlight a response that is already familiar.";
+  if (patternType === "kite") return "{{primary_target_planet}} is the {{primary_target_role}} in this Kite. The Grand Trine and the opposition both remain part of what you are noticing.";
+  if (patternType === "yod") return "{{primary_target_planet}} is the {{primary_target_role}} here, so the contact may bring more attention to timing, adjustment, and coordination.";
+  if (patternType === "mystic_rectangle") return "{{primary_target_planet}} is part of one opposition axis in this rectangle, so the contact may bring that side of the structure into focus.";
+  return "{{primary_target_planet}} is the natal target of the current contact.";
+}
+
+function activationWatchForTemplate(patternType) {
+  if (patternType === "grand_square") return "Notice which part of the setup asks for attention first, without assuming every side has the same volume.";
+  if (patternType === "grand_trine") return "Notice whether a familiar response is easier to reach, without turning that into a promise of luck or success.";
+  if (patternType === "kite") return "Notice how the opposition gives direction to the easier Grand Trine movement.";
+  if (patternType === "yod") return "Notice repeated adjustment rather than looking for one final answer.";
+  if (patternType === "mystic_rectangle") return "Notice the contacted opposition without assuming automatic balance or resolution.";
+  return "Notice how this contact draws attention to an existing natal setup without changing it.";
 }
 
 function resolveAspectPatternCopy(context, options = {}) {
@@ -2288,11 +2692,51 @@ function patternNameFromId(patternId) {
   return match ? PATTERN_DISPLAY_NAMES[match[1]] || titleToken(match[1]) : "related pattern";
 }
 
+function patternNameListFromIds(patternIds) {
+  const counts = new Map();
+  for (const patternId of patternIds) {
+    const name = patternNameFromId(patternId);
+    counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  return [...counts.entries()].map(([name, count]) => count > 1 ? `${numberWord(count)} ${pluralizePatternName(name)}` : name);
+}
+
+function pluralizePatternName(name) {
+  if (name.endsWith("s")) return name;
+  return `${name}s`;
+}
+
+function numberWord(value) {
+  return {
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five",
+    6: "six"
+  }[value] || String(value);
+}
+
+function degreePhrase(value) {
+  const formatted = formatCopyNumber(value);
+  return `${formatted} ${Number(formatted) === 1 ? "degree" : "degrees"}`;
+}
+
+function articleFor(value) {
+  return /^[aeiou]/i.test(String(value)) ? "an" : "a";
+}
+
 function titleToken(value) {
   return String(value || "")
     .replace(/_/g, " ")
     .replace(/-/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function lowerToken(value) {
+  return String(value || "")
+    .replace(/_/g, " ")
+    .replace(/-/g, " ")
+    .toLowerCase();
 }
 
 function pairLabel(value) {
@@ -2332,16 +2776,21 @@ function formatCopyNumber(value) {
 module.exports = {
   ASPECT_PATTERN_ACTIVATION_VERSION,
   ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION,
+  ASPECT_PATTERN_ACTIVATION_CONTENT_LEVELS,
+  ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION,
   ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
   ASPECT_PATTERN_CONTENT_LEVELS,
   ASPECT_PATTERN_COPY_RESOLVER_VERSION,
   ASPECT_PATTERN_DETECTOR_VERSION,
   APPROVED_COPY_SLOTS,
+  APPROVED_ACTIVATION_COPY_SLOTS,
   AUTHORED_ASPECT_PATTERN_RECORDS,
+  AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS,
   DEFAULT_ACTIVATION_POLICY,
   DEFAULT_ORB_POLICY,
   DEFAULT_RANKING_POLICY,
   GOVERNED_COPY_RECORDS,
+  GOVERNED_ACTIVATION_COPY_RECORDS,
   PATTERN_COPY_JOBS,
   PLANET_IDS,
   SUPPORTED_ASPECTS,
@@ -2363,6 +2812,9 @@ module.exports = {
   rankAspectPatterns,
   resolveAspectPatternCopies,
   resolveAspectPatternCopy,
+  resolveAspectPatternActivationCopies,
+  resolveAspectPatternActivationCopy,
+  validateAspectPatternActivationCopyRecord,
   validateAuthoredAspectPatternRecord,
   validateAspectPatternCopyRecord
 };

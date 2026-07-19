@@ -342,6 +342,9 @@ export interface AspectPatternActivationInterpretationContext {
     parentPatternIds: string[];
     childPatternIds: string[];
   };
+  natalPattern?: {
+    confidence: "exact" | "strong" | "wide" | "partial";
+  };
   triggers: Array<{
     activationId: string;
     sourceAspectId?: string;
@@ -387,6 +390,116 @@ export interface AspectPatternActivationInterpretationContext {
     activationPolicyId: string;
     natalContextBuilderVersion: string;
     activationContextBuilderVersion: string;
+  };
+}
+
+export type AspectPatternActivationContentLevel =
+  | "authored"
+  | "source_grounded_template"
+  | "madlib_fallback"
+  | "emergency_fallback";
+
+export interface ActivationCopyCondition {
+  slot: keyof AspectPatternActivationCopySlots | string;
+  exists?: boolean;
+  equals?: string | number | boolean;
+}
+
+export interface AspectPatternActivationCopySlots {
+  pattern_name: string;
+  primary_moving_body: string;
+  primary_target_planet: string;
+  primary_aspect_name: string;
+  primary_aspect_with_article: string;
+  primary_target_role?: string;
+  primary_orb: string;
+  trigger_count: number;
+  additional_moving_bodies?: string;
+  targeted_planets: string;
+  timing_state: ActivationTimingState;
+  exact_at?: string;
+  shared_planet_fanout: boolean;
+  linked_pattern_names?: string;
+  parent_pattern_name?: string;
+  child_pattern_names?: string;
+  pattern_confidence: "exact" | "strong" | "wide" | "partial";
+  is_currently_primary: boolean;
+}
+
+export interface AspectPatternActivationCopyRecord {
+  id: string;
+  version: string;
+  patternType: AspectPatternType;
+  contentLevel: AspectPatternActivationContentLevel;
+  status: "draft" | "reviewed" | "approved" | "deprecated";
+  eligibility: {
+    timingStates?: ActivationTimingState[];
+    patternConfidence?: Array<"exact" | "strong" | "wide" | "partial">;
+    triggerCount?: { min?: number; max?: number };
+    requiresSharedPlanetFanout?: boolean;
+    allowedTargetRoles?: string[];
+  };
+  content: {
+    eyebrow?: string;
+    headline: string;
+    overview: string;
+    sections: Array<{
+      id:
+        | "current_emphasis"
+        | "transit_trigger"
+        | "pattern_role"
+        | "linked_patterns"
+        | "timing"
+        | "watch_for"
+        | "confidence_note";
+      template: string;
+      required: boolean;
+      conditions?: ActivationCopyCondition[];
+    }>;
+  };
+  languageRules: {
+    certainty: "qualified";
+    prohibitedClaims: string[];
+    prohibitedTerms?: string[];
+  };
+  provenance: {
+    sourceIds: string[];
+    editorialStatus: "source_grounded" | "editorial_synthesis";
+    reviewedBy?: string;
+    reviewedAt?: string;
+  };
+}
+
+export interface ResolvedAspectPatternActivationCopy {
+  patternId: string;
+  patternType: AspectPatternType;
+  calculatedFor: string;
+  source: {
+    recordId: string;
+    contentLevel: AspectPatternActivationContentLevel;
+    status: string;
+    resolverVersion: string;
+  };
+  triggerSummary: {
+    primaryActivationId: string;
+    triggerCount: number;
+    movingBodies: string[];
+    targetedNatalPlanets: string[];
+    timingState: ActivationTimingState;
+  };
+  content: {
+    eyebrow?: string;
+    headline: string;
+    overview: string;
+    sections: Array<{ id: string; body: string }>;
+  };
+  diagnostics: {
+    templateId: string;
+    usedFallback: boolean;
+    missingSlots: string[];
+    skippedSections: string[];
+    validationWarnings: string[];
+    attemptedRecordIds?: string[];
   };
 }
 
@@ -628,13 +741,18 @@ export const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION: string;
 export const ASPECT_PATTERN_COPY_RESOLVER_VERSION: string;
 export const ASPECT_PATTERN_ACTIVATION_VERSION: string;
 export const ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION: string;
+export const ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION: string;
+export const ASPECT_PATTERN_ACTIVATION_CONTENT_LEVELS: readonly AspectPatternActivationContentLevel[];
 export const ASPECT_PATTERN_CONTENT_LEVELS: readonly AspectPatternContentLevel[];
+export const APPROVED_ACTIVATION_COPY_SLOTS: readonly string[];
 export const APPROVED_COPY_SLOTS: readonly string[];
+export const AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS: readonly AspectPatternActivationCopyRecord[];
 export const AUTHORED_ASPECT_PATTERN_RECORDS: readonly AuthoredAspectPatternRecord[];
 export const DEFAULT_ACTIVATION_POLICY: PatternActivationPolicy;
 export const DEFAULT_ORB_POLICY: OrbPolicy;
 export const DEFAULT_RANKING_POLICY: PatternRankingPolicy;
 export const GOVERNED_COPY_RECORDS: readonly AspectPatternCopyRecord[];
+export const GOVERNED_ACTIVATION_COPY_RECORDS: readonly AspectPatternActivationCopyRecord[];
 export const PATTERN_COPY_JOBS: Readonly<Record<AspectPatternType, PatternCopyJob>>;
 export const PLANET_IDS: readonly PlanetId[];
 export const SUPPORTED_ASPECTS: readonly AspectType[];
@@ -681,6 +799,25 @@ export function resolveAspectPatternCopies(
   contexts: AspectPatternInterpretationContext[],
   options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[] }
 ): ResolvedAspectPatternCopy[];
+export function resolveAspectPatternActivationCopy(
+  context: AspectPatternActivationInterpretationContext,
+  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: AspectPatternActivationCopyRecord[] }
+): ResolvedAspectPatternActivationCopy;
+export function resolveAspectPatternActivationCopies(
+  contexts: AspectPatternActivationInterpretationContext[],
+  options?: { records?: AspectPatternActivationCopyRecord[]; authoredRecords?: AspectPatternActivationCopyRecord[] }
+): ResolvedAspectPatternActivationCopy[];
+export function validateAspectPatternActivationCopyRecord(
+  record: AspectPatternActivationCopyRecord,
+  context: AspectPatternActivationInterpretationContext,
+  slots?: Partial<AspectPatternActivationCopySlots>
+): {
+  ok: boolean;
+  errors: string[];
+  warnings: string[];
+  missingSlots: string[];
+  unknownSlots: string[];
+};
 export function validateAuthoredAspectPatternRecord(
   record: AuthoredAspectPatternRecord,
   context: AspectPatternInterpretationContext,

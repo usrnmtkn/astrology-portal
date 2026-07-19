@@ -1,0 +1,76 @@
+{
+  "fixtureId": "emergency-t_square",
+  "activationContextId": "activation-context:2026-07-19T12:00:00.000Z:aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+  "patternType": "t_square",
+  "primaryTrigger": {
+    "movingBody": "mars",
+    "targetNatalPlanet": "mars",
+    "aspectType": "square",
+    "orb": 0.2,
+    "applying": true,
+    "targetRole": "apex"
+  },
+  "triggerCount": 1,
+  "targetRole": "apex",
+  "timingState": "applying",
+  "natalConfidence": "exact",
+  "triggerMode": "single",
+  "selectedContentLevel": "emergency_fallback",
+  "templateId": "aspect-pattern-activation-copy:emergency:t_square:v1",
+  "resolverVersion": "aspect_pattern_activation_copy_resolver_v1",
+  "resolvedCopy": {
+    "patternId": "aspect-pattern:t_square:sun-moon:apex-mars",
+    "patternType": "t_square",
+    "calculatedFor": "2026-07-19T12:00:00.000Z",
+    "source": {
+      "recordId": "aspect-pattern-activation-copy:emergency:t_square:v1",
+      "contentLevel": "emergency_fallback",
+      "status": "approved",
+      "resolverVersion": "aspect_pattern_activation_copy_resolver_v1"
+    },
+    "triggerSummary": {
+      "primaryActivationId": "activation.aspect_pattern_activation_v1.2026-07-19T12:00:00.000Z.mars.square.mars.aspect-pattern:t_square:sun-moon:apex-mars",
+      "triggerCount": 1,
+      "movingBodies": [
+        "mars"
+      ],
+      "targetedNatalPlanets": [
+        "mars"
+      ],
+      "timingState": "applying"
+    },
+    "content": {
+      "eyebrow": "T-square in motion",
+      "headline": "Mars is contacting Mars",
+      "overview": "Mars is making a square to Mars, which may make your T-square easier to notice for now.",
+      "sections": [
+        {
+          "id": "current_emphasis",
+          "body": "This is a temporary note about an existing natal setup."
+        },
+        {
+          "id": "timing",
+          "body": "This contact is still building."
+        }
+      ]
+    },
+    "diagnostics": {
+      "templateId": "aspect-pattern-activation-copy:emergency:t_square:v1",
+      "usedFallback": true,
+      "missingSlots": [],
+      "skippedSections": [
+        "timing"
+      ],
+      "validationWarnings": [],
+      "attemptedRecordIds": [
+        "aspect-pattern-activation-copy:emergency:t_square:v1"
+      ]
+    }
+  },
+  "missingSlots": [],
+  "skippedSections": [
+    "timing"
+  ],
+  "validationWarnings": []
+}

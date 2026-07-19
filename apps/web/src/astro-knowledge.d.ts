@@ -285,6 +285,7 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     }>;
     currentDisplayOrder: string[];
     interpretationContexts?: AspectPatternActivationInterpretationContext[];
+    resolvedCopy?: ResolvedAspectPatternActivationCopy[];
   };
 
   export type AspectPatternActivationInterpretationContext = {
@@ -294,12 +295,28 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     natalInterpretationContextId: string;
     calculatedFor: string;
     display: Record<string, unknown>;
+    natalPattern?: Record<string, unknown>;
     triggers: Array<Record<string, unknown>>;
     primaryTrigger: Record<string, unknown>;
     activationSummary: Record<string, unknown>;
     ranking: Record<string, unknown>;
     copyInstructions: Record<string, unknown>;
     provenance: Record<string, unknown>;
+  };
+
+  export type ResolvedAspectPatternActivationCopy = {
+    patternId: string;
+    patternType: AspectPatternType;
+    calculatedFor: string;
+    source: Record<string, unknown>;
+    triggerSummary: Record<string, unknown>;
+    content: {
+      eyebrow?: string;
+      headline: string;
+      overview: string;
+      sections: Array<{ id: string; body: string }>;
+    };
+    diagnostics: Record<string, unknown>;
   };
 
   export type AspectPatternInterpretationContext = {
@@ -381,6 +398,10 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     contexts: AspectPatternInterpretationContext[]
   ): ResolvedAspectPatternCopy[];
 
+  export function resolveAspectPatternActivationCopies(
+    contexts: AspectPatternActivationInterpretationContext[]
+  ): ResolvedAspectPatternActivationCopy[];
+
   const aspectPatternEngine: {
     detectPatterns: typeof detectPatterns;
     rankAspectPatterns: typeof rankAspectPatterns;
@@ -388,6 +409,7 @@ declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
     buildAspectPatternActivationInterpretationContexts: typeof buildAspectPatternActivationInterpretationContexts;
     buildPatternActivations: typeof buildPatternActivations;
     resolveAspectPatternCopies: typeof resolveAspectPatternCopies;
+    resolveAspectPatternActivationCopies: typeof resolveAspectPatternActivationCopies;
   };
 
   export default aspectPatternEngine;
