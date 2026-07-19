@@ -7,6 +7,8 @@ import { createServer } from "vite";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
 const {
+  buildAspectPatternActivationInterpretationContexts,
+  buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   detectPatterns,
   rankAspectPatterns
@@ -17,11 +19,21 @@ const calculatedFor = "2026-07-19T12:00:00.000Z";
 
 function rankedDetection(fixture, context = {}) {
   const detection = detectPatterns(fixture);
-  return {
+  const ranked = {
     ...detection,
     ranking: rankAspectPatterns(detection, {
       planets: fixture.planets,
       ascendantSign: "aries",
+      ...context
+    })
+  };
+  return {
+    ...ranked,
+    interpretationContexts: buildAspectPatternInterpretationContexts(ranked, {
+      planets: fixture.planets,
+      ascendantSign: "aries",
+      ascendantLongitude: 0,
+      midheavenLongitude: 270,
       ...context
     })
   };
@@ -57,6 +69,47 @@ function patternIdsOfType(detection, type) {
   assert.ok(output.activations[0].trigger.targetRoles.includes("apex"));
   assert.ok(output.activations[0].reasons.some((reason) => reason.code === "targets_apex"));
   assert.equal(output.currentDisplayOrder.length, 1);
+}
+
+{
+  const detection = rankedDetection(fixtures.t_square);
+  const activation = buildPatternActivations(detection, [
+    transit({ id: "transit.saturn.square.mars", movingBody: "saturn", targetNatalPlanet: "mars", aspectType: "square", orb: 0.8, applying: false }),
+    transit({ id: "transit.mars.square.mars", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 0.2, applying: true })
+  ], { calculatedFor });
+  const contexts = buildAspectPatternActivationInterpretationContexts({ ...detection, activation });
+  assert.equal(contexts.length, 1, "Multiple hits to one pattern should aggregate into one context.");
+  assert.equal(contexts[0].triggers.length, 2);
+  assert.equal(contexts[0].primaryTrigger.activationId.includes("mars.square.mars"), true);
+  assert.equal(contexts[0].primaryTrigger.selectionReason, "highest_activation_score");
+  assert.deepEqual(contexts[0].activationSummary.movingBodies, ["mars", "saturn"]);
+  assert.equal(contexts[0].activationSummary.timingState, "mixed");
+  assert.equal(contexts[0].copyInstructions.allowedCertainty, "qualified");
+  assert.ok(contexts[0].provenance.activationContextBuilderVersion);
+  assert.doesNotMatch(JSON.stringify(contexts), /\b(headline|overview|paragraph|reader|phrasebank)\b/i);
+}
+
+{
+  const detection = rankedDetection(fixtures.t_square);
+  const base = buildPatternActivations(detection, [
+    transit({ id: "transit.tie.a", movingBody: "venus", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: true }),
+    transit({ id: "transit.tie.b", movingBody: "mars", targetNatalPlanet: "mars", aspectType: "square", orb: 1, applying: false })
+  ], { calculatedFor });
+  const activation = {
+    ...base,
+    activations: base.activations.map((item) => ({
+      ...item,
+      score: { ...item.score, total: 10 }
+    }))
+  };
+  const contexts = buildAspectPatternActivationInterpretationContexts({ ...detection, activation });
+  assert.equal(contexts[0].primaryTrigger.selectionReason, "applying_over_separating");
+}
+
+{
+  const detection = rankedDetection(fixtures.t_square);
+  const activation = buildPatternActivations(detection, [], { calculatedFor });
+  assert.deepEqual(buildAspectPatternActivationInterpretationContexts({ ...detection, activation }), []);
 }
 
 {
@@ -206,6 +259,11 @@ try {
   assert.ok(present.sky.aspectPatterns.activation);
   assert.equal(present.aspectPatterns, present.sky.aspectPatterns);
   assert.equal(present.sky.aspectPatterns.activation.activations.length, 1);
+  assert.equal("interpretationContexts" in present.sky.aspectPatterns.activation, false);
+  const presentWithContexts = buildAstrologyFactsApiResponse(baseSky, true, false, true, true).body;
+  assert.ok(presentWithContexts.sky.aspectPatterns.activation.interpretationContexts);
+  assert.equal(presentWithContexts.sky.aspectPatterns.activation.interpretationContexts.length, 1);
+  assert.equal(presentWithContexts.sky.aspectPatterns.activation.interpretationContexts[0].triggers.length, 1);
   assert.deepEqual(present.sky.aspectPatterns.ranking.displayOrder, absent.sky.aspectPatterns.ranking.displayOrder);
 
   const noPatterns = buildAstrologyFactsApiResponse(snapshotFromFixture(fixtures.invalid_near_pattern, [transit()]), true, false, true).body;

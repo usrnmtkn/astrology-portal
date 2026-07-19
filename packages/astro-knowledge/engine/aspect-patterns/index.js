@@ -57,10 +57,26 @@ const ASPECT_PATTERN_DETECTOR_VERSION = "aspect_pattern_detector_v1";
 const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION = "aspect_pattern_interpretation_context_v1";
 const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "aspect_pattern_copy_resolver_v1";
 const ASPECT_PATTERN_ACTIVATION_VERSION = "aspect_pattern_activation_v1";
+const ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION = "aspect_pattern_activation_interpretation_context_v1";
 
 const PERSONAL_PLANETS = new Set(["mercury", "venus", "mars"]);
 const LUMINARIES = new Set(["sun", "moon"]);
 const ANGULAR_ORB_DEGREES = 5;
+const ACTIVATION_CONTEXT_COPY_JOBS = Object.freeze([
+  "describe_current_emphasis",
+  "name_transit_trigger",
+  "explain_target_planet_role",
+  "describe_timing_state"
+]);
+const ACTIVATION_CONTEXT_SHARED_COPY_JOB = "explain_shared_planet_fanout";
+const ACTIVATION_CONTEXT_STRUCTURE_COPY_JOB = "preserve_parent_child_structure";
+const ACTIVATION_CONTEXT_AVOID_CLAIMS = Object.freeze([
+  "do_not_predict_event",
+  "do_not_change_natal_geometry",
+  "do_not_treat_activation_as_permanent",
+  "do_not_claim_every_linked_pattern_is_equally_noticeable",
+  "do_not_treat_score_as_life_importance"
+]);
 const DEFAULT_ACTIVATION_POLICY = Object.freeze({
   id: "aspect_pattern_activation_v1",
   version: "1.0.0",
@@ -1480,6 +1496,166 @@ function buildPatternActivations(detectionResult, transitAspects = [], options =
   };
 }
 
+function buildAspectPatternActivationInterpretationContexts(detectionResult, options = {}) {
+  const activation = options.activation || (detectionResult && detectionResult.activation) || {};
+  const activations = Array.isArray(activation.activations) ? activation.activations : [];
+  const currentRankings = Array.isArray(activation.currentRankings) ? activation.currentRankings : [];
+  const currentDisplayOrder = Array.isArray(activation.currentDisplayOrder) ? activation.currentDisplayOrder : [];
+  const natalContexts = Array.isArray(options.natalContexts)
+    ? options.natalContexts
+    : Array.isArray(detectionResult && detectionResult.interpretationContexts)
+      ? detectionResult.interpretationContexts
+      : [];
+  const patterns = Array.isArray(detectionResult && detectionResult.patterns) ? detectionResult.patterns : [];
+  const relationships = Array.isArray(detectionResult && detectionResult.relationships) ? detectionResult.relationships : [];
+  const ranking = (detectionResult && detectionResult.ranking) || {};
+  const rankingDisplayOrder = Array.isArray(ranking.displayOrder) ? ranking.displayOrder : natalContexts.map((context) => context.patternId);
+  const patternById = new Map(patterns.map((pattern) => [pattern.id, pattern]));
+  const natalContextByPatternId = new Map(natalContexts.map((context) => [context.patternId, context]));
+  const currentRankingByPatternId = new Map(currentRankings.map((item) => [item.patternId, item]));
+  const activationsByPatternId = new Map();
+
+  for (const item of activations) {
+    if (!item || !item.patternId) continue;
+    const group = activationsByPatternId.get(item.patternId) || [];
+    group.push(item);
+    activationsByPatternId.set(item.patternId, group);
+  }
+
+  const activatedPatternIds = unique(
+    currentDisplayOrder.filter((patternId) => activationsByPatternId.has(patternId))
+      .concat([...activationsByPatternId.keys()].sort())
+  );
+
+  return activatedPatternIds.map((patternId) => {
+    const triggers = activationsByPatternId.get(patternId).slice().sort(compareActivationRecordsForPrimary);
+    const primary = triggers[0];
+    const natalContext = natalContextByPatternId.get(patternId);
+    const pattern = patternById.get(patternId) || {};
+    const currentRanking = currentRankingByPatternId.get(patternId) || {
+      natalBasePriority: 0,
+      activationScore: 0,
+      currentDisplayPriority: 0
+    };
+    const parentPatternIds = natalContext?.display?.parentPatternIds
+      ? natalContext.display.parentPatternIds.slice().sort()
+      : relationshipPatternIds(relationships, patternId, "parent");
+    const childPatternIds = natalContext?.display?.childPatternIds
+      ? natalContext.display.childPatternIds.slice().sort()
+      : relationshipPatternIds(relationships, patternId, "child");
+    const linkedPatternIds = unique(triggers.flatMap((trigger) => Array.isArray(trigger.linkedPatternIds) ? trigger.linkedPatternIds : [])).sort();
+    const triggerContexts = triggers.map(triggerContextFromActivation);
+    const jobs = activationContextJobs(linkedPatternIds, parentPatternIds, childPatternIds);
+
+    return {
+      version: "1.0.0",
+      patternId,
+      patternType: natalContext?.patternType || pattern.type || "unknown",
+      natalInterpretationContextId: natalContext?.patternId || patternId,
+      calculatedFor: activation.calculatedFor || primary.calculatedFor,
+      display: {
+        natalRank: rankForPatternId(rankingDisplayOrder, patternId),
+        currentRank: rankForPatternId(currentDisplayOrder, patternId),
+        isCurrentlyPrimary: rankForPatternId(currentDisplayOrder, patternId) === 1,
+        parentPatternIds,
+        childPatternIds
+      },
+      triggers: triggerContexts,
+      primaryTrigger: {
+        activationId: primary.id,
+        selectionReason: primaryTriggerSelectionReason(primary, triggers)
+      },
+      activationSummary: {
+        triggerCount: triggers.length,
+        movingBodies: unique(triggers.map((trigger) => trigger.trigger.movingBody)).sort(),
+        targetedNatalPlanets: unique(triggers.map((trigger) => trigger.trigger.targetNatalPlanet)).sort(),
+        targetedRoles: unique(triggers.flatMap((trigger) => trigger.trigger.targetRoles || [])).sort(),
+        linkedPatternIds,
+        timingState: activationTimingState(triggers, primary),
+        sharedPlanetFanout: linkedPatternIds.length > 0 && triggers.some((trigger) => (
+          Array.isArray(trigger.reasons) && trigger.reasons.some((reason) => reason.code === "targets_repeated_planet")
+        ))
+      },
+      ranking: {
+        natalBasePriority: roundNumber(currentRanking.natalBasePriority || 0),
+        activationScore: roundNumber(currentRanking.activationScore || 0),
+        currentDisplayPriority: roundNumber(currentRanking.currentDisplayPriority || 0)
+      },
+      copyInstructions: {
+        jobs,
+        avoidClaims: ACTIVATION_CONTEXT_AVOID_CLAIMS.slice(),
+        allowedCertainty: "qualified"
+      },
+      provenance: {
+        detectorVersion: ASPECT_PATTERN_DETECTOR_VERSION,
+        rankingPolicyId: ranking.policyId || DEFAULT_RANKING_POLICY.id,
+        activationPolicyId: activation.policyId || DEFAULT_ACTIVATION_POLICY.id,
+        natalContextBuilderVersion: ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
+        activationContextBuilderVersion: ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION
+      }
+    };
+  });
+}
+
+function compareActivationRecordsForPrimary(first, second) {
+  return (second.score?.total || 0) - (first.score?.total || 0)
+    || (first.trigger?.orb || 0) - (second.trigger?.orb || 0)
+    || Number(Boolean(second.trigger?.applying)) - Number(Boolean(first.trigger?.applying))
+    || String(first.id).localeCompare(String(second.id));
+}
+
+function triggerContextFromActivation(activation) {
+  return {
+    activationId: activation.id,
+    ...(activation.trigger.sourceAspectId ? { sourceAspectId: activation.trigger.sourceAspectId } : {}),
+    movingBody: activation.trigger.movingBody,
+    targetNatalPlanet: activation.trigger.targetNatalPlanet,
+    targetRoles: Array.isArray(activation.trigger.targetRoles) ? activation.trigger.targetRoles.slice().sort() : [],
+    aspectType: activation.trigger.aspectType,
+    orb: activation.trigger.orb,
+    applying: Boolean(activation.trigger.applying),
+    ...(activation.trigger.exactAt ? { exactAt: activation.trigger.exactAt } : {}),
+    score: activation.score?.total || 0,
+    reasons: copyValue(activation.reasons || [])
+  };
+}
+
+function primaryTriggerSelectionReason(primary, triggers) {
+  if (triggers.length <= 1) return "highest_activation_score";
+  const others = triggers.filter((trigger) => trigger.id !== primary.id);
+  const primaryScore = primary.score?.total || 0;
+  const maxOtherScore = Math.max(...others.map((trigger) => trigger.score?.total || 0));
+  if (primaryScore > maxOtherScore) return "highest_activation_score";
+
+  const scoreTied = triggers.filter((trigger) => (trigger.score?.total || 0) === primaryScore);
+  const minOtherOrb = Math.min(...scoreTied.filter((trigger) => trigger.id !== primary.id).map((trigger) => trigger.trigger?.orb ?? Infinity));
+  if ((primary.trigger?.orb ?? Infinity) < minOtherOrb) return "tightest_orb";
+
+  const orbTied = scoreTied.filter((trigger) => (trigger.trigger?.orb ?? Infinity) === (primary.trigger?.orb ?? Infinity));
+  if (primary.trigger?.applying && orbTied.some((trigger) => !trigger.trigger?.applying)) return "applying_over_separating";
+  return "deterministic_tiebreak";
+}
+
+function activationTimingState(triggers, primary) {
+  if (primary && (primary.trigger?.orb === 0 || primary.trigger?.orb <= 0.01)) return "exact";
+  const applyingCount = triggers.filter((trigger) => trigger.trigger?.applying).length;
+  if (applyingCount === triggers.length) return "applying";
+  if (applyingCount === 0) return "separating";
+  return "mixed";
+}
+
+function rankForPatternId(displayOrder, patternId) {
+  const index = displayOrder.indexOf(patternId);
+  return index === -1 ? 0 : index + 1;
+}
+
+function activationContextJobs(linkedPatternIds, parentPatternIds, childPatternIds) {
+  const jobs = ACTIVATION_CONTEXT_COPY_JOBS.slice();
+  if (linkedPatternIds.length > 0) jobs.push(ACTIVATION_CONTEXT_SHARED_COPY_JOB);
+  if (parentPatternIds.length > 0 || childPatternIds.length > 0) jobs.push(ACTIVATION_CONTEXT_STRUCTURE_COPY_JOB);
+  return jobs;
+}
+
 function resolveAspectPatternCopy(context, options = {}) {
   const sourceRecords = Array.isArray(options.records) ? options.records : [];
   const authoredRecords = Array.isArray(options.authoredRecords)
@@ -2155,6 +2331,7 @@ function formatCopyNumber(value) {
 
 module.exports = {
   ASPECT_PATTERN_ACTIVATION_VERSION,
+  ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION,
   ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
   ASPECT_PATTERN_CONTENT_LEVELS,
   ASPECT_PATTERN_COPY_RESOLVER_VERSION,
@@ -2169,6 +2346,7 @@ module.exports = {
   PLANET_IDS,
   SUPPORTED_ASPECTS,
   buildAspectGraph,
+  buildAspectPatternActivationInterpretationContexts,
   buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   buildRelationships,

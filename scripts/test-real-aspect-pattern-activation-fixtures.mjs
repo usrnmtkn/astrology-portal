@@ -4,6 +4,8 @@ import { createServer } from "vite";
 
 const require = createRequire(import.meta.url);
 const {
+  buildAspectPatternActivationInterpretationContexts,
+  buildAspectPatternInterpretationContexts,
   buildPatternActivations,
   detectPatterns,
   rankAspectPatterns
@@ -26,15 +28,19 @@ function outputForCase(fixtureCase) {
     ...detection,
     ranking
   };
+  const interpretationContexts = buildAspectPatternInterpretationContexts(rankedDetection, {
+    planets: natalFixture.input.planets,
+    ...(natalFixture.input.angles ?? {})
+  });
   const activation = buildPatternActivations(
-    rankedDetection,
+    { ...rankedDetection, interpretationContexts },
     fixtureCase.transitToNatalAspects,
     { calculatedFor: fixtureCase.calculatedFor }
   );
   return {
     natalFixture,
     detection,
-    rankedDetection,
+    rankedDetection: { ...rankedDetection, interpretationContexts },
     activation
   };
 }
@@ -124,6 +130,7 @@ for (const fixtureCase of realActivationFixtures.cases) {
   const before = JSON.stringify(rankedDetection);
   const expected = fixtureCase.expected;
   const projected = activationProjection(activation, rankedDetection.ranking.displayOrder);
+  const activationContexts = buildAspectPatternActivationInterpretationContexts({ ...rankedDetection, activation });
 
   assert.deepEqual(
     fixtureCase.natalPatterns.map((pattern) => pattern.id).sort(),
@@ -145,6 +152,14 @@ for (const fixtureCase of realActivationFixtures.cases) {
   assert.equal(JSON.stringify(rankedDetection), before, `${fixtureCase.id} activation mutated natal detection or ranking`);
   assertNoDuplicateActivationIds(fixtureCase, activation);
   assertNoActivationProse(fixtureCase, activation);
+  assert.equal(activationContexts.length, new Set(activation.activations.map((item) => item.patternId)).size, `${fixtureCase.id} should emit one context per activated pattern`);
+  assert.equal(JSON.stringify(rankedDetection), before, `${fixtureCase.id} context builder mutated natal contexts or ranking`);
+  assert.doesNotMatch(JSON.stringify(activationContexts), /\b(headline|overview|paragraph|reader|phrasebank)\b/i, `${fixtureCase.id} context generated prose`);
+  for (const context of activationContexts) {
+    assert.ok(context.provenance.activationContextBuilderVersion, `${fixtureCase.id} context missing provenance`);
+    assert.equal(context.copyInstructions.allowedCertainty, "qualified");
+    assert.ok(context.triggers.length > 0);
+  }
 
   const reversedActivation = buildPatternActivations(
     rankedDetection,
@@ -152,6 +167,11 @@ for (const fixtureCase of realActivationFixtures.cases) {
     { calculatedFor: fixtureCase.calculatedFor }
   );
   assert.equal(JSON.stringify(reversedActivation), JSON.stringify(activation), `${fixtureCase.id} reversed transit order changed output`);
+  assert.equal(
+    JSON.stringify(buildAspectPatternActivationInterpretationContexts({ ...rankedDetection, activation: reversedActivation })),
+    JSON.stringify(activationContexts),
+    `${fixtureCase.id} reversed activation order changed contexts`
+  );
 
   for (const activationRecord of activation.activations) {
     assert.ok(detection.patterns.some((pattern) => pattern.id === activationRecord.patternId), `${fixtureCase.id} activated unknown pattern`);
@@ -163,17 +183,24 @@ for (const fixtureCase of realActivationFixtures.cases) {
 {
   const grandSquareCase = realActivationFixtures.cases.find((item) => item.id === "transit-to-grand-square-member-repeated");
   const { activation } = outputForCase(grandSquareCase);
+  const { rankedDetection } = outputForCase(grandSquareCase);
+  const contexts = buildAspectPatternActivationInterpretationContexts({ ...rankedDetection, activation });
   assert.equal(grandSquareCase.classification, "EXPECTED_OVERLAP");
   assert.equal(activation.activations.length, grandSquareCase.expected.activatedPatternIds.length, "Shared Moon transit must fan out to every containing Grand Square/T-square pattern");
   assert.ok(activation.activations.some((item) => item.patternId.includes("grand_square")));
   assert.ok(activation.activations.some((item) => item.patternId.includes("t_square")));
+  assert.equal(contexts.length, activation.activations.length);
+  assert.ok(contexts.every((context) => context.activationSummary.sharedPlanetFanout));
 }
 
 {
   const kiteCase = realActivationFixtures.cases.find((item) => item.id === "transit-to-kite-resource-planet");
   const { activation } = outputForCase(kiteCase);
+  const { rankedDetection } = outputForCase(kiteCase);
+  const contexts = buildAspectPatternActivationInterpretationContexts({ ...rankedDetection, activation });
   assert.equal(kiteCase.classification, "EXPECTED_OVERLAP");
   assert.deepEqual(activation.activations.map((item) => item.patternId), [kiteGrandTrinePatternId(), kitePatternId()]);
+  assert.deepEqual(contexts.map((context) => context.patternId), [kitePatternId(), kiteGrandTrinePatternId()]);
 }
 
 {
@@ -204,14 +231,17 @@ try {
   const { buildAstrologyFactsApiResponse } = await vite.ssrLoadModule("/api/astrology-facts.ts");
   const apiCase = realActivationFixtures.cases.find((item) => item.id === "transit-to-grand-square-member-repeated");
   const sky = skySnapshotFromCase(apiCase);
-  const direct = aspectPatternsFromSkySnapshot(sky, { includeActivation: true, calculatedFor: apiCase.calculatedFor });
-  const apiBody = buildAstrologyFactsApiResponse(sky, true, false, true).body;
+  const direct = aspectPatternsFromSkySnapshot(sky, { includeActivation: true, includeActivationContexts: true, calculatedFor: apiCase.calculatedFor });
+  const apiBody = buildAstrologyFactsApiResponse(sky, true, false, true, true).body;
   const absent = buildAstrologyFactsApiResponse(sky, true, false, false).body;
+  const activationWithoutContexts = buildAstrologyFactsApiResponse(sky, true, false, true, false).body;
   const noPatterns = buildAstrologyFactsApiResponse(sky, false, false, true).body;
 
   assert.deepEqual(apiBody.sky.aspectPatterns.activation, direct.activation, "API activation output must match direct helper output");
   assert.equal(apiBody.aspectPatterns, apiBody.sky.aspectPatterns, "Top-level alias must match canonical sky.aspectPatterns object");
+  assert.ok(apiBody.sky.aspectPatterns.activation.interpretationContexts, "API should expose activation contexts with the third flag");
   assert.equal("activation" in absent.sky.aspectPatterns, false, "Activation must remain absent without activation flag");
+  assert.equal("interpretationContexts" in activationWithoutContexts.sky.aspectPatterns.activation, false, "Activation contexts must remain absent without context flag");
   assert.equal("aspectPatterns" in noPatterns.sky, false, "Activation flag alone must not add aspectPatterns");
 } finally {
   await vite.close();
