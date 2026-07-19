@@ -133,7 +133,8 @@
 }
 
 .natal-pattern-card__section h4,
-.natal-pattern-card__supporting h4 {
+.natal-pattern-card__supporting h4,
+.natal-pattern-card__activation-section h4 {
   color: var(--card-meta-color);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
@@ -172,6 +173,80 @@
 
 .natal-pattern-card__supporting-item .natal-pattern-card__header {
   padding-top: var(--space-4);
+}
+
+.natal-pattern-card__activation {
+  border-top: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--card-title-color) 12%);
+}
+
+.natal-pattern-card__activation--primary {
+  background: color-mix(in srgb, var(--card-bg) 82%, var(--card-title-color) 18%);
+}
+
+.natal-pattern-card__activation summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  list-style: none;
+  min-height: 58px;
+  padding: var(--space-4) var(--card-padding);
+}
+
+.natal-pattern-card__activation summary::-webkit-details-marker {
+  display: none;
+}
+
+.natal-pattern-card__activation summary span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.natal-pattern-card__activation summary em,
+.natal-pattern-card__activation-eyebrow {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.natal-pattern-card__activation summary strong {
+  color: var(--card-title-color);
+  font-size: var(--type-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  overflow-wrap: anywhere;
+}
+
+.natal-pattern-card__activation-body {
+  border-top: 1px solid color-mix(in srgb, var(--card-border) 80%, transparent);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--card-padding);
+}
+
+.natal-pattern-card__activation-body > p,
+.natal-pattern-card__activation-section p {
+  color: var(--card-body-color);
+  font-size: var(--type-sm);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
+.natal-pattern-card__activation-sections {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.natal-pattern-card__activation-section {
+  display: grid;
+  gap: var(--space-1);
 }
 
 .soul-roadmap-card--button,

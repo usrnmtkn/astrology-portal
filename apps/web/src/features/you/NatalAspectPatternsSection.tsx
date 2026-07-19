@@ -14,8 +14,22 @@ const sectionLabels: Record<string, string> = {
   confidence_note: "Reading note"
 };
 
+const activationSectionLabels: Record<string, string> = {
+  current_emphasis: "Current emphasis",
+  transit_trigger: "Transit trigger",
+  pattern_role: "Pattern role",
+  linked_patterns: "Linked patterns",
+  timing: "Timing",
+  watch_for: "Watch for",
+  confidence_note: "Reading note"
+};
+
 function sectionLabel(sectionId: string) {
   return sectionLabels[sectionId] ?? sectionId.replace(/_/g, " ");
+}
+
+function activationSectionLabel(sectionId: string) {
+  return activationSectionLabels[sectionId] ?? sectionId.replace(/_/g, " ");
 }
 
 function independentItems(items: NatalAspectPatternReaderItem[]) {
@@ -25,6 +39,10 @@ function independentItems(items: NatalAspectPatternReaderItem[]) {
 function childItems(parent: NatalAspectPatternReaderItem, items: NatalAspectPatternReaderItem[]) {
   const childIds = new Set(parent.childPatternIds);
   return items.filter((item) => item.isContained && (childIds.has(item.patternId) || item.parentPatternIds.includes(parent.patternId)));
+}
+
+function hasExpandedActivation(items: NatalAspectPatternReaderItem[]) {
+  return items.some((item) => item.activationExpanded);
 }
 
 export function NatalAspectPatternsSection({
@@ -65,7 +83,7 @@ export function NatalAspectPatternsSection({
         <div className="natal-patterns-stack">
           <PatternCopyCard item={primary} variant="primary" childItems={childItems(primary, items)} />
           {additional.map((item) => (
-            <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId}>
+            <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId} open={item.activationExpanded || hasExpandedActivation(childItems(item, items))}>
               <summary>
                 <span>
                   {item.copy.content.eyebrow ? <em>{item.copy.content.eyebrow}</em> : null}
@@ -133,11 +151,13 @@ function PatternCopyBody({
         </div>
       ) : null}
 
+      <ActiveNowCallout item={item} />
+
       {nestedItems.length > 0 ? (
         <div className="natal-pattern-card__supporting" aria-label="Supporting pattern detail">
           <h4>Supporting pattern detail</h4>
           {nestedItems.map((child) => (
-            <details key={child.patternId} className="natal-pattern-card__supporting-item">
+            <details key={child.patternId} className="natal-pattern-card__supporting-item" open={child.activationExpanded}>
               <summary>
                 <span>{child.copy.content.headline}</span>
                 <ChevronDown size={16} aria-hidden="true" />
@@ -148,6 +168,43 @@ function PatternCopyBody({
         </div>
       ) : null}
     </>
+  );
+}
+
+function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
+  const activation = item.activationCopy?.content;
+  if (!activation) return null;
+
+  const sections = activation.sections.filter((section) => section.body.trim());
+  const calloutClass = [
+    "natal-pattern-card__activation",
+    item.activationEmphasis === "primary" ? "natal-pattern-card__activation--primary" : "natal-pattern-card__activation--secondary"
+  ].join(" ");
+
+  return (
+    <details className={calloutClass} open={item.activationExpanded}>
+      <summary>
+        <span>
+          <em>Active now</em>
+          <strong>{activation.headline}</strong>
+        </span>
+        <ChevronDown size={16} aria-hidden="true" />
+      </summary>
+      <div className="natal-pattern-card__activation-body">
+        {activation.eyebrow ? <span className="natal-pattern-card__activation-eyebrow">{activation.eyebrow}</span> : null}
+        <p>{activation.overview}</p>
+        {sections.length > 0 ? (
+          <div className="natal-pattern-card__activation-sections">
+            {sections.map((section) => (
+              <section key={`${item.patternId}-active-${section.id}-${section.body}`} className="natal-pattern-card__activation-section">
+                <h4>{activationSectionLabel(section.id)}</h4>
+                <p>{section.body}</p>
+              </section>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </details>
   );
 }
 
