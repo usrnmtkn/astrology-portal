@@ -486,6 +486,12 @@ export interface AuthoredAspectPatternActivationRecord {
   content: AspectPatternActivationCopyRecord["content"];
   languageRules: AspectPatternActivationCopyRecord["languageRules"];
   provenance: AspectPatternActivationCopyRecord["provenance"];
+  persistence?: {
+    generatedContentId: string;
+    contentKey: string;
+    updatedAt?: string | null;
+    createdAt?: string | null;
+  };
 }
 
 export interface ResolvedAspectPatternActivationCopy {
@@ -497,6 +503,8 @@ export interface ResolvedAspectPatternActivationCopy {
     contentLevel: AspectPatternActivationContentLevel;
     status: string;
     resolverVersion: string;
+    persistedRecordId?: string;
+    persistedContentKey?: string;
   };
   triggerSummary: {
     primaryActivationId: string;
@@ -710,6 +718,12 @@ export interface AuthoredAspectPatternRecord {
     reviewedBy?: string;
     reviewedAt?: string;
   };
+  persistence?: {
+    generatedContentId: string;
+    contentKey: string;
+    updatedAt?: string | null;
+    createdAt?: string | null;
+  };
 }
 
 export interface ResolvedAspectPatternCopy {
@@ -720,6 +734,8 @@ export interface ResolvedAspectPatternCopy {
     contentLevel: AspectPatternContentLevel;
     status: string;
     resolverVersion: string;
+    persistedRecordId?: string;
+    persistedContentKey?: string;
   };
   content: {
     eyebrow?: string;

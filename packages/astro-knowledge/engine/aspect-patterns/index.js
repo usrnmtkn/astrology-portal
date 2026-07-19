@@ -1712,7 +1712,7 @@ function resolveAspectPatternActivationCopy(context, options = {}) {
 
   for (const record of records) {
     if (!record || record.patternType !== context.patternType) continue;
-    attemptedRecords.push(record.id);
+    if (!attemptedRecords.includes(record.id)) attemptedRecords.push(record.id);
     const result = resolveActivationCopyRecord(context, record);
     if (result) {
       result.diagnostics.attemptedRecordIds = attemptedRecords.slice();
@@ -1843,7 +1843,9 @@ function resolveActivationCopyRecord(context, record, options = {}) {
       recordId: record.id,
       contentLevel: record.contentLevel,
       status: record.status,
-      resolverVersion: ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION
+      resolverVersion: ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION,
+      persistedRecordId: record.persistence && record.persistence.generatedContentId,
+      persistedContentKey: record.persistence && record.persistence.contentKey
     },
     triggerSummary: {
       primaryActivationId: context.primaryTrigger.activationId,
@@ -1865,6 +1867,8 @@ function resolveActivationCopyRecord(context, record, options = {}) {
     }
   };
   if (!resolved.content.eyebrow) delete resolved.content.eyebrow;
+  if (!resolved.source.persistedRecordId) delete resolved.source.persistedRecordId;
+  if (!resolved.source.persistedContentKey) delete resolved.source.persistedContentKey;
   return resolved;
 }
 
@@ -2269,7 +2273,7 @@ function resolveAspectPatternCopy(context, options = {}) {
 
   for (const record of records) {
     if (!record || record.patternType !== context.patternType) continue;
-    attemptedRecords.push(record.id);
+    if (!attemptedRecords.includes(record.id)) attemptedRecords.push(record.id);
     const result = resolveCopyRecord(context, record);
     if (result) {
       result.diagnostics.attemptedRecordIds = attemptedRecords.slice();
@@ -2312,7 +2316,8 @@ function authoredRecordToCopyRecord(record) {
       prohibitedClaims: record.languageRules && record.languageRules.prohibitedClaims,
       prohibitedTerms: record.languageRules && record.languageRules.prohibitedTerms
     },
-    provenance: record.provenance
+    provenance: record.provenance,
+    persistence: record.persistence
   };
 }
 
@@ -2366,7 +2371,9 @@ function resolveCopyRecord(context, record, options = {}) {
       recordId: record.id,
       contentLevel: record.contentLevel,
       status: record.status,
-      resolverVersion: ASPECT_PATTERN_COPY_RESOLVER_VERSION
+      resolverVersion: ASPECT_PATTERN_COPY_RESOLVER_VERSION,
+      persistedRecordId: record.persistence && record.persistence.generatedContentId,
+      persistedContentKey: record.persistence && record.persistence.contentKey
     },
     content: {
       ...content,
@@ -2381,6 +2388,8 @@ function resolveCopyRecord(context, record, options = {}) {
     }
   };
   if (!resolved.content.eyebrow) delete resolved.content.eyebrow;
+  if (!resolved.source.persistedRecordId) delete resolved.source.persistedRecordId;
+  if (!resolved.source.persistedContentKey) delete resolved.source.persistedContentKey;
   return resolved;
 }
 
