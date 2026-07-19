@@ -187,6 +187,7 @@ import {
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
 import {
   fetchNatalAspectPatternsWithCopy,
+  natalAspectPatternActivationEnabled,
   natalAspectPatternReaderEnabled,
   natalAspectPatternReaderItems,
   natalAspectPatternReaderStatus,
@@ -11410,6 +11411,7 @@ export function App() {
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
     : guestHouseSignLabelStyle;
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
+  const showNatalAspectPatternActivation = showNatalAspectPatterns && natalAspectPatternActivationEnabled();
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
@@ -12328,7 +12330,7 @@ export function App() {
         });
 
         if (showNatalAspectPatterns) {
-          fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime)
+          fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime, { includeActivationCopy: showNatalAspectPatternActivation })
             .then((aspectPatterns) => {
               if (cancelled) {
                 return;
@@ -12368,7 +12370,8 @@ export function App() {
     userProfile?.charts[0]?.birthLocation?.timeZone,
     sky?.generatedAt,
     activeSunriseOrbDegrees,
-    showNatalAspectPatterns
+    showNatalAspectPatterns,
+    showNatalAspectPatternActivation
   ]);
 
   useEffect(() => {

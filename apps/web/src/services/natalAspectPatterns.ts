@@ -1,5 +1,5 @@
 import type { LocationInput, SkySnapshot } from "../types";
-import type { AspectPatternDetectionResult, ResolvedAspectPatternCopy } from "@tldr/astro-knowledge/aspect-pattern-engine";
+import type { AspectPatternDetectionResult, ResolvedAspectPatternActivationCopy, ResolvedAspectPatternCopy } from "@tldr/astro-knowledge/aspect-pattern-engine";
 
 type NatalAspectPatternReaderStatus = "loading" | "ready" | "unavailable";
 
@@ -7,6 +7,9 @@ export type NatalAspectPatternReaderItem = {
   patternId: string;
   patternType: string;
   copy: ResolvedAspectPatternCopy;
+  activationCopy?: ResolvedAspectPatternActivationCopy;
+  activationEmphasis: "primary" | "secondary" | "none";
+  activationExpanded: boolean;
   rank: number;
   isContained: boolean;
   parentPatternIds: string[];
@@ -14,6 +17,7 @@ export type NatalAspectPatternReaderItem = {
 };
 
 export const natalAspectPatternReaderFlagStorageKey = "tldrastro:natalAspectPatterns";
+export const natalAspectPatternActivationFlagStorageKey = "tldrastro:natalAspectPatternActivation";
 
 function envFlagEnabled(value: unknown) {
   const normalized = String(value ?? "false").trim().toLowerCase();
@@ -31,9 +35,22 @@ export function natalAspectPatternReaderEnabled() {
   }
 }
 
+export function natalAspectPatternActivationEnabled() {
+  if (!natalAspectPatternReaderEnabled()) return false;
+  if (envFlagEnabled(import.meta.env.VITE_ENABLE_NATAL_ASPECT_PATTERN_ACTIVATION)) return true;
+  if (import.meta.env.PROD) return false;
+
+  try {
+    return envFlagEnabled(window.localStorage.getItem(natalAspectPatternActivationFlagStorageKey));
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchNatalAspectPatternsWithCopy(
   location: LocationInput,
-  date: Date
+  date: Date,
+  options: { includeActivationCopy?: boolean } = {}
 ): Promise<AspectPatternDetectionResult> {
   const params = new URLSearchParams({
     lat: String(location.latitude),
@@ -43,6 +60,12 @@ export async function fetchNatalAspectPatternsWithCopy(
     includeAspectPatterns: "true",
     includeAspectPatternCopy: "true"
   });
+
+  if (options.includeActivationCopy) {
+    params.set("includeAspectPatternActivation", "true");
+    params.set("includeAspectPatternActivationContexts", "true");
+    params.set("includeAspectPatternActivationCopy", "true");
+  }
 
   if (location.timeZone) {
     params.set("timeZone", location.timeZone);
@@ -76,16 +99,27 @@ export function skyWithNatalAspectPatternCopy(
 export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): NatalAspectPatternReaderItem[] {
   const contexts = snapshot?.aspectPatterns?.interpretationContexts ?? [];
   const copies = snapshot?.aspectPatterns?.resolvedCopy ?? [];
+  const activationCopies = snapshot?.aspectPatterns?.activation?.resolvedCopy ?? [];
+  const activationDisplayOrder = snapshot?.aspectPatterns?.activation?.currentDisplayOrder ?? [];
   const contextById = new Map(contexts.map((context) => [context.patternId, context]));
+  const activationCopyById = new Map(activationCopies.map((copy) => [copy.patternId, copy]));
+  const primaryActivePatternId = activationDisplayOrder.find((patternId) => activationCopyById.has(patternId)) ?? activationCopies[0]?.patternId ?? null;
 
   return copies.flatMap((copy) => {
     const context = contextById.get(copy.patternId);
     if (!context) return [];
+    const activationCopy = activationCopyById.get(copy.patternId);
+    const activationEmphasis: NatalAspectPatternReaderItem["activationEmphasis"] = activationCopy
+      ? copy.patternId === primaryActivePatternId ? "primary" : "secondary"
+      : "none";
 
     return [{
       patternId: copy.patternId,
       patternType: copy.patternType,
       copy,
+      activationCopy,
+      activationEmphasis,
+      activationExpanded: Boolean(activationCopy && copy.patternId === primaryActivePatternId),
       rank: context.display.rank,
       isContained: context.display.isContained,
       parentPatternIds: context.display.parentPatternIds.slice(),
