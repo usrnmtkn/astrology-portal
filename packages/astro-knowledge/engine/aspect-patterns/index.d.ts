@@ -155,6 +155,7 @@ export interface AspectPatternDetectionResult {
   ranking?: RankedAspectPatternContext;
   interpretationContexts?: AspectPatternInterpretationContext[];
   resolvedCopy?: ResolvedAspectPatternCopy[];
+  activation?: AspectPatternActivationResult;
 }
 
 export interface PatternRankingPolicy {
@@ -204,6 +205,104 @@ export interface RankedAspectPatternContext {
   policyId: string;
   rankings: RankedAspectPattern[];
   displayOrder: string[];
+}
+
+export type PatternActivationReasonCode =
+  | "exact_or_tight"
+  | "applying"
+  | "targets_apex"
+  | "targets_focal_planet"
+  | "targets_luminary"
+  | "targets_repeated_planet"
+  | "activates_parent_pattern"
+  | "activates_contained_pattern";
+
+export interface TransitToNatalActivationAspect {
+  id?: string;
+  sourceAspectId?: string;
+  movingBody?: string;
+  transitPlanet?: string;
+  transitingPlanet?: string;
+  targetNatalPlanet?: string;
+  natalPoint?: string;
+  natalPlanet?: string;
+  aspectType?: string;
+  type?: string;
+  aspect?: string;
+  orb?: number | string;
+  orbValue?: number;
+  orbDegrees?: number;
+  applying?: boolean;
+  direction?: "applying" | "separating" | string;
+  exactAt?: string;
+  exact_at?: string;
+  bodyA?: string;
+  bodyB?: string;
+  from?: string;
+  to?: string;
+  conditions?: {
+    applying?: boolean;
+  };
+}
+
+export interface PatternActivationPolicy {
+  id: string;
+  version: string;
+  weights: {
+    aspects: Record<string, number>;
+    maximumOrb: number;
+    applying: number;
+    luminary: number;
+    repeatedPlanet: number;
+    parentPattern: number;
+    containedPattern: number;
+    roles: Record<string, number>;
+  };
+}
+
+export interface PatternActivation {
+  id: string;
+  patternId: string;
+  calculatedFor: string;
+  trigger: {
+    movingBody: string;
+    targetNatalPlanet: string;
+    targetRoles: string[];
+    aspectType: string;
+    orb: number;
+    applying: boolean;
+    exactAt?: string;
+    sourceAspectId?: string;
+  };
+  linkedPatternIds: string[];
+  score: {
+    aspectWeight: number;
+    exactnessWeight: number;
+    applyingWeight: number;
+    roleWeight: number;
+    sharedPlanetWeight: number;
+    total: number;
+  };
+  reasons: Array<{
+    code: PatternActivationReasonCode;
+    value: number;
+  }>;
+}
+
+export interface ActivatedPatternRanking {
+  patternId: string;
+  natalBasePriority: number;
+  activationScore: number;
+  currentDisplayPriority: number;
+}
+
+export interface AspectPatternActivationResult {
+  version: string;
+  policyId: string;
+  calculatedFor: string;
+  activations: PatternActivation[];
+  currentRankings: ActivatedPatternRanking[];
+  currentDisplayOrder: string[];
 }
 
 export type AspectPatternMemberRole =
@@ -442,9 +541,11 @@ export interface AspectPatternRankingInput {
 export const ASPECT_PATTERN_DETECTOR_VERSION: string;
 export const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION: string;
 export const ASPECT_PATTERN_COPY_RESOLVER_VERSION: string;
+export const ASPECT_PATTERN_ACTIVATION_VERSION: string;
 export const ASPECT_PATTERN_CONTENT_LEVELS: readonly AspectPatternContentLevel[];
 export const APPROVED_COPY_SLOTS: readonly string[];
 export const AUTHORED_ASPECT_PATTERN_RECORDS: readonly AuthoredAspectPatternRecord[];
+export const DEFAULT_ACTIVATION_POLICY: PatternActivationPolicy;
 export const DEFAULT_ORB_POLICY: OrbPolicy;
 export const DEFAULT_RANKING_POLICY: PatternRankingPolicy;
 export const GOVERNED_COPY_RECORDS: readonly AspectPatternCopyRecord[];
@@ -453,6 +554,7 @@ export const PLANET_IDS: readonly PlanetId[];
 export const SUPPORTED_ASPECTS: readonly AspectType[];
 
 export function normalizeOrbPolicy(policy?: Partial<OrbPolicy>): OrbPolicy;
+export function normalizeActivationPolicy(policy?: Partial<PatternActivationPolicy>): PatternActivationPolicy;
 export function normalizeRankingPolicy(policy?: Partial<PatternRankingPolicy>): PatternRankingPolicy;
 export function detectPatterns(
   input: {
@@ -470,6 +572,14 @@ export function buildAspectPatternInterpretationContexts(
   detectionResult: AspectPatternDetectionResult,
   context?: AspectPatternRankingInput
 ): AspectPatternInterpretationContext[];
+export function buildPatternActivations(
+  detectionResult: AspectPatternDetectionResult,
+  transitAspects?: TransitToNatalActivationAspect[],
+  options?: {
+    calculatedFor?: string;
+    policy?: Partial<PatternActivationPolicy>;
+  }
+): AspectPatternActivationResult;
 export function resolveAspectPatternCopy(
   context: AspectPatternInterpretationContext,
   options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[] }
