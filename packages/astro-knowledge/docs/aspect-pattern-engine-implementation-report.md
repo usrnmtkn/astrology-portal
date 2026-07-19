@@ -12,6 +12,7 @@
 - `packages/astro-knowledge/package.json`
 - `api/_lib/aspect-patterns.ts`
 - `api/astrology-facts.ts`
+- `apps/web/src/services/ephemeris.ts`
 - `apps/web/src/types.ts`
 - `apps/web/src/astro-knowledge.d.ts`
 - `scripts/test-astrology-facts-aspect-patterns.mjs`
@@ -41,6 +42,28 @@ npm run test:timing -w @tldr/astro-knowledge
 - `invalid_near_pattern`: emits no complete pattern.
 - `out_of_sign_grand_trine`: retains the pattern with out-of-sign metadata and warning.
 
+## Base Ranking
+
+The aspect-pattern engine now exports a separate math-only ranking layer:
+
+```text
+rankAspectPatterns(detectionResult, context, policy)
+```
+
+Ranking does not mutate or reorder the canonical `patterns` array. It returns:
+
+- `policyId`
+- one ranking record per detected pattern
+- `displayOrder`
+- separate `geometry`, `natalProminence`, `structuralContext`, and `baseDisplayPriority` scores
+- machine-readable reason codes for all score contributions
+
+The default policy is `natal_pattern_ranking_v1`.
+
+Ranking uses only permanent natal facts: geometry confidence, orb tightness, luminary involvement, personal planets, chart ruler when available, angular proximity when angles are available, repeated planets, and parent/contained pattern relationships. It does not use transits, progressions, current activation, copy, phrasebanks, UI, or admin state.
+
+Charts without birth time remain valid and deterministic. Missing angles and missing Ascendant ruler simply contribute zero prominence.
+
 ## API Exposure
 
 The `/api/astrology-facts` endpoint can include read-only aspect-pattern diagnostics when called with:
@@ -51,10 +74,18 @@ includeAspectPatterns=true
 
 The response adds:
 
-- top-level `aspectPatterns`
 - `sky.aspectPatterns`
+- top-level `aspectPatterns`
+
+`sky.aspectPatterns` is the canonical API location because these are calculated sky facts. The top-level `aspectPatterns` field is a temporary convenience alias that references the same calculated result. The opt-in aspect-pattern payload now includes `ranking`.
 
 Existing responses stay unchanged when the query flag is absent. The API helper consumes already-calculated snapshot positions/aspects and does not calculate planetary positions, rewrite facts, generate copy, rank display, or connect to UI/admin surfaces.
+
+## Quincunx Coverage
+
+The normalized aspect calculator now emits `quincunx` aspects at 150 degrees with a 3-degree orb cap. Existing major aspects keep their 5-degree cap. Aspect records preserve the existing `from`/`to` shape and also include stable `id`, `bodyA`, and `bodyB` fields.
+
+The API contract test verifies a real calculated snapshot for `2026-01-01T12:00:00.000Z` emits quincunxes, including a raw longitude pair greater than 180 degrees that normalizes into a 150-degree angular separation.
 
 ## Known Limitations
 
@@ -63,7 +94,7 @@ Existing responses stay unchanged when the query flag is absent. The API helper 
 - Partial pattern support is limited to supplied aspects that fall within the orb policy tolerance or are explicitly marked partial. Missing-aspect near-patterns are rejected.
 - Mystic Rectangle support is limited to the classical trine/sextile variant in this pass.
 - Geometry confidence uses deterministic thresholding against the configured orb policy. These thresholds can be tuned after fixture review.
-- The current app aspect calculator emits major aspects only, so Yod detection through the API requires quincunx aspects to already be present in the supplied snapshot aspects.
+- The current app aspect calculator emits major aspects plus the 150-degree quincunx required for Yod detection. It still intentionally excludes other minor aspects.
 - The API helper test passes but Vite may print a sandbox-only HMR websocket bind warning.
 
 ## Intentionally Deferred

@@ -9846,6 +9846,7 @@ const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupite
 type CompatibilityWriteupBankEntry = {
   glyph: string;
   match: string;
+  body?: string;
   function: string;
   your_line: string;
   their_line: string;
@@ -9906,7 +9907,7 @@ function compatibilityDashboardWriteupEntry(
   friendSign: string,
   phrasebankWriteup: CompatibilityWriteupBankEntry | null
 ): CompatibilityWriteupBankEntry | null {
-  if (!generatedContent || !phrasebankWriteup) {
+  if (!generatedContent) {
     return null;
   }
 
@@ -9923,20 +9924,46 @@ function compatibilityDashboardWriteupEntry(
     return null;
   }
 
-  const paragraphs = generatedContentParagraphs(dashboardContent);
+  const dashboardParagraphs = generatedContentParagraphs(dashboardContent);
+  const paragraphs = dashboardParagraphs.length >= 4
+    ? dashboardParagraphs
+    : generatedContentSections(dashboardContent).map((section) => section.body);
 
   if (paragraphs.length < 4) {
     return null;
   }
 
+  const comparisonKey = normalizeContentIdPart(comparisonSign);
+  const friendKey = normalizeContentIdPart(friendSign);
+  const sameSign = phrasebankWriteup?.same_sign ?? comparisonKey === friendKey;
+  const fallbackWriteup: CompatibilityWriteupBankEntry = phrasebankWriteup ?? {
+    glyph: pointGlyph(planet),
+    match: `${titleCase(planet)} compatibility`,
+    function: "",
+    your_line: "",
+    their_line: "",
+    same_sign: sameSign,
+    same_sign_line: "",
+    same_sign_quote: null,
+    verdict: "",
+    relationship: "compatibility"
+  };
+
   return {
-    ...phrasebankWriteup,
+    ...fallbackWriteup,
+    body: (dashboardContent.body ?? "")
+      .trim()
+      .split(/\n\n+/)
+      .map((paragraph) => paragraph.trim().replace(/[ \t]+/g, " "))
+      .filter(Boolean)
+      .join("\n\n"),
     function: paragraphs[0],
     your_line: paragraphs[1],
-    their_line: phrasebankWriteup.same_sign ? "" : paragraphs[2],
-    same_sign_line: phrasebankWriteup.same_sign ? paragraphs[2] : "",
+    their_line: sameSign ? "" : paragraphs[2],
+    same_sign: sameSign,
+    same_sign_line: sameSign ? paragraphs[2] : "",
     verdict: paragraphs[3],
-    tier: String(dashboardContent.sourceSnapshot?.tier ?? phrasebankWriteup.tier ?? "dashboard-article"),
+    tier: String(dashboardContent.sourceSnapshot?.tier ?? fallbackWriteup.tier ?? "dashboard-article"),
     status: "LIVE"
   };
 }
@@ -10105,6 +10132,7 @@ function compatibilityPlanetCards(
       goDeeper: {
         glyph: resolvedWriteup.glyph,
         match: resolvedWriteup.match,
+        body: resolvedWriteup.body,
         function: sectionBySlot.get("function") ?? "",
         yourLine: sectionBySlot.get("your-line") ?? "",
         theirLine: sectionBySlot.get("their-line") ?? "",

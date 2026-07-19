@@ -19,6 +19,14 @@ phrasebank/houses.json                  House scene/refine bank (context lane).
 phrasebank/cc-aspect-pair-reviewed.json All 84 cc/aspect-pair rows PROMOTED from EVIDENCE_ONLY_UNTIL_REVIEWED to
                                         REVIEWED_CLAUSE: voiced, decomposed into transit-template slots, seam-cleared,
                                         valence + recommended template tagged. Feeds the §4 transit templates.
+sources/moon-compatibility-library.json 144 resolved directional Moon-to-Moon compatibility records. Feeds
+                                        phrasebank/cc-compatibility-writeups.json via tests/build_compatibility_writeups.py.
+                                        Records with `format: "multi-paragraph"` render only on `\n\n` paragraph
+                                        breaks; never split sentences or semicolons.
+MOON-COMPATIBILITY-CARDS-RESOLVED.md    Editorial-readable companion to the resolved Moon library, with coverage and
+                                        source-review CSVs alongside it.
+TLDR-Compatibility-No-BirthTime-Spec.md  Certainty check and picker flow for no-birth-time compatibility charts,
+                                        especially ambiguous Moon sign dates.
 REVIEW-QUEUE-REPORT.md                  Status of the aspect-pair review queue: what was promoted, how, verification,
                                         editorial sign-off note, and the remaining SOURCE_GAP surface (angles, outer->personal).
 
@@ -53,6 +61,7 @@ python3 tests/build_banks.py > banks.md   # regenerate the vocabulary banks
 ## Core invariants enforced
 
 - Resolve the surface before selecting any prose source.
+- Compatibility records with `format: "multi-paragraph"` render paragraph breaks only where `\n\n` appears. Do not split on sentences or semicolons; replace `{friend}` with the display name every time.
 - Exact planet-in-sign / aspect-pair source first; a house locates the scene, it never emits a keyword paragraph.
 - Sources are evidence; the reader only meets the voiced layer. Compact card copy differs from expanded detail.
 - Missing exact source -> `SOURCE_GAP`. Never compose prose from keywords, prompts, feedback, reports, or raw CHANI copy.

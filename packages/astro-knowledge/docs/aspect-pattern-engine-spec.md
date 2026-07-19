@@ -344,6 +344,72 @@ type AspectPatternDetectionResult = {
 
 IDs and planet ordering must be deterministic. Reversing input aspect order must produce identical IDs and output.
 
+## Base Ranking
+
+Ranking is a separate versioned layer. It must not mutate, reorder, delete, or suppress the canonical `patterns` array.
+
+```ts
+type PatternRankingPolicy = {
+  id: string;
+  version: string;
+  weights: {
+    geometryConfidence: number;
+    tightness: number;
+    luminary: number;
+    personalPlanet: number;
+    angularity: number;
+    chartRuler: number;
+    repeatedPlanet: number;
+    parentPattern: number;
+    containedPattern: number;
+  };
+};
+
+type RankedAspectPattern = {
+  patternId: string;
+  score: {
+    geometry: number;
+    natalProminence: number;
+    structuralContext: number;
+    baseDisplayPriority: number;
+  };
+  reasons: Array<{
+    code:
+      | "tight_geometry"
+      | "contains_sun"
+      | "contains_moon"
+      | "contains_personal_planet"
+      | "contains_chart_ruler"
+      | "planet_near_angle"
+      | "repeated_planet"
+      | "parent_pattern"
+      | "contained_pattern";
+    planet?: string;
+    value: number;
+  }>;
+};
+
+type RankedAspectPatternContext = {
+  policyId: string;
+  rankings: RankedAspectPattern[];
+  displayOrder: string[];
+};
+```
+
+Ranking may use only permanent natal facts:
+
+- geometry confidence and orb tightness
+- Sun and Moon involvement
+- personal-planet involvement
+- chart ruler or Ascendant ruler involvement when available
+- member planet proximity to ASC, MC, DSC, or IC
+- repeated planets across detected patterns
+- parent and child structural relationships
+
+Ranking must not use transits, progressions, current activation, interpretation copy, phrasebank routing, UI state, or admin state.
+
+When birth time is unknown, angularity and Ascendant-ruler contributions are zero. Missing angles do not reduce geometric confidence and do not make a pattern incomplete.
+
 ## Detector Requirements
 
 ### Grand Square
