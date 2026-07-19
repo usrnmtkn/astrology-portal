@@ -131,3 +131,92 @@ declare module "@tldr/astro-knowledge/timing-engine" {
     options?: Record<string, unknown>
   ): ScoredTransit[];
 }
+
+declare module "@tldr/astro-knowledge/aspect-pattern-engine" {
+  export type PlanetId =
+    | "sun"
+    | "moon"
+    | "mercury"
+    | "venus"
+    | "mars"
+    | "jupiter"
+    | "saturn"
+    | "uranus"
+    | "neptune"
+    | "pluto";
+
+  export type AspectPatternType =
+    | "grand_square"
+    | "t_square"
+    | "grand_trine"
+    | "kite"
+    | "yod"
+    | "mystic_rectangle";
+
+  export type AspectType =
+    | "opposition"
+    | "trine"
+    | "square"
+    | "sextile"
+    | "quincunx";
+
+  export type NormalizedPlanet = {
+    id: PlanetId;
+    longitude?: number;
+    sign?: string;
+    house?: number;
+  };
+
+  export type NormalizedAspect = {
+    id: string;
+    pointA: PlanetId;
+    pointB: PlanetId;
+    type: AspectType;
+    exactAngle: number;
+    orb: number;
+    applying?: boolean;
+    outOfSign?: boolean;
+    partial?: boolean;
+  };
+
+  export type AspectPatternDetectionResult = {
+    orbPolicyId: string;
+    patterns: Array<{
+      id: string;
+      type: AspectPatternType;
+      planets: PlanetId[];
+      sourceAspectIds: string[];
+      roles: Record<string, unknown>;
+      derivedPoints: Array<Record<string, unknown>>;
+      geometry: {
+        orbPolicyId: string;
+        maximumOrb: number;
+        averageOrb: number;
+        weakestAspectOrb: number;
+        isOutOfSign: boolean;
+        confidence: "exact" | "strong" | "wide" | "partial";
+        warnings: string[];
+      };
+    }>;
+    relationships: Array<{
+      parentPatternId: string;
+      childPatternId: string;
+      relationship: "contains" | "shares_planet" | "shares_aspect" | "completes";
+    }>;
+    diagnostics: {
+      inputPlanetCount: number;
+      inputAspectCount: number;
+      eligibleAspectCount: number;
+      skippedAspects: Array<{
+        aspectId: string;
+        reason: string;
+      }>;
+      warnings: string[];
+    };
+  };
+
+  export function detectPatterns(input: {
+    planets: NormalizedPlanet[];
+    aspects: NormalizedAspect[];
+  }): AspectPatternDetectionResult;
+}
