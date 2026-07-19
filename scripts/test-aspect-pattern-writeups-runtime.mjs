@@ -15,6 +15,7 @@ const tempContentKeys = [
   `aspect-pattern/natal/t_square/${runId}`,
   `aspect-pattern/activation/t_square/apex/${runId}`
 ];
+const tempRowIds = new Set();
 const liveSupabase = process.env.TLDR_ASTRO_LIVE_SUPABASE_E2E === "true";
 const originalFetch = globalThis.fetch;
 const mockRows = new Map();
@@ -50,8 +51,10 @@ function installMockSupabase() {
     const method = String(options.method ?? "GET").toUpperCase();
     if (method === "GET") {
       const contentKeyFilter = url.searchParams.get("content_key");
+      const idFilter = parseFilter(url, "id");
       const rows = [...mockRows.values()]
         .filter((row) => {
+          if (idFilter && row.id !== idFilter) return false;
           if (!contentKeyFilter) return true;
           if (contentKeyFilter.startsWith("like.")) {
             const prefix = contentKeyFilter.slice("like.".length).replace(/%$/, "");
@@ -203,7 +206,7 @@ function buildGeneratedRow(kind, contentKey, record, reviewer) {
       required: section.required,
       conditions: section.conditions ?? []
     })),
-    block_type: kind === "activation" ? "aspect_pattern_activation_writeup" : "aspect_pattern_natal_writeup",
+    block_type: "synthesis",
     lane: "serving",
     review_state: status === "LIVE" || status === "REVIEWED" ? null : "editorial",
     facts: { kind, patternType: record.patternType, recordId: record.id, testRunId: runId },
@@ -247,6 +250,7 @@ async function insertRow(kind, contentKey, record) {
     body: JSON.stringify(buildGeneratedRow(kind, contentKey, record, "runtime-e2e"))
   });
   assert.ok(Array.isArray(payload) && payload[0]?.id, `Insert did not return a generated_interpretations id for ${contentKey}.`);
+  tempRowIds.add(payload[0].id);
   return payload[0];
 }
 
@@ -260,12 +264,40 @@ async function updateRow(id, kind, contentKey, record) {
   return payload[0];
 }
 
+async function saveViaAdmin(handler, kind, generatedContentId, record) {
+  const response = await invokeHandler(handler, "POST", "/api/admin/aspect-pattern-writeups", {
+    kind,
+    action: "save",
+    generatedContentId,
+    record,
+    reviewer: "runtime-e2e"
+  }, process.env.CONTENT_GENERATION_SECRET ? { authorization: `Bearer ${process.env.CONTENT_GENERATION_SECRET}` } : {});
+  const body = JSON.parse(response.body);
+  assert.equal(response.statusCode, 200, body.error || `Admin save failed for ${generatedContentId}.`);
+  assert.equal(body.ok, true);
+  assert.equal(body.row.id, generatedContentId);
+  return body.row;
+}
+
 async function deleteTempRows() {
+  for (const id of tempRowIds) {
+    await fetch(`${globalThis.runtimeSupabaseUrl}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: globalThis.runtimeHeaders
+    });
+  }
   for (const contentKey of tempContentKeys) {
     await fetch(`${globalThis.runtimeSupabaseUrl}/rest/v1/generated_interpretations?content_key=eq.${encodeURIComponent(contentKey)}`, {
       method: "DELETE",
       headers: globalThis.runtimeHeaders
     });
+  }
+}
+
+async function assertTempNamespaceIsEmpty() {
+  for (const contentKey of tempContentKeys) {
+    const rows = await restJson(`generated_interpretations?select=id,content_key&content_key=eq.${encodeURIComponent(contentKey)}`);
+    assert.equal(rows.length, 0, `Temporary E2E namespace is not empty before test: ${contentKey}`);
   }
 }
 
@@ -304,6 +336,7 @@ async function main() {
     globalThis.runtimeHeaders = repository.aspectPatternWriteupAdminHeaders();
     globalThis.runtimeSupabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
 
+    await assertTempNamespaceIsEmpty();
     await deleteTempRows();
 
     const { default: adminHandler } = await vite.ssrLoadModule("/api/admin/aspect-pattern-writeups.ts");
@@ -344,6 +377,8 @@ async function main() {
 
     const natalRow = await insertRow("natal", tempContentKeys[0], natalDraft);
     const activationRow = await insertRow("activation", tempContentKeys[1], activationDraft);
+    await saveViaAdmin(adminHandler, "natal", natalRow.id, natalDraft);
+    await saveViaAdmin(adminHandler, "activation", activationRow.id, activationDraft);
 
     assert.equal(copyBytes(await resolveNatal(vite, natal)), originalNatalBytes, "Draft Natal row must not change production copy.");
     assert.equal(copyBytes(await resolveActivation(vite, activation)), originalActivationBytes, "Draft activation row must not change production copy.");
@@ -366,15 +401,15 @@ async function main() {
 
     const natalReviewed = { ...natalDraft, status: "reviewed" };
     const activationReviewed = { ...activationDraft, status: "reviewed" };
-    await updateRow(natalRow.id, "natal", tempContentKeys[0], natalReviewed);
-    await updateRow(activationRow.id, "activation", tempContentKeys[1], activationReviewed);
+    await saveViaAdmin(adminHandler, "natal", natalRow.id, natalReviewed);
+    await saveViaAdmin(adminHandler, "activation", activationRow.id, activationReviewed);
     assert.equal(copyBytes(await resolveNatal(vite, natal)), originalNatalBytes, "Reviewed Natal row must not change production copy.");
     assert.equal(copyBytes(await resolveActivation(vite, activation)), originalActivationBytes, "Reviewed activation row must not change production copy.");
 
     const natalApproved = { ...natalDraft, status: "approved" };
     const activationApproved = { ...activationDraft, status: "approved" };
-    await updateRow(natalRow.id, "natal", tempContentKeys[0], natalApproved);
-    await updateRow(activationRow.id, "activation", tempContentKeys[1], activationApproved);
+    await saveViaAdmin(adminHandler, "natal", natalRow.id, natalApproved);
+    await saveViaAdmin(adminHandler, "activation", activationRow.id, activationApproved);
 
     const approvedNatal = await resolveNatal(vite, natal);
     const approvedActivation = await resolveActivation(vite, activation);
@@ -404,8 +439,8 @@ async function main() {
 
     const natalDeprecated = { ...natalDraft, status: "deprecated" };
     const activationDeprecated = { ...activationDraft, status: "deprecated" };
-    await updateRow(natalRow.id, "natal", tempContentKeys[0], natalDeprecated);
-    await updateRow(activationRow.id, "activation", tempContentKeys[1], activationDeprecated);
+    await saveViaAdmin(adminHandler, "natal", natalRow.id, natalDeprecated);
+    await saveViaAdmin(adminHandler, "activation", activationRow.id, activationDeprecated);
     assert.equal(copyBytes(await resolveNatal(vite, natal)), originalNatalBytes, "Deprecated Natal row must restore previous production copy.");
     assert.equal(copyBytes(await resolveActivation(vite, activation)), originalActivationBytes, "Deprecated activation row must restore previous production copy.");
 
@@ -415,6 +450,7 @@ async function main() {
     const invalidResponse = await invokeHandler(adminHandler, "POST", "/api/admin/aspect-pattern-writeups", {
       kind: "natal",
       action: "save",
+      generatedContentId: natalRow.id,
       record: invalid,
       reviewer: "runtime-e2e"
     }, process.env.CONTENT_GENERATION_SECRET ? { authorization: `Bearer ${process.env.CONTENT_GENERATION_SECRET}` } : {});

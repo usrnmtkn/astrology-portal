@@ -262,7 +262,7 @@ async function savePersistedRecord(kind: PatternWriteupKind, body: WriteupSaveBo
     summary: record.content.overview,
     body: JSON.stringify(record.content, null, 2),
     sections,
-    block_type: kind === "activation" ? "aspect_pattern_activation_writeup" : "aspect_pattern_natal_writeup",
+    block_type: "synthesis",
     lane: "serving",
     review_state: status === "LIVE" || status === "REVIEWED" ? null : "editorial",
     facts: {
@@ -289,6 +289,22 @@ async function savePersistedRecord(kind: PatternWriteupKind, body: WriteupSaveBo
   const validationRows = previewForRecord(kind, record);
   if (status === "LIVE" && validationRows.some((preview) => !preview.validation.ok)) {
     throw new Error(`Cannot approve ${record.id}: ${validationRows.flatMap((preview) => preview.validation.errors).join(", ")}`);
+  }
+
+  if (body.generatedContentId) {
+    const existingParams = new URLSearchParams({
+      select: "id,content_key",
+      id: `eq.${body.generatedContentId}`,
+      limit: "1"
+    });
+    const existingResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${existingParams.toString()}`, {
+      headers: adminHeaders()
+    });
+    const existingPayload = await existingResponse.json().catch(() => null);
+    const existingRow = Array.isArray(existingPayload) ? existingPayload[0] : null;
+    if (existingResponse.ok && typeof existingRow?.content_key === "string" && existingRow.content_key.startsWith(contentKeyPrefix(kind))) {
+      row.content_key = existingRow.content_key;
+    }
   }
 
   const url = body.generatedContentId
