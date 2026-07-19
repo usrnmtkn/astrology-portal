@@ -8711,6 +8711,185 @@ body,
   margin: 0;
 }
 
+.admin-dashboard .aspect-writeups-page {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-dashboard .aspect-writeups-header,
+.admin-dashboard .aspect-writeups-editor > header,
+.admin-dashboard .aspect-writeups-preview > header {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .aspect-writeups-filters {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-dashboard .aspect-writeups-filters label,
+.admin-dashboard .aspect-writeups-status,
+.admin-dashboard .aspect-writeups-fields label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-dashboard .aspect-writeups-filters label > span,
+.admin-dashboard .aspect-writeups-status > span,
+.admin-dashboard .aspect-writeups-fields label > span {
+  color: var(--admin-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .aspect-writeups-search {
+  grid-column: span 1;
+}
+
+.admin-dashboard .aspect-writeups-layout {
+  align-items: start;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(240px, 0.85fr) minmax(360px, 1.3fr) minmax(320px, 1fr);
+}
+
+.admin-dashboard .aspect-writeups-list,
+.admin-dashboard .aspect-writeups-editor,
+.admin-dashboard .aspect-writeups-preview {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard .aspect-writeups-list button {
+  background: var(--admin-surface-muted);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  text-align: left;
+}
+
+.admin-dashboard .aspect-writeups-list button.is-selected {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 1px var(--admin-accent);
+}
+
+.admin-dashboard .aspect-writeups-list button span,
+.admin-dashboard .aspect-writeups-list button small {
+  color: var(--admin-muted);
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-writeups-meta-grid,
+.admin-dashboard .aspect-writeups-readonly > div {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .aspect-writeups-meta-grid div,
+.admin-dashboard .aspect-writeups-readonly div div {
+  background: var(--admin-surface-muted);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.admin-dashboard .aspect-writeups-meta-grid dt,
+.admin-dashboard .aspect-writeups-readonly dt {
+  color: var(--admin-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .aspect-writeups-meta-grid dd,
+.admin-dashboard .aspect-writeups-readonly dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .aspect-writeups-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-dashboard .aspect-writeups-fields textarea {
+  min-height: 74px;
+  resize: vertical;
+}
+
+.admin-dashboard .aspect-writeups-compare {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .aspect-writeups-preview pre {
+  background: var(--admin-surface-muted);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  line-height: 1.45;
+  margin: 8px 0 0;
+  max-height: 420px;
+  overflow: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .aspect-writeups-validation {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.admin-dashboard .aspect-writeups-validation.is-error {
+  border-color: var(--admin-danger);
+}
+
+.admin-dashboard .aspect-writeups-slots {
+  border-top: 1px solid var(--admin-border);
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.admin-dashboard .aspect-writeups-slots > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-dashboard .aspect-writeups-slots button {
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+@media (max-width: 1200px) {
+  .admin-dashboard .aspect-writeups-layout,
+  .admin-dashboard .aspect-writeups-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .aspect-writeups-compare,
+  .admin-dashboard .aspect-writeups-meta-grid,
+  .admin-dashboard .aspect-writeups-readonly > div {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-dashboard .aspect-diagnostics-controls p,
 .admin-dashboard .aspect-coverage-header p,
 .admin-dashboard .aspect-diagnostics-empty p,

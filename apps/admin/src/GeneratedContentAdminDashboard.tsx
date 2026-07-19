@@ -20,9 +20,8 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
-import { AspectPatternCoverage } from "./AspectPatternCoverage";
-import { AspectPatternActivationCoverage } from "./AspectPatternActivationCoverage";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
+import { AspectPatternWriteups } from "./AspectPatternWriteups";
 import {
   fallbackHookDefinitions,
   lunarCalendarContentKeyDefinitions,
@@ -227,7 +226,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   templates: "templates",
   hooks: "surface-map",
   aspectPatternCoverage: "content/aspect-patterns",
-  aspectPatternActivationCoverage: "content/aspect-pattern-activation",
+  aspectPatternActivationCoverage: "content/aspect-patterns/activation",
   aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
   releaseNotes: "release-notes"
@@ -235,10 +234,14 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
 
 const adminPageByHashKey = {
   review: "reviewQueue",
+  "content/aspect-pattern-activation": "aspectPatternActivationCoverage",
   ...Object.fromEntries(
     Object.entries(adminPageHashKeys).map(([page, hashKey]) => [hashKey, page])
   )
 } as Record<string, AdminDashboardPage>;
+
+// Legacy read-only coverage components remain available in the codebase for diagnostics:
+// AspectPatternCoverage and AspectPatternActivationCoverage.
 
 const adminNavGroups: Array<{
   label: string;
@@ -263,7 +266,6 @@ const adminNavGroups: Array<{
       { page: "slotDictionary", label: "Slots", icon: KeyRound },
       { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
       { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
-      { page: "aspectPatternActivationCoverage", label: "Aspect Pattern Activation", icon: Activity },
       { page: "knowledge", label: "Fallback Hooks", icon: FileText },
       { page: "hooks", label: "Surface Map", icon: Flag }
     ]
@@ -433,9 +435,9 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "hooks":
       return "Every public surface and runtime hook request, with saved coverage separated from local placeholders.";
     case "aspectPatternCoverage":
-      return "Read-only coverage and previews for authored aspect-pattern copy against the accepted fallback resolver.";
+      return "Editable natal and Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
     case "aspectPatternActivationCoverage":
-      return "Read-only coverage and previews for authored aspect-pattern activation copy against the accepted fallback resolver.";
+      return "Editable Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
     case "aspectDiagnostics":
       return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
     case "users":
@@ -2282,9 +2284,9 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "aspectPatternCoverage" && <AspectPatternCoverage />}
+        {activePage === "aspectPatternCoverage" && <AspectPatternWriteups initialKind="natal" secret={secret} />}
 
-        {activePage === "aspectPatternActivationCoverage" && <AspectPatternActivationCoverage />}
+        {activePage === "aspectPatternActivationCoverage" && <AspectPatternWriteups initialKind="activation" secret={secret} />}
 
         {activePage === "aspectDiagnostics" && <AspectPatternDiagnostics />}
 
