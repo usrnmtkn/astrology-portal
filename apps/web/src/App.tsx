@@ -18850,11 +18850,18 @@ function ManualChartsPanel({
                             selectedChart.pronouns
                           );
                           const factLine = friendTransitFactLine(transit, selectedChart.displayName);
+                          const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
 
                           return (
                             <article className="updates-aspect-row friend-transit-row" key={transit.id}>
                               <span className="updates-aspect-row__content">
                                 <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
+                                <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
+                                  <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                                    <DurationLabelText label={timing.durationLabel} />
+                                  </span>
+                                  <span>{timing.rangeLabel}</span>
+                                </span>
                                 <p className="updates-aspect-row__description">{summary}</p>
                                 <span className="updates-aspect-row__detail">
                                   <span>{transit.transitPlanet} in the current sky</span>
@@ -18862,7 +18869,7 @@ function ManualChartsPanel({
                                   <span>{transit.direction ?? "active"} · orb {transit.orb}</span>
                                 </span>
                               </span>
-                              <span className="updates-aspect-row__meta" aria-label={`${transit.orb} orb`}>
+                              <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
                                 <span className="updates-aspect-row__dot" aria-hidden="true" />
                                 <span className="updates-aspect-row__orb">{transit.orb}</span>
                               </span>

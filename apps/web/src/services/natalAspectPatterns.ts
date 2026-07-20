@@ -10,6 +10,7 @@ export type NatalAspectPatternReaderItem = {
   activationCopy?: ResolvedAspectPatternActivationCopy;
   activationEmphasis: "primary" | "secondary" | "none";
   activationExpanded: boolean;
+  activationTimingLabel?: string;
   rank: number;
   isContained: boolean;
   parentPatternIds: string[];
@@ -112,6 +113,9 @@ export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): Nat
     const activationEmphasis: NatalAspectPatternReaderItem["activationEmphasis"] = activationCopy
       ? copy.patternId === primaryActivePatternId ? "primary" : "secondary"
       : "none";
+    const activationTimingLabel = activationCopy?.content.sections
+      .find((section) => section.id === "timing")
+      ?.body.trim();
 
     return [{
       patternId: copy.patternId,
@@ -120,6 +124,7 @@ export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): Nat
       activationCopy,
       activationEmphasis,
       activationExpanded: Boolean(activationCopy && copy.patternId === primaryActivePatternId),
+      activationTimingLabel,
       rank: context.display.rank,
       isContained: context.display.isContained,
       parentPatternIds: context.display.parentPatternIds.slice(),
