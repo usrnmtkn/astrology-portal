@@ -525,7 +525,7 @@
 }
 
 .natal-patterns-section--activations {
-  scroll-margin-top: 168px;
+  scroll-margin-top: calc(var(--nav-safe-offset) + var(--space-7));
 }
 
 .article-related-aspects .aspect-row.article-related-aspect-row {

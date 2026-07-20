@@ -17446,6 +17446,7 @@ function ProfileView({
           showHouses
           houseSignLabelStyle={houseSignLabelStyle}
           variant="natal"
+          aspectInspector
         />
       </div>
     </div>
@@ -18728,6 +18729,7 @@ function ManualChartsPanel({
                           showHouses
                           houseSignLabelStyle={houseSignLabelStyle}
                           variant="natal"
+                          aspectInspector
                         />
                       </div>
                     </div>
