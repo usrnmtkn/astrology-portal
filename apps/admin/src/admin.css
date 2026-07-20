@@ -8956,6 +8956,20 @@ body,
   gap: 14px;
 }
 
+.admin-dashboard .aspect-diagnostics-summary {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.admin-dashboard .aspect-diagnostics-summary .admin-status-card:nth-child(n + 3) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-dashboard .aspect-diagnostics-summary .admin-status-card:nth-child(n + 3) > strong {
+  font-size: var(--admin-ui-type-body);
+  line-height: var(--leading-body);
+  overflow-wrap: anywhere;
+}
+
 .admin-dashboard .aspect-diagnostics-display-order ol {
   display: grid;
   gap: 8px;
