@@ -5987,6 +5987,14 @@ function transitItemExactDate(transit: TransitItem, generatedAt: string) {
   return dateFromOffsetDays(generatedAt, exactOffsetDays);
 }
 
+function formatActivationWindowDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC"
+  }).format(date);
+}
+
 function transitItemActivationTimingWindow(transit: TransitItem, generatedAt: string): NatalAspectPatternActivationTimingWindow {
   const exact = transitItemExactDate(transit, generatedAt);
   const speed = averageDailyMotion[transit.transitPlanet] ?? 1;
@@ -6002,7 +6010,9 @@ function transitItemActivationTimingWindow(transit: TransitItem, generatedAt: st
     startLabel,
     exactLabel,
     endLabel,
-    rangeLabel: `${startLabel} - ${endLabel}`
+    rangeLabel: `${startLabel} - ${endLabel}`,
+    durationLabel: formatRemainingClockCompact(generatedAt, end) ?? "Duration",
+    activeRangeLabel: `${formatActivationWindowDate(start)} - ${formatActivationWindowDate(end)} (Exact: ${formatActivationWindowDate(exact)})`
   };
 }
 
@@ -6020,7 +6030,7 @@ function activationTimingOverridesForTransits(
   generatedAt: string
 ): Record<string, NatalAspectPatternActivationTimingWindow> {
   return Object.fromEntries(items.flatMap((item) => {
-    if (item.activationTimingWindow || !item.activationCopy) {
+    if (!item.activationCopy) {
       return [];
     }
 
