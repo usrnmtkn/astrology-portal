@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
+import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 
 export type NatalAspectPatternsSectionStatus = "loading" | "ready" | "unavailable";
 
@@ -164,7 +164,13 @@ function PatternCopyBody({
   );
 }
 
-export function NatalAspectPatternActivationsSection({ items }: { items: NatalAspectPatternReaderItem[] }) {
+export function NatalAspectPatternActivationsSection({
+  items,
+  timingOverrides = {}
+}: {
+  items: NatalAspectPatternReaderItem[];
+  timingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
+}) {
   const activeItems = items
     .filter((item) => item.activationCopy)
     .sort((first, second) => {
@@ -183,18 +189,25 @@ export function NatalAspectPatternActivationsSection({ items }: { items: NatalAs
       <span className="eyebrow section-label">Active chart patterns</span>
       <div className="natal-patterns-stack">
         {activeItems.map((item) => (
-          <ActiveNowCallout item={item} key={`${item.patternId}-activation`} />
+          <ActiveNowCallout item={item} key={`${item.patternId}-activation`} timingOverride={timingOverrides[item.patternId]} />
         ))}
       </div>
     </section>
   );
 }
 
-function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
+function ActiveNowCallout({
+  item,
+  timingOverride
+}: {
+  item: NatalAspectPatternReaderItem;
+  timingOverride?: NatalAspectPatternActivationTimingWindow;
+}) {
   const activation = item.activationCopy?.content;
   if (!activation) return null;
 
   const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing");
+  const timingWindow = item.activationTimingWindow ?? timingOverride;
   const calloutClass = [
     "natal-pattern-card__activation",
     item.activationEmphasis === "primary" ? "natal-pattern-card__activation--primary" : "natal-pattern-card__activation--secondary"
@@ -211,10 +224,12 @@ function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
       </summary>
       <div className="natal-pattern-card__activation-body">
         {activation.eyebrow ? <span className="natal-pattern-card__activation-eyebrow">{activation.eyebrow}</span> : null}
-        {item.activationTimingLabel ? (
-          <span className="updates-aspect-row__meta-line natal-pattern-card__activation-timing" aria-label={`Duration, ${item.activationTimingLabel}`}>
+        {timingWindow ? (
+          <span className="updates-aspect-row__meta-line natal-pattern-card__activation-timing" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
             <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
-            <span>{item.activationTimingLabel}</span>
+            <span>Start {timingWindow.startLabel}</span>
+            <span>Exact {timingWindow.exactLabel}</span>
+            <span>End {timingWindow.endLabel}</span>
           </span>
         ) : null}
         <p>{activation.overview}</p>
