@@ -18864,6 +18864,7 @@ function ManualChartsPanel({
                                 </span>
                                 <p className="updates-aspect-row__description">{summary}</p>
                                 <span className="updates-aspect-row__detail">
+                                  <span>Duration: {timing.label}</span>
                                   <span>{transit.transitPlanet} in the current sky</span>
                                   <span>{factLine}</span>
                                   <span>{transit.direction ?? "active"} · orb {transit.orb}</span>
