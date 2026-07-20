@@ -27,8 +27,10 @@ import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing
 import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
+import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { CareerArchetypeCard } from "./components/charts/CareerArchetypeCard";
+import { NatalChartDataTable, type NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
   AspectGlyphs,
   DurationLabelText,
@@ -358,6 +360,7 @@ type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
 type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
+type NatalChartViewMode = "circle" | "table";
 type FriendsMainView = "circle" | "charts" | "profile";
 type FriendsTab = Exclude<FriendsMainView, "profile">;
 
@@ -3247,6 +3250,109 @@ function formatBriefPlacementDegree(position?: PlanetPosition) {
   }
 
   return `${Math.round(position.degree)}°`;
+}
+
+function chartTableHouse(label: string, house?: number | null) {
+  if (label === "Ascendant") {
+    return 1;
+  }
+
+  return typeof house === "number" && house >= 1 && house <= 12 ? house : null;
+}
+
+function formatChartTableDegree(degree?: number | null) {
+  if (typeof degree !== "number" || !Number.isFinite(degree)) {
+    return "";
+  }
+
+  const normalized = ((degree % 30) + 30) % 30;
+  const wholeDegrees = Math.floor(normalized);
+  const minutes = Math.round((normalized - wholeDegrees) * 60);
+
+  if (minutes >= 60) {
+    return `${wholeDegrees + 1}°00'`;
+  }
+
+  return `${wholeDegrees}°${String(minutes).padStart(2, "0")}'`;
+}
+
+function natalChartTableSortValue(row: NatalChartDataTableRow) {
+  const house = row.house ?? 99;
+  const pointOrder: readonly string[] = placementPlanetOrder;
+  const pointIndex = pointOrder.indexOf(row.label);
+
+  return {
+    house,
+    pointIndex: pointIndex >= 0 ? pointIndex : 99,
+    label: row.label
+  };
+}
+
+function sortNatalChartTableRows(rows: NatalChartDataTableRow[]) {
+  return rows.slice().sort((first, second) => {
+    const firstSort = natalChartTableSortValue(first);
+    const secondSort = natalChartTableSortValue(second);
+
+    if (firstSort.house !== secondSort.house) {
+      return firstSort.house - secondSort.house;
+    }
+
+    if (firstSort.pointIndex !== secondSort.pointIndex) {
+      return firstSort.pointIndex - secondSort.pointIndex;
+    }
+
+    return firstSort.label.localeCompare(secondSort.label);
+  });
+}
+
+function natalChartTableRowFromPosition(position: PlanetPosition): NatalChartDataTableRow {
+  return {
+    id: `natal-table-${position.planet}`,
+    degree: formatPlanetDegree(position),
+    glyph: position.glyph,
+    house: chartTableHouse(position.planet, position.house),
+    label: position.planet,
+    retrograde: position.motion === "retrograde",
+    sign: position.sign
+  };
+}
+
+function natalChartTableRowFromSocial(row: SocialPlacementRow): NatalChartDataTableRow {
+  return {
+    id: `friend-natal-table-${row.id}`,
+    degree: formatChartTableDegree(row.degree),
+    glyph: row.glyph,
+    house: chartTableHouse(row.label, row.house),
+    label: row.label,
+    retrograde: row.retrograde,
+    sign: row.sign
+  };
+}
+
+function natalChartTableEmptyHouseRows(sky: SkySnapshot, rows: NatalChartDataTableRow[]): NatalChartDataTableRow[] {
+  const occupiedHouses = new Set(
+    rows
+      .map((row) => row.house)
+      .filter((house): house is number => typeof house === "number" && house >= 1 && house <= 12)
+  );
+
+  return Array.from({ length: 12 }, (_, index) => index + 1)
+    .filter((house) => !occupiedHouses.has(house))
+    .map((house) => ({
+      id: `natal-table-empty-house-${house}`,
+      degree: "",
+      glyph: "",
+      house,
+      label: "Empty house",
+      sign: signAtWholeSignHouse(sky.ascendant, house) || "—"
+    }));
+}
+
+function completeNatalChartTableRows(sky: SkySnapshot, rows: NatalChartDataTableRow[]) {
+  return sortNatalChartTableRows([
+    ...rows,
+    ...natalChartTableEmptyHouseRows(sky, rows)
+  ]);
 }
 
 function compactSkyChicletSign(label: string) {
@@ -16939,12 +17045,25 @@ function ProfileView({
         house: natalSky?.ascendant ? wholeSignHouseForSign(natalMidheavenBasePosition.sign, natalSky.ascendant) ?? 0 : 0
       }
     : null;
-  const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+  const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "South Node", "Midheaven"];
   const planetRows = natalListOrder
-    .map((planet) => natalPositions.find((position) => position.planet === planet))
+    .map((planet) => {
+      if (planet === "Midheaven") {
+        return natalMidheavenPosition;
+      }
+
+      return natalPositions.find((position) => position.planet === planet);
+    })
     .filter((position): position is PlanetPosition => Boolean(position));
   const natalAnglePositions = [natalAscendantPosition, natalMidheavenPosition].filter((position): position is PlanetPosition => Boolean(position));
   const routeableNatalPositions = [natalSun, natalMoon, ...natalAnglePositions, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
+  const natalChartTableBaseRows = [natalAscendantPosition, ...natalPositions, natalMidheavenPosition]
+    .filter((position): position is PlanetPosition => Boolean(position))
+    .filter((position, index, positions) => positions.findIndex((candidate) => candidate.planet === position.planet) === index)
+    .map(natalChartTableRowFromPosition);
+  const natalChartTableRows = natalSky
+    ? completeNatalChartTableRows(natalSky, natalChartTableBaseRows)
+    : [];
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
@@ -17082,18 +17201,6 @@ function ProfileView({
       variant="natal"
       key="ascendant"
     />,
-    <PlacementTableRow
-      asButton={Boolean(natalMidheavenPosition)}
-      degree={natalMidheavenPosition ? formatPlanetDegree(natalMidheavenPosition) : null}
-      description={natalCardTagline("Midheaven")}
-      glyph="MC"
-      house={natalMidheavenPosition?.house ?? null}
-      onClick={natalMidheavenPosition ? () => openPlacementArticle(natalMidheavenPosition) : undefined}
-      pointName="Midheaven"
-      title={natalMidheavenPosition ? `Midheaven in ${natalMidheavenPosition.sign}` : "Midheaven calculating"}
-      variant="natal"
-      key="midheaven"
-    />
   ];
   const planetPlacementRows = planetRows.map((position) => (
     <PlanetPlacementRow
@@ -17382,6 +17489,7 @@ function ProfileView({
         natalAspectPatternStatus={natalAspectPatternStatus}
         natalChart={natalChart}
         natalChartPending={!natalSky}
+        natalTableRows={natalChartTableRows}
         updatesChart={updatesChart}
         onCreateChart={onCreateChart}
         onOpenCareerDetail={careerArchetypeProfile ? openCareerDetail : undefined}
@@ -17485,6 +17593,7 @@ function ManualChartsPanel({
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
+  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -17646,6 +17755,10 @@ function ManualChartsPanel({
   const selectedFriendNatalPlacementRows = selectedChartIsEvent
     ? selectedFriendPlacementRows
     : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
+  const selectedFriendNatalTableBaseRows = selectedFriendPlacementRows.map(natalChartTableRowFromSocial);
+  const selectedFriendNatalTableRows = selectedChart?.natalChart
+    ? completeNatalChartTableRows(selectedChart.natalChart, selectedFriendNatalTableBaseRows)
+    : [];
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
     ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null)
@@ -18587,20 +18700,38 @@ function ManualChartsPanel({
             <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
               {friendProfileTab === "natal" && selectedChart.natalChart && (
                 <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                      <SkyWheel
-                        positions={selectedChart.natalChart.positions}
-                        aspects={selectedChart.natalChart.aspects}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        showHouses
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        variant="natal"
-                      />
+                  <SegmentedControl
+                    value={friendNatalChartViewMode}
+                    options={[
+                      { value: "circle", label: "Circle" },
+                      { value: "table", label: "Table" }
+                    ]}
+                    onChange={setFriendNatalChartViewMode}
+                    ariaLabel={`${selectedChart.displayName} natal chart display`}
+                    className="natal-chart-view-toggle"
+                    compact
+                  />
+                  {friendNatalChartViewMode === "table" ? (
+                    <NatalChartDataTable
+                      rows={selectedFriendNatalTableRows}
+                      title={`${selectedChart.displayName} natal placement table`}
+                    />
+                  ) : (
+                    <div className="chart-shell">
+                      <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+                        <SkyWheel
+                          positions={selectedChart.natalChart.positions}
+                          aspects={selectedChart.natalChart.aspects}
+                          ascendant={selectedChart.natalChart.ascendant}
+                          ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                          midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                          showHouses
+                          houseSignLabelStyle={houseSignLabelStyle}
+                          variant="natal"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
               {friendProfileTab === "transits" && selectedChart.natalChart && (
