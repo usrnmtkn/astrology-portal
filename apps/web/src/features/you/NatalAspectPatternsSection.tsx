@@ -97,7 +97,6 @@ export function NatalAspectPatternsSection({
         </div>
       ) : (
         <section className="you-empty-card natal-patterns-card natal-patterns-card--empty">
-          <span>Patterns in your chart</span>
           <h3>Individual aspects still matter.</h3>
           <p>{emptyPatternMessage}</p>
         </section>

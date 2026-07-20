@@ -105,6 +105,7 @@ import type { RelationshipChartFullscreenMode } from "./features/friends/Relatio
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
+import { NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -17570,6 +17571,18 @@ function ManualChartsPanel({
   const selectedFriendNatalPlacementRows = selectedChartIsEvent
     ? selectedFriendPlacementRows
     : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
+  const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
+  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
+    ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null)
+    : [];
+  const selectedFriendNatalAspectPatternStatus = showFriendNatalAspectPatterns && selectedChart?.natalChart
+    ? natalAspectPatternReaderStatus(
+        showFriendNatalAspectPatterns,
+        selectedChart.natalChart,
+        false,
+        selectedChart.natalChart.aspectPatterns?.resolvedCopy ? "ready" : "unavailable"
+      )
+    : undefined;
   const selectedFriendPronouns = selectedChart && !selectedChartIsEvent
     ? resolvePersonReference({
         name: selectedChart.displayName,
@@ -18679,6 +18692,12 @@ function ManualChartsPanel({
                       friendDetailRoutePath(selectedChart.id, friendProfileTab, "career")
                     ))}
                     profile={selectedFriendCareerArchetypeProfile}
+                  />
+                )}
+                {selectedFriendNatalAspectPatternStatus && (
+                  <NatalAspectPatternsSection
+                    items={selectedFriendNatalAspectPatternItems}
+                    status={selectedFriendNatalAspectPatternStatus}
                   />
                 )}
                 <span className="eyebrow section-label friend-section-label">Big three</span>
