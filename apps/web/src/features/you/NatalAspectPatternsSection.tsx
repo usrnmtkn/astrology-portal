@@ -185,9 +185,9 @@ export function NatalAspectPatternActivationsSection({
   }
 
   return (
-    <section className="natal-patterns-section natal-patterns-section--activations" aria-label="Active chart patterns">
+    <section className="natal-patterns-section natal-patterns-section--activations friend-transit-group" aria-label="Active chart patterns">
       <span className="eyebrow section-label">Active chart patterns</span>
-      <div className="natal-patterns-stack">
+      <div className="updates-aspect-list friend-transit-list active-chart-pattern-list">
         {activeItems.map((item) => (
           <ActiveNowCallout item={item} key={`${item.patternId}-activation`} timingOverride={timingOverrides[item.patternId]} />
         ))}
@@ -208,43 +208,44 @@ function ActiveNowCallout({
 
   const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing");
   const timingWindow = item.activationTimingWindow ?? timingOverride;
+  const emphasisLabel = item.activationEmphasis === "primary" ? "Now" : "Also";
   const calloutClass = [
-    "natal-pattern-card__activation",
-    item.activationEmphasis === "primary" ? "natal-pattern-card__activation--primary" : "natal-pattern-card__activation--secondary"
+    "updates-aspect-row",
+    "friend-transit-row",
+    "active-chart-pattern-row",
+    item.activationEmphasis === "primary" ? "active-chart-pattern-row--primary" : "active-chart-pattern-row--secondary"
   ].join(" ");
 
   return (
-    <details className={calloutClass} open={item.activationExpanded}>
-      <summary>
-        <span>
-          <em>{item.copy.content.headline}</em>
-          <strong>{activation.headline}</strong>
-        </span>
-        <ChevronDown size={16} aria-hidden="true" />
-      </summary>
-      <div className="natal-pattern-card__activation-body">
-        {activation.eyebrow ? <span className="natal-pattern-card__activation-eyebrow">{activation.eyebrow}</span> : null}
+    <article className={calloutClass}>
+      <span className="updates-aspect-row__content">
+        <span className="updates-aspect-row__title">{activation.headline}</span>
         {timingWindow ? (
-          <span className="updates-aspect-row__meta-line natal-pattern-card__activation-timing" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
+          <span className="updates-aspect-row__meta-line" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
             <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
             <span>Start {timingWindow.startLabel}</span>
             <span>Exact {timingWindow.exactLabel}</span>
             <span>End {timingWindow.endLabel}</span>
           </span>
         ) : null}
-        <p>{activation.overview}</p>
+        <span className="updates-aspect-row__description">{activation.overview}</span>
         {sections.length > 0 ? (
-          <div className="natal-pattern-card__activation-sections">
+          <span className="updates-aspect-row__detail">
+            {activation.eyebrow ? <span>{activation.eyebrow}</span> : null}
+            <span>{item.copy.content.headline}</span>
             {sections.map((section) => (
-              <section key={`${item.patternId}-active-${section.id}-${section.body}`} className="natal-pattern-card__activation-section">
-                <h4>{activationSectionLabel(section.id)}</h4>
-                <p>{section.body}</p>
-              </section>
+              <span key={`${item.patternId}-active-${section.id}-${section.body}`}>
+                {activationSectionLabel(section.id)}: {section.body}
+              </span>
             ))}
-          </div>
+          </span>
         ) : null}
-      </div>
-    </details>
+      </span>
+      <span className="updates-aspect-row__meta" aria-label={`${item.copy.content.headline}, ${emphasisLabel.toLowerCase()}`}>
+        <span className="updates-aspect-row__dot" aria-hidden="true" />
+        <span className="updates-aspect-row__orb">{emphasisLabel}</span>
+      </span>
+    </article>
   );
 }
 
