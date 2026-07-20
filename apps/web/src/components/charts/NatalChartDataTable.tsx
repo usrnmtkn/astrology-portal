@@ -29,7 +29,6 @@ export function NatalChartDataTable({
 }) {
   return (
     <section className="natal-chart-table-panel" aria-label={title}>
-      <span className="eyebrow section-label">Natal table</span>
       <div className="natal-chart-data-table-wrap">
         <table className="natal-chart-data-table">
           <thead>
