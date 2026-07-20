@@ -4,8 +4,6 @@ import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReader
 
 export type NatalAspectPatternsSectionStatus = "loading" | "ready" | "unavailable";
 
-const emptyPatternMessage = "Your chart does not contain one of the six larger aspect patterns currently covered here. Your individual aspects still describe important connections between your planets.";
-
 const sectionLabels: Record<string, string> = {
   how_it_works: "How it works",
   planet_roles: "Planet roles",
@@ -50,54 +48,39 @@ export function NatalAspectPatternsSection({
   status: NatalAspectPatternsSectionStatus;
 }) {
   if (status === "unavailable") {
-    return (
-      <section className="you-empty-card natal-patterns-card natal-patterns-card--unavailable" aria-label="Patterns in your chart">
-        <span>Patterns in your chart</span>
-        <h3>Pattern notes are temporarily unavailable.</h3>
-        <p>Everything else in your chart can still load while this section catches up.</p>
-      </section>
-    );
+    return null;
   }
 
   if (status === "loading") {
-    return (
-      <section className="you-empty-card natal-patterns-card natal-patterns-card--loading" aria-label="Patterns in your chart">
-        <span>Patterns in your chart</span>
-        <h3>Checking larger chart patterns.</h3>
-        <p>This will not block your placements or aspects.</p>
-      </section>
-    );
+    return null;
   }
 
   const topLevel = independentItems(items);
   const primary = topLevel[0] ?? null;
   const additional = topLevel.slice(1);
 
+  if (!primary) {
+    return null;
+  }
+
   return (
     <section className="natal-patterns-section" aria-label="Patterns in your chart">
       <span className="eyebrow section-label">Patterns in your chart</span>
-      {primary ? (
-        <div className="natal-patterns-stack">
-          <PatternCopyCard item={primary} variant="primary" childItems={childItems(primary, items)} />
-          {additional.map((item) => (
-            <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId}>
-              <summary>
-                <span>
-                  {item.copy.content.eyebrow ? <em>{item.copy.content.eyebrow}</em> : null}
-                  <strong>{item.copy.content.headline}</strong>
-                </span>
-                <ChevronDown size={18} aria-hidden="true" />
-              </summary>
-              <PatternCopyBody item={item} childItems={childItems(item, items)} />
-            </details>
-          ))}
-        </div>
-      ) : (
-        <section className="you-empty-card natal-patterns-card natal-patterns-card--empty">
-          <h3>Individual aspects still matter.</h3>
-          <p>{emptyPatternMessage}</p>
-        </section>
-      )}
+      <div className="natal-patterns-stack">
+        <PatternCopyCard item={primary} variant="primary" childItems={childItems(primary, items)} />
+        {additional.map((item) => (
+          <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId}>
+            <summary>
+              <span>
+                {item.copy.content.eyebrow ? <em>{item.copy.content.eyebrow}</em> : null}
+                <strong>{item.copy.content.headline}</strong>
+              </span>
+              <ChevronDown size={18} aria-hidden="true" />
+            </summary>
+            <PatternCopyBody item={item} childItems={childItems(item, items)} />
+          </details>
+        ))}
+      </div>
     </section>
   );
 }
@@ -252,5 +235,3 @@ function ActiveNowCallout({
     </article>
   );
 }
-
-export { emptyPatternMessage as natalAspectPatternsEmptyMessage };
