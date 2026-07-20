@@ -345,9 +345,8 @@ try {
   assert.doesNotMatch(activationHtml, /natal-pattern-card__activation|<summary>|active-chart-pattern-row--writeup/, "Activation callouts must not use the natal-pattern collapsible card treatment or split support sections into separate cards.");
   assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
   assert.match(activationHtml, /Duration/, "Activation timing should render as a visible duration line.");
-  assert.match(activationHtml, /Start Jul 14, 2026/, "Activation duration must show a calculated start date.");
-  assert.match(activationHtml, /Exact Jul 20, 2026/, "Activation duration must show a calculated exact date.");
-  assert.match(activationHtml, /End Jul 26, 2026/, "Activation duration must show a calculated end date.");
+  assert.match(activationHtml, /Jul 14, 2026 - Jul 26, 2026 \(Exact: Jul 20, 2026\)/, "Activation duration must show a calculated range with an exact date.");
+  assert.doesNotMatch(activationHtml, /Start Jul 14, 2026|Exact Jul 20, 2026|End Jul 26, 2026/, "Activation duration must not render start, exact, and end as separate fragments.");
   assert.doesNotMatch(activationHtml, /The supporting activation is exact today\.|The parent activation is applying\./, "Activation duration must not use authored timing prose as the duration.");
   assert.doesNotMatch(activationHtml, /<h4>Timing<\/h4>/, "Activation timing should not duplicate as a subsection heading.");
   assert.doesNotMatch(activationHtml, /Watch for/, "Empty activation sections must not render their heading.");
