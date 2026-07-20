@@ -191,7 +191,10 @@ try {
           activationCopy(childId, "t_square", {
             headline: "T-square active headline",
             overview: "T-square active overview",
-            sections: [{ id: "current_emphasis", body: "The supporting pattern is loudest." }]
+            sections: [
+              { id: "current_emphasis", body: "The supporting pattern is loudest." },
+              { id: "timing", body: "The supporting activation is exact today." }
+            ]
           })
         ]
       }
@@ -208,8 +211,10 @@ try {
   assert.ok(inactive);
   assert.equal(parent.activationEmphasis, "secondary");
   assert.equal(parent.activationExpanded, false);
+  assert.equal(parent.activationTimingLabel, "The parent activation is applying.");
   assert.equal(child.activationEmphasis, "primary");
   assert.equal(child.activationExpanded, true);
+  assert.equal(child.activationTimingLabel, "The supporting activation is exact today.");
   assert.equal(inactive.activationEmphasis, "none");
   assert.equal(inactive.activationExpanded, false);
 
@@ -245,7 +250,9 @@ try {
   assert.match(activationHtml, /natal-pattern-card__activation--primary/, "Primary current activation should receive visual emphasis.");
   assert.match(activationHtml, /natal-pattern-card__activation--secondary/, "Secondary current activation should remain visible without primary emphasis.");
   assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
-  assert.match(activationHtml, /Timing/, "Known activation timing section should render as a reader label.");
+  assert.match(activationHtml, /Duration/, "Activation timing should render as a visible duration line.");
+  assert.match(activationHtml, /The supporting activation is exact today\./, "Activation timing text should be promoted into the duration line.");
+  assert.doesNotMatch(activationHtml, /<h4>Timing<\/h4>/, "Activation timing should not duplicate as a subsection heading.");
   assert.doesNotMatch(activationHtml, /Watch for/, "Empty activation sections must not render their heading.");
   assert.doesNotMatch(html, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Reader HTML must not expose activation diagnostics, provenance, or trigger internals.");
   assert.doesNotMatch(activationHtml, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Activation HTML must not expose activation diagnostics, provenance, or trigger internals.");
