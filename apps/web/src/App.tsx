@@ -18889,11 +18889,6 @@ function ManualChartsPanel({
             <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${selectedChart.displayName} transits`}>
               <div className="friend-profile-copy-column">
                 <span className="eyebrow section-label friend-section-label">Transits</span>
-                <article className="friends-logic-card">
-                  <span>Personal timing</span>
-                  <h3>{selectedChart.displayName}&apos;s current themes</h3>
-                  <p>These are current sky contacts to {possessiveLabel(selectedChart.displayName)} natal chart, prioritized by exactness, natal target, and timing relevance.</p>
-                </article>
                 <NatalAspectPatternActivationsSection
                   items={selectedFriendNatalAspectPatternItems}
                   timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
