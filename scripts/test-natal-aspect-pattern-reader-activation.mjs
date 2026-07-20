@@ -82,6 +82,48 @@ function activationCopy(patternId, patternType, content) {
   };
 }
 
+function activationContext(patternId, patternType, rank, overrides = {}) {
+  const trigger = {
+    activationId: `${patternId}-activation`,
+    movingBody: "Mars",
+    targetNatalPlanet: "Moon",
+    targetRoles: ["member"],
+    aspectType: "square",
+    orb: 0.5,
+    applying: true,
+    exactAt: "2026-07-20T12:00:00.000Z",
+    score: 10,
+    reasons: [],
+    ...overrides.trigger
+  };
+
+  return {
+    version: "test",
+    patternId,
+    patternType,
+    natalInterpretationContextId: `${patternId}-natal-context`,
+    calculatedFor: "2026-07-19T00:00:00.000Z",
+    display: {
+      natalRank: rank,
+      currentRank: rank,
+      isCurrentlyPrimary: rank === 1,
+      parentPatternIds: [],
+      childPatternIds: [],
+      ...overrides.display
+    },
+    natalPattern: { confidence: "strong" },
+    triggers: [trigger],
+    primaryTrigger: {
+      activationId: trigger.activationId,
+      selectionReason: "highest_activation_score"
+    },
+    activationSummary: {},
+    ranking: {},
+    copyInstructions: {},
+    provenance: {}
+  };
+}
+
 function renderedTextPositions(html, snippets) {
   return snippets.map((snippet) => {
     const position = html.indexOf(snippet);
@@ -178,6 +220,37 @@ try {
       ],
       activation: {
         currentDisplayOrder: ["missing-pattern", childId, parentId],
+        activations: [
+          {
+            id: `${childId}-activation`,
+            patternId: childId,
+            calculatedFor: "2026-07-19T00:00:00.000Z",
+            trigger: {
+              movingBody: "Mars",
+              targetNatalPlanet: "Moon",
+              targetRoles: ["member"],
+              aspectType: "square",
+              orb: 0.5,
+              applying: true,
+              exactAt: "2026-07-20T12:00:00.000Z"
+            },
+            linkedPatternIds: [],
+            score: {},
+            reasons: []
+          }
+        ],
+        interpretationContexts: [
+          activationContext(parentId, "grand_square", 2, {
+            trigger: {
+              movingBody: "Saturn",
+              exactAt: "2026-08-01T12:00:00.000Z"
+            },
+            display: { parentPatternIds: [], childPatternIds: [childId] }
+          }),
+          activationContext(childId, "t_square", 1, {
+            display: { parentPatternIds: [parentId], childPatternIds: [] }
+          })
+        ],
         resolvedCopy: [
           activationCopy(parentId, "grand_square", {
             eyebrow: "Parent activation eyebrow",
@@ -211,12 +284,31 @@ try {
   assert.ok(inactive);
   assert.equal(parent.activationEmphasis, "secondary");
   assert.equal(parent.activationExpanded, false);
-  assert.equal(parent.activationTimingLabel, "The parent activation is applying.");
+  assert.equal(parent.activationTimingWindow?.exactLabel, "Aug 1, 2026");
   assert.equal(child.activationEmphasis, "primary");
   assert.equal(child.activationExpanded, true);
-  assert.equal(child.activationTimingLabel, "The supporting activation is exact today.");
+  assert.deepEqual(child.activationTimingWindow, {
+    startLabel: "Jul 14, 2026",
+    exactLabel: "Jul 20, 2026",
+    endLabel: "Jul 26, 2026",
+    rangeLabel: "Jul 14, 2026 - Jul 26, 2026"
+  });
   assert.equal(inactive.activationEmphasis, "none");
   assert.equal(inactive.activationExpanded, false);
+
+  const rawOnlyItems = natalAspectPatternReaderItems({
+    aspectPatterns: {
+      interpretationContexts: snapshot.aspectPatterns.interpretationContexts,
+      resolvedCopy: snapshot.aspectPatterns.resolvedCopy,
+      activation: {
+        currentDisplayOrder: snapshot.aspectPatterns.activation.currentDisplayOrder,
+        activations: snapshot.aspectPatterns.activation.activations,
+        resolvedCopy: snapshot.aspectPatterns.activation.resolvedCopy
+      }
+    }
+  });
+  const rawOnlyChild = rawOnlyItems.find((item) => item.patternId === childId);
+  assert.equal(rawOnlyChild?.activationTimingWindow?.exactLabel, "Jul 20, 2026", "Reader must derive timing from raw activation triggers when activation contexts are absent.");
 
   const html = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, { items, status: "ready" }));
   const [
@@ -251,7 +343,10 @@ try {
   assert.match(activationHtml, /natal-pattern-card__activation--secondary/, "Secondary current activation should remain visible without primary emphasis.");
   assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
   assert.match(activationHtml, /Duration/, "Activation timing should render as a visible duration line.");
-  assert.match(activationHtml, /The supporting activation is exact today\./, "Activation timing text should be promoted into the duration line.");
+  assert.match(activationHtml, /Start Jul 14, 2026/, "Activation duration must show a calculated start date.");
+  assert.match(activationHtml, /Exact Jul 20, 2026/, "Activation duration must show a calculated exact date.");
+  assert.match(activationHtml, /End Jul 26, 2026/, "Activation duration must show a calculated end date.");
+  assert.doesNotMatch(activationHtml, /The supporting activation is exact today\.|The parent activation is applying\./, "Activation duration must not use authored timing prose as the duration.");
   assert.doesNotMatch(activationHtml, /<h4>Timing<\/h4>/, "Activation timing should not duplicate as a subsection heading.");
   assert.doesNotMatch(activationHtml, /Watch for/, "Empty activation sections must not render their heading.");
   assert.doesNotMatch(html, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Reader HTML must not expose activation diagnostics, provenance, or trigger internals.");

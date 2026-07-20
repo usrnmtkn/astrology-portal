@@ -5,7 +5,7 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
-import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
+import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { emergencyDetailFallbackCopy } from "../../content/emergencyCopy";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
@@ -67,6 +67,7 @@ export type YouPageProps = {
   natalChart: ReactNode;
   natalChartPending: boolean;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
+  natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   updatesChart?: ReactNode;
   natalAspectRows: ReactNode[];
@@ -365,6 +366,7 @@ function YouUpdatesTab({
   dailyUpdateSummary,
   hasSavedCurrentCity,
   natalAspectPatternItems,
+  natalAspectPatternTimingOverrides,
   onCreateChart,
   personalTimingSummary,
   standaloneTransitRows = []
@@ -373,6 +375,7 @@ function YouUpdatesTab({
   dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
+  natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
@@ -424,7 +427,7 @@ function YouUpdatesTab({
         </section>
       )}
       {hasSavedCurrentCity && natalAspectPatternItems && (
-        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} />
+        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}
       <span className="eyebrow section-label">Aspects</span>
       {!hasSavedCurrentCity && (
@@ -729,6 +732,7 @@ export function YouPage({
   hasSavedCurrentCity,
   natalAspectRows,
   natalAspectPatternItems,
+  natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
   natalChart,
   natalChartPending,
@@ -825,6 +829,7 @@ export function YouPage({
               dailyUpdateSummary={dailyUpdateSummary}
               hasSavedCurrentCity={hasSavedCurrentCity}
               natalAspectPatternItems={natalAspectPatternItems}
+              natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}

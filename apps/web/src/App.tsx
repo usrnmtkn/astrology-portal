@@ -194,6 +194,7 @@ import {
   natalAspectPatternReaderStatus,
   skyWithNatalAspectPatternCopy
 } from "./services/natalAspectPatterns";
+import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "./services/natalAspectPatterns";
 import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
@@ -5971,6 +5972,68 @@ function transitItemTimingDisplay(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
 
   return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt));
+}
+
+function transitItemExactDate(transit: TransitItem, generatedAt: string) {
+  const speed = averageDailyMotion[transit.transitPlanet] ?? 1;
+  const orb = transitOrbValue(transit);
+  const direction = transit.direction?.toLowerCase();
+  const exactOffsetDays = direction === "separating"
+    ? -(orb / speed)
+    : direction === "applying"
+      ? orb / speed
+      : 0;
+
+  return dateFromOffsetDays(generatedAt, exactOffsetDays);
+}
+
+function transitItemActivationTimingWindow(transit: TransitItem, generatedAt: string): NatalAspectPatternActivationTimingWindow {
+  const exact = transitItemExactDate(transit, generatedAt);
+  const speed = averageDailyMotion[transit.transitPlanet] ?? 1;
+  const applyingOrb = transitToNatalOrbLimit(transit.transitPlanet, "applying") || transitToNatalOrbLimit(transit.transitPlanet);
+  const separatingOrb = transitToNatalOrbLimit(transit.transitPlanet, "separating") || transitToNatalOrbLimit(transit.transitPlanet);
+  const start = dateFromOffsetDays(exact.toISOString(), -(applyingOrb / speed));
+  const end = dateFromOffsetDays(exact.toISOString(), separatingOrb / speed);
+  const startLabel = formatEditorialDate(start, true);
+  const exactLabel = formatEditorialDate(exact, true);
+  const endLabel = formatEditorialDate(end, true);
+
+  return {
+    startLabel,
+    exactLabel,
+    endLabel,
+    rangeLabel: `${startLabel} - ${endLabel}`
+  };
+}
+
+function lowerStringSet(value: unknown) {
+  return new Set(
+    Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === "string").map((item) => item.toLowerCase())
+      : []
+  );
+}
+
+function activationTimingOverridesForTransits(
+  items: NatalAspectPatternReaderItem[],
+  transits: TransitItem[],
+  generatedAt: string
+): Record<string, NatalAspectPatternActivationTimingWindow> {
+  return Object.fromEntries(items.flatMap((item) => {
+    if (item.activationTimingWindow || !item.activationCopy) {
+      return [];
+    }
+
+    const movingBodies = lowerStringSet(item.activationCopy.triggerSummary.movingBodies);
+    const targetedPlanets = lowerStringSet(item.activationCopy.triggerSummary.targetedNatalPlanets);
+    const matchingTransit = transits
+      .filter((transit) => movingBodies.has(transit.transitPlanet.toLowerCase()) && targetedPlanets.has(transit.natalPoint.toLowerCase()))
+      .sort((first, second) => transitOrbValue(first) - transitOrbValue(second))[0];
+
+    return matchingTransit
+      ? [[item.patternId, transitItemActivationTimingWindow(matchingTransit, generatedAt)]]
+      : [];
+  }));
 }
 
 function completedAgeOnDate(birthDate: string, currentDateValue: string) {
@@ -16913,6 +16976,7 @@ function ProfileView({
     }
   };
   const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
+  const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, transitForm.chartDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
     : [];
@@ -17304,6 +17368,7 @@ function ProfileView({
         hasSavedCurrentCity={hasSavedCurrentCity}
         natalAspectRows={natalAspectItems}
         natalAspectPatternItems={natalAspectPatternItems}
+        natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}
         natalChart={natalChart}
         natalChartPending={!natalSky}
@@ -17575,6 +17640,11 @@ function ManualChartsPanel({
   const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
     ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null)
     : [];
+  const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
+    selectedFriendNatalAspectPatternItems,
+    selectedFriendTransits,
+    currentSky.generatedAt
+  );
   const selectedFriendNatalAspectPatternStatus = showFriendNatalAspectPatterns && selectedChart?.natalChart
     ? natalAspectPatternReaderStatus(
         showFriendNatalAspectPatterns,
@@ -18824,7 +18894,10 @@ function ManualChartsPanel({
                   <h3>{selectedChart.displayName}&apos;s current themes</h3>
                   <p>These are current sky contacts to {possessiveLabel(selectedChart.displayName)} natal chart, prioritized by exactness, natal target, and timing relevance.</p>
                 </article>
-                <NatalAspectPatternActivationsSection items={selectedFriendNatalAspectPatternItems} />
+                <NatalAspectPatternActivationsSection
+                  items={selectedFriendNatalAspectPatternItems}
+                  timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
+                />
                 {(["short", "long"] as const).map((durationClass) => {
                   const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
 
