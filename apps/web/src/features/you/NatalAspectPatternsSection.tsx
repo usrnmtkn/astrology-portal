@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { DurationLabelText } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 
 export type NatalAspectPatternsSectionStatus = "loading" | "ready" | "unavailable";
@@ -207,8 +208,11 @@ function ActiveNowCallout({
   if (!activation) return null;
 
   const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing");
-  const timingWindow = item.activationTimingWindow ?? timingOverride;
+  const timingWindow = timingOverride ?? item.activationTimingWindow;
   const emphasisLabel = item.activationEmphasis === "primary" ? "Now" : "Also";
+  const activeRangeLabel = timingWindow
+    ? timingWindow.activeRangeLabel ?? `${timingWindow.rangeLabel} (Exact: ${timingWindow.exactLabel})`
+    : "";
   const calloutClass = [
     "updates-aspect-row",
     "friend-transit-row",
@@ -221,11 +225,11 @@ function ActiveNowCallout({
       <span className="updates-aspect-row__content">
         <span className="updates-aspect-row__title">{activation.headline}</span>
         {timingWindow ? (
-          <span className="updates-aspect-row__meta-line" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
-            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
-            <span>Start {timingWindow.startLabel}</span>
-            <span>Exact {timingWindow.exactLabel}</span>
-            <span>End {timingWindow.endLabel}</span>
+          <span className="updates-aspect-row__meta-line" aria-label={`${timingWindow.durationLabel ?? "Duration"}, ${activeRangeLabel}`}>
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+              <DurationLabelText label={timingWindow.durationLabel ?? "Duration"} />
+            </span>
+            <span>{activeRangeLabel}</span>
           </span>
         ) : null}
         {activation.eyebrow ? <span className="updates-aspect-row__meta-line">{activation.eyebrow}</span> : null}

@@ -22,6 +22,8 @@ export type NatalAspectPatternActivationTimingWindow = {
   exactLabel: string;
   endLabel: string;
   rangeLabel: string;
+  durationLabel?: string;
+  activeRangeLabel?: string;
 };
 
 export type NatalAspectPatternReaderItem = {
