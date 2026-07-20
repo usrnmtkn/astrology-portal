@@ -81,7 +81,7 @@
   font-size: var(--type-xs);
   font-style: normal;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--snap-eyebrow-tracking);
   line-height: var(--leading-meta);
   text-transform: uppercase;
 }

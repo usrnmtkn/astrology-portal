@@ -165,7 +165,7 @@ function safeComposedCopy(value: string, fallback: string) {
     return cleanedFallback;
   }
 
-  return "This pattern is active now. Notice what needs attention, then choose one concrete response.";
+  return "This pattern is active now. The current emphasis is visible in timing, mood, and everyday choices.";
 }
 
 export function emergencyPlanetFunction(planet: string) {
@@ -492,8 +492,8 @@ export function emergencyDetailFallbackCopy(title: string) {
   const subject = cleanedTitle && !containsBannedPhrase(cleanedTitle) ? cleanedTitle : "This chart factor";
 
   return safeComposedCopy(
-    `${subject} is active here. Notice what asks for attention, then choose one concrete response you can actually use.`,
-    "This chart factor is active here. Notice what asks for attention, then choose one concrete response you can actually use."
+    `${subject} is active here. The current emphasis is visible in timing, mood, and everyday choices while this contact is active.`,
+    "This chart factor is active here. The current emphasis is visible in timing, mood, and everyday choices while this contact is active."
   );
 }
 

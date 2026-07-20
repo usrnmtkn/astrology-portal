@@ -405,6 +405,84 @@
   opacity: max(var(--aspect-line-opacity, 0.5), 0.58);
 }
 
+.sky-wheel--aspect-inspector {
+  cursor: default;
+}
+
+.sky-wheel--aspect-inspector .aspect-lines line {
+  transition: opacity 180ms ease, stroke-width 180ms ease;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-line line {
+  animation: aspect-inspector-line-in 180ms ease-out both;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point {
+  cursor: pointer;
+  transition: opacity 180ms ease, filter 180ms ease;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point:focus-visible {
+  outline: none;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point--averse :where(
+  .planet-glyph,
+  .planet-degree,
+  .planet-glyph-sun-symbol,
+  .planet-glyph-sun-symbol path
+) {
+  opacity: 0.3;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point--averse :where(.planet-glyph-image) {
+  opacity: 0.3;
+  filter: grayscale(1) opacity(0.55);
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point--participant :where(
+  .planet-glyph,
+  .planet-degree,
+  .planet-glyph-sun-symbol,
+  .planet-glyph-sun-symbol path
+),
+.sky-wheel--aspect-inspector .aspect-inspector-point--selected :where(
+  .planet-glyph,
+  .planet-degree,
+  .planet-glyph-sun-symbol,
+  .planet-glyph-sun-symbol path
+) {
+  opacity: 1;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point--participant :where(.planet-glyph-image),
+.sky-wheel--aspect-inspector .aspect-inspector-point--selected :where(.planet-glyph-image) {
+  opacity: 1;
+}
+
+.sky-wheel--aspect-inspector .angular-labels .aspect-inspector-point {
+  pointer-events: auto;
+}
+
+.sky-wheel--aspect-inspector.is-inspecting-aspects .angular-labels .aspect-inspector-point--averse {
+  opacity: 0.3;
+  filter: grayscale(1) opacity(0.62);
+}
+
+.aspect-inspector-focus-ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  opacity: 0.82;
+  vector-effect: non-scaling-stroke;
+}
+
+@keyframes aspect-inspector-line-in {
+  from {
+    opacity: 0;
+  }
+}
+
 .sky-wheel-synastry {
   --chart-sign-label-size: 11.5px;
   --chart-house-label-size: 11.5px;
