@@ -51,7 +51,24 @@ export type PlacementHouseInsight = {
 };
 
 export const placementPlanetOrder = [...SKY_BODY_ORDER];
-const socialPlacementOrder = ["Sun", "Moon", "Ascendant", ...SKY_BODY_ORDER.slice(2)];
+const socialPlacementOrder = [
+  "Sun",
+  "Moon",
+  "Ascendant",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+  "Chiron",
+  "Lilith",
+  "North Node",
+  "South Node",
+  "Midheaven"
+];
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
 type PlacementMicrocopyLayer = "source-grounded" | "madlib-fallback";
@@ -222,6 +239,31 @@ function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
 }
 
+function wholeSignHouseForSign(sign: string, ascendant: string) {
+  const zodiacSigns = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces"
+  ];
+  const signIndex = zodiacSigns.indexOf(sign);
+  const ascendantIndex = zodiacSigns.indexOf(ascendant);
+
+  if (signIndex < 0 || ascendantIndex < 0) {
+    return null;
+  }
+
+  return ((signIndex - ascendantIndex + 12) % 12) + 1;
+}
+
 export function ordinalHouse(house: number) {
   const rem100 = house % 100;
 
@@ -254,6 +296,18 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
         sign: sky.ascendant,
         degree: normalizedAngle(sky.ascendantLongitude ?? 0) % 30,
         house: null,
+        retrograde: false
+      }];
+    }
+
+    if (point === "Midheaven" && typeof sky.midheavenLongitude === "number") {
+      return [{
+        id: "Midheaven",
+        glyph: "MC",
+        label: "Midheaven",
+        sign: sky.midheaven,
+        degree: normalizedAngle(sky.midheavenLongitude) % 30,
+        house: sky.ascendant ? wholeSignHouseForSign(sky.midheaven, sky.ascendant) ?? null : null,
         retrograde: false
       }];
     }

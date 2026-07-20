@@ -3,6 +3,7 @@ import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
+import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
@@ -11,6 +12,7 @@ import { isReaderFacingCopy } from "../../content/readerSafety";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
 
 type YouTab = "transits" | "chart";
+type NatalChartViewMode = "circle" | "table";
 
 export type PersonalTimingSummary = {
   headline: string;
@@ -71,6 +73,7 @@ export type YouPageProps = {
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   updatesChart?: ReactNode;
   natalAspectRows: ReactNode[];
+  natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
   onOpenCareerDetail?: () => void;
@@ -227,15 +230,36 @@ function YouProfileSummary({
 function YouNatalChartPanel({
   ariaLabel = "Natal chart",
   natalChart,
-  natalChartPending
+  natalChartPending,
+  onViewModeChange,
+  tableContent,
+  viewMode
 }: {
   ariaLabel?: string;
   natalChart: ReactNode;
   natalChartPending: boolean;
+  onViewModeChange?: (value: NatalChartViewMode) => void;
+  tableContent?: ReactNode;
+  viewMode?: NatalChartViewMode;
 }) {
+  const showViewToggle = Boolean(onViewModeChange && tableContent);
+
   return (
     <aside className="chart-layout__visual" aria-label={ariaLabel}>
-      {natalChart}
+      {showViewToggle && viewMode ? (
+        <SegmentedControl
+          value={viewMode}
+          options={[
+            { value: "circle", label: "Circle" },
+            { value: "table", label: "Table" }
+          ]}
+          onChange={(value) => onViewModeChange?.(value)}
+          ariaLabel="Natal chart display"
+          className="natal-chart-view-toggle"
+          compact
+        />
+      ) : null}
+      {viewMode === "table" && tableContent ? tableContent : natalChart}
       {natalChartPending && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
           <span>Chart</span>
@@ -734,6 +758,7 @@ export function YouPage({
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
+  natalTableRows,
   natalChart,
   natalChartPending,
   updatesChart,
@@ -756,8 +781,12 @@ export function YouPage({
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
+  const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const activeChart = profileTab === "transits" && updatesChart ? updatesChart : natalChart;
   const activeChartLabel = profileTab === "transits" && updatesChart ? "Transit chart" : "Natal chart";
+  const natalTableContent = natalTableRows.length > 0 ? (
+    <NatalChartDataTable rows={natalTableRows} title="Your natal placement table" />
+  ) : null;
 
   if (!hasSavedBirthDetails) {
     return <YouEmptyState onCreateChart={onCreateChart} setupStepsLeft={setupStepsLeft} />;
@@ -774,6 +803,9 @@ export function YouPage({
           ariaLabel={activeChartLabel}
           natalChart={activeChart}
           natalChartPending={natalChartPending}
+          onViewModeChange={profileTab === "chart" ? setNatalChartViewMode : undefined}
+          tableContent={profileTab === "chart" ? natalTableContent : undefined}
+          viewMode={profileTab === "chart" ? natalChartViewMode : "circle"}
         />
 
         <main className="chart-layout__content">

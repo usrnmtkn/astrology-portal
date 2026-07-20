@@ -750,3 +750,112 @@
   max-width: 100%;
   height: auto;
 }
+
+.natal-chart-view-toggle {
+  align-self: center;
+  margin: 0 auto var(--space-4);
+}
+
+.natal-chart-table-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, var(--shared-chart-size));
+  min-width: 0;
+  gap: var(--space-3);
+  overflow: visible;
+}
+
+.natal-chart-table-panel .section-label {
+  margin: 0;
+}
+
+.natal-chart-data-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+}
+
+.natal-chart-data-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-description);
+  line-height: var(--leading-copy);
+}
+
+.natal-chart-data-table th,
+.natal-chart-data-table td {
+  padding: var(--space-3) clamp(var(--space-2), 2vw, var(--space-4));
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.natal-chart-data-table th {
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.natal-chart-data-table td + td,
+.natal-chart-data-table th + th {
+  border-left: 1px solid var(--line);
+}
+
+.natal-chart-data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.natal-chart-data-table td:nth-child(1),
+.natal-chart-data-table td:nth-child(3) {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.natal-chart-data-table th:nth-child(1),
+.natal-chart-data-table td:nth-child(1) {
+  width: 16%;
+}
+
+.natal-chart-data-table th:nth-child(2),
+.natal-chart-data-table td:nth-child(2) {
+  width: 28%;
+}
+
+.natal-chart-data-table th:nth-child(3),
+.natal-chart-data-table td:nth-child(3) {
+  width: 22%;
+}
+
+.natal-chart-data-table th:nth-child(4),
+.natal-chart-data-table td:nth-child(4) {
+  width: 34%;
+}
+
+.natal-chart-data-table th:nth-child(1),
+.natal-chart-data-table th:nth-child(3) {
+  text-align: center;
+}
+
+.natal-chart-data-table__point {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink);
+  font-weight: var(--weight-medium);
+  min-width: 0;
+}
