@@ -63,7 +63,7 @@ assert.match(component, /item\.activationCopy\?\.content/, "Activation rendering
 assert.match(component, /Active chart patterns[\s\S]*<ActiveNowCallout item=\{item\}/, "Temporary activation callouts must render only from the dedicated active-pattern section.");
 assert.match(component, /activation\.sections\.filter/, "Empty activation sections must not render headings.");
 assert.match(component, /activationSectionLabel\(section\.id\)/, "Activation section labels should map resolved section IDs.");
-assert.match(component, /open=\{item\.activationExpanded/, "Primary current activation may begin expanded.");
+assert.match(component, /updates-aspect-row[\s\S]*friend-transit-row[\s\S]*active-chart-pattern-row/, "Activation contacts should use the same row card treatment as transit themes.");
 assert.doesNotMatch(component, /hasExpandedActivation/, "Temporary activation state must not control permanent natal pattern expansion.");
 
 const forbiddenReaderLeaks = [

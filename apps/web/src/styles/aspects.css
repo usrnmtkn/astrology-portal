@@ -520,6 +520,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.active-chart-pattern-row {
+  cursor: default;
+}
+
 .article-related-aspects .aspect-row.article-related-aspect-row {
   --row-bg: transparent;
   --aspect-row-padding: calc(var(--space-7) - var(--space-1)) 0;
