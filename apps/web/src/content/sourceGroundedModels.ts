@@ -358,6 +358,14 @@ function retrogradeModifier(position: PlanetPosition, perspective: OwnerPerspect
   return `${position.planet} was retrograde at birth, so this part of the chart may develop through return, revision, and delayed trust. ${cap(subject(perspective))} may need more time before this placement feels ready to act in public.`;
 }
 
+function directNodeModifier(position: PlanetPosition, perspective: OwnerPerspective) {
+  if (!/\b(?:north|south|true)\s+node\b/i.test(position.planet) || position.motion !== "direct") {
+    return null;
+  }
+
+  return `The Moon Nodes were direct at birth, which may point to a life where paying attention to the past matters more than rushing toward a clean break. In ${possessive(perspective)} chart, this Node works best when old stories, inherited patterns, and unfinished memories are studied instead of dismissed.`;
+}
+
 function sectModifier(position: PlanetPosition, chartSect: ChartSect | null | undefined, perspective: OwnerPerspective) {
   if (!chartSect) return null;
   if (chartSect === "day" && position.planet === "Sun") {
@@ -532,6 +540,13 @@ export function composeNatalPlacement(options: {
     slots.retrogradeModifier = slot(retro, baseSourceKeys);
     sections.push({ heading: `${position.planet} retrograde`, tldr: "", body: retro });
     conditionalBranches.push("layer_4_retrograde_at_birth");
+  }
+
+  const directNode = directNodeModifier(position, ownerPerspective);
+  if (directNode) {
+    slots.directNodeModifier = slot(directNode, [...baseSourceKeys, "user-source/moon-nodes-direct-phase"]);
+    sections.push({ heading: "The Nodes direct", tldr: "", body: directNode });
+    conditionalBranches.push("layer_4_node_direct_at_birth");
   }
 
   const sect = reliableBirthTime ? sectModifier(position, options.chartSect, ownerPerspective) : null;
