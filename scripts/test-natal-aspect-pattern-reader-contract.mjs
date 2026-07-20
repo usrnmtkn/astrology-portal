@@ -27,6 +27,10 @@ assert.match(app, /setProfileNatalAspectPatternStatus\(showNatalAspectPatterns \
 assert.match(app, /skyWithNatalAspectPatternCopy\(currentSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
 assert.match(app, /natalAspectPatternStatus={natalAspectPatternStatus}/, "YouPage must receive an explicit reader status.");
+assert.match(app, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");
+assert.match(app, /natalAspectPatternReaderItems\(selectedChart\?\.natalChart \?\? null\)/, "Friends natal charts must derive reader items from the selected chart snapshot only.");
+assert.match(app, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
+assert.match(app, /<NatalAspectPatternsSection\s+items=\{selectedFriendNatalAspectPatternItems\}\s+status=\{selectedFriendNatalAspectPatternStatus\}/s, "Friends natal charts must render the shared read-only pattern section.");
 assert.match(page, /NatalAspectPatternsSection/, "YouPage must render the natal pattern section via a dedicated component.");
 
 assert.match(service, /includeAspectPatterns:\s*"true"/, "Reader data request must opt into aspect patterns.");
