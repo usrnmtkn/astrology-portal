@@ -194,7 +194,7 @@ function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
   const activation = item.activationCopy?.content;
   if (!activation) return null;
 
-  const sections = activation.sections.filter((section) => section.body.trim());
+  const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing");
   const calloutClass = [
     "natal-pattern-card__activation",
     item.activationEmphasis === "primary" ? "natal-pattern-card__activation--primary" : "natal-pattern-card__activation--secondary"
@@ -211,6 +211,12 @@ function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
       </summary>
       <div className="natal-pattern-card__activation-body">
         {activation.eyebrow ? <span className="natal-pattern-card__activation-eyebrow">{activation.eyebrow}</span> : null}
+        {item.activationTimingLabel ? (
+          <span className="updates-aspect-row__meta-line natal-pattern-card__activation-timing" aria-label={`Duration, ${item.activationTimingLabel}`}>
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
+            <span>{item.activationTimingLabel}</span>
+          </span>
+        ) : null}
         <p>{activation.overview}</p>
         {sections.length > 0 ? (
           <div className="natal-pattern-card__activation-sections">
