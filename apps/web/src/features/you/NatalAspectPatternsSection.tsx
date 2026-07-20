@@ -41,10 +41,6 @@ function childItems(parent: NatalAspectPatternReaderItem, items: NatalAspectPatt
   return items.filter((item) => item.isContained && (childIds.has(item.patternId) || item.parentPatternIds.includes(parent.patternId)));
 }
 
-function hasExpandedActivation(items: NatalAspectPatternReaderItem[]) {
-  return items.some((item) => item.activationExpanded);
-}
-
 export function NatalAspectPatternsSection({
   items,
   status
@@ -83,7 +79,7 @@ export function NatalAspectPatternsSection({
         <div className="natal-patterns-stack">
           <PatternCopyCard item={primary} variant="primary" childItems={childItems(primary, items)} />
           {additional.map((item) => (
-            <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId} open={item.activationExpanded || hasExpandedActivation(childItems(item, items))}>
+            <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId}>
               <summary>
                 <span>
                   {item.copy.content.eyebrow ? <em>{item.copy.content.eyebrow}</em> : null}
@@ -150,13 +146,11 @@ function PatternCopyBody({
         </div>
       ) : null}
 
-      <ActiveNowCallout item={item} />
-
       {nestedItems.length > 0 ? (
         <div className="natal-pattern-card__supporting" aria-label="Supporting pattern detail">
           <h4>Supporting pattern detail</h4>
           {nestedItems.map((child) => (
-            <details key={child.patternId} className="natal-pattern-card__supporting-item" open={child.activationExpanded}>
+            <details key={child.patternId} className="natal-pattern-card__supporting-item">
               <summary>
                 <span>{child.copy.content.headline}</span>
                 <ChevronDown size={16} aria-hidden="true" />
@@ -167,6 +161,32 @@ function PatternCopyBody({
         </div>
       ) : null}
     </>
+  );
+}
+
+export function NatalAspectPatternActivationsSection({ items }: { items: NatalAspectPatternReaderItem[] }) {
+  const activeItems = items
+    .filter((item) => item.activationCopy)
+    .sort((first, second) => {
+      const firstPriority = first.activationEmphasis === "primary" ? 0 : 1;
+      const secondPriority = second.activationEmphasis === "primary" ? 0 : 1;
+
+      return firstPriority - secondPriority || first.rank - second.rank || first.patternId.localeCompare(second.patternId);
+    });
+
+  if (activeItems.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="natal-patterns-section natal-patterns-section--activations" aria-label="Active chart patterns">
+      <span className="eyebrow section-label">Active chart patterns</span>
+      <div className="natal-patterns-stack">
+        {activeItems.map((item) => (
+          <ActiveNowCallout item={item} key={`${item.patternId}-activation`} />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -184,7 +204,7 @@ function ActiveNowCallout({ item }: { item: NatalAspectPatternReaderItem }) {
     <details className={calloutClass} open={item.activationExpanded}>
       <summary>
         <span>
-          <em>Active now</em>
+          <em>{item.copy.content.headline}</em>
           <strong>{activation.headline}</strong>
         </span>
         <ChevronDown size={16} aria-hidden="true" />
