@@ -105,7 +105,7 @@ import type { RelationshipChartFullscreenMode } from "./features/friends/Relatio
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
-import { NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
+import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -18824,6 +18824,7 @@ function ManualChartsPanel({
                   <h3>{selectedChart.displayName}&apos;s current themes</h3>
                   <p>These are current sky contacts to {possessiveLabel(selectedChart.displayName)} natal chart, prioritized by exactness, natal target, and timing relevance.</p>
                 </article>
+                <NatalAspectPatternActivationsSection items={selectedFriendNatalAspectPatternItems} />
                 {(["short", "long"] as const).map((durationClass) => {
                   const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
 

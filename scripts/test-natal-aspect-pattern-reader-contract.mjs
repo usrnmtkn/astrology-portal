@@ -58,12 +58,13 @@ assert.match(component, /topLevel\.slice\(1\)/, "Additional independent items sh
 assert.match(component, /childPatternIds/, "Contained patterns must be nested under parents.");
 assert.match(component, /parentPatternIds/, "Parent links must be respected for nesting.");
 assert.match(component, /Supporting pattern detail/, "Contained patterns must be visible as supporting detail.");
-assert.match(component, /Active now/, "Activation callout title must be present.");
+assert.match(component, /Active chart patterns/, "Activation contacts must be labeled as a transit/update section, not natal copy.");
 assert.match(component, /item\.activationCopy\?\.content/, "Activation rendering must read resolved activation copy content only.");
+assert.match(component, /Active chart patterns[\s\S]*<ActiveNowCallout item=\{item\}/, "Temporary activation callouts must render only from the dedicated active-pattern section.");
 assert.match(component, /activation\.sections\.filter/, "Empty activation sections must not render headings.");
 assert.match(component, /activationSectionLabel\(section\.id\)/, "Activation section labels should map resolved section IDs.");
 assert.match(component, /open=\{item\.activationExpanded/, "Primary current activation may begin expanded.");
-assert.match(component, /hasExpandedActivation\(childItems\(item, items\)\)/, "Contained current activations may expand their natal parent.");
+assert.doesNotMatch(component, /hasExpandedActivation/, "Temporary activation state must not control permanent natal pattern expansion.");
 
 const forbiddenReaderLeaks = [
   "sourceAspectIds",

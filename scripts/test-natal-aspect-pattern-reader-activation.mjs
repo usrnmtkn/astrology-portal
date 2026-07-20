@@ -104,7 +104,10 @@ try {
     fetchNatalAspectPatternsWithCopy,
     natalAspectPatternReaderItems
   } = await vite.ssrLoadModule("/apps/web/src/services/natalAspectPatterns.ts");
-  const { NatalAspectPatternsSection } = await vite.ssrLoadModule("/apps/web/src/features/you/NatalAspectPatternsSection.tsx");
+  const {
+    NatalAspectPatternActivationsSection,
+    NatalAspectPatternsSection
+  } = await vite.ssrLoadModule("/apps/web/src/features/you/NatalAspectPatternsSection.tsx");
   const capturedRequests = [];
   const originalFetch = globalThis.fetch;
 
@@ -213,29 +216,39 @@ try {
   const html = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, { items, status: "ready" }));
   const [
     parentNatalPosition,
-    parentActivePosition,
     supportingPosition,
-    childNatalPosition,
-    childActivePosition
+    childNatalPosition
   ] = renderedTextPositions(html, [
     "Grand Square natal headline",
-    "Grand Square active headline",
     "Supporting pattern detail",
-    "T-square supporting headline",
-    "T-square active headline"
+    "T-square supporting headline"
   ]);
 
-  assert.ok(parentNatalPosition < parentActivePosition, "Activation callout must follow natal copy in the parent card.");
-  assert.ok(parentActivePosition < supportingPosition, "Supporting patterns must remain nested after parent activation copy.");
+  assert.ok(parentNatalPosition < supportingPosition, "Supporting patterns must remain nested after permanent natal copy.");
   assert.ok(supportingPosition < childNatalPosition, "Contained natal pattern copy must render inside supporting detail.");
-  assert.ok(childNatalPosition < childActivePosition, "Contained activation copy must stay inside the contained natal pattern.");
-  assert.match(html, /<summary><span><em>Active now<\/em><strong>T-square active headline<\/strong><\/span>/, "Activation callout must use the Active now title and resolved headline.");
-  assert.match(html, /natal-pattern-card__activation--primary/, "Primary current activation should receive visual emphasis.");
-  assert.match(html, /natal-pattern-card__activation--secondary/, "Secondary current activation should remain visible without primary emphasis.");
-  assert.match(html, /Current emphasis/, "Known activation section IDs should render as reader labels.");
-  assert.match(html, /Timing/, "Known activation timing section should render as a reader label.");
-  assert.doesNotMatch(html, /Watch for/, "Empty activation sections must not render their heading.");
+  assert.doesNotMatch(html, /Grand Square active headline|T-square active headline|Active chart patterns|natal-pattern-card__activation/, "Natal pattern cards must not render temporary activation copy.");
+
+  const activationHtml = renderToStaticMarkup(React.createElement(NatalAspectPatternActivationsSection, { items }));
+  const [
+    activationSectionPosition,
+    childActivePosition,
+    parentActivePosition
+  ] = renderedTextPositions(activationHtml, [
+    "Active chart patterns",
+    "T-square active headline",
+    "Grand Square active headline"
+  ]);
+
+  assert.ok(activationSectionPosition < childActivePosition, "Activation copy must live in the dedicated active-pattern section.");
+  assert.ok(childActivePosition < parentActivePosition, "Primary active pattern should render before secondary active patterns.");
+  assert.match(activationHtml, /<summary><span><em>T-square supporting headline<\/em><strong>T-square active headline<\/strong><\/span>/, "Activation callout must name the natal pattern and resolved activation headline.");
+  assert.match(activationHtml, /natal-pattern-card__activation--primary/, "Primary current activation should receive visual emphasis.");
+  assert.match(activationHtml, /natal-pattern-card__activation--secondary/, "Secondary current activation should remain visible without primary emphasis.");
+  assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
+  assert.match(activationHtml, /Timing/, "Known activation timing section should render as a reader label.");
+  assert.doesNotMatch(activationHtml, /Watch for/, "Empty activation sections must not render their heading.");
   assert.doesNotMatch(html, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Reader HTML must not expose activation diagnostics, provenance, or trigger internals.");
+  assert.doesNotMatch(activationHtml, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Activation HTML must not expose activation diagnostics, provenance, or trigger internals.");
 
   const inactiveSnapshot = {
     aspectPatterns: {
@@ -243,12 +256,15 @@ try {
       resolvedCopy: snapshot.aspectPatterns.resolvedCopy
     }
   };
+  const inactiveItems = natalAspectPatternReaderItems(inactiveSnapshot);
   const inactiveHtml = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, {
-    items: natalAspectPatternReaderItems(inactiveSnapshot),
+    items: inactiveItems,
     status: "ready"
   }));
-  assert.doesNotMatch(inactiveHtml, /Active now/, "Reader must not render an empty activation placeholder.");
+  const inactiveActivationHtml = renderToStaticMarkup(React.createElement(NatalAspectPatternActivationsSection, { items: inactiveItems }));
+  assert.equal(inactiveActivationHtml, "", "Transit tab must not render an empty activation placeholder.");
   assert.doesNotMatch(inactiveHtml, /nothing active|no active/i, "Reader must not render a global inactive-state message.");
+  assert.doesNotMatch(inactiveActivationHtml, /nothing active|no active/i, "Transit tab must not render a global inactive-state message.");
 } finally {
   await vite.close();
 }
