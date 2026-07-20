@@ -340,9 +340,9 @@ try {
   assert.ok(childActivePosition < parentActivePosition, "Primary active pattern should render before secondary active patterns.");
   assert.match(activationHtml, /updates-aspect-row friend-transit-row active-chart-pattern-row active-chart-pattern-row--primary/, "Primary current activation should use the transit row card treatment.");
   assert.match(activationHtml, /updates-aspect-row friend-transit-row active-chart-pattern-row active-chart-pattern-row--secondary/, "Secondary current activation should remain visible in the transit row card treatment.");
-  assert.match(activationHtml, /active-chart-pattern-row--writeup/, "Each activation write-up section should render as its own transit row card.");
   assert.match(activationHtml, /T-square supporting headline/, "Activation callout must name the natal pattern.");
-  assert.doesNotMatch(activationHtml, /natal-pattern-card__activation|<summary>|updates-aspect-row__detail/, "Activation callouts must not use the natal-pattern collapsible card treatment or bundle write-ups into a detail block.");
+  assert.match(activationHtml, /updates-aspect-row__detail/, "Activation support sections should remain grouped inside the matching pattern card.");
+  assert.doesNotMatch(activationHtml, /natal-pattern-card__activation|<summary>|active-chart-pattern-row--writeup/, "Activation callouts must not use the natal-pattern collapsible card treatment or split support sections into separate cards.");
   assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
   assert.match(activationHtml, /Duration/, "Activation timing should render as a visible duration line.");
   assert.match(activationHtml, /Start Jul 14, 2026/, "Activation duration must show a calculated start date.");

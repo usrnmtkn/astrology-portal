@@ -217,40 +217,35 @@ function ActiveNowCallout({
   ].join(" ");
 
   return (
-    <>
-      <article className={calloutClass}>
-        <span className="updates-aspect-row__content">
-          <span className="updates-aspect-row__title">{activation.headline}</span>
-          {timingWindow ? (
-            <span className="updates-aspect-row__meta-line" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
-              <span>Start {timingWindow.startLabel}</span>
-              <span>Exact {timingWindow.exactLabel}</span>
-              <span>End {timingWindow.endLabel}</span>
-            </span>
-          ) : null}
-          {activation.eyebrow ? <span className="updates-aspect-row__meta-line">{activation.eyebrow}</span> : null}
-          <span className="updates-aspect-row__description">{activation.overview}</span>
-        </span>
-        <span className="updates-aspect-row__meta" aria-label={`${item.copy.content.headline}, ${emphasisLabel.toLowerCase()}`}>
-          <span className="updates-aspect-row__dot" aria-hidden="true" />
-          <span className="updates-aspect-row__orb">{emphasisLabel}</span>
-        </span>
-      </article>
-      {sections.map((section) => (
-        <article className={`${calloutClass} active-chart-pattern-row--writeup`} key={`${item.patternId}-active-${section.id}-${section.body}`}>
-          <span className="updates-aspect-row__content">
-            <span className="updates-aspect-row__title">{activationSectionLabel(section.id)}</span>
-            <span className="updates-aspect-row__meta-line">{item.copy.content.headline}</span>
-            <span className="updates-aspect-row__description">{section.body}</span>
+    <article className={calloutClass}>
+      <span className="updates-aspect-row__content">
+        <span className="updates-aspect-row__title">{activation.headline}</span>
+        {timingWindow ? (
+          <span className="updates-aspect-row__meta-line" aria-label={`Duration, ${timingWindow.rangeLabel}. Exact ${timingWindow.exactLabel}`}>
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">Duration</span>
+            <span>Start {timingWindow.startLabel}</span>
+            <span>Exact {timingWindow.exactLabel}</span>
+            <span>End {timingWindow.endLabel}</span>
           </span>
-          <span className="updates-aspect-row__meta" aria-label={`${activationSectionLabel(section.id)}, ${emphasisLabel.toLowerCase()}`}>
-            <span className="updates-aspect-row__dot" aria-hidden="true" />
-            <span className="updates-aspect-row__orb">{emphasisLabel}</span>
+        ) : null}
+        {activation.eyebrow ? <span className="updates-aspect-row__meta-line">{activation.eyebrow}</span> : null}
+        <span className="updates-aspect-row__description">{activation.overview}</span>
+        {sections.length > 0 ? (
+          <span className="updates-aspect-row__detail">
+            <span>{item.copy.content.headline}</span>
+            {sections.map((section) => (
+              <span key={`${item.patternId}-active-${section.id}-${section.body}`}>
+                {activationSectionLabel(section.id)}: {section.body}
+              </span>
+            ))}
           </span>
-        </article>
-      ))}
-    </>
+        ) : null}
+      </span>
+      <span className="updates-aspect-row__meta" aria-label={`${item.copy.content.headline}, ${emphasisLabel.toLowerCase()}`}>
+        <span className="updates-aspect-row__dot" aria-hidden="true" />
+        <span className="updates-aspect-row__orb">{emphasisLabel}</span>
+      </span>
+    </article>
   );
 }
 
