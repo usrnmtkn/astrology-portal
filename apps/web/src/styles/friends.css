@@ -2459,7 +2459,7 @@
   min-height: 22px;
   border: 1px solid var(--control-border);
   border-radius: var(--radius-pill);
-  padding: 2px 8px;
+  padding: calc(var(--space-1) / 2) var(--space-2);
   color: var(--muted);
   background: var(--control-bg);
   font-size: var(--text-meta-size);

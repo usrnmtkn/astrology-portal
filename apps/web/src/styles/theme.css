@@ -551,7 +551,7 @@
   --table-row-bg: var(--card-bg);
   --table-row-border: var(--card-border);
   --table-row-gap: var(--sp-2);
-  --chart-transit-degree-size: 9px;
+  --chart-transit-degree-size: var(--chart-degree-size);
   --chart-synastry-house-label-size: 10.5px;
   --sky-ledger-title-size: 21px;
   --sky-ledger-glyph-size: 17px;

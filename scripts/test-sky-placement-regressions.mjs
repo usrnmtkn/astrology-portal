@@ -142,6 +142,7 @@ function generatedContentParagraphsForTest(content) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const themeCss = read("apps/web/src/styles/theme.css");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const careerArchetype = read("apps/web/src/services/careerArchetype.ts");
 const natalPlacementTaglines = read("apps/web/src/services/natalPlacementTaglines.ts");
@@ -526,7 +527,8 @@ assert.ok(
 assert.ok(app.includes("dedupeTransitAxisContacts(rankedTransitItems"), "Friend transits must dedupe duplicate Ascendant/Descendant and MC/IC axis contacts before rendering.");
 assert.ok(app.includes("friendTransitFactLine(transit, selectedChart.displayName)"), "Friend transit cards must render owner-aware fact lines.");
 assert.ok(app.includes("transitAspectTechnicalVerb(transit.aspect)"), "Transit fact copy must use technical aspect verbs such as conjunct.");
-assert.ok(/friendProfileTab === "transits"\s*\?\s*false/.test(app), "Friend Transits must not reserve the chart-rail column.");
+assert.ok(themeCss.includes("--chart-transit-degree-size: var(--chart-degree-size);"), "Transit wheel degrees must use the same size token as natal wheel degrees.");
+assert.ok(/friendProfileTab === "transits"\s*\?\s*Boolean\(selectedChart\?\.natalChart\)/.test(app), "Friend Transits must keep the chart rail when a natal chart is available.");
 assert.ok(!/transit\.note<\/p>/.test(app), "Friend transit cards must not render raw transit.note fallback copy.");
 assert.ok(!/natalPoint\} in \{transit\.natalSign\}\{typeof transit\.natalHouse/.test(app), "Friend transit cards must not append house labels to angles through the old raw fact line.");
 assert.ok(!/dangerouslySetInnerHTML/.test(app), "Reader pages must not bypass text rendering with raw template HTML.");

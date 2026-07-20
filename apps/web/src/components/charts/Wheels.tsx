@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, KeyboardEvent, MouseEvent } from "react";
 import { memo, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
@@ -70,6 +70,24 @@ type ChartPoint = {
   y: number;
 };
 
+type InspectorAspectType = "conjunction" | "sextile" | "square" | "trine" | "opposition";
+
+type InspectorPoint = {
+  id: string;
+  label: string;
+  glyph: string;
+  longitude: number;
+  sign: number;
+  position?: PlanetPosition;
+  kind: "position" | "angle";
+};
+
+type InspectorAspect = {
+  point: InspectorPoint;
+  type: InspectorAspectType | null;
+  orb: number | null;
+};
+
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
     return 0;
@@ -101,6 +119,75 @@ function formatPlanetPlacementTitle(position: PlanetPosition) {
 
 function formatPlanetPlacementLine(position: PlanetPosition) {
   return `${formatPlanetPlacementTitle(position)} ${formatPlanetDegree(position)}`;
+}
+
+function normalizedLongitude(longitude: number) {
+  return ((longitude % 360) + 360) % 360;
+}
+
+function angularSeparation(first: number, second: number) {
+  return Math.abs(((second - first + 540) % 360) - 180);
+}
+
+function wholeSignAspectType(fromSign: number, toSign: number): InspectorAspectType | null {
+  const distance = ((toSign - fromSign) % 12 + 12) % 12;
+
+  if (distance === 0) return "conjunction";
+  if (distance === 2 || distance === 10) return "sextile";
+  if (distance === 3 || distance === 9) return "square";
+  if (distance === 4 || distance === 8) return "trine";
+  if (distance === 6) return "opposition";
+  return null;
+}
+
+function exactAspectAngle(type: InspectorAspectType) {
+  switch (type) {
+    case "conjunction":
+      return 0;
+    case "sextile":
+      return 60;
+    case "square":
+      return 90;
+    case "trine":
+      return 120;
+    case "opposition":
+      return 180;
+  }
+}
+
+function wholeSignAspectStyle(type: InspectorAspectType, orb: number): CSSProperties {
+  const base = aspectLineStyle(type, orb);
+
+  if (orb <= 3) {
+    return {
+      ...base,
+      "--aspect-line-opacity": "1",
+      "--aspect-line-width": "2"
+    } as CSSProperties;
+  }
+
+  if (orb <= 7) {
+    return {
+      ...base,
+      "--aspect-line-opacity": "0.8",
+      "--aspect-line-width": "1.5"
+    } as CSSProperties;
+  }
+
+  if (orb <= 12) {
+    return {
+      ...base,
+      "--aspect-line-opacity": "0.55",
+      "--aspect-line-width": "1"
+    } as CSSProperties;
+  }
+
+  return {
+    ...base,
+    "--aspect-line-dash": "5 6",
+    "--aspect-line-opacity": "0.3",
+    "--aspect-line-width": "0.75"
+  } as CSSProperties;
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
@@ -156,6 +243,7 @@ type SkyWheelProps = {
   showHouses?: boolean;
   houseSignLabelStyle?: HouseSignLabelStyle;
   variant?: Exclude<WheelVariant, "synastry">;
+  aspectInspector?: boolean;
 };
 
 export const SkyWheel = memo(function SkyWheel({
@@ -168,7 +256,8 @@ export const SkyWheel = memo(function SkyWheel({
   midheavenLongitude,
   showHouses = false,
   houseSignLabelStyle = "text",
-  variant = "zodiac"
+  variant = "zodiac",
+  aspectInspector = false
 }: SkyWheelProps) {
   const isAscendantAnchored = typeof ascendantLongitude === "number";
   const isNatalWheel = showHouses && isAscendantAnchored;
@@ -291,6 +380,7 @@ export const SkyWheel = memo(function SkyWheel({
     radius: angularLabelRadius
   }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored, angularLabelRadius]);
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
+  const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
   const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
@@ -337,11 +427,139 @@ export const SkyWheel = memo(function SkyWheel({
     className: aspectLineClass(aspect.type),
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
   })), [transitAspects]);
+  const inspectorEnabled = aspectInspector && variant === "natal" && !hasTransitOverlay;
+  const inspectorPoints = useMemo(() => {
+    if (!inspectorEnabled) {
+      return [];
+    }
+
+    const pointMap = new Map<string, InspectorPoint>();
+
+    positions.forEach((position) => {
+      const longitude = normalizedLongitude(zodiacLongitude(position));
+      pointMap.set(position.planet, {
+        id: position.planet,
+        label: position.planet,
+        glyph: position.glyph,
+        longitude,
+        sign: Math.floor(longitude / 30),
+        position,
+        kind: "position"
+      });
+    });
+
+    if (typeof ascendantLongitude === "number") {
+      const ascLongitude = normalizedLongitude(ascendantLongitude);
+      const dscLongitude = normalizedLongitude(ascendantLongitude + 180);
+      pointMap.set("Ascendant", {
+        id: "Ascendant",
+        label: "Ascendant",
+        glyph: "ASC",
+        longitude: ascLongitude,
+        sign: Math.floor(ascLongitude / 30),
+        kind: "angle"
+      });
+      pointMap.set("Descendant", {
+        id: "Descendant",
+        label: "Descendant",
+        glyph: "DSC",
+        longitude: dscLongitude,
+        sign: Math.floor(dscLongitude / 30),
+        kind: "angle"
+      });
+    }
+
+    if (typeof midheavenLongitude === "number") {
+      const mcLongitude = normalizedLongitude(midheavenLongitude);
+      const icLongitude = normalizedLongitude(midheavenLongitude + 180);
+      pointMap.set("Midheaven", {
+        id: "Midheaven",
+        label: "Midheaven",
+        glyph: "MC",
+        longitude: mcLongitude,
+        sign: Math.floor(mcLongitude / 30),
+        kind: "angle"
+      });
+      pointMap.set("Imum Coeli", {
+        id: "Imum Coeli",
+        label: "Imum Coeli",
+        glyph: "IC",
+        longitude: icLongitude,
+        sign: Math.floor(icLongitude / 30),
+        kind: "angle"
+      });
+    }
+
+    return Array.from(pointMap.values());
+  }, [inspectorEnabled, positions, ascendantLongitude, midheavenLongitude]);
+  const focusedInspectorPoint = focusedInspectorPointId
+    ? inspectorPoints.find((candidate) => candidate.id === focusedInspectorPointId) ?? null
+    : null;
+  const inspectorAspects = useMemo(() => {
+    if (!focusedInspectorPoint) {
+      return [];
+    }
+
+    return inspectorPoints
+      .filter((candidate) => candidate.id !== focusedInspectorPoint.id)
+      .map((candidate): InspectorAspect => {
+        const type = wholeSignAspectType(focusedInspectorPoint.sign, candidate.sign);
+
+        if (!type) {
+          return {
+            point: candidate,
+            type: null,
+            orb: null
+          };
+        }
+
+        return {
+          point: candidate,
+          type,
+          orb: Math.abs(angularSeparation(focusedInspectorPoint.longitude, candidate.longitude) - exactAspectAngle(type))
+        };
+      });
+  }, [focusedInspectorPoint, inspectorPoints]);
+  const inspectorConfiguredPointIds = useMemo(() => new Set(
+    inspectorAspects
+      .filter((aspect) => aspect.type)
+      .map((aspect) => aspect.point.id)
+  ), [inspectorAspects]);
+  const inspectorAversePointIds = useMemo(() => new Set(
+    inspectorAspects
+      .filter((aspect) => !aspect.type)
+      .map((aspect) => aspect.point.id)
+  ), [inspectorAspects]);
+  function inspectorPointState(pointId: string) {
+    if (!focusedInspectorPoint) {
+      return "idle";
+    }
+
+    if (pointId === focusedInspectorPoint.id) {
+      return "selected";
+    }
+
+    if (inspectorConfiguredPointIds.has(pointId)) {
+      return "participant";
+    }
+
+    if (inspectorAversePointIds.has(pointId)) {
+      return "averse";
+    }
+
+    return "idle";
+  }
   const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : wheelViewBox;
 
   return (
     <>
-      <svg className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}`} viewBox={activeWheelViewBox} role="img" aria-label="Planet positions">
+      <svg
+        className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+        viewBox={activeWheelViewBox}
+        role="img"
+        aria-label="Planet positions"
+        onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
+      >
         <defs>
           <clipPath id={wheelClipId}>
             <circle cx={center} cy={center} r={radius.outer} />
@@ -381,16 +599,37 @@ export const SkyWheel = memo(function SkyWheel({
           })}
         </g>
         <g className="aspect-lines">
-          {aspectPairs.map(({ from, to, type, className, lineStyle }) => {
-            const a = point(planetAngle(from), radius.aspect);
-            const b = point(planetAngle(to), radius.aspect);
+          {inspectorEnabled ? (
+            focusedInspectorPoint ? inspectorAspects.map(({ point: targetPoint, type, orb }) => {
+              if (!type || typeof orb !== "number") {
+                return null;
+              }
 
-            return (
-              <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
-                <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-              </g>
-            );
-          })}
+              const a = point(angleForLongitude(focusedInspectorPoint.longitude), radius.aspect);
+              const b = point(angleForLongitude(targetPoint.longitude), radius.aspect);
+
+              return (
+                <g
+                  key={`${focusedInspectorPoint.id}-${targetPoint.id}`}
+                  className={`${aspectLineClass(type)} ${normalizeAspectType(type)} aspect-inspector-line`}
+                  style={wholeSignAspectStyle(type, orb)}
+                >
+                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                </g>
+              );
+            }) : null
+          ) : (
+            aspectPairs.map(({ from, to, type, className, lineStyle }) => {
+              const a = point(planetAngle(from), radius.aspect);
+              const b = point(planetAngle(to), radius.aspect);
+
+              return (
+                <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                </g>
+              );
+            })
+          )}
         </g>
         {transitAspectPairs.length > 0 && (
           <g className="aspect-lines transit-to-natal-aspect-lines" aria-label="Transit to natal aspects">
@@ -449,6 +688,32 @@ export const SkyWheel = memo(function SkyWheel({
             {angularLabels.map(({ label, x, y }) => {
               const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
               const iconSize = angleIconSize;
+              const anglePointId = label === "ASC"
+                ? "Ascendant"
+                : label === "DSC"
+                  ? "Descendant"
+                  : label === "MC"
+                    ? "Midheaven"
+                    : label === "IC"
+                      ? "Imum Coeli"
+                      : label;
+              const angleInspectorState = inspectorPointState(anglePointId);
+              const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${angleInspectorState}`;
+              const angleProps = inspectorEnabled ? {
+                role: "button",
+                tabIndex: 0,
+                onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
+                  event.stopPropagation();
+                  setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
+                },
+                onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
+                  }
+                }
+              } : {};
 
               return iconHref ? (
                 <image
@@ -458,12 +723,13 @@ export const SkyWheel = memo(function SkyWheel({
                   y={y - iconSize / 2}
                   width={iconSize}
                   height={iconSize}
-                  className="zodiac-wheel__angle-icon"
+                  className={angleClassName}
                   aria-label={label}
                   preserveAspectRatio="xMidYMid meet"
+                  {...angleProps}
                 />
               ) : (
-                <text key={label} x={x} y={y}>
+                <text key={label} x={x} y={y} className={`aspect-inspector-point aspect-inspector-point--${angleInspectorState}`} {...angleProps}>
                   {label}
                 </text>
               );
@@ -479,6 +745,10 @@ export const SkyWheel = memo(function SkyWheel({
             const tickInner = point(tickAngle, radius.signInner - 17);
             const degreeOffset = inwardMarkerOffset(center, marker, planetDegreeOffset);
             const tooltipLines = tooltipDetailsByPlanet.get(position.planet)?.lines ?? [];
+            const inspectorState = inspectorPointState(position.planet);
+            const inspectorActiveLines = focusedInspectorPoint && inspectorState === "averse"
+              ? [`${focusedInspectorPoint.label} is in aversion to ${position.planet}.`]
+              : tooltipLines;
 
             return (
               <g
@@ -490,15 +760,35 @@ export const SkyWheel = memo(function SkyWheel({
                     planetMarkerRefs.current.delete(position.planet);
                   }
                 }}
-                className="planet-marker"
+                className={`planet-marker aspect-inspector-point aspect-inspector-point--${inspectorState}`}
                 tabIndex={0}
-                role="img"
-                aria-label={tooltipLines.join(". ")}
+                role={inspectorEnabled ? "button" : "img"}
+                aria-label={inspectorActiveLines.join(". ")}
                 onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
                 onFocus={() => setActiveTooltipPlanet(position.planet)}
+                onClick={inspectorEnabled ? (event) => {
+                  event.stopPropagation();
+                  setFocusedInspectorPointId((current) => current === position.planet ? null : position.planet);
+                } : undefined}
+                onKeyDown={inspectorEnabled ? (event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setFocusedInspectorPointId((current) => current === position.planet ? null : position.planet);
+                  }
+                } : undefined}
                 onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
                 onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
               >
+                {inspectorState === "selected" ? (
+                  <circle
+                    cx={point(tickAngle, radius.aspect).x}
+                    cy={point(tickAngle, radius.aspect).y}
+                    r={7}
+                    className="aspect-inspector-focus-ring"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
                 <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                   <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
