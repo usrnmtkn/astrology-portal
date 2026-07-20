@@ -8,7 +8,7 @@ import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { emergencyDetailFallbackCopy } from "../../content/emergencyCopy";
 import { isReaderFacingCopy } from "../../content/readerSafety";
-import { NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
+import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
 
 type YouTab = "transits" | "chart";
 
@@ -364,6 +364,7 @@ function YouUpdatesTab({
   aspectRows,
   dailyUpdateSummary,
   hasSavedCurrentCity,
+  natalAspectPatternItems,
   onCreateChart,
   personalTimingSummary,
   standaloneTransitRows = []
@@ -371,6 +372,7 @@ function YouUpdatesTab({
   aspectRows: ReactNode[];
   dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
+  natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
@@ -420,6 +422,9 @@ function YouUpdatesTab({
             </ul>
           )}
         </section>
+      )}
+      {hasSavedCurrentCity && natalAspectPatternItems && (
+        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} />
       )}
       <span className="eyebrow section-label">Aspects</span>
       {!hasSavedCurrentCity && (
@@ -819,6 +824,7 @@ export function YouPage({
               aspectRows={aspectRows}
               dailyUpdateSummary={dailyUpdateSummary}
               hasSavedCurrentCity={hasSavedCurrentCity}
+              natalAspectPatternItems={natalAspectPatternItems}
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
