@@ -8815,7 +8815,9 @@ function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot 
       fromLongitude: zodiacLongitude(transitPosition),
       toLongitude: zodiacLongitude(natalPosition),
       type: transit.aspect,
-      orb: transitOrbValue(transit)
+      orb: transitOrbValue(transit),
+      fromPointId: `transit:${transitPosition.planet}`,
+      toPointId: natalPosition.planet
     }];
   });
 }
@@ -13603,6 +13605,7 @@ export function App() {
                       midheavenLongitude={sky.midheavenLongitude}
                       houseSignLabelStyle={activeHouseSignLabelStyle}
                       variant="zodiac"
+                      aspectInspector
                     />
                   </div>
                 </div>
@@ -13903,6 +13906,7 @@ export function App() {
                         midheavenLongitude={sky.midheavenLongitude}
                         houseSignLabelStyle={activeHouseSignLabelStyle}
                         variant="zodiac"
+                        aspectInspector
                       />
                     </div>
                   </div>
@@ -17465,6 +17469,7 @@ function ProfileView({
           showHouses
           houseSignLabelStyle={houseSignLabelStyle}
           variant="natal"
+          aspectInspector
         />
       </div>
     </div>
@@ -18751,6 +18756,7 @@ function ManualChartsPanel({
                         showHouses
                         houseSignLabelStyle={houseSignLabelStyle}
                         variant="natal"
+                        aspectInspector
                       />
                     </div>
                   </div>
@@ -19031,7 +19037,6 @@ function ManualChartsPanel({
           {friendProfileTab === "transits" && (
             <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${selectedChart.displayName} transits`}>
               <div className="friend-profile-copy-column">
-                <span className="eyebrow section-label friend-section-label">Transits</span>
                 <NatalAspectPatternActivationsSection
                   items={selectedFriendNatalAspectPatternItems}
                   timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}

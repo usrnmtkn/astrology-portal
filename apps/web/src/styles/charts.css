@@ -12,6 +12,7 @@
   display: grid;
   justify-items: center;
   gap: 10px;
+  position: relative;
   width: min(100%, var(--chart-size));
   min-width: 0;
   max-width: 100%;
@@ -35,9 +36,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 5px;
+  position: absolute;
+  top: calc(100% + 42px);
+  left: 50%;
+  transform: translateX(-50%);
   width: max-content;
   max-width: min(100%, 220px);
-  margin: 18px auto 0;
+  margin: 0;
   color: var(--wheel-label);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
@@ -530,6 +535,14 @@
 .sky-wheel--aspect-inspector.is-inspecting-aspects .angular-labels .aspect-inspector-point--averse {
   opacity: 0.3;
   filter: grayscale(1) opacity(0.62);
+}
+
+.sky-wheel--aspect-inspector.is-inspecting-aspects .angular-labels :where(
+  .aspect-inspector-point--participant,
+  .aspect-inspector-point--selected
+) {
+  opacity: 1;
+  filter: none;
 }
 
 .aspect-inspector-focus-ring {

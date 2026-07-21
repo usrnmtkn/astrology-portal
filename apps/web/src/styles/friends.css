@@ -647,7 +647,7 @@
 .friend-chart-page {
   --friend-detail-content-max: 720px;
   --friend-detail-chart-max: var(--shared-chart-size);
-  --friend-wheel-stack-gap: 22px;
+  --friend-wheel-stack-gap: 8px;
   --friend-detail-no-chart-max: 760px;
   --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
   --friend-composite-row-template: 56px minmax(0, 1fr) auto;
@@ -737,6 +737,10 @@
 .friend-chart-page--synastry,
 .friend-chart-page--composite {
   --friend-wheel-stack-gap: 18px;
+}
+
+.friend-synastry-wheel-shell > .natal-chart-view-toggle {
+  margin-bottom: 4px;
 }
 
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
@@ -2241,7 +2245,7 @@
   .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout {
     align-items: start;
     column-gap: 55px;
-    grid-template-columns: minmax(420px, 1fr) var(--friend-detail-copy-width);
+    grid-template-columns: minmax(min(var(--shared-chart-size), 48vw), 1fr) var(--friend-detail-copy-width);
     justify-content: stretch;
   }
 

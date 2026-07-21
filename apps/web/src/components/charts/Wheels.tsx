@@ -36,6 +36,8 @@ export type InterChartAspectLine = {
   toLongitude: number;
   type: string;
   orb: number;
+  fromPointId?: string;
+  toPointId?: string;
 };
 
 const signs = [
@@ -70,7 +72,7 @@ type ChartPoint = {
   y: number;
 };
 
-type InspectorAspectType = "conjunction" | "sextile" | "square" | "trine" | "opposition";
+type WholeSignInspectorAspectType = "conjunction" | "sextile" | "square" | "trine" | "opposition";
 
 type InspectorPoint = {
   id: string;
@@ -79,13 +81,20 @@ type InspectorPoint = {
   longitude: number;
   sign: number;
   position?: PlanetPosition;
-  kind: "position" | "angle";
+  kind: "position" | "transit-position" | "angle";
 };
 
 type InspectorAspect = {
   point: InspectorPoint;
-  type: InspectorAspectType | null;
+  type: string | null;
   orb: number | null;
+};
+
+type InspectorAspectSource = {
+  fromId: string;
+  toId: string;
+  type: string;
+  orb: number;
 };
 
 const aspectLegendLabels: Record<string, string> = {
@@ -110,7 +119,11 @@ const aspectLegendAngles: Record<string, number> = {
   quincunx: 150,
   opposition: 180
 };
-const inspectorAspectLegendTypes: InspectorAspectType[] = ["conjunction", "sextile", "square", "trine", "opposition"];
+const wholeSignInspectorAspectTypes: WholeSignInspectorAspectType[] = ["conjunction", "sextile", "square", "trine", "opposition"];
+
+function transitInspectorPointId(planet: string) {
+  return `transit:${planet}`;
+}
 
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
@@ -153,7 +166,7 @@ function angularSeparation(first: number, second: number) {
   return Math.abs(((second - first + 540) % 360) - 180);
 }
 
-function wholeSignAspectType(fromSign: number, toSign: number): InspectorAspectType | null {
+function wholeSignAspectType(fromSign: number, toSign: number): WholeSignInspectorAspectType | null {
   const distance = ((toSign - fromSign) % 12 + 12) % 12;
 
   if (distance === 0) return "conjunction";
@@ -164,7 +177,7 @@ function wholeSignAspectType(fromSign: number, toSign: number): InspectorAspectT
   return null;
 }
 
-function exactAspectAngle(type: InspectorAspectType) {
+function exactAspectAngle(type: WholeSignInspectorAspectType) {
   switch (type) {
     case "conjunction":
       return 0;
@@ -192,9 +205,9 @@ function aspectLegendSortValue(type: string) {
   return aspectLegendAngles[normalizeAspectType(type)] ?? 999;
 }
 
-function wholeSignAspectStyle(type: InspectorAspectType, orb: number): CSSProperties {
+function wholeSignAspectStyle(type: WholeSignInspectorAspectType, orb: number): CSSProperties {
   const base = aspectLineStyle(type, orb);
-  const typeStyle: Record<InspectorAspectType, { stroke: string; dash: string; widthBoost: number }> = {
+  const typeStyle: Record<WholeSignInspectorAspectType, { stroke: string; dash: string; widthBoost: number }> = {
     conjunction: { stroke: "#252833", dash: "none", widthBoost: 0.2 },
     sextile: { stroke: "#1d8fd7", dash: "3 6", widthBoost: 0 },
     square: { stroke: "#e24eb9", dash: "9 4", widthBoost: 0.1 },
@@ -244,6 +257,17 @@ function wholeSignAspectStyle(type: InspectorAspectType, orb: number): CSSProper
     "--aspect-line-width": String(1.25 + aspectStyle.widthBoost),
     "--aspect-line-backdrop-width": String(3.3 + aspectStyle.widthBoost)
   } as CSSProperties;
+}
+
+function inspectorLineStyle(type: string, orb: number, mode: "exact" | "whole-sign") {
+  const normalizedType = normalizeAspectType(type);
+  const isWholeSignType = wholeSignInspectorAspectTypes.includes(normalizedType as WholeSignInspectorAspectType);
+
+  if (mode === "whole-sign" && isWholeSignType) {
+    return wholeSignAspectStyle(normalizedType as WholeSignInspectorAspectType, orb);
+  }
+
+  return aspectLineStyle(type, orb);
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
@@ -484,7 +508,7 @@ export const SkyWheel = memo(function SkyWheel({
     className: aspectLineClass(aspect.type),
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
   })), [transitAspects]);
-  const inspectorEnabled = aspectInspector && variant === "natal" && !hasTransitOverlay;
+  const inspectorEnabled = aspectInspector && (variant === "natal" || variant === "zodiac");
   const inspectorPoints = useMemo(() => {
     if (!inspectorEnabled) {
       return [];
@@ -502,6 +526,19 @@ export const SkyWheel = memo(function SkyWheel({
         sign: Math.floor(longitude / 30),
         position,
         kind: "position"
+      });
+    });
+
+    transitPositions.forEach((position) => {
+      const longitude = normalizedLongitude(zodiacLongitude(position));
+      pointMap.set(transitInspectorPointId(position.planet), {
+        id: transitInspectorPointId(position.planet),
+        label: `Current ${position.planet}`,
+        glyph: position.glyph,
+        longitude,
+        sign: Math.floor(longitude / 30),
+        position,
+        kind: "transit-position"
       });
     });
 
@@ -548,13 +585,65 @@ export const SkyWheel = memo(function SkyWheel({
     }
 
     return Array.from(pointMap.values());
-  }, [inspectorEnabled, positions, ascendantLongitude, midheavenLongitude]);
+  }, [inspectorEnabled, positions, transitPositions, ascendantLongitude, midheavenLongitude]);
   const focusedInspectorPoint = focusedInspectorPointId
     ? inspectorPoints.find((candidate) => candidate.id === focusedInspectorPointId) ?? null
     : null;
+  const inspectorMode: "exact" | "whole-sign" = variant === "natal" && !hasTransitOverlay ? "whole-sign" : "exact";
+  const exactInspectorAspectSources = useMemo((): InspectorAspectSource[] => {
+    if (!inspectorEnabled || inspectorMode !== "exact") {
+      return [];
+    }
+
+    if (hasTransitOverlay) {
+      return transitAspectPairs.flatMap((aspect) => {
+        if (!aspect.fromPointId || !aspect.toPointId) {
+          return [];
+        }
+
+        return [{
+          fromId: aspect.fromPointId,
+          toId: aspect.toPointId,
+          type: aspect.type,
+          orb: aspect.orb
+        }];
+      });
+    }
+
+    return aspectPairs.map((aspect) => ({
+      fromId: aspect.from.planet,
+      toId: aspect.to.planet,
+      type: aspect.type,
+      orb: aspect.orb
+    }));
+  }, [inspectorEnabled, inspectorMode, hasTransitOverlay, transitAspectPairs, aspectPairs]);
   const inspectorAspects = useMemo(() => {
     if (!focusedInspectorPoint) {
       return [];
+    }
+
+    if (inspectorMode === "exact") {
+      const exactAspectsByTargetId = new Map<string, InspectorAspectSource>();
+
+      exactInspectorAspectSources.forEach((aspect) => {
+        if (aspect.fromId === focusedInspectorPoint.id) {
+          exactAspectsByTargetId.set(aspect.toId, aspect);
+        } else if (aspect.toId === focusedInspectorPoint.id) {
+          exactAspectsByTargetId.set(aspect.fromId, aspect);
+        }
+      });
+
+      return inspectorPoints
+        .filter((candidate) => candidate.id !== focusedInspectorPoint.id)
+        .map((candidate): InspectorAspect => {
+          const exactAspect = exactAspectsByTargetId.get(candidate.id);
+
+          return {
+            point: candidate,
+            type: exactAspect?.type ?? null,
+            orb: exactAspect?.orb ?? null
+          };
+        });
     }
 
     return inspectorPoints
@@ -576,7 +665,7 @@ export const SkyWheel = memo(function SkyWheel({
           orb: Math.abs(angularSeparation(focusedInspectorPoint.longitude, candidate.longitude) - exactAspectAngle(type))
         };
       });
-  }, [focusedInspectorPoint, inspectorPoints]);
+  }, [exactInspectorAspectSources, focusedInspectorPoint, inspectorMode, inspectorPoints]);
   const inspectorConfiguredPointIds = useMemo(() => new Set(
     inspectorAspects
       .filter((aspect) => aspect.type)
@@ -588,25 +677,25 @@ export const SkyWheel = memo(function SkyWheel({
       .map((aspect) => aspect.point.id)
   ), [inspectorAspects]);
   const aspectLegendItems = useMemo(() => {
-    if (!focusedInspectorPoint || focusedInspectorPoint.kind !== "position") {
+    if (!focusedInspectorPoint || (focusedInspectorPoint.kind !== "position" && focusedInspectorPoint.kind !== "transit-position")) {
       return [];
     }
 
     const presentTypes = new Set(
       inspectorAspects
         .map((aspect) => aspect.type)
-        .filter((type): type is InspectorAspectType => Boolean(type))
+        .filter((type): type is string => Boolean(type))
     );
-    const types = inspectorAspectLegendTypes.filter((type) => presentTypes.has(type));
+    const types = Array.from(presentTypes);
 
     return types
       .sort((first, second) => aspectLegendSortValue(first) - aspectLegendSortValue(second))
       .map((type) => ({
         type,
         label: aspectLegendLabel(type),
-        lineStyle: wholeSignAspectStyle(type, 0)
+        lineStyle: inspectorLineStyle(type, 0, inspectorMode)
       }));
-  }, [focusedInspectorPoint, inspectorAspects]);
+  }, [focusedInspectorPoint, inspectorAspects, inspectorMode]);
   useEffect(() => {
     if (!inspectorEnabled || !focusedInspectorPointId) {
       return;
@@ -711,7 +800,7 @@ export const SkyWheel = memo(function SkyWheel({
                 <g
                   key={`${focusedInspectorPoint.id}-${targetPoint.id}`}
                   className={`${aspectLineClass(type)} ${normalizeAspectType(type)} aspect-inspector-line`}
-                  style={wholeSignAspectStyle(type, orb)}
+                  style={inspectorLineStyle(type, orb, inspectorMode)}
                 >
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
@@ -731,7 +820,7 @@ export const SkyWheel = memo(function SkyWheel({
             })
           )}
         </g>
-        {transitAspectPairs.length > 0 && (
+        {transitAspectPairs.length > 0 && !focusedInspectorPoint && (
           <g className="aspect-lines transit-to-natal-aspect-lines" aria-label="Transit to natal aspects">
             {transitAspectPairs.map(({ id, fromLongitude, toLongitude, type, className, lineStyle }) => {
               const a = point(angleForLongitude(fromLongitude), radius.aspect);
@@ -916,14 +1005,41 @@ export const SkyWheel = memo(function SkyWheel({
               const tickOuter = point(tickAngle, radius.outer + 7);
               const tickInner = point(tickAngle, radius.outer + 5);
               const degreeMarker = point(markerAngle, radius.transitDegree);
+              const transitPointId = transitInspectorPointId(position.planet);
+              const inspectorState = inspectorPointState(transitPointId);
+              const inspectorActiveLines = focusedInspectorPoint && inspectorState === "averse"
+                ? [`${focusedInspectorPoint.label} is in aversion to Current ${position.planet}.`]
+                : [`Current ${formatPlanetPlacementLine(position)}`];
 
               return (
                 <g
                   key={`transit-${position.planet}`}
-                  className="planet-marker planet-marker-transit"
-                  role="img"
-                  aria-label={`Current ${formatPlanetPlacementLine(position)}`}
+                  className={`planet-marker planet-marker-transit aspect-inspector-point aspect-inspector-point--${inspectorState}`}
+                  role={inspectorEnabled ? "button" : "img"}
+                  tabIndex={inspectorEnabled ? 0 : undefined}
+                  aria-label={inspectorActiveLines.join(". ")}
+                  onClick={inspectorEnabled ? (event) => {
+                    event.stopPropagation();
+                    event.currentTarget.blur();
+                    setFocusedInspectorPointId((current) => current === transitPointId ? null : transitPointId);
+                  } : undefined}
+                  onKeyDown={inspectorEnabled ? (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setFocusedInspectorPointId((current) => current === transitPointId ? null : transitPointId);
+                    }
+                  } : undefined}
                 >
+                  {inspectorState === "selected" ? (
+                    <circle
+                      cx={point(tickAngle, radius.aspect).x}
+                      cy={point(tickAngle, radius.aspect).y}
+                      r={7}
+                      className="aspect-inspector-focus-ring"
+                      aria-hidden="true"
+                    />
+                  ) : null}
                   <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick transit-planet-tick" />
                   <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                     <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
