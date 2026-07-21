@@ -740,6 +740,7 @@
 }
 
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel-shell,
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel,
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) svg {
   width: 100%;
@@ -2262,6 +2263,7 @@
 
   .app-shell.mode-friends .friend-detail-chart-rail .friend-synastry-wheel-shell,
   .app-shell.mode-friends .friend-detail-chart-rail .friend-wheel,
+  .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel-shell,
   .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel,
   .app-shell.mode-friends .friend-detail-chart-rail svg {
     max-width: var(--shared-chart-size);

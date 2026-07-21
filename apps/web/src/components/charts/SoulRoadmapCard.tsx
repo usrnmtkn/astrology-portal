@@ -273,6 +273,18 @@ function moonMissionSentence({
   return `${moonOpener}, which ${pronouns.helps} ${moonContribution}.`;
 }
 
+function moonMissionContributionSentence(moonSign: string, moonContribution: string, pronouns: ReturnType<typeof pronounSet>) {
+  if (/^point the mission\b/i.test(moonContribution)) {
+    return `The ${moonSign} Moon keeps the mission pointed ${moonContribution.replace(/^point the mission\s*/i, "").trim()}.`;
+  }
+
+  if (/^keep the mission\b/i.test(moonContribution)) {
+    return `The ${moonSign} Moon ${moonContribution.replace(/^keep\b/i, "keeps")}.`;
+  }
+
+  return `The ${moonSign} Moon helps ${pronouns.object} ${moonContribution}.`;
+}
+
 function readerFacingRoadmapText(value: string) {
   const trimmed = value.replace(/\s+/g, " ").trim();
 
@@ -340,19 +352,19 @@ function missionStatement({
 }) {
   const pronouns = pronounSet(ownerKind, ownerName, ownerPronouns);
   const sunExpression = formatRoadmapText(sun.sunExpression, ownerKind, pronouns.reference);
+  const moonContribution = formatRoadmapText(moon.moonContribution, ownerKind, pronouns.reference);
   const pathSign = northNodeSign || risingSign;
   const pathRoadmap = northNode ?? rising;
   const pathExpression = pathRoadmap ? formatRoadmapText(pathRoadmap.pathExpression, ownerKind, pronouns.reference) : "";
-  const moonStyle = formatRoadmapText(moon.moonStyle, ownerKind, pronouns.reference);
   const name = sentenceSubject(ownerKind, ownerName);
   const opener = ownerKind === "self"
-    ? `Your purpose becomes easier to recognize when ${signArticle(sunSign)} ${sunSign} part of you has room to act.`
-    : `${name}'s purpose becomes easier to recognize when ${signArticle(sunSign)} ${sunSign} part of ${pronouns.object} has room to act.`;
-  const sunSentence = `This gives ${pronouns.possessive} vitality a path through ${sunExpression}.`;
+    ? `Your mission gets clearer when your ${sunSign} Sun can move in its own way.`
+    : `${name}'s mission gets clearer when ${pronouns.possessive} ${sunSign} Sun can move in its own way.`;
+  const sunSentence = `The fuel is ${sunExpression}.`;
   const pathSentence = pathRoadmap && pathSign
-    ? `${pathSign} helps that path develop through ${pathExpression}.`
+    ? `${pathSign} points the path toward ${pathExpression}.`
     : "";
-  const moonSentence = `The ${moonSign} Moon keeps the work emotionally honest through ${moonStyle}.`;
+  const moonSentence = moonMissionContributionSentence(moonSign, moonContribution, pronouns);
 
   return [opener, sunSentence, pathSentence, moonSentence]
     .filter(Boolean)
@@ -472,6 +484,9 @@ export function SoulRoadmapCard({
     return null;
   }
 
+  const sourceLayer = profile.sections.some((section) => section.layer === "source-grounded")
+    ? "Admin"
+    : "Fallback";
   const cardClassName = [
     "soul-roadmap-card",
     onOpenDetail ? "soul-roadmap-card--button" : "",
@@ -481,7 +496,10 @@ export function SoulRoadmapCard({
     <>
       <div className="soul-roadmap-card__header">
         <span className="eyebrow section-label">{profile.label}</span>
-        <h3>{profile.title}</h3>
+        <h3>
+          {profile.title}
+          <span className="soul-roadmap-card__source-badge">{sourceLayer}</span>
+        </h3>
         <p>{profile.tldr}</p>
       </div>
     </>
@@ -499,7 +517,10 @@ export function SoulRoadmapCard({
     <section className={cardClassName} aria-label={profile.label}>
       <div className="soul-roadmap-card__header">
         <span className="eyebrow section-label">{profile.label}</span>
-        <h3>{profile.title}</h3>
+        <h3>
+          {profile.title}
+          <span className="soul-roadmap-card__source-badge">{sourceLayer}</span>
+        </h3>
         <p>{profile.tldr}</p>
       </div>
       <div className="soul-roadmap-card__points" aria-label="Purpose factors">
@@ -512,7 +533,12 @@ export function SoulRoadmapCard({
       </div>
       <div className="soul-roadmap-card__keywords" aria-label="Purpose reading">
         {profile.sections.map((section) => (
-          <p key={section.heading}><strong>{section.heading}</strong> {section.body}</p>
+          <p key={section.heading}>
+            <strong>{section.heading}</strong>
+            <em>{section.layer === "source-grounded" ? "Admin" : "Fallback"}</em>
+            {" "}
+            {section.body}
+          </p>
         ))}
       </div>
     </section>

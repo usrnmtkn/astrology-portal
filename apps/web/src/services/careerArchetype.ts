@@ -50,6 +50,7 @@ type CareerVocabularyDbRow = {
   flags?: string[] | null;
   headline: string | null;
   body: string | null;
+  prompt_version?: string | null;
 };
 
 type CareerArchetypeOptions = {
@@ -73,6 +74,7 @@ const cardinalSigns = new Set(["Aries", "Cancer", "Libra", "Capricorn"]);
 const fixedSigns = new Set(["Taurus", "Leo", "Scorpio", "Aquarius"]);
 const mutableSigns = new Set(["Gemini", "Virgo", "Sagittarius", "Pisces"]);
 const careerVocabularyPrefixes = [
+  "ms/career/",
   "vocab/house-career/",
   "vocab/house-cusp-element/",
   "vocab/element-career/",
@@ -283,12 +285,42 @@ function fallbackRow(contentKey: string, headline: string): CareerVocabularyRow 
   return { contentKey, headline, body: "" };
 }
 
+function normalizeCareerVocabularyKey(contentKey: string) {
+  const houseCareer = contentKey.match(/^vocab\/house-career\/house_(\d+)$/);
+
+  if (houseCareer) {
+    return `vocab/house-career/${houseCareer[1]}`;
+  }
+
+  const hemisphereAliases: Record<string, string> = {
+    eastern: "east",
+    northern: "north",
+    southern: "south",
+    western: "west"
+  };
+  const hemisphere = contentKey.match(/^vocab\/hemisphere\/(eastern|northern|southern|western)$/);
+
+  if (hemisphere) {
+    return `vocab/hemisphere/${hemisphereAliases[hemisphere[1]]}`;
+  }
+
+  return contentKey;
+}
+
 function careerRow(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string, headline: string) {
   return vocabulary?.get(contentKey) ?? fallbackRow(contentKey, headline);
 }
 
 function careerRowLayer(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string): CareerProseLayer {
   return vocabulary?.has(contentKey) ? "source-grounded" : "madlib-fallback";
+}
+
+function storedCareerRow(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string) {
+  return vocabulary?.get(contentKey) ?? null;
+}
+
+function careerSourceBadge(layer: CareerProseLayer) {
+  return layer === "source-grounded" ? "Admin" : "Fallback";
 }
 
 function possessiveOwnerName(name: string) {
@@ -345,6 +377,13 @@ function ownerizeCareerCopy(value: string, context: CareerCopyContext) {
     .replace(/\byour\b/g, context.possessiveLower);
 }
 
+function normalizeStoredCareerCopy(value: string, context: CareerCopyContext) {
+  return ownerizeCareerCopy(value, context)
+    .replace(/\s+/g, " ")
+    .replace(/\b, the ([a-z][^.!?]+?)\./g, ": the $1.")
+    .trim();
+}
+
 function composeBody(baseBody: string, explanation = "") {
   const trimmedBase = baseBody.trim();
   const trimmedExplanation = explanation.trim();
@@ -390,11 +429,68 @@ function section(
   };
 }
 
+function msCareerKey(facet: string, key: string) {
+  return key ? `ms/career/${facet}/${slug(key)}` : "";
+}
+
+function msHemisphereKey(hemisphere: string) {
+  const keys: Record<string, string> = {
+    east: "eastern",
+    north: "northern",
+    south: "southern",
+    west: "western"
+  };
+
+  return hemisphere ? msCareerKey("hemisphere", keys[hemisphere] ?? hemisphere) : "";
+}
+
+function sourceCareerRows(vocabulary: Map<string, CareerVocabularyRow> | null, contentKeys: string[]) {
+  return contentKeys
+    .filter(Boolean)
+    .map((contentKey) => storedCareerRow(vocabulary, contentKey))
+    .filter((row): row is CareerVocabularyRow => Boolean(row?.body.trim()));
+}
+
+function careerSourceSection({
+  context,
+  fallbackHeadline,
+  rows
+}: {
+  context: CareerCopyContext;
+  fallbackHeadline: string;
+  rows: CareerVocabularyRow[];
+}): CareerArchetypeSection | null {
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const body = rows
+    .map((row) => normalizeStoredCareerCopy(row.body, context))
+    .filter(Boolean)
+    .join(" ");
+
+  if (!body) {
+    return null;
+  }
+
+  return {
+    key: "career-pattern",
+    label: "Career pattern",
+    contentKey: "ms/career/*",
+    headline: fallbackHeadline,
+    body,
+    meta: `${careerSourceBadge("source-grounded")} · Career reading assembled from reviewed dashboard rows.`,
+    layer: "source-grounded",
+    tier: "stored-source-vocabulary",
+    sourceKeys: rows.map((row) => row.contentKey)
+  };
+}
+
 export function careerVocabularyFromRows(rows: CareerVocabularyDbRow[]) {
   const vocabulary = new Map<string, CareerVocabularyRow>();
 
   for (const row of rows) {
-    const contentKey = row.content_key;
+    const contentKey = normalizeCareerVocabularyKey(row.content_key);
 
     if (!careerVocabularyPrefixes.some((prefix) => contentKey.startsWith(prefix))) {
       continue;
@@ -435,11 +531,10 @@ export async function loadCareerVocabulary() {
 
     const { data, error } = await supabase
       .from("generated_interpretations")
-      .select("content_key, status, lane, review_state, flags, headline, body")
+      .select("content_key, status, lane, review_state, flags, headline, body, prompt_version")
       .eq("status", "LIVE")
       .eq("lane", "serving")
       .is("review_state", null)
-      .eq("prompt_version", "vocab-v1")
       .or(careerVocabularyContentKeyFilter)
       .returns<CareerVocabularyDbRow[]>();
 
@@ -472,12 +567,27 @@ export function resolveCareerArchetypeProfile(
     pronouns: options.pronouns
   });
   const tenthHousePlanets = sky.positions.filter((position) => position.house === 10 && careerPlanetSupported(position.planet));
+  const sun = findCareerPosition(sky.positions, "Sun");
+  const moon = findCareerPosition(sky.positions, "Moon");
   const northNode = sky.positions.find((position) => position.planet === "North Node");
   const northNodeMode = northNode ? modeForSign(northNode.sign) : "";
   const mcRuler = traditionalCareerSignRuler(sky.midheaven);
   const mcRulerPosition = mcRuler ? findCareerPosition(sky.positions, mcRuler) : null;
   const visiblePlanet = tenthHousePlanets[0] ?? null;
   const workCondition = findCareerPosition(sky.positions, "Saturn") ?? findCareerPosition(sky.positions, "Moon");
+  const saturn = findCareerPosition(sky.positions, "Saturn");
+  const hemisphere = strongestHemisphere(sky.positions);
+  const sourceRows = sourceCareerRows(vocabulary, [
+    msCareerKey("sun", elementForSign(sun?.sign ?? "")),
+    msCareerKey("moon", elementForSign(moon?.sign ?? "")),
+    msCareerKey("rising", elementForSign(sky.ascendant)),
+    msCareerKey("mc", elementForSign(sky.midheaven)),
+    msCareerKey("mode", modeForSign(sky.midheaven)),
+    msHemisphereKey(hemisphere),
+    ...tenthHousePlanets.map((position) => msCareerKey("planet10", position.planet)),
+    msCareerKey("saturn", elementForSign(saturn?.sign ?? "")),
+    msCareerKey("northnode", northNodeMode)
+  ]);
   const title = readerHeadlineFallback(subject, "career pattern");
   const summary = careerNarrativeSummary({
     mcSign: sky.midheaven,
@@ -491,13 +601,13 @@ export function resolveCareerArchetypeProfile(
     workCondition
   });
   const tldr = careerCompactLine({ mcSign: sky.midheaven, mcRuler, mcRulerPosition, subject, tenthHouseSign });
-  const section: CareerArchetypeSection = {
+  const fallbackSection: CareerArchetypeSection = {
     key: "career-pattern",
     label: "Career pattern",
     contentKey: "career.pattern",
     headline: title,
     body: summary,
-    meta: "Career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers.",
+    meta: `${careerSourceBadge("madlib-fallback")} · Career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers.`,
     layer: "madlib-fallback",
     tier: "source-based-local-career",
     sourceKeys: [
@@ -508,10 +618,17 @@ export function resolveCareerArchetypeProfile(
       "career.northNodeMode"
     ]
   };
+  const sourceSection = careerSourceSection({
+    context: careerCopyContext(options.ownerName),
+    fallbackHeadline: title,
+    rows: sourceRows
+  });
+  const visibleSection = sourceSection ?? fallbackSection;
+  const visibleSummary = sourceSection?.body ?? summary;
 
   return {
     title,
-    summary,
+    summary: visibleSummary,
     tldr,
     factors: [
       { label: "10th house", value: tenthHouseSign || "Pending" },
@@ -520,7 +637,7 @@ export function resolveCareerArchetypeProfile(
       { label: "Visible planet", value: visiblePlanet ? `${visiblePlanet.planet} in ${visiblePlanet.sign}` : "None" },
       { label: "North Node", value: northNode ? `${northNode.sign} (${northNodeMode})` : "Pending" }
     ],
-    sections: [section]
+    sections: [visibleSection]
   };
 }
 
@@ -547,14 +664,16 @@ function careerNarrativeSummary({
 }) {
   const display = readerDisplayName(subject);
   const direction = mcSign || tenthHouseSign || "public";
+  const directionPhrase = direction === "public" ? "the public part of the chart" : `${direction} qualities`;
+  const directionVerb = direction === "public" ? "has" : "have";
   const opener = subject.mode === "self"
-    ? `Your work becomes clearer when ${direction} has a form other people can recognize and return to.`
-    : `${capitalizeSentence(display)}'s work becomes clearer when ${direction} has a form other people can recognize and return to.`;
+    ? `Your work becomes clearer when ${directionPhrase} ${directionVerb} a form other people can recognize and return to.`
+    : `${capitalizeSentence(display)}'s work becomes clearer when ${directionPhrase} ${directionVerb} a form other people can recognize and return to.`;
   const ruler = mcRuler && mcRulerPosition
     ? `${direction} answers to ${mcRuler}. With ${mcRuler} in ${mcRulerPosition.sign} in the ${ordinal(mcRulerPosition.house)} house, the path develops through ${houseCareerScene(mcRulerPosition.house)}.`
     : `The Midheaven gives the work a visible direction, and daily choices show how that direction becomes practical.`;
   const visible = visiblePlanet
-    ? `${visiblePlanet.planet} in the tenth house makes the pattern easier for other people to notice; ${planetCareerAction(visiblePlanet.planet, subject)} through ${visiblePlanet.sign} conditions.`
+    ? `${visiblePlanet.planet} in the tenth house makes the pattern easier for other people to notice; ${planetCareerAction(visiblePlanet.planet, subject)} in a ${signEssence(visiblePlanet.sign) || visiblePlanet.sign.toLowerCase()} way.`
     : `The pattern becomes steadier when the Midheaven ruler and daily choices give the work a repeatable shape.`;
   const condition = workCondition
     ? `${workCondition.planet} adds a working condition: ${planetWorkCondition(workCondition.planet, subject)} through the ${ordinal(workCondition.house)} house.`
@@ -580,11 +699,18 @@ function careerCompactLine({
   tenthHouseSign: string;
 }) {
   const direction = mcSign || tenthHouseSign || "the public part of the chart";
-  const delivery = mcRuler && mcRulerPosition ? `${mcRuler} in ${mcRulerPosition.sign}` : "steady choices";
+  const ownerWork = subject.mode === "self"
+    ? "your work"
+    : `${subject.name ? possessiveOwnerName(subject.name) : subject.possessive} work`;
+  const directionTone = signEssence(direction);
+  const publicShape = directionTone
+    ? `${direction} gives ${ownerWork} a ${directionTone} public tone.`
+    : `The public part of the chart gives ${ownerWork} a clearer shape.`;
+  const delivery = mcRuler && mcRulerPosition
+    ? `${mcRuler} in ${mcRulerPosition.sign} gives that direction structure and a repeatable way to move.`
+    : `Steady choices give that direction structure and a repeatable way to move.`;
 
-  return subject.mode === "self"
-    ? `Your work has a clearer public shape when ${direction} has a practical form and ${delivery} gives it a repeatable way to move.`
-    : `${readerDisplayName(subject)}'s work has a clearer public shape when ${direction} has a practical form and ${delivery} gives it a repeatable way to move.`;
+  return `${publicShape} ${delivery}`;
 }
 
 function traditionalCareerSignRuler(sign: string) {
