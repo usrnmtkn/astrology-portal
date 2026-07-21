@@ -905,8 +905,6 @@ export function isReaderServableGeneratedContentRow(
     "editorial-only",
     "editorial_only",
     "superseded",
-    "source-grounded",
-    "source_grounded",
     "local-normalized-dashboard-source",
     "revoice-pending",
     "revoice_pending",

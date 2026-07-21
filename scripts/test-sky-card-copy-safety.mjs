@@ -73,7 +73,8 @@ for (const [body, sign, motion] of placements) {
   assert.ok(!new RegExp(`^${body} in ${sign}:\\s*`, "iu").test(text), `${label} card summary must not duplicate the title prefix`);
   assert.ok(!/\b(?:SOURCE_GAP|DRAFT|Interpretation unavailable)\b/u.test(text), `${label} card must not expose editorial workflow labels`);
   if (body === "Sun" && sign === "Cancer") {
-    assert.notEqual(text, "This summer’s waterworks will soak us all.", "Sun in Cancer must not be pinned to the legacy one-line card override");
+    assert.equal(result.fallbackId, "fallback-hook/sky.planetary-placement/sun/cancer", "Sun in Cancer must resolve through the approved placement fallback hook.");
+    assert.equal(result.readerAuthority, "approved-fallback", "Sun in Cancer approved card copy must be classified as approved fallback copy.");
   }
 }
 
@@ -149,11 +150,11 @@ assert.ok(
   "Sun Aquarius 9h natal detail must keep the concrete recognizable-example clause"
 );
 assert.ok(
-  appSource.includes("plainBody: sourceGroundedBody.length > 0"),
+  appSource.includes("plainBody: normalized.sections.some((section) => section.layer === \"source-grounded\")"),
   "Sky placement detail pages must render source-grounded body paragraphs instead of showing a blank article shell"
 );
 assert.ok(
-  appSource.includes("const rowSummary = sourceGroundedSummary || liveGeneratedSummary("),
+  appSource.includes("const rowSummary = normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"),
   "Sky placement list cards must prefer source-grounded summaries over stale generated/CMS summaries"
 );
 
