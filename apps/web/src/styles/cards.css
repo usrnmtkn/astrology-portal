@@ -278,6 +278,25 @@
   line-height: var(--leading-meta);
 }
 
+.soul-roadmap-card__source-badge,
+.career-archetype-card__source-badge,
+.soul-roadmap-card__keywords em,
+.career-archetype-card__sections em {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-pill);
+  background: var(--duration-badge-bg);
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
 .soul-roadmap-card__header p {
   margin: 0;
   color: var(--card-body-color);
@@ -340,6 +359,11 @@
   font-weight: var(--weight-semibold);
 }
 
+.soul-roadmap-card__keywords em {
+  margin-left: 6px;
+  margin-right: 4px;
+}
+
 .career-archetype-card {
   display: grid;
   gap: 0;
@@ -363,6 +387,10 @@
 
 .career-archetype-card__header h3 {
   font-size: var(--type-xl);
+}
+
+.career-archetype-card__source-badge {
+  vertical-align: middle;
 }
 
 .career-archetype-card__header p,
@@ -541,9 +569,15 @@
 }
 
 .chart-frame > svg,
+.chart-frame > .sky-wheel-shell,
 .chart-frame > .sky-wheel,
 .chart-frame svg {
   width: 100%;
   max-width: 100%;
+  height: auto;
+}
+
+.chart-frame > svg,
+.chart-frame > .sky-wheel {
   height: 100%;
 }

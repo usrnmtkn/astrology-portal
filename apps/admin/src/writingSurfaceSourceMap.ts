@@ -173,9 +173,9 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["purpose pattern"],
     visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "SoulRoadmapCard resolves local sign-roadmap material through normalizedSoulRoadmapSection and omits missing development slots.",
+    currentRenderPath: "SoulRoadmapCard resolves local sign-roadmap material through normalizedSoulRoadmapSection, omits missing development slots, and exposes fallback provenance labels in the card/detail UI.",
     risk: "This surface is structurally normalized but currently has only Layer 2 local roadmap material, not a reviewed source-grounded bundle.",
-    nextAction: "Move sign-roadmap material into a reviewed/source-grounded bundle if this card should graduate to Layer 1, and expose section provenance in QA.",
+    nextAction: "Move sign-roadmap material into a reviewed/source-grounded bundle if this card should graduate to Layer 1.",
     sources: [
       { label: "SoulRoadmapCard.tsx", path: "apps/web/src/components/charts/SoulRoadmapCard.tsx", role: "renderer" }
     ]
@@ -187,9 +187,9 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["career pattern"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "resolveCareerArchetypeProfile emits CareerArchetypeSection rows with layer/tier/sourceKeys; the visible career-pattern section is a source-based local madlib fallback.",
-    risk: "The current visible section is Layer 2 until a reviewed/source-grounded career-archetype bundle exists.",
-    nextAction: "Promote reviewed career archetype rows into Layer 1 and expose section provenance in the card UI.",
+    currentRenderPath: "resolveCareerArchetypeProfile loads LIVE serving ms/career/* dashboard rows first, assembles the visible Career Pattern section from matching Sun/Moon/Rising/MC/Saturn/North Node/hemisphere rows, and falls back to local Midheaven madlibs when stored rows are missing.",
+    risk: "Source-grounded quality now depends on reviewed ms/career/* row coverage and LIVE serving status; missing rows fall back locally.",
+    nextAction: "Keep reviewed ms/career/* rows LIVE serving and add QA coverage for source badge, fallback badge, and no-row fallback grammar.",
     sources: [
       { label: "CareerArchetypeCard.tsx", path: "apps/web/src/components/charts/CareerArchetypeCard.tsx", role: "renderer" },
       { label: "careerArchetype.ts", path: "apps/web/src/services/careerArchetype.ts", role: "madlib-material" }

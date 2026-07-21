@@ -1,10 +1,21 @@
 .wheel {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: min(100%, var(--chart-size));
   min-width: 0;
   max-width: 100%;
+}
+
+.sky-wheel-shell {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(100%, var(--chart-size));
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
 }
 
 .sky-wheel {
@@ -17,6 +28,46 @@
 
 .friend-wheel .sky-wheel {
   max-width: 100%;
+}
+
+.aspect-wheel-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  width: max-content;
+  max-width: min(100%, 220px);
+  margin: 18px auto 0;
+  color: var(--wheel-label);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.aspect-wheel-legend__item {
+  display: grid;
+  grid-template-columns: 38px max-content;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.aspect-wheel-legend__swatch {
+  display: block;
+  width: 38px;
+  height: 8px;
+  overflow: visible;
+}
+
+.aspect-wheel-legend__swatch line {
+  fill: none;
+  stroke: var(--aspect-line-stroke, var(--aspect-muted));
+  stroke-dasharray: var(--aspect-line-dash, none);
+  stroke-linecap: round;
+  stroke-width: var(--aspect-line-width, 1.6);
+  opacity: var(--aspect-line-opacity, 0.55);
 }
 
 .sign-band {
@@ -834,6 +885,7 @@
 }
 
 .sky-full-chart-shell .chart-frame,
+.sky-full-chart-shell .sky-wheel-shell,
 .sky-full-chart-shell .sky-wheel,
 .sky-full-chart-shell svg {
   width: 100%;
