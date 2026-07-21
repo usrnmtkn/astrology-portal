@@ -540,7 +540,7 @@ async function expectFormTypography(page: Page, selector: string, label: string)
   expect(result.failures, `${label} keeps form text regular/medium, not bold`).toEqual([]);
 }
 
-const readerCopyLeakPattern = /\b(?:undefined|null|NaN|fallback-hook|slot-template|sourceSnapshot|templateVersion|record id|backend|database|schema|generated content|dashboard|admin|hydrated|Supabase|Missing VITE|Interpretation in review)\b/i;
+const readerCopyLeakPattern = /\b(?:undefined|null|NaN|fallback-hook|slot-template|sourceSnapshot|templateVersion|record id|backend|database|schema|generated content|dashboard|admin|hydrated|Supabase|Missing VITE|Interpretation in review|giving North Node a clear place|This pattern is active now|This transit is active now|is active here|current emphasis (?:is|may be) visible in timing, mood|everyday choices|while this contact is active|one part of the contact|other part of the contact pushes back|They disagree about how you should respond|Recurring friction that asks for an adjustment|Name both sides of the pattern before choosing the next concrete response)\b/i;
 const directionalCopyPattern = /\b(?:Notice how|asks for attention|asks for attention in real life|this placement asks you to|this aspect teaches you|the lesson is|pay attention to|watch for|invites you to|gentle reminder|step into your power)\b/i;
 
 async function expectReaderFacingCopy(locator: ReturnType<Page["locator"]>, label: string, minLength = 120) {
@@ -550,6 +550,43 @@ async function expectReaderFacingCopy(locator: ReturnType<Page["locator"]>, labe
   expect(text.length, `${label} has substantial reader-facing copy`).toBeGreaterThanOrEqual(minLength);
   expect(text, `${label} does not leak scaffolding or placeholder copy`).not.toMatch(readerCopyLeakPattern);
   expect(text, `${label} does not surface directional or moralizing scaffold copy`).not.toMatch(directionalCopyPattern);
+}
+
+async function expectHydrationKeepsReaderCopyStable(
+  page: Page,
+  locator: ReturnType<Page["locator"]>,
+  label: string,
+  options: { minLength?: number; waitMs?: number } = {}
+) {
+  const minLength = options.minLength ?? 120;
+  const waitMs = options.waitMs ?? 3500;
+
+  await expect(locator, `${label} is visible before hydration settles`).toBeVisible();
+  await expect.poll(async () => {
+    return ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim().length;
+  }, {
+    message: `${label} has enough initial reader-facing copy to compare before hydration`,
+    timeout: 5000
+  }).toBeGreaterThanOrEqual(minLength);
+
+  const before = ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim();
+
+  expect(before, `${label} initial copy does not leak scaffolding or stale fallback text`).not.toMatch(readerCopyLeakPattern);
+  expect(before, `${label} initial copy does not surface directional scaffold copy`).not.toMatch(directionalCopyPattern);
+
+  await page.waitForTimeout(waitMs);
+
+  const after = ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim();
+
+  expect(after.length, `${label} keeps substantial reader-facing copy after hydration`).toBeGreaterThanOrEqual(minLength);
+  expect(after, `${label} hydrated copy does not leak scaffolding or stale fallback text`).not.toMatch(readerCopyLeakPattern);
+  expect(after, `${label} hydrated copy does not surface directional scaffold copy`).not.toMatch(directionalCopyPattern);
+
+  if (before.length >= minLength * 1.5) {
+    expect(after.length, `${label} does not downgrade from richer copy to a much thinner fallback after hydration`).toBeGreaterThanOrEqual(
+      Math.floor(before.length * 0.85)
+    );
+  }
 }
 
 async function expectRelationshipWheelGeometry(page: Page, label: string) {
@@ -1481,7 +1518,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.goto("/#you");
 
     await expect(page.getByRole("region", { name: "You" })).toBeVisible();
-    await page.getByRole("button", { name: "Sun in Aquarius" }).click();
+    await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
 
@@ -1540,6 +1577,50 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("content hydration does not downgrade reader-facing surfaces to stale fallback copy", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, friends: true });
+
+    await page.goto("/#sky/retrograde/mercury");
+    await expect(page.getByRole("heading", { name: "Mercury Rx in Cancer" })).toBeVisible();
+    await expectHydrationKeepsReaderCopyStable(
+      page,
+      page.locator(".sky-detail-article"),
+      "Sky retrograde detail copy",
+      { minLength: 180 }
+    );
+
+    await page.goto("/#you");
+    await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+    await expectHydrationKeepsReaderCopyStable(
+      page,
+      page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }),
+      "You natal placement detail copy",
+      { minLength: 180 }
+    );
+
+    await page.goto("/#calendar");
+    await expectHydrationKeepsReaderCopyStable(
+      page,
+      page.getByLabel("Selected lunar day"),
+      "Calendar selected lunar day copy",
+      { minLength: 80 }
+    );
+
+    await page.goto("/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Alisa" }).click();
+    await page.getByRole("tab", { name: "Synastry" }).click();
+    await expectHydrationKeepsReaderCopyStable(
+      page,
+      page.getByLabel("Synastry", { exact: true }),
+      "Friends synastry surface copy",
+      { minLength: 180 }
+    );
+
+    await assertNoClientErrors();
+  });
+
   test("content fallback copy is reader-facing in You profile detail articles", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
@@ -1561,7 +1642,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await page.goto("/#you");
 
-    await page.getByRole("button", { name: "Sun in Aquarius" }).click();
+    await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expectReaderFacingCopy(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }), "You natal placement fallback detail");
     await assertNoClientErrors();
   });

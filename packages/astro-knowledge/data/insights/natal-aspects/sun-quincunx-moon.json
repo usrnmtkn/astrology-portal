@@ -1,0 +1,48 @@
+{
+  "id": "sun-quincunx-moon",
+  "kind": "natal-aspect",
+  "displayTitle": "Sun Quincunx Moon",
+  "summary": "You get what you were chasing and it still doesn't land.",
+  "body": "You get what you were chasing and it still doesn't land. Your Sun quincunx Moon puts your wants and your needs on different schedules, so the win arrives before the feeling catches up. Working harder won't fix it. Before you commit, ask the quieter question: will this actually feel good, or just look right?",
+  "gift": "The ability to notice when success, timing, and emotional satisfaction are not the same thing.",
+  "shadow": "Working harder for something that looks right while the feeling still does not land.",
+  "integration": "Before committing, check whether the goal will feel livable after the achievement moment passes.",
+  "do": [
+    "Ask what will feel good after the win",
+    "Separate appearance from emotional fit",
+    "Give the feeling time to catch up before overcommitting"
+  ],
+  "dont": [
+    "Assume the visible win will satisfy the private need",
+    "Work harder to outrun misalignment",
+    "Commit before checking the quieter question"
+  ],
+  "lifeAreas": [
+    "identity",
+    "emotions",
+    "home"
+  ],
+  "tags": [
+    "sun",
+    "moon",
+    "quincunx",
+    "adjustment",
+    "misalignment"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "quincunx",
+      "planetB": "moon"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "emotional-needs",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

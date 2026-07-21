@@ -1,21 +1,21 @@
 {
   "id": "sun-square-moon",
   "kind": "natal-aspect",
-  "displayTitle": "Visible Or Sensitive",
-  "summary": "More than most people, a need to be seen and to matter and deep feelings and a strong need to feel safe grind against each other inside you. That friction is the engine you run on. Pushed, you make it all about you, or you shrink when no one's looking. Owned, you shine and lead without trying and you read people and care on instinct.",
-  "body": "More than most people, a need to be seen and to matter and deep feelings and a strong need to feel safe grind against each other inside you. That friction is the engine you run on. Pushed, you make it all about you, or you shrink when no one's looking. Owned, you shine and lead without trying and you read people and care on instinct. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness. Your outer direction and inner needs may not always move together. Part of you may want one thing, while another part needs something quieter or more emotionally familiar.",
-  "gift": "At your best: you shine and lead without trying, and you read people and care on instinct.",
-  "shadow": "The trap: you make it all about you, or you shrink when no one's looking — or your moods run you, or you bury what you actually need.",
-  "integration": "Let identity and emotional needs cooperate without making either one carry the whole story. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness.",
+  "displayTitle": "Sun Square Moon",
+  "summary": "Part of you wants one thing. Another part needs something else entirely.",
+  "body": "Part of you wants one thing. Another part needs something else entirely. Your Sun square Moon keeps your will and your feelings in constant negotiation: restlessness, second-guessing, choosing a path and then mourning the one you didn't take. This isn't a flaw, it's friction. And friction is how you grow. Be patient with yourself.",
+  "gift": "The ability to grow through inner friction instead of pretending every need points in the same direction.",
+  "shadow": "Restlessness, second-guessing, and treating every choice as a loss of the path not taken.",
+  "integration": "Let will and feeling negotiate without turning the negotiation into proof that something is wrong with you.",
   "do": [
-    "Use it on purpose, not on reflex",
-    "Let you shine and you read people work together",
-    "When it spikes, name it before you act"
+    "Name the want and the need separately",
+    "Give decisions enough time to settle",
+    "Treat friction as information"
   ],
   "dont": [
-    "You make it all about you",
-    "Pretend the tension isn't there",
-    "Let the reflex make the decision"
+    "Punish yourself for having mixed feelings",
+    "Make every choice prove the other path was wrong",
+    "Rush just to end the discomfort"
   ],
   "lifeAreas": [
     "identity",
@@ -26,8 +26,8 @@
     "sun",
     "moon",
     "square",
-    "confidence",
-    "emotional-intelligence"
+    "friction",
+    "inner-negotiation"
   ],
   "intensity": 4,
   "sourceFactors": [
