@@ -417,12 +417,24 @@
   animation: aspect-inspector-line-in 180ms ease-out both;
 }
 
+.sky-wheel--aspect-inspector .aspect-inspector-line .aspect-inspector-line-backdrop {
+  stroke: var(--bg);
+  stroke-dasharray: none;
+  stroke-width: var(--aspect-line-backdrop-width, 4);
+  opacity: 0.74;
+}
+
 .sky-wheel--aspect-inspector .aspect-inspector-point {
   cursor: pointer;
   transition: opacity 180ms ease, filter 180ms ease;
 }
 
 .sky-wheel--aspect-inspector .aspect-inspector-point:focus-visible {
+  outline: none;
+}
+
+.sky-wheel--aspect-inspector .aspect-inspector-point:focus,
+.sky-wheel--aspect-inspector .aspect-inspector-point *:focus {
   outline: none;
 }
 

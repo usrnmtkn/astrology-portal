@@ -157,36 +157,55 @@ function exactAspectAngle(type: InspectorAspectType) {
 
 function wholeSignAspectStyle(type: InspectorAspectType, orb: number): CSSProperties {
   const base = aspectLineStyle(type, orb);
+  const typeStyle: Record<InspectorAspectType, { stroke: string; dash: string; widthBoost: number }> = {
+    conjunction: { stroke: "#252833", dash: "none", widthBoost: 0.2 },
+    sextile: { stroke: "#1d8fd7", dash: "3 6", widthBoost: 0 },
+    square: { stroke: "#e24eb9", dash: "9 4", widthBoost: 0.1 },
+    trine: { stroke: "#17a978", dash: "none", widthBoost: 0 },
+    opposition: { stroke: "#c5202f", dash: "none", widthBoost: 0.18 }
+  };
+  const aspectStyle = typeStyle[type];
 
   if (orb <= 3) {
     return {
       ...base,
+      "--aspect-line-stroke": aspectStyle.stroke,
+      "--aspect-line-dash": aspectStyle.dash,
       "--aspect-line-opacity": "1",
-      "--aspect-line-width": "2"
+      "--aspect-line-width": String(2.6 + aspectStyle.widthBoost),
+      "--aspect-line-backdrop-width": String(5 + aspectStyle.widthBoost)
     } as CSSProperties;
   }
 
   if (orb <= 7) {
     return {
       ...base,
+      "--aspect-line-stroke": aspectStyle.stroke,
+      "--aspect-line-dash": aspectStyle.dash,
       "--aspect-line-opacity": "0.8",
-      "--aspect-line-width": "1.5"
+      "--aspect-line-width": String(2.15 + aspectStyle.widthBoost),
+      "--aspect-line-backdrop-width": String(4.45 + aspectStyle.widthBoost)
     } as CSSProperties;
   }
 
   if (orb <= 12) {
     return {
       ...base,
-      "--aspect-line-opacity": "0.55",
-      "--aspect-line-width": "1"
+      "--aspect-line-stroke": aspectStyle.stroke,
+      "--aspect-line-dash": aspectStyle.dash,
+      "--aspect-line-opacity": "0.62",
+      "--aspect-line-width": String(1.7 + aspectStyle.widthBoost),
+      "--aspect-line-backdrop-width": String(3.9 + aspectStyle.widthBoost)
     } as CSSProperties;
   }
 
   return {
     ...base,
-    "--aspect-line-dash": "5 6",
-    "--aspect-line-opacity": "0.3",
-    "--aspect-line-width": "0.75"
+    "--aspect-line-stroke": aspectStyle.stroke,
+    "--aspect-line-dash": aspectStyle.dash === "none" ? "3 8" : aspectStyle.dash,
+    "--aspect-line-opacity": "0.38",
+    "--aspect-line-width": String(1.25 + aspectStyle.widthBoost),
+    "--aspect-line-backdrop-width": String(3.3 + aspectStyle.widthBoost)
   } as CSSProperties;
 }
 
@@ -614,6 +633,7 @@ export const SkyWheel = memo(function SkyWheel({
                   className={`${aspectLineClass(type)} ${normalizeAspectType(type)} aspect-inspector-line`}
                   style={wholeSignAspectStyle(type, orb)}
                 >
+                  <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                 </g>
               );
@@ -704,6 +724,7 @@ export const SkyWheel = memo(function SkyWheel({
                 tabIndex: 0,
                 onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
                   event.stopPropagation();
+                  event.currentTarget.blur();
                   setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
                 },
                 onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
@@ -768,6 +789,7 @@ export const SkyWheel = memo(function SkyWheel({
                 onFocus={() => setActiveTooltipPlanet(position.planet)}
                 onClick={inspectorEnabled ? (event) => {
                   event.stopPropagation();
+                  event.currentTarget.blur();
                   setFocusedInspectorPointId((current) => current === position.planet ? null : position.planet);
                 } : undefined}
                 onKeyDown={inspectorEnabled ? (event) => {

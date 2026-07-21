@@ -80,6 +80,7 @@ assert.match(generatedContent, /containsSingleBraceSlot/, "Generated content run
 assert.match(generatedContent, /isReaderServableGeneratedContent\(content\)/, "Loaded content map must filter unsafe content rows before aliasing.");
 assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated content row safety must inspect actual section body copy instead of serialized metadata.");
 assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
+assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the source-grounded content-level label.");
 assert.match(app, /emergencySkyPlacementCopy\(position\.planet, position\.sign, \{ retrograde: isRetrograde \}\)/, "Sky placement detail/list rendering must build a local emergency fallback.");
 assert.match(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must use the real emergency fallback copy helper.");
 assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail rendering must resolve through the surface normalizer.");
