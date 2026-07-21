@@ -1,21 +1,21 @@
 {
   "id": "sun-sextile-moon",
   "kind": "natal-aspect",
-  "displayTitle": "Radiant Or Tender",
-  "summary": "There's a part of you that knows a need to be seen and to matter and deep feelings and a strong need to feel safe work together when you choose to use them. The opening is there: you shine and lead without trying, you read people and care on instinct. It rewards you when you reach for it.",
-  "body": "There's a part of you that knows a need to be seen and to matter and deep feelings and a strong need to feel safe work together when you choose to use them. The opening is there: you shine and lead without trying, you read people and care on instinct. It rewards you when you reach for it. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness. Your outer direction and inner needs may support each other more easily here. What you want can feel aligned with what helps you feel safe.",
-  "gift": "At your best: you shine and lead without trying, and you read people and care on instinct.",
-  "shadow": "The trap: you make it all about you, or you shrink when no one's looking — or your moods run you, or you bury what you actually need.",
-  "integration": "Let identity and emotional needs cooperate without making either one carry the whole story. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness.",
+  "displayTitle": "Sun Sextile Moon",
+  "summary": "What you want and what you need are on speaking terms.",
+  "body": "What you want and what you need are on speaking terms. Your Sun sextile Moon gives you an inner stability most people have to work for. Don't let it sit unused. When a big decision shows up, check your logic, then check your gut. For you, they'll usually agree. That agreement is your green light.",
+  "gift": "Inner cooperation between direction and need, with a steady instinct for choices that can actually hold.",
+  "shadow": "Ease can become passive when the gift is available but not used deliberately.",
+  "integration": "Use the agreement between logic and instinct as information, then still choose consciously.",
   "do": [
-    "Use it on purpose, not on reflex",
-    "Let you shine and you read people work together",
-    "When it spikes, name it before you act"
+    "Check what you want and what you need",
+    "Use stability as a tool, not a reason to coast",
+    "Let instinct support decision-making"
   ],
   "dont": [
-    "You make it all about you",
-    "Pretend the tension isn't there",
-    "Let the reflex make the decision"
+    "Assume ease will act for you",
+    "Ignore the body when the plan looks right",
+    "Wait for pressure before using your inner steadiness"
   ],
   "lifeAreas": [
     "identity",
@@ -26,8 +26,8 @@
     "sun",
     "moon",
     "sextile",
-    "confidence",
-    "emotional-intelligence"
+    "stability",
+    "inner-cooperation"
   ],
   "intensity": 3,
   "sourceFactors": [

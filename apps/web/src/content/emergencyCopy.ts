@@ -165,7 +165,7 @@ function safeComposedCopy(value: string, fallback: string) {
     return cleanedFallback;
   }
 
-  return "This pattern is active now. The current emphasis is visible in timing, mood, and everyday choices.";
+  return "This chart pattern is close enough to read. The title and timing give the clearest available frame.";
 }
 
 export function emergencyPlanetFunction(planet: string) {
@@ -173,7 +173,7 @@ export function emergencyPlanetFunction(planet: string) {
 
   return emergencyCopy.planetFunction[key as keyof typeof emergencyCopy.planetFunction]
     ?? emergencyCopy.angleFunction[key as keyof typeof emergencyCopy.angleFunction]
-    ?? "what needs attention and a clear response";
+    ?? "a chart function that needs a more specific reading";
 }
 
 export function emergencySignTone(sign: string) {
@@ -204,7 +204,7 @@ export function emergencyAspectBehavior(aspect: string) {
   const key = normalizedEmergencyKey(aspect);
 
   return emergencyCopy.aspectBehavior[key as keyof typeof emergencyCopy.aspectBehavior]
-    ?? "the two points are active together, so the overlap asks for attention";
+    ?? "the two points are active together, and the overlap changes how each one behaves";
 }
 
 export function emergencyAspectVerb(aspect: string) {
@@ -287,7 +287,7 @@ export function emergencySkyAspectCopy(planetA: string, aspect: string, planetB:
 
   return safeComposedCopy(
     composed,
-    `${displayName(planetA)} ${aspect.trim().toLowerCase()} ${displayName(planetB)} is exact enough to notice. Let both sides of the contact inform the next clear response.`
+    `${displayName(planetA)} ${aspect.trim().toLowerCase()} ${displayName(planetB)} is exact enough to notice. One part of the contact changes how the other one behaves.`
   );
 }
 
@@ -345,7 +345,7 @@ export function emergencySkyPlacementCopy(planet: string, sign: string, options:
 
   const fallback = options.retrograde
     ? `${planetName} is retrograde in ${sign}. This transit asks for review before the next response is finalized.`
-    : `${planetName} is in ${sign}. This transit is active now, so notice the signal and choose one practical response.`;
+    : `${planetName} is in ${sign}. The planet and sign together give the clearest available read.`;
 
   return safeComposedCopy(composed, fallback);
 }
@@ -492,8 +492,8 @@ export function emergencyDetailFallbackCopy(title: string) {
   const subject = cleanedTitle && !containsBannedPhrase(cleanedTitle) ? cleanedTitle : "This chart factor";
 
   return safeComposedCopy(
-    `${subject} is active here. The current emphasis is visible in timing, mood, and everyday choices while this contact is active.`,
-    "This chart factor is active here. The current emphasis is visible in timing, mood, and everyday choices while this contact is active."
+    `${subject} is close enough to read. The title, timing, and chart context give the clearest available frame.`,
+    "This chart factor is close enough to read. The title, timing, and chart context give the clearest available frame."
   );
 }
 

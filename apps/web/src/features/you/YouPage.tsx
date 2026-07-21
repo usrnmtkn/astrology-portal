@@ -42,6 +42,8 @@ export type YouTransitArticle = {
     heading: string;
     tldr: string;
     body: string;
+    role?: "main" | "aspect";
+    sourceTag?: string;
   }>;
   relatedAspects?: {
     heading: string;
@@ -513,6 +515,12 @@ function articleParagraphs(value?: string | null) {
     .filter(Boolean);
 }
 
+function contentSourceQaTag(value?: string | null) {
+  const text = (value ?? "").trim();
+
+  return /^\[(?:AUTHORED|FALLBACK)\s*·[^\]]+\]$/u.test(text) ? text : "";
+}
+
 function dedupeArticleParagraphs(paragraphs: string[]) {
   const seen = new Set<string>();
 
@@ -632,16 +640,23 @@ function YouTransitArticlePage({
   const sections = article.sections
     .map((section) => {
       const tldr = cleanArticleText(section.tldr);
-      const bodyParagraphs = articleParagraphs(section.body).filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
-      const displayTldr = tldr && !isDuplicateArticleCopy(tldr, seenCopy) ? tldr : "";
+      const sourceTag = contentSourceQaTag(section.sourceTag) || contentSourceQaTag(section.tldr);
+      const bodyParagraphs = articleParagraphs(section.body)
+        .filter((paragraph, paragraphIndex) => !(paragraphIndex === 0 && sourceTag && paragraph === sourceTag))
+        .filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
+      const displayTldr = tldr && !contentSourceQaTag(section.tldr) && !isDuplicateArticleCopy(tldr, seenCopy) ? tldr : "";
 
       return {
         heading: cleanArticleHeading(section.heading),
+        role: section.role,
+        sourceTag,
         tldr: displayTldr,
         bodyParagraphs
       };
     })
     .filter((section) => section.tldr || section.bodyParagraphs.length);
+  const mainSections = sections.filter((section) => section.role !== "aspect");
+  const aspectSections = sections.filter((section) => section.role === "aspect");
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
   const fallbackParagraph = hasReadableBody || article.relatedAspects?.rows.length
     ? ""
@@ -706,12 +721,13 @@ function YouTransitArticlePage({
                   <p>{displaySummary}</p>
                 </section>
               ) : null}
-              {sections.map((section, index) => {
+              {mainSections.map((section, index) => {
                 const showTldr = section.tldr && normalizedArticleCopy(section.tldr) !== normalizedArticleCopy(section.bodyParagraphs[0]);
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
                   {section.heading ? <h2>{section.heading}</h2> : null}
+                  {section.sourceTag ? <p>{section.sourceTag}</p> : null}
                   {showTldr ? <p>{section.tldr}</p> : null}
                   {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
                     <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
@@ -736,6 +752,26 @@ function YouTransitArticlePage({
             </div>
           </div>
         </div>
+        {aspectSections.map((section, index) => {
+          const showTldr = section.tldr && normalizedArticleCopy(section.tldr) !== normalizedArticleCopy(section.bodyParagraphs[0]);
+
+          return (
+            <div className="article-card sky-detail-card you-transit-aspect-card" key={`aspect-${section.heading}-${index}`}>
+              <div className="article-body-card sky-detail-body">
+                <div className="article-body-inner">
+                  <section className="article-section sky-detail-section">
+                    {section.heading ? <h2>{section.heading}</h2> : null}
+                    {section.sourceTag ? <p>{section.sourceTag}</p> : null}
+                    {showTldr ? <p>{section.tldr}</p> : null}
+                    {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
+                      <p key={`${section.heading || "aspect"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                    ))}
+                  </section>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </article>
     </section>
   );

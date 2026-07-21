@@ -136,8 +136,8 @@
       "kind": "template",
       "tag": "template",
       "headline": "Natal aspect — two natal planets (any type)",
-      "summary": "You/Friends: aspect between two natal planets. Type flavor from aspect-verb / aspect-feel.",
-      "body": "{{possessive}} {{planetA}} is {{aspectAdj}} {{planetB}}, linking {{planetATopic}} with {{planetBTopic}}. It plays as {{aspectFeel}}, shaping how these two parts of the chart move together.",
+      "summary": "You/Friends: aspect between two natal planets. The runtime fallback resolves aspect-specific interaction, lived behavior, and conflict/gift language.",
+      "body": "{{possessive}} {{planetA}} is {{aspectAdj}} {{planetB}}. This contact changes how {{planetA}} responds when {{planetB}} becomes part of the same moment. You may notice it in a conversation, decision, relationship, work situation, or reaction. The contact is not a separate definition of either planet. It is the lived tension or support created by this aspect.",
       "isNewKey": false
     },
     {
@@ -147,7 +147,7 @@
       "tag": "template",
       "headline": "Transit — transiting planet to a natal point",
       "summary": "You: a transiting planet aspects a natal planet. Timing, not permanent.",
-      "body": "Right now {{transitPlanet}} is {{aspectAdj}} your natal {{natalPoint}}. You may notice more activity around {{transitPlanetTopic}} and {{natalPointTopic}} while this contact is active.",
+      "body": "Right now {{transitPlanet}} is {{aspectAdj}} your natal {{natalPoint}}. This can place {{transitPlanetTopic}} in contact with {{natalPointTopic}} for this window.",
       "isNewKey": false
     },
     {
@@ -197,7 +197,7 @@
       "tag": "template",
       "headline": "Composite — aspect in the relationship chart",
       "summary": "Friends: an aspect in the composite (relationship) chart.",
-      "body": "In the composite chart, {{planetA}} is {{aspectAdj}} {{planetB}}, linking the relationship's {{planetATopic}} with {{planetBTopic}}. It plays as {{aspectFeel}}.",
+      "body": "In the composite chart, {{planetA}} is {{aspectAdj}} {{planetB}}. This contact changes how the relationship handles {{planetATopic}} when {{planetBTopic}} enters the same moment. It plays as {{aspectFeel}}.",
       "isNewKey": false
     },
     {

@@ -10,8 +10,10 @@ const scanRoots = [
   "packages/astro-knowledge/data/angles",
   "packages/astro-knowledge/data/synastry/aspects",
   "tldr-astro-phrasebank/phrasebank",
+  "apps/web/src/content/emergencyCopy.json",
   "apps/web/src/content/skyContentSnapshot.json",
   "apps/web/src/content/aspectPairSourcePhrases.json",
+  "apps/web/src/content/emergencyCopy.ts",
   "apps/web/src/content/seasonArcCopy.ts",
   "apps/web/src/content/lunarBeatCopy.ts"
 ];
@@ -40,6 +42,16 @@ const blockingChecks = [
     id: "known-emergency-synastry",
     description: "Known emergency synastry fallback wording",
     pattern: /puts first impressions,\s*outward style/i
+  },
+  {
+    id: "mechanical-natal-aspect-fallback",
+    description: "Mechanical natal aspect fallback fragments",
+    pattern: /\b(?:giving North Node a clear place|one part of the contact|other part of the contact pushes back|They disagree about how you should respond|Recurring friction that asks for an adjustment|Name both sides of the pattern before choosing the next concrete response)\b/i
+  },
+  {
+    id: "mechanical-emergency-detail-fallback",
+    description: "Mechanical emergency detail fallback fragments",
+    pattern: /\b(?:This pattern is active now|This transit is active now|is active here|current emphasis (?:is|may be) visible in timing, mood|everyday choices|while this contact is active)\b/i
   }
 ];
 
@@ -58,6 +70,14 @@ const warningChecks = [
     id: "mechanical-pairing",
     description: "Mechanically stitched point/function language",
     pattern: /\b(?:bringing .+ together with .+\. Between you it plays as|linking .+ with .+\. It plays as)\b/i
+  }
+];
+
+const sourceLeakChecks = [
+  {
+    id: "mechanical-emergency-detail-fallback",
+    description: "Mechanical emergency detail fallback fragments",
+    pattern: /\b(?:This pattern is active now|This transit is active now|is active here|current emphasis (?:is|may be) visible in timing, mood|everyday choices|while this contact is active)\b/i
   }
 ];
 
@@ -212,6 +232,28 @@ function checkString({ filePath, source, fieldPath, value }) {
   return findings;
 }
 
+function checkSourceForKnownLeaks({ filePath, source }) {
+  const findings = [];
+  const lineFor = makeLineLookup(source);
+
+  for (const check of sourceLeakChecks) {
+    const match = source.match(check.pattern);
+    if (!match?.[0]) continue;
+
+    findings.push({
+      severity: "BLOCKER",
+      check: check.id,
+      description: check.description,
+      filePath,
+      line: lineFor(match[0]),
+      fieldPath: "source",
+      excerpt: truncate(match[0])
+    });
+  }
+
+  return findings;
+}
+
 const allFiles = (await Promise.all(scanRoots.map(collectFiles))).flat().filter(shouldScanFile);
 const allFindings = [];
 let scannedStrings = 0;
@@ -219,6 +261,8 @@ let scannedStrings = 0;
 for (const filePath of allFiles) {
   const source = await readFile(filePath, "utf8");
   let readerStrings = [];
+
+  allFindings.push(...checkSourceForKnownLeaks({ filePath, source }));
 
   if (filePath.endsWith(".json")) {
     try {
@@ -288,7 +332,7 @@ if (warnings.length > 0) {
 }
 
 console.log("## Editorial Checks");
-console.log("- Blocking: placeholder copy, unresolved runtime values, internal scaffold terms, source-framework directions, and known emergency fallback wording.");
+console.log("- Blocking: placeholder copy, unresolved runtime values, internal scaffold terms, source-framework directions, known emergency fallback wording, and mechanical natal-aspect fallback fragments.");
 console.log("- Warnings: directional/moralizing phrasing, generic boilerplate, mechanically stitched point language, long fields, and repeated adjacent words.");
 
 if (blockers.length > 0) {

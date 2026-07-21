@@ -1,21 +1,21 @@
 {
   "id": "sun-conjunction-moon",
   "kind": "natal-aspect",
-  "displayTitle": "Radiant Or Tender",
-  "summary": "Whether you show it or not, a need to be seen and to matter and deep feelings and a strong need to feel safe are fused in you — you can't run one without the other. At your best, you shine and lead without trying and you read people and care on instinct. At the edge, you make it all about you, or you shrink when no one's looking.",
-  "body": "Whether you show it or not, a need to be seen and to matter and deep feelings and a strong need to feel safe are fused in you — you can't run one without the other. At your best, you shine and lead without trying and you read people and care on instinct. At the edge, you make it all about you, or you shrink when no one's looking. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness. Identity and emotional need can sit close together here. What you want and what you feel may be difficult to separate.",
-  "gift": "At your best: you shine and lead without trying, and you read people and care on instinct.",
-  "shadow": "The trap: you make it all about you, or you shrink when no one's looking — or your moods run you, or you bury what you actually need.",
-  "integration": "Let identity and emotional needs cooperate without making either one carry the whole story. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness.",
+  "displayTitle": "Sun Conjunct Moon",
+  "summary": "You commit with everything or not at all.",
+  "body": "You commit with everything or not at all. Your Sun conjunct Moon means your head and your heart move as one, so when you want something, all of you wants it. The blind spot? When every part of you agrees, no one's left to ask the hard questions. Keep honest people close. Let them push back.",
+  "gift": "Clear inner alignment, wholehearted commitment, and the ability to move without splitting yourself in two.",
+  "shadow": "Certainty can arrive so quickly that no inner voice slows down to ask what else needs to be considered.",
+  "integration": "Let trusted people ask the questions that your own inner agreement may skip.",
   "do": [
-    "Use it on purpose, not on reflex",
-    "Let you shine and you read people work together",
-    "When it spikes, name it before you act"
+    "Notice when all of you says yes at once",
+    "Invite a trusted outside perspective before major commitments",
+    "Let conviction stay open to better information"
   ],
   "dont": [
-    "You make it all about you",
-    "Pretend the tension isn't there",
-    "Let the reflex make the decision"
+    "Treat inner agreement as proof that every detail has been checked",
+    "Push away honest feedback",
+    "Mistake intensity for completeness"
   ],
   "lifeAreas": [
     "identity",
@@ -26,8 +26,8 @@
     "sun",
     "moon",
     "conjunction",
-    "confidence",
-    "emotional-intelligence"
+    "alignment",
+    "wholeheartedness"
   ],
   "intensity": 4,
   "sourceFactors": [

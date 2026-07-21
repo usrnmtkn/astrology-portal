@@ -23098,7 +23098,7 @@
       "durationClass": null,
       "templates": {
         "compact": "{{core_behavior}}",
-        "expanded": "{{core_behavior}} {{house_synthesis}}"
+        "expanded": "{{full_copy}}"
       },
       "clauses": {
         "core_behavior": {
@@ -23129,6 +23129,23 @@
           "source_lane": "cc",
           "review_status": "reviewed",
           "notes_editor_only": ""
+        },
+        "full_copy": {
+          "key": "dashboard.natal-placement.moon.scorpio.house_6.full_copy",
+          "family": "placement/full-copy/moon/scorpio/6",
+          "surface": "natal-placement",
+          "text_you": "Your Moon in Scorpio in the 6th house makes emotional safety depend on trust, privacy, and the feeling that your daily life is not secretly draining you. You may be able to function through stress for a long time, especially when work, health, chores, or caretaking need to be handled, but your body usually keeps score before you admit how much something is affecting you. The pattern is not just that your feelings are intense. It is that your routines, workload, and sense of usefulness become the places where hidden pressure shows up first.",
+          "text_they": "Their Moon in Scorpio in the 6th house makes emotional safety depend on trust, privacy, and the feeling that their daily life is not secretly draining them. They may be able to function through stress for a long time, especially when work, health, chores, or caretaking need to be handled, but their body usually keeps score before they admit how much something is affecting them. The pattern is not just that their feelings are intense. It is that their routines, workload, and sense of usefulness become the places where hidden pressure shows up first.",
+          "source_keys": [
+            "cc/planet-in-sign/moon-in-scorpio",
+            "cc/planet/moon",
+            "cc/sign/scorpio",
+            "cc/planet-in-house/moon-in-6th-house",
+            "cc/house/6"
+          ],
+          "source_lane": "cc",
+          "review_status": "reviewed",
+          "notes_editor_only": "Authored full-copy replacement supplied during placement-detail QA."
         }
       },
       "sourceKeys": [
@@ -93267,8 +93284,8 @@
           "key": "dashboard.natal-aspect.mercury.square.saturn.experience",
           "family": "natal-aspect/experience/mercury/square/saturn",
           "surface": "natal-aspect",
-          "text_you": "Doubt can chill your voice, so you may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
-          "text_they": "Doubt can chill their voice, so they may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
+          "text_you": "Waiting for an idea to become bulletproof gives your inner critic an easy trap. It forces you to hesitate, then uses that hesitation as proof you had nothing to say in the first place.",
+          "text_they": "Waiting for an idea to become bulletproof gives their inner critic an easy trap. It forces them to hesitate, then uses that hesitation as proof they had nothing to say in the first place.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-square",
             "cc/planet/mercury",
@@ -93283,8 +93300,8 @@
           "key": "dashboard.natal-aspect.mercury.square.saturn.guidance",
           "family": "natal-aspect/guidance/mercury/square/saturn",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "The work is to let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "The work is to let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-square",
             "cc/planet/mercury",
@@ -93333,8 +93350,8 @@
           "key": "dashboard.natal-aspect.saturn.square.mercury.experience",
           "family": "natal-aspect/experience/saturn/square/mercury",
           "surface": "natal-aspect",
-          "text_you": "Doubt can chill your voice, so you may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
-          "text_they": "Doubt can chill their voice, so they may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
+          "text_you": "A strict inner editor can make you hold back an idea until it feels airtight, then treat the delay as proof that you had nothing useful to say.",
+          "text_they": "A strict inner editor can make them hold back an idea until it feels airtight, then treat the delay as proof that they had nothing useful to say.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-square",
             "cc/planet/saturn",
@@ -93349,8 +93366,8 @@
           "key": "dashboard.natal-aspect.saturn.square.mercury.guidance",
           "family": "natal-aspect/guidance/saturn/square/mercury",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "The work is to let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "The work is to let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-square",
             "cc/planet/saturn",
@@ -94207,8 +94224,8 @@
           "key": "dashboard.natal-aspect.mercury.trine.saturn.guidance",
           "family": "natal-aspect/guidance/mercury/trine/saturn",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Precision is meant to polish your voice, not interrogate it. Let careful thinking refine the message without forcing every sentence to audition for its right to exist.",
+          "text_they": "Precision is meant to polish their voice, not interrogate it. Let careful thinking refine the message without forcing every sentence to audition for its right to exist.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-trine",
             "cc/planet/mercury",
@@ -94273,8 +94290,8 @@
           "key": "dashboard.natal-aspect.saturn.trine.mercury.guidance",
           "family": "natal-aspect/guidance/saturn/trine/mercury",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-trine",
             "cc/planet/saturn",
@@ -118499,8 +118516,8 @@
           "key": "dashboard.natal-aspect.mercury.conjunction.saturn.guidance",
           "family": "natal-aspect/guidance/mercury/conjunction/saturn",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-conjunction",
             "cc/planet/mercury",
@@ -118565,8 +118582,8 @@
           "key": "dashboard.natal-aspect.saturn.conjunction.mercury.guidance",
           "family": "natal-aspect/guidance/saturn/conjunction/mercury",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-conjunction",
             "cc/planet/saturn",
@@ -118615,8 +118632,8 @@
           "key": "dashboard.natal-aspect.mercury.opposition.saturn.experience",
           "family": "natal-aspect/experience/mercury/opposition/saturn",
           "surface": "natal-aspect",
-          "text_you": "Doubt can chill your voice, so you may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
-          "text_they": "Doubt can chill their voice, so they may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
+          "text_you": "Waiting for an idea to become bulletproof gives your inner critic an easy trap. It forces you to hesitate, then uses that hesitation as proof you had nothing to say in the first place.",
+          "text_they": "Waiting for an idea to become bulletproof gives their inner critic an easy trap. It forces them to hesitate, then uses that hesitation as proof they had nothing to say in the first place.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-opposition",
             "cc/planet/mercury",
@@ -118631,8 +118648,8 @@
           "key": "dashboard.natal-aspect.mercury.opposition.saturn.guidance",
           "family": "natal-aspect/guidance/mercury/opposition/saturn",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Precision is meant to polish your voice, not interrogate it. Let careful thinking refine the message without forcing every sentence to audition for its right to exist.",
+          "text_they": "Precision is meant to polish their voice, not interrogate it. Let careful thinking refine the message without forcing every sentence to audition for its right to exist.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-opposition",
             "cc/planet/mercury",
@@ -118681,8 +118698,8 @@
           "key": "dashboard.natal-aspect.saturn.opposition.mercury.experience",
           "family": "natal-aspect/experience/saturn/opposition/mercury",
           "surface": "natal-aspect",
-          "text_you": "Doubt can chill your voice, so you may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
-          "text_they": "Doubt can chill their voice, so they may hold an idea back for fear it is not good enough, and mistake caution for accuracy.",
+          "text_you": "A strict inner editor can make you hold back an idea until it feels airtight, then treat the delay as proof that you had nothing useful to say.",
+          "text_they": "A strict inner editor can make them hold back an idea until it feels airtight, then treat the delay as proof that they had nothing useful to say.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-opposition",
             "cc/planet/saturn",
@@ -118697,8 +118714,8 @@
           "key": "dashboard.natal-aspect.saturn.opposition.mercury.guidance",
           "family": "natal-aspect/guidance/saturn/opposition/mercury",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-opposition",
             "cc/planet/saturn",
@@ -118763,8 +118780,8 @@
           "key": "dashboard.natal-aspect.mercury.sextile.saturn.guidance",
           "family": "natal-aspect/guidance/mercury/sextile/saturn",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-sextile",
             "cc/planet/mercury",
@@ -118829,8 +118846,8 @@
           "key": "dashboard.natal-aspect.saturn.sextile.mercury.guidance",
           "family": "natal-aspect/guidance/saturn/sextile/mercury",
           "surface": "natal-aspect",
-          "text_you": "Let your rigor sharpen your ideas rather than silence them, and speak before you feel completely certain.",
-          "text_they": "Let their rigor sharpen their ideas rather than silence them, and speak before they feel completely certain.",
+          "text_you": "Let careful thinking improve the message without turning every sentence into a test you have to pass first.",
+          "text_they": "Let careful thinking improve the message without turning every sentence into a test they have to pass first.",
           "source_keys": [
             "cc/natal/aspect/mercury-saturn-sextile",
             "cc/planet/saturn",

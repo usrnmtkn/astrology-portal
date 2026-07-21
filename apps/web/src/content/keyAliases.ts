@@ -123,6 +123,11 @@ export function equivalentAstroContentKeys(key: string) {
     aspectAliases(ccAspectPair[1], ccAspectPair[2], ccAspectPair[3]).forEach((alias) => addAlias(aliases, alias));
   }
 
+  const legacyNatalAspect = normalized.match(/^natal\.([a-z_]+)\.([a-z_]+)\.([a-z_]+)$/);
+  if (legacyNatalAspect && aspectNames.has(aliasKeyPart(legacyNatalAspect[2]))) {
+    aspectAliases(legacyNatalAspect[1], legacyNatalAspect[2], legacyNatalAspect[3]).forEach((alias) => addAlias(aliases, alias));
+  }
+
   const midheaven = normalized.match(/^ms\/midheaven\/([a-z-]+)$/);
   if (midheaven) {
     addAlias(aliases, `midheaven-in-${aliasKeyPart(midheaven[1])}`);
