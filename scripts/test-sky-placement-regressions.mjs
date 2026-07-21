@@ -364,6 +364,7 @@ assert.ok((normalizedCoverage["angle-surface"]?.READY ?? 0) >= 24, "Normalized s
 assert.ok((normalizedCoverage.daylight?.READY ?? 0) >= 3, "Normalized source must cover planetary hour, sunrise, and sunset surfaces.");
 assert.ok(sourceGroundedMercuryCancer.includes("A family conversation, household plan, or message with a long history may need another pass."), "Direct Mercury retrograde composer must use the bundled v2.2.1 exemplar fallback instead of unavailable copy.");
 assert.ok(!/Messages and decisions start moving through Cancer circumstances/i.test(sourceGroundedMercuryCancer), "Mercury retrograde runtime must not fall back to the generic planet-in-sign snapshot wording.");
+assert.equal(isReaderFacingCopy("Mercury Rx in Cancer is active here. The current emphasis may be visible in timing, mood, and the choices around it."), false, "Runtime reader safety must reject stale active-here sky fallback copy.");
 for (const [label, rendered] of [
   ["Venus in Virgo compact", sourceGroundedVenusVirgoCompact],
   ["Mars in Gemini compact", sourceGroundedMarsGeminiCompact],
@@ -491,6 +492,14 @@ assert.ok(
   && app.includes("function skyPlacementMadlibFallbackSection(")
   && app.includes("emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde })"),
   "Sky placement pages must resolve dashboard-authored and source-grounded copy through the normalizer before source-based madlib fallback."
+);
+assert.ok(
+  app.includes("function sourceGroundedSkyRetrogradeNormalizedSection(")
+  && app.includes("composeSkyRetrograde({")
+  && app.includes("const sourceGroundedRetrogradeSection = sourceGroundedSkyRetrogradeNormalizedSection(position, generatedAt)")
+  && app.includes("sections: [sourceGroundedRetrogradeSection]")
+  && app.indexOf("const sourceGroundedRetrogradeSection = sourceGroundedSkyRetrogradeNormalizedSection(position, generatedAt)") < app.indexOf("const normalizedBody = normalized.sections.flatMap"),
+  "Sky retrograde detail pages must keep source-grounded detail copy stable after generated content hydrates."
 );
 assert.ok(
   app.includes("liveGeneratedContent(generatedContent, contentKey)")

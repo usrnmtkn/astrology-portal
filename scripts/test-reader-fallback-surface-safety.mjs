@@ -32,6 +32,15 @@ const unsafeReaderPatterns = [
   /\beasiest to see\b/iu,
   /\bpatterns? show(?:s)? up\b/iu,
   /\bchoose the next concrete response\b/iu,
+  /\bgiving North Node a clear place\b/iu,
+  /\bThis pattern is active now\b/iu,
+  /\bThis transit is active now\b/iu,
+  /\bis active here\b/iu,
+  /\bcurrent emphasis (?:is|may be) visible in timing, mood\b/iu,
+  /\beveryday choices\b/iu,
+  /\bcurrent emphasis is visible in timing, mood, and everyday choices\b/iu,
+  /\beveryday choices while this contact is active\b/iu,
+  /\bwhile this contact is active\b/iu,
   /\bmov(?:e|es|ing) through\b/iu,
   /\bcircumstances\b/iu,
   /\bKeywords:\b/u
@@ -95,6 +104,39 @@ assert.deepEqual(
   staleNatalPlacementSections,
   [],
   "stale ready natal placement rows must not outrank approved v2 fallback"
+);
+
+const integratedNatalPlacementSections = runtime.sourceGroundedNatalPlacementSections({
+  natalSky: null,
+  ownerPerspective: "you",
+  position: {
+    planet: "Moon",
+    sign: "Scorpio",
+    house: 6,
+    longitude: 222.7833,
+    degree: "12°47'",
+    motion: "direct"
+  }
+});
+assert.equal(
+  integratedNatalPlacementSections.length,
+  1,
+  "reviewed natal placement clauses must render as one integrated section"
+);
+assert.equal(
+  integratedNatalPlacementSections[0]?.heading,
+  "Moon in Scorpio in the 6th house",
+  "integrated natal placement section must name the full placement"
+);
+assert.match(
+  integratedNatalPlacementSections[0]?.body ?? "",
+  /Your Moon in Scorpio in the 6th house makes emotional safety depend on trust, privacy/u,
+  "integrated natal placement must prefer reviewed full-copy records"
+);
+assert.match(
+  integratedNatalPlacementSections[0]?.body ?? "",
+  /routines, workload, and sense of usefulness become the places where hidden pressure shows up first\./u,
+  "integrated natal placement must render the full reviewed placement interpretation"
 );
 
 const sourceFiles = [

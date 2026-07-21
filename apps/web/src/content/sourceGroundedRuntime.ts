@@ -80,6 +80,48 @@ function reviewedRecordText(record: SourceGroundedRecord, perspective: OwnerPers
     .trim();
 }
 
+function sentenceCase(value: string) {
+  const text = value.trim();
+  return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : "";
+}
+
+function sentenceWithTerminalPunctuation(value: string) {
+  const text = sentenceCase(value).trim();
+  return text && !/[.!?]$/u.test(text) ? `${text}.` : text;
+}
+
+function clauseAfterComma(value: string) {
+  const text = value.trim().replace(/[.!?]$/u, "");
+  return /^(?:Your|Their|You|They)\b/u.test(text)
+    ? `${text.charAt(0).toLowerCase()}${text.slice(1)}`
+    : text;
+}
+
+function composedNatalPlacementText({
+  coreBehavior,
+  houseSynthesis,
+  ownerPerspective,
+  position,
+  reliableBirthTime
+}: {
+  coreBehavior: string;
+  houseSynthesis: string;
+  ownerPerspective: OwnerPerspective;
+  position: PlanetPosition;
+  reliableBirthTime: boolean;
+}) {
+  const placement = position.house && reliableBirthTime
+    ? `${position.planet} in ${position.sign} in the ${ordinal(position.house)} house`
+    : `${position.planet} in ${position.sign}`;
+  const possessive = ownerPerspective === "they" ? "their" : "your";
+  const firstSentence = coreBehavior
+    ? sentenceWithTerminalPunctuation(`With ${possessive} ${placement}, ${clauseAfterComma(coreBehavior)}`)
+    : "";
+  const secondSentence = houseSynthesis ? sentenceWithTerminalPunctuation(houseSynthesis) : "";
+
+  return [firstSentence, secondSentence].filter(Boolean).join(" ");
+}
+
 function isReviewedClauseStatus(value: unknown) {
   return typeof value === "string" && /^(reviewed|approved|published)$/iu.test(value);
 }
@@ -378,10 +420,32 @@ export function sourceGroundedNatalPlacementSections({
     const houseSynthesis = reliableBirthTime
       ? reviewedRecordText(supportedRecord, ownerPerspective, ["house_synthesis"])
       : "";
+    const authoredFullCopy = reliableBirthTime
+      ? reviewedRecordText(supportedRecord, ownerPerspective, ["full_copy"])
+      : "";
+    const integratedBody = authoredFullCopy || composedNatalPlacementText({
+      coreBehavior,
+      houseSynthesis,
+      ownerPerspective,
+      position,
+      reliableBirthTime
+    });
     const sections: SourceGroundedSection[] = [];
 
-    if ([coreBehavior, houseSynthesis].some(isLegacyNatalPlacementClause)) {
+    if ([coreBehavior, houseSynthesis, integratedBody].some(isLegacyNatalPlacementClause)) {
       return [];
+    }
+
+    if (integratedBody) {
+      return [
+        {
+          heading: position.house && reliableBirthTime
+            ? `${position.planet} in ${position.sign} in the ${ordinal(position.house)} house`
+            : `${position.planet} in ${position.sign}`,
+          tldr: "",
+          body: integratedBody
+        }
+      ];
     }
 
     if (coreBehavior) {

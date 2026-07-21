@@ -21,6 +21,37 @@ const generatedKeys = read("apps/web/src/services/generatedContentKeys.ts");
 const calendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const emergencyCopy = read("apps/web/src/content/emergencyCopy.json");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
+const fallbackTemplateRows = read("scripts/content-source/tldrastro-fallback-templates-rows.json");
+const natalAspectFallback = read("apps/web/src/content/natalAspectFallback.ts");
+
+const natalAspectFallbackSource = [
+  app.slice(app.indexOf("function natalAspectMadlibFallbackSection"), app.indexOf("function normalizeNatalAspectSurface")),
+  fallbackTemplateRows.slice(
+    fallbackTemplateRows.indexOf("\"contentKey\": \"fallback-hook/you.natal-aspect\""),
+    fallbackTemplateRows.indexOf("\"contentKey\": \"fallback-hook/you.transit-to-natal\"")
+  ),
+  emergencyCopy.slice(
+    emergencyCopy.indexOf("\"you.natal-aspect\""),
+    emergencyCopy.indexOf("\"you.transit-to-natal\"")
+  )
+].join("\n");
+
+const natalAspectBannedFallbackPatterns = [
+  /\blinks\b[^.?!]*\bwith\b/i,
+  /\blink(?:ing)?\b[^.?!]*\bwith\b/i,
+  /\bbrings attention to\b/i,
+  /\basks for adjustment\b/i,
+  /\binvites you to\b/i,
+  /\bfind balance between\b/i,
+  /\bname both sides\b/i,
+  /\bchoose the next concrete response\b/i
+];
+
+for (const pattern of natalAspectBannedFallbackPatterns) {
+  if (pattern.test(natalAspectFallbackSource)) {
+    throw new Error(`Natal aspect fallback contains banned framing: ${pattern}`);
+  }
+}
 
 const guardedResolver = includesAll(generatedContent, [
   ".eq(\"status\", \"LIVE\")",
@@ -187,14 +218,16 @@ const families = [
     state: "WORKING",
     canonicalKey: "natal.aspect.sun.conjunction.mercury",
     runtimeCaller: "relatedAspectRowsForPlacement / natalAspectDetailArticle",
-    resolver: "liveGeneratedContentByKeys -> loadLiveGeneratedContentForSurfaces",
-    safeFallback: "fallbackFromHook('you.natal-aspect') + aspectRelationshipDescription",
+    resolver: "normalizeNatalAspectSurface -> sourceGroundedNatalAspectComposition or resolveNatalAspectFallback",
+    safeFallback: "resolveNatalAspectFallback with pair-specific and aspect-operator records",
     birthTimeDependency: "none for planet aspects; required for angle aspects",
     checks: [
       fallbackHooks.includes("key: \"you.natal-aspect\""),
       generatedKeys.includes("function natalAspectContentKey"),
       app.includes("natalAspectContentKey("),
-      app.includes("\"you.natal-aspect\"")
+      app.includes("\"you.natal-aspect\""),
+      app.includes("resolveNatalAspectFallback(aspect)"),
+      natalAspectFallback.includes("aspect-fallback.pair.moon-square-black-moon-lilith")
     ],
     incompleteCount: 0,
     nextAction: "Audit exact natal aspect rows for friend-chart pronoun grammar before publishing."
@@ -288,7 +321,7 @@ const report = [
   "Scope: read-only runtime wiring audit. No Supabase import, update, or LIVE promotion is performed.",
   "",
   `Reader guard: ${guardedResolver ? "PASS" : "FAIL"} (LIVE + lane=serving + review_state IS NULL + local servability guard).`,
-  `Reader copy guard: ${readerCopyGuard ? "PASS" : "WARN"} (non-blocking static smoke check; runtime tests own copy safety).`,
+  `Reader copy guard: ${readerCopyGuard ? "PASS" : "WARN"} (non-blocking static smoke check; runtime tests own non-empty reader-facing copy and metadata leakage safety).`,
   "",
   "| Family | Hook | State | Canonical key example | Runtime caller | Content resolver | Safe fallback | Test status | Birth-time dependency | Incomplete/unmapped count | Next required action |",
   "| --- | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |",

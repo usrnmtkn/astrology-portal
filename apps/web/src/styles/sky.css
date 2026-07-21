@@ -48,6 +48,10 @@
   box-shadow: var(--shadow-article);
 }
 
+.you-transit-aspect-card {
+  margin-top: var(--space-5);
+}
+
 .article-id,
 .sky-detail-id {
   display: grid;

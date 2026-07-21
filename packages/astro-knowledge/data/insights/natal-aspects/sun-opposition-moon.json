@@ -1,21 +1,21 @@
 {
   "id": "sun-opposition-moon",
   "kind": "natal-aspect",
-  "displayTitle": "Radiant Or Tender",
-  "summary": "What you want to become and what helps you feel safe may not always point in the same direction.",
-  "body": "Sun opposition Moon describes a life organized around contrast: public identity on one side, private needs on the other. You may feel split between confidence and sensitivity, visibility and retreat, ambition and belonging. Other people can become mirrors for this tension, showing you the part of yourself you are not yet holding directly. The gift is awareness. You can learn to see both sides clearly and make choices that do not require one part of you to exile the other.",
-  "gift": "Strong self-awareness, relational insight, and the ability to understand opposing needs without collapsing them into one answer.",
-  "shadow": "Projection, inner push-pull, relying on others to carry the side of yourself you avoid.",
-  "integration": "Let identity and need negotiate. You do not have to choose between becoming visible and staying emotionally honest.",
+  "displayTitle": "Sun Opposite Moon",
+  "summary": "You're pulled between your own direction and the people you love.",
+  "body": "You're pulled between your own direction and the people you love. Choose yourself, the guilt creeps in. Choose them, the resentment builds. Your Sun opposite Moon isn't asking you to pick a side, it's asking you to stop believing you have to. Closeness doesn't require losing yourself. Independence doesn't require distance. Hold both.",
+  "gift": "Relational awareness, self-awareness, and the ability to understand two opposing needs without collapsing either one.",
+  "shadow": "Guilt when choosing yourself, resentment when choosing others, and the belief that closeness and independence cannot both exist.",
+  "integration": "Build a life where connection and self-direction can both have room.",
   "do": [
-    "Name both needs before choosing",
-    "Watch what other people seem to trigger in you",
-    "Build a life with room for public purpose and private repair"
+    "Notice when you think you have to pick a side",
+    "Make space for closeness and independence",
+    "Name guilt and resentment before they choose for you"
   ],
   "dont": [
-    "Let relationships decide who you are",
-    "Treat emotional needs as obstacles to purpose",
-    "Perform certainty when you are divided"
+    "Use distance as the only way to protect yourself",
+    "Trade your direction for approval",
+    "Let relationships decide who you are"
   ],
   "lifeAreas": [
     "identity",
@@ -23,11 +23,11 @@
     "family"
   ],
   "tags": [
-    "selfhood",
-    "needs",
+    "sun",
+    "moon",
+    "opposition",
     "relationships",
-    "projection",
-    "integration"
+    "independence"
   ],
   "intensity": 4,
   "sourceFactors": [
