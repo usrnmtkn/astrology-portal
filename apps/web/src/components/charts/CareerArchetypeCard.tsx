@@ -11,6 +11,9 @@ export function CareerArchetypeCard({
   onOpenDetail,
   profile
 }: CareerArchetypeCardProps) {
+  const sourceLayer = profile.sections.some((section) => section.layer === "source-grounded")
+    ? "Admin"
+    : "Fallback";
   const cardClassName = [
     "career-archetype-card",
     onOpenDetail ? "career-archetype-card--button" : ""
@@ -20,7 +23,10 @@ export function CareerArchetypeCard({
       <div className="career-archetype-card__header">
         <div>
           <span className={`eyebrow ${labelClassName}`}>Career archetype</span>
-          <h3>{profile.title}</h3>
+          <h3>
+            {profile.title}
+            <span className="career-archetype-card__source-badge">{sourceLayer}</span>
+          </h3>
         </div>
         <p className="career-archetype-card__tldr">
           <strong>TLDR</strong>
@@ -43,6 +49,7 @@ export function CareerArchetypeCard({
             <article key={section.key}>
               <div>
                 <span>{section.label}</span>
+                <em>{section.layer === "source-grounded" ? "Admin" : "Fallback"}</em>
               </div>
               <h4>{section.headline}</h4>
               <p>{section.body}</p>

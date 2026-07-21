@@ -1,5 +1,5 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent } from "react";
-import { memo, useId, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
@@ -88,6 +88,30 @@ type InspectorAspect = {
   orb: number | null;
 };
 
+const aspectLegendLabels: Record<string, string> = {
+  conjunction: "Conjunction",
+  opposition: "Opposition",
+  quincunx: "Quincunx",
+  semisextile: "Semisextile",
+  semisquare: "Semisquare",
+  sextile: "Sextile",
+  sesquiquadrate: "Sesquiquadrate",
+  square: "Square",
+  trine: "Trine"
+};
+const aspectLegendAngles: Record<string, number> = {
+  conjunction: 0,
+  semisextile: 30,
+  semisquare: 45,
+  sextile: 60,
+  square: 90,
+  trine: 120,
+  sesquiquadrate: 135,
+  quincunx: 150,
+  opposition: 180
+};
+const inspectorAspectLegendTypes: InspectorAspectType[] = ["conjunction", "sextile", "square", "trine", "opposition"];
+
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
     return 0;
@@ -153,6 +177,19 @@ function exactAspectAngle(type: InspectorAspectType) {
     case "opposition":
       return 180;
   }
+}
+
+function aspectLegendLabel(type: string) {
+  const normalizedType = normalizeAspectType(type);
+  return aspectLegendLabels[normalizedType]
+    ?? normalizedType
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+}
+
+function aspectLegendSortValue(type: string) {
+  return aspectLegendAngles[normalizeAspectType(type)] ?? 999;
 }
 
 function wholeSignAspectStyle(type: InspectorAspectType, orb: number): CSSProperties {
@@ -401,6 +438,7 @@ export const SkyWheel = memo(function SkyWheel({
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
+  const wheelShellRef = useRef<HTMLElement | null>(null);
   const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
@@ -549,6 +587,47 @@ export const SkyWheel = memo(function SkyWheel({
       .filter((aspect) => !aspect.type)
       .map((aspect) => aspect.point.id)
   ), [inspectorAspects]);
+  const aspectLegendItems = useMemo(() => {
+    if (!focusedInspectorPoint || focusedInspectorPoint.kind !== "position") {
+      return [];
+    }
+
+    const presentTypes = new Set(
+      inspectorAspects
+        .map((aspect) => aspect.type)
+        .filter((type): type is InspectorAspectType => Boolean(type))
+    );
+    const types = inspectorAspectLegendTypes.filter((type) => presentTypes.has(type));
+
+    return types
+      .sort((first, second) => aspectLegendSortValue(first) - aspectLegendSortValue(second))
+      .map((type) => ({
+        type,
+        label: aspectLegendLabel(type),
+        lineStyle: wholeSignAspectStyle(type, 0)
+      }));
+  }, [focusedInspectorPoint, inspectorAspects]);
+  useEffect(() => {
+    if (!inspectorEnabled || !focusedInspectorPointId) {
+      return;
+    }
+
+    function clearInspectorOnOutsidePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (!(target instanceof Node) || wheelShellRef.current?.contains(target)) {
+        return;
+      }
+
+      setFocusedInspectorPointId(null);
+    }
+
+    document.addEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+    };
+  }, [inspectorEnabled, focusedInspectorPointId]);
   function inspectorPointState(pointId: string) {
     if (!focusedInspectorPoint) {
       return "idle";
@@ -572,13 +651,14 @@ export const SkyWheel = memo(function SkyWheel({
 
   return (
     <>
-      <svg
-        className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
-        viewBox={activeWheelViewBox}
-        role="img"
-        aria-label="Planet positions"
-        onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
-      >
+      <figure ref={wheelShellRef} className={`sky-wheel-shell sky-wheel-shell-${variant}`}>
+        <svg
+          className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+          viewBox={activeWheelViewBox}
+          role="img"
+          aria-label="Planet positions"
+          onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
+        >
         <defs>
           <clipPath id={wheelClipId}>
             <circle cx={center} cy={center} r={radius.outer} />
@@ -883,7 +963,27 @@ export const SkyWheel = memo(function SkyWheel({
             Houses: Whole Sign
           </text>
         ) : null}
-      </svg>
+        </svg>
+        {aspectLegendItems.length > 0 ? (
+          <figcaption className="aspect-wheel-legend" aria-label="Aspect legend">
+            {aspectLegendItems.map(({ type, label, lineStyle }) => (
+              <span key={type} className="aspect-wheel-legend__item">
+                <svg className="aspect-wheel-legend__swatch" viewBox="0 0 38 8" aria-hidden="true" focusable="false">
+                  <line
+                    className={`${aspectLineClass(type)} ${normalizeAspectType(type)}`}
+                    style={lineStyle}
+                    x1="2"
+                    y1="4"
+                    x2="36"
+                    y2="4"
+                  />
+                </svg>
+                <span>{label}</span>
+              </span>
+            ))}
+          </figcaption>
+        ) : null}
+      </figure>
       <FloatingTooltipPortal
         anchor={activeTooltipPlanet ? planetMarkerRefs.current.get(activeTooltipPlanet) ?? null : null}
         className="floating-tooltip--planet"

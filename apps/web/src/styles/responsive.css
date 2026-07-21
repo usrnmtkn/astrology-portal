@@ -1236,6 +1236,7 @@
   .chart-shell,
   .chart-frame,
   .wheel,
+  .sky-wheel-shell,
   .sky-wheel,
   .friend-wheel,
   .natal-wheel,
@@ -1248,7 +1249,9 @@
     overflow: hidden;
   }
 
+  .chart-frame > .sky-wheel-shell,
   .chart-frame > .sky-wheel,
+  .sky-wheel-shell svg,
   .sky-wheel svg,
   .wheel svg {
     display: block;
@@ -1257,6 +1260,7 @@
     height: auto;
   }
 
+  .sky-wheel-shell,
   .sky-wheel {
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
   }
