@@ -69,25 +69,21 @@ import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-syna
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
-} from "./content/fallbackArchitectureV3/renderFallbackV3";
+} from "./content/fallbackArchitectureV3Runtime";
 import {
   type SkyEvent
-} from "./content/fallbackArchitectureV3/renderTransitSynastry";
+} from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
   fallbackRendererV3,
-  transitSynastryFallbackRendererV3
-} from "./content/fallbackArchitectureV3/runtimeBundle";
-import {
+  transitSynastryFallbackRendererV3,
   fallbackV3AspectFeel,
   fallbackV3HouseTopic,
   fallbackV3PlanetTopic,
   fallbackV3SignRuler,
-  fallbackV3SignStyle
-} from "./content/fallbackArchitectureV3/vocabulary";
-import {
-  isSafeNatalAspectFallbackCopy
-} from "./content/natalAspectCopySafety";
+  fallbackV3SignStyle,
+  transitV3SameBeatKeyForContentKey
+} from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
 import {
   placementScaffoldHasMinimumCoverage,
@@ -590,6 +586,7 @@ type SkyDetail = {
   meta: string;
   duration?: string;
   subtitle?: string;
+  tldr?: string;
   suppressTldr?: boolean;
   lensHint?: ReactNode;
   compactHeader?: boolean;
@@ -632,6 +629,7 @@ type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  tldr?: string;
   lensHint?: ReactNode;
   compactHeader?: boolean;
   plainBody?: boolean;
@@ -673,6 +671,7 @@ function careerYouArticle(profile: CareerArchetypeProfile): YouTransitArticle {
     title: profile.title,
     glyph: "♔",
     subtitle: profile.tldr,
+    tldr: profile.tldr,
     summary: profile.summary,
     summaryHeading: "Career pattern",
     bodyBeforeSections: false,
@@ -693,6 +692,7 @@ function careerSkyDetail(profile: CareerArchetypeProfile, routePath?: string): S
     title: profile.title,
     meta: "Career pattern",
     subtitle: profile.tldr,
+    tldr: profile.tldr,
     compactHeader: true,
     body: [profile.summary],
     sections: careerDetailSections(profile)
@@ -705,6 +705,7 @@ function soulRoadmapYouArticle(profile: SoulRoadmapProfile): YouTransitArticle {
     title: profile.title,
     glyph: "✦",
     subtitle: profile.tldr,
+    tldr: profile.tldr,
     summary: profile.tldr,
     summaryHeading: profile.label,
     bodyBeforeSections: false,
@@ -725,6 +726,7 @@ function soulRoadmapSkyDetail(profile: SoulRoadmapProfile, routePath?: string): 
     title: profile.title,
     meta: "Purpose pattern",
     subtitle: profile.tldr,
+    tldr: profile.tldr,
     compactHeader: true,
     body: [],
     sections: profile.sections
@@ -2051,17 +2053,8 @@ function personalTimingGenerationFacts(personalTiming: PersonalTimingResponse, p
 const synastryCardPreviewCharacterLimit = 220;
 
 function textPreview(text: string, characterLimit = synastryCardPreviewCharacterLimit) {
-  const normalized = text.replace(/\s+/g, " ").trim();
-
-  if (normalized.length <= characterLimit) {
-    return normalized;
-  }
-
-  const slice = normalized.slice(0, characterLimit);
-  const lastBreak = Math.max(slice.lastIndexOf(". "), slice.lastIndexOf("? "), slice.lastIndexOf("! "));
-  const trimmed = lastBreak > characterLimit * 0.55 ? slice.slice(0, lastBreak + 1) : slice.replace(/\s+\S*$/, "");
-
-  return `${trimmed.trim()}...`;
+  void characterLimit;
+  return text.replace(/\s+/g, " ").trim();
 }
 
 function stripTldrPrefix(value: string) {
@@ -5015,7 +5008,7 @@ function SkyDetailArticle({
       group: section.group ?? normalizedAspectToneBucket(section.aspectType || aspectTypeFromText(section.heading))
     }));
   const drilldown = detail.astrologyDrilldown;
-  const detailSubtitle = detail.subtitle ? stripArticleTitlePrefix(detail.subtitle, detail.title) : "";
+  const authoredTldr = detail.tldr ? stripArticleTitlePrefix(detail.tldr, detail.title) : "";
   const articleBodyComparableCopies = new Set(
     [
       ...paragraphs.filter((paragraph): paragraph is string => typeof paragraph === "string"),
@@ -5028,7 +5021,8 @@ function SkyDetailArticle({
       .map((paragraph) => comparableText(stripTldrPrefix(stripLegacySkyArticleScaffoldPrefix(paragraph))))
       .filter(Boolean)
   );
-  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(detailSubtitle, detail.title);
+  // TLDR is an explicit authored slot; subtitle and body are never substitutes.
+  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(authoredTldr, detail.title);
   const articleSub = isReaderFacingCopy(articleSubCandidate) && !isArticleTldrBodyDuplicate(articleSubCandidate, articleBodyComparableCopies)
     ? articleSubCandidate
     : "";
@@ -5109,7 +5103,7 @@ function SkyDetailArticle({
             ) : null}
           </header>
 
-          <hr className="article-rule" />
+          {hasReadableBody ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">
@@ -5624,10 +5618,6 @@ function skyAspectMadlibFallbackSection(
       dateLine: generatedAt ? currentSkyAspectTransitRange(aspect, generatedAt) : undefined
     });
 
-    if (rendered.templateKey.startsWith("authored/")) {
-      return null;
-    }
-
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
     if (!body || !isReaderFacingCopy(body)) {
@@ -5637,8 +5627,10 @@ function skyAspectMadlibFallbackSection(
     return {
       slot: "meaning",
       required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
+      layer: rendered.templateKey.startsWith("authored/") ? "authored" : "fallback",
+      tier: rendered.templateKey.startsWith("authored/")
+        ? "fallback-architecture-v3-authored"
+        : "fallback-architecture-v3",
       sourceKeys: [
         "tldrastro-fallback-architecture-v3",
         rendered.contentKey ?? "",
@@ -5668,7 +5660,7 @@ function normalizeSkyAspectSurface(
 
   return {
     surface: "sky-aspect",
-    status: fallbackSection ? "partial" : "not-servable",
+    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
     sections
   };
 }
@@ -7919,6 +7911,52 @@ function personalTransitPackageWindow(transit: TransitItem, generatedAt: string)
   }
 
   return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true).rangeLabel;
+}
+
+function personalTransitPackageContentKey(transit: TransitItem, generatedAt: string) {
+  const normalizedAspect = normalizeFallbackV3Aspect(transit.aspect);
+
+  if (!normalizedAspect) {
+    return null;
+  }
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
+      aspect: normalizedAspect,
+      natal: normalizeContentIdPart(transit.natalPoint),
+      sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
+      transiting: normalizeContentIdPart(transit.transitPlanet),
+      window: personalTransitPackageWindow(transit, generatedAt)
+    });
+
+    return rendered.contentKey ?? null;
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+function dedupeSameBeatPersonalTransits<T extends TransitItem>(transits: T[], generatedAt: string) {
+  const seenBeatKeys = new Set<string>();
+
+  return transits.filter((transit) => {
+    const contentKey = personalTransitPackageContentKey(transit, generatedAt);
+    const beatKey = transitV3SameBeatKeyForContentKey(contentKey);
+
+    if (!beatKey) {
+      return true;
+    }
+
+    if (seenBeatKeys.has(beatKey)) {
+      return false;
+    }
+
+    seenBeatKeys.add(beatKey);
+    return true;
+  });
 }
 
 function personalTransitMadlibFallbackSection(
@@ -14790,9 +14828,9 @@ function sourceGroundedNatalAspectSectionsForPlacement(
           planetB: normalizeContentIdPart(fact.aspectPlanet),
           voice: ownerContext?.ownerName ?? "you"
         });
-        const fallbackBody = readerFacingParagraphs(rendered.parts).join("\n\n");
+        const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
-        if (!fallbackBody || !isReaderFacingCopy(fallbackBody)) {
+        if (!body || !isReaderFacingCopy(body)) {
           return null;
         }
 
@@ -14808,7 +14846,7 @@ function sourceGroundedNatalAspectSectionsForPlacement(
             rendered.templateKey
           ].filter(Boolean),
           heading: rendered.headline || `${fact.primaryPlanet} ${fact.aspectType} ${fact.aspectPlanet}`,
-          body: fallbackBody
+          body
         };
 
         return fallbackSection;
@@ -17440,7 +17478,10 @@ function ProfileView({
       setTransitArticle(soulRoadmapYouArticle(soulRoadmapProfile));
     }
   };
-  const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
+  const aspectRows = dedupeSameBeatPersonalTransits(
+    rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
+    transitForm.chartDate
+  ).slice(0, 8);
   const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, transitForm.chartDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
@@ -17616,8 +17657,10 @@ function ProfileView({
         id: personalizedContentKey,
         title,
         glyph: pointGlyph(transit.transitPlanet),
-        subtitle: stripTldrPrefix(rowSummary),
-        summary: stripTldrPrefix(rowSummary),
+        // The authored aspect package declares headline + body, not TLDR.
+        // The collapsed-row preview must not be promoted into another slot.
+        subtitle: "",
+        summary: "",
         sections: articleSections,
         meta: [
           { label: "Duration", value: timing.rangeLabel },
@@ -17686,8 +17729,11 @@ function ProfileView({
         id: contentKey,
         title,
         glyph: pointGlyph(transit.transitPlanet),
-        subtitle: stripTldrPrefix(rowSummary),
-        summary: stripTldrPrefix(rowSummary),
+        // House cards do not currently author a TLDR slot. Keep their preview
+        // copy on the updates row, but render the article from the authored
+        // headline + body fields without promoting body copy into TLDR.
+        subtitle: "",
+        summary: "",
         sections: articleSections,
         meta: [
           ...(timingRange ? [{ label: "Date range", value: timingRange }] : []),
@@ -18057,7 +18103,10 @@ function ManualChartsPanel({
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendTransits = selectedChart && !selectedChartIsEvent
-    ? rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus).slice(0, 8)
+    ? dedupeSameBeatPersonalTransits(
+      rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
+      currentSky.generatedAt
+    ).slice(0, 8)
     : [];
   const selectedFriendTransitAspectLines = selectedChart && !selectedChartIsEvent
     ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
