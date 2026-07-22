@@ -8156,39 +8156,42 @@
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "What you've been avoiding is the missing piece.",
-      "body": "There's one conversation, skill, or truth you keep walking around instead of through. Stop treating the detour like the route. Whatever you're avoiding is holding up everything else. Go through it once.\n*Anchor: Spring/Forrest \"skipped step\" (\"the unfinished business or skipped/resisted/denied thing we need to do to reach our North Node potential\"). Corpus: Retrograde shelf (\"Step back far enough to see the pattern before you take another step forward\").*",
+      "body": "There's one conversation, skill, or truth you keep walking around instead of through. Stop treating the detour like the route. Whatever you're avoiding is holding up everything else. Go through it once.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
       ],
-      "note": "Transiting planet square the nodal axis (skipped step)"
+      "note": "Transiting planet square the nodal axis (skipped step)",
+      "editorial_notes": "Anchor: Spring/Forrest \"skipped step\" (\"the unfinished business or skipped/resisted/denied thing we need to do to reach our North Node potential\"). Corpus: Retrograde shelf (\"Step back far enough to see the pattern before you take another step forward\")."
     },
     {
       "contentKey": "authored/transit-aspect/any/north-node/conjunction",
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "What keeps arriving isn't random.",
-      "body": "The same kind of person, offer, and challenge keeps finding you. Stop calling it coincidence. Life repeats the invitation until you accept it. Say yes this time.\n*Anchor: Spring's NN Medicine + Strategy shelf timing logic. Flag: \"Stop calling it coincidence\" shares a beat with the Mercury ℞ card's \"none of it is random\", engine should not surface both on one day.*",
+      "body": "The same kind of person, offer, and challenge keeps finding you. Stop calling it coincidence. Life repeats the invitation until you accept it. Say yes this time.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
       ],
-      "note": "Transiting planet conjunct natal North Node (medicine template) | em dashes converted to commas per style rule"
+      "note": "Transiting planet conjunct natal North Node (medicine template) | em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Spring's NN Medicine + Strategy shelf timing logic. Flag: \"Stop calling it coincidence\" shares a beat with the Mercury ℞ card's \"none of it is random\", engine should not surface both on one day."
     },
     {
       "contentKey": "authored/transit-aspect/any/south-node/conjunction",
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "An old version of you is asking for its job back.",
-      "body": "A familiar pattern showed up this week, one you learned from people you love. Stop rehiring the habit just because it has seniority. You can love them and still leave the patterns behind.\n*Anchor: Family shelf, closer quoted VERBATIM, this is the South Node's canon line, and the reason this lane fits the brand. Source: Spring, South Node contacts as \"past life patterns… it also colors your current life today.\"*",
+      "body": "A familiar pattern showed up this week, one you learned from people you love. Stop rehiring the habit just because it has seniority. You can love them and still leave the patterns behind.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
       ],
-      "note": "Transiting planet conjunct natal South Node (old-pattern template) | em dashes converted to commas per style rule"
+      "note": "Transiting planet conjunct natal South Node (old-pattern template) | em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Family shelf, closer quoted VERBATIM, this is the South Node's canon line, and the reason this lane fits the brand. Source: Spring, South Node contacts as \"past life patterns… it also colors your current life today.\""
     },
     {
       "contentKey": "authored/transit-aspect/chiron/mars/conjunction",
@@ -9731,25 +9734,27 @@
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "The next step asks for your softer side.",
-      "body": "You've been treating your sensitivity like a liability to manage. Stop hiding the part of you that feels everything first. It notices what everyone else misses. Lead with it for a while.\n*Anchor: Moon/Cancer keynote (permission to evolve past self-protection). Source: Spring, NN Medicine applied to the Moon.*",
+      "body": "You've been treating your sensitivity like a liability to manage. Stop hiding the part of you that feels everything first. It notices what everyone else misses. Lead with it for a while.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
-      ]
+      ],
+      "editorial_notes": "Anchor: Moon/Cancer keynote (permission to evolve past self-protection). Source: Spring, NN Medicine applied to the Moon."
     },
     {
       "contentKey": "authored/transit-aspect/north-node/sun/conjunction",
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "The next chapter needs more of you, not less.",
-      "body": "For a long time you've been waiting for the right direction to announce itself, some sign that it's safe to commit. Meanwhile everything keeps pointing back at the same place: you, undiluted. The traits you've spent years softening to be easier to work with are the same ones the next stretch of your life is built on. This isn't a season for editing yourself into someone more acceptable. It's a season for finding out what happens when you stop. Your difference is the blueprint, and it always was.\n*Anchor: Authenticity shelf, closer quoted (\"Your difference isn't a flaw, it's the blueprint\"). Source: Spring, planet conj NN as \"North Node Medicine… something this planet embodies that you need to bring into your life more.\"*",
+      "body": "For a long time you've been waiting for the right direction to announce itself, some sign that it's safe to commit. Meanwhile everything keeps pointing back at the same place: you, undiluted. The traits you've spent years softening to be easier to work with are the same ones the next stretch of your life is built on. This isn't a season for editing yourself into someone more acceptable. It's a season for finding out what happens when you stop. Your difference is the blueprint, and it always was.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
       ],
-      "note": "em dashes converted to commas per style rule"
+      "note": "em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Authenticity shelf, closer quoted (\"Your difference isn't a flaw, it's the blueprint\"). Source: Spring, planet conj NN as \"North Node Medicine… something this planet embodies that you need to bring into your life more.\""
     },
     {
       "contentKey": "authored/transit-aspect/pluto/ascendant/any",
@@ -10996,39 +11001,42 @@
       "content_role": "full_copy",
       "surface": "transit-return",
       "headline": "You get to choose what to fight for next.",
-      "body": "The last stretch of pushing is complete, wins and bruises included. Stop dragging old battles into the new cycle. Pick the one goal worth your energy for the next two years. Beat the day to the punch.\n*Anchor: Mars/Aries keynote, closer quoted verbatim. Source: Teal ch. 8, Mars Return, new cycle of initiative and energy.*",
+      "body": "The last stretch of pushing is complete, wins and bruises included. Stop dragging old battles into the new cycle. Pick the one goal worth your energy for the next two years. Beat the day to the punch.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch9-Returns.md"
       ],
-      "note": "em dashes converted to commas per style rule"
+      "note": "em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Mars/Aries keynote, closer quoted verbatim. Source: Teal ch. 8, Mars Return, new cycle of initiative and energy."
     },
     {
       "contentKey": "authored/transit-return/mercury",
       "content_role": "full_copy",
       "surface": "transit-return",
       "headline": "Time to change your mind about something.",
-      "body": "You've been running on last year's conclusions. Stop keeping old opinions around like furniture. Pick one and give it fresh eyes. Certainty is the cue to look again.\n*Anchor: Mercury/Gemini keynote (\"The moment you're certain you've figured it all out is the moment to look again\"). Source: Teal ch. 6, Mercury Return, annual reset of the mental cycle.*",
+      "body": "You've been running on last year's conclusions. Stop keeping old opinions around like furniture. Pick one and give it fresh eyes. Certainty is the cue to look again.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch9-Returns.md"
       ],
-      "note": "em dashes converted to commas per style rule"
+      "note": "em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Mercury/Gemini keynote (\"The moment you're certain you've figured it all out is the moment to look again\"). Source: Teal ch. 6, Mercury Return, annual reset of the mental cycle."
     },
     {
       "contentKey": "authored/transit-return/nodal",
       "content_role": "full_copy",
       "surface": "transit-return",
       "headline": "The compass gets reset this year.",
-      "body": "Every eighteen years or so, life asks again where you're headed. Stop measuring the new direction with the old map. The destination you set last time may not be yours anymore. Follow the pull, not the plan.\n*Anchor: Spring's own compass vocabulary (\"the Nodes as compass\") + Retrograde shelf (expired choices). Compass/map = one image, held.*",
+      "body": "Every eighteen years or so, life asks again where you're headed. Stop measuring the new direction with the old map. The destination you set last time may not be yours anymore. Follow the pull, not the plan.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch10-Nodal.md"
       ],
-      "note": "Nodal return (ages ~18–19, 37, 55–56)"
+      "note": "Nodal return (ages ~18–19, 37, 55–56)",
+      "editorial_notes": "Anchor: Spring's own compass vocabulary (\"the Nodes as compass\") + Retrograde shelf (expired choices). Compass/map = one image, held."
     },
     {
       "contentKey": "authored/transit-return/saturn",
@@ -11047,13 +11055,14 @@
       "content_role": "full_copy",
       "surface": "transit-return",
       "headline": "A new chapter of what you love starts now.",
-      "body": "The people and pleasures that filled last year are up for a gentle review. Stop renewing your affections on autopilot. Keep what makes you feel more like yourself. Value isn't earned, it's recognized.\n*Anchor: Taurus/Scorpio axis worth material (\"value isn't something you earn but something you are\") + Retrograde shelf (\"on autopilot\"). Source: Teal ch. 7, verified passage, \"the beginning of a new cycle, which in this case centers on love and happiness,\" ~one year; extra weight when Venus rules the ASC or Sun (flag: true for Taurus/Libra risings, engine can boost).*",
+      "body": "The people and pleasures that filled last year are up for a gentle review. Stop renewing your affections on autopilot. Keep what makes you feel more like yourself. Value isn't earned, it's recognized.",
       "review_status": "approved",
       "approved_via": "owner-authored library (final voice)",
       "source_keys": [
         "TLDR-Aspect-Samples-Batch9-Returns.md"
       ],
-      "note": "em dashes converted to commas per style rule"
+      "note": "em dashes converted to commas per style rule",
+      "editorial_notes": "Anchor: Taurus/Scorpio axis worth material (\"value isn't something you earn but something you are\") + Retrograde shelf (\"on autopilot\"). Source: Teal ch. 7, verified passage, \"the beginning of a new cycle, which in this case centers on love and happiness,\" ~one year; extra weight when Venus rules the ASC or Sun (flag: true for Taurus/Libra risings, engine can boost)."
     },
     {
       "contentKey": "authored/compat-pair/mercury/taurus/aries",

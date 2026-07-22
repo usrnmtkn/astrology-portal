@@ -1,6 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import { isReaderServableGeneratedContentRow } from "./generatedContent";
-import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3/vocabulary";
+import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export type PlanetTopicVariant = "you" | "friend" | "sky" | "natal";

@@ -16,6 +16,12 @@ for (const c of lib.authoredCards) {
   if (/\{\{(?!other_name)/.test(c.body)) fail(`${c.contentKey}: unexpected placeholder`);
 }
 
+
+for (const c of lib.authoredCards) {
+  if (/\*?\s*(Anchor|Flag|Source|Corpus)\s*:/.test(c.body ?? "") || /^\s*\*|\*\s*$/.test(c.body ?? ""))
+    fail(`${c.contentKey}: editorial metadata or asterisk junk in reader body`);
+}
+
 // transit-house full grid
 const signsPl = ["jupiter", "saturn", "uranus", "neptune", "pluto"];
 for (const p of signsPl) for (let h = 1; h <= 12; h++) {

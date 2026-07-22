@@ -110,6 +110,84 @@ export let transitSynastryFallbackRendererV3 = createTransitSynastryRenderer(
   snapshotBundle.templatesFile,
   snapshotBundle.rowsFile
 );
+let vocabularyRowsByKey = vocabularyRowsByContentKey(snapshotBundle.rowsFile);
+let transitAuthoredCardsByKey = authoredCardsByContentKey(snapshotBundle.transitLib);
+
+const signRulers: Record<string, string> = {
+  aries: "Mars",
+  taurus: "Venus",
+  gemini: "Mercury",
+  cancer: "Moon",
+  leo: "Sun",
+  virgo: "Mercury",
+  libra: "Venus",
+  scorpio: "Mars",
+  sagittarius: "Jupiter",
+  capricorn: "Saturn",
+  aquarius: "Saturn",
+  pisces: "Jupiter"
+};
+
+function contentIdPart(value: string | number) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function vocabularyRowsByContentKey(rowsFile: RowsFile) {
+  return new Map((rowsFile.vocabularyRows ?? []).map((row) => [row.contentKey, row]));
+}
+
+function authoredCardsByContentKey(transitLib: TransitLibFile) {
+  return new Map((transitLib.authoredCards ?? []).map((card) => [card.contentKey, card]));
+}
+
+function vocabularyBody(contentKey: string) {
+  const body = vocabularyRowsByKey.get(contentKey)?.body;
+  return typeof body === "string" ? body : "";
+}
+
+export function fallbackV3PlanetTopic(planet: string) {
+  const normalized = contentIdPart(planet);
+  const nodeAlias = normalized === "true-node" ? "north-node" : normalized;
+  return vocabularyBody(`fallback-vocab/planet-function/${nodeAlias}`);
+}
+
+export function fallbackV3HouseTopic(house: number) {
+  return vocabularyBody(`fallback-vocab/house-topic/${house}`);
+}
+
+export function fallbackV3SignStyle(sign: string) {
+  return vocabularyBody(`fallback-vocab/sign-style/${contentIdPart(sign)}`);
+}
+
+export function fallbackV3AspectFeel(aspect: string) {
+  const normalized = normalizeAspect(aspect);
+  return normalized ? vocabularyBody(`fallback-vocab/aspect-feel/${normalized}`) : "";
+}
+
+export function fallbackV3SignRuler(sign: string) {
+  return signRulers[contentIdPart(sign)] ?? "";
+}
+
+export function transitV3AuthoredCardForContentKey(contentKey: string | null | undefined) {
+  return contentKey ? transitAuthoredCardsByKey.get(contentKey) ?? null : null;
+}
+
+export function transitV3SameBeatKeyForContentKey(contentKey: string | null | undefined) {
+  const notes = transitV3AuthoredCardForContentKey(contentKey)?.editorial_notes;
+  const text = typeof notes === "string" ? notes.toLowerCase() : "";
+
+  if (text.includes("stop calling it coincidence") || text.includes("none of it is random")) {
+    return "transit-same-beat/randomness-pattern";
+  }
+
+  return null;
+}
 
 export function installFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle) {
   fallbackRendererV3 = createFallbackRenderer(bundle.templatesFile, bundle.rowsFile);
@@ -118,4 +196,6 @@ export function installFallbackArchitectureV3Bundle(bundle: FallbackArchitecture
     bundle.templatesFile,
     bundle.rowsFile
   );
+  vocabularyRowsByKey = vocabularyRowsByContentKey(bundle.rowsFile);
+  transitAuthoredCardsByKey = authoredCardsByContentKey(bundle.transitLib);
 }
