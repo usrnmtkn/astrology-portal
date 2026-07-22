@@ -195,6 +195,22 @@ function signForLongitude(longitude: number) {
   };
 }
 
+function southNodePositionFromNorthNode(northNode: CalculatedPlanet, ascendant: string): CalculatedPlanet {
+  const longitude = normalizeDegrees((northNode.longitude ?? 0) + 180);
+  const { sign, signGlyph, degree } = signForLongitude(longitude);
+
+  return {
+    ...northNode,
+    planet: "South Node",
+    glyph: "☋",
+    longitude: Number(longitude.toFixed(4)),
+    sign,
+    signGlyph,
+    degree,
+    house: wholeSignHouse(sign, ascendant)
+  };
+}
+
 function elementForSign(sign: string): SkySnapshot["dominantElement"] {
   if (["Aries", "Leo", "Sagittarius"].includes(sign)) return "Fire";
   if (["Taurus", "Virgo", "Capricorn"].includes(sign)) return "Earth";
@@ -2180,8 +2196,10 @@ export async function getAstrodienstSky(
       ...retrogradeWindow
     };
   });
-  const sun = positions.find((position) => position.planet === "Sun") ?? positions[0];
-  const moon = positions.find((position) => position.planet === "Moon") ?? positions[1];
+  const northNode = positions.find((position) => position.planet === "North Node");
+  const displayPositions = northNode ? [...positions, southNodePositionFromNorthNode(northNode, ascendant)] : positions;
+  const sun = displayPositions.find((position) => position.planet === "Sun") ?? displayPositions[0];
+  const moon = displayPositions.find((position) => position.planet === "Moon") ?? displayPositions[1];
   const houseCusps = wholeSignHouseCusps(ascendant);
   const snapshot: SkySnapshot = {
     location,
@@ -2198,8 +2216,8 @@ export async function getAstrodienstSky(
     moonEvent: nextMoonEvent(swe, date),
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
-    positions: positions.map((position) => ({ ...position })),
-    aspects: calculateAspects(positions)
+    positions: displayPositions.map((position) => ({ ...position })),
+    aspects: calculateAspects(displayPositions)
   };
 
   return {

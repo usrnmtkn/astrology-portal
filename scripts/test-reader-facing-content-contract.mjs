@@ -94,9 +94,10 @@ assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/076/, "Lilith fallback mus
 assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/255/, "Lilith fallback must use the guide-phrase source for the resistance/defiance/shadow-work copy.");
 assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/165/, "Lilith fallback must use the guide-phrase source for the wild-card awakening copy.");
 assert.doesNotMatch(app, /less patience for waiting/i, "Friends transit emergency summaries must not reuse the same generic angle sentence.");
-assert.match(app, /emergencyPointFunction\(transit\.natalPoint\)/, "Friends transit emergency summaries must include natal point vocabulary.");
+assert.doesNotMatch(app, /friendTransitEmergencySummary/, "Friends transit summaries must not use legacy emergency prose.");
+assert.doesNotMatch(app, /sourceGroundedPersonalTransitForItem/, "Friends transit summaries must not use legacy source-grounded transit prose.");
 assert.match(app, /function normalizePersonalTransitSurface/, "Transit-to-natal rendering must resolve through the personal transit surface normalizer.");
-assert.match(app, /sourceGroundedPersonalTransitNormalizedSection/, "Transit-to-natal rendering must prefer authored transit sections.");
+assert.match(app, /normalizedSurfacePreview\(normalizePersonalTransitSurface\(transit, generatedAt\)\)/, "Friend transit summaries must render through the v3 personal transit surface normalizer.");
 assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must fall back to the source-based madlib section.");
 assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
 assert.match(fallbackHooks, /key:\s*"you\.transit-to-natal"[\s\S]*slotKeys:\s*\[[^\]]*"aspectAdj"/, "Transit-to-natal fallback hook must declare the aspectAdj slot.");

@@ -245,21 +245,15 @@
   }
 }
 
-/* Sky card radius repair: keep card corners consistent after list edge rules. */
-.ro-screen .sky-card,
-.placement-section .sky-card,
-.aspect-section .sky-card {
-  min-height: var(--sky-card-mobile-min-height);
-  padding: var(--sky-card-mobile-padding);
-  border-radius: var(--radius-sm);
-  border-top-left-radius: var(--radius-sm);
-  border-top-right-radius: var(--radius-sm);
-  border-bottom-right-radius: var(--radius-sm);
-  border-bottom-left-radius: var(--radius-sm);
-}
-
 /* Responsive: compact sky/update rows */
 @media (max-width: 760px) {
+  .ro-screen .sky-card,
+  .placement-section .sky-card,
+  .aspect-section .sky-card {
+    min-height: var(--sky-card-mobile-min-height);
+    padding: var(--sky-card-mobile-padding);
+  }
+
   .sky-lunar-pills {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1263,6 +1257,28 @@
   .sky-wheel-shell,
   .sky-wheel {
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
+  }
+
+  .sky-wheel-shell--aspect-inspector {
+    overflow: visible;
+  }
+
+  .sky-wheel-shell--aspect-inspector .aspect-inspector-summary {
+    width: 100%;
+  }
+
+  .aspect-inspector-summary {
+    padding: var(--space-2);
+  }
+
+  .aspect-inspector-summary__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .aspect-inspector-summary__item {
+    grid-template-columns: 34px minmax(0, 1fr) max-content;
   }
 
   .placement-section .planet-placement-row {

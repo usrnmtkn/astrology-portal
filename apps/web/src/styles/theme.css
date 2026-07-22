@@ -344,11 +344,11 @@
   --snap-phase-size: 11px;
   --snap-next-title-size: 14px;
   --snap-next-subtitle-size: 13px;
-  --sky-card-padding: var(--lunar-card-padding);
+  --sky-card-padding: var(--card-row-padding);
   --sky-card-min-height: var(--lunar-card-min-height);
   --sky-card-grid-gap: var(--lunar-card-grid-gap);
   --sky-card-glyph-column-size: var(--lunar-card-glyph-column-size);
-  --sky-card-mobile-padding: var(--lunar-card-mobile-padding);
+  --sky-card-mobile-padding: var(--card-row-padding-compact);
   --sky-card-mobile-min-height: var(--lunar-card-mobile-min-height);
   --sky-card-mobile-grid-gap: var(--lunar-card-mobile-grid-gap);
   --sky-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-column-size);
@@ -423,6 +423,9 @@
   --surface-card-padding-compact: var(--card-row-padding);
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
+  --duration-pill-bg: transparent;
+  --duration-pill-border-color: color-mix(in srgb, var(--card-meta-color) 48%, var(--line));
+  --duration-pill-fg: var(--card-meta-color);
   --badge-font-family: var(--font-label);
   --badge-font-size: var(--type-pill-size);
   --badge-font-weight: var(--weight-semibold);
