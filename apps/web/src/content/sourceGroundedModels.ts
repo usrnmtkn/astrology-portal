@@ -523,7 +523,7 @@ export function composeNatalPlacement(options: {
     planetInSignStory: slot(planetSignStory(position, ownerPerspective), baseSourceKeys)
   };
   const sections: SourceGroundedSection[] = [
-    { heading: `${position.planet} in ${position.sign}`, tldr: "TLDR", body: slots.planetInSignStory.text }
+    { heading: `${position.planet} in ${position.sign}`, tldr: "", body: slots.planetInSignStory.text }
   ];
   const conditionalBranches: string[] = ["layer_1_sign"];
 
@@ -636,7 +636,7 @@ export function composeSkyRetrograde(options: {
     slots,
     sourceKeys,
     finalCopy,
-    sections: [{ heading: `${options.planet} retrograde in ${options.sign}`, tldr: "TLDR", body: finalCopy }],
+    sections: [{ heading: `${options.planet} retrograde in ${options.sign}`, tldr: "", body: finalCopy }],
     conditionalBranches: ["approved-fallback", `phase_${recordKeyPart(options.phase)}`],
     provenance: {
       initial: "source-grounded-local-template",
@@ -662,7 +662,7 @@ export function composeSkyPlacement(options: {
     slots,
     sourceKeys: [],
     finalCopy,
-    sections: [{ heading: `${options.planet} in ${options.sign}`, tldr: "TLDR", body: finalCopy }],
+    sections: [{ heading: `${options.planet} in ${options.sign}`, tldr: "", body: finalCopy }],
     conditionalBranches: ["SOURCE_GAP", "expanded", "template_section_sky_planet_in_sign"],
     provenance: {
       initial: "source-grounded-local-template",
@@ -709,7 +709,7 @@ export function composeSkyAspect(aspect: AspectFact & { timing?: string | null }
     slots,
     sourceKeys: [],
     finalCopy,
-    sections: [{ heading: `${aspect.focalPlanet} ${aspect.aspect} ${aspect.otherPlanet}`, tldr: "TLDR", body: finalCopy }],
+    sections: [{ heading: `${aspect.focalPlanet} ${aspect.aspect} ${aspect.otherPlanet}`, tldr: "", body: finalCopy }],
     conditionalBranches: ["SOURCE_GAP", "expanded", "template_section_sky_current_aspect"],
     provenance: {
       initial: "source-grounded-local-template",
