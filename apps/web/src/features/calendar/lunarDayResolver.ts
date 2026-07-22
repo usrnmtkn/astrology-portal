@@ -10,7 +10,7 @@ import type { LunarDay, LunarDayArcPoint, LunarDayCheckpointRole, LunarDayTransi
 
 const dayMs = 86_400_000;
 
-type LunarProseLayer = "source-grounded" | "madlib-fallback";
+type LunarProseLayer = "authored" | "fallback";
 
 type NormalizedLunarSection = {
   slot: string;
@@ -564,7 +564,7 @@ function normalizedLunarSection(
   body: string | null | undefined,
   layer: LunarProseLayer,
   sourceKeys: string[],
-  tier = layer === "source-grounded" ? "stored-source" : "source-based-madlib",
+  tier = layer === "authored" ? "stored-source" : "source-based-madlib",
   required = false
 ): NormalizedLunarSection | null {
   const copy = body?.trim() ?? "";
@@ -590,7 +590,7 @@ function normalizedLunarSlot(
   required = false
 ) {
   for (const candidate of sourceCandidates) {
-    const section = normalizedLunarSection(slot, candidate.body, "source-grounded", candidate.sourceKeys, candidate.tier, required);
+    const section = normalizedLunarSection(slot, candidate.body, "authored", candidate.sourceKeys, candidate.tier, required);
 
     if (section) {
       return section;
@@ -598,7 +598,7 @@ function normalizedLunarSlot(
   }
 
   for (const candidate of madlibCandidates) {
-    const section = normalizedLunarSection(slot, candidate.body, "madlib-fallback", candidate.sourceKeys, candidate.tier, required);
+    const section = normalizedLunarSection(slot, candidate.body, "fallback", candidate.sourceKeys, candidate.tier, required);
 
     if (section) {
       return section;

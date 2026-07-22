@@ -20,7 +20,7 @@
 }
 
 .deferred-render-placeholder {
-  min-height: var(--deferred-placeholder-height, 180px);
+  min-height: var(--deferred-placeholder-height);
 }
 
 .deferred-render-placeholder--table {

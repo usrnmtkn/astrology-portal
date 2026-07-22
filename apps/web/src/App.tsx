@@ -66,7 +66,6 @@ import compatibilityWriteupBank from "../../../tldr-astro-phrasebank/phrasebank/
 import moonCompatibilityLibrary from "../../../tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json";
 import compatibilitySummaryBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json";
 import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json";
-import natalAngleReviewedBank from "../../../tldr-astro-phrasebank/phrasebank/cc-natal-angle-reviewed.json";
 import {
   emergencyAspectBehavior,
   emergencyDetailFallbackCopy,
@@ -77,11 +76,20 @@ import {
   emergencyRulerBridgeCopy,
   emergencySignRuler,
   emergencySignTone,
-  emergencySkyAspectCopy,
-  emergencySkyPlacementCopy,
-  emergencySynastryAspectCopy,
-  emergencyTransitToNatalCopy
+  emergencySynastryAspectCopy
 } from "./content/emergencyCopy";
+import {
+  normalizeAspect as normalizeFallbackV3Aspect,
+  SourceGapError as FallbackV3SourceGapError
+} from "./content/fallbackArchitectureV3/renderFallbackV3";
+import {
+  type SkyEvent
+} from "./content/fallbackArchitectureV3/renderTransitSynastry";
+import {
+  installFallbackArchitectureV3Bundle,
+  fallbackRendererV3,
+  transitSynastryFallbackRendererV3
+} from "./content/fallbackArchitectureV3/runtimeBundle";
 import {
   isSafeNatalAspectFallbackCopy
 } from "./content/natalAspectCopySafety";
@@ -93,13 +101,8 @@ import {
 } from "./content/placementScaffold";
 import {
   sourceGroundedNatalPlacementSections as sourceGroundedNatalPlacementSectionsRuntime,
-  sourceGroundedPersonalTransitComposition as sourceGroundedPersonalTransitCompositionRuntime,
-  sourceGroundedSkyAspectParagraphs as sourceGroundedSkyAspectParagraphsRuntime,
-  sourceGroundedSkyAspectSummary as sourceGroundedSkyAspectSummaryRuntime,
-  sourceGroundedSkyPlacementParagraphs as sourceGroundedSkyPlacementParagraphsRuntime,
-  sourceGroundedSkyPlacementSummary as sourceGroundedSkyPlacementSummaryRuntime
+  sourceGroundedPersonalTransitComposition as sourceGroundedPersonalTransitCompositionRuntime
 } from "./content/sourceGroundedRuntime";
-import { composeSkyRetrograde } from "./content/sourceGroundedModels";
 import { resolveSourceGroundedV2 } from "./content/sourceGroundedV2";
 import {
   resolveSkyHistoricalLookback,
@@ -148,6 +151,7 @@ import {
   generatedContentSections,
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
+  loadFallbackArchitectureV3DashboardBundle,
   loadLiveGeneratedContent,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
@@ -172,8 +176,6 @@ import {
   natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
-  skyIngressContentKey,
-  skyPlacementContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -415,14 +417,10 @@ type NormalizedSurfaceArticle<Surface extends string = string, Slot extends stri
   sections: NormalizedSurfaceSection<Slot>[];
 };
 
-const showContentSourceQaTags = true;
-
 function contentSourceQaTag(section: Pick<NormalizedSurfaceSection<string>, "layer">) {
-  if (!showContentSourceQaTags) {
-    return "";
-  }
+  void section;
 
-  return section.layer === "fallback" ? "[FALLBACK]" : "[AUTHORED]";
+  return "";
 }
 
 function taggedSectionBody(section: Pick<NormalizedSurfaceSection<string>, "body" | "layer" | "tier">) {
@@ -548,30 +546,6 @@ type AuthoredSynastryBundle = {
   synastryAspects: AuthoredSynastryBundleEntry[];
 };
 
-type NatalAngleReviewedEntry = {
-  id: string;
-  angle: string;
-  sign: string;
-  status?: string;
-  title: string;
-  slots?: {
-    angle_sign_story?: string;
-  };
-  source_keys?: string[];
-  marie_advice?: {
-    text?: string;
-    tier?: string;
-    source?: string;
-  };
-};
-
-type NatalAngleReviewedBundle = {
-  _meta?: {
-    tier?: string;
-  };
-  reviewed: NatalAngleReviewedEntry[];
-};
-
 type HouseOverlay = {
   id: string;
   planet: string;
@@ -609,6 +583,7 @@ type SkyDetailSection = {
   heading: string;
   body: ReactNode;
   sourceTag?: string;
+  sourceKeys?: string[];
   role?: "main" | "aspect";
   aspectType?: string;
   group?: AspectToneBucket;
@@ -664,30 +639,6 @@ function sourceGroundedPersonalTransitComposition(
   return sourceGroundedPersonalTransitCompositionRuntime(...args);
 }
 
-function sourceGroundedSkyAspectParagraphs(
-  ...args: Parameters<typeof sourceGroundedSkyAspectParagraphsRuntime>
-) {
-  return sourceGroundedSkyAspectParagraphsRuntime(...args);
-}
-
-function sourceGroundedSkyAspectSummary(
-  ...args: Parameters<typeof sourceGroundedSkyAspectSummaryRuntime>
-) {
-  return sourceGroundedSkyAspectSummaryRuntime(...args);
-}
-
-function sourceGroundedSkyPlacementParagraphs(
-  ...args: Parameters<typeof sourceGroundedSkyPlacementParagraphsRuntime>
-) {
-  return sourceGroundedSkyPlacementParagraphsRuntime(...args);
-}
-
-function sourceGroundedSkyPlacementSummary(
-  ...args: Parameters<typeof sourceGroundedSkyPlacementSummaryRuntime>
-) {
-  return sourceGroundedSkyPlacementSummaryRuntime(...args);
-}
-
 type YouTransitArticle = {
   id: string;
   title: string;
@@ -705,6 +656,7 @@ type YouTransitArticle = {
     tldr: string;
     body: string;
     sourceTag?: string;
+    sourceKeys?: string[];
     role?: "main" | "aspect";
     aspectType?: string;
     group?: AspectToneBucket;
@@ -1165,10 +1117,6 @@ function contentFallbackParagraphs(fallback: ContentFallback | null | undefined)
 const authoredSynastryEntriesById = new Map(
   (synastryWebBundle as AuthoredSynastryBundle).synastryAspects.map((entry) => [entry.id, entry])
 );
-const natalAngleReviewedEntriesById = new Map(
-  (natalAngleReviewedBank as NatalAngleReviewedBundle).reviewed.map((entry) => [entry.id, entry])
-);
-
 function authoredSynastryEntry(firstPoint: string, aspect: string, secondPoint: string) {
   const id = synastryAuthoredContentId(firstPoint, aspect, secondPoint);
 
@@ -2151,7 +2099,7 @@ function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: str
     return sourceTag;
   }
 
-  if (!showContentSourceQaTags || typeof section.body !== "string") {
+  if (typeof section.body !== "string") {
     return "";
   }
 
@@ -2161,7 +2109,7 @@ function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: str
     return "";
   }
 
-  return "[AUTHORED · inferred]";
+  return "";
 }
 
 function normalizedArticleCopy(value: ReactNode) {
@@ -2636,8 +2584,14 @@ function decodeSkyRouteParts(routePath: string) {
   return routePath.split("/").map((part) => decodeURIComponent(part));
 }
 
-function skyPlacementRoutePath(position: Pick<PlanetPosition, "planet">) {
-  return `sky/placement/${encodeURIComponent(normalizeContentIdPart(position.planet))}`;
+function skyPlacementRoutePath(position: Pick<PlanetPosition, "planet"> & Partial<Pick<PlanetPosition, "sign">>) {
+  const parts = ["sky", "placement", normalizeContentIdPart(position.planet)];
+
+  if (position.sign) {
+    parts.push(normalizeContentIdPart(position.sign));
+  }
+
+  return parts.map(encodeURIComponent).join("/");
 }
 
 function skyRetrogradeRoutePath(position: Pick<PlanetPosition, "planet">) {
@@ -4450,6 +4404,20 @@ function articleTldrText(value: string, title = "") {
   return stripArticleTitlePrefix(value, title);
 }
 
+function isArticleTldrBodyDuplicate(tldr: string, bodyCopies: Set<string>) {
+  const normalizedTldr = comparableText(tldr).replace(/\b\.\.\.$/u, "").trim();
+
+  if (!normalizedTldr) {
+    return true;
+  }
+
+  return Array.from(bodyCopies).some((body) => (
+    body === normalizedTldr
+    || body.startsWith(normalizedTldr)
+    || normalizedTldr.startsWith(body)
+  ));
+}
+
 const averageDailyMotion: Record<string, number> = {
   Sun: 0.9856,
   Moon: 13.176,
@@ -5035,7 +5003,6 @@ function SkyDetailArticle({
   }, [detail.title, detail.meta]);
 
   const metaRows = detailMetaRows(detail.meta);
-  const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
@@ -5061,8 +5028,22 @@ function SkyDetailArticle({
     }));
   const drilldown = detail.astrologyDrilldown;
   const detailSubtitle = detail.subtitle ? stripArticleTitlePrefix(detail.subtitle, detail.title) : "";
-  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(detailSubtitle || statement || "", detail.title);
-  const articleSub = isReaderFacingCopy(articleSubCandidate) ? articleSubCandidate : "";
+  const articleBodyComparableCopies = new Set(
+    [
+      ...paragraphs.filter((paragraph): paragraph is string => typeof paragraph === "string"),
+      ...generatedSections.flatMap((section) => (
+        typeof section.body === "string"
+          ? section.body.split(/\n{2,}/)
+          : []
+      ))
+    ]
+      .map((paragraph) => comparableText(stripTldrPrefix(stripLegacySkyArticleScaffoldPrefix(paragraph))))
+      .filter(Boolean)
+  );
+  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(detailSubtitle, detail.title);
+  const articleSub = isReaderFacingCopy(articleSubCandidate) && !isArticleTldrBodyDuplicate(articleSubCandidate, articleBodyComparableCopies)
+    ? articleSubCandidate
+    : "";
   const articleSubComparable = comparableText(articleSub);
   const displaySections = contentSections.filter((section, index) => {
     if (index !== 0 || !articleSubComparable || typeof section.body !== "string") {
@@ -5172,7 +5153,7 @@ function SkyDetailArticle({
                     const bodyParagraphs = typeof section.body === "string"
                       ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
-                    const sectionHeading = typeof section.heading === "string" && comparableText(section.heading) !== comparableText(detail.title)
+                    const sectionHeading = typeof section.heading === "string" && (index > 0 || comparableText(section.heading) !== comparableText(detail.title))
                       ? section.heading
                       : "";
                     const sourceTag = inferredSectionQaSourceTag(section);
@@ -5180,7 +5161,7 @@ function SkyDetailArticle({
 
                     return (
                       <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
-                        {sectionHeading ? <h3>{sectionHeading}</h3> : null}
+                        {sectionHeading ? <h2>{sectionHeading}</h2> : null}
                         {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                         {bodyParagraphs.length > 0
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
@@ -5456,7 +5437,27 @@ function formatOrb(orb: number) {
 }
 
 function transitNote(transitPlanet: string, aspect: string, natalPoint: string) {
-  return emergencyTransitToNatalCopy({ aspect, natalPoint, transitPlanet });
+  const normalizedAspect = normalizeFallbackV3Aspect(aspect);
+
+  if (!normalizedAspect) {
+    return "";
+  }
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
+      aspect: normalizedAspect,
+      natal: normalizeContentIdPart(natalPoint),
+      transiting: normalizeContentIdPart(transitPlanet)
+    });
+
+    return firstReaderFacingCopy(readerFacingParagraphs(rendered.parts));
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return "";
+    }
+
+    throw error;
+  }
 }
 
 function natalPointTheme(point: string) {
@@ -5516,36 +5517,44 @@ function sourceGroundedNatalAspectNormalizedSection(
   aspect: SkySnapshot["aspects"][number],
   ownerContext?: ChartOwnerContext
 ): NormalizedNatalAspectSection | null {
-  const result = resolveSourceGroundedV2("me.natal_aspect", {
-    aspect: normalizeAspectType(aspect.type),
-    natalPointA: aspect.from,
-    natalPointB: aspect.to,
-    ownerPerspective: ownerContext ? "they" : "you",
-    orb: wholeDegreeOrb(aspect.orb)
-  });
-  const body = firstReaderFacingCopy([
-    result.expandedCopy,
-    result.renderedFields.expandedNarrative,
-    ...result.finalVisibleStrings
-  ]);
+  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
 
-  if (result.readerAuthority !== "approved-fallback" || !body || !isReaderFacingCopy(body)) {
+  if (!normalizedAspect) {
     return null;
   }
 
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "fallback",
-    tier: "approved-fallback",
-    sourceKeys: [
-      result.fallbackId ?? "",
-      ...result.primarySourceKeys,
-      ...result.supportingSourceKeys
-    ].filter(Boolean),
-    heading: result.renderedFields.factualAspectTitle || natalAspectDisplayTitle(aspect),
-    body
-  };
+  try {
+    const rendered = fallbackRendererV3.renderNatalAspect({
+      aspect: normalizedAspect,
+      planetA: normalizeContentIdPart(aspect.from),
+      planetB: normalizeContentIdPart(aspect.to),
+      voice: ownerContext?.ownerName ?? "you"
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "fallback-architecture-v3",
+      sourceKeys: [
+        "tldrastro-fallback-architecture-v3",
+        rendered.templateKey
+      ].filter(Boolean),
+      heading: rendered.headline || natalAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 function normalizeNatalAspectSurface(
@@ -5566,30 +5575,9 @@ function generatedNatalAspectSection(
   aspect: SkySnapshot["aspects"][number],
   generatedContent: GeneratedContentMap
 ): NormalizedNatalAspectSection | null {
-  const generated = liveGeneratedContent(
-    generatedContent,
-    natalAspectContentKey(aspect.from, aspect.type, aspect.to)
-  );
-
-  if (!generated) {
-    return null;
-  }
-
-  const body = generated.body.trim();
-
-  if (!body || !isSafeNatalAspectFallbackCopy(body)) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "LIVE_CONTENT",
-    sourceKeys: [generated.contentKey],
-    heading: natalAspectDisplayTitle(aspect),
-    body
-  };
+  void aspect;
+  void generatedContent;
+  return null;
 }
 
 function natalAspectDetailArticle(
@@ -5603,10 +5591,14 @@ function natalAspectDetailArticle(
   const normalized = generatedSection
     ? { surface: "natal-aspect", status: "servable", sections: [generatedSection] } satisfies NormalizedNatalAspectArticle
     : normalizeNatalAspectSurface(aspect, ownerContext);
-  const ownerAwareCopy = (value: string) => ownerContext
-    ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
-    : value;
-  const resolvedBody = normalized.sections.map((section) => ownerAwareCopy(taggedSectionBody(section)));
+  const ownerAwareCopy = (section: NormalizedNatalAspectSection) => {
+    const value = taggedSectionBody(section);
+
+    return generatedSection && section === generatedSection && ownerContext
+      ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
+      : value;
+  };
+  const resolvedBody = normalized.sections.map(ownerAwareCopy);
   const resolvedSummary = resolvedBody[0] ?? "";
 
   return {
@@ -5631,69 +5623,69 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function sourceGroundedSkyAspectNormalizedSection(
+function skyAspectMadlibFallbackSection(
   aspect: SkySnapshot["aspects"][number],
-  generatedAt: string
+  positions?: PlanetPosition[]
 ): NormalizedSkyAspectSection | null {
-  const timing = currentSkyAspectTransitRange(aspect, generatedAt);
-  const paragraphs = sourceGroundedSkyAspectParagraphs({
-    aspect: aspect.type,
-    focalPlanet: aspect.from,
-    orb: wholeDegreeOrb(aspect.orb),
-    otherPlanet: aspect.to,
-    timing
-  }).filter((paragraph) => isReaderFacingCopy(paragraph));
+  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
 
-  if (paragraphs.length === 0) {
+  if (!normalizedAspect) {
     return null;
   }
 
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "source-grounded-v2",
-    sourceKeys: [
-      `sourceGroundedV2.sky.aspect.${normalizeContentIdPart(aspect.from)}.${normalizeContentIdPart(aspect.type)}.${normalizeContentIdPart(aspect.to)}`
-    ],
-    heading: skyAspectDisplayTitle(aspect),
-    body: paragraphs.join("\n\n")
-  };
-}
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      aSign: skyAspectSign(aspect, aspect.from, positions),
+      aspect: normalizedAspect,
+      b: normalizeContentIdPart(aspect.to),
+      bSign: skyAspectSign(aspect, aspect.to, positions)
+    });
 
-function skyAspectMadlibFallbackSection(aspect: SkySnapshot["aspects"][number]): NormalizedSkyAspectSection | null {
-  const body = emergencySkyAspectCopy(aspect.from, aspect.type, aspect.to);
+    if (rendered.templateKey.startsWith("authored/")) {
+      return null;
+    }
 
-  if (!isReaderFacingCopy(body)) {
-    return null;
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "fallback-architecture-v3",
+      sourceKeys: [
+        "tldrastro-fallback-architecture-v3",
+        rendered.contentKey ?? "",
+        rendered.templateKey
+      ].filter(Boolean),
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
   }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      `emergencyCopy.planetFunction.${normalizeContentIdPart(aspect.from)}`,
-      `emergencyCopy.aspectBehavior.${normalizeContentIdPart(aspect.type)}`,
-      `emergencyCopy.planetFunction.${normalizeContentIdPart(aspect.to)}`
-    ],
-    heading: skyAspectDisplayTitle(aspect),
-    body
-  };
 }
 
 function normalizeSkyAspectSurface(
   aspect: SkySnapshot["aspects"][number],
-  generatedAt: string
+  generatedContent?: GeneratedContentMap,
+  positions?: PlanetPosition[]
 ): NormalizedSkyAspectArticle {
-  const sourceGroundedSection = sourceGroundedSkyAspectNormalizedSection(aspect, generatedAt);
-  const fallbackSection = sourceGroundedSection ? null : skyAspectMadlibFallbackSection(aspect);
-  const sections = sourceGroundedSection ? [sourceGroundedSection] : fallbackSection ? [fallbackSection] : [];
+  void generatedContent;
+  const fallbackSection = skyAspectMadlibFallbackSection(aspect, positions);
+  const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "sky-aspect",
-    status: sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: fallbackSection ? "partial" : "not-servable",
     sections
   };
 }
@@ -5704,11 +5696,9 @@ function currentSkyAspectDetailArticle(
   generatedContent: GeneratedContentMap,
   positions?: PlanetPosition[]
 ): SkyDetail {
-  void positions;
   const title = skyAspectDisplayTitle(aspect);
-  const normalized = normalizeSkyAspectSurface(aspect, generatedAt);
+  const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
-  const subtitle = stripTldrPrefix(textPreview(body[0] ?? ""));
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
   const historicalLookback = resolveSkyHistoricalLookback({
     enabled: skyHistoricalLookbackEnabled(generatedContent),
@@ -5726,7 +5716,8 @@ function currentSkyAspectDetailArticle(
     title,
     meta: `${aspectTone(aspect.type).toUpperCase()} · ${timing}`,
     duration: timing,
-    subtitle,
+    subtitle: "",
+    suppressTldr: true,
     body,
     sections: [],
     historicalLookback,
@@ -5742,46 +5733,75 @@ function skyAspectsForPlacement(planet: string, aspects: SkySnapshot["aspects"])
     .slice(0, 2);
 }
 
-function isLocalNormalizedGeneratedContent(content: LiveGeneratedContent | null) {
-  return content?.provider === "local-normalized-dashboard-source"
-    || content?.sourceSnapshot?.sourceType === "normalized-dashboard-source"
-    || content?.sourceSnapshot?.sourceType === "source-grounded-generated-snapshot";
+function relatedSkyAspectSectionsForPlacement({
+  aspects,
+  generatedAt,
+  generatedContent,
+  pointName,
+  positions
+}: {
+  aspects: SkySnapshot["aspects"];
+  generatedAt: string;
+  generatedContent: GeneratedContentMap;
+  pointName: string;
+  positions: PlanetPosition[];
+}): SkyDetailSection[] {
+  return aspects
+    .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
+    .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
+    .slice()
+    .sort((first, second) => first.orb - second.orb)
+    .flatMap((aspect) => {
+      const aspectDetail = currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions);
+      const body = aspectDetail.body
+        .filter((paragraph): paragraph is string => typeof paragraph === "string")
+        .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
+        .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
+        .join("\n\n");
+
+      if (!body) {
+        return [];
+      }
+
+      return [{
+        heading: aspectDetail.title,
+        body,
+        role: "aspect" as const,
+        aspectType: aspect.type,
+        group: normalizedAspectToneBucket(aspect.type)
+      }];
+    })
+    .slice(0, 2);
 }
 
-function isEmergencyFallbackTemplateContent(content: LiveGeneratedContent | null) {
-  if (!content) {
-    return false;
-  }
+function skyPlacementPackageEvents({
+  aspects,
+  generatedAt,
+  planet,
+  positions
+}: {
+  aspects: SkySnapshot["aspects"];
+  generatedAt: string;
+  planet: string;
+  positions?: PlanetPosition[];
+}): SkyEvent[] {
+  return skyAspectsForPlacement(planet, aspects).flatMap((aspect) => {
+    const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
 
-  const contentType = content.sourceSnapshot?.contentType;
+    if (!normalizedAspect) {
+      return [];
+    }
 
-  return (contentType === "template" || contentType === "mustache-template")
-    && (
-      content.contentKey.startsWith("fallback-hook/")
-      || content.contentKey.startsWith("slot-template/")
-      || content.eventType === "slot-template"
-    );
-}
-
-function isEmergencyTransitFloorContent(content: LiveGeneratedContent | null) {
-  if (!content) {
-    return false;
-  }
-
-  const category = typeof content.sourceSnapshot?.category === "string" ? content.sourceSnapshot.category : "";
-
-  return content.sourceSnapshot?.contentType === "transit"
-    && content.sourceSnapshot?.lane === "serving"
-    && (
-      content.contentKey.startsWith("ms/retrograde/")
-      || content.contentKey.startsWith("ms/ingress/")
-      || category === "retrograde"
-      || category === "ingress"
-    );
-}
-
-function isEmergencySkyFallbackContent(content: LiveGeneratedContent | null) {
-  return isEmergencyFallbackTemplateContent(content) || isEmergencyTransitFloorContent(content);
+    return [{
+      type: "aspect",
+      a: normalizeContentIdPart(aspect.from),
+      aSign: normalizeContentIdPart(skyAspectSign(aspect, aspect.from, positions)),
+      aspect: normalizedAspect,
+      b: normalizeContentIdPart(aspect.to),
+      bSign: normalizeContentIdPart(skyAspectSign(aspect, aspect.to, positions)),
+      dateLine: currentSkyAspectTransitRange(aspect, generatedAt)
+    }];
+  });
 }
 
 function splitSurfaceParagraphs(value: string, title: string, timing?: string | null) {
@@ -5807,126 +5827,27 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
-function sourceGroundedSkyPlacementNormalizedSection(
-  position: PlanetPosition,
-  duration?: string | null
-): NormalizedSkyPlacementSection | null {
-  const result = resolveSourceGroundedV2("sky.planet_sign", {
-    activeWindow: duration,
-    currentBody: position.planet,
-    currentSign: position.sign,
-    motion: position.motion
-  });
-
-  if (result.status !== "READY" || result.sourceGap || result.readerAuthority === "omitted") {
-    return null;
-  }
-
-  const title = skyPlacementDisplayTitle(position);
-  const paragraphs = splitSurfaceParagraphs(
-    result.expandedCopy ?? result.finalVisibleStrings.join("\n\n"),
-    title,
-    duration
-  );
-
-  if (paragraphs.length === 0) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: result.sourceTier,
-    sourceKeys: [
-      result.recordId,
-      ...result.primarySourceKeys,
-      ...result.supportingSourceKeys
-    ].filter(Boolean),
-    heading: title,
-    body: paragraphs.join("\n\n")
-  };
-}
-
-function sourceGroundedSkyRetrogradeNormalizedSection(
-  position: PlanetPosition,
-  generatedAt: string
-): NormalizedSkyPlacementSection | null {
-  if (position.motion !== "retrograde" || !position.retrogradeStart || !position.retrogradeEnd) {
-    return null;
-  }
-
-  const result = composeSkyRetrograde({
-    currentDate: formatRetrogradeDate(generatedAt),
-    end: formatRetrogradeDate(position.retrogradeEnd),
-    phase: "retrograde passage",
-    planet: position.planet,
-    sign: position.sign,
-    start: formatRetrogradeDate(position.retrogradeStart)
-  });
-  const paragraphs = readerFacingParagraphs([result.finalCopy]);
-
-  if (paragraphs.length === 0) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "source-grounded-package",
-    sourceKeys: [result.recordId, ...result.sourceKeys].filter(Boolean),
-    heading: result.sections[0]?.heading ?? retrogradePlacementTitle(position),
-    body: paragraphs.join("\n\n")
-  };
-}
-
-function savedSkyPlacementNormalizedSection(
-  position: PlanetPosition,
-  generatedContent: GeneratedContentMap | undefined
-): NormalizedSkyPlacementSection | null {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const contentKey = skyPlacementContentKey(position.planet, position.sign);
-  const generated = liveGeneratedContent(generatedContent, contentKey);
-
-  if (
-    !generated
-    || isLocalNormalizedGeneratedContent(generated)
-    || isEmergencySkyFallbackContent(generated)
-  ) {
-    return null;
-  }
-
-  const title = skyPlacementDisplayTitle(position);
-  const bodyParagraphs = generatedContentParagraphs(generated);
-  const summaryParagraph = firstReaderFacingCopy([generated.summary]);
-  const paragraphs = bodyParagraphs.length > 0
-    ? bodyParagraphs
-    : readerFacingParagraphs(summaryParagraph ? [stripTldrPrefix(summaryParagraph)] : []);
-
-  if (paragraphs.length === 0) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "dashboard-authored",
-    sourceKeys: [contentKey],
-    heading: generated.headline || title,
-    body: paragraphs.join("\n\n")
-  };
-}
-
 function skyPlacementMadlibFallbackSection(
   position: PlanetPosition,
-  isRetrograde: boolean
+  events: SkyEvent[] = []
 ): NormalizedSkyPlacementSection | null {
-  const body = emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
+  let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
+
+  try {
+    rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
+      planet: normalizeContentIdPart(position.planet),
+      sign: normalizeContentIdPart(position.sign),
+      events
+    });
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
+
+  const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
   if (!isReaderFacingCopy(body)) {
     return null;
@@ -5936,13 +5857,14 @@ function skyPlacementMadlibFallbackSection(
     slot: "meaning",
     required: true,
     layer: "fallback",
-    tier: "source-based-madlib",
+    tier: "fallback-architecture-v3",
     sourceKeys: [
-      `emergencyCopy.planetFunction.${normalizeContentIdPart(position.planet)}`,
-      `emergencyCopy.signTone.${normalizeContentIdPart(position.sign)}`,
-      ...(isRetrograde ? ["emergencyCopy.retroPhase.retrograde"] : [])
+      "tldrastro-fallback-architecture-v3",
+      rendered.templateKey,
+      `fallback-hook/sky-placement/${normalizeContentIdPart(position.planet)}`,
+      `fallback-vocab/sign-style/${normalizeContentIdPart(position.sign)}`
     ],
-    heading: skyPlacementDisplayTitle(position),
+    heading: rendered.headline || skyPlacementDisplayTitle(position),
     body
   };
 }
@@ -5950,28 +5872,17 @@ function skyPlacementMadlibFallbackSection(
 function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
-  generatedContent?: GeneratedContentMap
+  generatedContent?: GeneratedContentMap,
+  events: SkyEvent[] = []
 ): NormalizedSkyPlacementArticle {
-  const contentKey = skyPlacementContentKey(position.planet, position.sign);
-  const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
-  const savedSection = savedSkyPlacementNormalizedSection(position, generatedContent);
-  const sourceGroundedSection = savedSection
-    ? null
-    : sourceGroundedSkyPlacementNormalizedSection(position, duration);
-  const fallbackSection = savedSection || sourceGroundedSection
-    ? null
-    : skyPlacementMadlibFallbackSection(position, position.motion === "retrograde");
-  const sections = savedSection
-    ? [savedSection]
-    : sourceGroundedSection
-      ? [sourceGroundedSection]
-      : fallbackSection
-        ? [fallbackSection]
-        : [];
+  void duration;
+  void generatedContent;
+  const fallbackSection = skyPlacementMadlibFallbackSection(position, events);
+  const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "sky-placement",
-    status: savedSection || sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: fallbackSection ? "partial" : "not-servable",
     sections
   };
 }
@@ -5980,7 +5891,6 @@ function currentSkyPlacementDetailArticle({
   aspects,
   generatedAt,
   generatedContent,
-  onOpenDetail,
   position,
   positions
 }: {
@@ -6000,7 +5910,7 @@ function currentSkyPlacementDetailArticle({
   const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent);
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
-  const sourceGroundedBody = normalized.sections
+  const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
     .flatMap((section) => readerFacingParagraphs([section.body]));
   const body = isRetrograde
@@ -6009,14 +5919,10 @@ function currentSkyPlacementDetailArticle({
         normalizedParagraphs
       )
     : normalizedParagraphs;
-  const relatedRows = relatedAspectRowsForPlacement({
+  const relatedAspectSections = relatedSkyAspectSectionsForPlacement({
     aspects,
     generatedAt,
     generatedContent,
-    mode: "sky",
-    onOpenSkyAspect: onOpenDetail
-      ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
-      : undefined,
     pointName: position.planet,
     positions
   });
@@ -6038,15 +5944,9 @@ function currentSkyPlacementDetailArticle({
     duration: transitRangeLabel ?? undefined,
     retrograde: isRetrograde,
     plainBody: normalized.sections.some((section) => section.layer === "authored"),
-    suppressTldr: sourceGroundedBody.length > 0 && !isRetrograde,
+    suppressTldr: authoredBody.length > 0 && !isRetrograde,
     body,
-    sections: [],
-    relatedAspects: relatedRows.length
-      ? {
-          heading: "Related aspects",
-          rows: relatedRows
-        }
-      : undefined,
+    sections: relatedAspectSections,
     historicalLookback,
     astrologyDrilldown: null
   };
@@ -6074,13 +5974,23 @@ function skyDetailFromRoutePath(
   if (detailType === "placement" && firstPart) {
     const displayPositions = skyNodeDisplayPositions(sky.positions);
     const position = displayPositions.find((candidate) => skyRoutePartMatches(candidate.planet, firstPart));
+    const routeSign = secondPart
+      ? zodiacSigns.find((candidate) => skyRoutePartMatches(candidate, secondPart))
+      : null;
+    const routedPosition = position && routeSign
+      ? {
+          ...position,
+          sign: routeSign,
+          signGlyph: signGlyph(routeSign)
+        }
+      : position;
 
-    return position ? currentSkyPlacementDetailArticle({
+    return routedPosition ? currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
       generatedAt: sky.generatedAt,
       generatedContent,
       onOpenDetail,
-      position,
+      position: routedPosition,
       positions: displayPositions
     }) : null;
   }
@@ -6092,7 +6002,11 @@ function skyDetailFromRoutePath(
       && skyRoutePartMatches(candidate.to, thirdPart)
     ));
 
-    return aspect ? currentSkyAspectDetailArticle(aspect, sky.generatedAt, generatedContent, sky.positions) : null;
+    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions).sections.length === 0) {
+      return null;
+    }
+
+    return currentSkyAspectDetailArticle(aspect, sky.generatedAt, generatedContent, sky.positions);
   }
 
   return null;
@@ -6124,18 +6038,21 @@ function relatedAspectRowsForPlacement({
     .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
     .slice()
     .sort((first, second) => first.orb - second.orb)
-    .slice(0, mode === "sky" ? 2 : 4)
     .map((aspect) => {
+      const normalizedSkySurface = mode === "sky" && generatedAt
+        ? normalizeSkyAspectSurface(aspect, generatedContent, positions)
+        : null;
+
+      if (mode === "sky" && !normalizedSkySurface?.sections.length) {
+        return null;
+      }
+
       const otherPoint = aspectOtherPoint(aspect, pointName);
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
-      void generatedContent;
-      void positions;
-      const rowSummary = mode === "sky" && generatedAt
-        ? normalizedSurfacePreview(normalizeSkyAspectSurface(aspect, generatedAt))
-        : normalizedSurfacePreview(normalizeNatalAspectSurface(aspect));
-      const displaySummary = ownerContext && mode === "natal"
-        ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
-        : rowSummary;
+      const rowSummary = normalizedSkySurface
+        ? normalizedSurfacePreview(normalizedSkySurface)
+        : normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, ownerContext));
+      const displaySummary = rowSummary;
       const key = `${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`;
       const rowContent = (
         <>
@@ -6199,7 +6116,9 @@ function relatedAspectRowsForPlacement({
         </div>
         )
       };
-    });
+    })
+    .filter(Boolean)
+    .slice(0, mode === "sky" ? 2 : 4);
 }
 
 function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
@@ -6936,42 +6855,6 @@ function emptyHousePlanetFunction(ruler: string, context: "self" | "friend") {
   return functions[ruler] ?? `how this part of ${context === "friend" ? "them" : "you"} finds a workable rhythm`;
 }
 
-function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: string, context: "self" | "friend") {
-  const rulerLabel = displayRulerName(ruler || "the ruler");
-
-  if (house === 2 && sign === "Cancer" && ruler === "Moon") {
-    return context === "friend"
-      ? "Cancer is ruled by the Moon, so the Moon is their guide here. It carries the story of what helps them feel cared for, what their body remembers, and what they need in order to feel steady."
-      : "Cancer is ruled by the Moon, so the Moon is your guide here. It carries the story of what helps you feel cared for, what your body remembers, and what you need in order to feel steady.";
-  }
-
-  if (house === 10 && sign === "Cancer" && ruler === "Moon") {
-    return context === "friend"
-      ? "Cancer is ruled by the Moon, so the Moon shows what affects their sense of direction. It points to what helps them feel steady enough to take responsibility, be seen, and make public choices."
-      : "Cancer is ruled by the Moon, so the Moon shows what affects your sense of direction. It points to what helps you feel steady enough to take responsibility, be seen, and make public choices.";
-  }
-
-  if (house === 10 && sign === "Pisces" && ruler === "Jupiter") {
-    return context === "friend"
-      ? "Pisces is ruled by Jupiter, so Jupiter shows what helps them build confidence in their direction and recognize what kind of work has meaning for them."
-      : "Pisces is ruled by Jupiter, so Jupiter shows what helps you build confidence in your direction and recognize what kind of work has meaning for you.";
-  }
-
-  if (house === 5 && sign === "Aquarius" && ruler === "Saturn") {
-    return context === "friend"
-      ? "Aquarius is ruled by Saturn, so Saturn shows what can make joy easier or harder to access. For them, pleasure may not be automatic. They may need time, structure, privacy, or permission before they let themselves create, play, flirt, or be seen."
-      : "Aquarius is ruled by Saturn, so Saturn shows what can make joy easier or harder to access. For you, pleasure may not be automatic. You may need time, structure, privacy, or permission before you let yourself create, play, flirt, or be seen.";
-  }
-
-  if (house === 12) {
-    return context === "friend"
-      ? `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for them to let down.`
-      : `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for you to let down.`;
-  }
-
-  return `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} is the planet to follow here. It shows ${emptyHousePlanetFunction(ruler, context)} and where ${emptyHouseNaturalName(house, context)} starts to matter in ordinary life.`;
-}
-
 function emptyHouseNeedPhrase(house: number, context: "self" | "friend") {
   const possessive = context === "friend" ? "their" : "your";
   const phrases: Record<number, string> = {
@@ -7354,39 +7237,6 @@ function normalizedEmptyHouseSection(
   };
 }
 
-function emptyHouseCardDescriptionBody(
-  house: number,
-  natalSky: SkySnapshot | null,
-  context: "self" | "friend" = "self"
-): string {
-  const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
-  const rulerLabel = displayRulerName(ruler || "the house ruler");
-  const topic = emptyHouseTopicSingulars[house] ?? emptyHouseCardAreaLabels[house] ?? "this topic";
-  const rulerHouseLabel = rulerPosition?.house ? `the ${ordinalHouse(rulerPosition.house)} house` : "its placement";
-  const rulerHouseTopics = rulerPosition?.house ? emptyHouseCardRulerHouseTopics[rulerPosition.house] ?? "the place where the ruler sits" : "where that planet lives";
-  const rulerHouseLife = rulerPosition?.house ? emptyHouseCardRulerHouseLife(rulerPosition.house, context) : "where that planet lives";
-  const areaFocus = emptyHouseCardAreaFocus(house);
-
-  if (house === 2 && sign === "Cancer" && ruler === "Moon" && rulerPosition?.house === 6) {
-    return context === "friend"
-      ? "Their money, self-worth, and stability are connected to the Moon in the 6th house. They may feel more secure when their routines are steady, their work life is manageable, and their daily needs are being cared for."
-      : "Your money, self-worth, and stability are connected to the Moon in the 6th house. You may feel more secure when your routines are steady, your work life is manageable, and your daily needs are being cared for.";
-  }
-
-  if (house === 10 && sign === "Pisces" && ruler === "Jupiter" && rulerPosition?.sign === "Leo" && rulerPosition.house === 3) {
-    return context === "friend"
-      ? "Their career path may not follow a straight line. With Pisces on the empty 10th house and Jupiter in Leo in the 3rd, their direction may become clearer through speaking, writing, teaching, storytelling, or sharing their ideas more openly. They may need to trust their voice before they know what role fits."
-      : "Your career path may not follow a straight line. With Pisces on the empty 10th house and Jupiter in Leo in the 3rd, your direction may become clearer through speaking, writing, teaching, storytelling, or sharing your ideas more openly. You may need to trust your voice before you know what role fits.";
-  }
-
-  if (context === "friend") {
-    const friendArea = areaFocus.replace(/^your\b/i, "their");
-    return `${topicTakesShapeClause(topic, "their")} through ${rulerLabel} in ${rulerHouseLabel}, so ${friendArea} becomes clearer through ${rulerHouseTopics} and the way they experience ${rulerHouseLife}.`;
-  }
-
-  return `${topicTakesShapeClause(topic, "your")} through ${rulerLabel} in ${rulerHouseLabel}, so ${areaFocus} becomes clearer through ${rulerHouseTopics} and the way you experience ${rulerHouseLife}.`;
-}
-
 function normalizeEmptyHouseCardSurface(
   house: number,
   natalSky: SkySnapshot | null,
@@ -7394,16 +7244,40 @@ function normalizeEmptyHouseCardSurface(
   ownerName?: string,
   ownerPronouns?: PronounChoice | null
 ): NormalizedEmptyHouseArticle {
-  const selfBody = emptyHouseCardDescriptionBody(house, natalSky, "self");
-  const body = context === "friend" && ownerName
-    ? natalGeneratedCopyForOwner(selfBody, ownerName, "person", ownerPronouns)
-    : emptyHouseCardDescriptionBody(house, natalSky, context);
+  void ownerName;
+  void ownerPronouns;
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
+  let rendered: ReturnType<typeof fallbackRendererV3.renderNatalEmptyHouse>;
+
+  try {
+    rendered = fallbackRendererV3.renderNatalEmptyHouse({
+      house,
+      ruler: normalizeContentIdPart(ruler),
+      rulerHouse: rulerPosition?.house,
+      rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
+      sign: normalizeContentIdPart(sign),
+      voice: context === "self" ? "you" : "they"
+    });
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return {
+        surface: "empty-house",
+        status: "not-servable",
+        sections: []
+      };
+    }
+
+    throw error;
+  }
+
+  const body = firstReaderFacingCopy(readerFacingParagraphs(rendered.parts));
   const section = normalizedEmptyHouseSection(
     "card-summary",
-    emptyHouseTitle(house, natalSky),
+    rendered.headline || emptyHouseTitle(house, natalSky),
     body,
     [
+      "tldrastro-fallback-architecture-v3",
+      rendered.templateKey,
       `empty-house.${house}`,
       sign ? `empty-house.sign.${normalizeContentIdPart(sign)}` : "",
       ruler ? `empty-house.ruler.${normalizeContentIdPart(ruler)}` : "",
@@ -7448,50 +7322,54 @@ function normalizeEmptyHouseDetailSurface({
   rulerPosition: PlanetPosition | null;
   sign: string;
 }): NormalizedEmptyHouseArticle {
+  void compositionContext;
+  void context;
+  void natalSky;
+  void ownerAwareParagraph;
   const sourceBase = [
     `empty-house.${house}`,
     sign ? `empty-house.sign.${normalizeContentIdPart(sign)}` : "",
     ruler ? `empty-house.ruler.${normalizeContentIdPart(ruler)}` : "",
     rulerPosition?.house ? `empty-house.ruler-house.${rulerPosition.house}` : ""
   ].filter(Boolean);
-  const sections = [
-    normalizedEmptyHouseSection(
-      "house-sign",
-      `${ordinalHouse(house)} house sign`,
-      ownerAwareParagraph(emptyHouseSignSentence(sign, house, compositionContext)),
-      [...sourceBase, "empty-house.slot.house-sign"],
-      true
-    ),
-    normalizedEmptyHouseSection(
-      "ruler-guide",
-      "Ruler guide",
-      ownerAwareParagraph(emptyHouseRulerGuideParagraph(house, sign, ruler, compositionContext)),
-      [...sourceBase, "empty-house.slot.ruler-guide"],
-      false
-    ),
-    normalizedEmptyHouseSection(
-      "ruler-placement",
-      "Ruler placement",
-      ownerAwareParagraph(emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, compositionContext)),
-      [...sourceBase, "empty-house.slot.ruler-placement"],
-      false
-    ),
-    normalizedEmptyHouseSection(
-      "activation",
-      "Activation",
-      ownerAwareParagraph(emptyHouseActivationParagraph(house, ruler, compositionContext)),
-      [...sourceBase, "empty-house.slot.activation"],
-      false
-    )
-  ].filter((section): section is NormalizedEmptyHouseSection => Boolean(section));
 
-  void natalSky;
-  void context;
+  try {
+    const rendered = fallbackRendererV3.renderNatalEmptyHouse({
+      house,
+      ruler: normalizeContentIdPart(ruler),
+      rulerHouse: rulerPosition?.house,
+      rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
+      sign: normalizeContentIdPart(sign),
+      voice: context === "self" ? "you" : "they"
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const section = normalizedEmptyHouseSection(
+      "house-sign",
+      rendered.headline || `${ordinalHouse(house)} house sign`,
+      body,
+      [
+        "tldrastro-fallback-architecture-v3",
+        rendered.templateKey,
+        ...sourceBase
+      ],
+      true
+    );
+
+    return {
+      surface: "empty-house",
+      status: section ? "partial" : "not-servable",
+      sections: section ? [section] : []
+    };
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+  }
 
   return {
     surface: "empty-house",
-    status: sections.some((section) => section.required) ? "partial" : "not-servable",
-    sections
+    status: "not-servable",
+    sections: []
   };
 }
 
@@ -8126,66 +8004,117 @@ function sourceGroundedPersonalTransitNormalizedSection(
   };
 }
 
-function personalTransitMadlibFallbackSection(transit: TransitItem): NormalizedPersonalTransitSection | null {
-  const body = emergencyTransitToNatalCopy({
-    aspect: transit.aspect,
-    natalPoint: transit.natalPoint,
-    transitPlanet: transit.transitPlanet
-  });
+function personalTransitPackageWindow(transit: TransitItem, generatedAt: string) {
+  const window = transitItemActiveWindow(transit, generatedAt);
+  const referenceDate = new Date(generatedAt);
 
-  if (!isReaderFacingCopy(body)) {
+  if (window.end >= referenceDate) {
+    return `Until ${formatEditorialDate(window.end, true)}`;
+  }
+
+  return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true).rangeLabel;
+}
+
+function personalTransitMadlibFallbackSection(
+  transit: TransitItem,
+  generatedAt: string
+): NormalizedPersonalTransitSection | null {
+  const normalizedAspect = normalizeFallbackV3Aspect(transit.aspect);
+
+  if (!normalizedAspect) {
     return null;
   }
 
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      `emergencyCopy.planetFunction.${normalizeContentIdPart(transit.transitPlanet)}`,
-      `emergencyCopy.aspectBehavior.${normalizeContentIdPart(transit.aspect)}`,
-      `emergencyCopy.planetFunction.${normalizeContentIdPart(transit.natalPoint)}`
-    ],
-    heading: personalTransitDisplayTitle(transit),
-    body
-  };
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
+      aspect: normalizedAspect,
+      natal: normalizeContentIdPart(transit.natalPoint),
+      sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
+      transiting: normalizeContentIdPart(transit.transitPlanet),
+      window: personalTransitPackageWindow(transit, generatedAt)
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: rendered.templateKey.startsWith("authored/") ? "authored" : "fallback",
+      tier: rendered.templateKey.startsWith("authored/")
+        ? "fallback-architecture-v3-authored"
+        : "fallback-architecture-v3",
+      sourceKeys: [
+        "tldrastro-fallback-architecture-v3",
+        rendered.contentKey ?? "",
+        rendered.templateKey
+      ].filter(Boolean),
+      heading: rendered.headline || personalTransitDisplayTitle(transit),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 function normalizePersonalTransitSurface(
   transit: TransitItem,
   generatedAt: string
 ): NormalizedPersonalTransitArticle {
-  const sourceGroundedSection = sourceGroundedPersonalTransitNormalizedSection(transit, generatedAt);
-  const fallbackSection = sourceGroundedSection ? null : personalTransitMadlibFallbackSection(transit);
-  const sections = sourceGroundedSection ? [sourceGroundedSection] : fallbackSection ? [fallbackSection] : [];
+  const fallbackSection = personalTransitMadlibFallbackSection(transit, generatedAt);
+  const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "personal-transit",
-    status: sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
     sections
   };
 }
 
-function normalizeTransitHouseSurface(transit: TransitItem, house: number): NormalizedTransitHouseArticle {
-  const houseTopic = houseLifeAreas[house] ?? readableHouseTopic(house);
-  const planetTopic = emergencyPlanetFunction(transit.transitPlanet);
-  const heading = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
-  const body = `${heading} brings ${planetTopic} into ${houseTopic}. Watch what becomes louder in this part of life, then choose one concrete adjustment that makes the pressure easier to work with.`;
-  const section: NormalizedTransitHouseSection | null = isReaderFacingCopy(body)
-    ? {
-        slot: "house-activation",
-        required: true,
-        layer: "fallback",
-        tier: "source-based-madlib",
-        sourceKeys: [
-          `emergencyCopy.planetFunction.${normalizeContentIdPart(transit.transitPlanet)}`,
-          `houseLifeAreas.${house}`
-        ],
-        heading,
-        body
-      }
-    : null;
+function normalizeTransitHouseSurface(
+  transit: TransitItem,
+  house: number,
+  generatedAt: string
+): NormalizedTransitHouseArticle {
+  let section: NormalizedTransitHouseSection | null = null;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
+      house,
+      planet: normalizeContentIdPart(transit.transitPlanet),
+      sign: normalizeContentIdPart(transit.transitSign ?? ""),
+      window: personalTransitPackageWindow(transit, generatedAt)
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    section = body && isReaderFacingCopy(body)
+      ? {
+          slot: "house-activation",
+          required: true,
+          layer: "fallback",
+          tier: "fallback-architecture-v3",
+          sourceKeys: [
+            "tldrastro-fallback-architecture-v3",
+            rendered.contentKey ?? "",
+            rendered.templateKey,
+            `fallback-template/transit.house`,
+            `fallback-vocab/house-topic/${house}`
+          ].filter(Boolean),
+          heading: rendered.headline || `${transit.transitPlanet} through your ${ordinalHouse(house)} house`,
+          body
+        }
+      : null;
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+  }
 
   return {
     surface: "transit-house",
@@ -8453,7 +8382,7 @@ function houseRealLifeSummary(house: number) {
 
 function plainPlanetTopic(planet: string) {
   const topics: Record<string, string> = {
-    Ascendant: "how they come across and how quickly other people can read them",
+    Ascendant: "how they meet the world and how quickly other people read their presence",
     Descendant: "the kind of people and conflicts that pull them into direct relationship",
     Sun: "energy, confidence, identity, and the need to feel respected",
     Moon: "mood, safety, memory, and private reactions",
@@ -11923,6 +11852,7 @@ export function App() {
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [, setFallbackArchitectureV3Version] = useState(0);
   const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -11997,11 +11927,19 @@ export function App() {
 
     const eventSign = event.toSign ?? event.sign;
     const isRetrogradeEvent = event.title.toLowerCase().includes("retrograde");
+    const eventDegree = typeof event.longitude === "number"
+      ? normalizedAngle(event.longitude) % 30
+      : eventSign && eventSign !== position.sign
+        ? 0
+        : position.degree;
     const eventPosition: PlanetPosition = {
       ...position,
+      degree: eventDegree,
       sign: eventSign ?? position.sign,
       signGlyph: eventSign ? signGlyph(eventSign) : position.signGlyph,
-      motion: isRetrogradeEvent ? "retrograde" : position.motion
+      motion: isRetrogradeEvent ? "retrograde" : position.motion,
+      transitStart: event.type === "ingress" ? event.startsAt : position.transitStart,
+      transitEnd: event.type === "ingress" ? event.endsAt ?? null : position.transitEnd
     };
 
     if (event.type === "station" && isRetrogradeEvent) {
@@ -12060,6 +11998,27 @@ export function App() {
   }
 
   useEffect(() => {
+    let cancelled = false;
+
+    loadFallbackArchitectureV3DashboardBundle()
+      .then((bundle) => {
+        if (!bundle || cancelled) {
+          return;
+        }
+
+        installFallbackArchitectureV3Bundle(bundle);
+        setFallbackArchitectureV3Version((version) => version + 1);
+      })
+      .catch((error) => {
+        console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
 
@@ -12100,10 +12059,14 @@ export function App() {
       return;
     }
 
+    if (selectedSkyDetail?.routePath === skyDetailRoutePath) {
+      return;
+    }
+
     const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
     setSelectedSkyDetail(detail);
-  }, [sky, skyDetailRoutePath, skyGeneratedContent]);
+  }, [selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -14695,39 +14658,37 @@ function contentFallbackArticleParagraphs(content?: Partial<Pick<ContentFallback
   });
 }
 
-function natalAngleReviewedKey(position: PlanetPosition) {
-  const point = normalizeContentIdPart(position.planet);
-  const angle = point === "imum-coeli" || point === "ic"
-    ? "ic"
-    : point === "mc"
-      ? "midheaven"
-      : point;
+type FallbackV3AngleKey = "ascendant" | "midheaven" | "descendant" | "imum-coeli";
 
-  if (!["ascendant", "descendant", "midheaven", "ic"].includes(angle)) {
-    return "";
+function normalizedNatalAngleKey(point: string): FallbackV3AngleKey | "" {
+  const normalized = normalizeContentIdPart(point);
+
+  if (normalized === "mc") return "midheaven";
+  if (normalized === "ic") return "imum-coeli";
+  if (normalized === "ascendant" || normalized === "descendant" || normalized === "midheaven" || normalized === "imum-coeli") {
+    return normalized;
   }
 
-  return `cc/angle/${angle}-in-${normalizeContentIdPart(position.sign)}`;
+  return "";
 }
 
-function natalAngleReviewedNormalizedSections(position: PlanetPosition): NormalizedNatalPlacementSection[] {
-  const entry = natalAngleReviewedEntriesById.get(natalAngleReviewedKey(position));
-  const story = firstReaderFacingCopy([entry?.slots?.angle_sign_story]);
-  const advice = firstReaderFacingCopy([entry?.marie_advice?.text]);
+function natalAngleFallbackV3NormalizedSections(position: PlanetPosition, ownerContext?: ChartOwnerContext): NormalizedNatalPlacementSection[] {
+  const angle = normalizedNatalAngleKey(position.planet);
 
-  if (!entry || !story) {
-    const result = resolveSourceGroundedV2("me.natal_angle", {
-      angle: position.planet,
-      degree: formatPlanetDegree(position),
-      sign: position.sign
+  if (!angle) {
+    return [];
+  }
+
+  try {
+    const sign = normalizeContentIdPart(position.sign);
+    const rendered = fallbackRendererV3.renderNatalAngle({
+      angle,
+      sign,
+      voice: ownerContext?.ownerName ?? "you"
     });
-    const body = firstReaderFacingCopy([
-      result.expandedCopy,
-      result.renderedFields.expandedNarrative,
-      ...result.finalVisibleStrings
-    ]);
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
-    if (result.readerAuthority !== "approved-fallback" || !body) {
+    if (!body || !isReaderFacingCopy(body)) {
       return [];
     }
 
@@ -14735,31 +14696,23 @@ function natalAngleReviewedNormalizedSections(position: PlanetPosition): Normali
       slot: "angle",
       required: true,
       layer: "fallback",
-      tier: "approved-fallback",
+      tier: "fallback-architecture-v3",
       sourceKeys: [
-        result.fallbackId ?? "",
-        ...result.primarySourceKeys,
-        ...result.supportingSourceKeys
+        "tldrastro-fallback-architecture-v3",
+        rendered.templateKey,
+        `fallback-hook/angle-intro/${angle}`,
+        `fallback-hook/angle-sign/${angle}/${sign}`
       ].filter(Boolean),
-      heading: result.renderedFields.factualAngleTitle || `${position.planet} in ${position.sign}`,
+      heading: rendered.headline || `${position.planet} in ${position.sign}`,
       body
     }];
-  }
-
-  return [
-    {
-      slot: "angle",
-      required: true,
-      layer: "authored",
-      tier: entry.status ?? (natalAngleReviewedBank as NatalAngleReviewedBundle)._meta?.tier ?? "REVIEWED_CLAUSE",
-      sourceKeys: [
-        entry.id,
-        ...(entry.source_keys ?? [])
-      ],
-      heading: entry.title,
-      body: advice ? `${story}. ${advice}` : `${story}.`
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return [];
     }
-  ];
+
+    throw error;
+  }
 }
 
 function sourceGroundedNatalPlacementNormalizedSections(
@@ -14862,42 +14815,55 @@ function sourceGroundedNatalPlacementFallbackSections(position: PlanetPosition):
   return sections;
 }
 
-function sourceGroundedNatalAspectSectionsForPlacement(position: PlanetPosition, natalSky: SkySnapshot | null): NormalizedNatalPlacementSection[] {
+function sourceGroundedNatalAspectSectionsForPlacement(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  ownerContext?: ChartOwnerContext
+): NormalizedNatalPlacementSection[] {
   return natalPlacementAspectFacts(position, natalSky)
     .map((fact) => {
-      const result = resolveSourceGroundedV2("me.natal_aspect", {
-        aspect: normalizeAspectType(fact.aspectType),
-        natalPointA: fact.primaryPlanet,
-        natalPointB: fact.aspectPlanet,
-        orb: fact.orb
-      });
-      const fallbackBody = firstReaderFacingCopy([
-        result.expandedCopy,
-        result.renderedFields.expandedNarrative,
-        ...result.finalVisibleStrings
-      ]);
+      const normalizedAspect = normalizeFallbackV3Aspect(fact.aspectType);
 
-      if (result.readerAuthority !== "approved-fallback" || !fallbackBody || !isReaderFacingCopy(fallbackBody)) {
+      if (!normalizedAspect) {
         return null;
       }
 
-      const fallbackSection: NormalizedNatalPlacementSection = {
-        slot: "aspect" as const,
-        required: false,
-        layer: "fallback" as const,
-        tier: "approved-fallback",
-        aspectType: fact.aspectType,
-        group: normalizedAspectToneBucket(fact.aspectType),
-        sourceKeys: [
-          result.fallbackId ?? "",
-          ...result.primarySourceKeys,
-          ...result.supportingSourceKeys
-        ].filter(Boolean),
-        heading: result.renderedFields.factualAspectTitle || `${fact.primaryPlanet} ${fact.aspectType} ${fact.aspectPlanet}`,
-        body: fallbackBody
-      };
+      try {
+        const rendered = fallbackRendererV3.renderNatalAspect({
+          aspect: normalizedAspect,
+          planetA: normalizeContentIdPart(fact.primaryPlanet),
+          planetB: normalizeContentIdPart(fact.aspectPlanet),
+          voice: ownerContext?.ownerName ?? "you"
+        });
+        const fallbackBody = readerFacingParagraphs(rendered.parts).join("\n\n");
 
-      return fallbackSection;
+        if (!fallbackBody || !isReaderFacingCopy(fallbackBody)) {
+          return null;
+        }
+
+        const fallbackSection: NormalizedNatalPlacementSection = {
+          slot: "aspect" as const,
+          required: false,
+          layer: "fallback" as const,
+          tier: "fallback-architecture-v3",
+          aspectType: fact.aspectType,
+          group: normalizedAspectToneBucket(fact.aspectType),
+          sourceKeys: [
+            "tldrastro-fallback-architecture-v3",
+            rendered.templateKey
+          ].filter(Boolean),
+          heading: rendered.headline || `${fact.primaryPlanet} ${fact.aspectType} ${fact.aspectPlanet}`,
+          body: fallbackBody
+        };
+
+        return fallbackSection;
+      } catch (error) {
+        if (error instanceof FallbackV3SourceGapError) {
+          return null;
+        }
+
+        throw error;
+      }
     })
     .filter((section): section is NormalizedNatalPlacementSection => Boolean(section));
 }
@@ -14926,11 +14892,12 @@ function placementScaffoldNormalizedSections(position: PlanetPosition, natalSky:
 
 function normalizeNatalPlacementSurface(
   position: PlanetPosition,
-  natalSky: SkySnapshot | null
+  natalSky: SkySnapshot | null,
+  ownerContext?: ChartOwnerContext
 ): NormalizedNatalPlacementArticle {
   const isAnglePoint = isChartAnglePoint(position.planet);
   const sourceGroundedSections = isAnglePoint
-    ? natalAngleReviewedNormalizedSections(position)
+    ? natalAngleFallbackV3NormalizedSections(position, ownerContext)
     : sourceGroundedNatalPlacementNormalizedSections(position, natalSky);
   const fallbackSections = isAnglePoint
     ? []
@@ -14946,7 +14913,7 @@ function normalizeNatalPlacementSurface(
   const sections = primarySections.length > 0
     ? [
         ...primarySections,
-        ...sourceGroundedNatalAspectSectionsForPlacement(position, natalSky)
+        ...sourceGroundedNatalAspectSectionsForPlacement(position, natalSky, ownerContext)
       ]
     : placementScaffoldNormalizedSections(position, natalSky);
   const selectedReaderSections = sections.filter((section) => section.slot !== "aspect");
@@ -14967,7 +14934,8 @@ function normalizedNatalPlacementArticleSections(article: NormalizedNatalPlaceme
     role: section.slot === "aspect" ? "aspect" : "main",
     aspectType: section.aspectType,
     group: section.group,
-    sourceTag: contentSourceQaTag(section)
+    sourceTag: contentSourceQaTag(section),
+    sourceKeys: section.sourceKeys
   }));
 }
 
@@ -14986,9 +14954,8 @@ function natalPlacementModularSections({
 }) {
   void generatedContent;
   void liveWriteup;
-  void ownerContext;
   return normalizedNatalPlacementArticleSections(
-    normalizeNatalPlacementSurface(position, natalSky)
+    normalizeNatalPlacementSurface(position, natalSky, ownerContext)
   );
 }
 
@@ -15137,6 +15104,9 @@ function natalPlacementSkyDetail(
   ownerContext?: ChartOwnerContext
 ): SkyDetail {
   const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect, ownerContext);
+  const isFallbackArchitectureV3Section = (section: YouTransitArticle["sections"][number]) => (
+    section.sourceKeys?.includes("tldrastro-fallback-architecture-v3") ?? false
+  );
   const ownerAwareCopy = (value: ReactNode) => {
     if (!ownerContext || typeof value !== "string") {
       return value;
@@ -15163,7 +15133,10 @@ function natalPlacementSkyDetail(
       role: section.role,
       aspectType: section.aspectType,
       group: section.group,
-      body: ownerAwareCopy(typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body)
+      sourceKeys: section.sourceKeys,
+      body: isFallbackArchitectureV3Section(section)
+        ? (typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body)
+        : ownerAwareCopy(typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body)
     })),
     relatedAspects: article.relatedAspects
   };
@@ -15375,25 +15348,25 @@ function currentSkyRetrogradeDetailData(
     : null;
   const timelineLines = retrogradeTimelineLines(position);
   const retrogradeTiming = compactRetrogradeTiming(position);
-  const sourceGroundedRetrogradeSection = sourceGroundedSkyRetrogradeNormalizedSection(position, generatedAt)
-    ?? sourceGroundedSkyPlacementNormalizedSection(position, retrogradeTiming);
-  const normalized = sourceGroundedRetrogradeSection
-    ? {
-        surface: "sky-placement" as const,
-        status: "servable" as const,
-        sections: [sourceGroundedRetrogradeSection]
-      }
-    : normalizeSkyPlacementSurface(position, retrogradeTiming, generatedContent);
-  const normalizedBody = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
-  const tldr = normalizedSurfacePreview(normalized);
-  const baseGeneratedBodyParagraphs = stripRetrogradeGeneratedHeaderParagraphs(
-    position,
-    stripGeneratedTitleParagraph(
-      normalizedBody,
-      retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
-    )
-  );
-  const generatedBodyParagraphs = baseGeneratedBodyParagraphs;
+  let renderedHeadline = "";
+  let packageBodyParagraphs: string[] = [];
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
+      format: "article",
+      planet: normalizeContentIdPart(position.planet),
+      sign: normalizeContentIdPart(position.sign),
+      window: retrogradeRemainingCountLabel(generatedAt, position) ?? retrogradeTiming
+    });
+    renderedHeadline = rendered.headline;
+    packageBodyParagraphs = readerFacingParagraphs(rendered.parts);
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+  }
+
+  const tldr = firstSentences(packageBodyParagraphs[0] ?? "", 1);
   const detailParagraphs = [
     ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
     ...(durationLine
@@ -15405,21 +15378,22 @@ function currentSkyRetrogradeDetailData(
           </span>
         ]
       : []),
-    ...generatedBodyParagraphs
+    ...packageBodyParagraphs
   ];
 
   return {
-    blurb: firstSentences(normalizedBody[0] ?? retrogradeSummaryFallback([position], isPersonalRetrogradePlanet(position.planet) ? [position] : []), 2),
+    blurb: firstSentences(packageBodyParagraphs[0] ?? "", 2),
     detail: {
       routePath: skyRetrogradeRoutePath(position),
       glyph: `${position.glyph} ℞`,
       kicker: retrogradeDetailKicker(position),
-      title: retrogradePlacementTitle(position),
+      title: renderedHeadline || retrogradePlacementTitle(position),
       meta: [formatPlacementPosition(position).toUpperCase(), retrogradeTiming].filter(Boolean).join(" · "),
       duration: retrogradeTiming ?? undefined,
       subtitle: tldr,
       retrograde: true,
       plainBody: true,
+      suppressTldr: true,
       body: detailParagraphs,
       sections: [],
       astrologyDrilldown: null
@@ -16040,7 +16014,13 @@ function ActiveAspects({
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
-            const displaySummary = normalizedSurfacePreview(normalizeSkyAspectSurface(aspect, generatedAt));
+            const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);
+
+            if (normalized.sections.length === 0) {
+              return null;
+            }
+
+            const displaySummary = normalizedSurfacePreview(normalized);
 
                 return (
                   <button
@@ -17743,7 +17723,7 @@ function ProfileView({
     }
 
     const contentKey = transitHouseContentKey(transit.transitPlanet, house);
-    const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house);
+    const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, transitForm.chartDate);
     const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
     const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
     const timingRange = transitHouseRangeLabel(transit, currentSky, transitForm.chartDate);
@@ -19433,13 +19413,11 @@ function ManualChartsPanel({
                     <span className="eyebrow section-label friend-section-label">Natal aspects · by strength</span>
                     <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-natal-aspects-list" aria-label={`${selectedChart.displayName} natal aspects`}>
                       {uniqueNatalAspectRows(selectedChart.natalChart.aspects).map((aspect) => {
-                        const rawSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect));
-                        const rowSummary = natalGeneratedCopyForOwner(
-                          rawSummary,
-                          selectedChart.displayName,
-                          selectedChartIsEvent ? "chart" : "person",
-                          selectedChart.pronouns
-                        );
+                        const rowSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, {
+                          ownerName: selectedChart.displayName,
+                          ownerKind: selectedChartIsEvent ? "chart" : "person",
+                          ownerPronouns: selectedChart.pronouns
+                        }));
 
                         return (
                           <div

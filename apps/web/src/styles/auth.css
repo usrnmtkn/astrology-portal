@@ -368,7 +368,7 @@
   min-height: 58px;
   border: 1px solid var(--app-border);
   border-radius: var(--radius);
-  background: var(--input-bg, rgba(20, 20, 20, 0.035));
+  background: var(--input-bg);
   overflow: hidden;
 }
 

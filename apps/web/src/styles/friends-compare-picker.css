@@ -1,7 +1,7 @@
 .friend-compare-control {
   position: relative;
   display: grid;
-  width: min(100%, var(--relationship-picker-width, 360px));
+  width: min(100%, var(--relationship-picker-width));
   margin: 0 auto;
   gap: var(--sp-1);
 }

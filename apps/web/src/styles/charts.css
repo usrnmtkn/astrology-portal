@@ -71,8 +71,8 @@
   stroke: var(--aspect-line-stroke, var(--aspect-muted));
   stroke-dasharray: var(--aspect-line-dash, none);
   stroke-linecap: round;
-  stroke-width: var(--aspect-line-width, 1.6);
-  opacity: var(--aspect-line-opacity, 0.55);
+  stroke-width: var(--aspect-line-width);
+  opacity: var(--aspect-line-opacity);
 }
 
 .sign-band {
@@ -139,11 +139,11 @@
 
 .sign-labels text,
 .zodiac-wheel__sign-label {
-  fill: var(--wheel-sign-label, var(--ink));
+  fill: var(--wheel-sign-label);
   stroke: none;
   filter: none;
   font-family: var(--font-body);
-  font-size: var(--chart-sign-label-size, 13px);
+  font-size: var(--chart-sign-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   paint-order: normal;
@@ -156,7 +156,7 @@
 
 .sign-label-long text,
 .sign-label-long .zodiac-wheel__sign-label {
-  font-size: var(--chart-sign-label-size, 13px);
+  font-size: var(--chart-sign-label-size);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .planet-glyph {
@@ -217,7 +217,7 @@
 .zodiac-wheel__house-label {
   fill: var(--wheel-label);
   font-family: var(--font-body);
-  font-size: var(--chart-house-label-size, 13px);
+  font-size: var(--chart-house-label-size);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
   dominant-baseline: middle;
@@ -241,14 +241,14 @@
 .planet-glyph {
   fill: var(--chart-glyph);
   font-family: var(--font-glyph);
-  font-size: var(--chart-planet-glyph-size, 24px);
+  font-size: var(--chart-planet-glyph-size);
   font-weight: var(--weight-semibold);
   dominant-baseline: central;
   text-anchor: middle;
 }
 
 .planet-glyph-sun {
-  font-size: calc(var(--chart-planet-glyph-size, 24px) * 1.02);
+  font-size: calc(var(--chart-planet-glyph-size) * 1.02);
   font-weight: var(--weight-semibold);
   stroke: none;
   paint-order: normal;
@@ -273,9 +273,9 @@
 }
 
 .planet-degree {
-  fill: var(--chart-degree-label, var(--chart-label));
+  fill: var(--chart-degree-label);
   font-family: var(--font-body);
-  font-size: var(--chart-degree-size, 10px);
+  font-size: var(--chart-degree-size);
   font-weight: var(--weight-semibold);
   dominant-baseline: central;
   letter-spacing: var(--tracking-number);
@@ -371,8 +371,8 @@
   stroke: var(--aspect-line-stroke, var(--aspect-muted));
   stroke-dasharray: var(--aspect-line-dash, none);
   stroke-linecap: round;
-  stroke-width: var(--aspect-line-width, 1.6);
-  opacity: var(--aspect-line-opacity, 0.55);
+  stroke-width: var(--aspect-line-width);
+  opacity: var(--aspect-line-opacity);
 }
 
 .aspect-lines .aspect-line-hard line,
@@ -395,8 +395,8 @@
 :is(.theme-dark, [data-theme="dark"]) .aspect-lines path,
 :is(.theme-dark, [data-theme="dark"]) .interchart-aspect-lines line,
 :is(.theme-dark, [data-theme="dark"]) .interchart-aspect-lines path {
-  stroke-width: max(var(--aspect-line-width, 1.6), 1.9);
-  opacity: max(var(--aspect-line-opacity, 0.5), 0.68);
+  stroke-width: max(var(--aspect-line-width), var(--aspect-line-width-strong));
+  opacity: max(var(--aspect-line-opacity), var(--aspect-line-opacity-strong));
 }
 
 .inner-planet-labels .planet-glyph,
@@ -442,7 +442,7 @@
 }
 
 .sky-wheel .transit-planet-labels .planet-glyph-image {
-  filter: var(--transit-wheel-glyph-filter, var(--chart-glyph-filter));
+  filter: var(--transit-wheel-glyph-filter);
 }
 
 .sky-wheel .transit-planet-labels .planet-hit-area {
@@ -451,14 +451,14 @@
 }
 
 .sky-wheel .transit-planet-tick {
-  stroke: var(--transit-wheel-tick, var(--chart-glyph));
+  stroke: var(--transit-wheel-tick);
   stroke-width: 1.15;
   opacity: 0.42;
 }
 
 .sky-wheel .transit-to-natal-aspect-lines line {
-  stroke-width: var(--aspect-line-width, 1.45);
-  opacity: max(var(--aspect-line-opacity, 0.5), 0.58);
+  stroke-width: var(--transit-aspect-line-width);
+  opacity: max(var(--aspect-line-opacity), var(--transit-aspect-line-opacity-min));
 }
 
 .sky-wheel--aspect-inspector {
@@ -476,7 +476,7 @@
 .sky-wheel--aspect-inspector .aspect-inspector-line .aspect-inspector-line-backdrop {
   stroke: var(--bg);
   stroke-dasharray: none;
-  stroke-width: var(--aspect-line-backdrop-width, 4);
+  stroke-width: var(--aspect-line-backdrop-width);
   opacity: 0.74;
 }
 
@@ -661,8 +661,8 @@
 }
 
 .sky-wheel-synastry .interchart-aspect-lines line {
-  stroke-width: var(--aspect-line-width, 1.45);
-  opacity: max(var(--aspect-line-opacity, 0.48), 0.56);
+  stroke-width: var(--synastry-aspect-line-width);
+  opacity: max(var(--aspect-line-opacity), var(--synastry-aspect-line-opacity-min));
 }
 
 .sky-wheel-synastry .planet-label-group--displaced .planet-glyph:not(.planet-glyph-image) {
@@ -780,8 +780,8 @@
 }
 
 .chart-fullscreen-footer .friend-compare-control {
-  width: min(100%, var(--relationship-picker-width, 360px));
-  max-width: var(--relationship-picker-width, 360px);
+  width: min(100%, var(--relationship-picker-width));
+  max-width: var(--relationship-picker-width);
 }
 
 .chart-fullscreen-footer .friend-chart-legend {

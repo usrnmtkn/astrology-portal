@@ -74,7 +74,11 @@ function setupBlankRestoreRecovery() {
     window.location.reload();
   };
 
-  const checkAfterRestore = () => {
+  const checkAfterRestore = (event: PageTransitionEvent) => {
+    if (!event.persisted) {
+      return;
+    }
+
     window.setTimeout(() => {
       if (document.visibilityState === "hidden") {
         return;
@@ -87,8 +91,6 @@ function setupBlankRestoreRecovery() {
   };
 
   window.addEventListener("pageshow", checkAfterRestore);
-  window.addEventListener("focus", checkAfterRestore);
-  document.addEventListener("visibilitychange", checkAfterRestore);
 }
 
 void startApp();

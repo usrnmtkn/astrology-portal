@@ -147,7 +147,7 @@
       "tag": "template",
       "headline": "Transit — transiting planet to a natal point",
       "summary": "You: a transiting planet aspects a natal planet. Timing, not permanent.",
-      "body": "Right now {{transitPlanet}} is {{aspectAdj}} your natal {{natalPoint}}. This can place {{transitPlanetTopic}} in contact with {{natalPointTopic}} for this window.",
+      "body": "{{transitPlanet}} {{aspectAdj}} {{natalPoint}} needs approved V3 transit copy before it can serve reader text.",
       "isNewKey": false
     },
     {
@@ -257,7 +257,7 @@
       "tag": "template",
       "headline": "Sky placement — planet currently in a sign (collective)",
       "summary": "Sky: a planet's current sign placement, collective weather.",
-    "body": "{{planet}} is in {{sign}}, so the {{planet}} theme of {{planetTopic}} is active in a {{signStyle}} way. This transit can make that theme easier to notice in conversations, decisions, delays, or reactions around the room. Treat it as weather, not a verdict: name the signal, keep the response proportionate, and choose the next practical response.",
+    "body": "{{planet}} in {{sign}} needs approved V3 placement copy before it can serve reader text.",
       "isNewKey": false
     },
     {

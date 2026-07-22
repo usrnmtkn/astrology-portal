@@ -121,6 +121,15 @@
   --chart-sign-label-size: 14px;
   --chart-planet-glyph-size: 28px;
   --chart-degree-size: 12px;
+  --aspect-line-width: 1.6;
+  --aspect-line-width-strong: 1.9;
+  --aspect-line-opacity: 0.55;
+  --aspect-line-opacity-strong: 0.68;
+  --transit-aspect-line-width: 1.45;
+  --transit-aspect-line-opacity-min: 0.58;
+  --synastry-aspect-line-width: 1.45;
+  --synastry-aspect-line-opacity-min: 0.56;
+  --aspect-line-backdrop-width: 4;
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
   --retrograde-bg: var(--color-retrograde-bg);
@@ -376,6 +385,7 @@
   --article-meta-size: var(--type-meta-size);
   --article-label-size: var(--type-label-size);
   --text-body: var(--type-body-size);
+  --text-body-sm: var(--type-description-size);
   --text-row-value: var(--type-body-size);
   --text-description: var(--type-description-size);
   --text-eyebrow: var(--type-label-size);
@@ -544,6 +554,29 @@
   --aspect-card-meta-size: var(--type-meta-size);
   --aspect-card-meta-weight: var(--weight-regular);
   --aspect-card-meta-line: var(--leading-meta);
+  --aspect-inline-icon-size: 20px;
+  --aspect-row-glyph-size: var(--aspect-inline-icon-size);
+  --aspect-row-glyph-gap: var(--space-2);
+  --aspect-row-glyph-width: calc((var(--aspect-inline-icon-size) * 3) + (var(--aspect-row-glyph-gap) * 2));
+  --aspect-row-template: 78px minmax(0, 1fr) 30px;
+  --aspect-row-gap: var(--card-row-gap);
+  --aspect-row-copy-gap: var(--inline-gap);
+  --aspect-row-copy-size: var(--text-row-body-size);
+  --aspect-row-copy-line: var(--leading-description);
+  --aspect-row-subtitle-margin: var(--space-1);
+  --aspect-row-subtitle-color: var(--card-meta-color);
+  --aspect-row-subtitle-size: var(--text-meta-size);
+  --aspect-row-subtitle-weight: var(--weight-medium);
+  --aspect-row-subtitle-tracking: var(--tracking-label);
+  --aspect-row-meta-width: 30px;
+  --aspect-row-meta-size: var(--text-meta-size);
+  --aspect-row-meta-weight: var(--aspect-card-meta-weight);
+  --inline-glyph-fallback-offset-y: -0.01em;
+  --updates-aspect-glyph-width: 82px;
+  --updates-aspect-meta-width: var(--aspect-row-meta-width);
+  --updates-aspect-row-gap: var(--space-4);
+  --updates-aspect-copy-gap: calc(var(--space-2) - var(--space-1) / 4);
+  --updates-aspect-row-glyph-size: calc(var(--aspect-row-glyph-size) + 2px);
   --table-bg: var(--card-bg);
   --table-border: var(--card-border);
   --table-radius: var(--card-radius);
@@ -631,6 +664,7 @@
   --id-card-padding-x: var(--space-5);
   --id-avatar-size: 60px;
   --id-name-size: var(--text-card-title);
+  --id-name-weight: var(--weight-medium);
   --id-signature-size: 13px;
   --id-signature-glyph-size: 14px;
   --id-tabs-overlap-y: 14px;
@@ -647,12 +681,15 @@
   --modal-padding: var(--sp-4);
   --modal-width: 560px;
   --chart-size: clamp(560px, 42vw, 700px);
+  --relationship-picker-width: 360px;
+  --deferred-placeholder-height: 180px;
   --z-nav: 100;
   --z-topbar: 1000;
   --z-floating: 120;
   --z-popover: 100;
   --z-picker: 40;
   --z-modal: 5000;
+  --z-tooltip: 80;
 
   /* 4. COMPATIBILITY ALIASES */
   --text: var(--ink);
