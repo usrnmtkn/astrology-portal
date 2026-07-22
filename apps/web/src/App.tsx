@@ -100,8 +100,7 @@ import {
   type PlacementScaffoldSection
 } from "./content/placementScaffold";
 import {
-  sourceGroundedNatalPlacementSections as sourceGroundedNatalPlacementSectionsRuntime,
-  sourceGroundedPersonalTransitComposition as sourceGroundedPersonalTransitCompositionRuntime
+  sourceGroundedNatalPlacementSections as sourceGroundedNatalPlacementSectionsRuntime
 } from "./content/sourceGroundedRuntime";
 import { resolveSourceGroundedV2 } from "./content/sourceGroundedV2";
 import {
@@ -631,12 +630,6 @@ function sourceGroundedNatalPlacementSections(
   ...args: Parameters<typeof sourceGroundedNatalPlacementSectionsRuntime>
 ) {
   return sourceGroundedNatalPlacementSectionsRuntime(...args);
-}
-
-function sourceGroundedPersonalTransitComposition(
-  ...args: Parameters<typeof sourceGroundedPersonalTransitCompositionRuntime>
-) {
-  return sourceGroundedPersonalTransitCompositionRuntime(...args);
 }
 
 type YouTransitArticle = {
@@ -5625,7 +5618,8 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
 
 function skyAspectMadlibFallbackSection(
   aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
+  positions?: PlanetPosition[],
+  generatedAt?: string
 ): NormalizedSkyAspectSection | null {
   const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
 
@@ -5639,7 +5633,8 @@ function skyAspectMadlibFallbackSection(
       aSign: skyAspectSign(aspect, aspect.from, positions),
       aspect: normalizedAspect,
       b: normalizeContentIdPart(aspect.to),
-      bSign: skyAspectSign(aspect, aspect.to, positions)
+      bSign: skyAspectSign(aspect, aspect.to, positions),
+      dateLine: generatedAt ? currentSkyAspectTransitRange(aspect, generatedAt) : undefined
     });
 
     if (rendered.templateKey.startsWith("authored/")) {
@@ -5677,10 +5672,11 @@ function skyAspectMadlibFallbackSection(
 function normalizeSkyAspectSurface(
   aspect: SkySnapshot["aspects"][number],
   generatedContent?: GeneratedContentMap,
-  positions?: PlanetPosition[]
+  positions?: PlanetPosition[],
+  generatedAt?: string
 ): NormalizedSkyAspectArticle {
   void generatedContent;
-  const fallbackSection = skyAspectMadlibFallbackSection(aspect, positions);
+  const fallbackSection = skyAspectMadlibFallbackSection(aspect, positions, generatedAt);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -5697,7 +5693,7 @@ function currentSkyAspectDetailArticle(
   positions?: PlanetPosition[]
 ): SkyDetail {
   const title = skyAspectDisplayTitle(aspect);
-  const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);
+  const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
   const historicalLookback = resolveSkyHistoricalLookback({
@@ -5907,7 +5903,13 @@ function currentSkyPlacementDetailArticle({
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
-  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent);
+  const placementEvents = skyPlacementPackageEvents({
+    aspects,
+    generatedAt,
+    planet: position.planet,
+    positions
+  });
+  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents);
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const authoredBody = normalized.sections
@@ -6002,7 +6004,7 @@ function skyDetailFromRoutePath(
       && skyRoutePartMatches(candidate.to, thirdPart)
     ));
 
-    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions).sections.length === 0) {
+    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions, sky.generatedAt).sections.length === 0) {
       return null;
     }
 
@@ -6040,7 +6042,7 @@ function relatedAspectRowsForPlacement({
     .sort((first, second) => first.orb - second.orb)
     .map((aspect) => {
       const normalizedSkySurface = mode === "sky" && generatedAt
-        ? normalizeSkyAspectSurface(aspect, generatedContent, positions)
+        ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         : null;
 
       if (mode === "sky" && !normalizedSkySurface?.sections.length) {
@@ -7882,70 +7884,32 @@ function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart)
     });
 }
 
-function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generatedContent?: GeneratedContentMap) {
+function friendUpdateSummary(
+  chart: ManualChart,
+  transit?: TransitItem,
+  generatedContent?: GeneratedContentMap,
+  generatedAt = new Date().toISOString()
+) {
   void generatedContent;
   if (!transit) {
     return "";
   }
 
-  const sourceGroundedTransit = sourceGroundedPersonalTransitComposition({
-    activeWindow: "current calculated window",
-    aspect: transit.aspect,
-    exactAt: null,
-    natalHouse: transit.natalHouse,
-    natalPoint: transit.natalPoint,
-    natalSign: transit.natalSign,
-    orb: wholeDegreeOrb(transitOrbValue(transit)),
-    pass: transit.timingBonuses?.find((bonus) => /pass/i.test(bonus)) ?? null,
-    phase: transit.direction ?? null,
-    term: transit.term,
-    transitingPlanet: transit.transitPlanet
-  });
-  const sourceGroundedSummary = sourceGroundedTransit?.conditionalBranches?.includes("SOURCE_GAP")
-    ? ""
-    : sourceGroundedTransit?.finalCopy ?? "";
-  const fallback = friendTransitEmergencySummary(transit, chart.displayName, chart.pronouns);
-
-  return sourceGroundedSummary || fallback;
-}
-
-function friendTransitEmergencySummary(transit: TransitItem, ownerName: string, ownerPronouns?: PronounChoice | null) {
-  const pronouns = resolveThirdPersonReference({ name: ownerName, pronouns: ownerPronouns });
-  const technicalAspect = transitAspectTechnicalVerb(transit.aspect);
-  const transitTopic = emergencyPlanetFunction(transit.transitPlanet);
-  const natalTopic = emergencyPointFunction(transit.natalPoint);
-  const aspectBehavior = emergencyAspectBehavior(transit.aspect);
-
-  if (isChartAnglePoint(transit.natalPoint)) {
-    const angleScene: Record<string, string> = {
-      Ascendant: "how they are seen, met, and read in the moment",
-      Descendant: "the way contact, projection, and one-to-one dynamics ask for a response",
-      Midheaven: "visibility, work, reputation, and public direction",
-      "Imum Coeli": "home, private foundations, and what needs protection underneath"
-    };
-
-    return `${transit.transitPlanet} ${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}, bringing ${transitTopic} into ${angleScene[transit.natalPoint] ?? natalTopic}. ${aspectBehavior}. ${pronouns.subjectCapitalized} can choose one practical response while the contact is close.`;
-  }
-
-  return `${transit.transitPlanet} ${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}, bringing ${transitTopic} into contact with ${natalTopic}. ${aspectBehavior}. ${pronouns.subjectCapitalized} can choose one practical response while the contact is close.`;
+  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt));
 }
 
 function friendTransitSummary(
   transit: TransitItem,
   generatedContent: GeneratedContentMap,
   ownerName: string,
-  ownerPronouns?: PronounChoice | null
+  ownerPronouns?: PronounChoice | null,
+  generatedAt = new Date().toISOString()
 ) {
   void generatedContent;
-  const sourceGroundedTransit = sourceGroundedPersonalTransitForItem(transit, new Date().toISOString());
-  const sourceGroundedSummary = sourceGroundedTransit?.conditionalBranches?.includes("SOURCE_GAP")
-    ? ""
-    : sourceGroundedTransit?.finalCopy ?? "";
-  const fallback = friendTransitEmergencySummary(transit, ownerName, ownerPronouns);
+  void ownerName;
+  void ownerPronouns;
 
-  return sourceGroundedSummary
-    ? natalGeneratedCopyForOwner(sourceGroundedSummary, ownerName, "person", ownerPronouns)
-    : fallback;
+  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt));
 }
 
 function friendTransitFactLine(transit: TransitItem, ownerName: string) {
@@ -7955,53 +7919,8 @@ function friendTransitFactLine(transit: TransitItem, ownerName: string) {
   return `${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint} in ${transit.natalSign}${angleHouse}`;
 }
 
-function sourceGroundedPersonalTransitForItem(transit: TransitItem, generatedAt: string) {
-  const timing = transitItemTimingDisplay(transit, generatedAt);
-
-  return sourceGroundedPersonalTransitComposition({
-    activeWindow: timing.rangeLabel || timing.label,
-    aspect: transit.aspect,
-    exactAt: null,
-    natalHouse: transit.natalHouse,
-    natalPoint: transit.natalPoint,
-    natalSign: transit.natalSign,
-    orb: wholeDegreeOrb(transitOrbValue(transit)),
-    pass: transit.timingBonuses?.find((bonus) => /pass/i.test(bonus)) ?? null,
-    phase: transit.direction ?? null,
-    term: transit.term,
-    transitingPlanet: transit.transitPlanet
-  });
-}
-
 function personalTransitDisplayTitle(transit: TransitItem) {
   return `${transit.transitPlanet} ${titleCase(transit.aspect)} ${transit.natalPoint}`;
-}
-
-function sourceGroundedPersonalTransitNormalizedSection(
-  transit: TransitItem,
-  generatedAt: string
-): NormalizedPersonalTransitSection | null {
-  const sourceGrounded = sourceGroundedPersonalTransitForItem(transit, generatedAt);
-
-  if (
-    !sourceGrounded?.finalCopy
-    || sourceGrounded.conditionalBranches?.includes("SOURCE_GAP")
-    || !isReaderFacingCopy(sourceGrounded.finalCopy)
-  ) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "REVIEWED_CLAUSE",
-    sourceKeys: sourceGrounded.sourceKeys.length > 0
-      ? sourceGrounded.sourceKeys
-      : [sourceGrounded.recordId],
-    heading: sourceGrounded.sections[0]?.heading || personalTransitDisplayTitle(transit),
-    body: sourceGrounded.finalCopy
-  };
 }
 
 function personalTransitPackageWindow(transit: TransitItem, generatedAt: string) {
@@ -8127,6 +8046,22 @@ function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, stri
   const section = article.sections[0];
 
   return section?.body ? textPreview(taggedSectionBody(section)) : "";
+}
+
+function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: string; rangeLabel: string }) {
+  const escapePattern = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const leadingTiming = [timing.rangeLabel, timing.durationLabel]
+    .map((label) => label.trim())
+    .filter(Boolean);
+  let cleaned = summary.trim();
+
+  for (const label of leadingTiming) {
+    cleaned = cleaned.replace(new RegExp(`^${escapePattern(label)}\\s*,\\s*`, "i"), "");
+  }
+
+  cleaned = cleaned.replace(/^(Today|Tonight|This week|This month)\s*,\s*/i, "");
+
+  return cleaned.replace(/^([a-z])/, (letter) => letter.toUpperCase());
 }
 
 function normalizeMadlibCardSurface({
@@ -11157,22 +11092,21 @@ function relationshipTimingSummary(
   transit: TransitItem,
   person: string,
   generatedContent?: GeneratedContentMap,
-  fallback = ""
+  fallback = "",
+  generatedAt = new Date().toISOString()
 ) {
   void generatedContent;
-  const sourceGroundedTransit = sourceGroundedPersonalTransitForItem(transit, new Date().toISOString());
-  const sourceGroundedSummary = sourceGroundedTransit?.conditionalBranches?.includes("SOURCE_GAP")
-    ? ""
-    : sourceGroundedTransit?.finalCopy ?? "";
+  void person;
 
-  return sourceGroundedSummary || fallback || friendTransitEmergencySummary(transit, person);
+  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt)) || fallback;
 }
 
 function relationshipTiming(
   profileTransits: TransitItem[],
   friendTransits: TransitItem[],
   chart: ManualChart,
-  generatedContent?: GeneratedContentMap
+  generatedContent?: GeneratedContentMap,
+  generatedAt = new Date().toISOString()
 ) {
   const sharedPlanets = profileTransits.flatMap((yourTransit) => (
     friendTransits
@@ -11183,13 +11117,13 @@ function relationshipTiming(
   if (sharedPlanets.length > 0) {
     return sharedPlanets.slice(0, 3).map(({ yourTransit, friendTransit }) => ({
       title: `Both charts are feeling ${yourTransit.transitPlanet}`,
-      body: relationshipTimingSummary(yourTransit, "you", generatedContent)
+      body: relationshipTimingSummary(yourTransit, "you", generatedContent, "", generatedAt)
     }));
   }
 
   return friendTransits.slice(0, 2).map((transit) => ({
     title: `${chart.displayName} may be feeling ${transit.transitPlanet}`,
-    body: relationshipTimingSummary(transit, chart.displayName, generatedContent)
+    body: relationshipTimingSummary(transit, chart.displayName, generatedContent, "", generatedAt)
   }));
 }
 
@@ -11551,7 +11485,7 @@ function circleFeedPreviewCards(
         label: "Friend update",
         title: topTransit ? `${chart.displayName}: ${topTransit.transitPlanet} ${topTransit.aspect} ${topTransit.natalPoint}` : `${chart.displayName}'s update is ready`,
         body: normalizeCirclePreviewBody(
-          topTransit ? friendUpdateSummary(chart, topTransit, generatedContent) : timingSummary(chart, timing),
+          topTransit ? friendUpdateSummary(chart, topTransit, generatedContent, currentSky.generatedAt) : timingSummary(chart, timing),
           topTransit
             ? [`circleFeedPreview.singleChart.friendTransit.${topTransit.id}`]
             : ["circleFeedPreview.singleChart.timing"]
@@ -11571,7 +11505,13 @@ function circleFeedPreviewCards(
         label: "Relationship timing",
         title: "What each person is carrying",
         body: normalizeCirclePreviewBody(
-          relationshipTiming(profileTransits, rankedFriendTransits(currentSky, chart, sunriseOrb), chart, generatedContent)[0]?.body
+          relationshipTiming(
+            profileTransits,
+            rankedFriendTransits(currentSky, chart, sunriseOrb),
+            chart,
+            generatedContent,
+            currentSky.generatedAt
+          )[0]?.body
             ?? "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing.",
           ["circleFeedPreview.singleChart.relationshipTiming"]
         ),
@@ -11852,7 +11792,7 @@ export function App() {
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
-  const [, setFallbackArchitectureV3Version] = useState(0);
+  const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -11861,6 +11801,7 @@ export function App() {
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
   const [, setContentRegistryVersion] = useState(0);
+  const selectedSkyDetailRefreshKeyRef = useRef("");
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
   const activeHouseSignLabelStyle = userProfile
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
@@ -12059,14 +12000,20 @@ export function App() {
       return;
     }
 
-    if (selectedSkyDetail?.routePath === skyDetailRoutePath) {
+    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}`;
+
+    if (
+      selectedSkyDetail?.routePath === skyDetailRoutePath
+      && selectedSkyDetailRefreshKeyRef.current === refreshKey
+    ) {
       return;
     }
 
     const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
+    selectedSkyDetailRefreshKeyRef.current = refreshKey;
     setSelectedSkyDetail(detail);
-  }, [selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
+  }, [fallbackArchitectureV3Version, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -15653,46 +15600,23 @@ function RetrogradeCallout({
     compact?: boolean;
   }) {
     const row = buildRetrogradeDetail(position);
+    const title = `${skyDisplayPlanetName(position.planet)} Rx in ${position.sign}`;
 
     return (
-      <button
-        className={`sky-card sky-pl ro-sky-pl${compact ? " ro-sky-pl--compact" : ""}`}
-        type="button"
-        aria-label={`Read more about ${retrogradePlacementTitle(position)}`}
+      <PlanetPlacementRow
+        ariaLabel={`Read more about ${retrogradePlacementTitle(position)}`}
+        degree={formatPlanetDegree(position)}
+        description={!compact ? row.blurb : null}
+        durationLabel={row.remainingCount}
+        glyph={position.glyph}
         onClick={() => onOpenDetail(row.detail)}
-      >
-        <PlacementGlyphIcon
-          className="sky-pl-glyph"
-          fallback={position.glyph}
-          pointName={position.planet}
-          preferTextGlyph
-          retrograde={position.motion === "retrograde"}
-        />
-        <span className="sky-pl-body">
-          <span className="sky-pl-main">
-            <span className="sky-pl-title">
-              <span className="ro-sky-pl__name">
-                {skyDisplayPlanetName(position.planet)} <span className="sky-pl-rx">Rx</span> in {position.sign}
-              </span>
-              <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
-              <span className="ui-pill ui-pill--retrograde spl-status-item spl-status-retrograde ro-sky-pl__badge">Retrograde</span>
-            </span>
-          </span>
-          {row.remainingCount || row.range ? (
-            <span className="sky-pl-range ro-sky-pl__timing">
-              {row.remainingCount ? (
-                <span className="ui-pill ui-pill--neutral ui-pill--mixed sky-pl-duration sky-pl-duration--retrograde">
-                  <DurationLabelText label={row.remainingCount} />
-                </span>
-              ) : null}
-              {row.range ? <span>{row.range}</span> : null}
-            </span>
-          ) : null}
-          {!compact && row.blurb ? (
-            <span className="ro-sky-pl__blurb">{row.blurb}</span>
-          ) : null}
-        </span>
-      </button>
+        pointName={position.planet}
+        rangeLabel={row.range}
+        retrograde={position.motion === "retrograde"}
+        statuses={[{ label: "Retrograde", tone: "retrograde" }]}
+        title={title}
+        variant="sky"
+      />
     );
   }
 
@@ -16014,13 +15938,16 @@ function ActiveAspects({
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
-            const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);
+            const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
 
             if (normalized.sections.length === 0) {
               return null;
             }
 
-            const displaySummary = normalizedSurfacePreview(normalized);
+            const displaySummary = stripSkyAspectTimingPrefix(
+              normalizedSurfacePreview(normalized),
+              timing
+            );
 
                 return (
                   <button
@@ -16033,13 +15960,13 @@ function ActiveAspects({
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
-                      {displaySummary ? <p>{displaySummary}</p> : null}
                       <span className="aspect-row-timing" aria-label={timing.label}>
                         <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                           <DurationLabelText label={timing.durationLabel} />
                         </span>
                         <span>{timing.rangeLabel}</span>
                       </span>
+                      {displaySummary ? <p>{displaySummary}</p> : null}
                     </div>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
@@ -16113,7 +16040,19 @@ function PlacementTable({
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
-          const rowSummary = normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent));
+          const rowSummary = normalizedSurfacePreview(
+            normalizeSkyPlacementSurface(
+              position,
+              transitRangeLabel,
+              generatedContent,
+              skyPlacementPackageEvents({
+                aspects,
+                generatedAt,
+                planet: position.planet,
+                positions: displayPositions
+              })
+            )
+          );
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
             aspects,
             generatedAt,
@@ -19472,7 +19411,8 @@ function ManualChartsPanel({
                             transit,
                             relationshipGeneratedContent,
                             selectedChart.displayName,
-                            selectedChart.pronouns
+                            selectedChart.pronouns,
+                            currentSky.generatedAt
                           );
                           const factLine = friendTransitFactLine(transit, selectedChart.displayName);
                           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);

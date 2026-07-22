@@ -58,7 +58,7 @@ const signs = [
 const planetIconSize = 28;
 const sunIconSize = 30;
 const planetDegreeOffset = 28;
-const planetHitAreaRadius = 16;
+const planetHitAreaRadius = 22;
 const angleIconSize = 34;
 const signIconSize = 27;
 const longSignIconSize = 29;
@@ -268,6 +268,32 @@ function inspectorLineStyle(type: string, orb: number, mode: "exact" | "whole-si
   }
 
   return aspectLineStyle(type, orb);
+}
+
+function selectedInspectorLineStyle(type: string, orb: number, mode: "exact" | "whole-sign") {
+  const base = inspectorLineStyle(type, orb, mode) as CSSProperties & Record<string, string>;
+  const width = Number.parseFloat(base["--aspect-line-width"] ?? "1.8");
+  const opacity = Number.parseFloat(base["--aspect-line-opacity"] ?? "0.72");
+  const backdropWidth = Number.parseFloat(base["--aspect-line-backdrop-width"] ?? "");
+
+  return {
+    ...base,
+    "--aspect-line-opacity": String(Math.max(Number.isFinite(opacity) ? opacity : 0.72, 0.86)),
+    "--aspect-line-width": String(Math.max(Number.isFinite(width) ? width : 1.8, 2.35)),
+    "--aspect-line-backdrop-width": String(Math.max(Number.isFinite(backdropWidth) ? backdropWidth : width + 3.2, 5.4))
+  } as CSSProperties;
+}
+
+function formatInspectorOrb(orb: number) {
+  if (!Number.isFinite(orb)) {
+    return "";
+  }
+
+  if (orb < 0.05) {
+    return "exact";
+  }
+
+  return `${orb.toFixed(1)}° orb`;
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
@@ -676,24 +702,26 @@ export const SkyWheel = memo(function SkyWheel({
       .filter((aspect) => !aspect.type)
       .map((aspect) => aspect.point.id)
   ), [inspectorAspects]);
-  const aspectLegendItems = useMemo(() => {
-    if (!focusedInspectorPoint || (focusedInspectorPoint.kind !== "position" && focusedInspectorPoint.kind !== "transit-position")) {
+  const inspectorAspectRows = useMemo(() => {
+    if (!focusedInspectorPoint) {
       return [];
     }
 
-    const presentTypes = new Set(
-      inspectorAspects
-        .map((aspect) => aspect.type)
-        .filter((type): type is string => Boolean(type))
-    );
-    const types = Array.from(presentTypes);
+    return inspectorAspects
+      .filter((aspect): aspect is InspectorAspect & { type: string; orb: number } => Boolean(aspect.type) && typeof aspect.orb === "number")
+      .sort((first, second) => {
+        const aspectSort = aspectLegendSortValue(first.type) - aspectLegendSortValue(second.type);
 
-    return types
-      .sort((first, second) => aspectLegendSortValue(first) - aspectLegendSortValue(second))
-      .map((type) => ({
-        type,
-        label: aspectLegendLabel(type),
-        lineStyle: inspectorLineStyle(type, 0, inspectorMode)
+        if (aspectSort !== 0) {
+          return aspectSort;
+        }
+
+        return first.point.label.localeCompare(second.point.label);
+      })
+      .map((aspect) => ({
+        ...aspect,
+        label: aspectLegendLabel(aspect.type),
+        lineStyle: inspectorLineStyle(aspect.type, aspect.orb, inspectorMode)
       }));
   }, [focusedInspectorPoint, inspectorAspects, inspectorMode]);
   useEffect(() => {
@@ -740,13 +768,19 @@ export const SkyWheel = memo(function SkyWheel({
 
   return (
     <>
-      <figure ref={wheelShellRef} className={`sky-wheel-shell sky-wheel-shell-${variant}`}>
+      <figure
+        ref={wheelShellRef}
+        className={`sky-wheel-shell sky-wheel-shell-${variant}${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+      >
         <svg
           className={`sky-wheel sky-wheel-${variant}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
           viewBox={activeWheelViewBox}
           role="img"
           aria-label="Planet positions"
-          onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
+          onClick={inspectorEnabled ? () => {
+            setFocusedInspectorPointId(null);
+            setActiveTooltipPlanet(null);
+          } : undefined}
         >
         <defs>
           <clipPath id={wheelClipId}>
@@ -800,7 +834,7 @@ export const SkyWheel = memo(function SkyWheel({
                 <g
                   key={`${focusedInspectorPoint.id}-${targetPoint.id}`}
                   className={`${aspectLineClass(type)} ${normalizeAspectType(type)} aspect-inspector-line`}
-                  style={inspectorLineStyle(type, orb, inspectorMode)}
+                  style={selectedInspectorLineStyle(type, orb, inspectorMode)}
                 >
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
@@ -894,12 +928,14 @@ export const SkyWheel = memo(function SkyWheel({
                 onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
                   event.stopPropagation();
                   event.currentTarget.blur();
+                  setActiveTooltipPlanet(null);
                   setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
                 },
                 onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     event.stopPropagation();
+                    setActiveTooltipPlanet(null);
                     setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
                   }
                 }
@@ -959,12 +995,14 @@ export const SkyWheel = memo(function SkyWheel({
                 onClick={inspectorEnabled ? (event) => {
                   event.stopPropagation();
                   event.currentTarget.blur();
+                  setActiveTooltipPlanet(null);
                   setFocusedInspectorPointId((current) => current === position.planet ? null : position.planet);
                 } : undefined}
                 onKeyDown={inspectorEnabled ? (event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     event.stopPropagation();
+                    setActiveTooltipPlanet(null);
                     setFocusedInspectorPointId((current) => current === position.planet ? null : position.planet);
                   }
                 } : undefined}
@@ -1021,12 +1059,14 @@ export const SkyWheel = memo(function SkyWheel({
                   onClick={inspectorEnabled ? (event) => {
                     event.stopPropagation();
                     event.currentTarget.blur();
+                    setActiveTooltipPlanet(null);
                     setFocusedInspectorPointId((current) => current === transitPointId ? null : transitPointId);
                   } : undefined}
                   onKeyDown={inspectorEnabled ? (event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
                       event.stopPropagation();
+                      setActiveTooltipPlanet(null);
                       setFocusedInspectorPointId((current) => current === transitPointId ? null : transitPointId);
                     }
                   } : undefined}
@@ -1080,24 +1120,37 @@ export const SkyWheel = memo(function SkyWheel({
           </text>
         ) : null}
         </svg>
-        {aspectLegendItems.length > 0 ? (
-          <figcaption className="aspect-wheel-legend" aria-label="Aspect legend">
-            {aspectLegendItems.map(({ type, label, lineStyle }) => (
-              <span key={type} className="aspect-wheel-legend__item">
-                <svg className="aspect-wheel-legend__swatch" viewBox="0 0 38 8" aria-hidden="true" focusable="false">
-                  <line
-                    className={`${aspectLineClass(type)} ${normalizeAspectType(type)}`}
-                    style={lineStyle}
-                    x1="2"
-                    y1="4"
-                    x2="36"
-                    y2="4"
-                  />
-                </svg>
-                <span>{label}</span>
-              </span>
-            ))}
-          </figcaption>
+        {focusedInspectorPoint ? (
+          <div className="aspect-inspector-summary" role="status" aria-live="polite">
+            <div className="aspect-inspector-summary__head">
+              <strong>{focusedInspectorPoint.label}</strong>
+              <span>{inspectorMode === "whole-sign" ? "Whole-sign aspects" : "Aspects"}</span>
+            </div>
+            {inspectorAspectRows.length > 0 ? (
+              <ul className="aspect-inspector-summary__list">
+                {inspectorAspectRows.map(({ point: targetPoint, type, label, orb, lineStyle }) => (
+                  <li key={`${focusedInspectorPoint.id}-${targetPoint.id}-${type}`} className="aspect-inspector-summary__item">
+                    <svg className="aspect-wheel-legend__swatch" viewBox="0 0 38 8" aria-hidden="true" focusable="false">
+                      <line
+                        className={`${aspectLineClass(type)} ${normalizeAspectType(type)}`}
+                        style={lineStyle}
+                        x1="2"
+                        y1="4"
+                        x2="36"
+                        y2="4"
+                      />
+                    </svg>
+                    <span className="aspect-inspector-summary__copy">
+                      <strong>{label}</strong> {targetPoint.label}
+                    </span>
+                    <span className="aspect-inspector-summary__orb">{formatInspectorOrb(orb)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="aspect-inspector-summary__empty">No configured aspects from this point.</p>
+            )}
+          </div>
         ) : null}
       </figure>
       <FloatingTooltipPortal

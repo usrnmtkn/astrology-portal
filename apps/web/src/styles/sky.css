@@ -778,35 +778,6 @@
   margin-top: var(--sp-1);
 }
 
-.ro-screen .sky-pl-duration--retrograde {
-  background: var(--duration-badge-bg);
-  color: var(--duration-badge-fg);
-  box-shadow: var(--shadow-flat);
-}
-
-.ro-screen .ro-sky-pl__timing {
-  gap: 10px;
-  align-items: center;
-  letter-spacing: var(--tracking-number);
-}
-
-.ro-sky-pl__blurb {
-  display: -webkit-box;
-  margin: var(--sp-1) 0 0;
-  overflow: hidden;
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--retrograde-card-copy-size);
-  line-height: var(--retrograde-card-copy-line);
-  text-wrap: pretty;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-.ro-sky-pl--compact .sky-pl-title {
-  font-size: var(--text-card-title);
-}
-
 .retro {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -945,6 +916,10 @@
   padding: var(--sky-card-padding);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
   text-align: left;
