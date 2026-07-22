@@ -1,170 +1,80 @@
-const unsafeReaderCopyPatterns = [
-  /\bImported from\b/i,
-  /\bSource file was not copied\b/i,
-  /\bsource note\b/i,
-  /\bsource framework\b/i,
-  /\bsource file\b/i,
-  /\bprovenance\b/i,
-  /\beditorial\b/i,
-  /\bmapping note\b/i,
-  /\bimport note\b/i,
-  /\bmetadata\b/i,
-  /\bscaffold(?:ing)?\b/i,
-  /\bplaceholder\b/i,
-  /\bTODO\b/i,
-  /\bFIXME\b/i,
-  /\bbefore publishing\b/i,
-  /\beditor note\b/i,
-  /\breviewer note\b/i,
-  /\breplace before launch\b/i,
-  /\breplace (?:the )?headline, summary, and body\b/i,
-  /\blegacy copy\b/i,
-  /\bemergency template\b/i,
-  /\bconfirm before release\b/i,
-  /\bdraft only\b/i,
-  /\breference lane\b/i,
-  /\breference row\b/i,
-  /\breference material\b/i,
-  /\bgeneration-only\b/i,
-  /\bmanual only\b/i,
-  /\braw quarantine\b/i,
-  /\bparaphrase pending\b/i,
-  /\bneeds authored copy\b/i,
-  /\bcontent gap\b/i,
-  /\bthis interaspect needs authored copy\b/i,
-  /\bAt work this reads as\b/i,
-  /\bLuck favors\b/i,
-  /\boverplaying the drama\b/i,
-  /\bthe fuller story of this\b/i,
-  /\bfollows .+ to wherever it sits\b/i,
-  /\bso the point is not generic\b/i,
-  /\bcarries that story further\b/i,
-  /\bpoints this house toward\b/i,
-  /\bwhere the spark shows\b/i,
-  /\bmoves through\b[^.]*\btone\b/i,
-  /\bcoming through\b[^.]*\bstyle\b/i,
-  /\bplays out in that part of life\b/i,
-  /\bCollectively\b/i,
-  /\bgives attention, choice, and response\b/i,
-  /\btakes on\b.*\bcoloring\b/i,
-  /\bin the wider sky\b/i,
-  /\bmarks a relationship pattern worth noticing\b/i,
-  /\bopening becomes useful\b/i,
-  /\bmay affect how\b.*\bshows up\b/i,
-  /\bcollective mood\b/i,
-  /\bshared mood\b/i,
-  /\bWork with it by naming\b/i,
-  /\bdescribes\b/i,
-  /\bstyle or condition\b/i,
-  /\beasiest to see\b/i,
-  /\bplanet of communication\b/i,
-  /\bmind-map your most out-there thoughts\b/i,
-  /\bzips through visionary\b/i,
-  /\bover the coming weeks\b/i,
-  /\bbringing\b[^.]*\binto\b/i,
-  /\bcoming through\b/i,
-  /\bplays out\b/i,
-  /\bcircumstances\b/i,
-  /\bpatterns? show(?:s)? up\b/i,
-  /\bchoose the next concrete response\b/i,
-  /\bThis pattern is active now\b/i,
-  /\bThis transit is active now\b/i,
-  /\bis active here\b/i,
-  /\bis active in the current sky\b/i,
-  /\bcurrent emphasis (?:is|may be) visible in timing, mood\b/i,
-  /\beveryday choices\b/i,
-  /\bwhile this contact is active\b/i,
-  /\bvisible choices\b/i,
-  /\bThe calculated house is\b/i,
-  /\bUse that house placement as factual context\b/i,
-  /\bUse (?:the )?calculated\b/i,
-  /\bUse the reviewed\b/i,
-  /\bwhen no reviewed\b/i,
-  /\bas factual context\b/i,
-  /\breliable floor\b/i,
-  /\bTransit-to-natal entries are ordered\b/i,
-  /\bsame-moment aspect exclusions\b/i,
-  /\bDo not apply\b/i,
-  /\bInterpret as an active pressure or opening\b/i,
-  /\bcurrent timing, not a fixed verdict\b/i,
-  /\btwo functions concentrate\b/i,
-  /\bthe chart has a real situation to answer\b/i,
-  /\bnot just a list of traits\b/i,
-  /\brising sign\b[^.?!]*\basks for growth\b/i,
-  /\bMoon helps\b[^.?!]*\bcheck\b/i,
-  /\bchart can deliver\b/i,
-  /\breal outlet\b/i,
-  /\bName what is actually being asked\b/i,
-  /\bpart of the situation\b/i,
-  /\bphrasebank tier\b/i,
-  /\bMarie sign-off\b/i,
-  /\bfallback:\s*unsafe\b/i,
-  /\bauthored-content\b/i,
-  /\bslot-template\b/i,
-  /\bMUSTACHE[-_ ]MADLIB\b/i,
-  /\bWatch for .* patterns\b/i,
-  /\bread that through\b[^.;]*[,;]/i,
-  /\bsect is included only as a calculated condition\b/i,
-  /\bbefore (?:him|her|them) speak\b/i,
-  /\bBeing (?:himself|herself|themself|themselves) and the\b/i,
-  /\bWho\b[^.?!]*\band (?:deep|raw|strong)\b/i,
-  /\bThere['’]s a part of\b[^.?!]*\bneed\b/i,
-  /&(?:[a-z]+|#[0-9]+);/i,
-  /\{\{[^}]+\}\}/,
-  /\bpattern runs on autopilot\b/i,
-  /\bintense and hard to separate\b/i,
-  /\ba back-and-forth tension between two ends\b/i,
-  /\bFailure mode\b/i,
-  /\bteacher['’]s pedestal\b/i,
-  /\bDRAFT\b/,
-  /\bREVIEW(?:ED)?\b/,
-  /\bSOURCE_BACKED\b/,
-  /\bINCOMPLETE\b/,
-  /^TLDR\s*:/i,
-  /^Planetary meaning\s*:/i,
-  /^How it may show up\s*:/i,
-  /^How to work with it\s*:/i,
-  /^What You May Notice\s*:/i,
-  /^What To Do\s*:/i,
-  /^The Astrology\s*:/i,
-  /^The Shadow\s*:/i,
-  /^Timing\s*:/i,
-  /^Reflection\s*:/i,
-  /^Integration\s*:/i,
-  /^Story position\s*:/i,
-  /^[A-Z][A-Za-z]+ Season (?:cycle reflection|lessons under pressure|culmination|opening)\s*:/i,
-  /^[A-Z][A-Za-z]+ Energy\s*:/i,
-  /^Axis Integration\s*[-–:]/i
+/*
+ * This module is intentionally sanitation-only. Content eligibility and contract
+ * status belong to the import pipeline; renderers may trim authored copy or
+ * refuse an empty value, but must not repair, rewrite, or classify its prose.
+ */
+
+const markdownDividerLinePattern = /^(?:-{3,}|\*{3,}|_{3,})$/;
+const debugTagPattern = /\[(?:FALLBACK|AUTHORED)\]/gi;
+const metadataOnlyPatterns = [
+  /^imported from approved project\b/i,
+  /\bsource file was not copied into the repository\b/i
+];
+const legacyCopyFingerprintPatterns = [
+  { pattern: /\bactive here\b/i, reason: "legacy active-here fallback phrase" },
+  { pattern: /\bactive now\b/i, reason: "legacy active-now fallback phrase" },
+  { pattern: /\bcurrent emphasis\b/i, reason: "legacy current-emphasis fallback phrase" },
+  { pattern: /\btiming,\s*mood\b/i, reason: "legacy timing/mood fallback phrase" },
+  { pattern: /\beveryday choices\b/i, reason: "legacy everyday-choices fallback phrase" },
+  { pattern: /\bchoices around it\b/i, reason: "legacy choices-around-it fallback phrase" },
+  { pattern: /^\*?\s*anchor\s*:/im, reason: "editorial Anchor metadata" },
+  { pattern: /^\*?\s*flag\s*:/im, reason: "editorial Flag metadata" },
+  { pattern: /^\*?\s*source\s*:/im, reason: "editorial Source metadata" },
+  { pattern: /^\*?\s*corpus\s*:/im, reason: "editorial Corpus metadata" }
 ];
 
-const markdownDividerLinePattern = /^\s*(?:-{3,}|_{3,}|\*{3,})\s*$/;
+function isDevMode() {
+  return typeof import.meta !== "undefined" && Boolean(import.meta.env?.DEV);
+}
 
-function normalizeReaderFacingParagraph(value: string | null | undefined) {
+export function legacyCopyFingerprintReason(value: string | null | undefined) {
+  const text = String(value ?? "");
+  return legacyCopyFingerprintPatterns.find(({ pattern }) => pattern.test(text))?.reason ?? null;
+}
+
+export function warnIfLegacyCopyFingerprint(value: string | null | undefined, context = "reader-facing copy") {
+  if (!isDevMode()) return;
+
+  const reason = legacyCopyFingerprintReason(value);
+  if (!reason) return;
+
+  console.warn(`[legacy-copy-canary] ${reason} reached ${context}. Decommission the legacy generator path.`, {
+    preview: String(value ?? "").slice(0, 240)
+  });
+}
+
+export function sanitizeReaderFacingCopy(value: string | null | undefined) {
   return (value ?? "")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !markdownDividerLinePattern.test(line))
+    .split(/\n/)
+    .map((line) => line.replace(debugTagPattern, "").trim())
+    .filter((line) => !markdownDividerLinePattern.test(line))
     .join("\n")
     .trim();
 }
 
 export function isReaderFacingCopy(value: string | null | undefined) {
-  const normalized = value?.replace(/\s+/g, " ").trim() ?? "";
+  const normalized = sanitizeReaderFacingCopy(value).replace(/\s+/g, " ").trim();
 
   if (!normalized) {
     return false;
   }
 
-  return !unsafeReaderCopyPatterns.some((pattern) => pattern.test(normalized));
+  if (metadataOnlyPatterns.some((pattern) => pattern.test(normalized))) {
+    return false;
+  }
+
+  return normalized.length > 0;
 }
 
 export function readerFacingParagraphs(values: Array<string | null | undefined>) {
   const paragraphs = values
     .flatMap((value) => (value ?? "").split(/\n{2,}/))
-    .map((value) => normalizeReaderFacingParagraph(value))
+    .map((value) => sanitizeReaderFacingCopy(value))
     .filter((value) => isReaderFacingCopy(value));
 
-  return Array.from(new Set(paragraphs));
+  paragraphs.forEach((paragraph) => warnIfLegacyCopyFingerprint(paragraph));
+
+  return paragraphs;
 }
 
 export function firstReaderFacingCopy(values: Array<string | null | undefined>) {

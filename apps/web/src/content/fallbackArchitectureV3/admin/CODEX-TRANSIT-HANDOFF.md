@@ -9,7 +9,8 @@ The package supplies COPY. The app engine supplies SELECTION. Codex implements s
 1. **Headline driver: the transiting Moon.** Its sign, whole-sign house in the reader's chart, and applying aspects pick the day's headline card. Never headline with a slow transit; the Moon is why dailies change daily.
 2. **Areas of your life:** one section per qualifying non-Moon transit, ordered by orb tightness. Orb gates: outers + Saturn qualify at <= 3 degrees, inners at <= 5 degrees. Wider transits do not appear that day.
 3. **Headliner days:** any Saturn-through-Pluto transit at orb <= 1.0 degree, any station on a natal point, or any return upgrades the day and earns the bespoke deep section. Never generate a bespoke deep section for a sub-threshold transit.
-4. Every daily card needs its derivation record (driving transit + orb + application, house of contact, rulership condition, source grounding) per spec section 8.
+4. **Beat dedupe:** some authored cards share a rhetorical beat (e.g. the North Node "stop calling it coincidence" card and the Mercury retrograde "none of it is random" card). Do not surface two same-beat cards on one day; the affected cards carry the pairing in their `editorial_notes` field (moved there from the bodies in the 2026-07-22 cleanup — `editorial_notes` is authoring/engine metadata and NEVER renders).
+5. Every daily card needs its derivation record (driving transit + orb + application, house of contact, rulership condition, source grounding) per spec section 8.
 
 ### Rendering (package side)
 
