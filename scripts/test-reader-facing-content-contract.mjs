@@ -9,7 +9,6 @@ function read(relativePath) {
 }
 
 const publicFallbackFiles = [
-  "apps/web/src/content/emergencyCopy.json",
   "scripts/content-source/tldrastro-fallback-templates-rows.json"
 ];
 
@@ -39,18 +38,22 @@ for (const file of publicFallbackFiles) {
 const youPage = read("apps/web/src/features/you/YouPage.tsx");
 const app = read("apps/web/src/App.tsx");
 const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
+const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts");
-const emergencyCopyRuntime = read("apps/web/src/content/emergencyCopy.ts");
 const fallbackHooks = read("apps/web/src/content/fallbackHooks.ts");
-const emergencyCopyJson = read("apps/web/src/content/emergencyCopy.json");
+const planetTopicVocabulary = read("apps/web/src/services/planetTopicVocabulary.ts");
+const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
+const readerSafety = read("apps/web/src/content/readerSafety.ts");
 const materializeCompatibilityRows = read("scripts/materialize-compatibility-dashboard-rows.mjs");
 
 assert.match(youPage, /isReaderFacingCopy/, "You detail renderer must use reader-facing copy filtering.");
 assert.match(youPage, /isDuplicateArticleCopy/, "You detail renderer must dedupe TLDR, summary, and section body copy.");
-assert.doesNotMatch(youPage, /This interpretation is still being prepared\./, "Empty detail pages must render real emergency fallback copy.");
-assert.doesNotMatch(app, /This interpretation is still being prepared\./, "Sky detail pages must render real emergency fallback copy.");
-assert.match(youPage, /emergencyDetailFallbackCopy/, "You detail renderer must use the real emergency fallback copy helper.");
+assert.doesNotMatch(youPage, /This interpretation is still being prepared\./, "Empty detail pages must not render placeholder copy.");
+assert.doesNotMatch(app, /This interpretation is still being prepared\./, "Sky detail pages must not render placeholder copy.");
+assert.doesNotMatch(youPage, /emergencyDetailFallbackCopy/, "You detail renderer must not use emergency detail fallback copy.");
+assert.match(readerSafety, /markdownDividerLinePattern/, "Reader-facing paragraph cleanup must strip package markdown divider lines.");
+assert.doesNotMatch(readerSafety, /\\bmov\(\?:e\|es\|ing\) through\\b/, "Reader safety must not reject V3 transit-house fallback copy for saying moving through.");
 
 for (const requiredSource of [
   "cc-natal-aspect",
@@ -83,16 +86,19 @@ assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\
 assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the authored content-level label.");
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement detail/list rendering must use the v3 fallback package renderer.");
 assert.doesNotMatch(app, /emergencySkyPlacementCopy/, "Sky placement detail/list rendering must not use the legacy emergency placement helper.");
-assert.match(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must use the real emergency fallback copy helper.");
+assert.doesNotMatch(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must not use emergency detail fallback copy.");
 assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail rendering must resolve through the surface normalizer.");
 assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement detail rendering must include the source-based madlib fallback section.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
 assert.match(app, /renderSkyPlacement\(\{\s*[\s\S]*events/, "Sky placement rendering must pass event context into the v3 package renderer.");
-assert.match(app, /emergencyFallbackParagraph/, "Sky detail renderer must render a final emergency fallback only when normalized slots are empty.");
-assert.match(emergencyCopyRuntime, /cc-source-phrases\.json/, "Emergency point fallback copy must stay grounded in the authored source phrase file.");
-assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/076/, "Lilith fallback must use the guide-phrase source for the Black Moon Lilith definition.");
-assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/255/, "Lilith fallback must use the guide-phrase source for the resistance/defiance/shadow-work copy.");
-assert.match(emergencyCopyRuntime, /cc\/guide-phrase\/165/, "Lilith fallback must use the guide-phrase source for the wild-card awakening copy.");
+assert.doesNotMatch(app, /emergencyFallbackParagraph/, "Sky detail renderer must not render a final emergency fallback when normalized slots are empty.");
+assert.doesNotMatch(app, /from ["'][^"']*emergencyCopy["']/, "App reader surfaces must not import legacy emergency copy.");
+assert.doesNotMatch(app, /emergency[A-Z][A-Za-z0-9_]*/, "App reader surfaces must not call legacy emergency helpers.");
+assert.doesNotMatch(youPage, /from ["'][^"']*emergencyCopy["']/, "You reader surfaces must not import legacy emergency copy.");
+assert.doesNotMatch(planetTopicVocabulary, /from ["'][^"']*emergencyCopy["']/, "Topic vocabulary must use V3 package rows, not legacy emergency copy.");
+assert.doesNotMatch(lunarCalendar, /from ["'][^"']*emergencyCopy["']/, "Calendar reader surfaces must not import legacy emergency copy.");
+assert.doesNotMatch(lunarCalendar, /emergency[A-Z][A-Za-z0-9_]*/, "Calendar reader surfaces must not call legacy emergency helpers.");
+assert.doesNotMatch(writingSurfaceSourceMap, /emergencyCopy\.json/, "Admin source map must point to the V3 fallback package, not legacy emergency copy.");
 assert.doesNotMatch(app, /less patience for waiting/i, "Friends transit emergency summaries must not reuse the same generic angle sentence.");
 assert.doesNotMatch(app, /friendTransitEmergencySummary/, "Friends transit summaries must not use legacy emergency prose.");
 assert.doesNotMatch(app, /sourceGroundedPersonalTransitForItem/, "Friends transit summaries must not use legacy source-grounded transit prose.");
@@ -101,8 +107,6 @@ assert.match(app, /normalizedSurfacePreview\(normalizePersonalTransitSurface\(tr
 assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must fall back to the source-based madlib section.");
 assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
 assert.match(fallbackHooks, /key:\s*"you\.transit-to-natal"[\s\S]*slotKeys:\s*\[[^\]]*"aspectAdj"/, "Transit-to-natal fallback hook must declare the aspectAdj slot.");
-assert.match(emergencyCopyJson, /"you\.transit-to-natal":\s*"[^"]*\{\{aspectAdj\}\}/, "Transit-to-natal emergency copy must render the aspect word slot.");
-assert.match(emergencyCopyRuntime, /function emergencyTransitToNatalCopy[\s\S]*aspectAdj:\s*emergencyAspectAdjective\(aspect\)/, "Transit-to-natal emergency helper must provide the aspectAdj slot.");
 assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");
 assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement rendering must fall back to source-based madlibs when authored rows are absent.");
 assert.match(adminDashboard, /Content System/, "Admin article editor must label authored vs fallback as a content system, not a display override.");

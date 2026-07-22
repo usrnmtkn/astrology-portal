@@ -64,7 +64,6 @@ const unsafeReaderCopyPatterns = [
   /\bbringing\b[^.]*\binto\b/i,
   /\bcoming through\b/i,
   /\bplays out\b/i,
-  /\bmov(?:e|es|ing) through\b/i,
   /\bcircumstances\b/i,
   /\bpatterns? show(?:s)? up\b/i,
   /\bchoose the next concrete response\b/i,
@@ -138,6 +137,17 @@ const unsafeReaderCopyPatterns = [
   /^Axis Integration\s*[-–:]/i
 ];
 
+const markdownDividerLinePattern = /^\s*(?:-{3,}|_{3,}|\*{3,})\s*$/;
+
+function normalizeReaderFacingParagraph(value: string | null | undefined) {
+  return (value ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !markdownDividerLinePattern.test(line))
+    .join("\n")
+    .trim();
+}
+
 export function isReaderFacingCopy(value: string | null | undefined) {
   const normalized = value?.replace(/\s+/g, " ").trim() ?? "";
 
@@ -150,7 +160,8 @@ export function isReaderFacingCopy(value: string | null | undefined) {
 
 export function readerFacingParagraphs(values: Array<string | null | undefined>) {
   const paragraphs = values
-    .map((value) => value?.trim() ?? "")
+    .flatMap((value) => (value ?? "").split(/\n{2,}/))
+    .map((value) => normalizeReaderFacingParagraph(value))
     .filter((value) => isReaderFacingCopy(value));
 
   return Array.from(new Set(paragraphs));
