@@ -11,6 +11,7 @@ import {
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
+import { emergencyStationCopy } from "../../content/emergencyCopy";
 import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallbackArchitectureV3/renderFallbackV3";
 import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3/runtimeBundle";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
@@ -773,6 +774,8 @@ function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
     const exactStationKeys = event.sign && event.phase && event.phase !== "retrograde-passage"
       ? [
           `sky.station.${planetPart}.${signPart}.${motion}`,
+          `sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
+          `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`,
           `fallback-hook/sky.station/${planetPart}/${motion}`
         ]
       : [];
@@ -853,9 +856,14 @@ function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, content: Li
   }
 
   if (event.type === "station" && event.planet && event.sign && event.direction && event.phase !== "retrograde-passage") {
-    const expected = `sky.station.${slugContentPart(event.planet)}.${slugContentPart(event.sign)}.${event.direction}`;
+    const planetPart = slugContentPart(event.planet);
+    const signPart = slugContentPart(event.sign);
+    const expected = `sky.station.${planetPart}.${signPart}.${event.direction}`;
+    const expectedRetrogradePhase = event.phase
+      ? `sky.retrograde.${planetPart}.${signPart}.${event.phase.replace(/-/g, "_")}`
+      : "";
 
-    return canonicalKey === expected;
+    return canonicalKey === expected || canonicalKey === expectedRetrogradePhase;
   }
 
   return true;
@@ -925,6 +933,10 @@ function calendarEventMadlibDescription(event: LunarCalendarEvent) {
 
       throw error;
     }
+  }
+
+  if (event.type === "station" && event.planet && event.direction === "direct") {
+    return emergencyStationCopy(event.planet, "direct");
   }
 
   if (event.type === "aspect" && event.planets && event.aspect) {
