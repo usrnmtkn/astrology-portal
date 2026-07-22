@@ -68,7 +68,6 @@ import compatibilitySummaryBank from "../../../tldr-astro-phrasebank/phrasebank/
 import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json";
 import {
   emergencyAspectBehavior,
-  emergencyDetailFallbackCopy,
   emergencyHouseArea,
   emergencyNatalPlacementCopy,
   emergencyPlanetFunction,
@@ -5072,9 +5071,6 @@ function SkyDetailArticle({
       fallbackParagraphs.length > 0 ||
       drilldown
   );
-  const emergencyFallbackParagraph = hasReadableBody || hasAspectCard
-    ? ""
-    : emergencyDetailFallbackCopy(detail.title);
   const isAspectsOnlyArticle = hasAspectCard && !hasReadableBody;
 
   return (
@@ -5119,7 +5115,7 @@ function SkyDetailArticle({
 
           <hr className="article-rule" />
 
-          {hasReadableBody || emergencyFallbackParagraph ? (
+          {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {detail.lensHint ? (
@@ -5211,11 +5207,6 @@ function SkyDetailArticle({
                   {detail.historicalLookback.paragraphs.map((paragraph, index) => (
                     <p key={`historical-${index}`}>{paragraph}</p>
                   ))}
-                </section>
-              ) : null}
-              {emergencyFallbackParagraph ? (
-                <section className="article-section sky-detail-section">
-                  <p>{emergencyFallbackParagraph}</p>
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
