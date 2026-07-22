@@ -489,11 +489,11 @@ assert.ok(
 );
 assert.ok(app.includes("hash.replace(/^#\\/?/, \"\")"), "Sky detail routes must accept both #sky/... and #/sky/... hash paths.");
 assert.ok(
-  app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent)")
-  && !app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents)")
+  app.includes("const placementEvents = skyPlacementPackageEvents({")
+  && app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents)")
   && app.includes("function skyPlacementMadlibFallbackSection(")
   && app.includes("transitSynastryFallbackRendererV3.renderSkyPlacement({"),
-  "Sky placement pages must keep placement body copy separate from related aspect cards."
+  "Sky placement pages must render the V3 placement article with package event paragraphs."
 );
 assert.ok(
   !app.includes("[AUTHORED]")
@@ -516,8 +516,18 @@ assert.ok(
   && app.includes("void generatedContent;"),
   "Sky pages must use fallback-only routing: no saved/authored/source-grounded prose may outrank madlib fallback."
 );
-assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"), "Sky placement list rows must use the normalized dashboard/authored surface preview.");
-assert.ok(app.includes("const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);"), "Sky aspect list rows must use the fallback-only sky-aspect normalizer.");
+assert.ok(
+  app.includes("normalizedSurfacePreview(")
+  && app.includes("normalizeSkyPlacementSurface(")
+  && app.includes("skyPlacementPackageEvents({")
+  && app.includes("planet: position.planet")
+  && app.includes("positions: displayPositions"),
+  "Sky placement list rows must use the normalized package surface preview with package event paragraphs."
+);
+assert.ok(
+  app.includes("const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);"),
+  "Sky aspect list rows must use the fallback-only sky-aspect normalizer with current transit timing."
+);
 assert.ok(
   app.includes("const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);")
   && app.includes("if (!normalizedAspect)")
@@ -575,7 +585,7 @@ assert.ok(
   "Calendar selected-day transit rows must open the same sign-specific detail route as week transit cards."
 );
 assert.ok(
-  app.includes("normalizeSkyAspectSurface(aspect, generatedContent, positions)")
+  app.includes("normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)")
   && app.includes("function skyAspectMadlibFallbackSection("),
   "Sky placement aspect rows must resolve through the sky-aspect normalizer before madlib fallback."
 );

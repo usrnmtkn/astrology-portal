@@ -137,7 +137,6 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
-    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
     // fallback template
     const T = tpl("fallback-template/transit.aspect");

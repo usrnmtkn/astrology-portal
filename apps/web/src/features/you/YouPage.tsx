@@ -684,6 +684,14 @@ function YouTransitArticlePage({
 
   const displaySummary = summary && !isDuplicateArticleCopy(summary, seenCopy) ? summary : "";
   const displayIntroParagraphs = introParagraphs.filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
+  const hasSuppliedReaderCopy = Boolean(
+    summary
+    || introParagraphs.length
+    || article.sections.some((section) => (
+      isReaderFacingCopy(cleanArticleText(section.tldr))
+      || articleParagraphs(section.body).some((paragraph) => isReaderFacingCopy(paragraph))
+    ))
+  );
   const sections = article.sections
     .map((section) => {
       const tldr = cleanArticleText(section.tldr);
@@ -714,7 +722,7 @@ function YouTransitArticlePage({
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
-  const fallbackParagraph = hasReadableBody || article.relatedAspects?.rows.length
+  const fallbackParagraph = hasReadableBody || hasSuppliedReaderCopy || article.relatedAspects?.rows.length
     ? ""
     : emergencyDetailFallbackCopy(article.title);
   const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);

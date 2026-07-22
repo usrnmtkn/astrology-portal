@@ -536,6 +536,35 @@ function rowPromptVersion(row: AdminGeneratedContentRow | AdminReviewRecord) {
   return "content_key" in row ? row.prompt_version : row.promptVersion;
 }
 
+function sourceSnapshotString(snapshot: Record<string, unknown> | null | undefined, key: string) {
+  const value = snapshot?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+function normalizedSourceRole(snapshot: Record<string, unknown> | null | undefined) {
+  return [
+    sourceSnapshotString(snapshot, "contentRole"),
+    sourceSnapshotString(snapshot, "content_role"),
+    sourceSnapshotString(snapshot, "sourceRole"),
+    sourceSnapshotString(snapshot, "source_role"),
+    sourceSnapshotString(snapshot, "role")
+  ].find(Boolean)
+    ?.trim()
+    .toLowerCase()
+    .replace(/_/g, "-") ?? "";
+}
+
+function normalizedSourceContentType(snapshot: Record<string, unknown> | null | undefined) {
+  return [
+    sourceSnapshotString(snapshot, "contentType"),
+    sourceSnapshotString(snapshot, "content_type"),
+    sourceSnapshotString(snapshot, "type")
+  ].find(Boolean)
+    ?.trim()
+    .toLowerCase()
+    .replace(/_/g, "-") ?? "";
+}
+
 function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentRole {
   const contentKey = rowContentKey(row);
   const blockType = rowBlockType(row);
@@ -544,17 +573,20 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   const eventType = "content_key" in row ? row.event_type : row.eventType;
   const sourceSnapshot = sourceSnapshotForRow(row);
   const sourceText = JSON.stringify(sourceSnapshot ?? {});
-  const sourceContentType = typeof sourceSnapshot?.contentType === "string" ? sourceSnapshot.contentType : "";
-  const sourceBucket = typeof sourceSnapshot?.bucket === "string" ? sourceSnapshot.bucket : "";
-  const sourceTargetFamily = typeof sourceSnapshot?.targetContentFamily === "string" ? sourceSnapshot.targetContentFamily : "";
-  const sourceContentSystem = typeof sourceSnapshot?.contentSystem === "string" ? sourceSnapshot.contentSystem : "";
-  const sourceRole = typeof sourceSnapshot?.contentRole === "string"
-    ? sourceSnapshot.contentRole
-    : typeof sourceSnapshot?.sourceRole === "string"
-      ? sourceSnapshot.sourceRole
-      : "";
+  const sourceContentType = normalizedSourceContentType(sourceSnapshot);
+  const sourceBucket = sourceSnapshotString(sourceSnapshot, "bucket").toLowerCase();
+  const sourceTargetFamily = sourceSnapshotString(sourceSnapshot, "targetContentFamily").toLowerCase();
+  const sourceContentSystem = sourceSnapshotString(sourceSnapshot, "contentSystem").toLowerCase().replace(/_/g, "-");
+  const sourceRole = normalizedSourceRole(sourceSnapshot);
 
-  if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_template" || blockType === "fallback_hook" || promptVersion === "fallback-hook-template-v1") {
+  if (
+    contentKey.startsWith("fallback-hook/") ||
+    blockType === "fallback_template" ||
+    blockType === "fallback_hook" ||
+    promptVersion === "fallback-hook-template-v1" ||
+    sourceRole === "fallback-hook" ||
+    sourceContentType === "fallback-hook"
+  ) {
     return "fallback-output";
   }
 
@@ -570,6 +602,7 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
     contentKey.startsWith("guide-phrase/") ||
     eventType === "vocab" ||
     sourceContentType === "vocab" ||
+    sourceContentType === "vocabulary" ||
     sourceBucket === "vocab" ||
     sourceTargetFamily === "vocab" ||
     blockType === "vocabulary_phrase"
@@ -782,11 +815,19 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
     row.block_type,
     row.event_type,
     row.prompt_version,
-    row.provider,
-    contentClassForRow(row),
-    contentRoleForRecord(row),
-    tierForRow(row),
-    contentCategoryForRow(row)
+    row.provider
+  ].join(" ").toLowerCase();
+}
+
+function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
+  return [
+    row.content_key,
+    row.headline,
+    row.surface,
+    row.mode,
+    row.block_type,
+    row.event_type,
+    fallbackSectionForKey(row.content_key, row.surface)
   ].join(" ").toLowerCase();
 }
 
@@ -873,12 +914,20 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
   const provider = "content_key" in row ? row.provider : row.provider;
   const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
   const flags = Array.isArray(sourceSnapshot?.flags) ? sourceSnapshot.flags.join(" ") : JSON.stringify(sourceSnapshot ?? {});
-  const sourceContentType = typeof sourceSnapshot?.contentType === "string" ? sourceSnapshot.contentType : "";
-  const sourceBucket = typeof sourceSnapshot?.bucket === "string" ? sourceSnapshot.bucket : "";
-  const sourceTargetFamily = typeof sourceSnapshot?.targetContentFamily === "string" ? sourceSnapshot.targetContentFamily : "";
+  const sourceContentType = normalizedSourceContentType(sourceSnapshot);
+  const sourceBucket = sourceSnapshotString(sourceSnapshot, "bucket").toLowerCase();
+  const sourceTargetFamily = sourceSnapshotString(sourceSnapshot, "targetContentFamily").toLowerCase();
+  const sourceRole = normalizedSourceRole(sourceSnapshot);
   const eventType = "content_key" in row ? row.event_type : row.eventType;
 
-  if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_template" || promptVersion === "fallback-hook-template-v1") return "fallback-hook";
+  if (
+    contentKey.startsWith("fallback-hook/") ||
+    blockType === "fallback_template" ||
+    blockType === "fallback_hook" ||
+    promptVersion === "fallback-hook-template-v1" ||
+    sourceRole === "fallback-hook" ||
+    sourceContentType === "fallback-hook"
+  ) return "fallback-hook";
   if (
     contentKey.startsWith("vocab/") ||
     contentKey.startsWith("vocab.") ||
@@ -886,12 +935,20 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
     contentKey.startsWith("guide-phrase/") ||
     eventType === "vocab" ||
     sourceContentType === "vocab" ||
+    sourceContentType === "vocabulary" ||
     sourceBucket === "vocab" ||
     sourceTargetFamily === "vocab" ||
     blockType === "vocabulary_phrase" ||
     promptVersion === "vocab-v1" ||
     promptVersion === "tagline-v1"
   ) return "vocab";
+  if (
+    sourceRole === "fallback-source" ||
+    sourceRole === "source-material" ||
+    sourceContentType === "source-material" ||
+    sourceBucket === "source-material" ||
+    eventType === "fallback-source"
+  ) return "reference";
   if (contentKey.startsWith("compatibility.") || eventType === "friends.compatibility.planet-card") return "phrasebank";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
   if (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider)) return "legacy";
@@ -1142,7 +1199,18 @@ async function loadAllGeneratedContentRows(secret: string) {
     }
   }
 
-  return allRows;
+  return dedupeGeneratedContentRows(allRows);
+}
+
+function dedupeGeneratedContentRows(rows: AdminGeneratedContentRow[]) {
+  const byId = new Map<string, AdminGeneratedContentRow>();
+  rows.forEach((row) => {
+    const key = row.id || row.content_key;
+    if (!byId.has(key)) {
+      byId.set(key, row);
+    }
+  });
+  return [...byId.values()];
 }
 
 function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
@@ -1268,8 +1336,8 @@ export function GeneratedContentAdminDashboard() {
     [localSkySnapshotRows, persistedContentKeys]
   );
   const visibleRows = useMemo(
-    () => [...rows, ...visibleLocalSnapshots],
-    [rows, visibleLocalSnapshots]
+    () => rows,
+    [rows]
   );
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
@@ -1404,7 +1472,7 @@ export function GeneratedContentAdminDashboard() {
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
-      && matchesAdminSearch(visibleRowSearchText(row), query)
+      && matchesAdminSearch(fallbackHookVisibleSearchText(row), query)
   )), [savedFallbackRows, fallbackSectionFilter, query]);
   const filteredHookCatalog = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -1478,19 +1546,25 @@ export function GeneratedContentAdminDashboard() {
       const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
       const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
 
-      if (category && categoryFilters.some((filter) => filter.key === category)) setCategoryFilter(category);
-      if (source && contentClassFilters.some((filter) => filter.key === source)) setContentClassFilter(source);
+      setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
+      setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
       setQuery(search ?? "");
-      if (section && fallbackSections.some((filter) => filter.key === section)) setFallbackSectionFilter(section);
-      if (area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area)) setSurfaceAreaFilter(area);
-      if (status && ["all", "complete", "partial", "missing"].includes(status)) setSurfaceStatusFilter(status);
-      if (page === "vocabulary" && params.get("category") === "relationship") setVocabularyCategory("relationship");
+      setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
+      setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area) ? area : "all");
+      setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
+      setVocabularyCategory(page === "vocabulary" && params.get("category") === "relationship" ? "relationship" : "planets");
       if (page === "compatibility") {
-        if (compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection)) setCompatibilitySectionFilter(compatibilitySection);
-        if (status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus))) setCompatibilityStatusFilter(status as GeneratedContentStatus | "all");
-        if (compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet)) setCompatibilityPlanetFilter(compatibilityPlanet);
-        if (compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam)) setCompatibilitySort(compatibilitySortParam);
+        setCompatibilitySectionFilter(compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection) ? compatibilitySection : "all");
+        setCompatibilityStatusFilter(status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus)) ? status as GeneratedContentStatus | "all" : "all");
+        setCompatibilityPlanetFilter(compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet) ? compatibilityPlanet : "all");
+        setCompatibilitySort(compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam) ? compatibilitySortParam : "updated-desc");
         setCompatibilityQuery(search ?? "");
+      } else {
+        setCompatibilitySectionFilter("all");
+        setCompatibilityStatusFilter("all");
+        setCompatibilityPlanetFilter("all");
+        setCompatibilitySort("updated-desc");
+        setCompatibilityQuery("");
       }
     }
 
@@ -2524,7 +2598,7 @@ export function GeneratedContentAdminDashboard() {
               <span className="ui-pill admin-status">{userRows.length} user rows</span>
             </section>
             <div className="admin-content-table-scroll">
-              <table className="admin-content-table">
+              <table className="admin-content-table admin-user-content-table">
                 <thead className="admin-content-table-head">
                   <tr>
                     <th scope="col">Content</th>

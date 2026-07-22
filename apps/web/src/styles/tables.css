@@ -264,10 +264,13 @@ button.planet-placement-row {
   font-weight: var(--weight-semibold);
 }
 
-.planet-placement-row__duration {
+.ui-pill.planet-placement-row__duration {
   position: relative;
   top: -1px;
   margin-right: 0;
+  border: 1px solid var(--duration-pill-border-color);
+  background: var(--duration-pill-bg);
+  color: var(--duration-pill-fg);
 }
 
 .duration-label__value {
@@ -307,6 +310,14 @@ button.planet-placement-row {
 
 .planet-placement-row__status .spl-dig {
   margin: 0;
+}
+
+.planet-placement-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) 10px;
+  margin-top: var(--space-1);
 }
 
 .planet-placement-row--natal,

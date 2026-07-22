@@ -705,8 +705,8 @@ export function PlanetPlacementRow({
   }
 
   const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
-  const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
-  const timingStatuses = statuses.filter((status) => status.tone !== "retrograde");
+  const dignityItems = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
+  const hasFooterTags = statuses.length > 0 || dignityItems.length > 0;
   const displayHouse = displayHouseForPoint(house, pointName);
   const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : "House pending";
   const rowClassName = [
@@ -729,11 +729,6 @@ export function PlanetPlacementRow({
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
-          {titleStatuses.map((status) => (
-            <span className={statusPillClassName(status.tone)} key={status.label}>
-              {status.label}
-            </span>
-          ))}
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
@@ -748,26 +743,24 @@ export function PlanetPlacementRow({
               </span>
             ) : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
-            {timingStatuses.map((status) => (
-              <span className={statusPillClassName(status.tone)} key={status.label}>
-                {status.label}
-              </span>
-            ))}
-            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
           </span>
         ) : (
           <span className="planet-placement-row__meta placement-row__house">
             <span>{houseLabel}</span>
-            {timingStatuses.map((status) => (
-              <span className={statusPillClassName(status.tone)} key={status.label}>
-                {status.label}
-              </span>
-            ))}
-            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
           </span>
         )}
         {description ? (
           <span className="planet-placement-row__description">{description}</span>
+        ) : null}
+        {hasFooterTags ? (
+          <span className="planet-placement-row__tags">
+            {statuses.map((status) => (
+              <span className={statusPillClassName(status.tone)} key={status.label}>
+                {status.label}
+              </span>
+            ))}
+            <DignityBadge dignity={dignityItems} uppercase={variant === "sky"} />
+          </span>
         ) : null}
       </span>
     </>

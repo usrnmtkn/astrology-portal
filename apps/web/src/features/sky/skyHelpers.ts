@@ -69,6 +69,7 @@ export type SolarPhaseStatus = {
 
 export function skyNodeDisplayPositions(positions: PlanetPosition[]) {
   const northNodeSource = positions.find((position) => position.planet === "North Node" || position.planet === "True Node");
+  const southNodeSource = positions.find((position) => position.planet === "South Node");
 
   if (!northNodeSource) {
     return positions;
@@ -79,19 +80,20 @@ export function skyNodeDisplayPositions(positions: PlanetPosition[]) {
     planet: "North Node",
     glyph: "☊"
   };
-  const southNodeBase = positionFromLongitude({
-    planet: "South Node",
-    glyph: "☋",
-    longitude: zodiacLongitude(northNodeSource) + 180
-  });
-  const southNode: PlanetPosition = {
-    ...southNodeBase,
-    house: northNodeSource.house,
-    motion: northNodeSource.motion,
-    transitStart: northNodeSource.transitStart,
-    transitEnd: northNodeSource.transitEnd,
-    transitRemainingLabel: northNodeSource.transitRemainingLabel
-  };
+  const southNode: PlanetPosition = southNodeSource
+    ? {
+        ...southNodeSource,
+        planet: "South Node",
+        glyph: "☋"
+      }
+    : {
+        ...positionFromLongitude({
+          planet: "South Node",
+          glyph: "☋",
+          longitude: zodiacLongitude(northNodeSource) + 180
+        }),
+        motion: northNodeSource.motion
+      };
 
   return [
     ...positions.filter((position) => position.planet !== "True Node" && position.planet !== "North Node" && position.planet !== "South Node"),

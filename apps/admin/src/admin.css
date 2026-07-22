@@ -8286,9 +8286,9 @@ body,
 
 .admin-dashboard .admin-content-table {
   border-collapse: collapse;
-  min-width: 1024px;
+  min-width: 980px;
   table-layout: fixed;
-  width: 100%;
+  width: max(100%, 980px);
 }
 
 .admin-dashboard .admin-content-table th,
@@ -8322,37 +8322,37 @@ body,
 
 .admin-dashboard .admin-content-table th:nth-child(2),
 .admin-dashboard .admin-content-table td:nth-child(2) {
-  width: 220px;
+  width: 260px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(3),
 .admin-dashboard .admin-content-table td:nth-child(3) {
-  width: 112px;
+  width: 122px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(4),
 .admin-dashboard .admin-content-table td:nth-child(4) {
-  width: 96px;
+  width: 104px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(5),
 .admin-dashboard .admin-content-table td:nth-child(5) {
-  width: 96px;
+  width: 98px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(6),
 .admin-dashboard .admin-content-table td:nth-child(6) {
-  width: 102px;
+  width: 118px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(7),
 .admin-dashboard .admin-content-table td:nth-child(7) {
-  width: 92px;
+  width: 98px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(8),
 .admin-dashboard .admin-content-table td:nth-child(8) {
-  width: 132px;
+  width: 128px;
 }
 
 .admin-dashboard .admin-content-table th:nth-child(9),
@@ -8390,7 +8390,7 @@ body,
 
 .admin-dashboard .admin-content-table-head th:last-child,
 .admin-dashboard .admin-content-row td:last-child {
-  box-shadow: -18px 0 24px rgba(17, 19, 18, 0.78);
+  box-shadow: -10px 0 18px rgba(17, 19, 18, 0.72);
   position: sticky;
   right: 0;
   z-index: 2;
@@ -8422,7 +8422,7 @@ body,
   line-height: 1.18;
   max-width: 100%;
   overflow: hidden;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -8486,7 +8486,7 @@ body,
 
 .admin-dashboard .admin-edit-row-button {
   min-height: 32px;
-  min-width: 68px;
+  min-width: 72px;
   padding: 0 12px;
   white-space: nowrap;
 }
@@ -8503,6 +8503,54 @@ body,
   text-overflow: clip;
   white-space: nowrap;
   width: 92px;
+}
+
+.admin-dashboard .admin-user-content-table {
+  min-width: 1040px;
+  width: max(100%, 1040px);
+}
+
+.admin-dashboard .admin-user-content-table th:nth-child(1),
+.admin-dashboard .admin-user-content-table td:nth-child(1) {
+  width: 280px;
+}
+
+.admin-dashboard .admin-user-content-table th:nth-child(2),
+.admin-dashboard .admin-user-content-table td:nth-child(2) {
+  width: 260px;
+}
+
+.admin-dashboard .admin-user-content-table th:nth-child(3),
+.admin-dashboard .admin-user-content-table td:nth-child(3),
+.admin-dashboard .admin-user-content-table th:nth-child(4),
+.admin-dashboard .admin-user-content-table td:nth-child(4) {
+  width: 155px;
+}
+
+.admin-dashboard .admin-user-content-table th:nth-child(5),
+.admin-dashboard .admin-user-content-table td:nth-child(5) {
+  width: 96px;
+}
+
+.admin-dashboard .admin-user-content-table th:nth-child(6),
+.admin-dashboard .admin-user-content-table td:nth-child(6) {
+  width: 94px;
+}
+
+.admin-dashboard .admin-user-content-table td:nth-child(2) code {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-user-content-table th:last-child,
+.admin-dashboard .admin-user-content-table td:last-child {
+  box-shadow: none;
+  position: static;
+  text-align: left;
+  width: 94px;
 }
 
 .admin-dashboard .admin-workbench,
@@ -8840,8 +8888,37 @@ body,
   align-items: start;
   display: grid;
   gap: 10px 12px;
-  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-columns: 24px minmax(0, 1fr) auto;
   min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-copy h3,
+.admin-dashboard .admin-review-queue-copy code,
+.admin-dashboard .admin-review-queue-row p {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.admin-dashboard .admin-review-queue-copy code {
+  display: inline-block;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-review-queue-meta-strip {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: min(280px, 100%);
 }
 
 .admin-dashboard .admin-review-queue-copy {
