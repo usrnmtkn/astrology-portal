@@ -63,7 +63,9 @@ export function aspectGlyph(type: string) {
     opposition: "☍",
     square: "□",
     trine: "△",
-    sextile: "✶"
+    sextile: "✶",
+    quincunx: "⚻",
+    inconjunct: "⚻"
   };
 
   return glyphs[type] ?? "·";

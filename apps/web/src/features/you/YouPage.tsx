@@ -1,8 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
+import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
@@ -13,6 +14,7 @@ import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type 
 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
+type AspectToneBucket = "gifts" | "lessons";
 
 export type PersonalTimingSummary = {
   headline: string;
@@ -43,6 +45,8 @@ export type YouTransitArticle = {
     tldr: string;
     body: string;
     role?: "main" | "aspect";
+    aspectType?: string;
+    group?: AspectToneBucket;
     sourceTag?: string;
   }>;
   relatedAspects?: {
@@ -555,6 +559,49 @@ function cleanArticleHeading(value?: string | null) {
   return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
 }
 
+const articleGiftAspectTypes = new Set(["sextile", "trine"]);
+const articleAspectTypePattern = /\b(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\b/i;
+
+function normalizedArticleAspectType(value?: string | null) {
+  const normalized = (value ?? "").trim().toLowerCase();
+
+  if (normalized === "conjunct") {
+    return "conjunction";
+  }
+
+  if (normalized === "opposite") {
+    return "opposition";
+  }
+
+  if (normalized === "inconjunct") {
+    return "quincunx";
+  }
+
+  return normalized;
+}
+
+function articleAspectTypeFromText(value: string) {
+  return normalizedArticleAspectType(value.match(articleAspectTypePattern)?.[1] ?? "");
+}
+
+function articleAspectToneBucket(aspectType?: string): AspectToneBucket {
+  return articleGiftAspectTypes.has(normalizedArticleAspectType(aspectType)) ? "gifts" : "lessons";
+}
+
+function articleAspectGlyphPartsFromHeading(heading: string) {
+  const match = heading.match(/^\s*(.+?)\s+(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\s+(.+?)\s*$/iu);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    from: match[1].trim(),
+    aspect: normalizedArticleAspectType(match[2]),
+    to: match[3].trim()
+  };
+}
+
 const articleZodiacGlyphs: Record<string, string> = {
   Aries: "♈",
   Taurus: "♉",
@@ -649,6 +696,8 @@ function YouTransitArticlePage({
       return {
         heading: cleanArticleHeading(section.heading),
         role: section.role,
+        aspectType: section.aspectType || articleAspectTypeFromText(`${section.heading} ${section.body}`),
+        group: section.group ?? articleAspectToneBucket(section.aspectType || articleAspectTypeFromText(section.heading)),
         sourceTag,
         tldr: displayTldr,
         bodyParagraphs
@@ -657,6 +706,13 @@ function YouTransitArticlePage({
     .filter((section) => section.tldr || section.bodyParagraphs.length);
   const mainSections = sections.filter((section) => section.role !== "aspect");
   const aspectSections = sections.filter((section) => section.role === "aspect");
+  const aspectGroups = ([
+    { id: "gifts" as const, label: "Gifts" },
+    { id: "lessons" as const, label: "Lessons" }
+  ]).map((group) => ({
+    ...group,
+    sections: aspectSections.filter((section) => section.group === group.id)
+  })).filter((group) => group.sections.length > 0);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
   const fallbackParagraph = hasReadableBody || article.relatedAspects?.rows.length
     ? ""
@@ -701,6 +757,7 @@ function YouTransitArticlePage({
 
           <hr className="article-rule" />
 
+          {displaySummary || displayIntroParagraphs.length || mainSections.length || fallbackParagraph ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {article.lensHint ? (
@@ -751,27 +808,40 @@ function YouTransitArticlePage({
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
           </div>
+          ) : null}
         </div>
-        {aspectSections.map((section, index) => {
-          const showTldr = section.tldr && normalizedArticleCopy(section.tldr) !== normalizedArticleCopy(section.bodyParagraphs[0]);
 
-          return (
-            <div className="article-card sky-detail-card you-transit-aspect-card" key={`aspect-${section.heading}-${index}`}>
-              <div className="article-body-card sky-detail-body">
-                <div className="article-body-inner">
-                  <section className="article-section sky-detail-section">
-                    {section.heading ? <h2>{section.heading}</h2> : null}
-                    {section.sourceTag ? <p>{section.sourceTag}</p> : null}
-                    {showTldr ? <p>{section.tldr}</p> : null}
-                    {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
-                      <p key={`${section.heading || "aspect"}-${index}-${paragraphIndex}`}>{paragraph}</p>
-                    ))}
-                  </section>
+        {aspectGroups.length ? aspectGroups.map((group) => (
+          <Fragment key={group.id}>
+            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">{group.label}</span>
+            <section className="article-card article-related-aspects article-related-aspects-card" aria-label={group.label}>
+              <div className="article-related-aspects__group">
+                <div className="article-related-aspects__copy-list">
+                  {group.sections.map((section, index) => {
+                    const showTldr = section.tldr && normalizedArticleCopy(section.tldr) !== normalizedArticleCopy(section.bodyParagraphs[0]);
+                    const glyphParts = section.heading ? articleAspectGlyphPartsFromHeading(section.heading) : null;
+
+                    return (
+                      <section className="article-section sky-detail-section article-related-aspects__copy" key={`aspect-${section.heading}-${index}`}>
+                        {section.heading ? (
+                          <div className="article-related-aspects__copy-heading">
+                            {glyphParts ? <AspectGlyphs from={glyphParts.from} aspect={glyphParts.aspect} to={glyphParts.to} /> : null}
+                            <h3>{section.heading}</h3>
+                          </div>
+                        ) : null}
+                        {section.sourceTag ? <p>{section.sourceTag}</p> : null}
+                        {showTldr ? <p>{section.tldr}</p> : null}
+                        {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
+                          <p key={`${section.heading || "aspect"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                        ))}
+                      </section>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
-          );
-        })}
+            </section>
+          </Fragment>
+        )) : null}
       </article>
     </section>
   );
