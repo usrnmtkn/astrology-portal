@@ -72,10 +72,6 @@ type LunarCalendarProps = {
   showJournalPrompts?: boolean;
 };
 
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (callback: () => void) => { finished: Promise<void> };
-};
-
 type LocationSearchStatus = "idle" | "loading" | "ready" | "empty" | "error";
 
 const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = [
@@ -2065,16 +2061,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   );
   const handleViewModeChange = (nextMode: LunarCalendarViewMode) => {
     if (nextMode === viewMode) return;
-
-    const updateMode = () => setViewMode(nextMode);
-    const viewTransitionDocument = document as ViewTransitionDocument;
-
-    if (typeof viewTransitionDocument.startViewTransition === "function") {
-      viewTransitionDocument.startViewTransition(updateMode);
-      return;
-    }
-
-    updateMode();
+    setViewMode(nextMode);
   };
   function handleSelectDate(dateKey: string) {
     setSelectedDateKey(dateKey);
@@ -2469,11 +2456,11 @@ function TransitCard({
         ))}
       </span>
       <h3 className="tx-title">{title}</h3>
-      {description ? <p className="tx-body">{description}</p> : null}
       <div className="tx-foot">
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
       </div>
+      {description ? <p className="tx-body">{description}</p> : null}
     </>
   );
 

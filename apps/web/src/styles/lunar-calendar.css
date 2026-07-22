@@ -54,19 +54,6 @@
   overflow: visible;
 }
 
-@supports (view-transition-name: none) {
-  .lunar-calendar-body {
-    view-transition-name: lunar-calendar-body;
-  }
-
-  ::view-transition-old(lunar-calendar-body),
-  ::view-transition-new(lunar-calendar-body) {
-    animation-duration: 340ms;
-    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
-    mix-blend-mode: normal;
-  }
-}
-
 .calendar-content-column {
   display: block;
   width: 100%;
@@ -1054,7 +1041,7 @@ a.tx-card.has-article:hover {
 
 .tx-body {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 3;
   min-width: 0;
   margin: 0;
   text-wrap: pretty;
@@ -1063,7 +1050,7 @@ a.tx-card.has-article:hover {
 .tx-foot {
   display: flex;
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 2;
   align-items: center;
   gap: var(--sp-1) 10px;
   margin-top: 0;
@@ -1075,6 +1062,10 @@ a.tx-card.has-article:hover {
 
 .tx-date {
   min-width: 0;
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: var(--lunar-type-body);
+  line-height: var(--leading-label);
 }
 
 .tx-more {
@@ -2137,9 +2128,7 @@ a.tx-card.has-article:hover .tx-more {
 @media (prefers-reduced-motion: reduce) {
   .lunar-calendar-body,
   .lunar-calendar-grid-panel,
-  .lunar-week-strip,
-  ::view-transition-old(lunar-calendar-body),
-  ::view-transition-new(lunar-calendar-body) {
+  .lunar-week-strip {
     animation: none !important;
     transition: none !important;
   }
