@@ -32,6 +32,7 @@ export type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  tldr?: string;
   lensHint?: ReactNode;
   compactHeader?: boolean;
   plainBody?: boolean;
@@ -670,11 +671,20 @@ function YouTransitArticlePage({
       .filter(Boolean))
     : [];
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
-  const rawSectionTldr = article.sections.map((section) => cleanArticleText(section.tldr)).find(Boolean) ?? "";
-  const articleTldrCandidate = cleanArticleText(article.subtitle || summary || introParagraphs[0] || rawSectionTldr);
-  const articleTldr = articleTldrCandidate && normalizedArticleCopy(articleTldrCandidate) !== normalizedArticleCopy(introParagraphs[0])
-    ? articleTldrCandidate
-    : "";
+  const rawSectionTldr = article.sections
+    .map((section) => cleanArticleText(section.tldr))
+    .find((value) => value && value.toLowerCase() !== "tldr" && !contentSourceQaTag(value)) ?? "";
+  const authoredBodyCopies = [
+    summary,
+    ...introParagraphs,
+    ...article.sections.flatMap((section) => articleParagraphs(section.body))
+  ].map(normalizedArticleCopy).filter(Boolean);
+  // TLDR is an authored slot. Never infer it from subtitle, summary, or body.
+  const articleTldrCandidate = cleanArticleText(article.tldr || rawSectionTldr);
+  const normalizedTldrCandidate = normalizedArticleCopy(articleTldrCandidate);
+  const articleTldr = articleTldrCandidate && !authoredBodyCopies.some((body) => (
+    body === normalizedTldrCandidate || body.startsWith(normalizedTldrCandidate)
+  )) ? articleTldrCandidate : "";
   const seenCopy = new Set<string>();
 
   if (articleTldr) {
@@ -751,7 +761,7 @@ function YouTransitArticlePage({
             ) : null}
           </header>
 
-          <hr className="article-rule" />
+          {hasReadableBody ? <hr className="article-rule" /> : null}
 
           {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">

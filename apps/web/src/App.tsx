@@ -339,6 +339,7 @@ type TransitItem = {
   glyph: string;
   transitPlanet: string;
   transitSign?: string;
+  transitMotion?: "direct" | "retrograde";
   aspect: string;
   natalPoint: string;
   natalSign: string;
@@ -6142,6 +6143,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         glyph: aspectGlyph(aspect.type),
         transitPlanet: transitPosition.planet,
         transitSign: transitPosition.sign,
+        transitMotion: transitPosition.motion,
         aspect: aspect.type,
         natalPoint: natalPosition.planet,
         natalSign: natalPosition.sign,
@@ -8033,6 +8035,7 @@ function normalizeTransitHouseSurface(
       house,
       planet: normalizeContentIdPart(transit.transitPlanet),
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
+      motion: transit.transitMotion,
       window: personalTransitPackageWindow(transit, generatedAt)
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
