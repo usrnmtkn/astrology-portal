@@ -740,7 +740,7 @@
 }
 
 .friend-synastry-wheel-shell > .natal-chart-view-toggle {
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 }
 
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),

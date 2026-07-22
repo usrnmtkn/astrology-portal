@@ -530,7 +530,7 @@
 
 .article-related-aspects .aspect-row.article-related-aspect-row {
   --row-bg: transparent;
-  --aspect-row-padding: calc(var(--space-7) - var(--space-1)) 0;
+  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) 0;
 
   border: 0;
   border-bottom: 1px solid var(--line);
