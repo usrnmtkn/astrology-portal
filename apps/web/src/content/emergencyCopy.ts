@@ -473,16 +473,6 @@ export function emergencySynastryAspectCopy({
   );
 }
 
-export function emergencyDetailFallbackCopy(title: string) {
-  const cleanedTitle = cleanComposedCopy(title || "This chart factor");
-  const subject = cleanedTitle && !containsBannedPhrase(cleanedTitle) ? cleanedTitle : "This chart factor";
-
-  return safeComposedCopy(
-    `${subject} is close enough to read. The title, timing, and chart context give the clearest available frame.`,
-    "This chart factor is close enough to read. The title, timing, and chart context give the clearest available frame."
-  );
-}
-
 export function emergencySkyPlacementAspectRowCopy(planetA: string, aspect: string, planetB: string) {
   const composed = interpolateEmergencyCopy(template("sky-aspect-row"), {
     PlanetA: displayName(planetA),

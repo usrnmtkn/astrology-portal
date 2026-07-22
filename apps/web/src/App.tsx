@@ -67,17 +67,6 @@ import moonCompatibilityLibrary from "../../../tldr-astro-phrasebank/phrasebank/
 import compatibilitySummaryBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json";
 import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json";
 import {
-  emergencyAspectBehavior,
-  emergencyHouseArea,
-  emergencyNatalPlacementCopy,
-  emergencyPlanetFunction,
-  emergencyPointFunction,
-  emergencyRulerBridgeCopy,
-  emergencySignRuler,
-  emergencySignTone,
-  emergencySynastryAspectCopy
-} from "./content/emergencyCopy";
-import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
 } from "./content/fallbackArchitectureV3/renderFallbackV3";
@@ -89,6 +78,13 @@ import {
   fallbackRendererV3,
   transitSynastryFallbackRendererV3
 } from "./content/fallbackArchitectureV3/runtimeBundle";
+import {
+  fallbackV3AspectFeel,
+  fallbackV3HouseTopic,
+  fallbackV3PlanetTopic,
+  fallbackV3SignRuler,
+  fallbackV3SignStyle
+} from "./content/fallbackArchitectureV3/vocabulary";
 import {
   isSafeNatalAspectFallbackCopy
 } from "./content/natalAspectCopySafety";
@@ -1405,29 +1401,29 @@ function generatedContentSourceFile(content: LiveGeneratedContent | null) {
 }
 
 function signStyleSlot(sign: string) {
-  return signStylePhrase(sign) || emergencySignTone(sign);
+  return signStylePhrase(sign) || fallbackV3SignStyle(sign);
 }
 
 function planetTopicSlot(planet: string, variant: PlanetTopicVariant = "natal") {
-  return planetTopicPhrase(planet, variant) || emergencyPlanetFunction(planet);
+  return planetTopicPhrase(planet, variant) || fallbackV3PlanetTopic(planet);
 }
 
 const relationshipPlanetTopicFallbacks: Record<string, string> = {
-  Sun: emergencyPlanetFunction("Sun"),
-  Moon: emergencyPlanetFunction("Moon"),
-  Mercury: emergencyPlanetFunction("Mercury"),
-  Venus: emergencyPlanetFunction("Venus"),
-  Mars: emergencyPlanetFunction("Mars"),
-  Jupiter: emergencyPlanetFunction("Jupiter"),
-  Saturn: emergencyPlanetFunction("Saturn"),
-  Uranus: emergencyPlanetFunction("Uranus"),
-  Neptune: emergencyPlanetFunction("Neptune"),
-  Pluto: emergencyPlanetFunction("Pluto"),
-  Chiron: emergencyPlanetFunction("Chiron"),
-  Ascendant: emergencyPlanetFunction("Ascendant"),
-  Midheaven: emergencyPlanetFunction("Midheaven"),
-  "North Node": emergencyPlanetFunction("North Node"),
-  "True Node": emergencyPlanetFunction("True Node")
+  Sun: fallbackV3PlanetTopic("Sun"),
+  Moon: fallbackV3PlanetTopic("Moon"),
+  Mercury: fallbackV3PlanetTopic("Mercury"),
+  Venus: fallbackV3PlanetTopic("Venus"),
+  Mars: fallbackV3PlanetTopic("Mars"),
+  Jupiter: fallbackV3PlanetTopic("Jupiter"),
+  Saturn: fallbackV3PlanetTopic("Saturn"),
+  Uranus: fallbackV3PlanetTopic("Uranus"),
+  Neptune: fallbackV3PlanetTopic("Neptune"),
+  Pluto: fallbackV3PlanetTopic("Pluto"),
+  Chiron: fallbackV3PlanetTopic("Chiron"),
+  Ascendant: fallbackV3PlanetTopic("Ascendant"),
+  Midheaven: fallbackV3PlanetTopic("Midheaven"),
+  "North Node": fallbackV3PlanetTopic("North Node"),
+  "True Node": fallbackV3PlanetTopic("True Node")
 };
 
 function relationshipPlanetTopicSlot(planet: string, variant: PlanetTopicVariant = "friend") {
@@ -1575,7 +1571,7 @@ function natalPlacementTemplateSlots(
     planetTopic: planetTopicSlot(position.planet, variant),
     pointFunction: planetTopicSlot(position.planet, variant),
     sign: position.sign,
-    signStyle: emergencySignTone(position.sign),
+    signStyle: signStyleSlot(position.sign),
     house: houseNumber ? ordinalHouse(houseNumber) : "",
     houseLifeArea: houseNumber ? houseLifeAreas[houseNumber] ?? "" : ""
   };
@@ -1588,7 +1584,7 @@ function natalAngleTemplateSlots(position: PlanetPosition): TemplateSlotValues {
     planetTopic: planetTopicSlot(position.planet, "you"),
     angleTopic: planetTopicSlot(position.planet, "you") || relationshipPlanetTopicFallbacks[position.planet] || "",
     sign: position.sign,
-    signStyle: emergencySignTone(position.sign),
+    signStyle: signStyleSlot(position.sign),
     house: position.house ? ordinalHouse(position.house) : "",
     birthTimeConfidence: "reliable"
   };
@@ -1612,17 +1608,17 @@ function natalRulerTemplateSlots(
     rulerHouse: rulerHouse ? ordinalHouse(rulerHouse) : "",
     rulerTopic: planetTopicSlot(houseRuler, "you"),
     rulerFunction: planetTopicSlot(houseRuler, "you"),
-    rulerSignStyle: emergencySignTone(rulerPosition.sign),
+    rulerSignStyle: signStyleSlot(rulerPosition.sign),
     rulerHouseLifeArea: rulerHouse ? houseLifeAreas[rulerHouse] ?? "" : ""
   };
 }
 
 function aspectTonePhrase(aspect: string) {
-  return emergencyAspectBehavior(aspect);
+  return fallbackV3AspectFeel(aspect);
 }
 
 function transitPlanetWeatherPhrase(planet: string) {
-  return emergencyPlanetFunction(planet) || planetTopicSlot(planet, "sky");
+  return planetTopicSlot(planet, "sky");
 }
 
 function personalActivationPhrase(natalPoint: string, natalPointTopic: string) {
@@ -2242,35 +2238,35 @@ const zodiacSignGlyphs: Record<string, string> = {
 };
 
 const traditionalSignRulers: Record<string, string> = Object.fromEntries(
-  zodiacSigns.map((sign) => [sign, emergencySignRuler(sign)])
+  zodiacSigns.map((sign) => [sign, fallbackV3SignRuler(sign)])
 );
 const houseLifeAreas: Record<number, string> = {
-  1: emergencyHouseArea(1),
-  2: emergencyHouseArea(2),
-  3: emergencyHouseArea(3),
-  4: emergencyHouseArea(4),
-  5: emergencyHouseArea(5),
-  6: emergencyHouseArea(6),
-  7: emergencyHouseArea(7),
-  8: emergencyHouseArea(8),
-  9: emergencyHouseArea(9),
-  10: emergencyHouseArea(10),
-  11: emergencyHouseArea(11),
-  12: emergencyHouseArea(12)
+  1: fallbackV3HouseTopic(1),
+  2: fallbackV3HouseTopic(2),
+  3: fallbackV3HouseTopic(3),
+  4: fallbackV3HouseTopic(4),
+  5: fallbackV3HouseTopic(5),
+  6: fallbackV3HouseTopic(6),
+  7: fallbackV3HouseTopic(7),
+  8: fallbackV3HouseTopic(8),
+  9: fallbackV3HouseTopic(9),
+  10: fallbackV3HouseTopic(10),
+  11: fallbackV3HouseTopic(11),
+  12: fallbackV3HouseTopic(12)
 };
 const rulerHouseRouteKeywords: Record<number, string> = {
-  1: emergencyHouseArea(1),
-  2: emergencyHouseArea(2),
-  3: emergencyHouseArea(3),
-  4: emergencyHouseArea(4),
-  5: emergencyHouseArea(5),
-  6: emergencyHouseArea(6),
-  7: emergencyHouseArea(7),
-  8: emergencyHouseArea(8),
-  9: emergencyHouseArea(9),
-  10: emergencyHouseArea(10),
-  11: emergencyHouseArea(11),
-  12: emergencyHouseArea(12)
+  1: fallbackV3HouseTopic(1),
+  2: fallbackV3HouseTopic(2),
+  3: fallbackV3HouseTopic(3),
+  4: fallbackV3HouseTopic(4),
+  5: fallbackV3HouseTopic(5),
+  6: fallbackV3HouseTopic(6),
+  7: fallbackV3HouseTopic(7),
+  8: fallbackV3HouseTopic(8),
+  9: fallbackV3HouseTopic(9),
+  10: fallbackV3HouseTopic(10),
+  11: fallbackV3HouseTopic(11),
+  12: fallbackV3HouseTopic(12)
 };
 const naturalHouseSigns: Record<number, string> = {
   1: "Aries",
@@ -9970,14 +9966,35 @@ function directionalSynastryFallback(context: RelationshipFallbackGrammarContext
 }
 
 function relationshipAwareSynastryFallback(context: RelationshipFallbackGrammarContext) {
-  return emergencySynastryAspectCopy({
-    primaryName: context.primaryName,
-    primaryPoint: context.primaryPoint ?? "",
-    aspect: context.aspect ?? "",
-    comparisonName: context.comparisonName,
-    comparisonPoint: context.comparisonPoint ?? "",
-    comparisonIsSelf: context.comparisonIsSelf
-  });
+  const primaryPoint = context.primaryPoint?.trim();
+  const comparisonPoint = context.comparisonPoint?.trim();
+  const aspect = context.aspect?.trim();
+
+  if (!primaryPoint || !comparisonPoint || !aspect) {
+    return "";
+  }
+
+  const normalizedAspect = normalizeFallbackV3Aspect(aspect);
+  if (!normalizedAspect) {
+    return "";
+  }
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSynastryAspect({
+      planetA: normalizeContentIdPart(primaryPoint),
+      planetB: normalizeContentIdPart(comparisonPoint),
+      aspect: normalizedAspect,
+      otherName: context.comparisonIsSelf ? "you" : context.comparisonName
+    });
+
+    return readerFacingParagraphs(rendered.parts).join(" ");
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return "";
+    }
+
+    throw error;
+  }
 }
 
 function oldSynastryMatrixReplacementSentence(
@@ -14353,7 +14370,7 @@ function retrogradeCollapsedName(position: PlanetPosition) {
 }
 
 function retrogradeAttentionTopic(planet: string) {
-  return planetTopicPhrase(planet, "sky") || emergencyPlanetFunction(planet) || "what this planet is asking you to review";
+  return planetTopicPhrase(planet, "sky") || fallbackV3PlanetTopic(planet);
 }
 
 function generatedRetrogradeSummaryMatchesPlanets(summary: string, retrogrades: PlanetPosition[]) {

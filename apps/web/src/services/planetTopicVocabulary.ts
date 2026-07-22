@@ -1,6 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import { isReaderServableGeneratedContentRow } from "./generatedContent";
-import { emergencyPlanetFunction, emergencySignTone } from "../content/emergencyCopy";
+import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3/vocabulary";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export type PlanetTopicVariant = "you" | "friend" | "sky" | "natal";
@@ -162,17 +162,17 @@ function warnSignFallback(sign: string, reason: string) {
   if (!warnedFallbacks.has(warningKey)) {
     warnedFallbacks.add(warningKey);
     console.warn(
-      `Sign style vocabulary missing ${reason} for "${sign}"; using code fallback.`
+      `Sign style vocabulary missing ${reason} for "${sign}"; using package source vocabulary.`
     );
   }
 }
 
 function fallbackSignStyle(sign: string): SignStylePhrases {
-  return { phrase: emergencySignTone(sign) || "the sign's current style" };
+  return { phrase: fallbackV3SignStyle(sign) };
 }
 
 function fallbackSkyPlanetTopic(planet: string) {
-  return emergencyPlanetFunction(planet);
+  return fallbackV3PlanetTopic(planet);
 }
 
 function skyTopicValue(topic: PlanetTopicPhrases | undefined, planet: string) {

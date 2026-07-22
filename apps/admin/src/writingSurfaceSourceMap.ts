@@ -4,7 +4,7 @@ export type WritingSurfaceStatus = "normalized" | "partial" | "not-normalized";
 export type WritingSurfaceSource = {
   label: string;
   path: string;
-  role: "renderer" | "source-grounded" | "phrasebank" | "knowledge" | "madlib-material" | "stored-source" | "spec";
+  role: "renderer" | "source-grounded" | "phrasebank" | "knowledge" | "madlib-material" | "fallback-package" | "stored-source" | "spec";
 };
 
 export type WritingSurfaceMapItem = {
@@ -37,6 +37,7 @@ export const writingSurfaceSourceRoleLabels: Record<WritingSurfaceSource["role"]
   phrasebank: "Phrase bank",
   knowledge: "Knowledge bundle",
   "madlib-material": "Madlib material",
+  "fallback-package": "Fallback package",
   "stored-source": "Stored source rows",
   spec: "Spec"
 };
@@ -75,7 +76,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "cc-synastry-web-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json", role: "phrasebank" },
       { label: "relationships-web.json", path: "packages/astro-knowledge/dist/relationships-web.json", role: "knowledge" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -93,7 +94,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "cc-synastry-web-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json", role: "phrasebank" },
       { label: "relationshipRegistry.ts", path: "apps/web/src/content/relationshipRegistry.ts", role: "knowledge" },
       { label: "domainRegistry.ts", path: "apps/web/src/content/domainRegistry.ts", role: "knowledge" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -110,7 +111,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -146,7 +147,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "sourceGroundedModels.ts", path: "apps/web/src/content/sourceGroundedModels.ts", role: "source-grounded" },
       { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
       { label: "cc-natal-source-grounded-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json", role: "phrasebank" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -163,7 +164,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
       { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -210,7 +211,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
       { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
       { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -228,7 +229,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
       { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
       { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -246,7 +247,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
       { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
       { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -261,7 +262,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Add reviewed/source-grounded highlight rows if these cards need Layer 1 coverage, and expose layer/sourceKeys in the UI.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -276,7 +277,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Product-review Friends Circle before writing more prose: decide whether it is relationship radar, friend timing, social feed, or circle overview, then add authored rows only for the chosen job.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -307,7 +308,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "LunarCalendar.tsx", path: "apps/web/src/features/calendar/LunarCalendar.tsx", role: "renderer" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -394,7 +395,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Add reviewed/source-grounded transit-through-house records if this row needs Layer 1 coverage.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "emergencyCopy.json", path: "apps/web/src/content/emergencyCopy.json", role: "madlib-material" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {

@@ -11,7 +11,6 @@ import {
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
-import { emergencyStationCopy } from "../../content/emergencyCopy";
 import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallbackArchitectureV3/renderFallbackV3";
 import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3/runtimeBundle";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
@@ -932,7 +931,7 @@ function calendarEventMadlibDescription(event: LunarCalendarEvent) {
   }
 
   if (event.type === "station" && event.planet && event.direction === "direct") {
-    return emergencyStationCopy(event.planet, "direct");
+    return "";
   }
 
   if (event.type === "aspect" && event.planets && event.aspect) {
@@ -1001,7 +1000,7 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
       required: false,
       layer: "fallback",
       tier: "source-based-madlib",
-      sourceKeys: [`emergencyCopy.calendarEvent.${event.type}`],
+      sourceKeys: [`fallbackArchitectureV3.calendarEvent.${event.type}`],
       body: madlibDescription
     }]
   };
