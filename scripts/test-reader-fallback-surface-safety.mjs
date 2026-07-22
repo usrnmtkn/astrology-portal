@@ -9,6 +9,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const bundleDir = "/private/tmp/tldrastro-reader-fallback-surface-safety";
 const bundleFile = path.join(bundleDir, "source-grounded-runtime.bundle.mjs");
+const v2BundleFile = path.join(bundleDir, "source-grounded-v2.bundle.mjs");
+const sourceGroundedRecords = JSON.parse(
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/content/finalSourceGroundedDashboardRecords.json"), "utf8")
+);
+const legacyNatalAspectRecords = (sourceGroundedRecords.records ?? [])
+  .filter((record) => String(record.canonicalKey ?? "").startsWith("dashboard.natal-aspect."));
+
+assert.equal(
+  legacyNatalAspectRecords.length,
+  0,
+  "legacy source-grounded natal aspect phrasebank rows must be removed from the static bundle so v3 fallback is used until true authored rows exist"
+);
 
 fs.mkdirSync(bundleDir, { recursive: true });
 await build({
@@ -19,8 +31,17 @@ await build({
   outfile: bundleFile,
   platform: "node"
 });
+await build({
+  bundle: true,
+  entryPoints: [path.join(repoRoot, "apps/web/src/content/sourceGroundedV2.ts")],
+  format: "esm",
+  logLevel: "silent",
+  outfile: v2BundleFile,
+  platform: "node"
+});
 
 const runtime = await import(`${pathToFileURL(bundleFile).href}?t=${Date.now()}`);
+const v2Runtime = await import(`${pathToFileURL(v2BundleFile).href}?t=${Date.now()}`);
 
 const unsafeReaderPatterns = [
   /&(?:quot|#34|apos|#39|amp);/iu,
@@ -106,6 +127,98 @@ assert.deepEqual(
   "stale ready natal placement rows must not outrank approved v2 fallback"
 );
 
+const moonScorpioSixthFallback = v2Runtime.resolveSourceGroundedV2("me.natal_placement", {
+  degree: "12°47'",
+  natalBody: "Moon",
+  natalHouse: 6,
+  natalSign: "Scorpio",
+  ownerPerspective: "you",
+  reliableBirthTime: true
+});
+assert.equal(moonScorpioSixthFallback.readerAuthority, "approved-fallback");
+assert.match(
+  moonScorpioSixthFallback.renderedFields.planetSignFallbackStory ?? "",
+  /Moon is in Scorpio.+meaning you.+depth and honesty/us,
+  "Moon in Scorpio fallback must render composed Planet in Sign prose instead of a raw source clause"
+);
+assert.match(
+  moonScorpioSixthFallback.renderedFields.planetSignHouseFallbackStory ?? "",
+  /6th house.+(?:work|health|routine|body|daily|service)/ius,
+  "Moon in Scorpio 6th house fallback must render composed Planet in Sign in House prose"
+);
+assert.doesNotMatch(
+  moonScorpioSixthFallback.expandedCopy ?? "",
+  /(?:^|\n)(?:Needs depth and control|Guards the soft center)|works through Needs depth and control/u,
+  "fallback reader output must not expose source/helper fragments as standalone final copy"
+);
+
+const thinNatalPlacementFallback = v2Runtime.resolveSourceGroundedV2("me.natal_placement", {
+  natalBody: "Ceres",
+  natalSign: "Ophiuchus",
+  ownerPerspective: "you",
+  reliableBirthTime: true
+});
+assert.equal(thinNatalPlacementFallback.status, "SOURCE_GAP");
+assert.equal(thinNatalPlacementFallback.readerAuthority, "omitted");
+assert.equal(
+  thinNatalPlacementFallback.renderedFields.sourceMaterialStatus,
+  "needs-source-material",
+  "thin or missing source lanes must be flagged instead of composed into weak fallback prose"
+);
+assert.deepEqual(
+  thinNatalPlacementFallback.finalVisibleStrings,
+  [],
+  "thin fallback source lanes must not render final reader copy"
+);
+
+const ascendantAriesFallback = v2Runtime.resolveSourceGroundedV2("me.natal_angle", {
+  angle: "Ascendant",
+  degree: "1°00'",
+  sign: "Aries"
+});
+assert.equal(ascendantAriesFallback.readerAuthority, "approved-fallback");
+assert.match(
+  ascendantAriesFallback.expandedCopy ?? "",
+  /rising sign.+doorway to your chart.+Ascendant is in Aries/is,
+  "natal angle fallback must render composed v3 angle prose"
+);
+assert.doesNotMatch(
+  ascendantAriesFallback.expandedCopy ?? "",
+  /\{\{|\}\}|SOURCE_GAP/u,
+  "natal angle fallback must not expose template slots or source-gap text"
+);
+
+const sunSquareMoonFallback = v2Runtime.resolveSourceGroundedV2("me.natal_aspect", {
+  aspect: "square",
+  natalPointA: "Sun",
+  natalPointB: "Moon",
+  orb: "2°"
+});
+assert.equal(sunSquareMoonFallback.readerAuthority, "approved-fallback");
+assert.match(
+  sunSquareMoonFallback.expandedCopy ?? "",
+  /Sun is square your Moon.+identity and emotion.+friction/is,
+  "natal aspect fallback must render composed v3 aspect prose"
+);
+assert.doesNotMatch(
+  sunSquareMoonFallback.expandedCopy ?? "",
+  /\{\{|\}\}|SOURCE_GAP/u,
+  "natal aspect fallback must not expose template slots or source-gap text"
+);
+
+const unsupportedNatalAspectFallback = v2Runtime.resolveSourceGroundedV2("me.natal_aspect", {
+  aspect: "quincunx",
+  natalPointA: "Sun",
+  natalPointB: "Moon",
+  orb: "2°"
+});
+assert.equal(unsupportedNatalAspectFallback.readerAuthority, "omitted");
+assert.equal(
+  unsupportedNatalAspectFallback.renderedFields.sourceMaterialStatus,
+  "needs-source-material",
+  "unsupported natal aspect fallbacks must be flagged instead of composed through legacy helpers"
+);
+
 const integratedNatalPlacementSections = runtime.sourceGroundedNatalPlacementSections({
   natalSky: null,
   ownerPerspective: "you",
@@ -121,13 +234,9 @@ const integratedNatalPlacementSections = runtime.sourceGroundedNatalPlacementSec
 assert.equal(
   integratedNatalPlacementSections.length,
   1,
-  "reviewed natal placement clauses must render as one integrated section"
+  "reviewed natal placement helper must return only authored full-copy rows; the app normalizer fills missing sections from fallback"
 );
-assert.equal(
-  integratedNatalPlacementSections[0]?.heading,
-  "Moon in Scorpio in the 6th house",
-  "integrated natal placement section must name the full placement"
-);
+assert.equal(integratedNatalPlacementSections[0]?.heading, "Moon in Scorpio in the 6th house");
 assert.match(
   integratedNatalPlacementSections[0]?.body ?? "",
   /Your Moon in Scorpio in the 6th house makes emotional safety depend on trust, privacy/u,
@@ -137,6 +246,11 @@ assert.match(
   integratedNatalPlacementSections[0]?.body ?? "",
   /routines, workload, and sense of usefulness become the places where hidden pressure shows up first\./u,
   "integrated natal placement must render the full reviewed placement interpretation"
+);
+assert.doesNotMatch(
+  integratedNatalPlacementSections.map((section) => section.body).join("\n\n"),
+  /Your feelings run deep and private|you settle emotionally when the routine works/u,
+  "helper clauses must not be promoted as authored placement write-ups"
 );
 
 const sourceFiles = [

@@ -149,7 +149,7 @@ html[data-scrolled] .topbar {
 }
 
 .site-nav button.active {
-  background: var(--nav-link-active-bg, var(--surface-2));
+  background: var(--nav-link-active-bg);
   color: var(--ink);
 }
 
@@ -162,12 +162,12 @@ html[data-scrolled] .nav-pill {
 }
 
 .site-nav button:not(.active):hover {
-  background: var(--nav-link-hover-bg, var(--accent-bg));
+  background: var(--nav-link-hover-bg);
   color: var(--ink);
 }
 
 .site-nav button.active:hover {
-  background: var(--nav-link-active-bg, var(--surface-2));
+  background: var(--nav-link-active-bg);
   color: var(--ink);
 }
 

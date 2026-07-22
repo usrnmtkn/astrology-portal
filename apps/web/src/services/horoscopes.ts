@@ -1,7 +1,7 @@
 import type { Horoscope, HoroscopePeriod, SkySnapshot } from "../types";
 import { isReaderFacingCopy } from "../content/readerSafety";
 
-type HoroscopeProseLayer = "source-grounded" | "madlib-fallback";
+type HoroscopeProseLayer = "authored" | "fallback";
 
 type NormalizedHoroscopeSection = {
   slot: "summary" | "moon-context" | "reflection";
@@ -54,7 +54,7 @@ function normalizedHoroscopeSection(
   return {
     slot,
     required,
-    layer: "madlib-fallback",
+    layer: "fallback",
     tier: "source-based-local-horoscope",
     sourceKeys,
     body: copy

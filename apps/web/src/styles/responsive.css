@@ -1223,8 +1223,8 @@
 
   .mode-guest .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3),
   .mode-member .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3) {
-    font-size: var(--sky-mobile-row-title);
-    line-height: var(--leading-title);
+    font-size: var(--aspect-card-title-size);
+    line-height: var(--aspect-card-title-line);
   }
 
   .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
@@ -1662,7 +1662,7 @@
   }
 
   .chart-fullscreen-footer .friend-compare-control {
-    width: min(100%, var(--relationship-picker-width, 360px));
+    width: min(100%, var(--relationship-picker-width));
   }
 }
 @media (max-width: 640px) {

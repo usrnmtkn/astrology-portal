@@ -24,7 +24,7 @@ type SignRoadmap = {
   keywords: string[];
 };
 
-type SoulRoadmapLayer = "source-grounded" | "madlib-fallback";
+type SoulRoadmapLayer = "authored" | "fallback";
 
 export type SoulRoadmapProfile = {
   label: string;
@@ -317,7 +317,7 @@ function normalizedSoulRoadmapSection({
   return {
     heading,
     body: normalizedBody,
-    layer: "madlib-fallback" as const,
+    layer: "fallback" as const,
     tier: "source-based-local-roadmap",
     sourceKeys
   };
@@ -484,8 +484,8 @@ export function SoulRoadmapCard({
     return null;
   }
 
-  const sourceLayer = profile.sections.some((section) => section.layer === "source-grounded")
-    ? "Admin"
+  const sourceLayer = profile.sections.some((section) => section.layer === "authored")
+    ? "Authored"
     : "Fallback";
   const cardClassName = [
     "soul-roadmap-card",
@@ -535,7 +535,7 @@ export function SoulRoadmapCard({
         {profile.sections.map((section) => (
           <p key={section.heading}>
             <strong>{section.heading}</strong>
-            <em>{section.layer === "source-grounded" ? "Admin" : "Fallback"}</em>
+            <em>{section.layer === "authored" ? "Authored" : "Fallback"}</em>
             {" "}
             {section.body}
           </p>

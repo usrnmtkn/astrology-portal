@@ -22,7 +22,7 @@ const calendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const emergencyCopy = read("apps/web/src/content/emergencyCopy.json");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
 const fallbackTemplateRows = read("scripts/content-source/tldrastro-fallback-templates-rows.json");
-const natalAspectFallback = read("apps/web/src/content/natalAspectFallback.ts");
+const finalSourceGroundedRecords = JSON.parse(read("apps/web/src/content/finalSourceGroundedDashboardRecords.json"));
 
 const natalAspectFallbackSource = [
   app.slice(app.indexOf("function natalAspectMadlibFallbackSection"), app.indexOf("function normalizeNatalAspectSurface")),
@@ -218,19 +218,25 @@ const families = [
     state: "WORKING",
     canonicalKey: "natal.aspect.sun.conjunction.mercury",
     runtimeCaller: "relatedAspectRowsForPlacement / natalAspectDetailArticle",
-    resolver: "normalizeNatalAspectSurface -> sourceGroundedNatalAspectComposition or resolveNatalAspectFallback",
-    safeFallback: "resolveNatalAspectFallback with pair-specific and aspect-operator records",
+    resolver: "normalizeNatalAspectSurface -> resolveSourceGroundedV2('me.natal_aspect')",
+    safeFallback: "fallback architecture v3, or SOURCE_GAP when source material is missing",
     birthTimeDependency: "none for planet aspects; required for angle aspects",
     checks: [
       fallbackHooks.includes("key: \"you.natal-aspect\""),
       generatedKeys.includes("function natalAspectContentKey"),
       app.includes("natalAspectContentKey("),
-      app.includes("\"you.natal-aspect\""),
-      app.includes("resolveNatalAspectFallback(aspect)"),
-      natalAspectFallback.includes("aspect-fallback.pair.moon-square-black-moon-lilith")
+      app.includes("fallback-hook/you.natal-aspect"),
+      app.includes("resolveSourceGroundedV2(\"me.natal_aspect\""),
+      app.includes("isSafeNatalAspectFallbackCopy(body)"),
+      !app.includes("resolveNatalAspectFallback"),
+      !(finalSourceGroundedRecords.records ?? []).some((record) => (
+        String(record.canonicalKey ?? "").startsWith("dashboard.natal-aspect.")
+        && record.validation?.state === "READY"
+        && record.eligibility?.readerServing !== false
+      ))
     ],
     incompleteCount: 0,
-    nextAction: "Audit exact natal aspect rows for friend-chart pronoun grammar before publishing."
+    nextAction: "Author real dashboard aspect rows deliberately; until then v3 fallback owns reader prose."
   },
   {
     name: "Transits through natal houses",

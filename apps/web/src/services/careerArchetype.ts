@@ -17,7 +17,7 @@ export type CareerVocabularyRow = {
   body: string;
 };
 
-export type CareerProseLayer = "source-grounded" | "madlib-fallback";
+export type CareerProseLayer = "authored" | "fallback";
 
 export type CareerArchetypeSection = {
   key: string;
@@ -312,7 +312,7 @@ function careerRow(vocabulary: Map<string, CareerVocabularyRow> | null, contentK
 }
 
 function careerRowLayer(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string): CareerProseLayer {
-  return vocabulary?.has(contentKey) ? "source-grounded" : "madlib-fallback";
+  return vocabulary?.has(contentKey) ? "authored" : "fallback";
 }
 
 function storedCareerRow(vocabulary: Map<string, CareerVocabularyRow> | null, contentKey: string) {
@@ -320,7 +320,7 @@ function storedCareerRow(vocabulary: Map<string, CareerVocabularyRow> | null, co
 }
 
 function careerSourceBadge(layer: CareerProseLayer) {
-  return layer === "source-grounded" ? "Admin" : "Fallback";
+  return layer === "authored" ? "Authored" : "Fallback";
 }
 
 function possessiveOwnerName(name: string) {
@@ -424,7 +424,7 @@ function section(
     body,
     meta,
     layer: careerRowLayer(vocabulary, contentKey),
-    tier: careerRowLayer(vocabulary, contentKey) === "source-grounded" ? "stored-source-vocabulary" : "source-based-local-career",
+    tier: careerRowLayer(vocabulary, contentKey) === "authored" ? "stored-source-vocabulary" : "source-based-local-career",
     sourceKeys: [contentKey]
   };
 }
@@ -479,8 +479,8 @@ function careerSourceSection({
     contentKey: "ms/career/*",
     headline: fallbackHeadline,
     body,
-    meta: `${careerSourceBadge("source-grounded")} · Career reading assembled from reviewed dashboard rows.`,
-    layer: "source-grounded",
+    meta: `${careerSourceBadge("authored")} · Career reading assembled from reviewed dashboard rows.`,
+    layer: "authored",
     tier: "stored-source-vocabulary",
     sourceKeys: rows.map((row) => row.contentKey)
   };
@@ -607,8 +607,8 @@ export function resolveCareerArchetypeProfile(
     contentKey: "career.pattern",
     headline: title,
     body: summary,
-    meta: `${careerSourceBadge("madlib-fallback")} · Career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers.`,
-    layer: "madlib-fallback",
+    meta: `${careerSourceBadge("fallback")} · Career reading assembled from Midheaven, Midheaven ruler, tenth-house emphasis, and selected work-condition modifiers.`,
+    layer: "fallback",
     tier: "source-based-local-career",
     sourceKeys: [
       "career.midHeaven",
