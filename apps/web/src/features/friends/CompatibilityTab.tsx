@@ -1,3 +1,5 @@
+import type { KeyboardEvent } from "react";
+
 import { zodiacAssetHref, zodiacSignIconFiles } from "../../components/charts/chartAssets";
 
 export type CompatibilityPlanetCard = {
@@ -48,7 +50,10 @@ export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
   dynamics: CompatibilityDynamic[];
   friendName: string;
+  onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
 };
+
+const compatibilityCardPreviewCharacterLimit = 620;
 
 function CompatibilitySignLabel({ sign }: { sign: string }) {
   const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
@@ -99,10 +104,69 @@ function compatibilityContentSourceLabel(contentTrace?: string) {
   return null;
 }
 
+function truncateAtSentenceBoundary(text: string, characterLimit: number) {
+  if (text.length <= characterLimit) {
+    return text;
+  }
+
+  const minimumBoundary = Math.floor(characterLimit * 0.6);
+  const boundary = [". ", "? ", "! "]
+    .map((marker) => text.lastIndexOf(marker, characterLimit))
+    .filter((index) => index >= minimumBoundary)
+    .sort((first, second) => second - first)[0];
+
+  if (typeof boundary === "number") {
+    return text.slice(0, boundary + 1).trim();
+  }
+
+  return `${text.slice(0, characterLimit).trim().replace(/[,.!?;:]?$/u, "")}...`;
+}
+
+function appendContinuationMarker(text: string) {
+  return `${text.trim().replace(/(?:\.{3}|[.!?])$/u, "")}...`;
+}
+
+function compatibilityPreviewParagraphs(paragraphs: string[]) {
+  const preview: string[] = [];
+  let usedCharacters = 0;
+  let truncated = false;
+
+  for (const paragraph of paragraphs) {
+    const separatorCharacters = preview.length > 0 ? 2 : 0;
+    const remainingCharacters = compatibilityCardPreviewCharacterLimit - usedCharacters - separatorCharacters;
+
+    if (remainingCharacters <= 0) {
+      truncated = true;
+      break;
+    }
+
+    if (paragraph.length <= remainingCharacters) {
+      preview.push(paragraph);
+      usedCharacters += separatorCharacters + paragraph.length;
+      continue;
+    }
+
+    preview.push(truncateAtSentenceBoundary(paragraph, remainingCharacters));
+    truncated = true;
+    break;
+  }
+
+  if (paragraphs.length > preview.length) {
+    truncated = true;
+  }
+
+  if (truncated && preview.length > 0) {
+    preview[preview.length - 1] = appendContinuationMarker(preview[preview.length - 1]);
+  }
+
+  return { paragraphs: preview, truncated };
+}
+
 export function CompatibilityTab({
   cards,
   dynamics,
-  friendName
+  friendName,
+  onOpenCard
 }: CompatibilityTabProps) {
   const groupedDynamics = dynamics.reduce<Record<CompatibilityDynamic["heading"], CompatibilityDynamic[]>>((groups, dynamic) => {
     groups[dynamic.heading].push(dynamic);
@@ -132,9 +196,42 @@ export function CompatibilityTab({
             const theirLine = compatibilityFriendCopy(writeup.theirLine, card.friendName);
             const sameSignLine = compatibilityFriendCopy(writeup.sameSignLine, card.friendName);
             const verdict = compatibilityFriendCopy(writeup.verdict, card.friendName);
+            const fallbackParagraphs = [
+              functionCopy,
+              yourLine,
+              sameSign ? sameSignLine : theirLine,
+              verdict
+            ].filter(Boolean);
+            const fullParagraphs = bodyParagraphs.length > 0 ? bodyParagraphs : fallbackParagraphs;
+            const preview = compatibilityPreviewParagraphs(fullParagraphs);
+            const opensDetail = preview.truncated && Boolean(onOpenCard);
+            const openDetail = () => {
+              if (opensDetail) {
+                onOpenCard?.(card, fullParagraphs);
+              }
+            };
+            const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+              if (!opensDetail) {
+                return;
+              }
+
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openDetail();
+              }
+            };
 
             return (
-            <article className="compatibility-card" key={card.id} data-content-trace={contentTrace}>
+            <article
+              aria-label={opensDetail ? `Read more about ${card.planet} compatibility` : undefined}
+              className={`compatibility-card${opensDetail ? " compatibility-card--clickable" : ""}`}
+              data-content-trace={contentTrace}
+              key={card.id}
+              onClick={openDetail}
+              onKeyDown={handleKeyDown}
+              role={opensDetail ? "button" : undefined}
+              tabIndex={opensDetail ? 0 : undefined}
+            >
               <header className="compatibility-card__header">
                 <span className="compatibility-card__glyph" aria-hidden="true">{writeup.glyph || card.glyph}</span>
                 <div>
@@ -154,31 +251,14 @@ export function CompatibilityTab({
                 <span><strong>{card.friendName}</strong>: <CompatibilitySignLabel sign={card.friendSign} /></span>
               </div>
               <div className="compatibility-card__body compatibility-card__reading">
-                {bodyCopy ? (
-                  <>
-                    {bodyParagraphs.map((paragraph, index) => (
-                      <p className={index === bodyParagraphs.length - 1 ? "compatibility-card__verdict" : undefined} key={`${card.id}-body-${index}`}>
-                        {paragraph}
-                      </p>
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <p>{functionCopy}</p>
-                    {sameSign ? (
-                      <>
-                        <p>{yourLine}</p>
-                        {sameSignLine ? <p>{sameSignLine}</p> : null}
-                      </>
-                    ) : (
-                      <>
-                        <p>{yourLine}</p>
-                        <p>{theirLine}</p>
-                      </>
-                    )}
-                    <p className="compatibility-card__verdict">{verdict}</p>
-                  </>
-                )}
+                {preview.paragraphs.map((paragraph, index) => (
+                  <p
+                    className={!preview.truncated && index === preview.paragraphs.length - 1 ? "compatibility-card__verdict" : undefined}
+                    key={`${card.id}-preview-${index}`}
+                  >
+                    {paragraph}
+                  </p>
+                ))}
               </div>
               {card.exactAspectLabel ? (
                 <p className="compatibility-card__receipt">{card.exactAspectLabel}</p>

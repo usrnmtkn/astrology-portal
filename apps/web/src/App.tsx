@@ -18232,6 +18232,23 @@ function ManualChartsPanel({
   const selectedFriendEmptyHouses = selectedChart?.natalChart && !selectedChartIsEvent
     ? Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !selectedFriendOccupiedHouses.has(house))
     : [];
+  const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "compatibility", card.id),
+      glyph: card.glyph,
+      kicker: "Compatibility",
+      title: `${card.planet} compatibility`,
+      meta: `${card.comparisonLabel}: ${card.youSign} · ${card.friendName}: ${card.friendSign}`,
+      subtitle: card.goDeeper.match,
+      plainBody: true,
+      suppressTldr: true,
+      body: paragraphs
+    });
+  };
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
     const ownerName = selectedChart?.displayName ?? "This chart";
     const ownerKind = selectedChartIsEvent ? "chart" : "person";
@@ -19285,6 +19302,7 @@ function ManualChartsPanel({
                 cards={selectedCompatibilityCards}
                 dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
+                onOpenCard={openFriendCompatibilityCardDetail}
               />
             ) : (
               <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${selectedChart.displayName} compatibility`}>

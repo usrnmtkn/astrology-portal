@@ -2511,6 +2511,10 @@
   line-height: var(--leading-body);
 }
 
+.compatibility-card--clickable {
+  cursor: pointer;
+}
+
 .compatibility-card__summary {
   gap: 16px;
 }
