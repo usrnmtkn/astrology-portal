@@ -979,7 +979,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /Sun/i })).toBeVisible();
+    await expect(page.locator("#sky-detail-title")).toContainText(/Sun/i);
 
     await page.goto("/#friends?tab=charts&chart=friend-nikki&view=synastry");
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
@@ -1520,7 +1520,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "You" })).toBeVisible();
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
+    await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
 
     await page.getByRole("button", { name: "Back to updates" }).click();
     await expect(page.getByRole("region", { name: "You" })).toBeVisible();
