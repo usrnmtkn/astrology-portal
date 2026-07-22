@@ -8,7 +8,6 @@ import { NatalChartDataTable, type NatalChartDataTableRow } from "../../componen
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
-import { emergencyDetailFallbackCopy } from "../../content/emergencyCopy";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
 
@@ -684,14 +683,6 @@ function YouTransitArticlePage({
 
   const displaySummary = summary && !isDuplicateArticleCopy(summary, seenCopy) ? summary : "";
   const displayIntroParagraphs = introParagraphs.filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
-  const hasSuppliedReaderCopy = Boolean(
-    summary
-    || introParagraphs.length
-    || article.sections.some((section) => (
-      isReaderFacingCopy(cleanArticleText(section.tldr))
-      || articleParagraphs(section.body).some((paragraph) => isReaderFacingCopy(paragraph))
-    ))
-  );
   const sections = article.sections
     .map((section) => {
       const tldr = cleanArticleText(section.tldr);
@@ -722,9 +713,6 @@ function YouTransitArticlePage({
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
-  const fallbackParagraph = hasReadableBody || hasSuppliedReaderCopy || article.relatedAspects?.rows.length
-    ? ""
-    : emergencyDetailFallbackCopy(article.title);
   const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(article);
 
@@ -765,7 +753,7 @@ function YouTransitArticlePage({
 
           <hr className="article-rule" />
 
-          {displaySummary || displayIntroParagraphs.length || mainSections.length || fallbackParagraph ? (
+          {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {article.lensHint ? (
@@ -806,11 +794,6 @@ function YouTransitArticlePage({
                   <div className="article-related-aspects__list aspect-row-list">
                     {article.relatedAspects.rows}
                   </div>
-                </section>
-              ) : null}
-              {fallbackParagraph ? (
-                <section className="article-section sky-detail-section">
-                  <p>{fallbackParagraph}</p>
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
