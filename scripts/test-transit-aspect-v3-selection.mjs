@@ -19,7 +19,7 @@ await build({
     resolveDir: repoRoot,
     loader: "tsx",
     contents: `
-      export { transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3/runtimeBundle.ts";
+      export { transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
     `
   }
 });
@@ -38,18 +38,24 @@ function render(transiting, aspect, natal) {
 const oldChironCopy = /Something recent hit an old sore spot/i;
 
 const plutoChiron = render("pluto", "square", "chiron");
-assert.equal(plutoChiron.contentKey, undefined, "Pluto square Chiron should not borrow target-only Chiron authored copy.");
-assert.equal(oldChironCopy.test(plutoChiron.parts.join("\n")), false, "Pluto square Chiron should not render the old target-only Chiron copy.");
-assert.match(plutoChiron.parts.join("\n"), /Pluto is square your natal Chiron/i, "Pluto square Chiron should render a pair-specific V3 fallback.");
+assert.equal(
+  plutoChiron.contentKey,
+  "authored/transit-aspect/any/chiron/conjunction",
+  "Pluto square Chiron should use the package's heavy-sharing Chiron fallthrough."
+);
+assert.equal(oldChironCopy.test(plutoChiron.parts.join("\n")), true, "Pluto square Chiron should render the approved heavy-sharing Chiron copy.");
 
 const jupiterChiron = render("jupiter", "square", "chiron");
-assert.equal(jupiterChiron.contentKey, undefined, "Jupiter square Chiron should not borrow target-only Chiron authored copy.");
-assert.equal(oldChironCopy.test(jupiterChiron.parts.join("\n")), false, "Jupiter square Chiron should not render the old target-only Chiron copy.");
-assert.match(jupiterChiron.parts.join("\n"), /Jupiter is square your natal Chiron/i, "Jupiter square Chiron should render a pair-specific V3 fallback.");
-assert.notEqual(
+assert.equal(
+  jupiterChiron.contentKey,
+  "authored/transit-aspect/any/chiron/conjunction",
+  "Jupiter square Chiron should use the package's heavy-sharing Chiron fallthrough."
+);
+assert.equal(oldChironCopy.test(jupiterChiron.parts.join("\n")), true, "Jupiter square Chiron should render the approved heavy-sharing Chiron copy.");
+assert.equal(
   plutoChiron.parts.join("\n"),
   jupiterChiron.parts.join("\n"),
-  "Different transiting planets should not collapse to the same Chiron body."
+  "Heavy-sharing Chiron fallthrough should intentionally collapse these transit pairs to the same approved copy."
 );
 
 const venusAscendant = render("venus", "square", "ascendant");

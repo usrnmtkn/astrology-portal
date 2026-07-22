@@ -1,4 +1,4 @@
-import fallbackSourceRowsV3 from "./fallback-source-rows-v3.json";
+import fallbackSourceRowsV3 from "./source-rows/fallback-source-rows-v3.json";
 
 type FallbackV3VocabularyRow = {
   body?: string | null;

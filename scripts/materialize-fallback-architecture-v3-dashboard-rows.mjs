@@ -218,9 +218,9 @@ function mapPackageRecord(record, bucket) {
 }
 
 function materializeRows() {
-  const sourceRows = readJson("fallback-source-rows-v3.json");
-  const authoredRows = readJson("transit-synastry-rows-v1.json");
-  const templateRows = readJson("fallback-templates-v3.json");
+  const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+  const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
+  const templateRows = readJson("templates/fallback-templates-v3.json");
 
   return [
     ...authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
