@@ -321,6 +321,10 @@
   border-top: 0;
 }
 
+.article-related-aspects.article-related-aspects-card {
+  padding: calc(var(--space-7) + var(--space-1) / 2) clamp(var(--space-6), 5vw, var(--space-8));
+}
+
 .article-related-aspects__label {
   color: var(--muted);
   margin-bottom: 0;
@@ -340,7 +344,7 @@
 .article-related-aspects__list {
   --aspect-row-gap: 0;
   --aspect-row-glyph-width: 82px;
-  --aspect-row-padding: calc(var(--space-7) - var(--space-1)) 0;
+  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) 0;
   --aspect-row-template: 82px minmax(0, 1fr) 42px;
   gap: 0;
 }
@@ -410,7 +414,7 @@
 .article-related-aspect-row .aspect-row-glyphs {
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .article-related-aspect-row .aspect-row-glyphs :where(svg, img) {

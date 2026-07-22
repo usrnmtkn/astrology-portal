@@ -285,8 +285,8 @@
   display: inline-flex;
   align-items: center;
   width: max-content;
-  margin-left: 8px;
-  padding: 2px 8px;
+  margin-left: var(--space-2);
+  padding: calc(var(--space-1) / 2) var(--space-2);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-pill);
   background: var(--duration-badge-bg);
@@ -343,7 +343,7 @@
 
 .soul-roadmap-card__keywords {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   padding: var(--space-4) var(--card-padding) calc(var(--space-4) + var(--space-1) / 2);
 }
 
@@ -360,8 +360,8 @@
 }
 
 .soul-roadmap-card__keywords em {
-  margin-left: 6px;
-  margin-right: 4px;
+  margin-left: calc(var(--space-1) + var(--space-1) / 2);
+  margin-right: var(--space-1);
 }
 
 .career-archetype-card {
