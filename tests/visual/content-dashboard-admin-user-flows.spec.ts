@@ -46,7 +46,67 @@ const generatedContentRows = [
     evergreen_by: "qa",
     facts: { body: "Sun", sign: "Cancer" },
     knowledge_ids: ["qa-sky-source"],
-    source_snapshot: { appDisplaySource: "dashboard-article", contentType: "sky_article", authoringSource: "qa-fixture" },
+    source_snapshot: { contentSystem: "authored", contentLevel: "source-grounded", contentType: "sky_article", authoringSource: "qa-fixture" },
+    reviewer_notes: "QA fixture row.",
+    prompt_version: "qa-admin-flow",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: now,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-visible-moon-row",
+    content_key: "sky.placement.moon.virgo",
+    surface: "sky",
+    mode: "feed",
+    status: "LIVE",
+    event_type: "sky_placement",
+    target_date: "2026-07-16",
+    headline: "Moon in Virgo",
+    summary: "A visible Moon row for search filter QA.",
+    body: "Moon in Virgo keeps the emotional signal practical and specific.",
+    sections: [],
+    block_type: "sky_article",
+    lane: "serving",
+    review_state: "reviewed",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { body: "Moon", sign: "Virgo" },
+    knowledge_ids: ["qa-moon-source"],
+    source_snapshot: { contentSystem: "authored", contentLevel: "source-grounded", contentType: "sky_article", authoringSource: "qa-fixture" },
+    reviewer_notes: "QA fixture row.",
+    prompt_version: "qa-admin-flow",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: now,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-hidden-body-moon-row",
+    content_key: "qa/transit/mercury/search-trap",
+    surface: "you",
+    mode: "feed",
+    status: "LIVE",
+    event_type: "transit",
+    target_date: "2026-07-16",
+    headline: "QA Mercury Hidden Body Search Trap",
+    summary: "Mercury row whose hidden body mentions the Moon.",
+    body: "This hidden body mentions Moon only to prove Content Library search does not return invisible matches.",
+    sections: [],
+    block_type: "transit",
+    lane: "serving",
+    review_state: "reviewed",
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { planet: "Mercury", house: 2 },
+    knowledge_ids: ["qa-mercury-search-trap"],
+    source_snapshot: { contentType: "phrasebank", authoringSource: "qa-fixture" },
     reviewer_notes: "QA fixture row.",
     prompt_version: "qa-admin-flow",
     provider: "qa-fixture",
@@ -106,7 +166,7 @@ const generatedContentRows = [
     evergreen_by: "qa",
     facts: { planet: "sun", readerSign: "aries", otherSign: "libra" },
     knowledge_ids: ["compatibility.sun.aries.libra"],
-    source_snapshot: { contentType: "friends.compatibility.planet-card", appDisplaySource: "dashboard-article", contentLevel: "source-grounded", planet: "sun", readerSign: "aries", otherSign: "libra" },
+    source_snapshot: { contentType: "friends.compatibility.planet-card", contentSystem: "authored", contentLevel: "source-grounded", planet: "sun", readerSign: "aries", otherSign: "libra" },
     reviewer_notes: "QA compatibility fixture row.",
     prompt_version: "qa-admin-flow",
     provider: "phrasebank-dashboard-materialization",
@@ -588,13 +648,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(savedRow).toHaveCount(1);
     await savedRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.locator(".admin-editor-panel");
-    const displaySourcePanel = editor.locator("section[aria-label='Sky placement display source']");
+    const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
     await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
     await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
-    await expect(displaySourcePanel).toBeVisible();
-    await expect(displaySourcePanel.getByText("Content Level", { exact: true })).toBeVisible();
-    await editor.getByLabel("App display source").selectOption("madlib-fallback");
-    await expect(displaySourcePanel).toContainText("madlib-fallback");
+    await expect(contentSystemPanel).toBeVisible();
+    await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
+    await expect(contentSystemPanel).toContainText("Authored");
+    await expect(editor.getByLabel("App display source")).toHaveCount(0);
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
@@ -610,7 +670,8 @@ test.describe("content dashboard admin user flow case studies", () => {
         body: "Updated body from the visual admin editor.",
         status: "LIVE",
         sourceSnapshot: {
-          appDisplaySource: "madlib-fallback"
+          contentSystem: "authored",
+          contentLevel: "source-grounded"
         }
       }
     });
@@ -618,7 +679,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("article filters narrow by point, display source, and text search", async ({ page }) => {
+  test("article filters narrow by point, content system, and text search", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
     await page.goto("/admin/content#articles");
@@ -628,7 +689,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(articleFilters).toBeVisible();
     await expect(articleFilters.getByLabel("Article status")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
-    await expect(articleFilters.getByLabel("Article app display source")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
 
     await articleFilters.getByLabel("Article planet or point").selectOption("sun");
     await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
@@ -638,13 +699,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("Sun in Cancer");
 
-    await articleFilters.getByLabel("Article app display source").selectOption("madlib-fallback");
+    await articleFilters.getByLabel("Article content system").selectOption("fallback");
     await expect(page.locator(".admin-content-row")).toHaveCount(0);
     await expect(page.getByText("No rows match these filters.")).toBeVisible();
 
     await page.getByRole("button", { name: "Clear filters" }).click();
     await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
-    await expect(articleFilters.getByLabel("Article app display source")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Search articles")).toHaveValue("");
     await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
 
@@ -788,6 +849,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Draft/ })).toBeVisible();
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Published/ })).toBeVisible();
     await expect(page.getByText("Reader safety")).toBeVisible();
+
+    await page.getByLabel("Search content").fill("moon");
+    await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" }).first()).toBeVisible();
+    await expect(page.locator(".admin-content-row", { hasText: "QA Mercury Hidden Body Search Trap" })).toHaveCount(0);
+    await page.getByRole("button", { name: "Clear filters" }).click();
+    await expect(page.getByLabel("Search content")).toHaveValue("");
+    await expect(page.locator(".admin-content-row", { hasText: "QA Mercury Hidden Body Search Trap" })).toHaveCount(1);
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Review Queue" }).click();
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");

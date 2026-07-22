@@ -21,7 +21,7 @@ export const natalCardTaglinePoints = [
 export const fallbackNatalCardTaglines: Record<string, string> = {
   Sun: "Your core self and vitality",
   Moon: "Your inner world and what you need to feel safe",
-  Ascendant: "How you meet the world and come across",
+  Ascendant: "How you meet the world and enter the room",
   Mercury: "How you think and communicate",
   Venus: "What you value and who you're drawn to",
   Mars: "How you direct your energy and act",

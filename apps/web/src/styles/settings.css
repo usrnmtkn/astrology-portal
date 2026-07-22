@@ -109,7 +109,7 @@ button.settings-signout-row {
 .account-editable-row > .settings-row__label {
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: var(--text-body-sm, 14px);
+  font-size: var(--text-body-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);
@@ -172,7 +172,7 @@ button.settings-signout-row {
   display: block;
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: var(--text-body-sm, 14px);
+  font-size: var(--text-body-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);

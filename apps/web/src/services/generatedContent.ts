@@ -15,6 +15,17 @@ import {
   servedFieldsContract,
   type ServedFieldSurface
 } from "../content/servedFieldsContract";
+import type {
+  FallbackArchitectureV3Bundle
+} from "../content/fallbackArchitectureV3/runtimeBundle";
+import type {
+  HookRow,
+  TemplateRow,
+  VocabRow
+} from "../content/fallbackArchitectureV3/renderFallbackV3";
+import type {
+  AuthoredCard
+} from "../content/fallbackArchitectureV3/renderTransitSynastry";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
 export type GeneratedContentBlockType =
@@ -75,6 +86,13 @@ type GeneratedContentRow = {
   model: string | null;
   updated_at: string;
 };
+
+const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
+const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
 
 function isLocalGeneratedContentPreviewHost() {
   if (typeof window === "undefined") {
@@ -337,7 +355,7 @@ function servedFieldSections(content: LiveGeneratedContent): GeneratedContentSec
       return [];
     }
 
-    const body = repairGeneratedParagraph(servedFieldValue(record, field));
+    const body = servedFieldValue(record, field);
 
     if (!body || !isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
       return [];
@@ -605,8 +623,7 @@ export function generatedContentParagraphs(content?: LiveGeneratedContent | null
 
   return readerUniqueParagraphs(content.body
     .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .map(repairGeneratedParagraph));
+    .map((paragraph) => paragraph.trim()));
 }
 
 const blockedScaffoldCopyPatterns = [
@@ -648,15 +665,6 @@ function readerUniqueParagraphs(values: string[]) {
   });
 }
 
-function repairGeneratedParagraph(text: string) {
-  return text
-    .replace(/\bmake it all about they\b/gi, "make it all about themselves")
-    .replace(/\babout they\b/gi, "about themselves")
-    .replace(/\bgiving they\b/gi, "giving them")
-    .replace(/\brewards they\b/gi, "rewards them")
-    .replace(/\bIt rewards they\b/gi, "It rewards them");
-}
-
 function normalizeSection(value: unknown): GeneratedContentSection | null {
   if (!value || typeof value !== "object") {
     return null;
@@ -678,13 +686,11 @@ function normalizeSection(value: unknown): GeneratedContentSection | null {
     return null;
   }
 
-  const repairedBody = repairGeneratedParagraph(body);
-
-  if (!isReaderFacingCopy(repairedBody) || containsBlockedScaffoldCopy(repairedBody)) {
+  if (!isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
     return null;
   }
 
-  return { heading, body: repairedBody };
+  return { heading, body };
 }
 
 export function generatedContentSections(content?: LiveGeneratedContent | null): GeneratedContentSection[] {
@@ -720,6 +726,258 @@ function stringField(record: Record<string, unknown>, key: string) {
   const value = record[key];
 
   return typeof value === "string" ? value.trim() : "";
+}
+
+function generatedRowPackageRole(row: Pick<GeneratedContentRow, "facts" | "source_snapshot"> & { sections?: unknown }) {
+  const facts = row.facts && typeof row.facts === "object" ? row.facts as Record<string, unknown> : {};
+  const sourceSnapshot = row.source_snapshot && typeof row.source_snapshot === "object"
+    ? row.source_snapshot as Record<string, unknown>
+    : {};
+  const sections = row.sections && typeof row.sections === "object" ? row.sections as Record<string, unknown> : {};
+  const record = sections.packageRecord && typeof sections.packageRecord === "object"
+    ? sections.packageRecord as Record<string, unknown>
+    : {};
+  const role = sourceSnapshot.content_role
+    ?? sourceSnapshot.contentRole
+    ?? facts.content_role
+    ?? facts.contentRole
+    ?? record.content_role
+    ?? record.contentRole;
+  const review = sourceSnapshot.review_status
+    ?? sourceSnapshot.reviewStatus
+    ?? facts.review_status
+    ?? facts.reviewStatus
+    ?? record.review_status
+    ?? record.reviewStatus;
+
+  return {
+    role: typeof role === "string" ? role : "",
+    reviewStatus: typeof review === "string" ? review : ""
+  };
+}
+
+function rowSourceSnapshot(row: Pick<GeneratedContentRow, "source_snapshot">) {
+  return isRecord(row.source_snapshot) ? row.source_snapshot : {};
+}
+
+function rowFacts(row: Pick<GeneratedContentRow, "facts">) {
+  return isRecord(row.facts) ? row.facts : {};
+}
+
+function rowSections(row: Pick<GeneratedContentRow, "sections">) {
+  return isRecord(row.sections) ? row.sections : {};
+}
+
+function packageRecord(row: Pick<GeneratedContentRow, "sections">) {
+  const sections = rowSections(row);
+  return isRecord(sections.packageRecord) ? sections.packageRecord : {};
+}
+
+function stringFrom(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function stringArrayFrom(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : [];
+}
+
+function fallbackSystemBucket(row: GeneratedContentRow) {
+  const sourceSnapshot = rowSourceSnapshot(row);
+  const facts = rowFacts(row);
+  const contentType = stringFrom(
+    sourceSnapshot.contentType,
+    sourceSnapshot.content_type,
+    facts.contentType,
+    facts.content_type
+  );
+  const { role } = generatedRowPackageRole(row);
+
+  return { contentType, role };
+}
+
+function isApprovedFallbackArchitectureV3Row(row: GeneratedContentRow) {
+  const { reviewStatus } = generatedRowPackageRole(row);
+
+  return Boolean(
+    row.provider === fallbackArchitectureV3Provider
+      && fallbackArchitectureV3ApprovedReviews.has(reviewStatus)
+  );
+}
+
+function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
+  const record = packageRecord(row);
+  const { role, reviewStatus } = generatedRowPackageRole(row);
+  const body = stringFrom(row.body, record.body);
+
+  if (!body) {
+    return null;
+  }
+
+  return {
+    contentKey: row.content_key,
+    content_role: role || stringFrom(record.content_role) || "full_copy",
+    ...(stringFrom(row.headline, record.headline) ? { headline: stringFrom(row.headline, record.headline) } : {}),
+    body,
+    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+  };
+}
+
+function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
+  const record = packageRecord(row);
+  const sections = rowSections(row);
+  const { role, reviewStatus } = generatedRowPackageRole(row);
+  const bodyYou = stringFrom(row.body, sections.body_you, record.body_you, record.body);
+  const bodyThey = stringFrom(sections.body_they, record.body_they, bodyYou);
+
+  if (!bodyYou || !bodyThey) {
+    return null;
+  }
+
+  return {
+    contentKey: row.content_key,
+    content_role: role || stringFrom(record.content_role) || "fallback_hook",
+    body_you: bodyYou,
+    body_they: bodyThey,
+    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+  };
+}
+
+function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
+  const record = packageRecord(row);
+  const { role, reviewStatus } = generatedRowPackageRole(row);
+  const body = stringFrom(row.body, record.body);
+  const grammarFrame = stringFrom(record.grammar_frame, rowFacts(row).grammar_frame, rowSourceSnapshot(row).grammar_frame);
+
+  if (!body || !grammarFrame) {
+    return null;
+  }
+
+  return {
+    contentKey: row.content_key,
+    content_role: role || stringFrom(record.content_role) || "vocabulary",
+    grammar_frame: grammarFrame,
+    body,
+    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+  };
+}
+
+function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null {
+  const record = packageRecord(row);
+  const { role } = generatedRowPackageRole(row);
+  const body = stringFrom(row.body, record.body);
+
+  if (!body) {
+    return null;
+  }
+
+  return {
+    contentKey: row.content_key,
+    content_role: role || stringFrom(record.content_role) || "template",
+    ...(stringFrom(row.headline, record.headline) ? { headline: stringFrom(row.headline, record.headline) } : {}),
+    body,
+    ...(stringFrom(record.body_you) ? { body_you: stringFrom(record.body_you) } : {}),
+    ...(stringFrom(record.body_they) ? { body_they: stringFrom(record.body_they) } : {}),
+    ...(stringArrayFrom(record.requiredSlots).length ? { requiredSlots: stringArrayFrom(record.requiredSlots) } : {}),
+    ...(stringArrayFrom(record.optionalSlots).length ? { optionalSlots: stringArrayFrom(record.optionalSlots) } : {})
+  };
+}
+
+export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const rows: GeneratedContentRow[] = [];
+  const pageSize = 1000;
+
+  for (let page = 0; page < 10; page += 1) {
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+    const { data, error } = await supabase
+      .from("generated_interpretations")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
+      .eq("provider", fallbackArchitectureV3Provider)
+      .order("updated_at", { ascending: false })
+      .range(from, to)
+      .returns<GeneratedContentRow[]>();
+
+    if (error) {
+      console.warn("Fallback architecture V3 dashboard bundle failed to load; local JSON snapshot remains active.", error);
+      return null;
+    }
+
+    rows.push(...(data ?? []));
+
+    if (!data || data.length < pageSize) {
+      break;
+    }
+  }
+
+  const seen = new Set<string>();
+  const authoredCards: AuthoredCard[] = [];
+  const hookRows: HookRow[] = [];
+  const vocabularyRows: VocabRow[] = [];
+  const templates: TemplateRow[] = [];
+
+  for (const row of rows) {
+    if (seen.has(row.content_key) || !isApprovedFallbackArchitectureV3Row(row)) {
+      continue;
+    }
+
+    seen.add(row.content_key);
+    const { contentType, role } = fallbackSystemBucket(row);
+
+    if (contentType === "source-material" || role === "fallback_source" || role === "source_material") {
+      continue;
+    }
+
+    if (contentType === "authored-content" || role === "full_copy") {
+      const card = packageAuthoredCardFromRow(row);
+      if (card) authoredCards.push(card);
+      continue;
+    }
+
+    if (role === "fallback_hook") {
+      const hook = packageHookRowFromRow(row);
+      if (hook) hookRows.push(hook);
+      continue;
+    }
+
+    if (role === "vocabulary") {
+      const vocab = packageVocabRowFromRow(row);
+      if (vocab) vocabularyRows.push(vocab);
+      continue;
+    }
+
+    if (role === "template") {
+      const template = packageTemplateRowFromRow(row);
+      if (template) templates.push(template);
+    }
+  }
+
+  if (authoredCards.length === 0 || hookRows.length === 0 || vocabularyRows.length === 0 || templates.length === 0) {
+    console.warn("Fallback architecture V3 dashboard bundle was incomplete; local JSON snapshot remains active.", {
+      authoredCards: authoredCards.length,
+      hookRows: hookRows.length,
+      vocabularyRows: vocabularyRows.length,
+      templates: templates.length
+    });
+    return null;
+  }
+
+  return {
+    transitLib: { authoredCards },
+    rowsFile: { hookRows, vocabularyRows },
+    templatesFile: { templates }
+  };
 }
 
 export function generatedContentDrilldown(content?: LiveGeneratedContent | null): GeneratedContentDrilldown | null {
@@ -911,8 +1169,13 @@ export function isReaderServableGeneratedContentRow(
     "reference-only",
     "raw_quarantine"
   ];
+  const { role: packageRole, reviewStatus: packageReviewStatus } = generatedRowPackageRole(row);
+  const blockedPackageRoles = new Set(["fallback_source", "source_material"]);
+  const approvedPackageReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 
   if (row.content_key.startsWith("cc/fallback")) return false;
+  if (blockedPackageRoles.has(packageRole)) return false;
+  if (packageReviewStatus && !approvedPackageReviews.has(packageReviewStatus)) return false;
   if (unsafeMetadataMarkers.some((marker) => metadataText.includes(marker))) return false;
   if (copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
 

@@ -71,7 +71,7 @@ const socialPlacementOrder = [
 ];
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
-type PlacementMicrocopyLayer = "source-grounded" | "madlib-fallback";
+type PlacementMicrocopyLayer = "authored" | "fallback";
 
 type NormalizedPlacementMicrocopySection = {
   slot: "description" | "dignity";
@@ -173,7 +173,7 @@ function normalizePlacementMicrocopySection(
   return {
     slot,
     required,
-    layer: "madlib-fallback",
+    layer: "fallback",
     tier: "source-based-local-placement-microcopy",
     sourceKeys,
     body: copy

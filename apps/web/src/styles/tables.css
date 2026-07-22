@@ -5,7 +5,7 @@
   gap: var(--sp-2);
   align-items: start;
   width: 100%;
-  padding: var(--card-row-padding, calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5));
+  padding: var(--card-row-padding);
 }
 
 button.placement-table-row {
@@ -375,7 +375,7 @@ button.planet-placement-row {
   --floating-tooltip-center-offset: -50%;
 
   position: fixed;
-  z-index: var(--z-tooltip, 80);
+  z-index: var(--z-tooltip);
   box-sizing: border-box;
   max-width: min(340px, calc(100vw - 24px));
   padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);

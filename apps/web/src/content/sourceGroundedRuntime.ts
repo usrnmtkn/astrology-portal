@@ -34,21 +34,9 @@ type SourceGroundedRecord = {
 
 type SourceGroundedBundle = {
   records?: SourceGroundedRecord[];
-  sourceGaps?: SourceGroundedRecord[];
 };
 
 const records = (sourceGroundedBundle as SourceGroundedBundle).records ?? [];
-const sourceGaps = (sourceGroundedBundle as SourceGroundedBundle).sourceGaps ?? [];
-const readyRecordKeys = new Set(
-  records
-    .filter((record) => record.validation?.state === "READY")
-    .map((record) => record.canonicalKey)
-);
-const sourceGapKeys = new Set(sourceGaps.map((record) => record.canonicalKey));
-
-function hasReadyRecord(key: string) {
-  return readyRecordKeys.has(key);
-}
 
 function recordByKey(key: string) {
   return records.find((record) => record.canonicalKey === key);
@@ -78,48 +66,6 @@ function reviewedRecordText(record: SourceGroundedRecord, perspective: OwnerPers
     .join(" ")
     .replace(/\s+/gu, " ")
     .trim();
-}
-
-function sentenceCase(value: string) {
-  const text = value.trim();
-  return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : "";
-}
-
-function sentenceWithTerminalPunctuation(value: string) {
-  const text = sentenceCase(value).trim();
-  return text && !/[.!?]$/u.test(text) ? `${text}.` : text;
-}
-
-function clauseAfterComma(value: string) {
-  const text = value.trim().replace(/[.!?]$/u, "");
-  return /^(?:Your|Their|You|They)\b/u.test(text)
-    ? `${text.charAt(0).toLowerCase()}${text.slice(1)}`
-    : text;
-}
-
-function composedNatalPlacementText({
-  coreBehavior,
-  houseSynthesis,
-  ownerPerspective,
-  position,
-  reliableBirthTime
-}: {
-  coreBehavior: string;
-  houseSynthesis: string;
-  ownerPerspective: OwnerPerspective;
-  position: PlanetPosition;
-  reliableBirthTime: boolean;
-}) {
-  const placement = position.house && reliableBirthTime
-    ? `${position.planet} in ${position.sign} in the ${ordinal(position.house)} house`
-    : `${position.planet} in ${position.sign}`;
-  const possessive = ownerPerspective === "they" ? "their" : "your";
-  const firstSentence = coreBehavior
-    ? sentenceWithTerminalPunctuation(`With ${possessive} ${placement}, ${clauseAfterComma(coreBehavior)}`)
-    : "";
-  const secondSentence = houseSynthesis ? sentenceWithTerminalPunctuation(houseSynthesis) : "";
-
-  return [firstSentence, secondSentence].filter(Boolean).join(" ");
 }
 
 function isReviewedClauseStatus(value: unknown) {
@@ -153,31 +99,8 @@ function isLegacyNatalPlacementClause(value: string) {
   return /\b(?:identity is a little outside the norm|sense of self needs the bigger view|shows how this chart makes choices|points attention toward|where the next useful choice needs to be specific|style or condition|easiest to see|answers to|describes)\b/iu.test(value);
 }
 
-function hasSourceGap(key: string) {
-  return sourceGapKeys.has(key);
-}
-
 function natalPlacementBaseRecordId(position: Pick<PlanetPosition, "planet" | "sign">) {
   return `dashboard.natal-placement.${recordKeyPart(position.planet)}.${recordKeyPart(position.sign)}`;
-}
-
-function supportedNatalPlacementKey(position: PlanetPosition, reliableBirthTime = true) {
-  const houseKey = reliableBirthTime && position.house ? natalPlacementRecordId(position) : "";
-  if (houseKey && hasReadyRecord(houseKey)) return houseKey;
-
-  const baseKey = natalPlacementBaseRecordId(position);
-  if (hasSourceGap(baseKey)) return baseKey;
-
-  if (!reliableBirthTime) {
-    const anyHouseRecord = records.find((record) => (
-      record.family === "natal-placement"
-      && record.canonicalKey.startsWith(`${baseKey}.house_`)
-      && record.validation?.state === "READY"
-    ));
-    return anyHouseRecord?.canonicalKey ?? "";
-  }
-
-  return houseKey || baseKey;
 }
 
 function chartSectFromNatalSky(natalSky: SkySnapshot | null) {
@@ -413,63 +336,34 @@ export function sourceGroundedNatalPlacementSections({
   const isAnglePoint = ["ascendant", "descendant", "midheaven", "imum coeli", "ic", "mc"].includes(pointName);
   if (isAnglePoint) return [];
 
-  const supportedKey = supportedNatalPlacementKey(position, reliableBirthTime);
-  const supportedRecord = supportedKey ? recordByKey(supportedKey) : null;
-  if (supportedRecord && hasEligibleReviewedRecord(supportedKey)) {
-    const coreBehavior = reviewedRecordText(supportedRecord, ownerPerspective, ["core_behavior"]);
-    const houseSynthesis = reliableBirthTime
-      ? reviewedRecordText(supportedRecord, ownerPerspective, ["house_synthesis"])
-      : "";
-    const authoredFullCopy = reliableBirthTime
-      ? reviewedRecordText(supportedRecord, ownerPerspective, ["full_copy"])
-      : "";
-    const integratedBody = authoredFullCopy || composedNatalPlacementText({
-      coreBehavior,
-      houseSynthesis,
-      ownerPerspective,
-      position,
-      reliableBirthTime
+  const sections: SourceGroundedSection[] = [];
+  const baseKey = natalPlacementBaseRecordId(position);
+  const baseRecord = recordByKey(baseKey);
+  const signFullCopy = baseRecord && hasEligibleReviewedRecord(baseKey)
+    ? reviewedRecordText(baseRecord, ownerPerspective, ["full_copy"])
+    : "";
+  if (signFullCopy && !isLegacyNatalPlacementClause(signFullCopy)) {
+    sections.push({
+      heading: `${position.planet} in ${position.sign}`,
+      tldr: "",
+      body: signFullCopy
     });
-    const sections: SourceGroundedSection[] = [];
-
-    if ([coreBehavior, houseSynthesis, integratedBody].some(isLegacyNatalPlacementClause)) {
-      return [];
-    }
-
-    if (integratedBody) {
-      return [
-        {
-          heading: position.house && reliableBirthTime
-            ? `${position.planet} in ${position.sign} in the ${ordinal(position.house)} house`
-            : `${position.planet} in ${position.sign}`,
-          tldr: "",
-          body: integratedBody
-        }
-      ];
-    }
-
-    if (coreBehavior) {
-      sections.push({
-        heading: `${position.planet} in ${position.sign}`,
-        tldr: "",
-        body: coreBehavior
-      });
-    }
-
-    if (houseSynthesis && position.house) {
-      sections.push({
-        heading: `${position.planet} in the ${ordinal(position.house)} house`,
-        tldr: "",
-        body: houseSynthesis
-      });
-    }
-
-    if (sections.length > 0) {
-      return sections;
-    }
   }
 
-  return [];
+  const houseKey = reliableBirthTime && position.house ? natalPlacementRecordId(position) : "";
+  const houseRecord = houseKey ? recordByKey(houseKey) : null;
+  const houseFullCopy = houseRecord && hasEligibleReviewedRecord(houseKey)
+    ? reviewedRecordText(houseRecord, ownerPerspective, ["full_copy"])
+    : "";
+  if (houseFullCopy && !isLegacyNatalPlacementClause(houseFullCopy) && position.house && reliableBirthTime) {
+    sections.push({
+      heading: `${position.planet} in ${position.sign} in the ${ordinal(position.house)} house`,
+      tldr: "",
+      body: houseFullCopy
+    });
+  }
+
+  return sections;
 }
 
 export function sourceGroundedSkyPlacementParagraphs(position: PlanetPosition, duration?: string | null) {
@@ -501,43 +395,6 @@ export function sourceGroundedSkyPlacementSummary(position: PlanetPosition) {
     return summary;
   }
   return safeSkyPlacementFallbackSummary(position);
-}
-
-export function sourceGroundedNatalAspectComposition(aspect: AspectFact, ownerPerspective: OwnerPerspective): SourceGroundedComposition | null {
-  const key = `dashboard.natal-aspect.${recordKeyPart(aspect.focalPlanet)}.${recordKeyPart(aspect.aspect)}.${recordKeyPart(aspect.otherPlanet)}`;
-  if (!hasEligibleReviewedRecord(key)) return null;
-  const record = recordByKey(key);
-  if (!record) return null;
-  const finalCopy = reviewedRecordText(record, ownerPerspective);
-  if (!finalCopy) return null;
-
-  return {
-    templateId: "natal-aspect-reviewed-v1",
-    templateVersion: SOURCE_GROUNDED_V2_TEMPLATE_VERSION,
-    recordId: key,
-    slots: Object.fromEntries(
-      orderedTemplateClauseNames(record)
-        .map((name) => {
-          const clause = record.clauses?.[name];
-          return clause
-            ? [name, { text: readerTextForClause(clause, ownerPerspective), sourceKeys: clause.source_keys ?? [] }]
-            : null;
-        })
-        .filter((entry): entry is [string, { text: string; sourceKeys: string[] }] => Boolean(entry))
-    ),
-    sourceKeys: record.sourceKeys ?? [],
-    finalCopy,
-    sections: [{
-      heading: `${aspect.focalPlanet} ${aspect.aspect} ${aspect.otherPlanet}`,
-      tldr: "",
-      body: finalCopy
-    }],
-    conditionalBranches: ["reviewed-record"],
-    provenance: {
-      initial: `source-grounded-record:${key}`,
-      hydrated: `source-grounded-record:${key}`
-    }
-  };
 }
 
 export function sourceGroundedSkyAspectParagraphs(aspect: AspectFact & { timing?: string | null }) {

@@ -4,10 +4,17 @@ import surfaceResolutionMatrix from "./templateHandoffV2/contracts/SURFACE-RESOL
 import ccSourcePhrases from "./templateHandoffV2/sources/cc-source-phrases.json";
 import sourceDerivedClauseExemplars from "./templateHandoffV2/sources/source-derived-clause-exemplars.json" with { type: "json" };
 import normalizedSkySourceRecords from "../../../../scripts/content-source/normalized-sky-source-records.json";
+import {
+  SourceGapError as FallbackV3SourceGapError,
+  type AngleFacts,
+  type AspectFacts
+} from "./fallbackArchitectureV3/renderFallbackV3";
+import { fallbackRendererV3 } from "./fallbackArchitectureV3/runtimeBundle";
 import { isReaderFacingCopy } from "./readerSafety";
 import { renderMustacheMadlib, type MustacheTemplateId } from "./sourceGroundedMustacheV22";
 
 export const SOURCE_GROUNDED_V2_TEMPLATE_VERSION = "2.3.0";
+const FALLBACK_V3_ASPECTS = new Set<AspectFacts["aspect"]>(["conjunction", "opposition", "square", "trine", "sextile"]);
 
 export type SourceTier = "EVIDENCE_ONLY" | "REFERENCE_SCAFFOLD" | "REVIEWED_CLAUSE" | "REVIEWED_RECORD" | "RENDERED_OUTPUT" | "SOURCE_GAP";
 export type RenderMode = "card" | "detail";
@@ -605,6 +612,16 @@ function ownerPerspectiveFor(facts: Record<string, unknown>) {
   return sentence(facts.ownerPerspective).toLowerCase() === "they" ? "they" : "you";
 }
 
+function ownerFallbackVoiceFor(facts: Record<string, unknown>) {
+  if (ownerPerspectiveFor(facts) === "you") {
+    return "you";
+  }
+
+  const displayName = sentence(facts.ownerDisplayName).trim();
+
+  return displayName || "they";
+}
+
 function perspectiveClause(value: string, perspective: "you" | "they") {
   const normalized = normalizeReaderText(value);
   if (perspective === "you") return normalized;
@@ -626,6 +643,140 @@ function sentences(value: string | undefined) {
     .split(/(?<=[.!?])\s+/u)
     .map((part) => part.trim())
     .filter(Boolean);
+}
+
+function sourceLaneFragments(value: string | undefined) {
+  return sentence(value)
+    .split(/;\s*|(?<=[.!?])\s+/u)
+    .map((part) => normalizeReaderText(part).replace(/[“”"]/gu, "").replace(/[.!?]$/u, "").trim())
+    .filter((part) => {
+      if (!part || isUnsafeReaderClause(part)) return false;
+      const wordCount = part.split(/\s+/u).filter(Boolean).length;
+      return wordCount >= 2 && wordCount <= 28;
+    });
+}
+
+function lowerFirst(value: string) {
+  const trimmed = value.trim();
+  const firstAlpha = trimmed.search(/[A-Za-z]/u);
+  if (firstAlpha < 0) return trimmed;
+
+  return `${trimmed.slice(0, firstAlpha)}${trimmed.charAt(firstAlpha).toLowerCase()}${trimmed.slice(firstAlpha + 1)}`;
+}
+
+function fallbackFragmentSentence(fragment: string) {
+  const text = lowerFirst(fragment.replace(/[.!?]$/u, "").trim());
+  if (!text) return "";
+
+  if (/^(?:needs|guards|pushes|overthinks|chooses|risks|wants|seeks|looks|moves|works|protects|reacts|settles|opens|closes|holds|tests|asks|notices|keeps|makes|brings|meets|tracks|checks)\b/iu.test(text)) {
+    return ensureTerminalPunctuation(sentenceCase(`it ${text}`));
+  }
+
+  return ensureTerminalPunctuation(sentenceCase(`it can show up as ${text}`));
+}
+
+function hasEnoughSourceForFallback(fragments: string[]) {
+  if (fragments.length >= 2) return true;
+  const wordCount = fragments[0]?.split(/\s+/u).filter(Boolean).length ?? 0;
+  return wordCount >= 6;
+}
+
+function omittedFallback({
+  fallbackId,
+  fieldMap,
+  renderedFields,
+  supportingSourceKeys = []
+}: {
+  fallbackId: string;
+  fieldMap: Record<string, string>;
+  renderedFields: Record<string, string>;
+  supportingSourceKeys?: string[];
+}) {
+  return {
+    fallbackId,
+    fallbackSpecificity: "factual-floor" as FallbackSpecificity,
+    finalVisibleStrings: [],
+    renderedFields,
+    fieldMap,
+    compactCopy: "",
+    expandedCopy: "",
+    readerAuthority: "omitted" as ReaderAuthority,
+    supportingSourceKeys
+  };
+}
+
+function readerPossessive(perspective: "you" | "they") {
+  return perspective === "they" ? "their" : "your";
+}
+
+function adaptReaderPossessives(value: string, perspective: "you" | "they") {
+  return perspective === "they"
+    ? value.replace(/\byour\b/giu, "their").replace(/\byou\b/giu, "they")
+    : value.replace(/\btheir\b/giu, "your").replace(/\bthey\b/giu, "you");
+}
+
+const HOUSE_FALLBACK_TOPICS: Record<number, string> = {
+  1: "the body, first reactions, appearance, and the way a room meets you before you explain yourself",
+  2: "money, food, possessions, self-worth, and the practical conditions that make life feel stable",
+  3: "daily conversations, siblings, neighbors, messages, and the nervous system of ordinary life",
+  4: "home, family memory, privacy, ancestry, and the place you return to when the outside world gets loud",
+  5: "creative risk, pleasure, romance, children, and the places where joy asks to be emotionally safe",
+  6: "work, health, routines, chores, caretaking, and the way daily life uses your energy",
+  7: "partnership, conflict, agreements, and the people whose responses shape your emotional weather",
+  8: "trust, shared resources, grief, intimacy, debt, and the places where control has to be negotiated",
+  9: "belief, study, travel, teachers, publishing, and the larger story that helps you orient yourself",
+  10: "career, visibility, reputation, responsibility, and the role other people can recognize",
+  11: "friendship, groups, networks, audience, and the future you build with other people",
+  12: "rest, retreat, grief, solitude, hidden stress, and what the body carries before the mind explains it"
+};
+
+function natalPlacementFallbackSignStory({
+  body,
+  perspective,
+  sign,
+  source
+}: {
+  body: string;
+  perspective: "you" | "they";
+  sign: string;
+  source: string;
+}) {
+  const fragments = sourceLaneFragments(source);
+  if (!hasEnoughSourceForFallback(fragments)) return "";
+  const firstFragment = fragments[0] ?? "";
+
+  const followup = fallbackFragmentSentence(fragments[1] ?? "");
+  const possessive = perspective === "they" ? "their" : "your";
+  const opening = ensureTerminalPunctuation(sentenceCase(`${possessive} ${titlePart(body)} in ${titlePart(sign)} can show up as ${lowerFirst(firstFragment)}`));
+  return [opening, followup].filter(Boolean).join(" ");
+}
+
+function natalPlacementFallbackHouseStory({
+  body,
+  house,
+  perspective,
+  sign,
+  source
+}: {
+  body: string;
+  house: number | null;
+  perspective: "you" | "they";
+  sign: string;
+  source: string;
+}) {
+  if (!house || !source) return "";
+
+  const possessive = perspective === "they" ? "their" : "your";
+  const topic = adaptReaderPossessives(HOUSE_FALLBACK_TOPICS[house] ?? "the part of life described by this house", perspective);
+  const fragments = sourceLaneFragments(source);
+  if (!hasEnoughSourceForFallback(fragments)) return "";
+  const sourceSentence = fallbackFragmentSentence(fragments[0] ?? "");
+  const houseOpening = ensureTerminalPunctuation(sentenceCase(`${possessive} ${titlePart(body)} in ${titlePart(sign)} in the ${ordinal(house)} house brings that pattern into ${topic}`));
+  const houseSource = sourceSentence
+    ? sourceSentence.replace(/^It\b/u, "In that area, it")
+    : "";
+
+  return [houseOpening, houseSource].filter(Boolean).join(" ");
 }
 
 function surfaceInfo(surface: SurfaceId) {
@@ -793,6 +944,20 @@ function aspectVerb(aspect: unknown) {
   if (normalized === "conjunction") return "conjuncts";
   if (normalized === "opposition") return "opposes";
   return `${normalized}s`;
+}
+
+function fallbackV3Angle(value: unknown): AngleFacts["angle"] | null {
+  const normalized = slugPart(value);
+  if (normalized === "ascendant" || normalized === "descendant" || normalized === "midheaven") return normalized;
+  if (normalized === "imum-coeli" || normalized === "ic") return "imum-coeli";
+  return null;
+}
+
+function fallbackV3Aspect(value: unknown): AspectFacts["aspect"] | null {
+  const normalized = slugPart(value).replace(/^conjunct$/u, "conjunction");
+  return FALLBACK_V3_ASPECTS.has(normalized as AspectFacts["aspect"])
+    ? normalized as AspectFacts["aspect"]
+    : null;
 }
 
 function visibleStrings(templateFamily: string, mode: RenderMode, fields: Record<string, string>) {
@@ -1202,76 +1367,174 @@ function approvedFallbackFor(surface: SurfaceId, facts: Record<string, unknown>,
     };
   }
 
+  if (surface === "me.natal_angle" && facts.angle && facts.sign) {
+    const angle = fallbackV3Angle(facts.angle);
+    const signKey = slugPart(facts.sign);
+    const title = `${titlePart(facts.angle)} in ${titlePart(facts.sign)}`;
+
+    if (!angle) {
+      return omittedFallback({
+        fallbackId: `fallback-hook/me.natal-angle/${slugPart(facts.angle)}-${signKey}`,
+        fieldMap,
+        renderedFields: {
+          factualAngleTitle: title,
+          sourceMaterialStatus: "needs-source-material"
+        },
+        supportingSourceKeys: [`SOURCE_GAP: unsupported natal angle ${sentence(facts.angle)}`]
+      });
+    }
+
+    try {
+      const rendered = fallbackRendererV3.renderNatalAngle({
+        angle,
+        sign: signKey,
+        voice: "you"
+      });
+      const expandedNarrative = rendered.parts.join("\n\n");
+
+      return {
+        fallbackId: `fallback-hook/me.natal-angle/${angle}-${signKey}`,
+        fallbackSpecificity: "exact-combination",
+        finalVisibleStrings: rendered.parts,
+        renderedFields: {
+          factualAngleTitle: title,
+          expandedNarrative,
+          ...(facts.degree ? { degreeDisplay: sentence(facts.degree) } : {})
+        },
+        fieldMap,
+        expandedCopy: expandedNarrative,
+        readerAuthority: "approved-fallback",
+        supportingSourceKeys: [
+          "tldrastro-fallback-architecture-v3",
+          rendered.templateKey,
+          `fallback-hook/angle-intro/${angle}`,
+          `fallback-hook/angle-sign/${angle}/${signKey}`
+        ]
+      };
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      return omittedFallback({
+        fallbackId: `fallback-hook/me.natal-angle/${angle}-${signKey}`,
+        fieldMap,
+        renderedFields: {
+          factualAngleTitle: title,
+          sourceMaterialStatus: "needs-source-material"
+        },
+        supportingSourceKeys: [error.message]
+      });
+    }
+  }
+
+  if (surface === "me.natal_aspect" && facts.natalPointA && facts.aspect && facts.natalPointB) {
+    const aspect = fallbackV3Aspect(facts.aspect);
+    const planetA = slugPart(facts.natalPointA);
+    const planetB = slugPart(facts.natalPointB);
+    const title = `${titlePart(facts.natalPointA)} ${sentence(facts.aspect)} ${titlePart(facts.natalPointB)}`;
+
+    if (!aspect) {
+      return omittedFallback({
+        fallbackId: `fallback-hook/me.natal-aspect/${planetA}-${slugPart(facts.aspect)}-${planetB}`,
+        fieldMap,
+        renderedFields: {
+          factualAspectTitle: title,
+          sourceMaterialStatus: "needs-source-material"
+        },
+        supportingSourceKeys: [`SOURCE_GAP: unsupported natal aspect ${sentence(facts.aspect)}`]
+      });
+    }
+
+    try {
+      const rendered = fallbackRendererV3.renderNatalAspect({
+        aspect,
+        planetA,
+        planetB,
+        voice: ownerFallbackVoiceFor(facts)
+      });
+      const expandedNarrative = rendered.parts.join("\n\n");
+
+      return {
+        fallbackId: `fallback-hook/me.natal-aspect/${planetA}-${aspect}-${planetB}`,
+        fallbackSpecificity: "surface-family",
+        finalVisibleStrings: rendered.parts,
+        renderedFields: {
+          factualAspectTitle: title,
+          expandedNarrative,
+          ...(facts.orb ? { orbDisplay: sentence(facts.orb) } : {})
+        },
+        fieldMap,
+        expandedCopy: expandedNarrative,
+        readerAuthority: "approved-fallback",
+        supportingSourceKeys: [
+          "tldrastro-fallback-architecture-v3",
+          rendered.templateKey,
+          `fallback-vocab/aspect-adj/${aspect}`,
+          `fallback-vocab/planet-core/${planetA}`,
+          `fallback-vocab/planet-core/${planetB}`
+        ]
+      };
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      return omittedFallback({
+        fallbackId: `fallback-hook/me.natal-aspect/${planetA}-${aspect}-${planetB}`,
+        fieldMap,
+        renderedFields: {
+          factualAspectTitle: title,
+          sourceMaterialStatus: "needs-source-material"
+        },
+        supportingSourceKeys: [error.message]
+      });
+    }
+  }
+
   if (surface === "me.natal_placement" && facts.natalBody && facts.natalSign) {
     const house = facts.natalHouse ? ` in the ${ordinal(facts.natalHouse)} house` : "";
     const title = `${titlePart(facts.natalBody)} in ${titlePart(facts.natalSign)}${house}`;
-    const ownerPerspective = ownerPerspectiveFor(facts);
-    const exemplar = slugPart(facts.natalBody) === "sun" && slugPart(facts.natalSign) === "aquarius"
-      ? exemplarRecords.find((record) => record.id === "exemplar.natal.sun.aquarius")
-      : null;
-    const houseKey = facts.natalHouse ? `cc/house/${facts.natalHouse}` : "";
-    const exactPlanetSignKey = `cc/planet-in-sign/${slugPart(facts.natalBody)}-in-${slugPart(facts.natalSign)}`;
-    const signBehaviorKey = `cc/sign/${slugPart(facts.natalSign)}/lived-behaviors`;
-    const signActionKey = `cc/sign/${slugPart(facts.natalSign)}/actions`;
-    const signClosingKey = `cc/sign/${slugPart(facts.natalSign)}/closings`;
-    const exactPlanetSign = sourceLaneParagraph(ccPhrases[exactPlanetSignKey]);
-    const signBehavior = sourceLaneParagraph([
-      ccSignLane(titlePart(facts.natalSign), "lived-behaviors"),
-      ccSignLane(titlePart(facts.natalSign), "actions"),
-      ccSignLane(titlePart(facts.natalSign), "closings")
-    ].filter(Boolean).join("; "));
-    const houseContext = sourceLaneSentence(ccPhrases[houseKey]);
-    const bodySignStory = perspectiveClause(exemplar?.slots?.planetInSignStory
-      || exactPlanetSign
-      || signBehavior
-      || "", ownerPerspective);
-    const recognizableExample = exemplar?.slots?.recognizableExample || houseContext;
-    const houseDevelopment = facts.natalHouse && recognizableExample
-      ? perspectiveClause(recognizableExample, ownerPerspective)
-      : "";
-    const rendered = renderMustacheMadlib("natal.placement", {
-      facts: {
-        body: titlePart(facts.natalBody),
-        sign: titlePart(facts.natalSign),
-        house: facts.natalHouse ? `${ordinal(facts.natalHouse)} house` : "birth-time pending"
-      },
-      primary: {
-        body_sign_story: bodySignStory,
-        house_development: houseDevelopment
-      },
-      modifier: {
-        sect: "",
-        retrograde: "",
-        dignity: "",
-        ruler_bridge: "",
-        supportive_aspect: "",
-        challenging_aspect: ""
-      }
-    });
-    const visibleRendered = stripTemplateHeaderParagraphs(rendered, [title]);
-    const expandedNarrative = visibleRendered.join("\n\n");
+    try {
+      const planetKey = slugPart(facts.natalBody);
+      const signKey = slugPart(facts.natalSign);
+      const rendered = fallbackRendererV3.renderNatalPlacement({
+        planet: planetKey,
+        sign: signKey,
+        house: facts.natalHouse ? Number(facts.natalHouse) : null,
+        voice: "you"
+      });
+      const [planetSignFallbackStory = "", planetSignHouseFallbackStory = ""] = rendered.parts;
+      const expandedNarrative = rendered.parts.join("\n\n");
 
-    return {
-      fallbackId: `fallback-hook/me.natal-placement/${slugPart(facts.natalBody)}-${slugPart(facts.natalSign)}${facts.natalHouse ? `-house-${facts.natalHouse}` : ""}`,
-      fallbackSpecificity: facts.natalHouse ? "exact-combination" : "surface-family",
-      finalVisibleStrings: visibleRendered,
-      renderedFields: {
-        factualPlacementTitle: title,
-        integratedSignHouseStory: expandedNarrative,
-        ...(facts.degree ? { degreeDisplay: sentence(facts.degree) } : {})
-      },
-      fieldMap,
-      expandedCopy: expandedNarrative,
-      readerAuthority: "approved-fallback",
-      supportingSourceKeys: [
-        ...(exemplar?.source_keys ?? []),
-        exactPlanetSign ? exactPlanetSignKey : "",
-        !exactPlanetSign && signBehavior ? signBehaviorKey : "",
-        !exactPlanetSign && signBehavior ? signActionKey : "",
-        !exactPlanetSign && signBehavior ? signClosingKey : "",
-        houseKey
-      ].filter(Boolean)
-    };
+      return {
+        fallbackId: `fallback-hook/me.natal-placement/${slugPart(facts.natalBody)}-${slugPart(facts.natalSign)}${facts.natalHouse ? `-house-${facts.natalHouse}` : ""}`,
+        fallbackSpecificity: facts.natalHouse ? "exact-combination" : "surface-family",
+        finalVisibleStrings: rendered.parts,
+        renderedFields: {
+          factualPlacementTitle: title,
+          planetSignFallbackStory,
+          ...(planetSignHouseFallbackStory ? { planetSignHouseFallbackStory } : {}),
+          integratedSignHouseStory: expandedNarrative,
+          ...(facts.degree ? { degreeDisplay: sentence(facts.degree) } : {})
+        },
+        fieldMap,
+        expandedCopy: expandedNarrative,
+        readerAuthority: "approved-fallback",
+        supportingSourceKeys: [
+          "tldrastro-fallback-architecture-v3",
+          rendered.templateKey,
+          `fallback-vocab/planet-topic/${planetKey}`,
+          `fallback-vocab/sign-need/${signKey}`,
+          ...(facts.natalHouse ? [`fallback-hook/house-meaning/${facts.natalHouse}`] : [])
+        ]
+      };
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      return omittedFallback({
+        fallbackId: `fallback-hook/me.natal-placement/${slugPart(facts.natalBody)}-${slugPart(facts.natalSign)}${facts.natalHouse ? `-house-${facts.natalHouse}` : ""}`,
+        fieldMap,
+        renderedFields: {
+          factualPlacementTitle: title,
+          sourceMaterialStatus: "needs-source-material"
+        },
+        supportingSourceKeys: [error.message]
+      });
+    }
   }
 
   const title = surface.replace(/[._-]+/g, " ");

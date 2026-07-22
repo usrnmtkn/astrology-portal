@@ -8593,7 +8593,6 @@ body,
   margin: 6px 0 0;
 }
 
-.admin-dashboard .admin-editor-guidance,
 .admin-dashboard .admin-editor-key-details,
 .admin-dashboard .admin-display-source-panel {
   background: var(--admin-ui-surface-2);
@@ -8602,13 +8601,114 @@ body,
   padding: 14px;
 }
 
+.admin-dashboard .admin-editor-guidance,
+.admin-dashboard .admin-content-role-panel,
+.admin-dashboard .admin-fallback-diagnostic-panel {
+  background: transparent;
+  border: 0;
+  border-left: 2px solid var(--admin-ui-border-strong);
+  border-radius: 0;
+  padding: 0 0 0 12px;
+}
+
 .admin-dashboard .admin-editor-guidance p,
+.admin-dashboard .admin-content-role-panel p,
+.admin-dashboard .admin-fallback-diagnostic-panel p,
 .admin-dashboard .admin-display-source-panel p,
 .admin-dashboard .admin-field-hint {
   color: var(--admin-ui-muted);
   font-size: var(--admin-ui-type-hint);
   line-height: 1.45;
   margin: 0;
+}
+
+.admin-dashboard .admin-content-role-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-dashboard .admin-content-role-panel h3 {
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading h3 {
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading strong {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 999px;
+  color: #d9a14a;
+  flex: 0 0 auto;
+  font-size: var(--admin-ui-type-caption);
+  padding: 5px 9px;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-fallback-diagnostic-grid > div {
+  border: 0;
+  border-top: 1px solid var(--admin-ui-border);
+  border-radius: 0;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 10px 0 0;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-grid span {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-grid ul {
+  display: grid;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-panel code {
+  background: var(--admin-ui-surface);
+  border: 1px solid var(--admin-ui-border-soft);
+  border-radius: 6px;
+  color: var(--admin-ui-text);
+  display: inline-block;
+  font-size: var(--admin-ui-type-caption);
+  line-height: 1.3;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 3px 6px;
+}
+
+@media (max-width: 920px) {
+  .admin-dashboard .admin-fallback-diagnostic-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-dashboard .admin-display-source-panel {
@@ -8676,6 +8776,161 @@ body,
   max-width: min(420px, calc(100vw - 48px));
   pointer-events: none;
   right: 24px;
+}
+
+.admin-dashboard .admin-review-queue-layout {
+  align-items: stretch;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-groups {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  min-width: 0;
+  padding: 12px;
+  position: static;
+}
+
+.admin-dashboard .admin-review-queue-groups button {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  justify-items: stretch;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.admin-dashboard .admin-review-queue-groups button span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-review-queue-groups button strong {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-review-queue-rows {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.admin-dashboard .admin-review-queue-row {
+  align-items: start;
+  cursor: pointer;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  padding: 14px;
+}
+
+.admin-dashboard .admin-review-queue-row-head {
+  align-items: start;
+  display: grid;
+  gap: 10px 12px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-copy h3 {
+  display: -webkit-box;
+  line-height: 1.18;
+  max-width: 100%;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.admin-dashboard .admin-review-queue-copy code {
+  display: block;
+  max-width: min(100%, 520px);
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-review-queue-meta-strip {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  grid-column: 2;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-row > p {
+  color: var(--admin-ui-muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 78ch;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.admin-dashboard .admin-review-queue-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-review-queue-actions button {
+  min-height: 36px;
+  min-width: 76px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-fallback-row code {
+  display: block;
+  max-width: min(100%, 420px);
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-fallback-row h3 {
+  display: -webkit-box;
+  line-height: 1.18;
+  max-width: 100%;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (min-width: 1180px) {
+  .admin-dashboard .admin-review-queue-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .admin-dashboard .admin-review-queue-actions {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
 }
 
 .admin-dashboard .admin-panel {

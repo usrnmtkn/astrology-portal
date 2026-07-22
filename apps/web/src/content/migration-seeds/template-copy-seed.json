@@ -119,7 +119,7 @@
       "fields": {
         "title": "{{planet}} in {{sign}}",
         "summary": "{{planet}} in {{sign}} changes what gets attention in the current sky.",
-    "body": "{{planet}} is in {{sign}}, so the {{planet}} theme of {{planetTopic}} is active in a {{signStyle}} way. This transit can make that theme easier to notice in conversations, decisions, delays, or reactions around the room. Treat it as weather, not a verdict: name the signal, keep the response proportionate, and choose the next practical response.",
+    "body": "{{planet}} in {{sign}} needs approved V3 placement copy before it can serve reader text.",
         "bestMove": "Name the concrete situation before deciding what response is actually needed.",
         "emptyState": "If no approved content exists, leave the product surface blank."
       },

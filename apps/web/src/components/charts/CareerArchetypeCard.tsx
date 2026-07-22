@@ -11,8 +11,8 @@ export function CareerArchetypeCard({
   onOpenDetail,
   profile
 }: CareerArchetypeCardProps) {
-  const sourceLayer = profile.sections.some((section) => section.layer === "source-grounded")
-    ? "Admin"
+  const sourceLayer = profile.sections.some((section) => section.layer === "authored")
+    ? "Authored"
     : "Fallback";
   const cardClassName = [
     "career-archetype-card",
@@ -49,7 +49,7 @@ export function CareerArchetypeCard({
             <article key={section.key}>
               <div>
                 <span>{section.label}</span>
-                <em>{section.layer === "source-grounded" ? "Admin" : "Fallback"}</em>
+                <em>{section.layer === "authored" ? "Authored" : "Fallback"}</em>
               </div>
               <h4>{section.headline}</h4>
               <p>{section.body}</p>

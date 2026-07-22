@@ -4,14 +4,12 @@
   --row-bg: var(--card-bg);
   --aspect-row-padding: var(--sky-card-padding);
   --aspect-row-copy-gap: var(--space-2);
-  --aspect-row-glyph-gap: var(--space-2);
-  --aspect-row-glyph-width: calc((var(--aspect-inline-icon-size, 20px) * 3) + (var(--aspect-row-glyph-gap) * 2));
 
   display: grid;
-  grid-template-columns: var(--aspect-row-template, 78px minmax(0, 1fr) 30px);
+  grid-template-columns: var(--aspect-row-template);
   align-items: start;
   width: 100%;
-  gap: var(--aspect-row-gap, var(--card-row-gap));
+  gap: var(--aspect-row-gap);
   padding: var(--aspect-row-padding);
   text-align: left;
 }
@@ -31,13 +29,13 @@
   align-items: center;
   justify-content: flex-start;
   align-self: start;
-  width: var(--aspect-row-glyph-width, 78px);
-  min-width: var(--aspect-row-glyph-width, 78px);
+  width: var(--aspect-row-glyph-width);
+  min-width: var(--aspect-row-glyph-width);
   height: 25px;
   margin-top: calc(var(--space-1) / 4);
   gap: var(--aspect-row-glyph-gap);
   font-family: var(--font-glyph);
-  font-size: var(--aspect-row-glyph-size, 20px);
+  font-size: var(--aspect-row-glyph-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-label);
   text-shadow: none;
@@ -50,12 +48,12 @@
 .inline-glyph-icon {
   display: inline-grid;
   place-items: center;
-  flex: 0 0 var(--aspect-inline-icon-size, 20px);
-  width: var(--aspect-inline-icon-size, 20px);
-  height: var(--aspect-inline-icon-size, 20px);
+  flex: 0 0 var(--aspect-inline-icon-size);
+  width: var(--aspect-inline-icon-size);
+  height: var(--aspect-inline-icon-size);
   color: currentColor;
   font-family: var(--font-glyph);
-  font-size: var(--aspect-inline-icon-size, 20px);
+  font-size: var(--aspect-inline-icon-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-label);
   text-align: center;
@@ -74,13 +72,13 @@
 }
 
 .inline-glyph-icon--fallback {
-  transform: translateY(var(--inline-glyph-fallback-offset-y, -0.01em));
+  transform: translateY(var(--inline-glyph-fallback-offset-y));
 }
 
 .aspect-row-copy {
   display: grid;
   min-width: 0;
-  gap: var(--aspect-row-copy-gap, var(--inline-gap, 6px));
+  gap: var(--aspect-row-copy-gap);
   text-align: left;
 }
 
@@ -91,9 +89,11 @@
   min-height: 25px;
   overflow-wrap: normal;
   word-break: normal;
-  font-size: var(--text-table-title-size);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-title);
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--aspect-card-title-size);
+  font-weight: var(--aspect-card-title-weight);
+  line-height: var(--aspect-card-title-line);
   letter-spacing: var(--tracking-title);
 }
 
@@ -101,18 +101,18 @@
 .aspect-row-copy p {
   margin: 0;
   color: var(--aspect-row-copy-color, var(--card-body-color));
-  font-size: var(--aspect-row-copy-size, var(--text-row-body-size));
+  font-size: var(--aspect-row-copy-size);
   font-weight: var(--weight-regular);
-  line-height: var(--aspect-row-copy-line, var(--leading-description));
+  line-height: var(--aspect-row-copy-line);
 }
 
 .aspect-row-copy .aspect-row-subtitle:not(.ui-pill) {
-  margin-top: var(--aspect-row-subtitle-margin, var(--space-1));
-  color: var(--aspect-row-subtitle-color, var(--card-meta-color));
+  margin-top: var(--aspect-row-subtitle-margin);
+  color: var(--aspect-row-subtitle-color);
   font-family: var(--font-body);
-  font-size: var(--aspect-row-subtitle-size, var(--text-meta-size));
-  font-weight: var(--aspect-row-subtitle-weight, var(--weight-medium));
-  letter-spacing: var(--aspect-row-subtitle-tracking, var(--tracking-label));
+  font-size: var(--aspect-row-subtitle-size);
+  font-weight: var(--aspect-row-subtitle-weight);
+  letter-spacing: var(--aspect-row-subtitle-tracking);
   line-height: var(--leading-label);
   text-transform: uppercase;
 }
@@ -172,15 +172,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--aspect-row-meta-width, 30px);
-  min-width: var(--aspect-row-meta-width, 30px);
+  width: var(--aspect-row-meta-width);
+  min-width: var(--aspect-row-meta-width);
   gap: 5px;
   padding-top: calc(var(--space-1) + var(--space-1) / 4);
   color: var(--card-meta-color);
   font-family: var(--font-body);
-  font-size: var(--aspect-row-meta-size, var(--text-meta-size));
+  font-size: var(--aspect-row-meta-size);
   font-variant-numeric: tabular-nums;
-  font-weight: var(--aspect-row-meta-weight, var(--aspect-card-meta-weight));
+  font-weight: var(--aspect-row-meta-weight);
   line-height: var(--aspect-card-meta-line);
   text-align: center;
   white-space: nowrap;
@@ -366,11 +366,7 @@
 }
 
 .updates-aspect-list {
-  --updates-aspect-glyph-width: var(--aspect-row-glyph-width, 82px);
-  --updates-aspect-meta-width: var(--aspect-row-meta-width, 30px);
-  --updates-aspect-row-gap: var(--aspect-row-gap, 16px);
   --updates-aspect-row-padding: var(--surface-card-padding);
-  --updates-aspect-copy-gap: 7px;
 
   display: grid;
   gap: var(--card-list-gap);
@@ -424,7 +420,7 @@
   gap: 6px;
   color: var(--ink);
   font-family: var(--font-glyph);
-  font-size: var(--aspect-row-glyph-size, 22px);
+  font-size: var(--updates-aspect-row-glyph-size);
   line-height: var(--leading-label);
   white-space: nowrap;
 }
@@ -437,12 +433,12 @@
 .updates-aspect-row__title {
   display: block;
   min-height: 22px;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
+  font-size: var(--aspect-card-title-size);
+  font-weight: var(--aspect-card-title-weight);
   letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
+  line-height: var(--aspect-card-title-line);
   overflow-wrap: anywhere;
 }
 

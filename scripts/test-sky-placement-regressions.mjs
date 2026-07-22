@@ -142,6 +142,7 @@ function generatedContentParagraphsForTest(content) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const themeCss = read("apps/web/src/styles/theme.css");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const careerArchetype = read("apps/web/src/services/careerArchetype.ts");
@@ -489,35 +490,49 @@ assert.ok(
 assert.ok(app.includes("hash.replace(/^#\\/?/, \"\")"), "Sky detail routes must accept both #sky/... and #/sky/... hash paths.");
 assert.ok(
   app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent)")
+  && !app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents)")
   && app.includes("function skyPlacementMadlibFallbackSection(")
-  && app.includes("emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde })"),
-  "Sky placement pages must resolve dashboard-authored and source-grounded copy through the normalizer before source-based madlib fallback."
+  && app.includes("transitSynastryFallbackRendererV3.renderSkyPlacement({"),
+  "Sky placement pages must keep placement body copy separate from related aspect cards."
 );
 assert.ok(
-  app.includes("function sourceGroundedSkyRetrogradeNormalizedSection(")
-  && app.includes("composeSkyRetrograde({")
-  && app.includes("const sourceGroundedRetrogradeSection = sourceGroundedSkyRetrogradeNormalizedSection(position, generatedAt)")
-  && app.includes("sections: [sourceGroundedRetrogradeSection]")
-  && app.indexOf("const sourceGroundedRetrogradeSection = sourceGroundedSkyRetrogradeNormalizedSection(position, generatedAt)") < app.indexOf("const normalizedBody = normalized.sections.flatMap"),
-  "Sky retrograde detail pages must keep source-grounded detail copy stable after generated content hydrates."
+  !app.includes("[AUTHORED]")
+  && !app.includes("[FALLBACK]")
+  && !app.includes("showContentSourceQaTags"),
+  "Production reader pages must not show authored/fallback QA source tags."
 );
 assert.ok(
-  app.includes("liveGeneratedContent(generatedContent, contentKey)")
-  && app.includes("skyPlacementContentKey(position.planet, position.sign)")
-  && app.includes("skyPlacementAppDisplaySource(generated)")
-  && app.includes("appDisplaySource === \"madlib-fallback\"")
-  && app.indexOf("savedSkyPlacementNormalizedSection(position, generatedContent)") >= 0
-  && app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") >= 0
-  && app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")") >= 0
-  && app.indexOf("savedSkyPlacementNormalizedSection(position, generatedContent)") < app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)")
-  && app.indexOf("sourceGroundedSkyPlacementNormalizedSection(position, duration)") < app.indexOf("skyPlacementMadlibFallbackSection(position, position.motion === \"retrograde\")"),
-  "Sky placement normalizer must try dashboard-authored placement copy before source-grounded copy and madlib fallback."
+  !app.includes("savedSkyPlacementNormalizedSection(")
+  && !app.includes("sourceGroundedSkyPlacementNormalizedSection(")
+  && !app.includes("sourceGroundedSkyRetrogradeNormalizedSection(")
+  && !app.includes("savedSkyAspectNormalizedSection(")
+  && !app.includes("sourceGroundedSkyAspectNormalizedSection(")
+  && !app.includes("composeSkyRetrograde({")
+  && !app.includes("skyPlacementContentKey(position.planet, position.sign)")
+  && !app.includes("skyAspectContentKey(aspect.from, aspect.type, aspect.to)")
+  && !app.includes("skyPlacementAppDisplaySource(generated)")
+  && !app.includes("appDisplaySource ===")
+  && app.indexOf("skyPlacementMadlibFallbackSection(position, events)") >= 0
+  && app.includes("void generatedContent;"),
+  "Sky pages must use fallback-only routing: no saved/authored/source-grounded prose may outrank madlib fallback."
 );
-assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"), "Sky placement list rows must use the normalized dashboard/source-grounded surface preview.");
-assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyAspectSurface(aspect, generatedAt))"), "Sky aspect list and related rows must use the normalized source-grounded surface preview.");
-assert.ok(app.includes("sourceGroundedNatalPlacementSections({"), "Natal placement pages must use source-grounded package layers before emergency copy.");
+assert.ok(app.includes("normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"), "Sky placement list rows must use the normalized dashboard/authored surface preview.");
+assert.ok(app.includes("const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions);"), "Sky aspect list rows must use the fallback-only sky-aspect normalizer.");
+assert.ok(
+  app.includes("const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);")
+  && app.includes("if (!normalizedAspect)")
+  && app.includes("if (mode === \"sky\" && !normalizedSkySurface?.sections.length)")
+  && app.includes("if (normalized.sections.length === 0)"),
+  "Unsupported Sky aspects such as quincunx must be skipped instead of rendered through legacy emergency copy."
+);
+assert.ok(
+  /function normalizeNatalPlacementSurface[\s\S]*const sourceGroundedSections = isAnglePoint[\s\S]*sourceGroundedNatalPlacementNormalizedSections\(position, natalSky\)[\s\S]*const fallbackSections = isAnglePoint[\s\S]*sourceGroundedNatalPlacementFallbackSections\(position\)[\s\S]*const primarySections = isAnglePoint[\s\S]*sourceGroundedSections[\s\S]*sourceGroundedSections\.find\(\(section\) => section\.slot === slot\)[\s\S]*fallbackSections\.find\(\(section\) => section\.slot === slot\)/.test(app)
+  && app.includes("sourceGroundedNatalAspectSectionsForPlacement(position, natalSky, ownerContext)")
+  && app.includes("normalizeNatalPlacementSurface(position, natalSky, ownerContext)"),
+  "Natal placement pages must use authored prose per section when present, otherwise fallback, while keeping aspects separate and passing owner voice into v3."
+);
 assert.ok(app.includes("options: { allowKnowledgeOnly?: boolean } = {}"), "Relationship knowledge fallback must require callers to opt into knowledge-only prose.");
-assert.ok(app.includes("const allowKnowledgeOnly = options.allowKnowledgeOnly ?? false;"), "Relationship source-grounded sections must not treat bare knowledge plainTranslation as public prose by default.");
+assert.ok(app.includes("const allowKnowledgeOnly = options.allowKnowledgeOnly ?? false;"), "Relationship authored sections must not treat bare knowledge plainTranslation as public prose by default.");
 assert.ok(!app.includes("approvedVoiceOrKnowledgeFallback(contentKey, \"relationship\", true)"), "Relationship surfaces must not directly opt into knowledge-only prose.");
 assert.ok(!app.includes("loadOrSeedPlacementWriteup"), "Natal placement detail pages must not load or seed private generated writeups outside the placement normalizer.");
 assert.ok(!app.includes("you-natal-placement-v1"), "Natal placement detail pages must not depend on legacy user-generated placement writeup keys.");
@@ -525,11 +540,42 @@ assert.ok(app.includes("return `${firstLabel} ${aspectLabel} ${secondLabel}`;"),
 assert.ok(!app.includes("You Challenge Each Other"), "Synastry rows must not fall back to generic boilerplate titles.");
 assert.ok(!app.includes("This Contact Stands Out"), "Synastry rows must not fall back to generic boilerplate titles.");
 assert.ok(!app.includes("generated-daily-timing"), "Normalized section tiers must not expose generated as a third reader-facing prose layer.");
-assert.ok(app.includes("emergencySkyPlacementCopy(position.planet, position.sign"), "Sky placement fallback must use the approved emergency placement copy.");
-assert.ok(app.includes("currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions)"), "Sky placement aspect rows must open current-sky aspect details.");
+assert.ok(!app.includes("emergencySkyPlacementCopy(position.planet, position.sign"), "Sky placement fallback must not use legacy emergency placement copy.");
+assert.ok(app.includes("fallback-architecture-v3"), "Sky placement fallback must use the v3 fallback architecture package.");
+assert.ok(
+  app.includes("function relatedSkyAspectSectionsForPlacement(")
+  && app.includes("const relatedAspectSections = relatedSkyAspectSectionsForPlacement({")
+  && app.includes("sections: relatedAspectSections")
+  && !app.includes("onOpenSkyAspect: onOpenDetail"),
+  "Sky placement related aspects must render as inline sections instead of click-through detail rows."
+);
+assert.ok(
+  app.includes("const articleSubCandidate = detail.suppressTldr ? \"\" : articleTldrText(detailSubtitle, detail.title)")
+  && app.includes("articleBodyComparableCopies")
+  && app.includes("function isArticleTldrBodyDuplicate(")
+  && app.includes("body.startsWith(normalizedTldr)")
+  && !app.includes("articleTldrText(detailSubtitle || statement"),
+  "Sky detail TLDR must come from an independent subtitle only and must not duplicate or preview body copy."
+);
+assert.ok(
+  /function currentSkyAspectDetailArticle[\s\S]*subtitle: "",[\s\S]*suppressTldr: true/.test(app)
+  && !/function currentSkyAspectDetailArticle[\s\S]*const subtitle = stripTldrPrefix\(textPreview\(body\[0\]/.test(app),
+  "Standalone Sky aspect detail pages must not manufacture TLDR copy from the body paragraph."
+);
 assert.ok(app.includes("skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail)"), "URL-built Sky placement details must keep aspect-row navigation wired.");
 assert.ok(
-  app.includes("normalizeSkyAspectSurface(aspect, generatedAt)")
+  /function skyPlacementRoutePath\(position: Pick<PlanetPosition, "planet"> & Partial<Pick<PlanetPosition, "sign">>\)[\s\S]*parts\.push\(normalizeContentIdPart\(position\.sign\)\)/.test(app)
+  && app.includes("const routeSign = secondPart")
+  && app.includes("signGlyph: signGlyph(routeSign)")
+  && app.includes("position: routedPosition"),
+  "Sky placement routes must preserve sign-specific ingress destinations such as Sun enters Leo instead of reopening the current Sun sign."
+);
+assert.ok(
+  lunarCalendar.includes("onClick={() => onOpenTransit?.(event)}"),
+  "Calendar selected-day transit rows must open the same sign-specific detail route as week transit cards."
+);
+assert.ok(
+  app.includes("normalizeSkyAspectSurface(aspect, generatedContent, positions)")
   && app.includes("function skyAspectMadlibFallbackSection("),
   "Sky placement aspect rows must resolve through the sky-aspect normalizer before madlib fallback."
 );

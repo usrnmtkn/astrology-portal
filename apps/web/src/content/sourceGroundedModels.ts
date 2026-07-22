@@ -621,7 +621,7 @@ export function composeSkyRetrograde(options: {
   const sourceKeys = exemplar?.source_keys ?? [];
   const reviewSituation = exemplar?.slots?.recognizableMoment ?? READER_UNAVAILABLE_COPY;
   const response = exemplar?.slots?.practicalResponse ?? "";
-  const timing = `${options.currentDate} falls inside the calculated ${options.start} to ${options.end} retrograde window.`;
+  const timing = `Until ${options.end}.`;
   const slots = {
     reviewSituation: slot(reviewSituation, sourceKeys),
     practicalResponse: slot(response, sourceKeys),

@@ -784,7 +784,7 @@
 
 .friend-profile-card .friend-hero-copy h2 {
   font-size: var(--id-name-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--id-name-weight);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
 }
@@ -834,7 +834,7 @@
 .you-profile-copy h1 {
   overflow-wrap: anywhere;
   font-size: var(--id-name-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--id-name-weight);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
 }

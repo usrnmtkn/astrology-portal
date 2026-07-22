@@ -129,20 +129,6 @@ function cleanComposedCopy(value: string) {
     .replace(/\bhouse (\d+(?:st|nd|rd|th))\b/gi, "$1 house")
     .replace(/\bin house (\d+(?:st|nd|rd|th))\b/gi, "in the $1 house")
     .replace(/\bin the house (\d+(?:st|nd|rd|th))\b/gi, "in the $1 house")
-    .replace(/\bthey builds\b/gi, "they build")
-    .replace(/\bthey has\b/gi, "they have")
-    .replace(/\bthey is\b/gi, "they are")
-    .replace(/\babout they\b/gi, "about themselves")
-    .replace(/\babout he\b/gi, "about himself")
-    .replace(/\babout she\b/gi, "about herself")
-    .replace(/\bfor they\b/gi, "for them")
-    .replace(/\bto they\b/gi, "to them")
-    .replace(/\bwith they\b/gi, "with them")
-    .replace(/\bof they\b/gi, "of them")
-    .replace(/\bby they\b/gi, "by them")
-    .replace(/\bgiving they\b/gi, "giving them")
-    .replace(/\brewards they\b/gi, "rewards them")
-    .replace(/\bthey make it all about they\b/gi, "they make it all about themselves")
     .trim();
 }
 
