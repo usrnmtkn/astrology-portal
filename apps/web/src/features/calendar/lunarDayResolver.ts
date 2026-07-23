@@ -585,7 +585,7 @@ function normalizedLunarSection(
 function normalizedLunarSlot(
   slot: string,
   sourceCandidates: Array<{ body: string | null | undefined; sourceKeys: string[]; tier?: string }>,
-  madlibCandidates: Array<{ body: string | null | undefined; sourceKeys: string[]; tier?: string }> = [],
+  packageCandidates: Array<{ body: string | null | undefined; sourceKeys: string[]; tier?: string }> = [],
   required = false
 ) {
   for (const candidate of sourceCandidates) {
@@ -596,7 +596,7 @@ function normalizedLunarSlot(
     }
   }
 
-  for (const candidate of madlibCandidates) {
+  for (const candidate of packageCandidates) {
     const section = normalizedLunarSection(slot, candidate.body, "fallback", candidate.sourceKeys, candidate.tier, required);
 
     if (section) {
