@@ -41,7 +41,7 @@ import {
   PlacementTableRow,
   SynastryPlacementsComparison,
   dignitiesFor,
-  natalPlacementDescription as placementRowDescription,
+  friendPlacementDescription,
   placementPlanetOrder,
   placementDignity,
   socialPlacementRows
@@ -15108,7 +15108,7 @@ function PlacementTable({
         {orderedPositions.map((position) => {
           const activeAspects = aspectsByPlacement.get(position.planet) ?? [];
           const title = placementDetailTitle(position, activeAspects);
-          const dignity = placementDignity(position);
+          const dignity = placementDignity(position, "sky");
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
           const isRetrograde = position.motion === "retrograde";
@@ -18592,14 +18592,14 @@ function ManualChartsPanel({
                       : placementTitleFromParts(row.label, row.sign, row.retrograde);
                     const body = selectedChart.birthTimeUnknown && row.label === "Ascendant"
                       ? ""
-                      : placementRowDescription(row.label, "person", selectedChart.displayName);
+                      : friendPlacementDescription(row.label, row.sign);
                     const canOpenDetail = Boolean(selectedChart.natalChart && !row.sign.toLowerCase().includes("pending"));
 
                     return (
                       <PlacementTableRow
                         asButton={canOpenDetail}
                         description={body}
-                        dignity={dignitiesFor(row.label, row.sign)}
+                        dignity={dignitiesFor(row.label, row.sign, "they")}
                         glyph={row.glyph}
                         key={row.id}
                         onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}

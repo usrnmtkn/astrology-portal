@@ -382,9 +382,26 @@ export function renderSynastryAspect({ planetA, planetB, aspect, otherName }) {
       // what each person's planet feels like to the other (hard aspects)
       gratesA: hooks.get(`fallback-hook/planet-grates/${planetA}`)?.body_you,
       gratesB: hooks.get(`fallback-hook/planet-grates/${planetB}`)?.body_they,
+      sceneA: vocab.get(`fallback-vocab/planet-scene/${planetA}`)?.body,
+      sceneB: vocab.get(`fallback-vocab/planet-scene/${planetB}`)?.body,
+      askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
+      askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body,
     }) : null,
     pairSentences: pairRow?.body_you ? fill(pairRow.body_you, holders) : null,
+    // signature closing formula for the assembled fallback (matches the natal-aspect close)
+    closingLine: (() => {
+      const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
+      const coreB = vocab.get(`fallback-vocab/planet-core/${planetB}`)?.body;
+      const motion = vocab.get(`fallback-vocab/aspect-motion/${aspect}`)?.body;
+      return coreA && coreB && motion ? `That's your ${title(planetA)} ${aspect} ${otherName}'s ${title(planetB)}: ${coreA} and ${coreB} ${motion}.` : null;
+    })(),
   };
+  // authored pair copy stands alone (natal-aspect pattern): the headline carries the
+  // astronomy, the pair paragraph carries the meaning. Generic assembly only when no pair row.
+  if (ctx.pairSentences) {
+    const headlinePair = tpl.headline.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
+    return { headline: headlinePair, tag: typeRow?.tag ?? null, body: ctx.pairSentences, parts: [ctx.pairSentences], templateKey: tpl.contentKey };
+  }
   for (const slot of tpl.requiredSlots) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: synastry aspect slot ${slot} for ${planetA}-${aspect}-${planetB}`);
   let body = tpl.body
     .replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => (ctx[key] ? inner : ""))
