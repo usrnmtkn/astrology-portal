@@ -155,12 +155,46 @@ function skyFallbackUnits(atoms, signColors, authoredKeys) {
   }));
 }
 
-export default async function loadUnits() {
-  const houseTransitUnits = readJson(
-    "apps/web/src/content/fallbackArchitectureV3/source-rows/house-transits-master-v2.json"
+async function transitHouseUnitsFromPackage(transitLibrary, templates, sourceRows) {
+  const { createTransitSynastryRenderer } = await import(
+    "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js"
   );
+  const renderer = createTransitSynastryRenderer(transitLibrary, templates, sourceRows);
+  const transitHousePlanets = Array.from(new Set(
+    (sourceRows.hookRows ?? [])
+      .map((row) => String(row.contentKey ?? "").match(/^fallback-hook\/transit-effect-house\/([^/]+)$/)?.[1])
+      .filter(Boolean)
+  )).sort();
+
+  return transitHousePlanets.flatMap((planet) => (
+    Array.from({ length: 12 }, (_, index) => {
+      const house = index + 1;
+      const rendered = renderer.renderTransitHouse({ planet, house });
+
+      return {
+        key: rendered.contentKey ?? `house.${planet}.${house}`,
+        surface: "house",
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        version: "author-final",
+        declaredSlots: [...surfaceLayouts.house.requiredSlots],
+        fields: {
+          headline: rendered.headline,
+          body: rendered.body
+        }
+      };
+    })
+  ));
+}
+
+export default async function loadUnits() {
   const transitLibrary = readJson(
     "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json"
+  );
+  const fallbackSourceRows = readJson(
+    "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+  );
+  const fallbackTemplates = readJson(
+    "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json"
   );
   const moonCompatibilityLibrary = readJson(
     "tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json"
@@ -175,17 +209,7 @@ export default async function loadUnits() {
     "apps/web/src/content/sky-writing/sign-colors-v1.json"
   );
 
-  const houses = houseTransitUnits.map((unit) => ({
-    key: unit.key,
-    surface: "house",
-    sourcePackage: "house-transits-master-v2",
-    version: "author-final",
-    declaredSlots: [...surfaceLayouts.house.requiredSlots],
-    fields: {
-      headline: unit.headline,
-      body: unit.body
-    }
-  }));
+  const houses = await transitHouseUnitsFromPackage(transitLibrary, fallbackTemplates, fallbackSourceRows);
   const aspects = transitLibrary.authoredCards
     .filter((card) => card.contentKey.startsWith("authored/transit-aspect/"))
     .filter(selectableTransitAspectCard)

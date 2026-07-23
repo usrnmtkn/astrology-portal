@@ -255,6 +255,62 @@ async function upsertRows(rows) {
   return upserted;
 }
 
+function restString(value) {
+  return `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
+}
+
+function restInFilter(values) {
+  return `in.(${values.map(restString).join(",")})`;
+}
+
+async function deleteStaleRows(currentRows) {
+  const currentKeys = new Set(currentRows.map((row) => row.content_key));
+  const staleKeys = [];
+
+  for (let offset = 0; ; offset += 1000) {
+    const response = await fetch(
+      `${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key&provider=eq.tldrastro-fallback-architecture-v3&limit=1000&offset=${offset}`,
+      {
+        method: "GET",
+        headers: adminHeaders()
+      }
+    );
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(`Fallback architecture V3 stale-row scan failed with ${response.status}: ${JSON.stringify(payload)}`);
+    }
+
+    for (const row of payload ?? []) {
+      if (row?.content_key && !currentKeys.has(row.content_key)) {
+        staleKeys.push(row.content_key);
+      }
+    }
+
+    if (!Array.isArray(payload) || payload.length < 1000) {
+      break;
+    }
+  }
+
+  for (let index = 0; index < staleKeys.length; index += 100) {
+    const batch = staleKeys.slice(index, index + 100);
+    const response = await fetch(
+      `${supabaseUrl()}/rest/v1/generated_interpretations?provider=eq.tldrastro-fallback-architecture-v3&content_key=${encodeURIComponent(restInFilter(batch))}`,
+      {
+        method: "DELETE",
+        headers: adminHeaders({ prefer: "return=minimal" })
+      }
+    );
+    const payload = await response.text().catch(() => "");
+
+    if (!response.ok) {
+      throw new Error(`Fallback architecture V3 stale-row delete failed with ${response.status}: ${payload}`);
+    }
+  }
+
+  return staleKeys.length;
+}
+
 async function readImportedRows() {
   const imported = [];
 
@@ -329,6 +385,8 @@ console.log(`materialized ${rows.length} V3 dashboard rows -> ${path.relative(re
 console.log(JSON.stringify(counts, null, 2));
 
 if (apply) {
+  const deleted = await deleteStaleRows(rows);
+  console.log(`deleted ${deleted} stale V3 dashboard rows from generated_interpretations`);
   const upserted = await upsertRows(rows);
   console.log(`upserted ${upserted.length} V3 dashboard rows into generated_interpretations`);
 }

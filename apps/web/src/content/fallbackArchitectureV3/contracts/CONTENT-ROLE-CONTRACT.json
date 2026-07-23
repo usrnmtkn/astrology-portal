@@ -220,7 +220,8 @@
       "steadies",
       "heaven",
       "facilitating",
-      "loop"
+      "loop",
+      "engine"
     ],
     "sourceWordsOnly": "Slot meanings must come from the cited source_keys. Verbatim reuse is preferred for lists and fragments; connective sentences (planet intros, house lines) may be drafted in plain language from those meanings, but must add no new astrological claims. All drafted rows carry review_status needs_review until the owner approves the rendered output in chat.",
     "genericYou": "Generic 'you' inside verbatim approved source wording (e.g. 'to feel like you matter') is acceptable in both voices and is not a voice leak."
