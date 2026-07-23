@@ -76,13 +76,17 @@ const dignityLineRows = fallbackSourceRows.hookRows.filter((row) =>
 const targetSpecificTransitEffectRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/transit-effect-(?:hard|soft)\/(?:sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)\/(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north-node|south-node|lilith|ascendant|midheaven|descendant|imum-coeli)$/u.test(row.contentKey)
 );
+const phaseOneTransitAspectRows = transitSynastryRows.authoredCards.filter((row) =>
+  /^authored\/transit-aspect\/(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north-node|south-node)\/(?:chiron|north-node|south-node|moon|venus|mars|mercury)\/(?:conjunction|opposition|sextile|square|trine)$/u.test(row.contentKey)
+  && row.approved_via === "owner-authored aspects-phase1-v1 package (final voice)"
+);
 const bannedDignityWords = contentRoleContract.styleRules?.bannedWords ?? [];
 const bannedDignityPattern = bannedDignityWords.length > 0
   ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
   : null;
 
 assert.equal(PACKAGE_VERSION, "v3-2026-07-23f", "FallbackArchitectureV3 package version must expose the current imported stamp.");
-assert.equal(transitSynastryRows.authoredCards.length, 1_365, "23f must preserve the re-derived authored-card count.");
+assert.equal(transitSynastryRows.authoredCards.length, 1_625, "23f plus aspects-phase1-v1 must expose the re-derived authored-card count.");
 assert.equal(fallbackSourceRows.hookRows.length, 2_343, "23f plus the durable dignity library must expose the complete hook count.");
 assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23f must preserve the re-derived vocabulary count.");
 assert.equal(fallbackTemplates.templates.length, 22, "23f must preserve the re-derived template count.");
@@ -93,6 +97,21 @@ assert.equal(anglePlacementRows.length, 24, "23c must provide all Ascendant and 
 assert.equal(dignityGlossaryRows.length, 4, "23c must provide one generic glossary row for every dignity badge.");
 assert.equal(dignityLineRows.length, 28, "The durable dignity library must include 7 classical planets x 4 dignities.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "23f must include the complete target-specific transit effect library.");
+assert.equal(phaseOneTransitAspectRows.length, 266, "aspects-phase1-v1 must contribute exactly 266 exact authored transit-aspect units.");
+assert.equal(
+  transitSynastryRows.authoredCards.some((row) =>
+    [
+      "authored/transit-aspect/any/chiron/conjunction",
+      "authored/transit-aspect/any/north-node/conjunction",
+      "authored/transit-aspect/any/south-node/conjunction"
+    ].includes(row.contentKey)
+  ),
+  false,
+  "Retired planet-agnostic Chiron and node transit cards must not remain in the authored serving library."
+);
+for (const row of phaseOneTransitAspectRows) {
+  assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
+}
 for (const row of dignityLineRows) {
   assert.equal(row.content_role, "fallback_hook", `${row.contentKey} must remain a fallback_hook.`);
   assert.equal(row.review_status, "approved", `${row.contentKey} must remain approved.`);
