@@ -563,7 +563,7 @@ function normalizedLunarSection(
   body: string | null | undefined,
   layer: LunarProseLayer,
   sourceKeys: string[],
-  tier = layer === "authored" ? "stored-source" : "source-based-madlib",
+  tier = layer === "authored" ? "stored-source" : "v3-package",
   required = false
 ): NormalizedLunarSection | null {
   const copy = body?.trim() ?? "";
