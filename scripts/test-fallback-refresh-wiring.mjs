@@ -42,13 +42,10 @@ const packageRows = [
 ];
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
-assert.equal(needsReviewCards.length, 0, "Owner-approved Mercury cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, 0, "Owner-approved connection variants must be reader eligible.");
-assert.equal(
-  packageRows.filter((row) => row.review_status === "needs_review").length,
-  0,
-  "The owner-approved package must not retain review-gated rows."
-);
+const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
+assert.equal(needsReviewCards.length, 0, "Previously approved authored cards must remain reader eligible.");
+assert.ok(needsReviewHooks.length > 0, "The 07-23b legacy-replacement hooks must remain review gated.");
+assert.ok(needsReviewRows.length > 0, "The package must retain its owner-review boundary.");
 
 const reversedMercuryCompat = transitRenderer.renderCompat({
   planet: "mercury",
@@ -67,7 +64,7 @@ const friendTransit = transitRenderer.renderTransitAspect({
   window: "Until November 13"
 });
 assert.equal(friendTransit.headline, "Saturn square Sofia's Venus");
-assert.match(friendTransit.body, /^Saturn square Sofia's natal Venus through November 13 brings /u);
+assert.match(friendTransit.body, /^Saturn square Sofia's natal Venus through November 13\./u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 
 const friendHouse = transitRenderer.renderTransitHouse({
