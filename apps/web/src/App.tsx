@@ -60,7 +60,6 @@ import {
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
-import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -497,21 +496,6 @@ type NormalizedCompositeArticle = {
   surface: "composite";
   status: NormalizedSurfaceStatus;
   sections: NormalizedCompositeSection[];
-};
-
-type AuthoredSynastryBundleEntry = {
-  id: string;
-  planetA: string;
-  planetB: string;
-  aspect: string;
-  summaryShort?: string;
-  summaryDeep?: string;
-  status?: string;
-  tier?: string;
-};
-
-type AuthoredSynastryBundle = {
-  synastryAspects: AuthoredSynastryBundleEntry[];
 };
 
 type HouseOverlay = {
@@ -1010,12 +994,6 @@ function relationshipKnowledgeFallbackByKeys(
   const allowKnowledgeOnly = options.allowKnowledgeOnly ?? false;
 
   for (const contentKey of contentKeys) {
-    const authoredFallback = authoredSynastryFallbackById(contentKey);
-
-    if (authoredFallback) {
-      return authoredFallback;
-    }
-
     const fallback = approvedVoiceOrKnowledgeFallback(contentKey, "relationship", allowKnowledgeOnly);
 
     if (fallback.summary || fallback.body || fallback.detailParagraphs.length > 0) {
@@ -1038,153 +1016,11 @@ function contentFallbackParagraphs(fallback: ContentFallback | null | undefined)
   ]);
 }
 
-const authoredSynastryEntriesById = new Map(
-  (synastryWebBundle as AuthoredSynastryBundle).synastryAspects.map((entry) => [entry.id, entry])
-);
-
-function authoredSynastryEntryForContact(contact: Omit<SynastryContact, "summary">) {
-  const directionalKeys = [
-    synastryAuthoredContentId(contact.friendPoint.name, contact.aspect, contact.yourPoint.name),
-    synastryAuthoredContentId(contact.yourPoint.name, contact.aspect, contact.friendPoint.name),
-    ...contact.contentKeys
-  ];
-
-  for (const contentKey of new Set(directionalKeys)) {
-    const entry = authoredSynastryEntriesById.get(contentKey);
-    const body = entry ? firstReaderFacingCopy([entry.summaryDeep, entry.summaryShort]) : null;
-
-    if (entry && body) {
-      return { entry, body };
-    }
-  }
-
-  return null;
-}
-
-function authoredSynastryEntry(firstPoint: string, aspect: string, secondPoint: string) {
-  const id = synastryAuthoredContentId(firstPoint, aspect, secondPoint);
-
-  return authoredSynastryEntriesById.get(id) ?? null;
-}
-
-function synastryAuthoredContentId(firstPoint: string, aspect: string, secondPoint: string) {
-  return `A-${normalizeContentIdPart(firstPoint)}_B-${normalizeContentIdPart(secondPoint)}_${normalizeContentIdPart(aspect)}`;
-}
-
-function authoredSynastryFallbackById(id: string): ContentFallback | null {
-  const entry = authoredSynastryEntriesById.get(id);
-
-  return entry ? authoredSynastryFallback(entry.planetA, entry.aspect, entry.planetB) : null;
-}
-
-function authoredSynastryFallback(firstPoint: string, aspect: string, secondPoint: string): ContentFallback | null {
-  const entry = authoredSynastryEntry(firstPoint, aspect, secondPoint);
-
-  if (!entry) {
-    return null;
-  }
-
-  const detail = firstReaderFacingCopy([entry.summaryDeep, entry.summaryShort]);
-  const summary = firstReaderFacingCopy([entry.summaryShort, entry.summaryDeep]);
-
-  if (!summary && !detail) {
-    return null;
-  }
-
-  return sanitizeContentFallback({
-    ...emptyContentFallback(entry.id),
-    bundle: {
-      id: entry.id,
-      knowledge: null,
-      voice: null,
-      status: "MISSING_VOICE"
-    },
-    summary,
-    body: detail,
-    detailParagraphs: detail ? [detail] : []
-  });
-}
-
 function contentFallbackPreview(content: ContentFallback | null | undefined) {
   return content?.summary
     || content?.body
     || content?.detailParagraphs[0]
     || null;
-}
-
-function repairSynastrySurfaceCopy(
-  text: string,
-  friendName: string,
-  comparisonName: string,
-  comparisonIsSelf: boolean,
-  contact: Omit<SynastryContact, "summary">,
-  romanticAllowed: boolean,
-  relationshipType?: string | null
-) {
-  return repairRelationshipFallbackGrammar(
-    relationshipGeneratedCopyForPerspective(
-      text,
-      friendName,
-      comparisonName,
-      comparisonIsSelf
-    ),
-    {
-      primaryName: friendName,
-      comparisonName,
-      comparisonIsSelf,
-      primaryPoint: contact.friendPoint.name,
-      comparisonPoint: contact.yourPoint.name,
-      aspect: contact.aspect,
-      romanticAllowed,
-      relationshipType
-    }
-  );
-}
-
-function authoredSynastrySection(contact: Omit<SynastryContact, "summary">): NormalizedSurfaceSection<SynastryContactSlot> | null {
-  const authored = authoredSynastryEntryForContact(contact);
-
-  if (authored) {
-    return {
-      slot: "scene",
-      required: true,
-      layer: "authored",
-      tier: authored.entry.tier ?? "authored-draft",
-      sourceKeys: [
-        "cc-synastry-web-bundle",
-        authored.entry.id,
-        `status=${authored.entry.status ?? "unknown"}`
-      ],
-      body: authored.body
-    };
-  }
-
-  return null;
-}
-
-function registrySynastrySection(contact: Omit<SynastryContact, "summary">): NormalizedSurfaceSection<SynastryContactSlot> | null {
-  const fallback = relationshipKnowledgeFallbackByKeys(contact.contentKeys);
-  const body = fallback ? firstReaderFacingCopy([
-    ...fallback.detailParagraphs,
-    fallback.body,
-    fallback.summary
-  ]) : null;
-
-  if (!fallback || !body) {
-    return null;
-  }
-
-  return {
-    slot: "scene",
-    required: true,
-    layer: "fallback",
-    tier: fallback.bundle.knowledge?.status ?? fallback.bundle.status,
-    sourceKeys: [
-      ...(fallback.bundle.knowledge?.sources ?? []),
-      fallback.bundle.knowledge?.id ?? fallback.bundle.id
-    ].filter(Boolean),
-    body
-  };
 }
 
 function normalizeSynastryContactSurface(
@@ -1199,31 +1035,31 @@ function normalizeSynastryContactSurface(
   relationshipType?: string | null
 ): NormalizedSynastryContactArticle {
   void generatedContent;
+  void comparisonName;
+  void comparisonIsSelf;
   void friendPronouns;
   void comparisonPronouns;
-  const section = authoredSynastrySection(contact)
-    ?? registrySynastrySection(contact);
-  const repairedSection = section
+  void romanticAllowed;
+  void relationshipType;
+  const rendered = renderReaderDirectedSynastryContact(contact, friendName);
+  const section: NormalizedSurfaceSection<SynastryContactSlot> | null = rendered
     ? {
-      ...section,
-      body: section.layer === "authored"
-        ? section.body
-        : repairSynastrySurfaceCopy(
-          section.body,
-          friendName,
-          comparisonName,
-          comparisonIsSelf,
-          contact,
-          romanticAllowed,
-          relationshipType
-        )
-    }
+        slot: "scene",
+        required: true,
+        layer: rendered.templateKey?.startsWith("authored/") ? "authored" : "fallback",
+        tier: "fallback-architecture-v3",
+        sourceKeys: [
+          "tldrastro-fallback-architecture-v3",
+          rendered.templateKey ?? ""
+        ].filter(Boolean),
+        body: rendered.body
+      }
     : null;
 
   return {
     surface: "synastry-contact",
-    status: repairedSection ? "servable" : "not-servable",
-    sections: repairedSection ? [repairedSection] : []
+    status: section ? "servable" : "not-servable",
+    sections: section ? [section] : []
   };
 }
 
@@ -8076,18 +7912,10 @@ function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, stri
   return section?.body ? textPreview(taggedSectionBody(section)) : "";
 }
 
-function renderReaderDirectedSynastryContact(contact: SynastryContact, friendName: string): RenderedSynastryContact | null {
-  const authored = authoredSynastryEntryForContact(contact);
-
-  if (authored) {
-    return {
-      headline: `Your ${contact.yourPoint.name} ${contact.aspect} ${friendName}'s ${contact.friendPoint.name}`,
-      tag: null,
-      body: authored.body,
-      templateKey: authored.entry.id
-    };
-  }
-
+function renderReaderDirectedSynastryContact(
+  contact: Omit<SynastryContact, "summary">,
+  friendName: string
+): RenderedSynastryContact | null {
   const normalizedAspect = normalizeFallbackV3Aspect(contact.aspect);
 
   if (!normalizedAspect) {
@@ -9272,15 +9100,10 @@ function synastryContactContentKeys(
   secondPoint: string,
   relationshipType?: string | null
 ) {
-  const authoredIds = [
-    synastryAuthoredContentId(firstPoint, aspect, secondPoint),
-    synastryAuthoredContentId(secondPoint, aspect, firstPoint)
-  ];
   const richKeys = richSynastryContactContentKeys(firstPoint, aspect, secondPoint, relationshipType);
   const relationshipKeys = relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
 
   return [
-    ...authoredIds,
     ...richKeys,
     ...relationshipKeys
   ];
@@ -11719,7 +11542,7 @@ export function App() {
       };
     }
 
-    loadLiveGeneratedContentForSurfaces(["relationship", "synastry", "composite"], skyDate)
+    loadLiveGeneratedContentForSurfaces(["relationship", "composite"], skyDate)
       .then((content) => {
         if (!cancelled) {
           setRelationshipGeneratedContent(content);

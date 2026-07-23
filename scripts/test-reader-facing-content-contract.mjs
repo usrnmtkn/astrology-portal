@@ -143,6 +143,12 @@ assert.match(generatedContent, /servedFieldSections/, "Generated content runtime
 assert.match(generatedContent, /isNoProseGeneratedContent/, "Generated content runtime must block no-prose rows.");
 assert.match(generatedContent, /containsSingleBraceSlot/, "Generated content runtime must block raw single-brace fallback slots.");
 assert.match(generatedContent, /isReaderServableGeneratedContent\(content\)/, "Loaded content map must filter unsafe content rows before aliasing.");
+assert.match(generatedContent, /isGeneratedContentReaderBoundaryAllowed\(row\)/, "Generated content runtime must apply the reader-surface boundary before aliasing rows.");
+assert.match(generatedContent, /row\.surface === "synastry"/, "Generated content runtime must block the generic synastry surface.");
+assert.match(generatedContent, /contentType === "synastry-kb-seed"/, "Generated content runtime must block synastry KB seed rows.");
+assert.doesNotMatch(app, /loadLiveGeneratedContentForSurfaces\(\["relationship", "synastry", "composite"\]/, "Friends must not request the generic synastry generated-content surface.");
+assert.doesNotMatch(app, /cc-synastry-web-bundle|authoredSynastryEntryForContact|registrySynastrySection/, "Synastry reader surfaces must not resolve through legacy bundles or registry rows.");
+assert.match(app, /function renderReaderDirectedSynastryContact[\s\S]*?renderSynastryAspect\(\{/u, "Synastry cards and details must resolve through renderSynastryAspect.");
 assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated content row safety must inspect actual section body copy instead of serialized metadata.");
 assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
 assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the authored content-level label.");
