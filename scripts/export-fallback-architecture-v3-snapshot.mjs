@@ -6,11 +6,14 @@ import process from "node:process";
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const provider = "tldrastro-fallback-architecture-v3";
+const contentPrefix = process.argv
+  .find((arg) => arg.startsWith("--content-prefix="))
+  ?.slice("--content-prefix=".length);
 
 const outFiles = {
-  authored: path.join(packageDir, "transit-synastry-rows-v1.json"),
-  source: path.join(packageDir, "fallback-source-rows-v3.json"),
-  templates: path.join(packageDir, "fallback-templates-v3.json")
+  authored: path.join(packageDir, "source-rows/transit-synastry-rows-v1.json"),
+  source: path.join(packageDir, "source-rows/fallback-source-rows-v3.json"),
+  templates: path.join(packageDir, "templates/fallback-templates-v3.json")
 };
 
 function unquoteEnvValue(value) {
@@ -138,7 +141,7 @@ function recordWithDashboardEdits(row) {
   record.content_role = role || record.content_role;
   record.review_status = reviewStatus || record.review_status;
 
-  if (typeof row.headline === "string" && row.headline.trim()) {
+  if (Object.hasOwn(record, "headline") && typeof row.headline === "string" && row.headline.trim()) {
     record.headline = row.headline.trim();
   }
 
@@ -185,7 +188,75 @@ async function readDashboardRows() {
 }
 
 function writeJson(filePath, value) {
-  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 1)}\n`);
+}
+
+function orderLike(reference, value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (!isRecord(value)) {
+    return value;
+  }
+
+  const ordered = {};
+
+  if (isRecord(reference)) {
+    for (const key of Object.keys(reference)) {
+      if (Object.hasOwn(value, key)) {
+        ordered[key] = orderLike(reference[key], value[key]);
+      }
+    }
+  }
+
+  for (const [key, nestedValue] of Object.entries(value)) {
+    if (!Object.hasOwn(ordered, key)) {
+      ordered[key] = nestedValue;
+    }
+  }
+
+  return ordered;
+}
+
+function isInExportScope(row) {
+  return !contentPrefix || String(row.contentKey ?? "").startsWith(contentPrefix);
+}
+
+function mergeRowsInExistingOrder(existingRows, exportedRows) {
+  const exportedByKey = new Map(exportedRows.map((row) => [row.contentKey, row]));
+  const merged = [];
+
+  for (const existingRow of existingRows) {
+    if (!isInExportScope(existingRow)) {
+      merged.push(existingRow);
+      exportedByKey.delete(existingRow.contentKey);
+      continue;
+    }
+
+    const exportedRow = exportedByKey.get(existingRow.contentKey);
+
+    if (!exportedRow) {
+      continue;
+    }
+
+    merged.push(orderLike(existingRow, exportedRow));
+    exportedByKey.delete(existingRow.contentKey);
+  }
+
+  const newRows = Array.from(exportedByKey.values())
+    .filter(isInExportScope)
+    .sort((a, b) => String(a.contentKey).localeCompare(String(b.contentKey)));
+
+  return [...merged, ...newRows];
+}
+
+function snapshotNote(note, exportedAt) {
+  const base = String(note ?? "")
+    .replace(/\n\nExported from dashboard\/Supabase on [^;]+; this file is the emergency local snapshot, not the source of truth\.$/u, "")
+    .trim();
+
+  return `${base}\n\nExported from dashboard/Supabase on ${exportedAt}; this file is the emergency local snapshot, not the source of truth.`.trim();
 }
 
 loadLocalWebEnv();
@@ -194,6 +265,7 @@ const existingAuthored = readJson(outFiles.authored);
 const existingSource = readJson(outFiles.source);
 const existingTemplates = readJson(outFiles.templates);
 const rows = await readDashboardRows();
+const exportedAt = new Date().toISOString();
 
 const authoredCards = [];
 const vocabularyRows = [];
@@ -228,26 +300,31 @@ fallbackSourceRows.sort(byContentKey);
 hookRows.sort(byContentKey);
 templates.sort(byContentKey);
 
-writeJson(outFiles.authored, {
-  ...existingAuthored,
-  note: `${existingAuthored.note ?? ""}\n\nExported from dashboard/Supabase on ${new Date().toISOString()}; this file is the emergency local snapshot, not the source of truth.`.trim(),
-  authoredCards
-});
+if (!contentPrefix || authoredCards.some(isInExportScope)) {
+  writeJson(outFiles.authored, {
+    ...existingAuthored,
+    note: snapshotNote(existingAuthored.note, exportedAt),
+    authoredCards: mergeRowsInExistingOrder(existingAuthored.authoredCards, authoredCards)
+  });
+}
 writeJson(outFiles.source, {
   ...existingSource,
-  note: `${existingSource.note ?? ""}\n\nExported from dashboard/Supabase on ${new Date().toISOString()}; this file is the emergency local snapshot, not the source of truth.`.trim(),
-  vocabularyRows,
-  fallbackSourceRows,
-  hookRows
+  note: snapshotNote(existingSource.note, exportedAt),
+  vocabularyRows: mergeRowsInExistingOrder(existingSource.vocabularyRows, vocabularyRows),
+  fallbackSourceRows: mergeRowsInExistingOrder(existingSource.fallbackSourceRows, fallbackSourceRows),
+  hookRows: mergeRowsInExistingOrder(existingSource.hookRows, hookRows)
 });
-writeJson(outFiles.templates, {
-  ...existingTemplates,
-  note: `${existingTemplates.note ?? ""}\n\nExported from dashboard/Supabase on ${new Date().toISOString()}; this file is the emergency local snapshot, not the source of truth.`.trim(),
-  templates
-});
+if (!contentPrefix || templates.some(isInExportScope)) {
+  writeJson(outFiles.templates, {
+    ...existingTemplates,
+    note: snapshotNote(existingTemplates.note, exportedAt),
+    templates: mergeRowsInExistingOrder(existingTemplates.templates, templates)
+  });
+}
 
 console.log(`exported ${rows.length} V3 dashboard rows into local emergency snapshot JSON`);
 console.log(JSON.stringify({
+  contentPrefix: contentPrefix ?? null,
   authoredCards: authoredCards.length,
   fallbackHooks: hookRows.length,
   vocabulary: vocabularyRows.length,

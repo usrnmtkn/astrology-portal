@@ -6,6 +6,13 @@ import process from "node:process";
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const defaultSourceDir = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com";
 const importBatchId = `dashboard-source-${new Date().toISOString().slice(0, 10)}`;
+const dignityLinesPath = path.join(
+  repoRoot,
+  "apps/web/src/content/fallbackArchitectureV3/authored-inputs/dignity-sky-lines-2026-07-23.json"
+);
+const requestedSourceId = process.argv
+  .find((arg) => arg.startsWith("--source="))
+  ?.slice("--source=".length);
 
 const sourceFiles = [
   {
@@ -89,13 +96,79 @@ function rowsFromSource(source) {
     return source;
   }
 
-  for (const key of ["templateRows", "rows", "records"]) {
+  for (const key of ["hookRows", "templateRows", "rows", "records"]) {
     if (Array.isArray(source?.[key])) {
       return source[key];
     }
   }
 
   return [];
+}
+
+function normalizeRowsDocument(source, rows) {
+  if (Array.isArray(source)) {
+    return rows;
+  }
+
+  for (const key of ["hookRows", "templateRows", "rows", "records"]) {
+    if (Array.isArray(source?.[key])) {
+      return { ...source, [key]: rows };
+    }
+  }
+
+  throw new Error("Dashboard source JSON must be an array or expose hookRows/templateRows/rows/records.");
+}
+
+function mergeRowsByContentKey(masterRows, authoredRows) {
+  const merged = [...masterRows];
+  const indexes = new Map(
+    merged.map((row, index) => [normalizeContentKey(row), index]).filter(([key]) => key)
+  );
+  let inserted = 0;
+  let updated = 0;
+
+  for (const row of authoredRows) {
+    const contentKey = normalizeContentKey(row);
+
+    if (!contentKey) {
+      throw new Error("Canonical dignity authoring row is missing contentKey.");
+    }
+
+    const existingIndex = indexes.get(contentKey);
+
+    if (existingIndex === undefined) {
+      indexes.set(contentKey, merged.length);
+      merged.push(row);
+      inserted += 1;
+    } else {
+      merged[existingIndex] = row;
+      updated += 1;
+    }
+  }
+
+  return { rows: merged, inserted, updated };
+}
+
+function mergeDignityLinesIntoAuthoredMaster(sourceFile, source) {
+  const dignitySource = readJson(dignityLinesPath);
+  const dignityRows = rowsFromSource(dignitySource);
+
+  if (dignityRows.length !== 28) {
+    throw new Error(`Expected 28 canonical dignity lines, found ${dignityRows.length}.`);
+  }
+
+  const merged = mergeRowsByContentKey(rowsFromSource(source), dignityRows);
+  const document = normalizeRowsDocument(source, merged.rows);
+  fs.writeFileSync(sourceFile.path, `${JSON.stringify(document, null, 2)}\n`);
+
+  return {
+    source: document,
+    inserted: merged.inserted,
+    updated: merged.updated,
+    totalDignityRows: merged.rows.filter((row) =>
+      normalizeContentKey(row).startsWith("fallback-hook/dignity-line/")
+    ).length
+  };
 }
 
 function requireEnv(name) {
@@ -207,11 +280,93 @@ function sourceContentTypeForKey(key, sourceFile) {
   return "fallback-hook";
 }
 
+function mapApprovedDignityLine(row, sourceFile, contentKey) {
+  const requiredBodies = ["body_you", "body_they", "body_sky"];
+
+  for (const field of requiredBodies) {
+    if (typeof row[field] !== "string" || !row[field].trim()) {
+      throw new Error(`${contentKey} is missing ${field}.`);
+    }
+  }
+
+  if (row.content_role !== "fallback_hook") {
+    throw new Error(`${contentKey} must keep content_role=fallback_hook.`);
+  }
+
+  if (row.review_status !== "approved") {
+    throw new Error(`${contentKey} must keep review_status=approved.`);
+  }
+
+  if (!Array.isArray(row.source_keys) || row.source_keys.length === 0) {
+    throw new Error(`${contentKey} must keep its cc/dignity source_keys.`);
+  }
+
+  const expectedSourceKey = contentKey.replace("fallback-hook/dignity-line/", "cc/dignity/");
+
+  if (!row.source_keys.includes(expectedSourceKey)) {
+    throw new Error(`${contentKey} must keep source key ${expectedSourceKey}.`);
+  }
+
+  const packageRecord = structuredClone(row);
+
+  return {
+    content_key: contentKey,
+    surface: "modifier",
+    mode: "feed",
+    status: "DRAFT",
+    event_type: "fallback-hook",
+    target_date: null,
+    headline: String(row.headline ?? titleFromKey(contentKey)).trim(),
+    summary: String(row.summary ?? row.note ?? "").trim(),
+    body: row.body_you.trim(),
+    sections: {
+      packageRecord,
+      body_you: row.body_you.trim(),
+      body_they: row.body_they.trim(),
+      body_sky: row.body_sky.trim()
+    },
+    block_type: "fallback_hook",
+    lane: "reference",
+    review_state: "fallback-system-reference",
+    evergreen: true,
+    evergreen_at: new Date().toISOString(),
+    evergreen_by: importBatchId,
+    facts: {
+      fallbackArchitectureV3: true,
+      packageBucket: "fallback-system",
+      content_role: "fallback_hook",
+      review_status: "approved",
+      readerServing: false
+    },
+    knowledge_ids: [],
+    source_snapshot: {
+      contentType: "fallback-system",
+      content_role: "fallback_hook",
+      review_status: "approved",
+      approved_via: row.approved_via ?? null,
+      source_keys: row.source_keys,
+      importBatchId,
+      sourcePackage: "tldrastro-fallback-architecture-v3",
+      sourceFile: path.basename(sourceFile.path),
+      note: "Approved dignity authoring master row mirrored for dashboard editing and package snapshot export."
+    },
+    reviewer_notes: String(row.note ?? "").trim(),
+    prompt_version: importBatchId,
+    provider: "tldrastro-fallback-architecture-v3",
+    model: "manual",
+    updated_at: new Date().toISOString()
+  };
+}
+
 function mapRow(row, sourceFile, sourceIndex) {
   const contentKey = normalizeContentKey(row);
 
   if (!contentKey) {
     throw new Error(`${sourceFile.id} row ${sourceIndex + 1} is missing contentKey/canonical_key.`);
+  }
+
+  if (contentKey.startsWith("fallback-hook/dignity-line/")) {
+    return mapApprovedDignityLine(row, sourceFile, contentKey);
   }
 
   const family = familyForKey(contentKey, row, sourceFile);
@@ -345,9 +500,23 @@ await assertServingGuardSchema();
 
 const mappedByFile = [];
 const mappedRows = [];
+let dignityMasterMerge = null;
+const activeSourceFiles = requestedSourceId
+  ? sourceFiles.filter((sourceFile) => sourceFile.id === requestedSourceId)
+  : sourceFiles;
 
-for (const sourceFile of sourceFiles) {
-  const source = readJson(sourceFile.path);
+if (requestedSourceId && activeSourceFiles.length === 0) {
+  throw new Error(`Unknown dashboard source id: ${requestedSourceId}`);
+}
+
+for (const sourceFile of activeSourceFiles) {
+  let source = readJson(sourceFile.path);
+
+  if (sourceFile.id === "authored-fallbacks") {
+    dignityMasterMerge = mergeDignityLinesIntoAuthoredMaster(sourceFile, source);
+    source = dignityMasterMerge.source;
+  }
+
   const rows = rowsFromSource(source);
   const mapped = rows.map((row, index) => mapRow(row, sourceFile, index));
 
@@ -412,6 +581,14 @@ const liveHookTemplateCount = await countByPrefix("fallback-hook/", {
 
 console.log(JSON.stringify({
   importBatchId,
+  requestedSourceId: requestedSourceId ?? "all",
+  dignityMasterMerge: dignityMasterMerge
+    ? {
+        inserted: dignityMasterMerge.inserted,
+        updated: dignityMasterMerge.updated,
+        totalDignityRows: dignityMasterMerge.totalDignityRows
+      }
+    : null,
   sourceFiles: mappedByFile,
   totalMappedRows: mappedRows.length,
   totalRowsAfterIncomingDedupe: rowsToUpsert.length,
