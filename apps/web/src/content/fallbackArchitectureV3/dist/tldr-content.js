@@ -314,14 +314,20 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
+    const pushUnique = (key) => {
+      if (!tryKeys.includes(key)) tryKeys.push(key);
+    };
     const push = (a, b) => {
-      if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
-      for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
-      tryKeys.push(`authored/transit-aspect/${a}/${b}/any`);
+      pushUnique(`authored/transit-aspect/${a}/${b}/${aspect}`);
+      if (variant) pushUnique(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
+      for (const gg of groupsToTry) pushUnique(`authored/transit-aspect/${a}/${b}/${gg}`);
+      pushUnique(`authored/transit-aspect/${a}/${b}/any`);
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
-    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    pushUnique(`authored/transit-aspect/any/${natal}/${aspect}`);
+    pushUnique(`authored/transit-aspect/any/${natal}/${g}`);
+    pushUnique(`authored/transit-aspect/any/${natal}/conjunction`);
     if (v === "you") for (const k of tryKeys) {
       const c = card(k);
       if (c) return result(c, "authored/transit-aspect");
@@ -746,6 +752,21 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
     return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
+  const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
+  function renderDailyGlance({ natal, aspect, house }) {
+    if (natal && aspect) {
+      const g = DAILY_GROUP[aspect] ?? aspect;
+      const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
+      const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
+      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    }
+    if (house) {
+      const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
+      const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
+      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    }
+    throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
+  }
   function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
     const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
     const dos = [
@@ -762,7 +783,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const uniq = (a) => [...new Set(a)];
     return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 export {
   RoleViolationError,
