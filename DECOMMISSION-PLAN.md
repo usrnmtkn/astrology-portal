@@ -8,7 +8,7 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 - [x] `apps/web/src/App.tsx` — `personalTransitMadlibFallbackSection`: remove the legacy transit fallback naming/path and keep personal transits on the V3 package resolver only.
 - [x] `apps/web/src/App.tsx` — `normalizeMadlibCardSurface`: remove the legacy madlib naming/tier for package-backed card surfaces.
 - [x] `apps/web/src/App.tsx` — `houseOverlayMadlibSection`: remove the local house overlay generator and hide house overlay rows when dashboard/package output is missing.
-- [ ] `apps/web/src/App.tsx` — `compositeAspectFallbackSummary`: remove the local composite aspect summary generator.
+- [x] `apps/web/src/App.tsx` — `compositeAspectFallbackSummary`: remove the local composite aspect summary generator.
 - [ ] `apps/web/src/App.tsx` — `compositePlacementFallbackSummary`: remove the local composite placement summary generator.
 - [ ] `apps/web/src/App.tsx` — `compositeAspectMadlibSection`: remove the local composite aspect section generator and hide missing rows.
 - [ ] `apps/web/src/App.tsx` — `compositePlacementMadlibSection`: remove the local composite placement section generator and hide missing rows.
