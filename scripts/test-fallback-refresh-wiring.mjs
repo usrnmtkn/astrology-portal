@@ -43,9 +43,9 @@ const packageRows = [
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
-assert.equal(needsReviewCards.length, 0, "Previously approved authored cards must remain reader eligible.");
-assert.ok(needsReviewHooks.length > 0, "The 07-23b legacy-replacement hooks must remain review gated.");
-assert.ok(needsReviewRows.length > 0, "The package must retain its owner-review boundary.");
+assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
+assert.equal(needsReviewHooks.length, 0, "All legacy-replacement hooks must be reader eligible.");
+assert.equal(needsReviewRows.length, 0, "The owner-approved package must not retain review-gated rows.");
 
 const reversedMercuryCompat = transitRenderer.renderCompat({
   planet: "mercury",
