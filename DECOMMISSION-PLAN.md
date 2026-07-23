@@ -5,7 +5,7 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 - [x] `apps/web/src/App.tsx` — `synastryEmergencyMadlibContent`: remove the local synastry emergency generator path.
 - [x] `apps/web/src/App.tsx` — `synastryEmergencyMadlibPreview`: remove the local synastry preview generator path.
 - [x] `apps/web/src/App.tsx` — `madlibSynastrySection`: remove the local synastry section generator and make synastry normalize through authored/dashboard or package output only.
-- [ ] `apps/web/src/App.tsx` — `personalTransitMadlibFallbackSection`: remove the legacy transit fallback naming/path and keep personal transits on the V3 package resolver only.
+- [x] `apps/web/src/App.tsx` — `personalTransitMadlibFallbackSection`: remove the legacy transit fallback naming/path and keep personal transits on the V3 package resolver only.
 - [ ] `apps/web/src/App.tsx` — `normalizeMadlibCardSurface`: remove the legacy madlib naming/tier for package-backed card surfaces.
 - [ ] `apps/web/src/App.tsx` — `houseOverlayMadlibSection`: remove the local house overlay generator and hide house overlay rows when dashboard/package output is missing.
 - [ ] `apps/web/src/App.tsx` — `compositeAspectFallbackSummary`: remove the local composite aspect summary generator.

@@ -7904,7 +7904,7 @@ function dailyCalendarPhaseKey(phase: string) {
   return "balsamic";
 }
 
-function personalTransitMadlibFallbackSection(
+function personalTransitPackageSection(
   transit: TransitItem,
   generatedAt: string,
   voice: "you" | string = "you"
@@ -7960,12 +7960,12 @@ function normalizePersonalTransitSurface(
   generatedAt: string,
   voice: "you" | string = "you"
 ): NormalizedPersonalTransitArticle {
-  const fallbackSection = personalTransitMadlibFallbackSection(transit, generatedAt, voice);
-  const sections = fallbackSection ? [fallbackSection] : [];
+  const packageSection = personalTransitPackageSection(transit, generatedAt, voice);
+  const sections = packageSection ? [packageSection] : [];
 
   return {
     surface: "personal-transit",
-    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
+    status: packageSection ? (packageSection.layer === "authored" ? "servable" : "partial") : "not-servable",
     sections
   };
 }
