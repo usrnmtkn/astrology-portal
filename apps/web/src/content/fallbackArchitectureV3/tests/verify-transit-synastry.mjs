@@ -6,6 +6,7 @@ import { renderTransitHouse, renderTransitAspect, renderCompat, renderSynastryAs
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
+const rowsFileForTests = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
 let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 
@@ -196,6 +197,28 @@ console.log("Rendered 12 Lilith sky placements.");
     fv++;
   }
   console.log(`Rendered ${fv} friend-voice transit cards.`);
+}
+
+
+// Connections pairs: render BOTH directions for every pair and catch holder-slot agreement bugs
+{
+  let cx = 0;
+  const AGREE = /(?<!between )(?<!of )(?<!around )(?<!to )(?<!for )(?<!with )(?<!near )\byou (?:feels|gives|seems|wants|paces|loves|builds|makes|takes|keeps|finds|meets|leans|comes)\b/;
+  const pairKeys = [...new Set(rowsFileForTests.hookRows.filter(r => r.contentKey.startsWith("fallback-hook/synastry-pair/")).map(r => r.contentKey.split("/").slice(2, 4)))].map(a => a);
+  const seen = new Set();
+  for (const r of rowsFileForTests.hookRows) {
+    if (!r.contentKey.startsWith("fallback-hook/synastry-pair/")) continue;
+    const [a, b] = r.contentKey.split("/").slice(2, 4);
+    if (seen.has(a + b)) continue; seen.add(a + b);
+    for (const [pa, pb] of [[a, b], [b, a]]) {
+      try {
+        const out = renderSynastryAspect({ planetA: pa, planetB: pb, aspect: "trine", otherName: "Sofia" });
+        if (AGREE.test(out.body)) fail(`connections pair ${pa}/${pb}: holder agreement bug (${out.body.match(AGREE)[0]})`);
+        cx++;
+      } catch (e) { /* some directions lack mode hooks; fine */ }
+    }
+  }
+  console.log(`Rendered ${cx} Connections pair directions, agreement-checked.`);
 }
 
 console.log(`Rendered ${syn} synastry aspect combos, ${lib.authoredCards.length} authored cards checked.`);

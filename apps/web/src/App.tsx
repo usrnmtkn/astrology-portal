@@ -388,6 +388,19 @@ type SynastryContact = {
   contentKeys: string[];
 };
 
+type RenderedSynastryContact = {
+  headline: string;
+  tag: string | null;
+  body: string;
+  templateKey?: string;
+};
+
+type FriendNatalAspectGroup = {
+  key: "gifts" | "lessons";
+  label: "Gifts" | "Lessons";
+  aspects: SkySnapshot["aspects"];
+};
+
 type SurfaceProseLayer = "authored" | "fallback";
 type NormalizedSurfaceStatus = "servable" | "partial" | "not-servable";
 
@@ -7988,7 +8001,8 @@ function normalizePersonalTransitSurface(
 function normalizeTransitHouseSurface(
   transit: TransitItem,
   house: number,
-  generatedAt: string
+  generatedAt: string,
+  voice: "you" | string = "you"
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
 
@@ -7998,7 +8012,8 @@ function normalizeTransitHouseSurface(
       planet: normalizeContentIdPart(transit.transitPlanet),
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
       motion: transit.transitMotion,
-      window: personalTransitPackageWindow(transit, generatedAt)
+      window: personalTransitPackageWindow(transit, generatedAt),
+      voice
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
@@ -8015,7 +8030,11 @@ function normalizeTransitHouseSurface(
             `fallback-template/transit.house`,
             `fallback-vocab/house-topic/${house}`
           ].filter(Boolean),
-          heading: rendered.headline || `${transit.transitPlanet} through your ${ordinalHouse(house)} house`,
+          heading: rendered.headline || (
+            voice === "you"
+              ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
+              : `${transit.transitPlanet} through ${possessiveLabel(voice)} ${ordinalHouse(house)} house`
+          ),
           body
         }
       : null;
@@ -8034,15 +8053,20 @@ function normalizeTransitHouseSurface(
 
 function activeBondTransitCards(
   contacts: SynastryContact[],
-  transits: TransitItem[],
+  friendTransits: TransitItem[],
+  readerTransits: TransitItem[],
   friendName: string,
   generatedAt: string
 ) {
   return contacts.flatMap((contact) => {
-    const activation = transits.find((transit) => (
-      transit.natalPoint === contact.friendPoint.name
+    const activations = [
+      ...readerTransits.map((transit) => ({ transit, endpoint: contact.yourPoint.name })),
+      ...friendTransits.map((transit) => ({ transit, endpoint: contact.friendPoint.name }))
+    ];
+    const activation = activations.find(({ transit, endpoint }) => (
+      transit.natalPoint === endpoint
       && Math.min(...transit.arc) <= 1
-    ));
+    ))?.transit;
 
     if (!activation) {
       return [];
@@ -8085,6 +8109,56 @@ function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, stri
   const section = article.sections[0];
 
   return section?.body ? textPreview(taggedSectionBody(section)) : "";
+}
+
+function renderReaderDirectedSynastryContact(contact: SynastryContact, friendName: string): RenderedSynastryContact | null {
+  const normalizedAspect = normalizeFallbackV3Aspect(contact.aspect);
+
+  if (!normalizedAspect) {
+    return null;
+  }
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSynastryAspect({
+      planetA: normalizeContentIdPart(contact.yourPoint.name),
+      planetB: normalizeContentIdPart(contact.friendPoint.name),
+      aspect: normalizedAspect,
+      otherName: friendName
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      headline: rendered.headline,
+      tag: rendered.tag ?? null,
+      body,
+      templateKey: rendered.templateKey
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+function natalAspectGroupKey(aspect: string): FriendNatalAspectGroup["key"] {
+  return aspect === "trine" || aspect === "sextile" ? "gifts" : "lessons";
+}
+
+function groupFriendNatalAspects(aspects: SkySnapshot["aspects"]): FriendNatalAspectGroup[] {
+  const uniqueAspects = uniqueNatalAspectRows(aspects).slice().sort((first, second) => first.orb - second.orb);
+  const gifts = uniqueAspects.filter((aspect) => natalAspectGroupKey(aspect.type) === "gifts");
+  const lessons = uniqueAspects.filter((aspect) => natalAspectGroupKey(aspect.type) === "lessons");
+
+  return [
+    { key: "gifts" as const, label: "Gifts" as const, aspects: gifts },
+    { key: "lessons" as const, label: "Lessons" as const, aspects: lessons }
+  ].filter((group) => group.aspects.length > 0);
 }
 
 function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: string; rangeLabel: string }) {
@@ -10649,26 +10723,23 @@ function compatibilityDynamicsFromContacts(
   friendPronouns?: PronounChoice | null,
   comparisonPronouns?: PronounChoice | null
 ): CompatibilityDynamic[] {
-  return contacts.map((contact) => ({
-    id: `compatibility-dynamic-${contact.id}`,
-    heading: compatibilityDynamicHeading(contact.aspect),
-    glyphs: `${contact.friendPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.yourPoint.glyph}`,
-    title: relationshipAspectTitleFromSlots(synastryTemplateSlots(
-      friendName,
-      contact.friendPoint.name,
-      contact.aspect,
-      comparisonName,
-      contact.yourPoint.name,
-      "friend",
-      {
-        personAPronouns: friendPronouns,
-        personBPronouns: comparisonPronouns,
-        personBIsReader: comparisonIsSelf
-      }
-    )),
-    summary: contact.summary,
-    meta: wholeDegreeOrb(contact.orb)
-  }));
+  void comparisonName;
+  void comparisonIsSelf;
+  void friendPronouns;
+  void comparisonPronouns;
+
+  return contacts.map((contact) => {
+    const rendered = renderReaderDirectedSynastryContact(contact, friendName);
+
+    return {
+      id: `compatibility-dynamic-${contact.id}`,
+      heading: compatibilityDynamicHeading(contact.aspect),
+      glyphs: `${contact.yourPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.friendPoint.glyph}`,
+      title: rendered?.headline ?? `${contact.yourPoint.name} ${contact.aspect} ${contact.friendPoint.name}`,
+      summary: rendered?.body ?? contact.summary,
+      meta: rendered?.tag ?? wholeDegreeOrb(contact.orb)
+    };
+  });
 }
 
 function synastryDetailCopy(
@@ -18138,6 +18209,7 @@ function ManualChartsPanel({
     ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
+        profileTransits,
         selectedChart.displayName,
         currentSky.generatedAt
       )
@@ -18184,6 +18256,9 @@ function ManualChartsPanel({
   const selectedFriendNatalTableBaseRows = selectedFriendPlacementRows.map(natalChartTableRowFromSocial);
   const selectedFriendNatalTableRows = selectedChart?.natalChart
     ? completeNatalChartTableRows(selectedChart.natalChart, selectedFriendNatalTableBaseRows)
+    : [];
+  const selectedFriendNatalAspectGroups = selectedChart?.natalChart
+    ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
     : [];
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
@@ -19438,35 +19513,45 @@ function ManualChartsPanel({
                     )}
                   </>
                 )}
-                {selectedChart.natalChart?.aspects.length ? (
+                {selectedFriendNatalAspectGroups.length ? (
                   <>
-                    <span className="eyebrow section-label friend-section-label">Natal aspects · by strength</span>
-                    <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-natal-aspects-list" aria-label={`${selectedChart.displayName} natal aspects`}>
-                      {uniqueNatalAspectRows(selectedChart.natalChart.aspects).map((aspect) => {
-                        const rowSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, {
-                          ownerName: selectedChart.displayName,
-                          ownerKind: selectedChartIsEvent ? "chart" : "person",
-                          ownerPronouns: selectedChart.pronouns
-                        }));
+                    {selectedFriendNatalAspectGroups.map((group) => (
+                      <section className="friend-natal-aspect-group" aria-label={`${selectedChart.displayName} natal aspect ${group.label}`} key={group.key}>
+                        <span className="eyebrow section-label friend-section-label">{group.label}</span>
+                        <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-natal-aspects-list">
+                          {group.aspects.map((aspect) => {
+                            const normalized = normalizeNatalAspectSurface(aspect, {
+                              ownerName: selectedChart.displayName,
+                              ownerKind: selectedChartIsEvent ? "chart" : "person",
+                              ownerPronouns: selectedChart.pronouns
+                            });
+                            const renderedSection = normalized.sections[0];
+                            const rowSummary = normalizedSurfacePreview(normalized);
+                            const title = renderedSection?.heading ?? `${selectedChart.displayName}'s ${aspect.from} ${aspect.type} ${aspect.to}`;
 
-                        return (
-                          <div
-                            className="aspect-row aspect-row-static friend-aspect-row"
-                            key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                          >
-                            <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                            <span className="aspect-row-copy">
-                              <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                              {rowSummary ? <p>{rowSummary}</p> : null}
-                            </span>
-                            <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                              <span className="aspect-row-dot" aria-hidden="true" />
-                              <span>{wholeDegreeOrb(aspect.orb)}</span>
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                            return (
+                              <button
+                                aria-label={`Open full entry for ${title}`}
+                                className="aspect-row aspect-row-button friend-aspect-row"
+                                key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                                onClick={() => openFriendNatalAspectDetail(aspect)}
+                                type="button"
+                              >
+                                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                                <span className="aspect-row-copy">
+                                  <h3>{title}</h3>
+                                  {rowSummary ? <p>{rowSummary}</p> : null}
+                                </span>
+                                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                                  <span className="aspect-row-dot" aria-hidden="true" />
+                                  <span>{wholeDegreeOrb(aspect.orb)}</span>
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    ))}
                   </>
                 ) : null}
               </div>
@@ -19592,36 +19677,11 @@ function ManualChartsPanel({
                 <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
                   {selectedSynastryContacts.map((contact) => {
-                    const titleSlots = synastryTemplateSlots(
-                      selectedChart.displayName,
-                      contact.friendPoint.name,
-                      contact.aspect,
-                      relationshipComparisonName,
-                      contact.yourPoint.name,
-                      "friend",
-                      {
-                        personAPronouns: selectedChart.pronouns,
-                        personBPronouns: relationshipComparisonPronouns,
-                        personBIsReader: relationshipComparisonIsSelf
-                      }
-                    );
-                    const title = relationshipAspectTitleFromSlots(titleSlots);
-                    const subtitle = relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect);
-                    const detailParagraphs = synastryDetailCopy(
-                      selectedChart.displayName,
-                      relationshipComparisonName,
-                      relationshipComparisonIsSelf,
-                      contact,
-                      relationshipGeneratedContent,
-                      selectedChart.pronouns,
-                      relationshipComparisonPronouns,
-                      selectedRelationshipRomantic,
-                      selectedChart.relationshipType
-                    ).filter(Boolean);
-                    const description = contact.summary || textPreview(detailParagraphs.join("\n\n"));
-                    const detailBody = detailParagraphs.length > 0
-                      ? detailParagraphs
-                      : [];
+                    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+                    const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
+                    const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
+                    const detailBody = rendered?.body ? [rendered.body] : [];
+                    const description = rendered?.body ? textPreview(rendered.body) : "";
 
                     return (
                       <button
@@ -19636,13 +19696,13 @@ function ManualChartsPanel({
                           title,
                           meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
                           body: detailBody,
-                          content: emptyContentFallback(contact.contentKeys[0] ?? contact.id).bundle
+                          content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
                         })}
                       >
                         <span className="aspect-row-glyphs" aria-hidden="true">
-                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
-                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
                           <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
+                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
+                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
                         </span>
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>
