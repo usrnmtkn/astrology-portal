@@ -26,6 +26,7 @@ import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
+import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
 
 type LunarCalendarStatus = "loading" | "ready" | "error";
 type LunarCalendarViewMode = "week" | "month";
@@ -448,8 +449,9 @@ function selectedDayTransitEvents(
   lunarDay: ReturnType<typeof resolveLunarDay> | null,
   selectedEvents: LunarCalendarEvent[]
 ) {
-  const transits = lunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
-    ?? selectedEvents.filter(isDayCardSurfaceEvent);
+  const transits = (lunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
+    ?? selectedEvents.filter(isDayCardSurfaceEvent))
+    .filter((event) => isExactDayEvent(event, day) || isActiveRetrogradeEvent(event));
 
   return removeActiveRetrogradeStationDuplicates([...transits], day).sort((first, second) => {
     const firstIsExact = isExactDayEvent(first, day);
@@ -1087,22 +1089,6 @@ const aspectGlyphs: Record<string, string> = {
 const retrogradeGlyph = unicodeGlyphs.retrograde;
 const moonGlyph = "\u{263E}";
 
-const seasonStartDates: Array<{ sign: string; month: number; day: number }> = [
-  { sign: "Capricorn", month: 1, day: 1 },
-  { sign: "Aquarius", month: 1, day: 20 },
-  { sign: "Pisces", month: 2, day: 19 },
-  { sign: "Aries", month: 3, day: 20 },
-  { sign: "Taurus", month: 4, day: 20 },
-  { sign: "Gemini", month: 5, day: 21 },
-  { sign: "Cancer", month: 6, day: 21 },
-  { sign: "Leo", month: 7, day: 22 },
-  { sign: "Virgo", month: 8, day: 23 },
-  { sign: "Libra", month: 9, day: 23 },
-  { sign: "Scorpio", month: 10, day: 23 },
-  { sign: "Sagittarius", month: 11, day: 22 },
-  { sign: "Capricorn", month: 12, day: 21 }
-];
-
 function isWaxingPhase(phase: string) {
   return phase.includes("Waxing") || phase.includes("First Quarter") || phase.includes("New Moon");
 }
@@ -1138,75 +1124,11 @@ function lunarDayFor(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
   return Math.max(1, Math.min(30, Math.floor((selectedTime - new Date(previousNewMoon.startsAt).getTime()) / 86_400_000) + 1));
 }
 
-function localCalendarDateParts(day: LunarCalendarDay, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).formatToParts(new Date(day.date));
-
-  return {
-    year: Number(parts.find((part) => part.type === "year")?.value ?? new Date(day.date).getFullYear()),
-    month: Number(parts.find((part) => part.type === "month")?.value ?? 1),
-    day: Number(parts.find((part) => part.type === "day")?.value ?? 1)
-  };
-}
-
-function seasonSignForDay(day: LunarCalendarDay, timeZone: string) {
-  const { month, day: dayNumber } = localCalendarDateParts(day, timeZone);
-  const monthDayValue = month * 100 + dayNumber;
-  const currentSeason = seasonStartDates
-    .filter((season) => monthDayValue >= season.month * 100 + season.day)
-    .at(-1);
-
-  return currentSeason?.sign ?? "Capricorn";
-}
-
-function localDateKeyFromParts(year: number, month: number, day: number) {
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function seasonWindowForDay(day: LunarCalendarDay, timeZone: string) {
-  const parts = localCalendarDateParts(day, timeZone);
-  const monthDayValue = parts.month * 100 + parts.day;
-  let seasonIndex = -1;
-
-  for (let index = seasonStartDates.length - 1; index >= 0; index -= 1) {
-    const season = seasonStartDates[index];
-
-    if (season && monthDayValue >= season.month * 100 + season.day) {
-      seasonIndex = index;
-      break;
-    }
-  }
-
-  if (seasonIndex < 0) {
-    seasonIndex = seasonStartDates.length - 1;
-  }
-
-  const season = seasonStartDates[seasonIndex] ?? seasonStartDates[0];
-  const nextSeason = seasonStartDates[(seasonIndex + 1) % seasonStartDates.length] ?? seasonStartDates[1];
-  const startsPreviousYear = season.month === 12 && parts.month === 1;
-  const startYear = startsPreviousYear ? parts.year - 1 : parts.year;
-  const endYear = nextSeason.month < season.month || (season.month === 12 && nextSeason.month === 1)
-    ? startYear + 1
-    : startYear;
-  const startKey = localDateKeyFromParts(startYear, season.month, season.day);
-  const endKey = localDateKeyFromParts(endYear, nextSeason.month, nextSeason.day);
-
-  return {
-    sign: season.sign,
-    startKey,
-    endKey
-  };
-}
-
 function seasonLunarArc(day: LunarCalendarDay, events: LunarCalendarEvent[], timeZone: string) {
-  const window = seasonWindowForDay(day, timeZone);
+  const window = sunIngressSeasonWindow(day.dateKey, events);
   const selectedTime = dayKeyToUtcTime(day.dateKey);
-  const startTime = dayKeyToUtcTime(window.startKey);
-  const endTime = dayKeyToUtcTime(window.endKey);
+  const startTime = dayKeyToUtcTime(window.start);
+  const endTime = dayKeyToUtcTime(window.end);
   const allLunations = events
     .filter((event) => event.type === "lunation")
     .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
@@ -1290,8 +1212,8 @@ function isSeasonStart(day: LunarCalendarDay) {
   return day.events.some((event) => event.type === "ingress" && event.planet === "Sun");
 }
 
-function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string) {
-  const seasonSign = seasonSignForDay(day, timeZone);
+function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string, events?: LunarCalendarEvent[]) {
+  const seasonSign = sunIngressSeasonSign(day.dateKey, events ?? []);
 
   return `${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
 }
@@ -1712,7 +1634,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
       <div className="lunar-selected-card__main">
         <div className="lunar-selected-card__copy">
           <span className="lunar-selected-card__eyebrow">
-            {seasonEyebrowForDay(selectedDay, zone)}
+            {seasonEyebrowForDay(selectedDay, zone, arcEvents)}
           </span>
           <h2>
             {selectedPackagePhase?.headline ?? titleForDay(selectedDay)}
