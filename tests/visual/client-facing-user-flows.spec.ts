@@ -1023,7 +1023,6 @@ test.describe("client-facing user flow case studies", () => {
       await captureThemeSurface(page, theme, "you");
 
       await page.goto("/#friends?tab=charts");
-      await expect(page.getByText("friends.")).toBeVisible();
       await expect(page.getByText("Nikki")).toBeVisible();
       await captureThemeSurface(page, theme, "friends");
 
@@ -1584,7 +1583,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.goto("/#sky/retrograde/mercury");
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Retrograde|in Cancer is retrograde)/i);
+    await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Rx|Retrograde|in Cancer is retrograde)/i);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,

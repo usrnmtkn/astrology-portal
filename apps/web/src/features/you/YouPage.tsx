@@ -786,7 +786,7 @@ function YouTransitArticlePage({
               ) : null}
               {displaySummary && !article.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
-                  <h2>{summaryHeading}</h2>
+                  <h3>{summaryHeading}</h3>
                   <p>{displaySummary}</p>
                 </section>
               ) : null}
@@ -795,7 +795,7 @@ function YouTransitArticlePage({
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                  {section.heading ? <h2>{section.heading}</h2> : null}
+                  {section.heading ? <h3>{section.heading}</h3> : null}
                   {section.sourceTag ? <p>{section.sourceTag}</p> : null}
                   {showTldr ? <p>{section.tldr}</p> : null}
                   {section.bodyParagraphs.map((paragraph, paragraphIndex) => (

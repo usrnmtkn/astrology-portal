@@ -544,9 +544,10 @@ assert.ok(
 );
 assert.ok(
   /function normalizeNatalPlacementSurface[\s\S]*const sourceGroundedSections = isAnglePoint[\s\S]*sourceGroundedNatalPlacementNormalizedSections\(position, natalSky\)[\s\S]*const fallbackSections = isAnglePoint[\s\S]*sourceGroundedNatalPlacementFallbackSections\(position\)[\s\S]*const primarySections = isAnglePoint[\s\S]*sourceGroundedSections[\s\S]*sourceGroundedSections\.find\(\(section\) => section\.slot === slot\)[\s\S]*fallbackSections\.find\(\(section\) => section\.slot === slot\)/.test(app)
-  && app.includes("sourceGroundedNatalAspectSectionsForPlacement(position, natalSky, ownerContext)")
+  && app.includes("Related aspects on natal placement pages must come from authored natal copy.")
+  && !app.includes("...sourceGroundedNatalAspectSectionsForPlacement(position, natalSky, ownerContext)")
   && app.includes("normalizeNatalPlacementSurface(position, natalSky, ownerContext)"),
-  "Natal placement pages must use authored prose per section when present, otherwise fallback, while keeping aspects separate and passing owner voice into v3."
+  "Natal placement pages must use authored prose per section when present, otherwise fallback, without appending generic v3 natal aspect cards."
 );
 assert.ok(app.includes("options: { allowKnowledgeOnly?: boolean } = {}"), "Relationship knowledge fallback must require callers to opt into knowledge-only prose.");
 assert.ok(app.includes("const allowKnowledgeOnly = options.allowKnowledgeOnly ?? false;"), "Relationship authored sections must not treat bare knowledge plainTranslation as public prose by default.");

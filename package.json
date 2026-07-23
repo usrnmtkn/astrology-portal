@@ -20,6 +20,7 @@
     "test": "npm run test:content && npm run typecheck && npm run build:web",
     "test:content": "node scripts/test-authored-verbatim-rendering.mjs && node scripts/test-authored-placement-coverage.mjs && node scripts/test-authored-sun-moon-natal-aspects.mjs && node scripts/test-placement-scaffold-rendering.mjs && node scripts/test-authored-sky-placement-coverage.mjs && node scripts/test-moon-compatibility-library-import.mjs && node scripts/test-reader-facing-content-contract.mjs && node scripts/test-reader-fallback-surface-safety.mjs && node scripts/test-natal-aspect-fallback-framework.mjs && node scripts/test-sky-placement-regressions.mjs && node scripts/test-web-api-house-parity.mjs && node scripts/test-fallback-wiring-and-phrasebook.mjs",
     "qa:client-report": "node scripts/run-client-facing-qa-report.mjs",
+    "qa:content-wiring": "node scripts/test-content-wiring-qa.mjs",
     "qa:client-flows": "playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep-invert \"content fallback copy|directional copy\"",
     "qa:content-copy": "playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts -g \"content fallback copy|directional copy|content hydration\"",
     "qa:admin-report": "node scripts/run-admin-content-qa-report.mjs",

@@ -1,4 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import fs from "node:fs";
+import path from "node:path";
 import { URL } from "node:url";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
@@ -22,6 +24,9 @@ type GeneratedContentWriteBody = {
   facts?: unknown;
   knowledgeIds?: string[];
   sourceSnapshot?: unknown;
+  reviewStatus?: string;
+  editorialNotes?: string;
+  revertToPackageOriginal?: boolean;
   lane?: "serving" | "reference" | string | null;
   reviewState?: string | null;
   promptVersion?: string;
@@ -41,9 +46,19 @@ type GeneratedContentRequestBody = GeneratedContentWriteBody & {
 type ExistingGeneratedContentRow = {
   id: string;
   content_key: string;
+  surface?: string | null;
   target_date: string | null;
   mode: string;
+  event_type?: string | null;
   status: ReviewStatus;
+  headline?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  sections?: Record<string, unknown> | null;
+  facts?: Record<string, unknown> | null;
+  lane?: string | null;
+  review_state?: string | null;
+  block_type?: string | null;
   provider?: string | null;
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> | null;
@@ -57,8 +72,12 @@ type SkippedLiveGeneratedContentRow = {
 
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
+const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
+const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reuse"]);
+const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse"]);
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
+let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
@@ -72,6 +91,164 @@ function normalizedGeneratedContentBlockType(blockType: unknown, surface?: Gener
     return surface === "sky" || mode === "article" ? "sky_article" : "essay";
   }
   return value;
+}
+
+function contentRoleContract() {
+  if (contentRoleContractCache) return contentRoleContractCache;
+
+  const contractPath = path.join(process.cwd(), "apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json");
+  contentRoleContractCache = JSON.parse(fs.readFileSync(contractPath, "utf8")) as { styleRules?: { bannedWords?: string[] } };
+  return contentRoleContractCache;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function stringFrom(value: unknown) {
+  return typeof value === "string" ? value : "";
+}
+
+function v3PackageRecord(row: Pick<ExistingGeneratedContentRow, "sections">) {
+  const sections = isRecord(row.sections) ? row.sections : {};
+  return isRecord(sections.packageRecord) ? sections.packageRecord : {};
+}
+
+function isFallbackArchitectureV3Row(row: ExistingGeneratedContentRow | undefined) {
+  return row?.provider === fallbackArchitectureV3Provider
+    || stringFrom(row?.source_snapshot?.sourcePackage) === "tldrastro-fallback-architecture-v3"
+    || Boolean(row?.facts?.fallbackArchitectureV3);
+}
+
+function packageReviewStatus(row: ExistingGeneratedContentRow, requested?: string) {
+  const existing = requested
+    || stringFrom(row.source_snapshot?.review_status)
+    || stringFrom(row.facts?.review_status)
+    || stringFrom(v3PackageRecord(row).review_status)
+    || "needs_review";
+
+  return existing.trim();
+}
+
+function readerServingForPackageReview(reviewStatus: string) {
+  return fallbackArchitectureV3EligibleReviews.has(reviewStatus);
+}
+
+function packagePlaceholders(value: unknown) {
+  const matches = stringFrom(value).match(/{{\s*[\w.-]+\s*}}/g) ?? [];
+  return new Set(matches.map((match) => match.replace(/\s+/g, "")));
+}
+
+function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+  const record = v3PackageRecord(row);
+  const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
+  const editableFields: Array<[string, unknown, unknown]> = [
+    ["headline", patch.headline, record.headline],
+    ["summary", patch.summary, record.summary],
+    ["body", patch.body, record.body]
+  ];
+  const sections = isRecord(patch.sections) ? patch.sections : {};
+  editableFields.push(["body_you", sections.body_you, record.body_you]);
+  editableFields.push(["body_they", sections.body_they, record.body_they]);
+
+  for (const [field, value, original] of editableFields) {
+    if (typeof value !== "string") continue;
+    if (value.includes("—")) {
+      throw new Error(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
+    }
+
+    const lower = value.toLowerCase();
+    const banned = bannedWords.find((word) => {
+      const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
+    });
+    if (banned) {
+      throw new Error(`${field} contains banned word "${banned}".`);
+    }
+
+    const originalSlots = packagePlaceholders(original);
+    for (const slot of packagePlaceholders(value)) {
+      if (!originalSlots.has(slot)) {
+        throw new Error(`${field} contains unresolved placeholder ${slot} that was not in the package original.`);
+      }
+    }
+  }
+}
+
+function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody) {
+  const structuralChecks: Array<[string, unknown, unknown]> = [
+    ["contentKey", body.contentKey, row.content_key],
+    ["surface", body.surface, row.surface],
+    ["mode", body.mode, row.mode],
+    ["eventType", body.eventType, row.event_type],
+    ["blockType", body.blockType, row.block_type]
+  ];
+
+  for (const [field, next, existing] of structuralChecks) {
+    if (next === undefined || next === null) continue;
+    if (String(next).trim() !== String(existing ?? "").trim()) {
+      throw new Error(`Package rows cannot change ${field}. Structural changes must come from a package drop.`);
+    }
+  }
+
+  const existingRole = stringFrom(row.source_snapshot?.content_role)
+    || stringFrom(row.facts?.content_role)
+    || stringFrom(v3PackageRecord(row).content_role);
+  const nextSnapshot = isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {};
+  const nextRole = stringFrom(nextSnapshot.content_role);
+
+  if (nextRole && existingRole && nextRole !== existingRole) {
+    throw new Error("Package rows cannot change content role. Structural changes must come from a package drop.");
+  }
+}
+
+function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody, patch: Record<string, unknown>) {
+  const sections = isRecord(body.sections) ? body.sections : isRecord(row.sections) ? { ...row.sections } : {};
+  const facts = isRecord(body.facts) ? body.facts : isRecord(row.facts) ? { ...row.facts } : {};
+  const sourceSnapshot = isRecord(body.sourceSnapshot) ? body.sourceSnapshot : isRecord(row.source_snapshot) ? { ...row.source_snapshot } : {};
+  const record = { ...v3PackageRecord(row) };
+  const reviewStatus = packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
+
+  if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
+    throw new Error("review_status must be needs_review, approved, or approved_reuse.");
+  }
+
+  if (body.revertToPackageOriginal) {
+    patch.headline = stringFrom(record.headline) || row.headline || "";
+    patch.summary = stringFrom(record.summary) || row.summary || "";
+    patch.body = stringFrom(record.body ?? record.body_you) || row.body || "";
+    sections.body_you = record.body_you ?? null;
+    sections.body_they = record.body_they ?? null;
+  }
+
+  record.review_status = reviewStatus;
+  if (typeof body.editorialNotes === "string") {
+    record.editorial_notes = body.editorialNotes;
+  }
+
+  sections.packageRecord = record;
+  sections.dashboardEditHistory = [
+    ...(Array.isArray(sections.dashboardEditHistory) ? sections.dashboardEditHistory : []),
+    {
+      editedAt: patch.updated_at,
+      headline: row.headline ?? "",
+      summary: row.summary ?? "",
+      body: row.body ?? "",
+      review_status: packageReviewStatus(row)
+    }
+  ].slice(-25);
+
+  facts.review_status = reviewStatus;
+  facts.readerServing = readerServingForPackageReview(reviewStatus);
+  sourceSnapshot.review_status = reviewStatus;
+
+  patch.sections = sections;
+  patch.facts = facts;
+  patch.source_snapshot = sourceSnapshot;
+  patch.status = readerServingForPackageReview(reviewStatus) ? "LIVE" : "DRAFT";
+  patch.lane = readerServingForPackageReview(reviewStatus) ? "serving" : "reference";
+  patch.review_state = readerServingForPackageReview(reviewStatus) ? null : "needs-review";
+  validateFallbackArchitectureV3Copy(row, patch);
 }
 
 function sourceSnapshotSourceType(sourceSnapshot: unknown) {
@@ -495,7 +672,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -596,9 +773,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new Error("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
   }
 
+  const existing = await fetchExistingRowById(body.id);
+  const isPackageRow = isFallbackArchitectureV3Row(existing);
+
   const patch: Record<string, unknown> = {
     updated_at: new Date().toISOString()
   };
+
+  if (isPackageRow && existing) {
+    assertFallbackArchitectureV3StructureLocked(existing, body);
+  }
 
   if (body.status) {
     if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
@@ -606,8 +790,6 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
 
     if (body.status === "LIVE") {
-      const existing = await fetchExistingRowById(body.id);
-
       assertCanPublishGeneratedContent({
         ...existing,
         contentKey: body.contentKey ?? existing?.content_key,
@@ -708,6 +890,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (Object.keys(patch).length === 0) {
     throw new Error("No review fields were provided.");
+  }
+
+  if (isPackageRow && existing) {
+    applyFallbackArchitectureV3ReviewPatch(existing, body, patch);
   }
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {

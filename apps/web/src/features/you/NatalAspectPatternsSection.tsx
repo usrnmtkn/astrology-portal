@@ -123,7 +123,7 @@ function PatternCopyBody({
         <div className="natal-pattern-card__sections">
           {sections.map((section) => (
             <section key={`${item.patternId}-${section.id}-${section.body}`} className="natal-pattern-card__section">
-              <h4>{sectionLabel(section.id)}</h4>
+              <h3>{sectionLabel(section.id)}</h3>
               <p>{section.body}</p>
             </section>
           ))}
@@ -132,7 +132,7 @@ function PatternCopyBody({
 
       {nestedItems.length > 0 ? (
         <div className="natal-pattern-card__supporting" aria-label="Supporting pattern detail">
-          <h4>Supporting pattern detail</h4>
+          <h3>Supporting pattern detail</h3>
           {nestedItems.map((child) => (
             <details key={child.patternId} className="natal-pattern-card__supporting-item">
               <summary>

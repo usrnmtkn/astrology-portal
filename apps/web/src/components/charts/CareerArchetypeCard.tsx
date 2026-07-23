@@ -51,7 +51,7 @@ export function CareerArchetypeCard({
                 <span>{section.label}</span>
                 <em>{section.layer === "authored" ? "Authored" : "Fallback"}</em>
               </div>
-              <h4>{section.headline}</h4>
+              <h3>{section.headline}</h3>
               <p>{section.body}</p>
               <small>{section.meta}</small>
             </article>

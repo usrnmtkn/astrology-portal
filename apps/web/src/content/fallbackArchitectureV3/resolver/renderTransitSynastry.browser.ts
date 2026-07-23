@@ -133,14 +133,18 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
     const groupsToTry = [g, ...(SHARE[g] ?? [])];
     const tryKeys: string[] = [];
+    const pushUnique = (key: string) => { if (!tryKeys.includes(key)) tryKeys.push(key); };
     const push = (a: string, b: string) => {
-      if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
-      for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
-      tryKeys.push(`authored/transit-aspect/${a}/${b}/any`);
+      pushUnique(`authored/transit-aspect/${a}/${b}/${aspect}`);
+      if (variant) pushUnique(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
+      for (const gg of groupsToTry) pushUnique(`authored/transit-aspect/${a}/${b}/${gg}`);
+      pushUnique(`authored/transit-aspect/${a}/${b}/any`);
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
-    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    pushUnique(`authored/transit-aspect/any/${natal}/${aspect}`);
+    pushUnique(`authored/transit-aspect/any/${natal}/${g}`);
+    pushUnique(`authored/transit-aspect/any/${natal}/conjunction`);
     if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
     // fallback template
     const T = tpl("fallback-template/transit.aspect");
@@ -329,7 +333,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     if (!opener || !shadow || !close) throw new SourceGapError(`SOURCE_GAP: season sections for ${sign}`);
     const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
     const ritual = hooks.get(`fallback-hook/sky-season-ritual/${sign}`)?.body_you;
-    const paras = [opener, lore, ritual].filter((part): part is string => Boolean(part));
+    const paras = [opener, lore, ritual].filter(Boolean);
     for (const ev of events) {
       const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
       const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
@@ -656,6 +660,25 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     return { headline: `${label} for ${title(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
 
+  // ---- Daily At-a-Glance (Copy Batch A): engine-hidden headline + body driven by the
+  // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
+  // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
+  const DAILY_GROUP: Record<string, string> = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
+  function renderDailyGlance({ natal, aspect, house }: { natal?: string; aspect?: string; house?: number | null }): TransitRenderResult {
+    if (natal && aspect) {
+      const g = DAILY_GROUP[aspect] ?? aspect;
+      const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
+      const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
+      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    }
+    if (house) {
+      const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
+      const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
+      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    }
+    throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
+  }
+
   // ---- Do/Don't engine (TLDR-Remedial-DoDont-Spec): chart-specific lists assembled from
   // seeds. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
   // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
@@ -676,5 +699,5 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }

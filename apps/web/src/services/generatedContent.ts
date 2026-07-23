@@ -35,6 +35,7 @@ export type GeneratedContentBlockType =
   | "ruler"
   | "natal_aspect"
   | "sky_aspect"
+  | "daily_horoscope"
   | "transit_to_natal_aspect"
   | "synastry_aspect"
   | "composite_aspect"
@@ -89,6 +90,8 @@ type GeneratedContentRow = {
 
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
+const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
+const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
@@ -810,6 +813,51 @@ function isApprovedFallbackArchitectureV3Row(row: GeneratedContentRow) {
   );
 }
 
+function fallbackArchitectureV3DashboardVersionFromRows(rows: Pick<GeneratedContentRow, "updated_at">[]) {
+  return rows.reduce((version, row) => {
+    const nextVersion = Date.parse(row.updated_at ?? "");
+    return Number.isFinite(nextVersion) ? Math.max(version, nextVersion) : version;
+  }, 0);
+}
+
+function readCachedFallbackArchitectureV3Bundle(): { version: number; bundle: FallbackArchitectureV3Bundle } | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const version = Number(window.localStorage.getItem(fallbackArchitectureV3BundleVersionKey) ?? "0");
+    const rawBundle = window.localStorage.getItem(fallbackArchitectureV3BundleCacheKey);
+
+    if (!version || !rawBundle) {
+      return null;
+    }
+
+    const bundle = JSON.parse(rawBundle) as FallbackArchitectureV3Bundle;
+
+    if (!bundle?.transitLib?.authoredCards?.length || !bundle?.rowsFile || !bundle?.templatesFile?.templates?.length) {
+      return null;
+    }
+
+    return { version, bundle };
+  } catch {
+    return null;
+  }
+}
+
+function cacheFallbackArchitectureV3Bundle(version: number, bundle: FallbackArchitectureV3Bundle) {
+  if (typeof window === "undefined" || !version) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(fallbackArchitectureV3BundleVersionKey, String(version));
+    window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify(bundle));
+  } catch {
+    // The static package remains available when browser storage is full or blocked.
+  }
+}
+
 function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
@@ -890,9 +938,29 @@ function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null
 
 export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
+  const cached = readCachedFallbackArchitectureV3Bundle();
 
   if (!supabase) {
-    return null;
+    return cached?.bundle ?? null;
+  }
+
+  const { data: versionRows, error: versionError } = await supabase
+    .from("generated_interpretations")
+    .select("updated_at")
+    .eq("provider", fallbackArchitectureV3Provider)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+
+  if (versionError) {
+    console.warn("Fallback architecture V3 dashboard version failed to load; cached/local snapshot remains active.", versionError);
+    return cached?.bundle ?? null;
+  }
+
+  const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
+
+  if (cached && dashboardVersion && cached.version === dashboardVersion) {
+    return cached.bundle;
   }
 
   const rows: GeneratedContentRow[] = [];
@@ -911,7 +979,7 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
 
     if (error) {
       console.warn("Fallback architecture V3 dashboard bundle failed to load; local JSON snapshot remains active.", error);
-      return null;
+      return cached?.bundle ?? null;
     }
 
     rows.push(...(data ?? []));
@@ -970,14 +1038,18 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
       vocabularyRows: vocabularyRows.length,
       templates: templates.length
     });
-    return null;
+    return cached?.bundle ?? null;
   }
 
-  return {
+  const bundle = {
     transitLib: { authoredCards },
     rowsFile: { hookRows, vocabularyRows },
     templatesFile: { templates }
   };
+
+  cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle);
+
+  return bundle;
 }
 
 export function generatedContentDrilldown(content?: LiveGeneratedContent | null): GeneratedContentDrilldown | null {

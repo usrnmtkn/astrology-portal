@@ -631,6 +631,19 @@ body,
   gap: var(--admin-space-md);
 }
 
+.admin-template-tabs a {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--admin-line);
+  border-radius: var(--admin-radius-pill);
+  color: inherit;
+  display: inline-flex;
+  justify-content: center;
+  min-height: var(--admin-control-height-lg);
+  padding: 0 var(--admin-space-2xl);
+  text-decoration: none;
+}
+
 .admin-template-actions {
   align-items: center;
   justify-content: flex-end;
@@ -664,11 +677,11 @@ body,
   padding-top: var(--admin-space-3xl);
 }
 
-.admin-template-tabs button {
+.admin-template-tabs :where(button, a) {
   min-width: 128px;
 }
 
-.admin-template-tabs button.active {
+.admin-template-tabs :where(button, a).active {
   background: rgba(124, 134, 255, 0.18);
   border-color: rgba(124, 134, 255, 0.52);
   color: #fff;
@@ -8173,20 +8186,20 @@ body,
   gap: 8px;
 }
 
-.admin-dashboard :where(.admin-status-pills button, .admin-queue-chips button, .admin-template-tabs button, .admin-slot-filter-group button) {
+.admin-dashboard :where(.admin-status-pills button, .admin-queue-chips button, .admin-template-tabs button, .admin-template-tabs a, .admin-slot-filter-group button) {
   background: transparent;
   border-color: var(--admin-ui-border);
   color: var(--admin-ui-muted);
   min-height: 34px;
 }
 
-.admin-dashboard :where(.admin-status-pills button.active, .admin-status-pills button[aria-selected="true"], .admin-queue-chips button.active, .admin-queue-chips button[aria-selected="true"], .admin-template-tabs button.active, .admin-template-tabs button[aria-selected="true"], .admin-slot-filter-group button.active, .admin-slot-filter-group button[aria-pressed="true"]) {
+.admin-dashboard :where(.admin-status-pills button.active, .admin-status-pills button[aria-selected="true"], .admin-queue-chips button.active, .admin-queue-chips button[aria-selected="true"], .admin-template-tabs button.active, .admin-template-tabs button[aria-selected="true"], .admin-template-tabs a.active, .admin-template-tabs a[aria-selected="true"], .admin-slot-filter-group button.active, .admin-slot-filter-group button[aria-pressed="true"]) {
   background: var(--admin-ui-neutral-soft);
   border-color: var(--admin-ui-border-strong);
   color: var(--admin-ui-text);
 }
 
-.admin-dashboard .admin-template-tabs button {
+.admin-dashboard .admin-template-tabs :where(button, a) {
   gap: 8px;
 }
 
@@ -8199,7 +8212,9 @@ body,
 .admin-dashboard .admin-status-pills button.active,
 .admin-dashboard .admin-status-pills button[aria-selected="true"],
 .admin-dashboard .admin-template-tabs button.active,
-.admin-dashboard .admin-template-tabs button[aria-selected="true"] {
+.admin-dashboard .admin-template-tabs button[aria-selected="true"],
+.admin-dashboard .admin-template-tabs a.active,
+.admin-dashboard .admin-template-tabs a[aria-selected="true"] {
   background: rgba(223, 229, 225, 0.075);
   border-color: var(--admin-ui-border-strong);
   box-shadow: none;
@@ -9658,4 +9673,112 @@ body,
     top: auto;
     width: 100%;
   }
+}
+
+/* Final package-dashboard layout corrections. These live at the end because the
+   admin stylesheet has several legacy table/editor blocks above. */
+.admin-dashboard .admin-content-table {
+  min-width: 1280px;
+  table-layout: fixed;
+  width: max(100%, 1280px);
+}
+
+.admin-dashboard .admin-content-table th:nth-child(1),
+.admin-dashboard .admin-content-table td:nth-child(1) {
+  width: 54px;
+}
+
+.admin-dashboard .admin-content-table th:nth-child(2),
+.admin-dashboard .admin-content-table td:nth-child(2) {
+  width: 390px;
+}
+
+.admin-dashboard .admin-content-table th:nth-child(3),
+.admin-dashboard .admin-content-table td:nth-child(3),
+.admin-dashboard .admin-content-table th:nth-child(4),
+.admin-dashboard .admin-content-table td:nth-child(4) {
+  width: 142px;
+}
+
+.admin-dashboard .admin-content-table th:nth-child(5),
+.admin-dashboard .admin-content-table td:nth-child(5),
+.admin-dashboard .admin-content-table th:nth-child(6),
+.admin-dashboard .admin-content-table td:nth-child(6),
+.admin-dashboard .admin-content-table th:nth-child(7),
+.admin-dashboard .admin-content-table td:nth-child(7) {
+  width: 130px;
+}
+
+.admin-dashboard .admin-content-table th:nth-child(8),
+.admin-dashboard .admin-content-table td:nth-child(8) {
+  width: 190px;
+}
+
+.admin-dashboard .admin-content-row-title {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.admin-dashboard .admin-reader-state-pill,
+.admin-dashboard .admin-status,
+.admin-dashboard .ui-pill {
+  align-items: center;
+  border-radius: 999px;
+  box-sizing: border-box;
+  line-height: 1.2;
+  min-height: 28px;
+  padding: 5px 10px;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-reader-safety-grid article span {
+  line-height: 1.18;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-editor-panel .admin-toolbar-actions {
+  background: transparent;
+  border: 0;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+  position: static;
+}
+
+.admin-dashboard .admin-package-edit-panel {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(120px, 0.6fr) minmax(150px, 0.7fr);
+  padding: 14px;
+}
+
+.admin-dashboard .admin-package-edit-panel > div,
+.admin-dashboard .admin-package-edit-panel label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-package-edit-panel span {
+  color: var(--admin-ui-subtle);
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-label);
+}
+
+.admin-dashboard .admin-package-edit-panel code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-dashboard .admin-package-notes-field {
+  grid-column: 1 / -1;
+}
+
+.admin-dashboard .admin-package-notes-field textarea {
+  min-height: 88px;
 }

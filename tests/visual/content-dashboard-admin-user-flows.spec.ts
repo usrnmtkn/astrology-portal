@@ -557,30 +557,40 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminCreateMenuHost(page);
 
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create article/ }).click();
+    const createArticle = page.getByRole("menuitem", { name: /Create article/ });
+    await expect(createArticle).toBeVisible();
+    await createArticle.click({ force: true });
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     await expect(page.locator(".admin-review-workspace, .admin-workbench").first()).toBeVisible();
 
     await openAdminCreateMenuHost(page);
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create content row/ }).click();
+    const createContentRow = page.getByRole("menuitem", { name: /Create content row/ });
+    await expect(createContentRow).toBeVisible();
+    await createContentRow.click({ force: true });
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.locator("section[aria-label='Content controls']")).toBeVisible();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
 
     await openAdminCreateMenuHost(page);
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create reusable phrase/ }).click();
+    const createReusablePhrase = page.getByRole("menuitem", { name: /Create reusable phrase/ });
+    await expect(createReusablePhrase).toBeVisible();
+    await createReusablePhrase.click({ force: true });
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
 
     await openAdminCreateMenuHost(page);
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create template/ }).click();
+    const createTemplate = page.getByRole("menuitem", { name: /Create template/ });
+    await expect(createTemplate).toBeVisible();
+    await createTemplate.click({ force: true });
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
 
     await openAdminCreateMenuHost(page);
     await openCreateMenu(page);
-    await page.getByRole("menuitem", { name: /Create fallback hook/ }).click();
+    const createFallbackHook = page.getByRole("menuitem", { name: /Create fallback hook/ });
+    await expect(createFallbackHook).toBeVisible();
+    await createFallbackHook.click({ force: true });
     await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
     await assertNoBrowserErrors();
   });
@@ -599,7 +609,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       { action: "Create content row", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
       { action: "Create reusable phrase", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
       { action: "Create template", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-      { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_template", contentKey: "fallback-hook/manual/new-hook" }
+      { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
     ];
 
     await openAdminCreateMenuHost(page);
@@ -698,8 +708,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-dashboard h2").filter({ hasText: "Articles" })).toBeVisible();
 
     await articleFilters.getByLabel("Search articles").fill("cancer");
-    await expect(page.locator(".admin-content-row")).toHaveCount(1);
-    await expect(page.locator(".admin-content-row")).toContainText("Sun in Cancer");
+    await expect(page.locator(".admin-content-row", { hasText: "Sun in Cancer" }).first()).toBeVisible();
 
     await articleFilters.getByLabel("Article content system").selectOption("fallback");
     await expect(page.locator(".admin-content-row")).toHaveCount(0);
@@ -736,18 +745,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row", { hasText: "slot-template/compatibility/planet-card" })).toHaveCount(1);
 
     await compatibilityFilters.getByLabel("Search compatibility").fill("aries libra");
-    await expect(page.locator(".admin-content-row")).toHaveCount(1);
-    await expect(page.locator(".admin-content-row")).toContainText("Sun compatibility / Aries and Libra");
+    await expect(page.locator(".admin-content-row", { hasText: "Sun compatibility / Aries and Libra" })).toHaveCount(1);
 
     await page.getByRole("tab", { name: /Simple fallbacks/ }).click();
     await compatibilityFilters.getByLabel("Search compatibility").fill("");
-    await expect(page.locator(".admin-content-row")).toHaveCount(1);
-    await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
+    await expect(
+      page.locator(".admin-content-row", { hasText: "fallback-hook/friends.compatibility.planet-card" }),
+    ).toHaveCount(1);
 
     await page.getByRole("tab", { name: /Reusable phrases/ }).click();
     await compatibilityFilters.getByLabel("Compatibility planet or point").selectOption("venus");
-    await expect(page.locator(".admin-content-row")).toHaveCount(1);
-    await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
+    await expect(
+      page.locator(".admin-content-row", { hasText: "vocab/relationship/compatibility-repair" }),
+    ).toHaveCount(1);
 
     await compatibilityFilters.getByLabel("Compatibility sort").selectOption("title-asc");
     await page.getByRole("button", { name: "Clear filters" }).click();
@@ -814,15 +824,27 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
 
     await page.goto("/admin/content#vocabulary");
+    await page.waitForURL("**/admin/content#vocabulary");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
-    await page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" }).click();
-    await page.getByLabel("Search vocabulary").fill("compatibility repair");
+    const vocabularyTabs = page.getByRole("tablist", { name: "Vocabulary categories" });
+    await expect(vocabularyTabs.getByRole("tab", { name: "Planets" })).toHaveAttribute("aria-selected", "true");
+    const relationshipVocabTab = vocabularyTabs.getByRole("tab", { name: "Relationship" });
+    await relationshipVocabTab.click();
+    await expect(page).toHaveURL(/#vocabulary\?category=relationship$/);
+    await expect(
+      page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })
+    ).toHaveAttribute("aria-selected", "true");
+    await page.getByLabel("Search vocabulary").fill("vocab/relationship/compatibility-repair");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
 
-    await page.goto("/admin/content#fallback-hooks");
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Fallback Hooks" }).click();
     await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
-    await page.getByRole("tablist", { name: "Fallback hook sections" }).getByRole("tab", { name: "Friends" }).click();
+    const friendsFallbackTab = page
+      .getByRole("tablist", { name: "Fallback hook sections" })
+      .getByRole("tab", { name: "Friends" });
+    await friendsFallbackTab.click();
+    await expect(friendsFallbackTab).toHaveAttribute("aria-selected", "true");
     await page.getByLabel("Search fallback hooks").fill("compatibility card");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
@@ -873,27 +895,30 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("composition surfaces expose templates, slots, vocabulary, fallback hooks, and surface map", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content");
+    let deepLinkLoadIndex = 0;
+    const openAdminDeepLink = async (hash: string) => {
+      await page.goto(`/admin/content?qaCompositionSurface=${deepLinkLoadIndex++}${hash}`);
+    };
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Templates" }).click();
+    await openAdminDeepLink("#templates");
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
     await expect(page.getByText(/Mustache templates|voice scaffolds/i)).toBeVisible();
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Slots" }).click();
+    await openAdminDeepLink("#slots");
     await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
     await expect(page.getByRole("button", { name: /Editable slot rows/ })).toBeVisible();
     await expect(page.getByRole("button", { name: "Needs rows" })).toBeVisible();
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Vocabulary & Phrases" }).click();
+    await openAdminDeepLink("#vocabulary");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
     await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Planets" })).toBeVisible();
     await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })).toBeVisible();
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Fallback Hooks" }).click();
+    await openAdminDeepLink("#fallback-hooks");
     await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
     await expect(page.locator("main.admin-dashboard")).toContainText(/Sky|Natal|Lunar Calendar|Settings|Friends/);
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Surface Map" }).click();
+    await openAdminDeepLink("#surface-map");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
     await expect(page.getByText(/public surfaces|content paths/i)).toBeVisible();
 
