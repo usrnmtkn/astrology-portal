@@ -4,6 +4,7 @@ import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
+export type ManualChartSyncStatus = "synced" | "pending" | "failed" | "conflict";
 
 export type ManualChart = {
   id: string;
@@ -24,6 +25,9 @@ export type ManualChart = {
   notes?: string | null;
   createdAt: string;
   updatedAt: string;
+  syncStatus: ManualChartSyncStatus;
+  syncError?: string | null;
+  lastSyncedAt?: string | null;
 };
 
 export type ManualChartInput = {
@@ -62,6 +66,14 @@ type ManualChartRow = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  sync_status?: string | null;
+  sync_error?: string | null;
+  last_synced_at?: string | null;
+};
+
+type LocalManualChartRecord = Omit<ManualChart, "chartType" | "syncStatus"> & {
+  chartType?: ManualChartType;
+  syncStatus?: ManualChartSyncStatus;
 };
 
 const localManualChartsKey = (userId: string) => `tldrastro:manualCharts:${userId}`;
@@ -112,6 +124,7 @@ function isMissingManualChartPronounsColumn(error: unknown) {
 
 function rowToManualChart(row: ManualChartRow): ManualChart {
   const chartType = row.relationship_type === "event" ? "event" : "person";
+  const lastSyncedAt = row.last_synced_at ?? row.updated_at ?? row.created_at;
 
   return {
     id: row.id,
@@ -136,7 +149,24 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
     natalChart: row.natal_chart,
     notes: row.notes,
     createdAt: row.created_at,
-    updatedAt: row.updated_at
+    updatedAt: row.updated_at,
+    syncStatus: "synced",
+    syncError: null,
+    lastSyncedAt
+  };
+}
+
+function normalizeLocalManualChart(chart: LocalManualChartRecord): ManualChart {
+  const chartType = chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person");
+
+  return {
+    ...chart,
+    chartType,
+    pronouns: normalizePronounChoice(chart.pronouns),
+    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+    syncStatus: chart.syncStatus ?? "pending",
+    syncError: chart.syncError ?? null,
+    lastSyncedAt: chart.lastSyncedAt ?? null
   };
 }
 
@@ -229,16 +259,7 @@ function readLocalManualCharts(userId: string): ManualChart[] {
     const parsedCharts = savedCharts ? JSON.parse(savedCharts) as unknown : [];
 
     return Array.isArray(parsedCharts)
-      ? (parsedCharts as ManualChart[]).map((chart) => {
-          const chartType = chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person");
-
-          return {
-            ...chart,
-            chartType,
-            pronouns: normalizePronounChoice(chart.pronouns),
-            relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType)
-          };
-        })
+      ? (parsedCharts as LocalManualChartRecord[]).map(normalizeLocalManualChart)
       : [];
   } catch {
     return [];
@@ -283,7 +304,10 @@ function createLocalManualChart(userId: string, input: ManualChartInput): Manual
     id: `manual-${Date.now()}`,
     ownerUserId: userId,
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
+    syncStatus: "pending",
+    syncError: null,
+    lastSyncedAt: null
   };
   const charts = [...readLocalManualCharts(userId), nextChart]
     .sort((first, second) => first.displayName.localeCompare(second.displayName));
