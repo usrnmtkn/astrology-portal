@@ -55,6 +55,8 @@ const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 const ANGLES = new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
 const ELEMENT: Record<string, string> = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 const GROUP: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+const GROUP_EXAMPLE: Record<string, string> = { hard: "square", soft: "trine" };
+const EXACT_AUTHORED_NATALS = new Set(["chiron", "north-node", "south-node"]);
 // default time windows by transiting-planet speed; the engine may override via facts.window
 const WINDOW_ASPECT: Record<string, string> = { moon: "Today", sun: "This week", mercury: "This week", venus: "This week", mars: "For the next couple of weeks", jupiter: "This month", saturn: "For the next few months", uranus: "For the next few months", neptune: "For the next few months", pluto: "For the next few months", chiron: "For the next few months", "north-node": "For the next few months", "south-node": "For the next few months", lilith: "This month" };
 const WINDOW_HOUSE: Record<string, string> = { moon: "For the next couple of days", sun: "This month", mercury: "For the next few weeks", venus: "For the next few weeks", mars: "For the next month or two" };
@@ -133,6 +135,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
     const groupsToTry = [g, ...(SHARE[g] ?? [])];
     const tryKeys: string[] = [];
+    tryKeys.push(`authored/transit-aspect/${transiting}/${natal}/${aspect}`);
     const push = (a: string, b: string) => {
       if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
       for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
@@ -140,15 +143,18 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
-    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    if (!EXACT_AUTHORED_NATALS.has(natal)) {
+      tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    }
     if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
     // fallback template
     const T = tpl("fallback-template/transit.aspect");
     // the natal planet's life areas, so type lines can say WHAT gets easier/harder
     const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
     // angle targets get their own type line when one exists (richer phrasing per owner)
-    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null)
-      ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
+    const concreteAspect = GROUP_EXAMPLE[aspect] ?? aspect;
+    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}/angle`, v) : null)
+      ?? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}`, v);
     // soft contacts (trine, sextile, light conjunction) use the flowing effect;
     // hard contacts (square, opposition, heavy conjunction) use the pressure effect.
     const effectFamily = g === "soft" || (g === "conjunction" && !isHeavy) ? "soft" : "hard";
@@ -161,7 +167,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const ctx: Ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
-      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
+      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${concreteAspect}`)?.body,
       transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
     aspectVerb: (() => { const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body; const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body; return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null; })(),
       // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they

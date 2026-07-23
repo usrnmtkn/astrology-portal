@@ -16319,8 +16319,8 @@
    "contentKey": "fallback-hook/transit-effect-soft/mars",
    "content_role": "fallback_hook",
    "grammar_frame": "verb_clause_slotted",
-   "body_you": "{{natalArea}} get real momentum, and effort pays off instead of scattering. Start the thing you have been circling",
-   "body_they": "{{natalArea}} get real momentum, and effort pays off instead of scattering. It is a good window for them to start the thing they have been circling",
+   "body_you": "{{natalArea}} get real momentum, ensuring effort pays off instead of scattering. Start the thing you have been circling",
+   "body_they": "{{natalArea}} get real momentum, ensuring effort pays off instead of scattering. It is a good window for them to start the thing they have been circling",
    "review_status": "approved",
    "source_keys": [
     "fallback-vocab/planet-topic/mars"
@@ -16904,7 +16904,7 @@
    "contentKey": "fallback-hook/transit-effect-hard/saturn",
    "content_role": "fallback_hook",
    "grammar_frame": "verb_clause_slotted",
-   "body_you": "{{natalArea}} feel heavier and slower, and shortcuts stop working. What holds up under this scrutiny has true staying power, and what fractures simply needed fixing in the first place",
+   "body_you": "{{natalArea}} move slower and heavier, making shortcuts stop working entirely. What holds up under this scrutiny has true staying power, and what fractures simply needed fixing in the first place",
    "body_they": "{{natalArea}} go through a stress test, and quick fixes stop fixing. What stands up to this scrutiny is built to last; what fractures was already broken.",
    "review_status": "approved",
    "source_keys": [
@@ -18137,8 +18137,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and on a collective level, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and on a collective level, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"
@@ -18147,8 +18147,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and on a collective level, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and on a collective level, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"
@@ -18157,8 +18157,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and on a collective level, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and on a collective level, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"

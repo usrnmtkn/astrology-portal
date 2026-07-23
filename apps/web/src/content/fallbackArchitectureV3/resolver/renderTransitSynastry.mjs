@@ -22,6 +22,8 @@ const tpl = (key) => templates.templates.find((t) => t.contentKey === key);
 const fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
 const hookVoice = (key, voice) => { const r = hooks.get(key); return r ? (voice === "you" ? r.body_you : r.body_they) : null; };
 const GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+const GROUP_EXAMPLE = { hard: "square", soft: "trine" };
+const EXACT_AUTHORED_NATALS = new Set(["chiron", "north-node", "south-node"]);
 // default time windows by transiting-planet speed; the engine may override via facts.window
 const WINDOW_ASPECT = { moon: "Today", sun: "This week", mercury: "This week", venus: "This week", mars: "For the next couple of weeks", jupiter: "This month", saturn: "For the next few months", uranus: "For the next few months", neptune: "For the next few months", pluto: "For the next few months", chiron: "For the next few months", "north-node": "For the next few months", "south-node": "For the next few months", lilith: "This month" };
 const WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", mercury: "For the next few weeks", venus: "For the next few weeks", mars: "For the next month or two" };
@@ -80,6 +82,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   };
   const groupsToTry = [g, ...(SHARE[g] ?? [])];
   const tryKeys = [];
+  tryKeys.push(`authored/transit-aspect/${transiting}/${natal}/${aspect}`);
   const push = (a, b) => {
     if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
     for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
@@ -87,7 +90,9 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   };
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
-  tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+  if (!EXACT_AUTHORED_NATALS.has(natal)) {
+    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+  }
   if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
   // fallback template
   const T = tpl("fallback-template/transit.aspect");
@@ -95,8 +100,9 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const ANGLES = new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
   const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
   // angle targets get their own type line when one exists (richer phrasing per owner)
-  const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null)
-    ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
+  const concreteAspect = GROUP_EXAMPLE[aspect] ?? aspect;
+  const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}/angle`, v) : null)
+    ?? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}`, v);
   // what to expect from THIS transiting planet, landing on the natal planet's areas.
   // soft contacts (trine, sextile, light conjunction) use the flowing effect;
   // hard contacts (square, opposition, heavy conjunction) use the pressure effect.
@@ -110,7 +116,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const ctx = {
     timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
     transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
-    aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
+    aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${concreteAspect}`)?.body,
     transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
     aspectVerb: (() => { const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body; const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body; return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null; })(),
     // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they
