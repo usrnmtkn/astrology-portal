@@ -102,7 +102,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   // hard contacts (square, opposition, heavy conjunction) use the pressure effect.
   const effectFamily = g === "soft" || (g === "conjunction" && !isHeavy) ? "soft" : "hard";
   // variant rotation for repeat viewers: engine passes variant 2 or 3, base otherwise
-  const effectRaw = (v === "you" && variant ? hooks.get(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`)?.body_you : null)
+  const effectRaw = (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null)
     ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
   const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
   const ctx = {
@@ -562,11 +562,13 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, window: win }) {
+export function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }) {
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  const effect = hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+  // variant rotation for repeat viewers (2 or 3; absent = base line)
+  const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
+    ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   const natalG = GROUP[natalAspect] ?? natalAspect ?? null;
   const bondQuality = natalG ? vocab.get(`fallback-vocab/bond-quality/${natalG}`)?.body : null;
@@ -583,4 +585,66 @@ export function renderBondTransit({ transiting, aspect, planetA, planetB, natalA
   const HL = { conjunction: "conjunct", opposition: "opposite" };
   const headline = `${title(transiting)} ${HL[aspect] ?? aspect} your ${title(planetA)}-${title(planetB)} line with ${otherName}`;
   return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
+}
+
+// ---- Per-rising lunation horoscope (owner template library): house illuminated ->
+// Release/Shift -> Higher Path. Eclipses skip the Release section per canon and append
+// the observe-only note. house auto-derives from risingSign + lunation sign (whole sign). ----
+const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+export function renderLunationHoroscope({ kind, sign, risingSign, house }) {
+  const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
+  const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
+  const h = house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
+  const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+  const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
+  const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
+  if (!frame || !jurisdiction || !higher) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+  const paras = [fill(frame, { houseOrdinal: ordinal(h), jurisdiction })];
+  // sign alignment: the per-sign lunation section distilled from the owner's book
+  const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
+  if (signSection) paras.push(signSection);
+  // concrete manifestations for this house (from the book's per-house chapters)
+  const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
+  if (shows) paras.push(shows);
+  // in-the-moment events for this house + lunation kind (from the book's per-house chapters)
+  const moment = hooks.get(`fallback-hook/lunation-moment/${which}/${h}`)?.body_you;
+  if (moment) paras.push(moment);
+  if (!isEclipse) {
+    const release = hooks.get(`fallback-hook/lunation-release/${h}`)?.body_you;
+    if (release) paras.push(release);
+  }
+  paras.push(higher);
+  // New Moons close with the book's verbatim intention for this house
+  if (which === "new" && !isEclipse) {
+    const intent = hooks.get(`fallback-hook/lunation-intention/${h}`)?.body_you;
+    if (intent) paras.push(`Set your intention: "${intent}"`);
+  }
+  if (isEclipse) {
+    const note = hooks.get("fallback-hook/lunation-horoscope/eclipse-note")?.body_you;
+    if (note) paras.push(note);
+  }
+  const label = isEclipse ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse") : (which === "new" ? "New Moon" : "Full Moon");
+  return { headline: `${label} for ${title(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+}
+
+// ---- Do/Don't engine (TLDR-Remedial-DoDont-Spec): chart-specific lists assembled from
+// seeds. The transit picks which natal planet needs tending; the natal chart writes the
+// list. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
+// + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
+export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
+  const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+  const dos = [
+    seed(`dodont-do/${planet}/${sign}`),
+    house ? seed(`dodont-house/${house}`) : null,
+    seed(`dodont-reward/${transiting}`),
+  ].filter(Boolean);
+  const donts = [
+    seed(`dodont-shadow/${planet}/${sign}`),
+    seed(`dodont-friction/${transiting}`),
+    weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : null,
+  ].filter(Boolean);
+  if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
+  // de-dupe while preserving order (same seed can arrive twice via the weak-point path)
+  const uniq = (a) => [...new Set(a)];
+  return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
 }

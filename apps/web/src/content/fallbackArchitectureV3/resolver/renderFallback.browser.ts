@@ -13,6 +13,7 @@ export interface TemplateRow {
   contentKey: string;
   content_role: string;
   headline?: string;
+  headline_they?: string;
   body: string;
   body_you?: string;
   body_they?: string;
