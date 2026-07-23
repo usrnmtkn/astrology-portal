@@ -8,6 +8,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 const publicFallbackFiles = [
   "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json"
 ];
@@ -47,6 +51,54 @@ const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
 const materializeCompatibilityRows = read("scripts/materialize-compatibility-dashboard-rows.mjs");
 const apiContentGeneration = read("api/_lib/content-generation.ts");
+
+const readerServingFiles = {
+  "apps/web/src/App.tsx": app,
+  "apps/web/src/features/you/YouPage.tsx": youPage,
+  "apps/web/src/features/calendar/LunarCalendar.tsx": lunarCalendar,
+  "apps/web/src/services/generatedContent.ts": generatedContent,
+  "apps/web/src/services/planetTopicVocabulary.ts": planetTopicVocabulary,
+  "apps/web/src/content/servedFieldsContract.ts": servedFieldsContract,
+  "apps/web/src/content/readerSafety.ts": readerSafety,
+  "api/_lib/content-generation.ts": apiContentGeneration
+};
+
+const deletedReaderCopySourceFragments = [
+  "sky-writing",
+  "skyWriting",
+  "skyContentSnapshot",
+  "skyHistoricalLookback",
+  "placementScaffold",
+  "placementScaffoldData",
+  "emergencyCopy",
+  "lunarBeatCopy",
+  "seasonArcCopy",
+  "fallbackHooks",
+  "metaphorSpecificityPhraseBook",
+  "metaphor-specificity-phrasebook",
+  "aspectPairSourcePhrases",
+  "sourceGroundedRuntime",
+  "sourceGroundedV2",
+  "sourceGroundedMustacheV22",
+  "sourceGroundedModels",
+  "finalSourceGroundedDashboardRecords",
+  "sourceGroundedReviewCandidates",
+  "migration-seeds",
+  "templateHandoffV2",
+  "lunar-calendar/content-library",
+  "lunarCalendarLibraryResolver"
+];
+
+for (const [file, contents] of Object.entries(readerServingFiles)) {
+  for (const sourceFragment of deletedReaderCopySourceFragments) {
+    const escapedFragment = escapeRegExp(sourceFragment);
+    assert.doesNotMatch(
+      contents,
+      new RegExp(`(?:from\\s+|import\\s*\\(|require\\s*\\()["'][^"']*${escapedFragment}[^"']*["']`, "u"),
+      `${file} must not import deleted non-package copy source ${sourceFragment}.`
+    );
+  }
+}
 
 assert.match(youPage, /isReaderFacingCopy/, "You detail renderer must use reader-facing copy filtering.");
 assert.match(youPage, /isDuplicateArticleCopy/, "You detail renderer must dedupe TLDR, summary, and section body copy.");
