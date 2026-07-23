@@ -238,6 +238,35 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   // close, all dual-voice by construction (voice param; never pronoun substitution). ----
   const SIGN_RULER: Record<string, string> = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "mars", sagittarius: "jupiter", capricorn: "saturn", aquarius: "saturn", pisces: "jupiter" };
 
+  // ---- Aspect patterns (T-square, Grand Cross, Grand Trine, Kite, Yod, Mystic Rectangle):
+  // natal pattern card + activation card. Replaces the astro-knowledge copy entries; the
+  // detection engine stays in the app, the words come from here. ----
+  const PATTERN_NAMES: Record<string, string> = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
+  function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }: { type: string; apexTitle?: string; mode?: string; element?: string; activation?: boolean; voice?: Voice }): RenderResult {
+    const pick = (key: string) => { const r = hooks.get(key); return r ? (voice === "you" ? r.body_you : r.body_they) : null; };
+    const body = pick(`fallback-hook/aspect-pattern${activation ? "-activation" : ""}/${type}`);
+    if (!body) throw new SourceGapError(`SOURCE_GAP: aspect pattern ${type}${activation ? " activation" : ""}`);
+    const paras = [body];
+    if (!activation && apexTitle) {
+      const apex = pick(`fallback-hook/aspect-pattern-apex/${type}`);
+      if (apex) paras.push(apex.replace(/\{\{apexTitle\}\}/g, apexTitle));
+    }
+    if (!activation) {
+      const qual = mode ? vocab.get(`fallback-vocab/pattern-mode/${mode}`)?.body : (element ? vocab.get(`fallback-vocab/pattern-element/${element}`)?.body : null);
+      if (qual) paras.push(`It runs as ${qual}.`);
+    }
+    return { headline: PATTERN_NAMES[type] ?? type, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/natal.aspect-pattern" } as RenderResult;
+  }
+
+  // ---- House glossary: one-sentence house definitions (replaces the legacy hardcoded
+  // glossary in App.tsx). Used for tooltips, chart legends, and house headers. ----
+  function renderHouseGlossary({ house, voice = "you" }: { house: number; voice?: Voice }): RenderResult {
+    const r = hooks.get(`fallback-hook/house-glossary/${house}`);
+    if (!r) throw new SourceGapError(`SOURCE_GAP: house glossary ${house}`);
+    const body = voice === "you" ? r.body_you : r.body_they;
+    return { headline: `${ordinal(house)} House`, body, parts: [body], templateKey: "fallback-template/natal.house-glossary", contentKey: r.contentKey } as RenderResult;
+  }
+
   function renderNatalEmptyHouse(facts: EmptyHouseFacts, opts: RenderOpts = {}): RenderResult & { note: string | null } {
     const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
     const v = voice === "you" ? "you" : "they";
@@ -290,7 +319,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     return { headline: `${ordinal(house)} House Year`, note, body: parts.join("\n\n"), parts, templateKey: "fallback-template/natal.profection-year" };
   }
 
-  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear };
+  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
 }
 
 /** Normalize app wording to the five canonical aspect ids ("conjunct" -> "conjunction", etc).

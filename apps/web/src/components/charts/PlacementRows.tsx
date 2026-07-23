@@ -82,36 +82,6 @@ type NormalizedPlacementMicrocopySection = {
   body: string;
 };
 
-const chartPlacementDescriptions: Record<string, string> = {
-  Ascendant: "How this chart meets the world",
-  Sun: "This chart's identity and life force",
-  Moon: "This chart's emotional rhythm",
-  Mercury: "How this chart communicates",
-  Venus: "How this chart connects",
-  Mars: "How this chart takes action",
-  Jupiter: "How this chart grows",
-  Saturn: "Where this chart builds and commits",
-  Uranus: "How this chart breaks from pattern",
-  Neptune: "How this chart dreams and imagines",
-  Pluto: "How this chart transforms",
-  Chiron: "Where this chart touches repair and old tenderness",
-  Lilith: "Where this chart carries the untamed and uncontained"
-};
-
-const compositePlacementDescriptions: Record<string, string> = {
-  Ascendant: "How the relationship meets the world",
-  Sun: "The relationship's identity and life force",
-  Moon: "The relationship's emotional rhythm",
-  Mercury: "How the relationship communicates",
-  Venus: "How the relationship connects",
-  Mars: "How the relationship takes action",
-  Jupiter: "How the relationship grows",
-  Saturn: "Where the relationship builds and commits",
-  Uranus: "How the relationship breaks from pattern",
-  Neptune: "How the relationship dreams and imagines",
-  Pluto: "How the relationship transforms"
-};
-
 function possessiveName(name: string) {
   const trimmed = name.trim();
 
@@ -122,26 +92,8 @@ function possessiveName(name: string) {
   return trimmed.endsWith("s") ? `${trimmed}'` : `${trimmed}'s`;
 }
 
-function namedPlacementDescription(planet: string, ownerName: string) {
-  const owner = ownerName.trim();
-  const possessive = possessiveName(owner);
-  const subject = owner || "they";
-
-  const descriptions: Record<string, string> = {
-    Sun: `${possessive} core self and vitality`,
-    Moon: `${possessive} inner world and what they need to feel safe`,
-    Ascendant: `How ${subject} meets the world and comes across`,
-    Mercury: `How ${subject} thinks and communicates`,
-    Venus: `What ${subject} values and who they're drawn to`,
-    Mars: `How ${subject} directs their energy and acts`,
-    Jupiter: `Where ${subject} grows and reaches for more`,
-    Saturn: `What ${subject} commits to and builds`,
-    Uranus: `Where ${subject} breaks the pattern`,
-    Neptune: `Where ${subject} dreams and idealizes`,
-    Pluto: `Where ${subject} transforms and reclaims power`
-  };
-
-  return descriptions[planet] ?? "";
+function namedPlacementDescription(_planet: string, _ownerName: string) {
+  return "";
 }
 
 const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: string; tone: DignityTone }> = {
@@ -151,12 +103,7 @@ const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: str
   fall: { adjective: "Weakened", name: "Fall", tone: "weak" }
 };
 
-const dignityDescriptions: Record<EssentialDignity, string> = {
-  domicile: "Domicile: the planet is in one of its own signs, so its topics tend to have direct access and familiar tools.",
-  exaltation: "Exaltation: the planet is honored in this sign, so its topics can be amplified, supported, or especially visible.",
-  detriment: "Detriment: the planet is opposite one of its own signs, so its topics may need translation, effort, or less familiar tools.",
-  fall: "Fall: the planet is opposite its exaltation, so its topics can feel less supported and may need extra care or adjustment."
-};
+const dignityDescriptions: Record<EssentialDignity, string> = { domicile: "", exaltation: "", detriment: "", fall: "" };
 
 function normalizePlacementMicrocopySection(
   slot: NormalizedPlacementMicrocopySection["slot"],
@@ -380,10 +327,8 @@ export function natalPlacementDescription(planet: string, context: PlacementDesc
 
   if (context === "person" && ownerName?.trim()) {
     body = namedPlacementDescription(planet, ownerName);
-  } else if (context === "chart") {
-    body = chartPlacementDescriptions[planet] ?? "";
-  } else if (context === "composite") {
-    body = compositePlacementDescriptions[planet] ?? "";
+  } else if (context === "chart" || context === "composite") {
+    body = "";
   } else {
     body = natalCardTagline(planet);
   }

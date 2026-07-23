@@ -15935,6 +15935,762 @@
     "SATURN-COMPATIBILITY-CARDS.md"
    ],
    "editorial_notes": "Reversed-direction card authored from the owner-approved forward card (same dynamic, reader holds the other sign). Saturn reversed batch."
+  },
+  {
+   "contentKey": "authored/career-transit/uranus/sun/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your career changes before the explanation is ready.",
+   "body": "A role, contract, or professional direction can change so quickly that other people assume you had the replacement lined up. You know how much improvising it took to keep your work moving once the original plan became impossible. You are allowed to call this a transition while you share what you know, acknowledge what remains undecided, and test the next direction.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Uranus square natal Sun (career). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/saturn/mars/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Put your available energy where it matters most.",
+   "body": "Your workload may exceed the energy you have available today. Identify the deadline that affects your income, your credibility, or someone who is waiting on you, and put that task first. An unrealistic list does not become reasonable because you exhausted yourself trying to finish it.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Saturn conjunct natal Mars (career). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-return/saturn/career",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your career history has already left clues.",
+   "body": "By your Saturn return, you may recognize the same problem across different jobs, managers, or clients. Perhaps the role remains vague, the workload keeps expanding, or you stay long after the work has stopped being worth the cost. Use that history to choose your next role according to the conditions under which you actually do your best work.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Saturn return (career reading). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-return/saturn/unfinished",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The unfinished responsibility keeps following you.",
+   "body": "You may want work to feel lighter while an unfinished certification, unpaid invoice, difficult conversation, or overdue decision remains on every week's list. Relief may begin with the email, application, or deadline you have been avoiding. Close one responsibility fully so it does not follow you into next month.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Saturn return (unfinished business reading). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/a/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your old professional identity no longer fits.",
+   "body": "The title or achievement that once opened every introduction may stop explaining the work you want now. You do not need a finished identity before revising your résumé, portfolio, or bio. Begin with the work you are doing, the people it serves, and the problems you want to keep solving.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto conjunct a personal planet (career). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-placement/mercury/scorpio",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your research needs a stopping point.",
+   "body": "Once a number, claim, or decision feels wrong, you may keep investigating long after everyone else has moved on. That persistence can uncover hidden costs, weak assumptions, or the question no one wanted to ask. Decide what evidence would be enough before the investigation consumes the time you reserved for acting on what you found.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Mercury in Scorpio. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-placement/mercury/pisces-12",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your private idea needs a visible form.",
+   "body": "You may do your best thinking away from noise, following an idea before you know where it will lead. Solitude gives the idea room to grow. A draft, prototype, outline, or private preview gives someone else a way to understand it and help you move it forward.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Mercury in Pisces in the 12th house. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/mercury/neptune/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You may need to decide before every detail is clear.",
+   "body": "You may keep analyzing the numbers, feedback, and possible outcomes because one missing detail still bothers you. Some decisions remain uncertain after every available fact has been reviewed. Set a standard for enough information, make a provisional choice, and schedule a date to reconsider it when you know more.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Mercury in Virgo opposite Neptune. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-placement/mercury/gemini",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Capture the ideas before they begin competing.",
+   "body": "One question can open five more before you have finished deciding what the first one requires. Write each idea down, then choose the question connected to the work already due. Your mind does not have to hold every possibility at once for those ideas to remain valuable.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Mercury in Gemini. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit-house/saturn/2",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The budget is giving you career information.",
+   "body": "You may put time, labor, or money into a plan and wait longer than expected for a return. Review what the investment has produced in income, completed work, useful contacts, or a skill you can sell. You are allowed to change the price, scope, timeline, or funding before disappointment becomes debt.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Saturn transiting the 2nd house. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-placement/mars/capricorn",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The work teaches you how to plan it.",
+   "body": "You can study a role, prepare for the difficulty, and still discover its true weight only after you begin. Pay attention to how long the work takes, where you need support, and which skills become easier through repetition. A realistic timeline respects the person doing the work as much as the result.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Mars in Capricorn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/saturn/moon/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The work is getting done at your expense.",
+   "body": "You may still meet every deadline while lunch gets later, sleep gets shorter, and your patience is gone by the last call. Because the work keeps arriving, people may not realize how close you are to your limit. Change the workload while you still have a say in what gets moved.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Saturn opposite natal Moon (career). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The promotion changes more than your title.",
+   "body": "A promotion or leadership change may bring you into conversations about budgets, staffing, and decisions that affect other people's livelihoods. You may be expected to sound certain before you understand who has authority and who will carry the consequences. Learn where the decision is made before you attach your name to the promise.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto conjunct the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/venus/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The offer may cost more than it pays.",
+   "body": "Money, recognition, or access can make an offer hard to question. The obligations may appear later, once someone else controls the timeline, the terms, or your ability to leave. Read the contract after the excitement has worn off and decide whether you would still say yes.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto square natal Venus (career). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/uranus/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your career may change before you have a clean explanation.",
+   "body": "A field or way of working that once seemed unrealistic may suddenly make more sense than the path you were following. People who know your résumé may need time to understand the change. Start doing the work, and let the explanation come from what you learn after you begin.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Uranus conjunct the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/neptune/midheaven/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The job looked better from the outside.",
+   "body": "A role may give you the title you wanted and leave you dreading work you once imagined enjoying. Wait before turning one difficult month into a resignation letter. Notice whether any part of the work still feels worth doing once the pressure drops.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Neptune square the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The opportunity may be bigger than the support around it.",
+   "body": "An offer or public success can move you into work you have never handled at this scale. The excitement may make it easy to agree before anyone explains what comes with the role. Get clear on the authority, staff, time, and compensation before one opportunity becomes several new jobs.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter conjunct the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-retro/mercury/mercury/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The decision is back on the table.",
+   "body": "An application, proposal, or conversation you thought was settled may return with a changed detail or a question no one raised the first time. Read the new version before defending your old answer. The revision may save you from committing to a plan built on missing information.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Retrograde Mercury conjunct natal Mercury. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/mercury/pluto/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You notice what no one says directly.",
+   "body": "You may catch the missing number in a proposal, the hesitation behind an agreement, or the question everyone keeps avoiding. This can make you a sharp researcher or negotiator, especially when a plan depends on information no one wants to volunteer. Know what answer you need before you start digging, or you may spend the afternoon proving what you already suspected.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Mercury trine Pluto. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/jupiter/saturn/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The opportunity needs a plan your life can support.",
+   "body": "You may want to launch, apply, hire, or expand at the same moment the budget and calendar are telling you to slow down. The opportunity may need more time, money, or help than you currently have available. Test the idea on a smaller scale before you reorganize your life around it.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Jupiter square Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/mars/saturn/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You know how to finish difficult work.",
+   "body": "Once the goal is clear, you can keep going through the slow part that makes other people lose interest. This is useful for the draft that needs another pass, the repair that takes all afternoon, or the negotiation that cannot be rushed. Put your uninterrupted time toward one piece you can finish and clear from your week.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Mars trine Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/sun/uranus/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You need room to decide how the work gets done.",
+   "body": "A role can become impossible to stay in once every decision has been made for you. Other people may call your exit sudden because they did not see how long you spent following rules that made the work slower or worse. Choose roles that give you a real problem to solve and enough authority to use your own judgment.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Sun square Uranus. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/neptune/mercury/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The idea is vivid. The instructions are missing.",
+   "body": "You may know exactly how a project should feel and struggle to explain what another person needs to make. Translate the idea into a draft, example, or list of decisions before assigning the work. Inspiration becomes easier to collaborate with once someone else can see what you mean.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Neptune conjunct natal Mercury. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/saturn/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The work you built slowly has room to grow.",
+   "body": "A project you have developed over time may finally receive the money, authority, or audience it needs. Expand the part that already produces a clear result. Let the additional demand show you what needs to be hired, documented, or simplified next.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter trine natal Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mars/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "People can see what you are pushing for.",
+   "body": "You may be more willing to pitch, lead, compete, or challenge a decision in public. The same force that makes you noticeable can make every disagreement feel like a test of authority. Know what result you want before entering the meeting so anger does not become the whole message.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mars conjunct the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-retro/venus/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "An old opportunity returns for review.",
+   "body": "A former client, employer, or professional goal may return with a flattering reminder of what once felt possible. Look at the current pay, scope, and working conditions before treating familiarity as proof that the opportunity still fits. The return can show you how much your standards have changed.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Retrograde Venus conjunct the Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/mercury/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The idea is growing faster than the plan.",
+   "body": "One exciting conversation can turn into six commitments before anyone checks the calendar. Write down what was agreed, then calculate the time, staff, and follow-up it requires. Enthusiasm is useful. Undocumented enthusiasm becomes unpaid work.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter opposite natal Mercury. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/saturn/midheaven/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The path requires more than you currently have available.",
+   "body": "A job, degree, thesis, or professional qualification may require more time and support than you planned. Identify the missing requirement before taking the delay as proof that you cannot continue. The next step may be a revised deadline, a smaller workload, additional funding, or help from someone with the authority to provide it.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Saturn square the MC (final version). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/mercury/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The conversation is really about power.",
+   "body": "A meeting may stop being about the proposal once you realize someone is using information, silence, or urgency to control the outcome. Keep records and take time before replying to a message designed to force a quick answer. You do not have to negotiate at the speed that benefits the other person.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto opposite natal Mercury. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/mars/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You can put real force behind one goal.",
+   "body": "You may have the stamina to complete work that has intimidated you or remained unfinished for months. Choose the project that would materially change your position if completed. Give it uninterrupted time and finish enough of it before you announce what you are building.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto trine natal Mars. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/mercury/uranus/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your mind moves faster than the meeting.",
+   "body": "You may see the solution while everyone else is still defining the problem. Waiting can feel pointless, which may lead you to interrupt or introduce a new direction before the room is ready. Write the point down, let the speaker finish, then explain which decision your idea would change.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Mercury square Uranus. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/venus/saturn/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "People trust you with work that lasts.",
+   "body": "You may build professional relationships slowly and keep your promises long after the initial excitement has passed. Clients and colleagues learn that you will remember the details and return when you said you would. Familiarity can keep you in an underpaid arrangement, so put regular rate reviews on the calendar.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Venus trine Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/mars/neptune/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your effort can disappear into unclear work.",
+   "body": "A vague project can absorb an entire day because the goal changes every time you get close. Before you begin, define what finished means and who has authority to approve it. A moving target will use every hour you give it.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Mars opposite Neptune. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/sun/saturn/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You may treat every role like a test you have to pass.",
+   "body": "You can take responsibility seriously and assume that respect must be earned again every day. This may make you prepared and dependable, while also leaving you reluctant to apply until you are overqualified. Use the work you have already completed as evidence when you negotiate or accept more authority.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Sun conjunct Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/moon/mercury/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You can explain what the room is feeling.",
+   "body": "You may know how to name tension in a meeting without making everyone defensive. That skill becomes valuable when a client is upset or a team has stopped saying what the problem is. Use plain language and give people a specific decision they can respond to.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Moon trine Mercury. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-natal-aspect/venus/saturn/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You may underprice work you care about.",
+   "body": "Charging the full rate can feel uncomfortable when you like the client or believe in the work. This can create long relationships that quietly depend on you accepting less. Put the rate, revision limit, and payment date in writing before goodwill starts covering the gap.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Natal Venus square Saturn. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mercury/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Say the part that moves the decision.",
+   "body": "An interview, presentation, application, or academic review may place your work in front of someone who can act on it. Lead with the conclusion, then explain what it changes. Make it easy for the professor, advisor, employer, or decision-maker to understand what you are proposing.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mercury conjunct the MC. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/midheaven/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your previous work opens a larger door.",
+   "body": "A referral, promotion, acceptance, publication, or recommendation may grow from work you completed earlier. Find out what support comes with the opportunity and where it can take you. Your past results give you evidence for requesting better terms, funding, mentorship, or responsibility.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter trine the MC (final version). Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/sun/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your work is visible today.",
+   "body": "An interview, presentation, exam, or public decision may put your effort in front of people evaluating it. Be clear about what you contributed and what result you produced. This moment matters, and it does not have to decide your entire future.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Sun conjunct the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/sun/midheaven/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The demand in front of you changes the day you planned.",
+   "body": "A work deadline or academic requirement may take over hours you expected to use elsewhere. Decide what must be submitted today, then renegotiate the rest before silence creates another problem. One pressured day says nothing final about whether you belong on this path.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Sun square the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/moon/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "People can see how much this matters to you.",
+   "body": "An interview, class presentation, meeting, or result may feel more personal than usual. You may care deeply about how it is received and have difficulty hiding that. Let the first reaction pass before you respond to feedback or decide what the outcome means.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Moon conjunct the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/moon/midheaven/square",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your mood and the deadline are competing.",
+   "body": "You may wake up distracted or overwhelmed on a day that still requires you to present, submit, or lead. Complete the necessary part and keep the commitment as simple as possible. Wait until tomorrow before making a larger decision about the job, course, or program.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Moon square the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mercury/midheaven/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The right words arrive when you need them.",
+   "body": "An interview, oral exam, proposal review, or advisor meeting may go more easily because you can explain your point clearly. Lead with the answer, then show how you reached it. Send the follow-up while the conversation is still fresh.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mercury trine the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mercury/midheaven/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "A private conversation changes the public plan.",
+   "body": "News from home or an important private discussion may affect your schedule, application, or willingness to accept an opportunity. Decide what you can realistically commit to before updating the people who depend on your answer. The public plan may need to wait until the private decision is clear.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mercury opposite the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/venus/midheaven/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Support arrives through someone who knows your work.",
+   "body": "A professor, colleague, client, or former manager may be willing to recommend you or make an introduction. Tell them which role, program, or opportunity you are pursuing. A specific request gives their goodwill somewhere useful to go.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Venus trine the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/venus/midheaven/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The opportunity has to fit your actual life.",
+   "body": "A job or academic program may look attractive and require a move, schedule, or financial arrangement that changes everyday life. Before agreeing, picture an ordinary Tuesday: where you will live, how you will eat, how long the commute takes, and who you can call. The opportunity has to fit inside that day.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Venus opposite the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mars/midheaven/sextile",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You have enough momentum to make the next move.",
+   "body": "Use the available energy to submit the application, schedule the meeting, or finish the section someone else is waiting to review. Choose a step that creates a response from the outside world. Progress becomes easier to measure once the work leaves your desk.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mars sextile the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/mars/midheaven/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Work pressure is entering your private life.",
+   "body": "A deadline, conflict, or competitive environment may follow you home and keep the day running long after work or class ends. Close the laptop at a specific time and write down what remains. Repeated spillover is information about the structure and deserves to be taken seriously.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Mars opposite the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/midheaven/sextile",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "One useful introduction widens the path.",
+   "body": "Someone with experience or influence may recognize your ability and point you toward an opportunity beyond your current options. Follow up with one concrete goal, such as a role, program, research area, or professional qualification. Make it easy for them to understand where their support would help.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter sextile the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/jupiter/midheaven/opposition",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "A larger future requires more from your life at home.",
+   "body": "An acceptance, promotion, or distant opportunity may expand your options while requiring travel, relocation, or a more demanding schedule. Calculate the housing, transportation, care, and time involved before excitement makes the decision for you. Growth still has to work on an ordinary week.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Jupiter opposite the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/saturn/midheaven/conjunction",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "The next step comes with real responsibility.",
+   "body": "A promotion, thesis, degree requirement, or leadership role may make the next phase of your path feel serious. Get clear on the timeline, evaluation process, and support before committing to the workload. The title or qualification will matter more when the structure around it is workable.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Saturn conjunct the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/uranus/midheaven/sextile",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "A practical change makes the work easier.",
+   "body": "A new tool, schedule, course format, or working arrangement may solve a problem you had started treating as permanent. Test the change on one project or semester before reorganizing the entire path. Keep the part that saves time or improves the result.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Uranus sextile the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/neptune/midheaven/trine",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "Your imagination finds a place in the work.",
+   "body": "A creative idea or research interest may begin to fit into your formal career or studies. Give it a clear form through a proposal, paper, portfolio piece, or defined service. Other people can support the idea once they understand what you plan to make.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Neptune trine the natal Midheaven. Verticals rule: employment language native to career surface only."
+  },
+  {
+   "contentKey": "authored/career-transit/pluto/midheaven/sextile",
+   "content_role": "full_copy",
+   "surface": "career-vertical",
+   "headline": "You can negotiate from a stronger position.",
+   "body": "A successful result, specialized skill, or important piece of research may give you more influence over what happens next. Decide which term would materially improve your work, such as funding, credit, authority, or compensation. Request that change while the evidence of your contribution is visible.",
+   "review_status": "approved_reuse",
+   "approved_via": "owner-authored library (TLDR Author Set V5, career vertical, filed as written)",
+   "source_keys": [
+    "TLDR-Author-Set-V5-Career.md",
+    "hand/planets-in-transit (verified per set audit)"
+   ],
+   "editorial_notes": "Original title: Transiting Pluto sextile the natal Midheaven. Verticals rule: employment language native to career surface only."
   }
  ]
 }

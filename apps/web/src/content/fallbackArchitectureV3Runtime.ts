@@ -141,9 +141,17 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
   );
 }
 
-export let fallbackRendererV3 = createFallbackRenderer(snapshotBundle.templatesFile, snapshotBundle.rowsFile);
+function createAppFallbackRenderer(bundle: FallbackArchitectureV3Bundle) {
+  return createFallbackRenderer(bundle.templatesFile, {
+    hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
+    vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
+  });
+}
+
+export let fallbackRendererV3 = createAppFallbackRenderer(snapshotBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(snapshotBundle);
 let vocabularyRowsByKey = vocabularyRowsByContentKey(snapshotBundle.rowsFile);
+let hookRowsByKey = hookRowsByContentKey(snapshotBundle.rowsFile);
 let transitAuthoredCardsByKey = authoredCardsByContentKey(snapshotBundle.transitLib);
 
 const signRulers: Record<string, string> = {
@@ -172,7 +180,11 @@ function contentIdPart(value: string | number) {
 }
 
 function vocabularyRowsByContentKey(rowsFile: RowsFile) {
-  return new Map((rowsFile.vocabularyRows ?? []).map((row) => [row.contentKey, row]));
+  return new Map((rowsFile.vocabularyRows ?? []).filter(isReaderEligible).map((row) => [row.contentKey, row]));
+}
+
+function hookRowsByContentKey(rowsFile: RowsFile) {
+  return new Map((rowsFile.hookRows ?? []).filter(isReaderEligible).map((row) => [row.contentKey, row]));
 }
 
 function authoredCardsByContentKey(transitLib: TransitLibFile) {
@@ -192,6 +204,31 @@ export function fallbackV3PlanetTopic(planet: string) {
 
 export function fallbackV3HouseTopic(house: number) {
   return vocabularyBody(`fallback-vocab/house-topic/${house}`);
+}
+
+export function fallbackV3VocabularyBody(contentKey: string) {
+  return vocabularyBody(contentKey);
+}
+
+export function fallbackV3HookBody(contentKey: string, voice: "you" | "they" = "you") {
+  const row = hookRowsByKey.get(contentKey);
+  const body = voice === "you" ? row?.body_you ?? row?.body : row?.body_they ?? row?.body;
+  return typeof body === "string" ? body : "";
+}
+
+export function renderHouseGlossaryV3(house: number, voice: "you" | string = "you") {
+  return fallbackRendererV3.renderHouseGlossary({ house, voice });
+}
+
+export function renderAspectPatternV3(facts: {
+  type: string;
+  apexTitle?: string;
+  mode?: string;
+  element?: string;
+  activation?: boolean;
+  voice?: "you" | string;
+}) {
+  return fallbackRendererV3.renderAspectPattern(facts);
 }
 
 export function fallbackV3SignStyle(sign: string) {
@@ -223,8 +260,9 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
 }
 
 export function installFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle) {
-  fallbackRendererV3 = createFallbackRenderer(bundle.templatesFile, bundle.rowsFile);
+  fallbackRendererV3 = createAppFallbackRenderer(bundle);
   transitSynastryFallbackRendererV3 = createAppTransitRenderer(bundle);
   vocabularyRowsByKey = vocabularyRowsByContentKey(bundle.rowsFile);
+  hookRowsByKey = hookRowsByContentKey(bundle.rowsFile);
   transitAuthoredCardsByKey = authoredCardsByContentKey(bundle.transitLib);
 }

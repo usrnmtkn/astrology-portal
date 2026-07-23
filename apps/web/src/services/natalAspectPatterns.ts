@@ -6,6 +6,7 @@ import type {
   ResolvedAspectPatternActivationCopy,
   ResolvedAspectPatternCopy
 } from "@tldr/astro-knowledge/aspect-pattern-engine";
+import { renderAspectPatternV3 } from "../content/fallbackArchitectureV3Runtime";
 
 type NatalAspectPatternReaderStatus = "loading" | "ready" | "unavailable";
 
@@ -82,13 +83,13 @@ export async function fetchNatalAspectPatternsWithCopy(
     label: location.label,
     date: date.toISOString(),
     includeAspectPatterns: "true",
-    includeAspectPatternCopy: "true"
+    includeAspectPatternCopy: "false"
   });
 
   if (options.includeActivationCopy) {
     params.set("includeAspectPatternActivation", "true");
     params.set("includeAspectPatternActivationContexts", "true");
-    params.set("includeAspectPatternActivationCopy", "true");
+    params.set("includeAspectPatternActivationCopy", "false");
   }
 
   if (location.timeZone) {
@@ -103,8 +104,8 @@ export async function fetchNatalAspectPatternsWithCopy(
     aspectPatterns?: AspectPatternDetectionResult;
   };
 
-  if (!response.ok || json.ok === false || !json.sky?.aspectPatterns?.resolvedCopy) {
-    throw new Error(json.error || "Natal aspect-pattern copy could not load.");
+  if (!response.ok || json.ok === false || !json.sky?.aspectPatterns?.interpretationContexts) {
+    throw new Error(json.error || "Natal aspect-pattern detection could not load.");
   }
 
   return json.sky.aspectPatterns;
@@ -196,36 +197,71 @@ function activationTimingWindowFromContext(context: AspectPatternActivationInter
   return activationTimingWindowForTrigger(primaryActivationTrigger(context));
 }
 
-export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): NatalAspectPatternReaderItem[] {
+export function natalAspectPatternReaderItems(
+  snapshot: SkySnapshot | null,
+  voice: "you" | "they" = "you"
+): NatalAspectPatternReaderItem[] {
   const contexts = snapshot?.aspectPatterns?.interpretationContexts ?? [];
-  const copies = snapshot?.aspectPatterns?.resolvedCopy ?? [];
-  const activationCopies = snapshot?.aspectPatterns?.activation?.resolvedCopy ?? [];
   const activations = snapshot?.aspectPatterns?.activation?.activations ?? [];
   const activationContexts = snapshot?.aspectPatterns?.activation?.interpretationContexts ?? [];
   const activationDisplayOrder = snapshot?.aspectPatterns?.activation?.currentDisplayOrder ?? [];
   const contextById = new Map(contexts.map((context) => [context.patternId, context]));
-  const activationCopyById = new Map(activationCopies.map((copy) => [copy.patternId, copy]));
   const activationById = new Map((activations as PatternActivationTimingSource[]).map((activation) => [activation.patternId, activation]));
   const activationContextById = new Map(activationContexts.map((context) => [context.patternId, context]));
-  const primaryActivePatternId = activationDisplayOrder.find((patternId) => activationCopyById.has(patternId)) ?? activationCopies[0]?.patternId ?? null;
+  const primaryActivePatternId = activationDisplayOrder[0] ?? null;
 
-  return copies.flatMap((copy) => {
-    const context = contextById.get(copy.patternId);
-    if (!context) return [];
-    const activationCopy = activationCopyById.get(copy.patternId);
+  return contexts.flatMap((rawContext) => {
+    const context = rawContext as any;
+    const apex = "apex" in context.roles ? context.roles.apex : "focalPlanet" in context.roles ? context.roles.focalPlanet : undefined;
+    const element = context.patternType === "grand_trine"
+      ? context.roles.elementConsistency === "same_element" ? String(context.members[0]?.sign ?? "").toLowerCase() : undefined
+      : undefined;
+    const rendered = renderAspectPatternV3({
+      type: context.patternType,
+      apexTitle: apex,
+      element,
+      voice
+    });
+    const copy = {
+      patternId: context.patternId,
+      patternType: context.patternType,
+      source: { recordId: rendered.templateKey, contentLevel: "source_grounded_template", status: "approved", resolverVersion: "v3" },
+      content: { headline: rendered.headline, overview: rendered.parts[0] ?? rendered.body, sections: rendered.parts.slice(1).map((body: string, index: number) => ({ id: `package_${index + 1}`, body })) },
+      diagnostics: { templateId: rendered.templateKey, usedFallback: false, missingSlots: [], skippedSections: [] }
+    } as ResolvedAspectPatternCopy;
+    const activationContext = activationContextById.get(context.patternId);
+    let activationCopy: ResolvedAspectPatternActivationCopy | undefined;
+    if (activationContext) {
+      const active = renderAspectPatternV3({
+        type: context.patternType,
+        apexTitle: apex,
+        element,
+        activation: true,
+        voice
+      });
+      activationCopy = {
+        patternId: context.patternId,
+        patternType: context.patternType,
+        triggerSummary: {
+          movingBodies: activationContext.triggers.map((trigger) => trigger.movingBody),
+          targetedNatalPlanets: activationContext.triggers.map((trigger) => trigger.targetNatalPlanet)
+        },
+        content: { headline: active.headline, overview: active.body, sections: [] }
+      } as unknown as ResolvedAspectPatternActivationCopy;
+    }
     const activationEmphasis: NatalAspectPatternReaderItem["activationEmphasis"] = activationCopy
-      ? copy.patternId === primaryActivePatternId ? "primary" : "secondary"
+      ? context.patternId === primaryActivePatternId ? "primary" : "secondary"
       : "none";
-    const activationTiming = activationTimingWindowFromContext(activationContextById.get(copy.patternId))
-      ?? activationTimingWindowForTrigger(activationById.get(copy.patternId)?.trigger);
+    const activationTiming = activationTimingWindowFromContext(activationContext)
+      ?? activationTimingWindowForTrigger(activationById.get(context.patternId)?.trigger);
 
     return [{
-      patternId: copy.patternId,
-      patternType: copy.patternType,
+      patternId: context.patternId,
+      patternType: context.patternType,
       copy,
       activationCopy,
       activationEmphasis,
-      activationExpanded: Boolean(activationCopy && copy.patternId === primaryActivePatternId),
+      activationExpanded: Boolean(activationCopy && context.patternId === primaryActivePatternId),
       activationTimingWindow: activationTiming,
       rank: context.display.rank,
       isContained: context.display.isContained,
@@ -244,6 +280,6 @@ export function natalAspectPatternReaderStatus(
   if (!enabled) return "unavailable";
   if (natalChartPending || loadStatus === "loading") return "loading";
   if (loadStatus === "unavailable") return "unavailable";
-  if (!natalSky?.aspectPatterns?.resolvedCopy) return "unavailable";
+  if (!natalSky?.aspectPatterns?.interpretationContexts) return "unavailable";
   return "ready";
 }

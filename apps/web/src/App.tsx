@@ -60,9 +60,6 @@ import {
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
-import compatibilityWriteupBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-writeups.json";
-import moonCompatibilityLibrary from "../../../tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json";
-import compatibilitySummaryBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json";
 import synastryWebBundle from "../../../tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
@@ -78,6 +75,7 @@ import {
   fallbackV3PlanetTopic,
   fallbackV3SignRuler,
   fallbackV3SignStyle,
+  renderHouseGlossaryV3,
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
@@ -151,12 +149,6 @@ import {
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
-import {
-  isSamePlanetSynastryContact,
-  samePlanetSynastryAspectFamily,
-  samePlanetSynastryContentKeys,
-  samePlanetSynastryRuntimeFallbackKey
-} from "./services/samePlanetSynastry";
 import {
   createManualChart,
   deleteManualChart,
@@ -507,16 +499,6 @@ type NormalizedCompositeArticle = {
   sections: NormalizedCompositeSection[];
 };
 
-type CompatibilityCardSlot = "function" | "your-line" | "their-line" | "same-sign-line" | "verdict";
-type NormalizedCompatibilityCardSection = NormalizedSurfaceSection<CompatibilityCardSlot> & {
-  heading: string;
-};
-type NormalizedCompatibilityCardArticle = {
-  surface: "compatibility-card";
-  status: NormalizedSurfaceStatus;
-  sections: NormalizedCompatibilityCardSection[];
-};
-
 type AuthoredSynastryBundleEntry = {
   id: string;
   planetA: string;
@@ -637,7 +619,7 @@ type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
-    rows: ReactNode[];
+    rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   historicalLookback?: SkyHistoricalLookback | null;
   meta: Array<{
@@ -993,7 +975,6 @@ const templateFallbackContentKeys = {
   youTransitToAngle: "fallback-hook/you.transit-to-angle",
   youDailyTiming: "fallback-hook/you.daily-timing",
   friendsSynastryContact: "fallback-hook/friends.synastry-contact",
-  friendsSamePlanet: samePlanetSynastryRuntimeFallbackKey,
   friendsHouseOverlay: "fallback-hook/friends.house-overlay",
   friendsCompositeAspect: "fallback-hook/friends.composite-aspect",
   friendsCompositePlacement: "fallback-hook/friends.composite-placement",
@@ -2227,20 +2208,17 @@ const naturalHouseSigns: Record<number, string> = {
   11: "Aquarius",
   12: "Pisces"
 };
-const naturalHouseLensBodies: Record<number, string> = {
-  1: "The 1st house is identity, instinct, body, appearance, and the way life is met head-on.",
-  2: "The 2nd house is money, resources, appetite, self-worth, and what feels stable enough to keep.",
-  3: "The 3rd house is conversation, learning, siblings, local movement, and daily perception.",
-  4: "The 4th house is home, family memory, emotional foundation, and what feels safe underneath everything else.",
-  5: "The 5th house is pleasure, romance, creativity, children, play, and the desire to be seen.",
-  6: "The 6th house is daily life. Routines, work, health, service, maintenance, and the small habits that keep everything running.",
-  7: "The 7th house is partners, mirrors, agreements, attraction, conflict, and the people met face to face.",
-  8: "The 8th house is intimacy, taboo, trust, shared power, secrecy, risk, and the desire to understand what people usually hide.",
-  9: "The 9th house is meaning. Belief, study, travel, teaching, publishing, and the wider frame used to explain life.",
-  10: "The 10th house is career, reputation, authority, visibility, and the work of becoming known.",
-  11: "The 11th house is friends, networks, audience, collaboration, hopes, and the future a person wants to belong to.",
-  12: "The 12th house is solitude, dreams, retreat, hidden pressure, grief, imagination, and what works behind the scenes."
-};
+const naturalHouseLensBodies: Record<number, string> = Object.fromEntries(
+  Array.from({ length: 12 }, (_, index) => {
+    const house = index + 1;
+    try {
+      return [house, renderHouseGlossaryV3(house).body];
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) return [house, ""];
+      throw error;
+    }
+  })
+);
 const naturalSignLensBodies: Record<string, string> = {
   Aries: "The Aries lens adds heat, directness, urgency, and the need to act before everything is fully settled.",
   Taurus: "The Taurus lens adds embodiment, loyalty, appetite, and the need to make things real enough to trust.",
@@ -5921,7 +5899,7 @@ function relatedAspectRowsForPlacement({
   ownerContext?: ChartOwnerContext;
   pointName: string;
   positions?: PlanetPosition[];
-}) {
+}): Array<SkyDetailRelatedAspectRow | null> {
   return aspects
     .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
     .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
@@ -9288,17 +9266,8 @@ function synastryContactContentKeys(
   const richKeys = richSynastryContactContentKeys(firstPoint, aspect, secondPoint, relationshipType);
   const relationshipKeys = relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
 
-  if (!isSamePlanetSynastryContact(firstPoint, secondPoint)) {
-    return [
-      ...authoredIds,
-      ...richKeys,
-      ...relationshipKeys
-    ];
-  }
-
   return [
     ...authoredIds,
-    ...samePlanetSynastryContentKeys(firstPoint, aspect, relationshipType),
     ...richKeys,
     ...relationshipKeys
   ];
@@ -9806,174 +9775,6 @@ function relationshipContextVerb(value?: string | null) {
   return relationshipContextNoun(value);
 }
 
-function samePlanetFallbackAspectFamily(aspect?: string | null) {
-  const normalized = normalizeContentIdPart(aspect ?? "");
-
-  if (normalized === "square" || normalized === "opposition") {
-    return "challenging";
-  }
-
-  if (normalized === "trine" || normalized === "sextile") {
-    return "supportive";
-  }
-
-  return normalized || "contact";
-}
-
-function samePlanetRelationshipContextLine(contextKey: string, relationshipNoun: string) {
-  const contextLines: Record<string, string> = {
-    friend: "In a friendship, this is less about one person teaching the other and more about a pattern both people can notice in real time.",
-    "romantic-partner": "In a romantic relationship, this needs room for affection and difference at the same time.",
-    "romantic-partner-ex": "With an ex, recognition can be real without becoming a reason to repeat the old pattern.",
-    "family-sibling": "With siblings, the pattern can wake up comparison quickly, so it helps to separate the present moment from the old role.",
-    coworker: "At work, this needs clear timing, plain expectations, and enough room for each person to move without performing for the other.",
-    business: "In business, this works best when shared confidence is tied to decisions, numbers, and follow-through."
-  };
-
-  return contextLines[contextKey] ?? `In this ${relationshipNoun}, the shared planet works best when it becomes something both people can name and handle.`;
-}
-
-function samePlanetGeneralFallback(
-  pairLabel: string,
-  pointKey: string,
-  aspectKey: string,
-  aspectFamily: string,
-  contextKey: string,
-  relationshipNoun: string
-) {
-  const subjects: Record<string, string> = {
-    sun: "being seen, taking up room, and deciding who gets to lead",
-    moon: "comfort, mood, care, and the timing of emotional response",
-    mercury: "conversation, decisions, interruptions, and the way a point gets named",
-    venus: "preferences, affection, money, ease, and what feels worth maintaining",
-    mars: "initiative, speed, anger, courage, and how action starts",
-    jupiter: "faith, risk, appetite, promises, and how big a plan becomes",
-    saturn: "standards, promises, hesitation, pressure, and what has to be carried",
-    uranus: "freedom, disruption, refusal, and the need to change the rules",
-    neptune: "hope, sensitivity, uncertainty, and the places where clearer edges help",
-    pluto: "control, pressure, survival habits, and what nobody wants to keep pretending around"
-  };
-  const subject = subjects[pointKey] ?? "the same pattern";
-  const contextLine = samePlanetRelationshipContextLine(contextKey, relationshipNoun);
-
-  if (aspectKey === "conjunction") {
-    return [
-      `${pairLabel} may concentrate the same pattern around ${subject}.`,
-      contextLine,
-      "The gift is recognition: each person can understand why the other responds this way.",
-      "The edge is reinforcement: the same reflex can get louder when neither person slows it down."
-    ].join(" ");
-  }
-
-  if (aspectKey === "square") {
-    return [
-      `${pairLabel} may care about the same topic but handle it through different moves around ${subject}.`,
-      contextLine,
-      "The square shows up when both people are trying to solve the tension in their own style.",
-      "What helps is naming the mismatch before it becomes a test of who is right."
-    ].join(" ");
-  }
-
-  if (aspectKey === "opposition") {
-    return [
-      `${pairLabel} may stand on opposite sides of the same pattern around ${subject}.`,
-      contextLine,
-      "One person may reach for motion while the other asks for pause, or one may protect the part the other keeps skipping.",
-      "The contact works better when each side gets a real job instead of waiting for someone to concede."
-    ].join(" ");
-  }
-
-  if (aspectFamily === "supportive") {
-    return [
-      `${pairLabel} may find it easier to cooperate around ${subject}.`,
-      contextLine,
-      "Supportive does not mean automatic; it means the opening is easier to use when both people participate.",
-      "Let the ease become a clear choice, not an unspoken expectation."
-    ].join(" ");
-  }
-
-  if (aspectFamily === "challenging") {
-    return [
-      `${pairLabel} may recognize the same pattern through tension around ${subject}.`,
-      contextLine,
-      "The pressure is useful only if it becomes information instead of a repeat argument.",
-      "Name what each person is protecting before the pattern decides for both of you."
-    ].join(" ");
-  }
-
-  return [
-    `${pairLabel} may recognize the same pattern around ${subject}.`,
-    contextLine,
-    "Use that recognition to make one ordinary choice clearer."
-  ].join(" ");
-}
-
-function samePlanetSynastryFallback(context: RelationshipFallbackGrammarContext) {
-  const primaryPoint = context.primaryPoint?.trim();
-  const comparisonPoint = context.comparisonPoint?.trim();
-
-  if (!primaryPoint || !comparisonPoint || normalizeContentIdPart(primaryPoint) !== normalizeContentIdPart(comparisonPoint)) {
-    return "";
-  }
-
-  const pairLabel = context.comparisonIsSelf
-    ? `You and ${context.primaryName}`
-    : `${context.primaryName} and ${context.comparisonName}`;
-  const relationshipNoun = relationshipContextNoun(context.relationshipType);
-  const contextKey = normalizeRelationshipContextKey(context.relationshipType);
-  const pointKey = normalizeContentIdPart(primaryPoint);
-  const aspectKey = normalizeContentIdPart(context.aspect ?? "");
-  const aspectFamily = samePlanetFallbackAspectFamily(context.aspect);
-  const exactKey = `${contextKey}/${pointKey}/${aspectKey}`;
-  const exactExamples: Record<string, string> = {
-    "friend/saturn/conjunction": [
-      `${pairLabel} may both take promises seriously, even when the promise is small.`,
-      "That can make the friendship steady: each person understands why follow-through matters.",
-      "The edge is that you can make a simple plan heavier than it needs to be, or hesitate over the same risk until nobody moves.",
-      "Let the structure help the friendship breathe. Keep the agreement clear, then let it be enough."
-    ].join(" "),
-    "romantic-partner/venus/square": [
-      `${pairLabel} may care about each other and still recognize care through different actions.`,
-      "One person may want more shared time, softness, or reassurance while the other needs more space, directness, or practical proof.",
-      "The square is not a lack of affection; it is the moment affection asks to be translated.",
-      "Say what makes you feel chosen before resentment turns the mismatch into a scorecard."
-    ].join(" "),
-    "ex/venus/square": [
-      `${pairLabel} may still remember what felt sweet, and also why sweetness was not enough.`,
-      "The mismatch may have lived in timing, money, attention, or the way each person tried to repair discomfort.",
-      "The square keeps the old preference visible without making it a reason to return.",
-      "Let recognition tell the truth about the pattern, not rewrite the ending."
-    ].join(" "),
-    "family/mercury/square": [
-      `${pairLabel} may both want to be understood, but the conversation can quickly turn into correction.`,
-      "One person explains, the other counters, and suddenly the old sibling role is speaking louder than the actual point.",
-      "The square asks for a pause before tone becomes the whole argument.",
-      "Repeat what you heard before defending what you meant."
-    ].join(" "),
-    "coworker/mars/opposition": [
-      `${pairLabel} may both want the work to move, but not from the same starting line.`,
-      "One person may begin before the plan is settled while the other pushes back until the method is clear.",
-      "The opposition can turn the task into a contest over who gets to set the pace.",
-      "Name the next move and the reason for it before effort becomes resistance."
-    ].join(" "),
-    "business/jupiter/trine": [
-      `${pairLabel} may find it easy to believe a plan can grow.`,
-      "That can help the business relationship when optimism is tied to a real offer, a clear audience, and numbers both people can check.",
-      "The trine opens the door, but it still needs a decision about scope.",
-      "Let the bigger vision earn trust through the next practical step."
-    ].join(" "),
-    "friend/neptune/conjunction": [
-      `${pairLabel} may share a soft spot for what could be better, kinder, or more meaningful.`,
-      "In friendship, that can make space for compassion without needing every feeling explained right away.",
-      "The conjunction can also blur what was promised, assumed, or left unsaid.",
-      "Keep the tenderness, and put the plan in clear words when the friendship needs something concrete."
-    ].join(" ")
-  };
-
-  return exactExamples[exactKey]
-    ?? samePlanetGeneralFallback(pairLabel, pointKey, aspectKey, aspectFamily, contextKey, relationshipNoun);
-}
-
 function directionalSynastryFallback(context: RelationshipFallbackGrammarContext) {
   const primaryPoint = context.primaryPoint?.trim() || "";
   const comparisonPoint = context.comparisonPoint?.trim() || "";
@@ -10268,290 +10069,6 @@ function synastryContacts(
 
 const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
 
-type CompatibilityWriteupBankEntry = {
-  glyph: string;
-  match: string;
-  body?: string;
-  function: string;
-  your_line: string;
-  their_line: string;
-  same_sign: boolean;
-  same_sign_line: string;
-  same_sign_quote: { text: string; source: string } | null;
-  verdict: string;
-  relationship: string;
-  tier?: string;
-  status?: string;
-};
-
-type CompatibilityWriteupBank = {
-  cards: Record<string, Record<string, Record<string, CompatibilityWriteupBankEntry>>>;
-};
-
-type RenderedCompatibilityLibraryRecord = {
-  relation: string;
-  source: string;
-  text: string;
-  format: "multi-paragraph";
-  domain: string;
-  tag: string;
-} & Record<string, string>;
-
-type RenderedCompatibilityLibrary = RenderedCompatibilityLibraryRecord[];
-
-type CompatibilitySummaryBankEntry = {
-  function: string;
-  nouns: string;
-  shared: string;
-  different: string;
-  watch: string;
-  try: string;
-  relationship: string;
-  tier?: string;
-  status?: string;
-};
-
-type CompatibilitySummaryBank = {
-  cards: Record<string, Record<string, Record<string, CompatibilitySummaryBankEntry>>>;
-};
-
-const compatibilityWriteupsByPlanet = (compatibilityWriteupBank as CompatibilityWriteupBank).cards;
-const compatibilitySummariesByPlanet = (compatibilitySummaryBank as CompatibilitySummaryBank).cards;
-const compatibilityRenderedLibraryManifest: Partial<Record<typeof compatibilityPlanets[number], RenderedCompatibilityLibrary>> = {
-  Moon: moonCompatibilityLibrary as RenderedCompatibilityLibrary
-};
-
-function compatibilityRelationChipLabel(relation: string | null | undefined, seedLabel?: string | null) {
-  return seedLabel?.trim() || titleCase(normalizeContentIdPart(relation ?? "compatibility").replace(/-/g, " "));
-}
-
-function renderedCompatibilityRecordSign(
-  record: RenderedCompatibilityLibraryRecord,
-  planet: typeof compatibilityPlanets[number],
-  role: "reader" | "other"
-) {
-  return normalizeContentIdPart(record[`${role}_${normalizeContentIdPart(planet)}`]);
-}
-
-function renderedCompatibilityLibraryEntry(
-  planet: typeof compatibilityPlanets[number],
-  comparisonSign: string,
-  friendSign: string
-): CompatibilityWriteupBankEntry | null {
-  const library = compatibilityRenderedLibraryManifest[planet];
-
-  if (!library) {
-    return null;
-  }
-
-  const comparisonKey = normalizeContentIdPart(comparisonSign);
-  const friendKey = normalizeContentIdPart(friendSign);
-  const record = library.find((entry) => (
-    renderedCompatibilityRecordSign(entry, planet, "reader") === comparisonKey
-    && renderedCompatibilityRecordSign(entry, planet, "other") === friendKey
-  ));
-
-  if (!record || record.format !== "multi-paragraph") {
-    return null;
-  }
-
-  const body = record.text.trim();
-  const paragraphs = body.split(/\n\n+/).map((paragraph) => paragraph.trim()).filter(Boolean);
-
-  if (paragraphs.length !== 4) {
-    return null;
-  }
-
-  const sameSign = comparisonKey === friendKey;
-
-  return {
-    glyph: pointGlyph(planet),
-    match: compatibilityRelationChipLabel(record.relation, record.tag),
-    body,
-    function: paragraphs[0],
-    your_line: paragraphs[1],
-    their_line: sameSign ? "" : paragraphs[2],
-    same_sign: sameSign,
-    same_sign_line: sameSign ? paragraphs[2] : "",
-    same_sign_quote: null,
-    verdict: paragraphs[3],
-    relationship: record.relation,
-    tier: "author-final",
-    status: "LIVE"
-  };
-}
-
-function compatibilityWriteupEntry(
-  planet: typeof compatibilityPlanets[number],
-  comparisonSign: string,
-  friendSign: string
-) {
-  return renderedCompatibilityLibraryEntry(planet, comparisonSign, friendSign)
-    ?? compatibilityWriteupsByPlanet[normalizeContentIdPart(planet)]
-    ?.[normalizeContentIdPart(comparisonSign)]
-    ?.[normalizeContentIdPart(friendSign)] ?? null;
-}
-
-function compatibilityDashboardContentKey(
-  planet: typeof compatibilityPlanets[number],
-  comparisonSign: string,
-  friendSign: string
-) {
-  return `compatibility.${normalizeContentIdPart(planet)}.${normalizeContentIdPart(comparisonSign)}.${normalizeContentIdPart(friendSign)}`;
-}
-
-function compatibilityDashboardWriteupEntry(
-  generatedContent: GeneratedContentMap | undefined,
-  planet: typeof compatibilityPlanets[number],
-  comparisonSign: string,
-  friendSign: string,
-  phrasebankWriteup: CompatibilityWriteupBankEntry | null
-): CompatibilityWriteupBankEntry | null {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const contentKey = compatibilityDashboardContentKey(planet, comparisonSign, friendSign);
-  const dashboardContent = generatedContent.get(contentKey);
-
-  if (!dashboardContent) {
-    return null;
-  }
-
-  const dashboardParagraphs = generatedContentParagraphs(dashboardContent);
-  const paragraphs = dashboardParagraphs.length >= 4
-    ? dashboardParagraphs
-    : generatedContentSections(dashboardContent).map((section) => section.body);
-
-  if (paragraphs.length < 4) {
-    return null;
-  }
-
-  const comparisonKey = normalizeContentIdPart(comparisonSign);
-  const friendKey = normalizeContentIdPart(friendSign);
-  const sameSign = phrasebankWriteup?.same_sign ?? comparisonKey === friendKey;
-  const fallbackWriteup: CompatibilityWriteupBankEntry = phrasebankWriteup ?? {
-    glyph: pointGlyph(planet),
-    match: compatibilityRelationChipLabel(
-      String(dashboardContent.sourceSnapshot?.relationship ?? "compatibility"),
-      String(dashboardContent.sourceSnapshot?.relationTagSeed ?? "")
-    ),
-    function: "",
-    your_line: "",
-    their_line: "",
-    same_sign: sameSign,
-    same_sign_line: "",
-    same_sign_quote: null,
-    verdict: "",
-    relationship: "compatibility"
-  };
-
-  return {
-    ...fallbackWriteup,
-    body: (dashboardContent.body ?? "")
-      .trim()
-      .split(/\n\n+/)
-      .map((paragraph) => paragraph.trim())
-      .filter(Boolean)
-      .join("\n\n"),
-    function: paragraphs[0],
-    your_line: paragraphs[1],
-    their_line: sameSign ? "" : paragraphs[2],
-    same_sign: sameSign,
-    same_sign_line: sameSign ? paragraphs[2] : "",
-    verdict: paragraphs[3],
-    tier: String(dashboardContent.sourceSnapshot?.tier ?? fallbackWriteup.tier ?? "dashboard-article"),
-    status: "LIVE"
-  };
-}
-
-function compatibilitySummaryEntry(
-  planet: typeof compatibilityPlanets[number],
-  comparisonSign: string,
-  friendSign: string
-) {
-  return compatibilitySummariesByPlanet[normalizeContentIdPart(planet)]
-    ?.[normalizeContentIdPart(comparisonSign)]
-    ?.[normalizeContentIdPart(friendSign)] ?? null;
-}
-
-function normalizeCompatibilityCardSurface({
-  comparisonSign,
-  friendSign,
-  planet,
-  writeup
-}: {
-  comparisonSign: string;
-  friendSign: string;
-  planet: typeof compatibilityPlanets[number];
-  writeup: CompatibilityWriteupBankEntry | null;
-}): NormalizedCompatibilityCardArticle {
-  if (!writeup) {
-    return {
-      surface: "compatibility-card",
-      status: "not-servable",
-      sections: []
-    };
-  }
-
-  const sourceKeys = [
-    "cc-compatibility-writeups",
-    `compatibility.${normalizeContentIdPart(planet)}.${normalizeContentIdPart(comparisonSign)}.${normalizeContentIdPart(friendSign)}`
-  ];
-  const base = {
-    required: true,
-    layer: "authored" as const,
-    tier: writeup.tier ?? "DRAFT",
-    sourceKeys
-  };
-  const candidates: Array<NormalizedCompatibilityCardSection | null> = [
-    writeup.function ? {
-      ...base,
-      slot: "function",
-      heading: `${planet} function`,
-      body: writeup.function
-    } : null,
-    writeup.your_line ? {
-      ...base,
-      slot: "your-line",
-      heading: `${planet} for you`,
-      body: writeup.your_line
-    } : null,
-    !writeup.same_sign && writeup.their_line ? {
-      ...base,
-      slot: "their-line",
-      heading: `${planet} for them`,
-      body: writeup.their_line
-    } : null,
-    writeup.same_sign && writeup.same_sign_line ? {
-      ...base,
-      slot: "same-sign-line",
-      heading: `${planet} shared pattern`,
-      body: writeup.same_sign_line
-    } : null,
-    writeup.verdict ? {
-      ...base,
-      slot: "verdict",
-      heading: `${planet} verdict`,
-      body: writeup.verdict
-    } : null
-  ];
-  const sections = candidates.filter((section): section is NormalizedCompatibilityCardSection => (
-    Boolean(section?.body && isReaderFacingCopy(section.body))
-  ));
-  const requiredSlots: CompatibilityCardSlot[] = writeup.same_sign
-    ? ["function", "your-line", "same-sign-line", "verdict"]
-    : ["function", "your-line", "their-line", "verdict"];
-  const filledSlots = new Set(sections.map((section) => section.slot));
-  const hasAllRequired = requiredSlots.every((slot) => filledSlots.has(slot));
-
-  return {
-    surface: "compatibility-card",
-    status: hasAllRequired ? "servable" : sections.length > 0 ? "partial" : "not-servable",
-    sections
-  };
-}
-
 function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
   const separation = angularDistance(zodiacLongitude(personAPosition), zodiacLongitude(personBPosition));
 
@@ -10564,7 +10081,7 @@ function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition:
 function compatibilityPlanetCards(
   profileNatalSky: SkySnapshot | null,
   chart: ManualChart,
-  generatedContent?: GeneratedContentMap,
+  _generatedContent?: GeneratedContentMap,
   relationshipType?: string | null,
   comparisonName = "You",
   comparisonIsSelf = true
@@ -10587,36 +10104,34 @@ function compatibilityPlanetCards(
     const hasExactAspect = Boolean(exactAspect);
     const comparisonLabel = comparisonIsSelf ? "You" : comparisonName;
     const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
-    const writeup = compatibilityWriteupEntry(
-      planet,
-      yourPosition.sign,
-      friendPosition.sign
-    );
-    const dashboardWriteup = compatibilityDashboardWriteupEntry(
-      generatedContent,
-      planet,
-      yourPosition.sign,
-      friendPosition.sign,
-      writeup
-    );
-    const resolvedWriteup = dashboardWriteup ?? writeup;
-    const summary = compatibilitySummaryEntry(
-      planet,
-      yourPosition.sign,
-      friendPosition.sign
-    );
-    const normalized = normalizeCompatibilityCardSurface({
-      comparisonSign: yourPosition.sign,
-      friendSign: friendPosition.sign,
-      planet,
-      writeup: resolvedWriteup
-    });
+    let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderCompat>;
 
-    if (!resolvedWriteup || normalized.status === "not-servable") {
+    try {
+      rendered = transitSynastryFallbackRendererV3.renderCompat({
+        planet: normalizeContentIdPart(planet),
+        signA: normalizeContentIdPart(yourPosition.sign),
+        signB: normalizeContentIdPart(friendPosition.sign),
+        otherName: chart.displayName
+      });
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) {
+        return [];
+      }
+
+      throw error;
+    }
+
+    const body = rendered.body.trim();
+
+    if (!body || !isReaderFacingCopy(body)) {
       return [];
     }
 
-    const sectionBySlot = new Map(normalized.sections.map((section) => [section.slot, taggedSectionBody(section)]));
+    const sameSign = yourPosition.sign === friendPosition.sign;
+    const relationship = sameSign ? "same-sign" : "sign-pair";
+    const match = rendered.tag?.trim() || (sameSign ? "Same sign" : `${yourPosition.sign} + ${friendPosition.sign}`);
+    const sourceKey = rendered.contentKey ?? rendered.templateKey;
+    const contentTrace = `source=${sourceKey};template=${rendered.templateKey};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};signA=${normalizeContentIdPart(yourPosition.sign)};signB=${normalizeContentIdPart(friendPosition.sign)};context=${normalizeRelationshipContextKey(relationshipType)}`;
 
     return [{
       id: `compatibility-${normalizeContentIdPart(planet)}`,
@@ -10627,32 +10142,22 @@ function compatibilityPlanetCards(
       friendName: chart.displayName,
       friendSign: friendPosition.sign,
       goDeeper: {
-        glyph: resolvedWriteup.glyph,
-        match: resolvedWriteup.match,
-        body: resolvedWriteup.body,
-        function: sectionBySlot.get("function") ?? "",
-        yourLine: sectionBySlot.get("your-line") ?? "",
-        theirLine: sectionBySlot.get("their-line") ?? "",
-        sameSign: resolvedWriteup.same_sign,
-        sameSignLine: sectionBySlot.get("same-sign-line") ?? "",
-        verdict: sectionBySlot.get("verdict") ?? "",
-        relationship: resolvedWriteup.relationship,
-        contentTrace: `tier=${resolvedWriteup.tier ?? "unknown"};status=${resolvedWriteup.status ?? "unknown"};source=${dashboardWriteup ? "dashboard-generated-content" : "cc-compatibility-writeups"};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${resolvedWriteup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
+        glyph: yourPosition.glyph || pointGlyph(planet),
+        match,
+        body,
+        function: "",
+        yourLine: "",
+        theirLine: "",
+        sameSign,
+        sameSignLine: "",
+        verdict: "",
+        relationship,
+        contentTrace
       },
-      summary: summary ? {
-        function: summary.function,
-        nouns: summary.nouns,
-        shared: summary.shared,
-        different: summary.different,
-        watch: summary.watch,
-        try: summary.try,
-        relationship: summary.relationship,
-        contentTrace: `tier=${summary.tier ?? "unknown"};status=${summary.status ?? "unknown"};source=cc-compatibility-cards;route=friends.compatibility.summary;planet=${normalizeContentIdPart(planet)};relationship=${summary.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
-      } : undefined,
       exactAspectLabel: hasExactAspect && exactAspect
         ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
         : undefined,
-      contentTrace: `tier=${resolvedWriteup.tier ?? "unknown"};status=${resolvedWriteup.status ?? "unknown"};source=${dashboardWriteup ? "dashboard-generated-content" : "cc-compatibility-writeups"};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};relationship=${resolvedWriteup.relationship};context=${normalizeRelationshipContextKey(relationshipType)}`
+      contentTrace
     }];
   });
 }
@@ -14805,6 +14310,18 @@ function natalPlacementDetailArticle(
     ownerContext,
     position
   });
+  const relatedAspectRows = natalSky
+    ? relatedAspectRowsForPlacement({
+        aspects: natalSky.aspects,
+        generatedContent,
+        mode: "natal",
+        onOpenNatalAspect,
+        ownerContext,
+        pointName: position.planet,
+        positions: natalSky.positions
+      }).filter((row): row is SkyDetailRelatedAspectRow => Boolean(row))
+    : [];
+
   return {
     id: natalPlacementRouteId(position),
     title: natalPlacementDetailTitle(position),
@@ -14818,7 +14335,12 @@ function natalPlacementDetailArticle(
     summary: "",
     summaryHeading: "",
     sections,
-    relatedAspects: undefined,
+    relatedAspects: relatedAspectRows.length > 0
+      ? {
+          heading: "Natal aspects",
+          rows: relatedAspectRows
+        }
+      : undefined,
     meta: [
       { label: "Placement", value: natalPlacementDetailTitle(position) },
       { label: "House", value: position.house ? `${ordinalHouse(position.house)} House` : "" },
@@ -18053,7 +17575,7 @@ function ManualChartsPanel({
     : [];
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
-    ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null)
+    ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null, "they")
     : [];
   const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
     selectedFriendNatalAspectPatternItems,
@@ -18065,7 +17587,7 @@ function ManualChartsPanel({
         showFriendNatalAspectPatterns,
         selectedChart.natalChart,
         false,
-        selectedChart.natalChart.aspectPatterns?.resolvedCopy ? "ready" : "unavailable"
+        selectedChart.natalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
       )
     : undefined;
   const selectedFriendPronouns = selectedChart && !selectedChartIsEvent

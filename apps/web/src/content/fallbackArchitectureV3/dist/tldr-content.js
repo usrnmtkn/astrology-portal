@@ -169,6 +169,31 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
   }
   const SIGN_RULER = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "mars", sagittarius: "jupiter", capricorn: "saturn", aquarius: "saturn", pisces: "jupiter" };
+  const PATTERN_NAMES = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
+  function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }) {
+    const pick = (key) => {
+      const r = hooks.get(key);
+      return r ? voice === "you" ? r.body_you : r.body_they : null;
+    };
+    const body = pick(`fallback-hook/aspect-pattern${activation ? "-activation" : ""}/${type}`);
+    if (!body) throw new SourceGapError(`SOURCE_GAP: aspect pattern ${type}${activation ? " activation" : ""}`);
+    const paras = [body];
+    if (!activation && apexTitle) {
+      const apex = pick(`fallback-hook/aspect-pattern-apex/${type}`);
+      if (apex) paras.push(apex.replace(/\{\{apexTitle\}\}/g, apexTitle));
+    }
+    if (!activation) {
+      const qual = mode ? vocab.get(`fallback-vocab/pattern-mode/${mode}`)?.body : element ? vocab.get(`fallback-vocab/pattern-element/${element}`)?.body : null;
+      if (qual) paras.push(`It runs as ${qual}.`);
+    }
+    return { headline: PATTERN_NAMES[type] ?? type, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/natal.aspect-pattern" };
+  }
+  function renderHouseGlossary({ house, voice = "you" }) {
+    const r = hooks.get(`fallback-hook/house-glossary/${house}`);
+    if (!r) throw new SourceGapError(`SOURCE_GAP: house glossary ${house}`);
+    const body = voice === "you" ? r.body_you : r.body_they;
+    return { headline: `${ordinal(house)} House`, body, parts: [body], templateKey: "fallback-template/natal.house-glossary", contentKey: r.contentKey };
+  }
   function renderNatalEmptyHouse(facts, opts = {}) {
     const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
     const v = voice === "you" ? "you" : "they";
@@ -221,7 +246,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     }
     return { headline: `${ordinal(house)} House Year`, note, body: parts.join("\n\n"), parts, templateKey: "fallback-template/natal.profection-year" };
   }
-  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear };
+  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
 }
 function normalizeAspect(input) {
   const k = input.trim().toLowerCase();
@@ -332,6 +357,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const effectFamily = g === "soft" || g === "conjunction" && !isHeavy ? "soft" : "hard";
     const effectRaw = (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
+    const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
     const ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title2(transiting),
@@ -340,8 +366,13 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
       aspectName: aspect,
       aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
       transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
+      aspectVerb: (() => {
+        const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body;
+        const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body;
+        return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null;
+      })(),
       // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they
-      natalCore: hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body,
+      natalCore: natalCoreVal,
       otherPoss,
       timeInline: inlineWindow(win ?? WINDOW_ASPECT[transiting] ?? "currently"),
       transitEffectLine: transitEffect ? `${transitEffect.charAt(0).toUpperCase()}${transitEffect.slice(1).replace(/\.$/, "")}.` : null,
@@ -785,7 +816,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-23";
+var PACKAGE_VERSION = "v3-2026-07-23b";
 export {
   PACKAGE_VERSION,
   RoleViolationError,
