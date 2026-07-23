@@ -1,0 +1,68 @@
+[
+  {
+    "key": "sky.mercury.cancer",
+    "type": "direct",
+    "variant": "A",
+    "version": "author-final",
+    "sections": {
+      "opening": "Mercury enters Cancer on June 1, and conversations change temperature. In Gemini, Mercury's own sign, thinking ran fast and traveled light: questions, banter, five tabs open. In Cancer, memory and feeling start doing the deciding. Expect the talks you've been putting off to finally feel possible.",
+      "mechanics": "Mercury governs thinking, talking, and deciding. Cancer is cardinal water, ruled by the Moon: the sign of memory, emotion, and emotional protection, the crab whose hard shell guards the soft center. Put Mercury here and the mind works the way the Moon does, by feel and by memory. Thoughts arrive attached to memories, words get read for the emotion under them before the information in them, and conversations approach hard subjects sideways when going straight at them feels too exposed.",
+      "lived": "You'll notice it in how things land: what you say hits harder than usual and stays longer, because Cancer's memory keeps receipts, kind and unkind alike. People soften their first drafts, read feeling into short replies, and talk more about home, family, food, and the past.",
+      "shadow": "There's a shadow side too: hinting instead of asking, going quiet instead of saying it, taking care of everyone as a way of not talking about yourself. If that's been your pattern, you'll feel the gap now. People haven't been declining your requests; they never heard one.",
+      "truth": "Being understood starts with saying it. Nobody can hear what you almost said.",
+      "collective": "Collectively, the conversation turns to Cancer's subjects: housing and rent, family obligations, who's caring for the kids and the aging parents, what a home is supposed to cost and who gets to have one. Nostalgia sells this month: the reboots, the reissues, the old songs back on the charts. Group chats fill with childhood photos, and staying in starts beating going out.",
+      "walkthrough_authored_beats": [
+        {
+          "slot": "station_rx",
+          "text": "On June 29, Mercury stations retrograde and the review begins: old conversations reopen, unanswered texts resurface, and the apology you never finished writing comes back around. Keep things in drafts."
+        },
+        {
+          "slot": "aspect.mercury.square.saturn",
+          "text": "From July 21 to 24, Mercury squares Saturn in Aries. Replies slow down, plans hit red tape, and the answer you were waiting for may come back as 'not yet.' Double-check the dates, reread the contract, and expect the boss or the bank to want more detail than usual. Whatever survives that scrutiny is solid."
+        },
+        {
+          "slot": "aspect.moon.trine.mercury",
+          "text": "On July 22 and 23, the Moon in Scorpio trines Mercury, and words find their depth: conversations land, plans click, and a stalled decision finally moves."
+        },
+        {
+          "slot": "station_direct",
+          "text": "On July 23, Mercury stations direct, and stalled talks start moving again; give it a few days before you resend anything important."
+        }
+      ],
+      "directive": "The best use of these weeks: stop talking around it. Send the message, make the call, and tell the actual person what you actually need in plain words.",
+      "handoff": "Mercury leaves Cancer for Leo on August 9, and the volume comes back up: the season turns from saying it gently to saying it proudly. Until then, the best thing you can do is say how you feel while it's easier than usual."
+    }
+  },
+  {
+    "key": "sky.mercury.cancer.rx",
+    "type": "retrograde",
+    "variant": "A",
+    "version": "author-final",
+    "header": {
+      "whenSlot": "[rx_start] – [rx_end] (shadow clears [post_shadow_end])",
+      "what": "Mercury retrograde in Cancer",
+      "tldr": "Mercury's backward loop through Cancer sends communication through feelings and family. Expect touchy conversations, returning texts from the past, and a real chance to finish what got left unsaid."
+    },
+    "sections": {
+      "s1_header": "THE PAST GETS TALKATIVE",
+      "s1": "Mercury stations retrograde on June 29, and the review begins: the unanswered text resurfaces, the family conversation loops back around, and the apology you never finished writing shows up in your drafts. None of it is a malfunction. Retrograde means Mercury appears to move backward through the sky, and communication does the same: revisiting instead of advancing.",
+      "s2_header": "WHY THIS ONE GETS PERSONAL",
+      "s2": "Mercury governs thinking, talking, and deciding, and Cancer is cardinal water, ruled by the Moon: the sign of memory, emotion, and emotional protection, the crab whose hard shell guards the soft center. So this review runs emotional. The conversations coming back are the tender ones: with family, with old friends, about home. Expect double-sent texts, misread silences, and people from the past checking in. Old feelings feel current under this sky, so before you act on one, ask whether it's today's feeling or a rerun. If you've been calling avoidance 'keeping the peace,' the quiet stops holding. A second pass isn't a setback; some conversations can only be finished by someone who's had time to think.",
+      "s3_header": "THE COLLECTIVE REVIEW",
+      "s3": "Collectively, the review turns public. Old stories cycle back into the news: the resurfaced clip, the old messages that put someone back in the headlines, the institution revisiting what it thought was handled. Cancer's subjects get the second look, housing, family obligations, caregiving, who belongs where, and nostalgia does numbers all month: the reboots, the reissues, the anniversary retrospectives. Watch what your group chat digs back up; the past isn't just personal right now.",
+      "s4_header": "JULY 12 IS YOUR CLEAREST DAY",
+      "s4": "Midway through, Mercury meets the Sun in a cazimi: the one day this cycle when the static drops and the lesson shows up in plain sight. Insights land through odd channels around this date, a dream, an overheard conversation, a post that feels aimed at you, so write down what sticks. Then, from July 21 to 24, Mercury squares Saturn in Aries: replies slow down further, paperwork wants a third read, and 'not yet' is a complete answer. Mercury stations direct on July 23; give it a few days before resending anything important.",
+      "do": [
+        "reread before you reply",
+        "finish the apology and close the loop you left open",
+        "confirm the plan twice and leave buffer time"
+      ],
+      "dont": [
+        "sign what you haven't reread",
+        "treat an old feeling as a current instruction",
+        "launch the big thing before the shadow clears in early August (or time it to July 12)"
+      ],
+      "handoff": "Mercury clears its shadow in early August and moves into Leo on August 9, when the season turns from reviewing what was said to saying it proudly."
+    }
+  }
+]

@@ -17,15 +17,15 @@ import {
 } from "../content/servedFieldsContract";
 import type {
   FallbackArchitectureV3Bundle
-} from "../content/fallbackArchitectureV3/runtimeBundle";
+} from "../content/fallbackArchitectureV3Runtime";
 import type {
   HookRow,
   TemplateRow,
   VocabRow
-} from "../content/fallbackArchitectureV3/renderFallbackV3";
+} from "../content/fallbackArchitectureV3Runtime";
 import type {
   AuthoredCard
-} from "../content/fallbackArchitectureV3/renderTransitSynastry";
+} from "../content/fallbackArchitectureV3Runtime";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
 export type GeneratedContentBlockType =

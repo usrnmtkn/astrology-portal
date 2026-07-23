@@ -84,13 +84,14 @@ assert.match(generatedContent, /isReaderServableGeneratedContent\(content\)/, "L
 assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated content row safety must inspect actual section body copy instead of serialized metadata.");
 assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
 assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the authored content-level label.");
-assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement detail/list rendering must use the v3 fallback package renderer.");
+assert.match(app, /resolveSkyWritingArticle\(\{/, "Sky placement detail/list rendering must use the Sky writing package resolver.");
+assert.doesNotMatch(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement detail/list rendering must not use the retired V3 sky placement renderer.");
 assert.doesNotMatch(app, /emergencySkyPlacementCopy/, "Sky placement detail/list rendering must not use the legacy emergency placement helper.");
 assert.doesNotMatch(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must not use emergency detail fallback copy.");
 assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail rendering must resolve through the surface normalizer.");
-assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement detail rendering must include the source-based madlib fallback section.");
+assert.match(app, /skyPlacementWritingSection/, "Sky placement detail rendering must include the Sky writing authored/fallback section.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
-assert.match(app, /renderSkyPlacement\(\{\s*[\s\S]*events/, "Sky placement rendering must pass event context into the v3 package renderer.");
+assert.match(app, /skyPlacementWritingBeats\(\{[\s\S]*aspects,[\s\S]*generatedAt,[\s\S]*planet: position\.planet/, "Sky placement rendering must pass computed aspect beats into the Sky writing resolver.");
 assert.doesNotMatch(app, /emergencyFallbackParagraph/, "Sky detail renderer must not render a final emergency fallback when normalized slots are empty.");
 assert.doesNotMatch(app, /from ["'][^"']*emergencyCopy["']/, "App reader surfaces must not import legacy emergency copy.");
 assert.doesNotMatch(app, /emergency[A-Z][A-Za-z0-9_]*/, "App reader surfaces must not call legacy emergency helpers.");
@@ -108,7 +109,7 @@ assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rend
 assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
 assert.match(fallbackHooks, /key:\s*"you\.transit-to-natal"[\s\S]*slotKeys:\s*\[[^\]]*"aspectAdj"/, "Transit-to-natal fallback hook must declare the aspectAdj slot.");
 assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");
-assert.match(app, /skyPlacementMadlibFallbackSection/, "Sky placement rendering must fall back to source-based madlibs when authored rows are absent.");
+assert.match(app, /skyPlacementWritingSection/, "Sky placement rendering must fall back to Sky writing atoms when authored rows are absent.");
 assert.match(adminDashboard, /Content System/, "Admin article editor must label authored vs fallback as a content system, not a display override.");
 assert.doesNotMatch(adminDashboard, /Content Level/, "Admin article editor must not expose internal content level as a third reader choice.");
 assert.doesNotMatch(adminDashboard, /<span>Content level<\/span>[\s\S]*<select/, "Admin editor must not present content level as the editable source dropdown.");
