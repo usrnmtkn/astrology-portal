@@ -887,7 +887,7 @@ function calendarEventContentLayer(content: LiveGeneratedContent): CalendarEvent
     : "authored";
 }
 
-function calendarEventMadlibDescription(event: LunarCalendarEvent) {
+function calendarEventPackageDescription(event: LunarCalendarEvent) {
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
     const sign = event.toSign ?? event.sign;
 
@@ -978,9 +978,9 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
     };
   }
 
-  const madlibDescription = calendarEventMadlibDescription(event);
+  const packageDescription = calendarEventPackageDescription(event);
 
-  if (!isReaderFacingCopy(madlibDescription)) {
+  if (!isReaderFacingCopy(packageDescription)) {
     return {
       surface: "calendar-event",
       status: "not-servable",
@@ -997,7 +997,7 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
       layer: "fallback",
       tier: "source-based-madlib",
       sourceKeys: [`fallbackArchitectureV3.calendarEvent.${event.type}`],
-      body: madlibDescription
+      body: packageDescription
     }]
   };
 }

@@ -12,7 +12,7 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 - [x] `apps/web/src/App.tsx` — `compositePlacementFallbackSummary`: remove the local composite placement summary generator.
 - [x] `apps/web/src/App.tsx` — `compositeAspectMadlibSection`: remove the local composite aspect section generator and hide missing rows.
 - [x] `apps/web/src/App.tsx` — `compositePlacementMadlibSection`: remove the local composite placement section generator and hide missing rows.
-- [ ] `apps/web/src/features/calendar/LunarCalendar.tsx` — `calendarEventMadlibDescription`: rename the package-backed path so it no longer advertises a legacy madlib source.
+- [x] `apps/web/src/features/calendar/LunarCalendar.tsx` — `calendarEventMadlibDescription`: rename the package-backed path so it no longer advertises a legacy madlib source.
 - [ ] `apps/web/src/features/calendar/LunarCalendar.tsx` — `source-based-madlib` tier labels: rename package-backed calendar fallback tiers to V3 package/dashboard language.
 - [ ] `apps/web/src/features/calendar/lunarDayResolver.ts` — `source-based-madlib` tier labels: rename package-backed lunar fallback tiers to V3 package/dashboard language.
 - [ ] `apps/web/src/features/calendar/lunarDayResolver.ts` — `madlibCandidates`: rename the package-backed candidate parameter so it no longer advertises a legacy madlib source.
