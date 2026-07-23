@@ -8162,12 +8162,12 @@ function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: st
   return cleaned.replace(/^([a-z])/, (letter) => letter.toUpperCase());
 }
 
-function normalizeMadlibCardSurface({
+function normalizePackageCardSurface({
   body,
   sourceKeys,
   surface,
   slot,
-  tier = "source-based-madlib"
+  tier = "fallback-architecture-v3"
 }: {
   body: string | null | undefined;
   sourceKeys: string[];
@@ -8784,7 +8784,7 @@ function circleLordOfYearDetailArticle(planet: string, activeCharts: ManualChart
 function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap) {
   const friendSky = chart.natalChart;
   const friendBigThree = manualChartBigThree(chart);
-  const normalizeHighlightBody = (body: string, sourceKeys: string[]) => normalizedSurfacePreview(normalizeMadlibCardSurface({
+  const normalizeHighlightBody = (body: string, sourceKeys: string[]) => normalizedSurfacePreview(normalizePackageCardSurface({
     body,
     sourceKeys,
     surface: "compatibility-highlight",
@@ -11482,7 +11482,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
   const byHouse = new Map<number, ManualChart[]>();
   const byProfectedHouse = new Map<number, ManualChart[]>();
   const byLordOfYear = new Map<string, ManualChart[]>();
-  const normalizeCircleBody = (body: string, sourceKeys: string[]) => normalizedSurfacePreview(normalizeMadlibCardSurface({
+  const normalizeCircleBody = (body: string, sourceKeys: string[]) => normalizedSurfacePreview(normalizePackageCardSurface({
     body,
     sourceKeys,
     surface: "circle-feed",
@@ -11587,7 +11587,7 @@ function circleFeedPreviewCards(
   const personCharts = charts.filter((chart) => chart.chartType !== "event");
   const calculatedCharts = personCharts.filter((chart) => chart.natalChart);
   const circleCards = circleActivationCards(currentSky, personCharts, focusAreas, sunriseOrb);
-  const normalizeCirclePreviewBody = (body: string | null | undefined, sourceKeys: string[]) => normalizedSurfacePreview(normalizeMadlibCardSurface({
+  const normalizeCirclePreviewBody = (body: string | null | undefined, sourceKeys: string[]) => normalizedSurfacePreview(normalizePackageCardSurface({
     body,
     sourceKeys,
     surface: "circle-feed-preview",
