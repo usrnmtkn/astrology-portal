@@ -155,22 +155,25 @@ html[data-scrolled] .sky-header-date-button {
 }
 
 .mobile-sky-controls__tabs button {
+  box-sizing: border-box;
   min-width: 0;
   height: var(--segmented-item-height);
-  border: 0;
-  border-radius: var(--segmented-radius);
+  border: 1px solid transparent;
+  border-radius: var(--segmented-item-radius);
   background: transparent;
   color: var(--segmented-inactive-fg);
   font-family: var(--font-ui);
-  font-size: var(--text-button-size);
+  font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-label);
 }
 
 .mobile-sky-controls__tabs button.active {
+  border-color: var(--segmented-active-border);
   background: var(--segmented-active-bg);
   color: var(--segmented-active-fg);
   font-weight: var(--weight-semibold);
+  box-shadow: var(--segmented-active-shadow);
 }
 
 .mobile-sky-controls__label {

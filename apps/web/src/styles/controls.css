@@ -35,6 +35,7 @@
 }
 
 .segmented-control .segmented-control__item {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -42,12 +43,12 @@
   height: var(--segmented-item-height);
   min-height: 0;
   padding: 0 var(--segmented-item-px);
-  border: 0;
-  border-radius: var(--segmented-radius);
+  border: 1px solid transparent;
+  border-radius: var(--segmented-item-radius);
   background: transparent;
   color: var(--segmented-inactive-fg);
   font-family: var(--font-body);
-  font-size: var(--text-button-size);
+  font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-label);
   letter-spacing: var(--tracking-number);
@@ -61,6 +62,7 @@
 }
 
 .segmented-control .segmented-control__item.segmented-control__item--active {
+  border-color: var(--segmented-active-border);
   background: var(--segmented-active-bg);
   color: var(--segmented-active-fg);
   font-weight: var(--weight-semibold);
@@ -84,6 +86,6 @@
 
 .segmented-control--compact .segmented-control__item {
   height: var(--segmented-item-height);
-  padding: 0 calc(var(--space-4) + var(--space-1) / 2);
-  font-size: var(--text-button-size);
+  padding: 0 var(--segmented-item-px);
+  font-size: var(--text-meta-size);
 }
