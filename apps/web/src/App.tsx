@@ -7847,10 +7847,9 @@ function friendTransitSummary(
   generatedAt = new Date().toISOString()
 ) {
   void generatedContent;
-  void ownerName;
   void ownerPronouns;
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt));
+  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName));
 }
 
 function friendTransitFactLine(transit: TransitItem, ownerName: string) {
@@ -7923,7 +7922,8 @@ function dedupeSameBeatPersonalTransits<T extends TransitItem>(transits: T[], ge
 
 function personalTransitMadlibFallbackSection(
   transit: TransitItem,
-  generatedAt: string
+  generatedAt: string,
+  voice: "you" | string = "you"
 ): NormalizedPersonalTransitSection | null {
   const normalizedAspect = normalizeFallbackV3Aspect(transit.aspect);
 
@@ -7937,7 +7937,8 @@ function personalTransitMadlibFallbackSection(
       natal: normalizeContentIdPart(transit.natalPoint),
       sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
       transiting: normalizeContentIdPart(transit.transitPlanet),
-      window: personalTransitPackageWindow(transit, generatedAt)
+      window: personalTransitPackageWindow(transit, generatedAt),
+      voice
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
@@ -7971,9 +7972,10 @@ function personalTransitMadlibFallbackSection(
 
 function normalizePersonalTransitSurface(
   transit: TransitItem,
-  generatedAt: string
+  generatedAt: string,
+  voice: "you" | string = "you"
 ): NormalizedPersonalTransitArticle {
-  const fallbackSection = personalTransitMadlibFallbackSection(transit, generatedAt);
+  const fallbackSection = personalTransitMadlibFallbackSection(transit, generatedAt, voice);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -8028,6 +8030,55 @@ function normalizeTransitHouseSurface(
     status: section ? "partial" : "not-servable",
     sections: section ? [section] : []
   };
+}
+
+function activeBondTransitCards(
+  contacts: SynastryContact[],
+  transits: TransitItem[],
+  friendName: string,
+  generatedAt: string
+) {
+  return contacts.flatMap((contact) => {
+    const activation = transits.find((transit) => (
+      transit.natalPoint === contact.friendPoint.name
+      && Math.min(...transit.arc) <= 1
+    ));
+
+    if (!activation) {
+      return [];
+    }
+
+    const activationAspect = normalizeFallbackV3Aspect(activation.aspect);
+    const contactAspect = normalizeFallbackV3Aspect(contact.aspect);
+
+    if (!activationAspect || !contactAspect) {
+      return [];
+    }
+
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderBondTransit({
+        transiting: normalizeContentIdPart(activation.transitPlanet),
+        aspect: activationAspect,
+        planetA: normalizeContentIdPart(contact.yourPoint.name),
+        planetB: normalizeContentIdPart(contact.friendPoint.name),
+        natalAspect: contactAspect,
+        otherName: friendName,
+        sign: activation.transitSign ? normalizeContentIdPart(activation.transitSign) : undefined,
+        window: personalTransitPackageWindow(activation, generatedAt)
+      });
+
+      return [{
+        id: `${contact.id}-${activation.id}`,
+        headline: rendered.headline,
+        body: readerFacingParagraphs(rendered.parts).join("\n\n")
+      }];
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) {
+        return [];
+      }
+      throw error;
+    }
+  }).slice(0, 3);
 }
 
 function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, string>) {
@@ -8398,6 +8449,18 @@ function transitDirectionPhrase(direction?: TransitDirection) {
 }
 
 function circleTransitParagraph(chart: ManualChart, transit: TransitItem, currentSky: SkySnapshot, timing: FriendTimingContext) {
+  const authoredFriendVoice = friendTransitSummary(
+    transit,
+    new Map(),
+    chart.displayName,
+    chart.pronouns,
+    currentSky.generatedAt
+  );
+
+  if (authoredFriendVoice) {
+    return authoredFriendVoice;
+  }
+
   const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
   const direction = transitDirectionPhrase(transit.direction);
   const relevance = transit.natalPoint === timing.lordOfYear
@@ -18071,6 +18134,14 @@ function ManualChartsPanel({
       currentSky.generatedAt
     ).slice(0, 8)
     : [];
+  const selectedBondTransitCards = selectedChart && !selectedChartIsEvent
+    ? activeBondTransitCards(
+        selectedSynastryContacts,
+        selectedFriendTransits,
+        selectedChart.displayName,
+        currentSky.generatedAt
+      )
+    : [];
   const selectedFriendTransitAspectLines = selectedChart && !selectedChartIsEvent
     ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
     : [];
@@ -19409,6 +19480,21 @@ function ManualChartsPanel({
                   items={selectedFriendNatalAspectPatternItems}
                   timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
                 />
+                {selectedBondTransitCards.length > 0 ? (
+                  <section className="friend-transit-group" aria-label="Between you two right now">
+                    <span className="eyebrow section-label friend-section-label">Between you two right now</span>
+                    <div className="updates-aspect-list friend-transit-list">
+                      {selectedBondTransitCards.map((card) => (
+                        <article className="updates-aspect-row friend-transit-row" key={card.id}>
+                          <span className="updates-aspect-row__content">
+                            <h3 className="updates-aspect-row__title">{card.headline}</h3>
+                            <p className="updates-aspect-row__description">{card.body}</p>
+                          </span>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
                 {(["short", "long"] as const).map((durationClass) => {
                   const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
 

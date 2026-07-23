@@ -781,7 +781,7 @@
       "contentKey": "fallback-vocab/planet-core/moon",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "body": "emotion",
+      "body": "the feeling body",
       "review_status": "approved_reuse",
       "source_keys": [
         "fallback-vocab/planet-core/moon"
@@ -871,7 +871,7 @@
       "contentKey": "fallback-vocab/planet-core/chiron",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "body": "an old wound and its repair",
+      "body": "the old wound",
       "review_status": "approved_reuse",
       "source_keys": [
         "fallback-vocab/planet-core/chiron"
@@ -3347,7 +3347,7 @@
       "contentKey": "fallback-vocab/planet-core/lilith",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "body": "the untamed part and its refusal",
+      "body": "the raw edge",
       "review_status": "approved",
       "notes": "Black Moon Lilith vocab (full-surface extension).",
       "approved_via": "owner sign-off (finish queue), chat 2026-07-22"
@@ -3419,9 +3419,9 @@
       "contentKey": "fallback-vocab/aspect-motion/square",
       "content_role": "vocabulary",
       "grammar_frame": "gerund_phrase",
-      "body": "pulling in different directions, and the friction trains both",
+      "body": "pulling against each other until the friction builds muscle",
       "review_status": "approved",
-      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "approved_via": "owner rewrite, chat 2026-07-22",
       "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
     },
     {
@@ -12857,7 +12857,8 @@
         "cc/ref/aspect-psychology/conjunction"
       ],
       "note": "Plain-language transit mechanics line; single voice.",
-      "approved_via": "owner sign-off, chat 2026-07-21"
+      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": ""
     },
     {
       "contentKey": "fallback-hook/transit-aspect-type/square",
@@ -12871,7 +12872,8 @@
         "cc/ref/aspect-psychology/square"
       ],
       "note": "Plain-language transit mechanics line; single voice.",
-      "approved_via": "owner sign-off, chat 2026-07-21"
+      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": ""
     },
     {
       "contentKey": "fallback-hook/transit-aspect-type/trine",
@@ -12893,7 +12895,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "They pull in the same direction: {{natalArea}} come naturally right now. Make the most of this opportunity while you can.",
-      "body_they": "They pull in the same direction: {{natalArea}} come naturally right now. Make the most of this opportunity while you can.",
+      "body_they": "They pull in the same direction: {{natalArea}} come naturally right now. It is an opening worth making the most of while it lasts.",
       "review_status": "approved",
       "notes": "Used when the natal target is an angle. {{natalArea}} filled from angle-area.",
       "approved_via": "owner sign-off, chat 2026-07-21"
@@ -12903,7 +12905,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get a lift of confidence, and it is easier than usual to be noticed for the right reasons",
-      "body_they": "{{natalArea}} get a lift of confidence, and it is easier than usual to be noticed for the right reasons",
+      "body_they": "{{natalArea}} get a lift of confidence, and it is easier than usual for them to be noticed for the right reasons",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/sun"
@@ -13059,7 +13061,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get real momentum, and effort pays off instead of scattering. Start the thing you have been circling",
-      "body_they": "{{natalArea}} get real momentum, and effort pays off instead of scattering. A good time for them to start the thing they have been circling",
+      "body_they": "{{natalArea}} get real momentum, and effort pays off instead of scattering. It is a good window for them to start the thing they have been circling",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/mars"
@@ -13098,7 +13100,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} open up, and chances to grow show up with less effort than usual. Say yes to more than you normally would",
-      "body_they": "{{natalArea}} open up, and chances to grow show up with less effort than usual. A good time to say yes to more than normal",
+      "body_they": "{{natalArea}} open up, and chances to grow show up with less effort than usual. The season favors them saying yes to more than they normally would",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/jupiter"
@@ -13137,7 +13139,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} quieten down, bringing plain clarity to what you need to feel secure. The long game becomes much easier to navigate once you stop treating daily structure like a prison. If there is a habit you have been putting off, build it now while the ground is solid under your feet",
-      "body_they": "{{natalArea}} quieten down, bringing plain clarity to what they need to feel secure. The long game becomes much easier to navigate once daily structure stops feeling like a prison. A habit they have been putting off is worth building now while the ground is solid under their feet",
+      "body_they": "{{natalArea}} quieten down, bringing plain clarity to what they need to feel secure. The long game gets easier for them to navigate, and habits they start now tend to stick, because the ground under them is solid",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/saturn"
@@ -13254,7 +13256,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} deepen, and change that usually feels threatening looks workable instead. Let something old go quietly",
-      "body_they": "{{natalArea}} deepen, and change that usually feels threatening looks workable instead. Old attachments loosen without a crisis",
+      "body_they": "{{natalArea}} deepen, and change that usually feels threatening looks workable instead. It is a good stretch for them to let something old go quietly",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/pluto"
@@ -13293,7 +13295,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get gentler to deal with, and old sore spots are easier to look at without flinching",
-      "body_they": "{{natalArea}} get gentler to deal with, and old sore spots are easier to look at without flinching",
+      "body_they": "{{natalArea}} get gentler to deal with, and old sore spots are easier for them to look at without flinching",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/chiron"
@@ -13332,7 +13334,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} pull you forward instead of dragging you backward. Whatever new direction you have been overthinking is finally gaining traction, making this the moment to take the first step",
-      "body_they": "{{natalArea}} pull them forward instead of dragging them backward. Whatever new direction they have been overthinking is finally gaining traction, making this the moment for the first step",
+      "body_they": "{{natalArea}} pull them forward instead of dragging them backward. Whatever new direction they have been overthinking is finally gaining traction, and first steps taken now tend to hold",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/north-node"
@@ -13371,7 +13373,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} lean on strengths you already own. Use them, just do not hide in them",
-      "body_they": "{{natalArea}} lean on strengths they already own. Useful, as long as they do not hide in them",
+      "body_they": "{{natalArea}} lean on strengths they already own. The skills are real; the only risk is hiding in them",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/south-node"
@@ -13410,7 +13412,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get pulled into the spotlight, and your pride bruises easier than usual. Take feedback as information, not as an attack",
-      "body_they": "{{natalArea}} get pulled into the spotlight, and their pride bruises easier than usual. Feedback is information right now, not an attack",
+      "body_they": "{{natalArea}} get pulled into the spotlight, and their pride bruises easier than usual. Feedback lands better with them as information, not as an attack",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/sun"
@@ -13449,7 +13451,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} run moodier than usual, and small things hit harder than they should. Don't make permanent decisions out of a passing feeling",
-      "body_they": "{{natalArea}} run moodier than usual, and small things hit harder than they should. Not the moment for them to make permanent decisions out of a passing feeling",
+      "body_they": "{{natalArea}} run moodier than usual, and small things hit them harder than they should. Passing feelings can look permanent to them right now",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/moon"
@@ -13488,7 +13490,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get noisy. Mixed messages and second-guessing pile up, so say the clear version twice and put the important things in writing",
-      "body_they": "{{natalArea}} get noisy. Mixed messages and second-guessing pile up, so the clear version deserves saying twice, with the important things in writing",
+      "body_they": "{{natalArea}} get noisy. Mixed messages and second-guessing pile up around them, so plans made with them deserve a written version",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/mercury"
@@ -13527,7 +13529,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} tug at your wants, and it is easy to overspend, overindulge, or say yes just to keep the peace. Check what you actually want before agreeing",
-      "body_they": "{{natalArea}} tug at their wants, and it is easy to overspend, overindulge, or say yes just to keep the peace. Worth checking what they actually want before agreeing",
+      "body_they": "{{natalArea}} tug at their wants, and it is easy for them to overspend, overindulge, or say yes just to keep the peace. Their agreements this week may not match what they actually want",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/venus"
@@ -13566,7 +13568,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} run hot, and impatience picks fights your goals do not need. The energy is real, so burn it on effort, not arguments",
-      "body_they": "{{natalArea}} run hot, and impatience picks fights their goals do not need. The energy is real and better burned on effort, not arguments",
+      "body_they": "{{natalArea}} run hot, and impatience picks fights their goals do not need. The energy is real; it goes better for them when it burns on effort, not arguments",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/mars"
@@ -13605,7 +13607,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} inflate, and it is easy to promise more than you can deliver. Focus on growing one thing exceptionally well instead of spreading yourself thin across five",
-      "body_they": "{{natalArea}} inflate, and it is easy to promise more than they can deliver. One thing grown exceptionally well beats five spread thin",
+      "body_they": "{{natalArea}} inflate, and it is easy for them to promise more than they can deliver. They do best growing one thing well instead of spreading across five",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/jupiter"
@@ -13644,7 +13646,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} feel heavier and slower, and shortcuts stop working. What holds up under this scrutiny has true staying power, and what fractures simply needed fixing in the first place",
-      "body_they": "{{natalArea}} feel heavier and slower, and shortcuts stop working. What holds up under this scrutiny has true staying power, and what fractures simply needed fixing in the first place",
+      "body_they": "{{natalArea}} go through a stress test, and quick fixes stop fixing. What stands up to this scrutiny is built to last; what fractures was already broken.",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/saturn"
@@ -13683,7 +13685,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} take on unpredictable energy, and solid routines suddenly feel restrictive. Make a deliberate change on your own terms before circumstances force the issue for you",
-      "body_they": "{{natalArea}} take on unpredictable energy, and solid routines suddenly feel restrictive. A deliberate change on their own terms beats waiting for circumstances to force the issue",
+      "body_they": "{{natalArea}} take on unpredictable energy, and solid routines suddenly feel restrictive to them. Changes they choose on purpose go better than the ones circumstances force",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/uranus"
@@ -13722,7 +13724,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} blur at the edges, and wishful thinking starts to look a lot like hard reality. Verify what is actually in front of you before making any big moves",
-      "body_they": "{{natalArea}} blur at the edges, and wishful thinking starts to look a lot like hard reality. The facts need verifying before any big moves",
+      "body_they": "{{natalArea}} blur at the edges, and wishful thinking starts to look a lot like hard reality to them. What they believe right now deserves a second check against the facts",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/neptune"
@@ -13800,7 +13802,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} brush against an old sore spot, and reactions can run bigger than the moment deserves. Pay attention to the sting, because it points directly to where healing wants to happen",
-      "body_they": "{{natalArea}} brush against an old sore spot, and reactions can run bigger than the moment deserves. The sting deserves attention, because it points directly to where healing wants to happen",
+      "body_they": "{{natalArea}} brush against an old sore spot, and their reactions can run bigger than the moment deserves. The sting points directly at where healing wants to happen",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/chiron"
@@ -13839,7 +13841,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} get pulled toward unfamiliar ground, and the comfortable route quietly stops working. Awkward first steps count double right now",
-      "body_they": "{{natalArea}} get pulled toward unfamiliar ground, and the comfortable route quietly stops working. Awkward first steps count double right now",
+      "body_they": "{{natalArea}} get pulled toward unfamiliar ground, and their comfortable route quietly stops working. Awkward first steps count double for them right now",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/north-node"
@@ -13878,7 +13880,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{natalArea}} slide toward the old default, and the easy way is quietly the trap. Use the skill without repeating the pattern",
-      "body_they": "{{natalArea}} slide toward the old default, and the easy way is quietly the trap. The skill works without repeating the pattern",
+      "body_they": "{{natalArea}} slide toward their old default, and the easy way is quietly the trap. The skill is real; repeating the pattern is the part to watch",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/south-node"
@@ -13917,7 +13919,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} want more of you than usual. Show up there visibly, because effort in this area gets noticed right now and builds real confidence",
-      "body_they": "{{houseTopic}} want more of them than usual. Showing up visibly there gets noticed right now and builds real confidence",
+      "body_they": "{{houseTopic}} want more of them than usual. Effort they put in here gets noticed right now and builds real confidence",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/sun"
@@ -13930,7 +13932,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "your moods track this area closely: when {{houseTopic}} are tended to, the whole stretch feels calmer, and when they are ignored, everything else feels off too",
-      "body_they": "their moods track this area closely: when {{houseTopic}} are tended to, the whole stretch feels calmer, and when they are ignored, everything else feels off too",
+      "body_they": "their moods track this area closely: when {{houseTopic}} are tended to, their whole stretch feels calmer, and when they are ignored, everything else feels off too",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/moon"
@@ -13943,7 +13945,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "expect more conversations, questions, and errands around {{houseTopic}}. Ideas move fast in this area right now, so write the good ones down before they slip",
-      "body_they": "expect more conversations, questions, and errands around {{houseTopic}}. Ideas move fast in this area right now, and the good ones deserve writing down",
+      "body_they": "expect more conversations, questions, and errands around {{houseTopic}}. Ideas move fast for them in this area right now, and the good ones are worth writing down",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/mercury"
@@ -13956,7 +13958,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} sweeten. Connection and enjoyment come easier in this area, and people there are warmer to you than usual, so this is the time to ask, invite, and repair",
-      "body_they": "{{houseTopic}} sweeten. Connection and enjoyment come easier in this area, and people there are warmer to them than usual: a good time to ask, invite, and repair",
+      "body_they": "{{houseTopic}} sweeten. Connection and enjoyment come easier for them in this area, and people there are warmer to them than usual",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/venus"
@@ -13969,7 +13971,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} get your energy and your temper. Progress comes faster in this area, and so do arguments, so aim the push at tasks instead of people",
-      "body_they": "{{houseTopic}} get their energy and their temper. Progress comes faster in this area, and so do arguments, so the push works better aimed at tasks instead of people",
+      "body_they": "{{houseTopic}} get their energy and their temper. Progress comes faster for them in this area, and so do arguments",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/mars"
@@ -13982,7 +13984,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} expand. More options, more invitations, and more appetite show up in this area, so say yes to the ones worth the extra room",
-      "body_they": "{{houseTopic}} expand. More options, more invitations, and more appetite show up in this area, and the ones worth the extra room deserve the yes",
+      "body_they": "{{houseTopic}} expand. More options, more invitations, and more appetite show up for them in this area",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/jupiter"
@@ -13995,7 +13997,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} get serious. What is solid in this area holds and grows roots, what is flimsy starts costing you, and patient effort beats quick fixes",
-      "body_they": "{{houseTopic}} get serious. What is solid in this area holds and grows roots, what is flimsy starts costing them, and patient effort beats quick fixes",
+      "body_they": "{{houseTopic}} get serious. What is solid in this area holds and grows roots, and what is flimsy starts costing them",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/saturn"
@@ -14008,7 +14010,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} stop sitting still. Expect surprises and reversals in this area, so experiment on purpose before something changes on its own",
-      "body_they": "{{houseTopic}} stop sitting still. Surprises and reversals show up in this area, and experimenting on purpose beats waiting for change to arrive uninvited",
+      "body_they": "{{houseTopic}} stop sitting still. Surprises and reversals show up for them in this area, and the changes they choose go better than the ones that choose them",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/uranus"
@@ -14021,7 +14023,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} blur at the edges. Inspiration and confusion both run high in this area, so dream freely but double-check the facts before committing",
-      "body_they": "{{houseTopic}} blur at the edges. Inspiration and confusion both run high in this area, so the big dreams need a second look at the facts before committing",
+      "body_they": "{{houseTopic}} blur at the edges. Inspiration and confusion both run high for them in this area, so their facts deserve a double-check before big commitments",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/neptune"
@@ -14034,7 +14036,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} change from the ground up. This area will not stay as it was, and the less you grip the old version, the easier the rebuild goes",
-      "body_they": "{{houseTopic}} change from the ground up. This area will not stay as it was, and the less they grip the old version, the easier the rebuild goes",
+      "body_they": "{{houseTopic}} change from the ground up. This area will not stay as it was for them, and the less they grip the old version, the easier the rebuild goes",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/pluto"
@@ -14047,7 +14049,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} touch an old sore spot. What stings in this area is pointing at something worth healing, not just something that hurts",
-      "body_they": "{{houseTopic}} touch an old sore spot. What stings in this area is pointing at something worth healing, not just something that hurts",
+      "body_they": "{{houseTopic}} touch an old sore spot. What stings for them in this area is pointing at something worth healing, not just something that hurts",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/chiron"
@@ -14060,7 +14062,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} are where growth lives right now. The unfamiliar move in this area pays more than the comfortable one",
-      "body_they": "{{houseTopic}} are where growth lives right now. The unfamiliar move in this area pays more than the comfortable one",
+      "body_they": "{{houseTopic}} are where their growth lives right now. The unfamiliar move in this area pays them more than the comfortable one",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/north-node"
@@ -14073,7 +14075,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "verb_clause_slotted",
       "body_you": "{{houseTopic}} pull you toward old habits. Your skills in this area are real, just do not use them to hide from growth",
-      "body_they": "{{houseTopic}} pull them toward old habits. The skills in this area are real, just not a place to hide from growth",
+      "body_they": "{{houseTopic}} pull them toward old habits. Their skills in this area are real; using them to hide from growth is the trap",
       "review_status": "approved",
       "source_keys": [
         "fallback-vocab/planet-topic/south-node"
@@ -16938,14 +16940,15 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "There is an opening between them: {{transitEffect}}. It works if you use it, and it closes quietly if you don't.",
-      "body_they": "There is an opening between them: {{transitEffect}}. It works if you use it, and it closes quietly if you don't.",
+      "body_they": "There is an opening between them: {{transitEffect}}. It works if they use it, and it closes quietly if they don't.",
       "review_status": "approved",
       "source_keys": [
         "cc/ref/transit-principles/hard-vs-soft",
         "cc/ref/aspect-psychology/sextile"
       ],
       "note": "Plain-language transit mechanics line; single voice.",
-      "approved_via": "owner sign-off, chat 2026-07-21"
+      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": ""
     },
     {
       "contentKey": "fallback-hook/transit-aspect-type/opposition",
@@ -16959,7 +16962,8 @@
         "cc/ref/aspect-psychology/opposition"
       ],
       "note": "Plain-language transit mechanics line; single voice.",
-      "approved_via": "owner sign-off, chat 2026-07-21"
+      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": ""
     },
     {
       "contentKey": "fallback-hook/natal-core/sun",
@@ -18658,7 +18662,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "{{natalArea}} drop the polite filter, and the honest version surfaces without wrecking anything. Say the true thing while it comes out clean.",
-      "body_they": "{{natalArea}} drop the polite filter, and the honest version surfaces without wrecking anything. Say the true thing while it comes out clean.",
+      "body_they": "{{natalArea}} drop the polite filter, and the honest version surfaces without wrecking anything. Things they say plainly in this window tend to land clean",
       "review_status": "approved",
       "notes": "Black Moon Lilith rows (full-surface extension, chat 2026-07-22).",
       "approved_via": "owner sign-off (finish queue), chat 2026-07-22"
@@ -18668,7 +18672,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "{{natalArea}} hit the limit of what you are willing to keep swallowing. The refusal is real; aim it at the situation, not the whole room.",
-      "body_they": "{{natalArea}} hit the limit of what they are willing to keep swallowing. The refusal is real, and it needs a target the size of the situation.",
+      "body_they": "{{natalArea}} hit the limit of what they are willing to keep swallowing. The refusal is real, and it needs a target the size of the situation",
       "review_status": "approved",
       "notes": "Black Moon Lilith rows (full-surface extension, chat 2026-07-22).",
       "approved_via": "owner sign-off (finish queue), chat 2026-07-22"
@@ -19042,6 +19046,547 @@
       "review_status": "approved",
       "notes": "Per-ruler profection year-lord paragraph (owner cadence). Slots {{signTitle}}, {{houseOrdinal}}.",
       "approved_via": "owner sign-off (finish queue), chat 2026-07-22"
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/sun/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Somewhere early, being yourself got you hurt, so you learned to dim first and shine later. The work of your life is unlearning that order. Every time you take up space and nothing bad happens, the wound closes a little.",
+      "body_they": "Somewhere early, being themselves got them hurt, so they learned to dim first and shine later. The work of their life is unlearning that order. Every time they take up space and nothing bad happens, the wound closes a little.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/sun/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Confidence and the old wound sit at angles in you, so praise can feel undeserved and criticism can feel like proof. Neither is accurate; both are echoes. The identity that survives its own doubts ends up sturdier than one that never met them.",
+      "body_they": "Confidence and the old wound sit at angles in them, so praise can feel undeserved and criticism can feel like proof. Neither is accurate; both are echoes. The identity that survives its own doubts ends up sturdier than one that never met them.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/sun/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You know what it is like to feel not enough, and it made you gentle with people who feel the same. That gentleness is skill, not softness. You put people at ease about the exact things they are ashamed of.",
+      "body_they": "They know what it is like to feel not enough, and it made them gentle with people who feel the same. That gentleness is skill, not softness. They put people at ease about the exact things those people are ashamed of.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/moon/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your feelings and your oldest hurt live in the same room, so caring for anyone brushes against what once hurt you. It makes you a deep well of comfort for others. Let someone return the favor now and then; the wound heals in company.",
+      "body_they": "Their feelings and their oldest hurt live in the same room, so caring for anyone brushes against what once hurt them. It makes them a deep well of comfort for others. The wound heals in company, when they let someone return the favor.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/moon/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "When you get emotional, the old hurt wakes up too, and reactions can arrive bigger than the moment. The gap between what happened and what it touched is worth a pause. Feelings this deep make you unusually good at sitting with other people's pain.",
+      "body_they": "When they get emotional, the old hurt wakes up too, and reactions can arrive bigger than the moment. The gap between what happened and what it touched is real. Feelings this deep make them unusually good at sitting with other people's pain.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/moon/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What hurt you taught you to read hurt in others, quickly and accurately. People calm down around you because you never make them explain their pain from scratch. Comforting others comes naturally; being comforted takes practice, and it is worth practicing.",
+      "body_they": "What hurt them taught them to read hurt in others, quickly and accurately. People calm down around them because they never make anyone explain their pain from scratch. Comforting others comes naturally to them; being comforted takes practice.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mercury/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Words once cut you, so you weigh yours carefully and hear the edge in everyone else's. It makes you a precise, careful communicator. Say the risky true thing occasionally; your voice is safer now than it was then.",
+      "body_they": "Words once cut them, so they weigh theirs carefully and hear the edge in everyone else's. It makes them a precise, careful communicator. Their voice is safer now than it was then, and the risky true thing suits them more than they think.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mercury/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You doubt your own intelligence in ways that make no sense given your track record. The old classroom sting still grades you harder than anyone else does. Speak before you feel fully qualified; that is where the repair happens.",
+      "body_they": "They doubt their own intelligence in ways that make no sense given their track record. The old classroom sting still grades them harder than anyone else does. Speaking before feeling fully qualified is where their repair happens.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mercury/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You explain hard things kindly, because you remember what it was like not to understand and be judged for it. People learn from you without feeling small. That is rarer than talent, and it is yours.",
+      "body_they": "They explain hard things kindly, because they remember what it was like not to understand and be judged for it. People learn from them without feeling small. That is rarer than talent, and it is theirs.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/venus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Love and hurt got tangled early, so closeness can feel like the most dangerous thing on offer. You pick people carefully, and the ones you pick get a loyalty most never see. Letting yourself be seen mid-repair, not just when polished, is what deepens it.",
+      "body_they": "Love and hurt got tangled early, so closeness can feel like the most dangerous thing on offer to them. They pick people carefully, and the ones they pick get a loyalty most never see. Letting themselves be seen mid-repair, not just when polished, is what deepens it.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/venus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Part of you suspects affection has to be earned, and it can push you to over-give or settle. The suspicion is a leftover, not a fact. The relationships that stay when you stop doing the extras are the ones that were real all along.",
+      "body_they": "Part of them suspects affection has to be earned, and it can push them to over-give or settle. The suspicion is a leftover, not a fact. The relationships that stay when they stop doing the extras are the ones that were real all along.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/venus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Old heartbreak made you kind instead of hard, which is a choice most people do not manage. You love people through their worst without flinching. Just keep the same patience for yourself.",
+      "body_they": "Old heartbreak made them kind instead of hard, which is a choice most people do not manage. They love people through their worst without flinching. The same patience, aimed at themselves, is the missing piece.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Anger was unsafe once, so yours tends to come out sideways or not at all, then all at once. Learning to say the small no early keeps the big blowup from booking itself. Your drive is real; it just needs permission.",
+      "body_they": "Anger was unsafe once, so theirs tends to come out sideways or not at all, then all at once. The small no, said early, keeps the big blowup from booking itself. Their drive is real; it just needs permission.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Standing up for yourself can feel more dangerous than it is, so you either swallow it or overshoot. The middle exists, and it is built from small, boring acts of directness. Every clean no makes the next one easier.",
+      "body_they": "Standing up for themselves can feel more dangerous than it is, so they either swallow it or overshoot. The middle exists, and it is built from small, boring acts of directness. Every clean no makes their next one easier.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You fight best for other people, especially ones who cannot fight for themselves, because you remember being one. That protective streak is the wound converted to purpose. Save a share of it for your own corner.",
+      "body_they": "They fight best for other people, especially ones who cannot fight for themselves, because they remember being one. That protective streak is the wound converted to purpose. A share of it belongs in their own corner too.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/jupiter/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Somewhere along the way, hope itself got bruised: believing big felt like setting up for a fall. So you hedge your optimism. Growth for you looks like betting on something again, in public, and surviving the wait.",
+      "body_they": "Somewhere along the way, hope itself got bruised for them: believing big felt like setting up for a fall. So they hedge their optimism. Growth for them looks like betting on something again, in public, and surviving the wait.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/jupiter/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You can teach meaning to others and struggle to feel it yourself, like a guide who knows the trail but doubts the map. The doubt is part of the credential. People trust your hope precisely because it is not naive.",
+      "body_they": "They can teach meaning to others and struggle to feel it themselves, like a guide who knows the trail but doubts the map. The doubt is part of the credential. People trust their hope precisely because it is not naive.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/jupiter/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What broke you built your philosophy, and it holds up because it was tested. People come to you when their own beliefs wobble. You give hope with fingerprints on it, the kind that works.",
+      "body_they": "What broke them built their philosophy, and it holds up because it was tested. People come to them when their own beliefs wobble. They give hope with fingerprints on it, the kind that works.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/saturn/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Authority hurt before it helped, so rules and judges get your guard up fast. You built your own standards instead, brick by brick. Trusting a structure you did not build alone is the next level of the repair.",
+      "body_they": "Authority hurt before it helped, so rules and judges get their guard up fast. They built their own standards instead, brick by brick. Trusting a structure they did not build alone is the next level of the repair.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/saturn/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Part of you is still trying to pass a test that ended years ago. The examiner is gone; the habit stayed. Real discipline, the kind that serves you, starts when the fear retires.",
+      "body_they": "Part of them is still trying to pass a test that ended years ago. The examiner is gone; the habit stayed. Real discipline, the kind that serves them, starts when the fear retires.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/saturn/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Time actually heals you, which is not true for everyone. Each year you carry the old weight a little easier, and younger people sense you have been where they are. Age is on your side; let it work.",
+      "body_they": "Time actually heals them, which is not true for everyone. Each year they carry the old weight a little easier, and younger people sense they have been where those people are. Age is on their side.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/uranus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Being different was the wound and became the identity. You broke from what hurt you, and freedom is how you keep it from happening again. Belonging somewhere does not undo the escape; it completes it.",
+      "body_they": "Being different was the wound and became the identity. They broke from what hurt them, and freedom is how they keep it from happening again. Belonging somewhere does not undo the escape; it completes it.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/uranus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You disconnect fast when things get painful, gone before anyone sees the flinch. It kept you safe once and keeps you lonely now. Staying present ten seconds past the urge to bolt is where the change lives.",
+      "body_they": "They disconnect fast when things get painful, gone before anyone sees the flinch. It kept them safe once and keeps them lonely now. Staying present ten seconds past the urge to bolt is where their change lives.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/uranus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your strangest experiences made you the person others seek out when their lives stop making sense. You normalize the unusual just by being calm about it. That is healing work, whether or not you call it that.",
+      "body_they": "Their strangest experiences made them the person others seek out when life stops making sense. They normalize the unusual just by being calm about it. That is healing work, whether or not they call it that.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/neptune/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your sensitivity got you hurt and became your gift in the same motion. You feel what the room refuses to say, which is heavy and useful. Boundaries are not a betrayal of the gift; they are its maintenance.",
+      "body_they": "Their sensitivity got them hurt and became their gift in the same motion. They feel what the room refuses to say, which is heavy and useful. Boundaries are not a betrayal of the gift; they are its maintenance.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/neptune/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Escaping pain is a skill you learned early, through daydream, fiction, or fog. Some escapes rest you and some erase you, and telling them apart is the practice. What you feel when you stay turns out survivable, and then valuable.",
+      "body_they": "Escaping pain is a skill they learned early, through daydream, fiction, or fog. Some escapes rest them and some erase them, and telling those apart is the practice. What they feel when they stay turns out survivable, and then valuable.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/neptune/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Compassion is your native language, learned in places you would not wish on anyone. You forgive people their worst because you have met your own. That mercy changes rooms; ration it only where it gets exploited.",
+      "body_they": "Compassion is their native language, learned in places they would not wish on anyone. They forgive people their worst because they have met their own. That mercy changes rooms, and it only needs rationing where it gets exploited.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/pluto/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What happened to you would have ended a softer story, and instead it forged the strongest thing in you. You do not fear other people's darkness; you have inventory of your own. Survivors find you, and you know what to do.",
+      "body_they": "What happened to them would have ended a softer story, and instead it forged the strongest thing in them. They do not fear other people's darkness; they have inventory of their own. Survivors find them, and they know what to do.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/pluto/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Control feels like safety because once, losing it cost you. Loosening the grip one finger at a time is the long work. Power held lightly turns out to hold better.",
+      "body_they": "Control feels like safety to them because once, losing it cost them. Loosening the grip one finger at a time is their long work. Power held lightly turns out to hold better.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/chiron/pluto/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You have already been through the thing most people organize their lives around avoiding. It left you unshockable and quietly strong. When everything falls apart around others, you are the one who knows the way through.",
+      "body_they": "They have already been through the thing most people organize their lives around avoiding. It left them unshockable and quietly strong. When everything falls apart around others, they are the one who knows the way through.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/sun/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What you were shamed for and who you are turned out to be the same thing, so hiding it never really worked. The exile and the identity share a face. Every year you apologize less, and every year you get more yourself.",
+      "body_they": "What they were shamed for and who they are turned out to be the same thing, so hiding it never really worked. The exile and the identity share a face. Every year they apologize less, and every year they get more themselves.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/sun/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Part of you wants the spotlight and part of you remembers what happened last time you took it. The tug makes you flinch at your own boldness. Take the space anyway; the room adjusts faster than the shame admits.",
+      "body_they": "Part of them wants the spotlight and part of them remembers what happened last time they took it. The tug makes them flinch at their own boldness. When they take the space anyway, the room adjusts faster than the shame admits.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/sun/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your untamed side and your identity cooperate, so being fully yourself costs you less than it costs most people. Others read that ease as courage. Spend it on the moments where honesty needs a first mover.",
+      "body_they": "Their untamed side and their identity cooperate, so being fully themselves costs them less than it costs most people. Others read that ease as courage. It shows most in the moments where honesty needs a first mover.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/moon/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your needs got labeled too much somewhere early, so wanting comfort can feel like breaking a rule. The appetite is not the problem; the labeling was. Feed the need directly and it stops running the show from underneath.",
+      "body_they": "Their needs got labeled too much somewhere early, so wanting comfort can feel like breaking a rule to them. The appetite is not the problem; the labeling was. Needs they feed directly stop running the show from underneath.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/moon/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Suppressed needs always surface ugly. When you finally express a need, it comes out sideways, sharp, or way past the deadline because it sat too long in storage. Speaking up sooner, in low-stakes moments, is the whole fix. The people worth keeping wanted to know sooner, not after the fallout.",
+      "body_they": "Suppressed needs always surface ugly. When they finally express a need, it comes out sideways, sharp, or way past the deadline because it sat too long in storage. Speaking up sooner, in low-stakes moments, is the whole fix. The people worth keeping wanted to know sooner, not after the fallout.",
+      "review_status": "approved",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately.",
+      "approved_via": "owner rewrite, chat 2026-07-22"
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/moon/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You are at ease with the feelings other people are ashamed of, which makes you a safe place for the unsayable. Nothing human scares you off. That acceptance heals people, starting with you.",
+      "body_they": "They are at ease with the feelings other people are ashamed of, which makes them a safe place for the unsayable. Nothing human scares them off. That acceptance heals people, starting with them.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mercury/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your real opinions got you in trouble young, so you learned to run them through a filter. The filtered version keeps the peace and starves the truth. The unfiltered sentence, said calmly, is your growth edge.",
+      "body_they": "Their real opinions got them in trouble young, so they learned to run everything through a filter. The filtered version keeps the peace and starves the truth. The unfiltered sentence, said calmly, is their growth edge.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mercury/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You bite back the sharp true thing until it escapes at the wrong volume. The censor and the outburst are the same wound wearing two coats. Practice the medium setting: honest, early, and unapologetic.",
+      "body_they": "They bite back the sharp true thing until it escapes at the wrong volume. The censor and the outburst are the same wound wearing two coats. The medium setting, honest and early and unapologetic, is the skill they are building.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mercury/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You say the thing everyone is thinking and nobody will start, and you do it without cruelty. That tongue makes you valuable in every room that runs on politeness. Keep it; rooms need one of you.",
+      "body_they": "They say the thing everyone is thinking and nobody will start, and they do it without cruelty. That tongue makes them valuable in every room that runs on politeness. Rooms need one of them.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/venus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your desires got judged somewhere back there, so wanting what you want still carries a charge. Attraction and shame arrived holding hands. They can be separated, and it starts with admitting the want plainly to yourself.",
+      "body_they": "Their desires got judged somewhere back there, so wanting what they want still carries a charge. Attraction and shame arrived holding hands. They can be separated, and it starts with admitting the want plainly.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/venus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You want intensely and doubt whether you are allowed to, which can turn love into a push-pull you run by yourself. Nobody is issuing permits. Choosing openly is the version where you finally relax.",
+      "body_they": "They want intensely and doubt whether they are allowed to, which can turn love into a push-pull they run by themselves. Nobody is issuing permits. Choosing openly is the version where they finally relax.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/venus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You love outside the standard menu and stopped apologizing for it earlier than most. That honesty gives your relationships unusual air. People near you get braver about their own wants.",
+      "body_they": "They love outside the standard menu and stopped apologizing for it earlier than most. That honesty gives their relationships unusual air. People near them get braver about their own wants.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your anger got banned early, so it went underground and built muscle. When it surfaces now it can scare you more than anyone else. It is not a monster; it is a boundary that never got to speak. Let it talk in sentences before it has to shout.",
+      "body_they": "Their anger got banned early, so it went underground and built muscle. When it surfaces now it can scare them more than anyone else. It is not a monster; it is a boundary that never got to speak, and it talks in sentences when given the chance.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You swing between swallowing anger and erupting, because the middle was never modeled for you. The eruption is not the real you; neither is the silence. Clean anger, aimed and brief, is; it just needs reps.",
+      "body_they": "They swing between swallowing anger and erupting, because the middle was never modeled for them. The eruption is not the real them; neither is the silence. Clean anger, aimed and brief, is; it just needs reps.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your aggression and your instincts work together, so you defend yourself without disowning it afterward. People sense you have teeth and calm both. That is what boundaries look like when they are healthy.",
+      "body_they": "Their aggression and their instincts work together, so they defend themselves without disowning it afterward. People sense they have teeth and calm both. That is what boundaries look like when they are healthy.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/jupiter/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your beliefs run against the grain you were raised on, and hiding that split you in half for a while. The conviction is the real part. Living by it openly is the growth that settles everything else.",
+      "body_they": "Their beliefs run against the grain they were raised on, and hiding that split them in half for a while. The conviction is the real part. Living by it openly is the growth that settles everything else.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/jupiter/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You inflate and deflate around your own convictions, preaching what you doubt or doubting what you know. The audience is not the problem; the permission is. Believe out loud in small rooms first.",
+      "body_they": "They inflate and deflate around their own convictions, preaching what they doubt or doubting what they know. The audience is not the problem; the permission is. Believing out loud in small rooms first is how it grows.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/jupiter/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your appetite for life is bigger than the approved portion, and you stopped shrinking it. That refusal reads as vitality. People around you eat better, laugh harder, and ask for more, because you showed them asking works.",
+      "body_they": "Their appetite for life is bigger than the approved portion, and they stopped shrinking it. That refusal reads as vitality. People around them eat better, laugh harder, and ask for more, because they showed everyone asking works.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/saturn/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The rules and your wildness grew up in the same house, fighting. You either over-obey or torch the rulebook, and both are reactions, not choices. Making your own structure, one that includes the wild part, ends the war.",
+      "body_they": "The rules and their wildness grew up in the same house, fighting. They either over-obey or torch the rulebook, and both are reactions, not choices. Making their own structure, one that includes the wild part, ends the war.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/saturn/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Authority pressed on the part of you that refuses to be pressed, and the standoff got installed as a reflex. Not every structure is the old one. Test each new rule on its merits and keep your no ready but holstered.",
+      "body_they": "Authority pressed on the part of them that refuses to be pressed, and the standoff got installed as a reflex. Not every structure is the old one. They do best testing each new rule on its merits, no ready but holstered.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/saturn/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You discipline the untamed part without killing it, which is the whole trick. Your rebellions have structure and your structures have life in them. People trust you with both order and honesty.",
+      "body_they": "They discipline the untamed part without killing it, which is the whole trick. Their rebellions have structure and their structures have life in them. People trust them with both order and honesty.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/uranus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You are the exception to most rules and you know it, and the shame others expected never quite took. Your existence gives people permission. Just remember that even the free need somewhere to land.",
+      "body_they": "They are the exception to most rules and they know it, and the shame others expected never quite took. Their existence gives people permission. Even the free need somewhere to land, and that is their one watch-out.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/uranus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your strangeness and your shame take turns driving, so you alternate between too visible and vanished. Neither extreme is the resting state. Shown evenly, your difference stops being a spike and becomes a signature.",
+      "body_they": "Their strangeness and their shame take turns driving, so they alternate between too visible and vanished. Neither extreme is the resting state. Shown evenly, their difference stops being a spike and becomes a signature.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/uranus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your oddness runs clean, no shame attached, and people find it magnetic. You make weird look like a reasonable life choice. Keep going first; it is a public service.",
+      "body_they": "Their oddness runs clean, no shame attached, and people find it magnetic. They make weird look like a reasonable life choice. Going first is their public service.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/neptune/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What you refuse to tame dissolves into dream and drift, so your wildness leaks out as fantasy more than action. The imagination is the pressure valve. Give the banned part one real outlet and the fog thins on its own.",
+      "body_they": "What they refuse to tame dissolves into dream and drift, so their wildness leaks out as fantasy more than action. The imagination is the pressure valve. One real outlet for the banned part, and the fog thins on its own.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/neptune/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You escape your own refusals, numbing what you are not ready to admit wanting. The want survives the numbing; it just gets postponed. Admitting it, sober and specific, is the door.",
+      "body_they": "They escape their own refusals, numbing what they are not ready to admit wanting. The want survives the numbing; it just gets postponed. Admitting it, sober and specific, is the door.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/neptune/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Your shadow and your compassion are on speaking terms, so you accept in others what they cannot accept in themselves. That makes you medicine for ashamed people. It costs you little because you did the work.",
+      "body_they": "Their shadow and their compassion are on speaking terms, so they accept in others what those people cannot accept in themselves. That makes them medicine for ashamed people. It costs them little because they did the work.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/pluto/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The banned part of you and the powerful part of you are the same part. Every attempt to bury it made it stronger, and every honest use of it made you calmer. Power without apology, aimed at something worthy: that is the assignment.",
+      "body_they": "The banned part of them and the powerful part of them are the same part. Every attempt to bury it made it stronger, and every honest use of it made them calmer. Power without apology, aimed at something worthy: that is their assignment.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/pluto/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Shame and power wrestle underground in you, and the pressure occasionally vents at the wrong target. The target is rarely the point; the backlog is. Regular honesty, the uncomfortable kind, keeps the pressure at working levels.",
+      "body_they": "Shame and power wrestle underground in them, and the pressure occasionally vents at the wrong target. The target is rarely the point; the backlog is. Regular honesty, the uncomfortable kind, keeps their pressure at working levels.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
+    },
+    {
+      "contentKey": "fallback-hook/aspect-pair/lilith/pluto/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You draw power from the exact places you were told to hide, and it shows in how little grip others' opinions have on you. Blackmail-proof is a real kind of freedom. Use it to say what others cannot afford to.",
+      "body_they": "They draw power from the exact places they were told to hide, and it shows in how little grip others' opinions have on them. Blackmail-proof is a real kind of freedom. They can say what others cannot afford to.",
+      "review_status": "needs_review",
+      "notes": "Natal aspect per-pair section (Chiron/Lilith extension, chat 2026-07-22). Renders before the aspect frame's closing line. Dual-voice authored separately."
     }
   ]
 }
