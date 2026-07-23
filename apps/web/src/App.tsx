@@ -5708,7 +5708,9 @@ function skyPlacementWritingSection(
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
-  const rendered = position.motion === "retrograde"
+  const hasRetrogradeArticle = position.motion === "retrograde"
+    && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
+  const rendered = hasRetrogradeArticle
     ? transitSynastryFallbackRendererV3.renderTransitRetro({
         planet,
         sign,
@@ -5716,7 +5718,7 @@ function skyPlacementWritingSection(
         format: "article"
       })
     : transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
-  const renderedParagraphs = position.motion === "retrograde"
+  const renderedParagraphs = hasRetrogradeArticle
     ? [rendered.headline, ...(rendered.parts.length ? rendered.parts : [rendered.body])]
     : (rendered.parts.length ? rendered.parts : [rendered.body]);
   const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
