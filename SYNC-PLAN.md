@@ -1,7 +1,7 @@
 # Manual Chart Sync Plan
 
 - [x] Add syncStatus ("synced" | "pending" | "failed" | "conflict") + created_at / updated_at / last_synced_at to the manual chart type and local storage shape.
-- [ ] Chart save path: write local first, then Supabase immediately when a session exists; on remote failure mark local record pending, never throw, never drop.
+- [x] Chart save path: write local first, then Supabase immediately when a session exists; on remote failure mark local record pending, never throw, never drop.
   - Location: `apps/web/src/services/manualCharts.ts`
 - [ ] Chart load path: render local cache immediately, merge Supabase rows in the background; delete a local row only after a confirmed remote save or confirmed duplicate.
   - Location: `apps/web/src/services/manualCharts.ts`

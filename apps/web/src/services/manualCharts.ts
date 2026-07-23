@@ -274,6 +274,18 @@ function writeLocalManualCharts(userId: string, charts: ManualChart[]) {
   }
 }
 
+function writeLocalManualChart(userId: string, chart: ManualChart) {
+  const charts = [
+    ...readLocalManualCharts(userId).filter((candidate) => (
+      candidate.id !== chart.id && chartIdentity(candidate) !== chartIdentity(chart)
+    )),
+    chart
+  ].sort((first, second) => first.displayName.localeCompare(second.displayName));
+
+  writeLocalManualCharts(userId, charts);
+  return chart;
+}
+
 function clearLocalManualCharts(userId: string) {
   try {
     window.localStorage.removeItem(localManualChartsKey(userId));
@@ -362,29 +374,35 @@ function updateLocalManualChart(userId: string, chartId: string, input: ManualCh
     relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
   };
   const updatedIdentity = chartIdentityFromInput(normalizedInput);
-  const nextCharts = charts.map((chart) => (
-    chart.id === chartId
-      ? { ...chart, ...normalizedInput, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: targetOwnerId, updatedAt }
-      : chart
-  )).filter((chart) => (
-    chart.id === chartId || (
-      (!existingIdentity || chartIdentity(chart) !== existingIdentity) &&
-      chartIdentity(chart) !== updatedIdentity
-    )
-  )).sort((first, second) => first.displayName.localeCompare(second.displayName));
-  const nextChart = nextCharts.find((chart) => chart.id === chartId);
+  const updatedChart: ManualChart = {
+    ...existingChart,
+    ...normalizedInput,
+    pronouns: normalizePronounChoice(input.pronouns),
+    id: chartId,
+    ownerUserId: targetOwnerId,
+    createdAt: existingChart?.createdAt ?? updatedAt,
+    updatedAt,
+    syncStatus: "pending",
+    syncError: null,
+    lastSyncedAt: existingChart?.lastSyncedAt ?? null
+  };
+  const nextCharts = [
+    ...charts.filter((chart) => (
+      chart.id !== chartId && (
+        (!existingIdentity || chartIdentity(chart) !== existingIdentity) &&
+        chartIdentity(chart) !== updatedIdentity
+      )
+    )),
+    updatedChart
+  ].sort((first, second) => first.displayName.localeCompare(second.displayName));
 
   writeLocalManualCharts(targetOwnerId, nextCharts);
-  if (!nextChart) {
-    throw new Error("Manual chart not found.");
-  }
-
   removeLocalManualChartsByIdentity(
     ownerIds.filter((ownerId) => ownerId !== targetOwnerId),
     new Set([...(existingIdentity ? [existingIdentity] : []), updatedIdentity])
   );
 
-  return nextChart;
+  return updatedChart;
 }
 
 function deleteLocalManualChart(userId: string, chartId: string) {
@@ -438,6 +456,43 @@ function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart)
   const ownerIds = localManualChartOwnerIds(userId);
 
   removeLocalManualChartsByIdentity(ownerIds, new Set([deletedIdentity]));
+}
+
+function syncErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+
+  return "Remote chart save failed.";
+}
+
+function markLocalManualChartPending(userId: string, chart: ManualChart, error: unknown) {
+  const foundChart = findLocalManualChart(userId, chart.id);
+  const ownerId = foundChart?.ownerId ?? userId;
+
+  return writeLocalManualChart(ownerId, {
+    ...(foundChart?.chart ?? chart),
+    syncStatus: "pending",
+    syncError: syncErrorMessage(error)
+  });
+}
+
+function cacheConfirmedManualChart(userId: string, localChart: ManualChart, remoteChart: ManualChart) {
+  removeLocalManualChartsByIdentity(
+    localManualChartOwnerIds(userId),
+    new Set([chartIdentity(localChart), chartIdentity(remoteChart)])
+  );
+
+  return writeLocalManualChart(userId, {
+    ...remoteChart,
+    syncStatus: "synced",
+    syncError: null,
+    lastSyncedAt: remoteChart.lastSyncedAt ?? new Date().toISOString()
+  });
 }
 
 async function hasRemoteUser(userId: string) {
@@ -532,17 +587,19 @@ export async function listManualCharts(userId: string): Promise<ManualChart[]> {
 }
 
 export async function createManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
-  if (!(await hasRemoteUser(userId))) {
-    return createLocalManualChart(userId, input);
+  const localChart = createLocalManualChart(userId, input);
+
+  try {
+    if (!(await hasRemoteUser(userId))) {
+      return localChart;
+    }
+
+    const remoteChart = await insertRemoteManualChart(userId, input);
+
+    return cacheConfirmedManualChart(userId, localChart, remoteChart);
+  } catch (error) {
+    return markLocalManualChartPending(userId, localChart, error);
   }
-
-  const client = await getSupabaseClient();
-
-  if (!client) {
-    return createLocalManualChart(userId, input);
-  }
-
-  return insertRemoteManualChart(userId, input);
 }
 
 export async function migrateLocalManualChartsToRemote(userId: string, localUserIds: Array<string | null | undefined>) {
@@ -581,15 +638,11 @@ export async function migrateLocalManualChartsToRemote(userId: string, localUser
   return { imported, skipped };
 }
 
-export async function updateManualChart(userId: string, chartId: string, input: ManualChartInput): Promise<ManualChart> {
-  if (!(await hasRemoteUser(userId))) {
-    return updateLocalManualChart(userId, chartId, input);
-  }
-
+async function updateRemoteManualChart(userId: string, chartId: string, input: ManualChartInput): Promise<ManualChart> {
   const client = await getSupabaseClient();
 
   if (!client) {
-    return updateLocalManualChart(userId, chartId, input);
+    throw new Error("Supabase auth is not configured.");
   }
   const remoteClient = client;
   const { data: existingChartData, error: existingLookupError } = await client
@@ -601,6 +654,10 @@ export async function updateManualChart(userId: string, chartId: string, input: 
 
   if (existingLookupError) {
     throw existingLookupError;
+  }
+
+  if (!existingChartData) {
+    return insertRemoteManualChart(userId, input);
   }
 
   const existingChart = existingChartData ? rowToManualChart(existingChartData as ManualChartRow) : null;
@@ -681,6 +738,22 @@ export async function updateManualChart(userId: string, chartId: string, input: 
   }
 
   return updatedChart;
+}
+
+export async function updateManualChart(userId: string, chartId: string, input: ManualChartInput): Promise<ManualChart> {
+  const localChart = updateLocalManualChart(userId, chartId, input);
+
+  try {
+    if (!(await hasRemoteUser(userId))) {
+      return localChart;
+    }
+
+    const remoteChart = await updateRemoteManualChart(userId, chartId, input);
+
+    return cacheConfirmedManualChart(userId, localChart, remoteChart);
+  } catch (error) {
+    return markLocalManualChartPending(userId, localChart, error);
+  }
 }
 
 export async function deleteManualChart(userId: string, chartId: string): Promise<void> {
