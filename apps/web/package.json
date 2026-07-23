@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "node ../../scripts/test-calendar-package-boundary.mjs",
+    "prebuild": "node ../../scripts/test-reader-facing-content-contract.mjs && node ../../scripts/test-calendar-package-boundary.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"
