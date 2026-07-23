@@ -1131,27 +1131,6 @@ function contentFallbackPreview(content: ContentFallback | null | undefined) {
     || null;
 }
 
-function synastryEmergencyMadlibPreview(
-  friendName: string,
-  comparisonName: string,
-  comparisonIsSelf: boolean,
-  contact: Omit<SynastryContact, "summary">,
-  generatedContent?: GeneratedContentMap,
-  friendPronouns?: PronounChoice | null,
-  comparisonPronouns?: PronounChoice | null,
-  relationshipType?: string | null
-) {
-  void friendName;
-  void comparisonName;
-  void comparisonIsSelf;
-  void contact;
-  void generatedContent;
-  void friendPronouns;
-  void comparisonPronouns;
-  void relationshipType;
-  return null;
-}
-
 function repairSynastrySurfaceCopy(
   text: string,
   friendName: string,
