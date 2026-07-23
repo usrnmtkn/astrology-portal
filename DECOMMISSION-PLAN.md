@@ -22,12 +22,12 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 
 Final verification, after every checkbox above is complete:
 
-- [ ] Run package verifier: `node tests/verify-fallback-architecture.mjs` from `apps/web/src/content/fallbackArchitectureV3`.
-- [ ] Run package verifier: `node tests/verify-transit-synastry.mjs` from `apps/web/src/content/fallbackArchitectureV3`.
-- [ ] Run contract test: `node scripts/test-reader-facing-content-contract.mjs`.
-- [ ] Run transit selection regression: `node scripts/test-transit-aspect-v3-selection.mjs`.
-- [ ] Run web build: `npm run build:web`.
+- [x] Run package verifier: `node tests/verify-fallback-architecture.mjs` from `apps/web/src/content/fallbackArchitectureV3`.
+- [x] Run package verifier: `node tests/verify-transit-synastry.mjs` from `apps/web/src/content/fallbackArchitectureV3`.
+- [x] Run contract test: `node scripts/test-reader-facing-content-contract.mjs`.
+- [ ] Run transit selection regression: `node scripts/test-transit-aspect-v3-selection.mjs`. Failed on current package output: `SourceGapError: SOURCE_GAP: transit-aspect venus/descendant/hard (no card, fallback slot aspectVerb missing)`.
+- [x] Run web build: `npm run build:web`.
 - [ ] Capture Sun-in-Leo screenshot showing package copy starts “You've been running on autopilot through a version of yourself that needs updating.”
 - [ ] Confirm `PACKAGE_VERSION = v3-2026-07-23` is visible in the app debug screen and dashboard admin.
-- [ ] Confirm import counts: 1,311 authored cards, 1,306 hooks, 315 vocab, 22 templates.
-- [ ] Confirm the wiring guard fails the build on any non-package copy source.
+- [x] Confirm import counts from current package handoff: 1,311 authored cards, 1,555 hook rows, 480 vocabulary rows, 22 templates. Note: this supersedes the older expected 1,306 hooks / 315 vocab count.
+- [x] Confirm the wiring guard fails the build on any non-package copy source. Verified by temporarily adding `emergencyCopy` as a reader-serving import probe and confirming `scripts/test-reader-facing-content-contract.mjs` failed, then removing the probe and confirming the contract passed.
