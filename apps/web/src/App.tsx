@@ -1206,27 +1206,6 @@ function registrySynastrySection(contact: Omit<SynastryContact, "summary">): Nor
   };
 }
 
-function madlibSynastrySection(
-  friendName: string,
-  comparisonName: string,
-  comparisonIsSelf: boolean,
-  contact: Omit<SynastryContact, "summary">,
-  generatedContent?: GeneratedContentMap,
-  friendPronouns?: PronounChoice | null,
-  comparisonPronouns?: PronounChoice | null,
-  relationshipType?: string | null
-): NormalizedSurfaceSection<SynastryContactSlot> | null {
-  void friendName;
-  void comparisonName;
-  void comparisonIsSelf;
-  void contact;
-  void generatedContent;
-  void friendPronouns;
-  void comparisonPronouns;
-  void relationshipType;
-  return null;
-}
-
 function normalizeSynastryContactSurface(
   friendName: string,
   comparisonName: string,
@@ -1238,18 +1217,11 @@ function normalizeSynastryContactSurface(
   romanticAllowed = false,
   relationshipType?: string | null
 ): NormalizedSynastryContactArticle {
+  void generatedContent;
+  void friendPronouns;
+  void comparisonPronouns;
   const section = authoredSynastrySection(contact)
-    ?? registrySynastrySection(contact)
-    ?? madlibSynastrySection(
-      friendName,
-      comparisonName,
-      comparisonIsSelf,
-      contact,
-      generatedContent,
-      friendPronouns,
-      comparisonPronouns,
-      relationshipType
-    );
+    ?? registrySynastrySection(contact);
   const repairedSection = section
     ? {
       ...section,
