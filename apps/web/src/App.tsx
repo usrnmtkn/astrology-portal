@@ -3640,7 +3640,8 @@ function manualChartNeedsNatalRepair(chart: ManualChart) {
     return false;
   }
 
-  return isTldrAstroApiConfigured || !chart.natalChart || !chart.birthLocation.timeZone;
+  // Complete charts should not trigger background timezone/natal API repair on page load.
+  return !chart.natalChart || !chart.birthLocation.timeZone;
 }
 
 const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);

@@ -26,3 +26,12 @@ apps/web/src/content/templateHandoffV2/references/
 
 # Local raw source extraction scratchpads
 tldr-astro-phrasebank/_raw-lofthus-delineations.txt
+
+# Local filesystem/provider scratch files
+.fuse_hidden*
+**/.fuse_hidden*
+
+# Local package handoff archives
+tldrastro-fallback-*.zip
+tldrastro-fallback-source-package-*.zip
+tldrastro-fallback-architecture-v3-*.zip
