@@ -20,6 +20,7 @@ function read(relativePath) {
 const app = read("apps/web/src/App.tsx");
 const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
+const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
@@ -31,11 +32,34 @@ const mercuryCancerRetrograde = renderer.renderTransitRetro({
   window: "Jun 29 - Jul 23",
   format: "article"
 });
+const ascendantSaturnSquare = renderer.renderSynastryAspect({
+  planetA: "ascendant",
+  planetB: "saturn",
+  aspect: "square",
+  otherName: "X"
+});
+const anglePlacementRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/placement-sentence\/(?:ascendant|midheaven)\//u.test(row.contentKey)
+);
+const dignityGlossaryRows = fallbackSourceRows.vocabularyRows.filter((row) =>
+  row.contentKey.startsWith("fallback-vocab/dignity-glossary/")
+);
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-23b", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-23c", "FallbackArchitectureV3 package version must expose the current imported stamp.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
 assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
+assert.equal(anglePlacementRows.length, 24, "23c must provide all Ascendant and Midheaven placement sentences.");
+assert.equal(dignityGlossaryRows.length, 4, "23c must provide one generic glossary row for every dignity badge.");
+assert.match(debugRuntime, /fallback-vocab\/dignity-glossary/, "Runtime must expose package dignity glossary rows.");
+assert.match(placementRows, /fallbackV3DignityGlossary/, "Dignity badges must always read their generic package glossary.");
+assert.match(placementRows, /fallbackV3DignityLine/, "Dignity badges must layer the sparse planet-specific package line when present.");
+assert.match(placementRows, /friendPlacementDescription[\s\S]*fallbackV3PlacementSentence/u, "Friend chart placement rows must read package placement sentences, including covered angles.");
+assert.match(
+  ascendantSaturnSquare.body,
+  /^X's Saturn sits at a hard angle to your Ascendant, and it can feel like being graded on arrival\./u,
+  "23c must return the owner-approved Ascendant-Saturn authored pair body."
+);
 
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing")), false, "Retired sky-writing source folder must not exist.");
