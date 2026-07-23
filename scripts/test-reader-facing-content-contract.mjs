@@ -110,7 +110,8 @@ assert.doesNotMatch(app, /friendTransitEmergencySummary/, "Friends transit summa
 assert.doesNotMatch(app, /sourceGroundedPersonalTransitForItem/, "Friends transit summaries must not use legacy source-grounded transit prose.");
 assert.match(app, /function normalizePersonalTransitSurface/, "Transit-to-natal rendering must resolve through the personal transit surface normalizer.");
 assert.match(app, /normalizedSurfacePreview\(normalizePersonalTransitSurface\(transit, generatedAt\)\)/, "Friend transit summaries must render through the v3 personal transit surface normalizer.");
-assert.match(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must fall back to the source-based madlib section.");
+assert.doesNotMatch(app, /personalTransitMadlibFallbackSection/, "Transit-to-natal rendering must not use the retired source-based madlib section.");
+assert.match(app, /personalTransitPackageSection/, "Transit-to-natal rendering must stay on the V3 package section path.");
 assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
 const fallbackHookKeys = new Set((fallbackSourceRowsV3.hookRows ?? []).map((row) => row.contentKey));
 assert.ok(fallbackHookKeys.has("fallback-hook/transit-aspect-type/square"), "V3 fallback package must include transit aspect hooks.");
