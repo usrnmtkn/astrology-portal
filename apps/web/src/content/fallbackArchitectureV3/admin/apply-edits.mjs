@@ -13,12 +13,16 @@ for (const e of edits) {
   const hook = rows.hookRows.find(r => r.contentKey === e.contentKey);
   const voc = rows.vocabularyRows.find(r => r.contentKey === e.contentKey);
   const card = lib.authoredCards.find(c => c.contentKey === e.contentKey);
+  const NAMED = new Set(["title", "question", "headline", "keywords", "mantra", "intention", "ritual", "axis", "completion", "focus", "strategy"]);
   if (hook) {
-    const single = hook.body_you === hook.body_they;
-    if (e.field === "they") hook.body_they = clean; else { hook.body_you = clean; if (single) hook.body_they = clean; }
+    if (NAMED.has(e.field)) hook[e.field] = clean;
+    else {
+      const single = hook.body_you === hook.body_they;
+      if (e.field === "they") hook.body_they = clean; else { hook.body_you = clean; if (single) hook.body_they = clean; }
+    }
     hook.review_status = "approved"; hook.approved_via = "owner edit via content book";
   } else if (voc) { voc.body = clean; voc.review_status = "approved"; voc.approved_via = "owner edit via content book"; }
-  else if (card) { card.body = clean; card.review_status = "approved_reuse"; }
+  else if (card) { if (NAMED.has(e.field)) card[e.field] = clean; else card.body = clean; card.review_status = "approved_reuse"; }
   else { miss.push(e.contentKey); continue; }
   n++;
 }

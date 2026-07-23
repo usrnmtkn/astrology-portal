@@ -9,7 +9,6 @@ import {
   runImporter
 } from "./prepare-tldr-astro-store-import.mjs";
 import { runAuthoredFallbackRowsTests } from "./test-authored-fallback-rows.mjs";
-import { runFallbackWiringAndPhraseBookTests } from "./test-fallback-wiring-and-phrasebook.mjs";
 
 function record(overrides) {
   return {
@@ -230,6 +229,5 @@ testExistingRowProtection();
 testServingGuard();
 testArtifactGeneration();
 runAuthoredFallbackRowsTests();
-runFallbackWiringAndPhraseBookTests();
 
 console.log("tldr store import tests passed");

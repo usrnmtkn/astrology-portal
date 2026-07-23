@@ -6,40 +6,6 @@ type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
-type EmergencyVocab = {
-  angleFunction?: Record<string, string>;
-  aspectBehavior?: Record<string, string>;
-  houseArea?: Record<string, string>;
-  planetFunction?: Record<string, string>;
-  signTone?: Record<string, string>;
-};
-
-let cachedEmergencyVocab: EmergencyVocab | null = null;
-
-function loadEmergencyVocab() {
-  if (cachedEmergencyVocab) {
-    return cachedEmergencyVocab;
-  }
-
-  const candidates = [
-    path.join(process.cwd(), "apps/web/src/content/emergencyCopy.json"),
-    path.join(process.cwd(), "../apps/web/src/content/emergencyCopy.json"),
-    path.join(process.cwd(), "../../apps/web/src/content/emergencyCopy.json")
-  ];
-
-  for (const candidate of candidates) {
-    try {
-      cachedEmergencyVocab = JSON.parse(fs.readFileSync(candidate, "utf8")) as EmergencyVocab;
-      return cachedEmergencyVocab;
-    } catch {
-      // Try the next deployment/local path.
-    }
-  }
-
-  cachedEmergencyVocab = {};
-  return cachedEmergencyVocab;
-}
-
 export type GenerateContentInput = {
   contentKey: string;
   surface: Surface;
@@ -3263,13 +3229,69 @@ function lowerAspectDisplayLabel(value?: string) {
   return label ? label.toLowerCase() : "aspect";
 }
 
+const deterministicPlanetFunctionByKey: Record<string, string> = {
+  ascendant: "how the chart meets the world",
+  descendant: "how the chart meets other people",
+  midheaven: "public direction and visibility",
+  sun: "identity, vitality, and creative direction",
+  moon: "emotional safety, instinct, and recovery",
+  mercury: "thinking, language, and communication",
+  venus: "connection, pleasure, value, and attraction",
+  mars: "drive, assertion, anger, and action",
+  jupiter: "growth, belief, opportunity, and meaning",
+  saturn: "structure, pressure, time, and responsibility",
+  uranus: "disruption, freedom, originality, and change",
+  neptune: "imagination, longing, sensitivity, and projection",
+  pluto: "power, control, depth, and transformation",
+  chiron: "pain, repair, skill, and vulnerability",
+  "north-node": "the unfamiliar direction life keeps asking for",
+  "south-node": "the familiar pattern life asks the chart to loosen"
+};
+
+const deterministicSignToneByKey: Record<string, string> = {
+  aries: "direct, fast, and self-starting",
+  taurus: "steady, embodied, and resistant to being rushed",
+  gemini: "curious, verbal, and changeable",
+  cancer: "protective, emotional, and memory-led",
+  leo: "expressive, proud, and creatively visible",
+  virgo: "precise, practical, and improvement-oriented",
+  libra: "relational, aesthetic, and responsive to imbalance",
+  scorpio: "private, intense, and drawn toward what is hidden",
+  sagittarius: "restless, searching, and oriented toward meaning",
+  capricorn: "structured, durable, and consequence-aware",
+  aquarius: "observant, future-facing, and unwilling to simply conform",
+  pisces: "porous, imaginative, and emotionally permeable"
+};
+
+const deterministicHouseAreaByKey: Record<string, string> = {
+  "1": "identity, appearance, vitality, and first responses",
+  "2": "money, resources, appetite, self-worth, and what feels stable",
+  "3": "communication, learning, siblings, errands, and the local world",
+  "4": "home, family, memory, privacy, and emotional foundations",
+  "5": "pleasure, creativity, romance, play, and being witnessed",
+  "6": "work, health, routines, maintenance, and daily responsibility",
+  "7": "partnership, projection, conflict, and one-to-one dynamics",
+  "8": "intimacy, shared resources, debt, grief, and power",
+  "9": "travel, study, belief, publishing, and larger perspective",
+  "10": "career, visibility, reputation, and public responsibility",
+  "11": "friends, groups, community, networks, and long-range hopes",
+  "12": "rest, isolation, endings, hidden material, and spiritual repair"
+};
+
+const deterministicAspectBehaviorByKey: Record<string, string> = {
+  conjunction: "fuses the two functions so one quickly activates the other",
+  sextile: "creates an opening between the two functions when there is a reason to use it",
+  square: "creates friction because the two functions solve pressure in different ways",
+  trine: "lets the two functions cooperate with little resistance",
+  opposition: "pulls the chart between two positions that often have to be met through relationship",
+  quincunx: "creates a mismatch that needs adjustment because the two functions use different methods",
+  semisextile: "places the two functions close together without making the connection automatic"
+};
+
 function deterministicPlanetFunction(planet: string) {
   const key = comparableKey(planet);
-  const vocab = loadEmergencyVocab();
 
-  return vocab.planetFunction?.[key]
-    ?? vocab.angleFunction?.[key]
-    ?? "attention, choice, and response";
+  return deterministicPlanetFunctionByKey[key] ?? "attention, choice, and response";
 }
 
 function planetSubjectName(planet: string) {
@@ -3281,9 +3303,8 @@ function planetSubjectName(planet: string) {
 
 function deterministicSignExpression(sign: string) {
   const key = comparableKey(sign);
-  const vocab = loadEmergencyVocab();
 
-  return vocab.signTone?.[key] ?? "a clear, present-tense";
+  return deterministicSignToneByKey[key] ?? "a clear, present-tense";
 }
 
 function deterministicPlanetSentence(planet: string, sign: string) {
@@ -3326,9 +3347,7 @@ function deterministicPlanetSentence(planet: string, sign: string) {
 
 function deterministicHouseTopics(house: string) {
   const key = ordinalHouseKey(house);
-  const vocab = loadEmergencyVocab();
 
-  return vocab.houseArea?.[key] ?? "the part of life named by this house";
 }
 
 function deterministicShortPlanetAction(planet: string) {
@@ -3345,7 +3364,7 @@ function deterministicShortHouseTopics(house: string) {
 
 function deterministicAspectEffect(value?: string) {
   const aspect = canonicalAspectKey(value);
-  const behavior = loadEmergencyVocab().aspectBehavior?.[aspect];
+  const behavior = deterministicAspectBehaviorByKey[aspect];
 
   if (behavior) return behavior;
 
@@ -3354,7 +3373,7 @@ function deterministicAspectEffect(value?: string) {
 
 function deterministicAspectPattern(value?: string) {
   const aspect = canonicalAspectKey(value);
-  const behavior = loadEmergencyVocab().aspectBehavior?.[aspect];
+  const behavior = deterministicAspectBehaviorByKey[aspect];
 
   if (behavior) return `${behavior.charAt(0).toUpperCase()}${behavior.slice(1)}.`;
 

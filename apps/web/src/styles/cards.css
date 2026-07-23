@@ -581,3 +581,63 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
+.daily-dodont > div,
+.daily-special-section,
+.daily-behind-forecast {
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, rgba(20, 24, 35, 0.12));
+  border-radius: 1.25rem;
+  padding: 1rem 1.15rem;
+}
+
+.daily-dodont {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1rem 0 1.5rem;
+}
+
+.daily-dodont ul {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.daily-special-section {
+  margin-bottom: 1.5rem;
+}
+
+.daily-behind-forecast {
+  margin-top: 1.5rem;
+}
+
+.daily-behind-forecast > div {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.daily-forecast-label {
+  align-items: start;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line, rgba(20, 24, 35, 0.12));
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0;
+  text-align: left;
+}
+
+.daily-forecast-label small {
+  color: var(--muted, #626875);
+}
+
+@media (max-width: 640px) {
+  .daily-dodont {
+    grid-template-columns: 1fr;
+  }
+}
