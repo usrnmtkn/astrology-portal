@@ -11017,21 +11017,6 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
   };
 }
 
-function compositeAspectFallbackSummary(aspect: { from: string; to: string; type: string; orb?: number | null }) {
-  const aspectType = normalizeAspectType(aspect.type);
-  const firstTopic = relationshipPlanetTopicSlot(aspect.from, "friend");
-  const secondTopic = relationshipPlanetTopicSlot(aspect.to, "friend");
-  const aspectSentence: Record<string, string> = {
-    conjunction: "These themes merge into one strong shared pattern, so the relationship tends to experience them as a single combined force.",
-    opposition: "These themes sit across from each other in the relationship, creating a polarity that can become clearer when both sides are named plainly.",
-    square: "These themes press against each other in the relationship, creating friction that can become useful when it is handled directly.",
-    trine: "These themes move easily together in the relationship, giving the bond a natural channel of support and recognition.",
-    sextile: "These themes cooperate in the relationship, giving the bond a practical opening for shared effort and mutual understanding."
-  };
-
-  return `The composite ${aspect.from} ${aspectType} ${aspect.to} changes how the relationship handles ${firstTopic} when ${secondTopic} enters the same moment. ${aspectSentence[aspectType] ?? "The contact describes a recurring relationship pattern that becomes clearer when both people can see what each planet is doing in the bond."}`;
-}
-
 function compositePlacementFallbackSummary(position: { planet: string; sign: string; house?: number | null }) {
   const planetTopic = relationshipPlanetTopicSlot(position.planet, "friend");
   const signStyle = signStyleSlot(position.sign);
@@ -11068,25 +11053,8 @@ function sourceGroundedCompositeSection({
 }
 
 function compositeAspectMadlibSection(aspect: { from: string; to: string; type: string; orb?: number | null }): NormalizedCompositeSection | null {
-  const body = compositeAspectFallbackSummary(aspect);
-
-  if (!isReaderFacingCopy(body)) {
-    return null;
-  }
-
-  return {
-    slot: "composite-meaning",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      `relationshipPlanetTopic.${normalizeContentIdPart(aspect.from)}`,
-      `relationshipAspect.${normalizeContentIdPart(aspect.type)}`,
-      `relationshipPlanetTopic.${normalizeContentIdPart(aspect.to)}`
-    ],
-    heading: `Composite ${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`,
-    body
-  };
+  void aspect;
+  return null;
 }
 
 function compositePlacementMadlibSection(position: { planet: string; sign: string; house?: number | null }): NormalizedCompositeSection | null {
