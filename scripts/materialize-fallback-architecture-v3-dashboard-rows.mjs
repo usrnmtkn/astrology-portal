@@ -6,7 +6,7 @@ import process from "node:process";
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architecture-v3-dashboard-rows.json");
-const importBatchId = "fallback-architecture-v3-2026-07-21";
+const importBatchId = "fallback-architecture-v3-2026-07-23";
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -105,6 +105,10 @@ function statusForReview(role, reviewStatus, contentKey) {
     return { status: "LIVE", lane: "serving", reviewState: null };
   }
 
+  if (reviewStatus === "needs_review") {
+    return { status: "DRAFT", lane: "reference", reviewState: "needs-review" };
+  }
+
   return { status: "DRAFT", lane: "reference", reviewState: "fallback-system-reference" };
 }
 
@@ -136,12 +140,12 @@ function eventTypeForKey(key, role) {
   if (role === "template") return "fallback-template";
   if (role === "vocabulary") return "vocab";
   if (role === "fallback_source") return "fallback-source";
+  if (key.startsWith("fallback-hook/")) return "fallback-hook";
   if (key.includes("/compat-")) return "friends.compatibility";
   if (key.includes("/transit-aspect/")) return "transit-to-natal-aspect";
   if (key.includes("/sky-newmoon/")) return "sky-newmoon";
   if (key.includes("/sky-fullmoon/")) return "sky-fullmoon";
   if (key.includes("/sky-season/")) return "planetary-ingress";
-  if (key.startsWith("fallback-hook/")) return "fallback-hook";
   return "fallback-architecture-v3";
 }
 
@@ -151,6 +155,12 @@ function rowBody(record) {
 
 function rowSummary(record) {
   return String(record.summary ?? record.intention ?? record.energy ?? record.note ?? record.notes ?? "").trim();
+}
+
+function blockTypeForPackageRecord(contentRole, contentKey) {
+  if (contentRole === "template") return "fallback_template";
+  if (contentRole === "fallback_hook" || contentKey.startsWith("fallback-hook/")) return "fallback_hook";
+  return null;
 }
 
 function mapPackageRecord(record, bucket) {
@@ -184,7 +194,7 @@ function mapPackageRecord(record, bucket) {
       ritual: record.ritual ?? null,
       energy: record.energy ?? null
     },
-    block_type: contentRole === "template" ? "fallback_template" : null,
+    block_type: blockTypeForPackageRecord(contentRole, contentKey),
     lane: serving.lane,
     review_state: serving.reviewState,
     evergreen: true,

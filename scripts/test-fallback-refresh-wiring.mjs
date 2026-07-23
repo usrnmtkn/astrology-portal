@@ -40,14 +40,24 @@ const packageRows = [
   ...sourceRows.vocabularyRows,
   ...templates.templates
 ];
+const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
+const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
+assert.equal(needsReviewCards.length, 0, "Owner-approved Mercury cards must be reader eligible.");
+assert.equal(needsReviewHooks.length, 0, "Owner-approved connection variants must be reader eligible.");
 assert.equal(
-  packageRows.filter((row) => (
-    row.review_status
-    && !["APPROVED", "APPROVED_REUSE", "REVIEWED", "LIVE"].includes(String(row.review_status).toUpperCase())
-  )).length,
+  packageRows.filter((row) => row.review_status === "needs_review").length,
   0,
-  "Owner-approved package must not contain gated rows."
+  "The owner-approved package must not retain review-gated rows."
 );
+
+const reversedMercuryCompat = transitRenderer.renderCompat({
+  planet: "mercury",
+  signA: "scorpio",
+  signB: "gemini",
+  otherName: "X"
+});
+assert.equal(reversedMercuryCompat.contentKey, "authored/compat-pair/mercury/scorpio/gemini");
+assert.equal(reversedMercuryCompat.templateKey, "authored/compat-pair");
 
 const friendTransit = transitRenderer.renderTransitAspect({
   transiting: "saturn",
@@ -122,7 +132,28 @@ const connectionTransit = transitRenderer.renderBondTransit({
 assert.match(connectionTransit.body, /^Until November 13, Saturn is square the line between your Venus and Sofia's Pluto\./u);
 assert.match(connectionTransit.body, /Reliability stops being a promise and starts being something you have to prove/u);
 
+const baseConnectionVariant = transitRenderer.renderBondTransit({
+  transiting: "mars",
+  aspect: "square",
+  planetA: "moon",
+  planetB: "venus",
+  otherName: "X"
+});
+const thirdConnectionVariant = transitRenderer.renderBondTransit({
+  transiting: "mars",
+  aspect: "square",
+  planetA: "moon",
+  planetB: "venus",
+  otherName: "X",
+  variant: 3
+});
+assert.notEqual(thirdConnectionVariant.body, baseConnectionVariant.body);
+
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const runtimeSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
+  "utf8"
+);
 
 assert.match(
   appSource,
@@ -148,6 +179,31 @@ assert.match(
   appSource,
   /Math\.min\(\.\.\.transit\.arc\) <= 1[\s\S]*?renderBondTransit\(\{/u,
   "Bond transits must use the <=1 degree endpoint gate before renderBondTransit."
+);
+assert.match(
+  appSource,
+  /renderTransitAspect\(\{[\s\S]*?variant: stableTransitCopyVariant\(/u,
+  "Transit aspects must receive a stable repeat-viewer variant."
+);
+assert.match(
+  appSource,
+  /renderTransitHouse\(\{[\s\S]*?variant: stableTransitCopyVariant\(/u,
+  "Friend transit houses must receive a stable repeat-viewer variant."
+);
+assert.match(
+  appSource,
+  /renderBondTransit\(\{[\s\S]*?variant: stableTransitCopyVariant\(/u,
+  "Connection transits must receive a stable repeat-viewer variant."
+);
+assert.match(
+  runtimeSource,
+  /authoredCards: bundle\.transitLib\.authoredCards\.filter\(isReaderEligible\)/u,
+  "Production must filter review-gated authored cards before creating the dist renderer."
+);
+assert.match(
+  runtimeSource,
+  /hookRows: \(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
+  "Production must filter review-gated hook variants before creating the dist renderer."
 );
 
 console.log("fallback refresh wiring checks passed", counts);

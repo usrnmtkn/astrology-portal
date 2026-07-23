@@ -330,7 +330,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
     const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
     const effectFamily = g === "soft" || g === "conjunction" && !isHeavy ? "soft" : "hard";
-    const effectRaw = (v === "you" && variant ? hooks.get(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`)?.body_you : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
+    const effectRaw = (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
     const ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
@@ -693,10 +693,10 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
     return { headline: `${title2(a)} ${title2(aspect)} ${title2(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
   }
-  function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, window: win }) {
+  function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }) {
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
-    const effect = hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+    const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null) ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     const natalG = natalAspect ? GROUP[natalAspect] ?? natalAspect : null;
     const bondQuality = natalG ? vocab.get(`fallback-vocab/bond-quality/${natalG}`)?.body : null;
@@ -714,7 +714,55 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} your ${title2(planetA)}-${title2(planetB)} line with ${otherName}`;
     return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit };
+  const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+  function renderLunationHoroscope({ kind, sign, risingSign, house }) {
+    const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
+    const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
+    const h = house ?? (SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12 + 1;
+    const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+    const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
+    const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
+    if (!frame || !jurisdiction || !higher) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+    const paras = [fill(frame, { houseOrdinal: ordinal2(h), jurisdiction })];
+    const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
+    if (signSection) paras.push(signSection);
+    const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
+    if (shows) paras.push(shows);
+    const moment = hooks.get(`fallback-hook/lunation-moment/${which}/${h}`)?.body_you;
+    if (moment) paras.push(moment);
+    if (!isEclipse) {
+      const release = hooks.get(`fallback-hook/lunation-release/${h}`)?.body_you;
+      if (release) paras.push(release);
+    }
+    paras.push(higher);
+    if (which === "new" && !isEclipse) {
+      const intent = hooks.get(`fallback-hook/lunation-intention/${h}`)?.body_you;
+      if (intent) paras.push(`Set your intention: "${intent}"`);
+    }
+    if (isEclipse) {
+      const note = hooks.get("fallback-hook/lunation-horoscope/eclipse-note")?.body_you;
+      if (note) paras.push(note);
+    }
+    const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
+    return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+  }
+  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
+    const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+    const dos = [
+      seed(`dodont-do/${planet}/${sign}`),
+      house ? seed(`dodont-house/${house}`) : null,
+      seed(`dodont-reward/${transiting}`)
+    ].filter((x) => Boolean(x));
+    const donts = [
+      seed(`dodont-shadow/${planet}/${sign}`),
+      seed(`dodont-friction/${transiting}`),
+      weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : null
+    ].filter((x) => Boolean(x));
+    if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
+    const uniq = (a) => [...new Set(a)];
+    return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
+  }
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont };
 }
 export {
   RoleViolationError,
