@@ -225,6 +225,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts),
       planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts),
       aspectTypeLine: getHook(`fallback-hook/aspect-type/${facts.aspect}`, voice, opts),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${facts.aspect}`, opts),
+      possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair,
     };
     const template = getTemplate("fallback-template/natal.aspect");

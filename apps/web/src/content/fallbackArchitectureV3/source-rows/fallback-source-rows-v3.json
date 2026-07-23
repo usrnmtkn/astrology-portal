@@ -3387,6 +3387,51 @@
       "review_status": "approved",
       "notes": "Black Moon Lilith vocab (full-surface extension).",
       "approved_via": "owner sign-off (finish queue), chat 2026-07-22"
+    },
+    {
+      "contentKey": "fallback-vocab/aspect-motion/conjunction",
+      "content_role": "vocabulary",
+      "grammar_frame": "gerund_phrase",
+      "body": "running as one instinct, always on together",
+      "review_status": "approved",
+      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
+    },
+    {
+      "contentKey": "fallback-vocab/aspect-motion/trine",
+      "content_role": "vocabulary",
+      "grammar_frame": "gerund_phrase",
+      "body": "flowing into each other without effort",
+      "review_status": "approved",
+      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
+    },
+    {
+      "contentKey": "fallback-vocab/aspect-motion/sextile",
+      "content_role": "vocabulary",
+      "grammar_frame": "gerund_phrase",
+      "body": "backing each other up whenever called on",
+      "review_status": "approved",
+      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
+    },
+    {
+      "contentKey": "fallback-vocab/aspect-motion/square",
+      "content_role": "vocabulary",
+      "grammar_frame": "gerund_phrase",
+      "body": "pulling in different directions, and the friction trains both",
+      "review_status": "approved",
+      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
+    },
+    {
+      "contentKey": "fallback-vocab/aspect-motion/opposition",
+      "content_role": "vocabulary",
+      "grammar_frame": "gerund_phrase",
+      "body": "taking turns at opposite ends of the chart",
+      "review_status": "approved",
+      "approved_via": "owner-directed natal aspect rewrite, chat 2026-07-22",
+      "notes": "How the two planets move together; closes/opens natal aspect cards in place of the repeated 'wired together in you' formula."
     }
   ],
   "fallbackSourceRows": [
@@ -5869,7 +5914,7 @@
       "contentKey": "fallback-hook/placement-sentence/chiron/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You go first and stay busy, partly because motion keeps an old doubt quiet: whether you have the right to want what you want. Leading with action solved that once, but now it means you rarely pause to check if a fight is actually yours. Pick one thing you want this month and say so plainly, without a joke or an apology attached.",
+      "body_you": "You go first and stay busy, partly because motion keeps an old doubt quiet: whether you have the right to want what you want. Leading with action solved that once, but now it means you rarely pause to check if a fight is actually yours. Pick one thing you want and say so plainly, without a joke or an apology attached.",
       "body_they": "They go first and stay busy, partly because motion keeps an old doubt quiet: whether they have the right to want what they want. Leading with action solved that once, but now it means they rarely pause to check if a fight is actually theirs. A good next step is naming one thing they want plainly, without a joke or an apology attached.",
       "review_status": "approved",
       "source_keys": [
@@ -5884,7 +5929,7 @@
       "contentKey": "fallback-hook/placement-sentence/chiron/taurus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can do a lot with very little, a skill you built when solid ground felt like something that could vanish. It is a real strength, but it keeps you living lean long after the shortage has passed. This month, take the comfort at full size instead of the sample: the better chair, the real break, the price your work is worth.",
+      "body_you": "You can do a lot with very little, a skill you built when solid ground felt like something that could vanish. It is a real strength, but it keeps you living lean long after the shortage has passed. Take the comfort at full size instead of the sample: the better chair, the real break, the price your work is worth.",
       "body_they": "They can do a lot with very little, a skill built when solid ground felt like something that could vanish. It is a real strength, but it keeps them living lean long after the shortage has passed. A worthwhile experiment is taking the comfort at full size instead of the sample: the better chair, the real break, the price the work is worth.",
       "review_status": "approved",
       "source_keys": [
@@ -5914,7 +5959,7 @@
       "contentKey": "fallback-hook/placement-sentence/chiron/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You became the one who looks after everyone, because taking care of people was a reliable way to belong. It works, and it quietly teaches everyone around you that you never need tending yourself. The people who love you would take a turn if you let them. Ask one of them for something small this week, and do not manage how they deliver it.",
+      "body_you": "You became the one who looks after everyone, because taking care of people was a reliable way to belong. It works, and it quietly teaches everyone around you that you never need tending yourself. The people who love you would take a turn if you let them. Ask one of them for something small, and do not manage how they deliver it.",
       "body_they": "They became the one who looks after everyone, because taking care of people was a reliable way to belong. It works, and it quietly teaches everyone around them that they never need tending themselves. The people who love them would take a turn if given the chance. A small repair: asking one of those people for something minor, then not managing how it gets delivered.",
       "review_status": "approved",
       "source_keys": [
@@ -5944,7 +5989,7 @@
       "contentKey": "fallback-hook/placement-sentence/chiron/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Being useful became your admission ticket a long time ago, so you fix, improve, and over-deliver before anyone can question your place. The craft is excellent; the cost is that you are never off duty, and rest starts to feel like a risk. Show up somewhere this week with nothing to offer but company. You will still be welcome, and noticing that is the repair.",
+      "body_you": "Being useful became your admission ticket a long time ago, so you fix, improve, and over-deliver before anyone can question your place. The craft is excellent; the cost is that you are never off duty, and rest starts to feel like a risk. Show up somewhere with nothing to offer but company. You will still be welcome, and noticing that is the repair.",
       "body_they": "Being useful became their admission ticket a long time ago, so they fix, improve, and over-deliver before anyone can question their place. The craft is excellent; the cost is that they are never off duty, and rest starts to feel like a risk. A good experiment is showing up somewhere with nothing to offer but company. They will still be welcome, and noticing that is the repair.",
       "review_status": "approved",
       "source_keys": [
@@ -6004,7 +6049,7 @@
       "contentKey": "fallback-hook/placement-sentence/chiron/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You learned early that results are the reliable way to be taken seriously, so you built a life around delivering them. It works, except the wins keep arriving to someone too busy proving to enjoy them, and even the summit can feel lonely. Spend time this month with people you have nothing to prove to, and get honestly curious about a path nothing like your own. Respect you do not have to re-earn daily is the next thing worth building.",
+      "body_you": "You learned early that results are the reliable way to be taken seriously, so you built a life around delivering them. It works, except the wins keep arriving to someone too busy proving to enjoy them, and even the summit can feel lonely. Spend time with people you have nothing to prove to, and get honestly curious about a path nothing like your own. Respect you do not have to re-earn daily is the next thing worth building.",
       "body_they": "They learned early that results are the reliable way to be taken seriously, so they built a life around delivering them. It works, except the wins keep arriving to someone too busy proving to enjoy them, and even the summit can feel lonely. Time with people they have nothing to prove to, plus honest curiosity about a path nothing like their own, is the assignment. Respect that does not have to be re-earned daily is the next thing worth building.",
       "review_status": "approved",
       "source_keys": [
@@ -9385,7 +9430,7 @@
       "contentKey": "fallback-hook/placement-house-sentence/chiron/1",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "People remember you and hand you their hard stuff fast, sometimes within minutes of meeting you; something in how you carry yourself reads as a person who figured things out the hard way. The flip side is that you manage first impressions carefully, because being seen wrong once stung enough to make control feel necessary. Walk into one room this week without pre-editing yourself. The presence works better unmanaged.",
+      "body_you": "People remember you and hand you their hard stuff fast, sometimes within minutes of meeting you; something in how you carry yourself reads as a person who figured things out the hard way. The flip side is that you manage first impressions carefully, because being seen wrong once stung enough to make control feel necessary. Walk into one room without pre-editing yourself. The presence works better unmanaged.",
       "body_they": "People remember them and hand them the hard stuff fast, sometimes within minutes; something in how they carry themselves reads as a person who figured things out the hard way. The flip side is that they manage first impressions carefully, because being seen wrong once stung enough to make control feel necessary. Walking into a room without pre-editing is the experiment worth running. The presence works better unmanaged.",
       "review_status": "approved",
       "source_keys": [
@@ -9399,7 +9444,7 @@
       "contentKey": "fallback-hook/placement-house-sentence/chiron/2",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Generosity comes easily to you and receiving does not, a lopsided trade you learned when giving felt like the safest way to matter. So you build stability for other people while quietly undercharging for yourself, in money and in effort. Name your true price once this month, in a fee, a favor, or a limit, and hold it. What you are worth was never up for negotiation; you just got used to opening low.",
+      "body_you": "Generosity comes easily to you and receiving does not, a lopsided trade you learned when giving felt like the safest way to matter. So you build stability for other people while quietly undercharging for yourself, in money and in effort. Name your true price once, in a fee, a favor, or a limit, and hold it. What you are worth was never up for negotiation; you just got used to opening low.",
       "body_they": "Generosity comes easily to them and receiving does not, a lopsided trade learned when giving felt like the safest way to matter. So they build stability for other people while quietly undercharging for themselves, in money and in effort. Naming a true price once, in a fee, a favor, or a limit, and holding it is the next move. Their worth was never up for negotiation; they just got used to opening low.",
       "review_status": "approved",
       "source_keys": [
@@ -9413,7 +9458,7 @@
       "contentKey": "fallback-hook/placement-house-sentence/chiron/3",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You explain hard things unusually well, mostly because you had to learn them the slow way, through trial and error nobody saw. That history left a habit of over-preparing before you speak and quietly discounting your own intelligence. Drop one disclaimer this week: answer without the wind-up about not being an expert. The people listening already trust you more than you trust your delivery.",
+      "body_you": "You explain hard things unusually well, mostly because you had to learn them the slow way, through trial and error nobody saw. That history left a habit of over-preparing before you speak and quietly discounting your own intelligence. Drop one disclaimer: answer without the wind-up about not being an expert. The people listening already trust you more than you trust your delivery.",
       "body_they": "They explain hard things unusually well, mostly because they had to learn them the slow way, through trial and error nobody saw. That history left a habit of over-preparing before speaking and quietly discounting their own intelligence. Dropping one disclaimer, answering without the wind-up about not being an expert, is the rep. The people listening already trust them more than they trust their own delivery.",
       "review_status": "approved",
       "source_keys": [
@@ -10701,8 +10746,8 @@
       "contentKey": "fallback-hook/aspect-type/sextile",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "A sextile means they work well together when you actually use them. It is an open door, not an automatic gift.",
-      "body_they": "A sextile means they work well together when actually used. It is an open door, not an automatic gift.",
+      "body_you": "A sextile means they work well together when you actually use them. The strength is real, but it is not automatic.",
+      "body_they": "A sextile means they work well together when actually used. The strength is real, but it is not automatic.",
       "review_status": "approved",
       "source_keys": [
         "cc/ref/aspect-psychology/sextile",
@@ -10768,8 +10813,8 @@
       "contentKey": "fallback-hook/aspect-pair/moon/mercury/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You pick up what people are feeling almost before they say it, and you can put emotions into words in a way that genuinely reaches people. The flip side is that other people's opinions land hard on you, and it can be tough to tell what you think from what you feel. Writing things down, or sleeping on a reaction, helps you find the clear read underneath the mood.",
-      "body_they": "They pick up what people are feeling almost before it gets said, and they can put emotions into words in a way that genuinely reaches people. The flip side is that other people's opinions land hard on them, and it can be tough to tell what they think from what they feel. Writing things down, or sleeping on a reaction, helps them find the clear read underneath the mood.",
+      "body_you": "You pick up what people are feeling almost before they say it, and you can put emotions into words in a way that actually reaches people. The flip side is that other people's opinions land hard on you, and it can be tough to tell what you think from what you feel. Writing things down, or sleeping on a reaction, helps you find the clear read underneath the mood.",
+      "body_they": "They pick up what people are feeling almost before it gets said, and they can put emotions into words in a way that actually reaches people. The flip side is that other people's opinions land hard on them, and it can be tough to tell what they think from what they feel. Writing things down, or sleeping on a reaction, helps them find the clear read underneath the mood.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/moon-mercury/conjunction"
@@ -10794,7 +10839,7 @@
       "contentKey": "fallback-hook/aspect-pair/moon/mercury/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your thoughts and feelings work as a team, so you can name what's going on inside you and talk your way out of a bad mood instead of sitting in it. That makes you easy to talk to, and people often leave a conversation with you feeling clearer than when they arrived. It's a real skill, so use it out loud, in writing, or anywhere words carry weight.",
+      "body_you": "Your thoughts and feelings work as a team, so you can put words to what's going on inside you and talk your way out of a bad mood instead of sitting in it. That makes you easy to talk to, and people often leave a conversation with you feeling clearer than when they arrived. It's a real skill, so use it out loud, in writing, or anywhere words carry weight.",
       "body_they": "Their thoughts and feelings work as a team, so they can name what's going on inside and talk their way out of a bad mood instead of sitting in it. That makes them easy to talk to, and people often leave a conversation with them feeling clearer than when they arrived. It's a real skill, worth using out loud, in writing, or anywhere words carry weight.",
       "review_status": "approved",
       "source_keys": [
@@ -10820,8 +10865,8 @@
       "contentKey": "fallback-hook/aspect-pair/moon/venus/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "In relationships your feelings run big, and small slights can hit like real rejections. Underneath is often a worry about not being loved enough, which can push you to please people or pick partners on pure emotion. Naming what you actually need, out loud and early, works better than hoping someone guesses, and big decisions about love or money deserve a night of sleep first.",
-      "body_they": "In relationships their feelings run big, and small slights can hit like real rejections. Underneath is often a worry about not being loved enough, which can push them to please people or pick partners on pure emotion. Naming what they actually need, out loud and early, works better than hoping someone guesses, and big decisions about love or money deserve a night of sleep first.",
+      "body_you": "In relationships your feelings run big, and small slights can hit like real rejections. Underneath is often a worry about not being loved enough, which can push you to please people or pick partners on pure emotion. Asking for what you actually need, early and in plain words, works better than hoping someone guesses, and big decisions about love or money deserve a night of sleep first.",
+      "body_they": "In relationships their feelings run big, and small slights can hit like real rejections. Underneath is often a worry about not being loved enough, which can push them to please people or pick partners on pure emotion. Asking for what they actually need, early and in plain words, works better than hoping someone guesses, and big decisions about love or money deserve a night of sleep first.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/moon-venus/hard"
@@ -11041,8 +11086,8 @@
       "contentKey": "fallback-hook/aspect-pair/moon/pluto/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "What you feel runs far deeper than what you show; people see maybe a tenth of it. Your wants have real gravity, and under pressure you find strength you didn't know you had, which is why a crisis often brings out your best. That intensity needs work worth gripping, something deep, demanding, or genuinely helpful to others, because pointed at people instead, it can turn into holding on too tight.",
-      "body_they": "What they feel runs far deeper than what they show; people see maybe a tenth of it. Their wants have real gravity, and under pressure they find strength they didn't know they had, which is why a crisis often brings out their best. That intensity needs work worth gripping, something deep, demanding, or genuinely helpful to others, because pointed at people instead, it can turn into holding on too tight.",
+      "body_you": "What you feel runs far deeper than what you show; people see maybe a tenth of it. Your wants have real gravity, and under pressure you find strength you didn't know you had, which is why a crisis often brings out your best. That intensity needs work worth gripping, something deep, demanding, or truly helpful to others, because pointed at people instead, it can turn into holding on too tight.",
+      "body_they": "What they feel runs far deeper than what they show; people see maybe a tenth of it. Their wants have real gravity, and under pressure they find strength they didn't know they had, which is why a crisis often brings out their best. That intensity needs work worth gripping, something deep, demanding, or truly helpful to others, because pointed at people instead, it can turn into holding on too tight.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/moon-pluto/conjunction"
@@ -11119,8 +11164,8 @@
       "contentKey": "fallback-hook/aspect-pair/mercury/mars/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You are quick and sharp, and words come out of you like weapons when you feel challenged. From inside it feels like people keep picking fights with you, but some of those fights start with your own tone. When you argue for the idea instead of the win, that same sharpness makes you genuinely persuasive.",
-      "body_they": "They are quick and sharp, and words come out like weapons when they feel challenged. From inside it feels like people keep picking fights with them, but some of those fights start with their own tone. When they argue for the idea instead of the win, that same sharpness makes them genuinely persuasive.",
+      "body_you": "You are quick and sharp, and words come out of you like weapons when you feel challenged. From inside it feels like people keep picking fights with you, but some of those fights start with your own tone. When you argue for the idea instead of the win, that same sharpness makes you hard to argue with.",
+      "body_they": "They are quick and sharp, and words come out like weapons when they feel challenged. From inside it feels like people keep picking fights with them, but some of those fights start with their own tone. When they argue for the idea instead of the win, that same sharpness makes them hard to argue with.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/mercury-mars/hard"
@@ -11288,8 +11333,8 @@
       "contentKey": "fallback-hook/aspect-pair/mercury/neptune/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You sense what people are feeling before they say it, and your words can genuinely comfort or move someone. You do best when your work connects to something that inspires you, because you cannot fake interest. When you picture what you want clearly, you are surprisingly good at making it real.",
-      "body_they": "They sense what people are feeling before it is said, and their words can genuinely comfort or move someone. They do best when work connects to something inspiring, because they cannot fake interest. When they picture what they want clearly, they are surprisingly good at making it real.",
+      "body_you": "You sense what people are feeling before they say it, and your words can comfort or move someone. You do best when your work connects to something that inspires you, because you cannot fake interest. When you picture what you want clearly, you are surprisingly good at making it real.",
+      "body_they": "They sense what people are feeling before it is said, and their words can comfort or move someone. They do best when work connects to something inspiring, because they cannot fake interest. When they picture what they want clearly, they are surprisingly good at making it real.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/mercury-neptune/soft"
@@ -11366,8 +11411,8 @@
       "contentKey": "fallback-hook/aspect-pair/venus/mars/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Warmth comes naturally to you, and once someone earns your trust you are loyal and generous with them. You can be passionate without losing your head, which makes both love and teamwork easier for you than for most. The only catch is that ease can quiet your ambition, so aim at something that genuinely excites you.",
-      "body_they": "Warmth comes naturally to them, and once someone earns their trust they are loyal and generous. They can be passionate without losing their head, which makes both love and teamwork easier for them than for most. The only catch is that ease can quiet ambition, so it helps them to aim at something genuinely exciting.",
+      "body_you": "Warmth comes naturally to you, and once someone earns your trust you are loyal and generous with them. You can be passionate without losing your head, which makes both love and teamwork easier for you than for most. The only catch is that ease can quiet your ambition, so aim at something that actually excites you.",
+      "body_they": "Warmth comes naturally to them, and once someone earns their trust they are loyal and generous. They can be passionate without losing their head, which makes both love and teamwork easier for them than for most. The only catch is that ease can quiet ambition, so it helps them to aim at something that actually excites them.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/venus-mars/soft"
@@ -11470,8 +11515,8 @@
       "contentKey": "fallback-hook/aspect-pair/venus/uranus/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You chase what excites you and lose interest fast once you have it, in love and in spending. Anyone who tries to fence you in gets the opposite of what they wanted. Freedom is a real need for you, not a flaw, but naming it up front saves everyone the sudden exits.",
-      "body_they": "They chase what excites them and lose interest fast once they have it, in love and in spending. Anyone who tries to fence them in gets the opposite of what was wanted. Freedom is a real need for them, not a flaw, but naming it up front saves everyone the sudden exits.",
+      "body_you": "You chase what excites you and lose interest fast once you have it, in love and in spending. Anyone who tries to fence you in gets the opposite of what they wanted. Freedom is a real need for you, not a flaw, but saying it up front saves everyone the sudden exits.",
+      "body_they": "They chase what excites them and lose interest fast once they have it, in love and in spending. Anyone who tries to fence them in gets the opposite of what was wanted. Freedom is a real need for them, not a flaw, but saying it up front saves everyone the sudden exits.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/venus-uranus/hard"
@@ -11522,8 +11567,8 @@
       "contentKey": "fallback-hook/aspect-pair/venus/neptune/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You are romantic, tender, and genuinely kind, and people feel safe opening up to you. When you love someone, you love the whole person, including what goes unspoken. Creative or caring work suits you, and doing something you do not care about drains you faster than most.",
-      "body_they": "They are romantic, tender, and genuinely kind, and people feel safe opening up to them. When they love someone, they love the whole person, including what goes unspoken. Creative or caring work suits them, and doing something they do not care about drains them faster than most.",
+      "body_you": "You are romantic, tender, and kind all the way through, and people feel safe opening up to you. When you love someone, you love the whole person, including what goes unspoken. Creative or caring work suits you, and doing something you do not care about drains you faster than most.",
+      "body_they": "They are romantic, tender, and kind all the way through, and people feel safe opening up to them. When they love someone, they love the whole person, including what goes unspoken. Creative or caring work suits them, and doing something they do not care about drains them faster than most.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/venus-neptune/soft"
@@ -12120,8 +12165,8 @@
       "contentKey": "fallback-hook/aspect-pair/neptune/pluto/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You were born wired for questions most people never ask, about meaning, life, and what sits underneath it all. Ideas move through you in a way that can genuinely influence others. Feed that depth with real study or craft, and your inner world becomes something you can share rather than just carry.",
-      "body_they": "They were born wired for questions most people never ask, about meaning, life, and what sits underneath it all. Ideas move through them in a way that can genuinely influence others. Fed with real study or craft, that depth becomes something they can share rather than just carry.",
+      "body_you": "You were born asking questions most people never ask, about meaning, life, and what sits underneath it all. Ideas move through you in a way that influences others more than you realize. Feed that depth with real study or craft, and your inner world becomes something you can share rather than just carry.",
+      "body_they": "They were born asking questions most people never ask, about meaning, life, and what sits underneath it all. Ideas move through them in a way that influences others more than they realize. Fed with real study or craft, that depth becomes something they can share rather than just carry.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/neptune-pluto/conjunction"
@@ -12160,7 +12205,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "Your ideas feel like part of who you are, so a challenge to your opinion can land like a challenge to you personally. You think fast, talk a lot, and need people who actually listen; feeling unheard drains you faster than almost anything else. Work has to keep your mind busy or you get restless and start eyeing the door. Asking a real question before making your case helps, because your thinking gets sharper when someone pushes back.",
-      "body_they": "Their ideas feel like part of who they are, so a challenge to their opinion can land like a personal challenge. They think fast, talk a lot, and need people who actually listen; feeling unheard drains them faster than almost anything else. Work has to keep their mind busy or they get restless and start eyeing the door. Their thinking gets sharper when someone pushes back, so an honest sparring partner is genuinely good for them.",
+      "body_they": "Their ideas feel like part of who they are, so a challenge to their opinion can land like a personal challenge. They think fast, talk a lot, and need people who actually listen; feeling unheard drains them faster than almost anything else. Work has to keep their mind busy or they get restless and start eyeing the door. Their thinking gets sharper when someone pushes back, so an honest sparring partner does them real good.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/sun-mercury/conjunction"
@@ -12263,8 +12308,8 @@
       "contentKey": "fallback-hook/aspect-pair/sun/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You aim big, believe things will work out, and usually spot a new horizon the moment you reach the old one. Fairness genuinely matters to you, and your enthusiasm pulls people along. The trap is promising more than the calendar can hold, then scrambling. Check commitments against your actual week before saying yes, and your optimism becomes a track record instead of a reputation for big talk.",
-      "body_they": "They aim big, believe things will work out, and usually spot a new horizon the moment they reach the old one. Fairness genuinely matters to them, and their enthusiasm pulls people along. The trap is promising more than the calendar can hold, then scrambling. Checking commitments against the actual week before saying yes turns that optimism into a track record instead of a reputation for big talk.",
+      "body_you": "You aim big, believe things will work out, and usually spot a new horizon the moment you reach the old one. Fairness matters to you, and your enthusiasm pulls people along. The trap is promising more than the calendar can hold, then scrambling. Check commitments against your actual week before saying yes, and your optimism becomes a track record instead of a reputation for big talk.",
+      "body_they": "They aim big, believe things will work out, and usually spot a new horizon the moment they reach the old one. Fairness matters to them, and their enthusiasm pulls people along. The trap is promising more than the calendar can hold, then scrambling. Checking commitments against the actual week before saying yes turns that optimism into a track record instead of a reputation for big talk.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/sun-jupiter/conjunction"
@@ -12393,8 +12438,8 @@
       "contentKey": "fallback-hook/aspect-pair/sun/pluto/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Pressure brings out something in you that surprises people: where others fold, you find another gear. You have run into controlling bosses or authority figures more than once, and those fights taught you where your power actually lives. The urge to control outcomes and people can boil over when you feel cornered. Naming what you want out loud, and loosening your grip on the rest, gets you further than winning every standoff.",
-      "body_they": "Pressure brings out something in them that surprises people: where others fold, they find another gear. They have run into controlling bosses or authority figures more than once, and those fights taught them where their power actually lives. The urge to control outcomes and people can boil over when they feel cornered. Naming what they want out loud, and loosening their grip on the rest, gets them further than winning every standoff.",
+      "body_you": "Pressure brings out something in you that surprises people: where others fold, you find another gear. You have run into controlling bosses or authority figures more than once, and those fights taught you where your power actually lives. The urge to control outcomes and people can boil over when you feel cornered. Saying what you want plainly, and loosening your grip on the rest, gets you further than winning every standoff.",
+      "body_they": "Pressure brings out something in them that surprises people: where others fold, they find another gear. They have run into controlling bosses or authority figures more than once, and those fights taught them where their power actually lives. The urge to control outcomes and people can boil over when they feel cornered. Saying what they want plainly, and loosening their grip on the rest, gets them further than winning every standoff.",
       "review_status": "approved",
       "source_keys": [
         "book/887580146-natal-aspect-cookbook/sun-pluto/hard"
