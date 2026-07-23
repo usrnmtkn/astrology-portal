@@ -6,7 +6,7 @@ import type {
   ResolvedAspectPatternActivationCopy,
   ResolvedAspectPatternCopy
 } from "@tldr/astro-knowledge/aspect-pattern-engine";
-import { renderAspectPatternV3 } from "../content/fallbackArchitectureV3Runtime";
+import { renderAspectPatternV3, SourceGapError } from "../content/fallbackArchitectureV3Runtime";
 
 type NatalAspectPatternReaderStatus = "loading" | "ready" | "unavailable";
 
@@ -212,6 +212,7 @@ export function natalAspectPatternReaderItems(
 
   return contexts.flatMap((rawContext) => {
     const context = rawContext as any;
+    try {
     const apex = "apex" in context.roles ? context.roles.apex : "focalPlanet" in context.roles ? context.roles.focalPlanet : undefined;
     const element = context.patternType === "grand_trine"
       ? context.roles.elementConsistency === "same_element" ? String(context.members[0]?.sign ?? "").toLowerCase() : undefined
@@ -268,6 +269,10 @@ export function natalAspectPatternReaderItems(
       parentPatternIds: context.display.parentPatternIds.slice(),
       childPatternIds: context.display.childPatternIds.slice()
     }];
+    } catch (error) {
+      if (error instanceof SourceGapError) return [];
+      throw error;
+    }
   }).sort((first, second) => first.rank - second.rank || first.patternId.localeCompare(second.patternId));
 }
 

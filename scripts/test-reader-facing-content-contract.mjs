@@ -147,6 +147,7 @@ assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated conte
 assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
 assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the authored content-level label.");
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement detail/list rendering must use the fallbackArchitectureV3 sky placement renderer.");
+assert.match(app, /transitSynastryFallbackRendererV3\.renderTransitRetro\(\{[\s\S]*format: "article"/u, "Retrograde Sky placement pages must use the fallbackArchitectureV3 retrograde article renderer.");
 assert.doesNotMatch(app, /resolveSkyWritingArticle\(\{/, "Sky placement detail/list rendering must not use the retired Sky writing package resolver.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing")), false, "Retired sky-writing source folder must not exist.");

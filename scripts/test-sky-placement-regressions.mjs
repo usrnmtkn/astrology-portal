@@ -24,8 +24,15 @@ const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts"
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
 const sunLeo = renderer.renderSkyPlacement({ planet: "sun", sign: "leo" });
+const mercuryCancerIngress = renderer.renderSkyPlacement({ planet: "mercury", sign: "cancer" });
+const mercuryCancerRetrograde = renderer.renderTransitRetro({
+  planet: "mercury",
+  sign: "cancer",
+  window: "Jun 29 - Jul 23",
+  format: "article"
+});
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-23", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-23b", "FallbackArchitectureV3 package version must expose the current imported stamp.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
 assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
@@ -38,6 +45,7 @@ assert.doesNotMatch(adminDashboard, /skyWriting|localSkySnapshot|skyContentSnaps
 assert.doesNotMatch(writingSurfaceSourceMap, /sky-writing-v1|skyContentSnapshot/u, "Admin source map must not point at retired Sky writing sources.");
 
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement rendering must call the V3 package renderer.");
+assert.match(app, /position\.motion === "retrograde"[\s\S]*renderTransitRetro\(\{[\s\S]*format: "article"[\s\S]*renderSkyPlacement\(\{/u, "Retrograde Sky pages must use the retro article while direct-motion pages use the ingress article.");
 assert.match(app, /normalizeSkyPlacementSurface/, "Sky placement rendering must flow through the normalized surface path.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
 
@@ -63,6 +71,26 @@ assert.doesNotMatch(
   "Package Sun-in-Leo copy must not contain the retired rogue Leo passage."
 );
 assert.match(app, /return `\$\{skyDisplayPlanetName\(position\.planet\)\} Rx in \$\{position\.sign\}`;/, "Retrograde Sky ID title must stay factual in the app route.");
+assert.equal(
+  mercuryCancerRetrograde.headline,
+  "You do not owe every message an instant reply.",
+  "Mercury retrograde in Cancer must open with the approved retrograde article."
+);
+assert.doesNotMatch(
+  mercuryCancerRetrograde.body,
+  /Mercury's move into Cancer changes the voice in the room|Say the thing while the channel is open/iu,
+  "Retrograde Sky articles must not contain ingress-only copy for the same planet-sign."
+);
+assert.match(
+  mercuryCancerIngress.body,
+  /Mercury's move into Cancer changes the voice in the room/iu,
+  "Direct-motion Mercury in Cancer must retain its ingress article."
+);
+assert.doesNotMatch(
+  `${mercuryCancerIngress.headline}\n${mercuryCancerIngress.body}`,
+  /You do not owe every message an instant reply\./u,
+  "Direct-motion ingress articles must not contain retrograde-article copy."
+);
 
 console.log(JSON.stringify({
   packageVersion: PACKAGE_VERSION,

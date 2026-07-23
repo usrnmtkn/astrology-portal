@@ -5690,6 +5690,7 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
 
 function skyPlacementWritingSection(
   position: PlanetPosition,
+  duration: string | null | undefined,
   beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
@@ -5707,8 +5708,18 @@ function skyPlacementWritingSection(
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
-  const rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
-  const body = readerFacingParagraphs(rendered.parts.length ? rendered.parts : [rendered.body]).join("\n\n");
+  const rendered = position.motion === "retrograde"
+    ? transitSynastryFallbackRendererV3.renderTransitRetro({
+        planet,
+        sign,
+        window: duration ?? undefined,
+        format: "article"
+      })
+    : transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
+  const renderedParagraphs = position.motion === "retrograde"
+    ? [rendered.headline, ...(rendered.parts.length ? rendered.parts : [rendered.body])]
+    : (rendered.parts.length ? rendered.parts : [rendered.body]);
+  const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
@@ -5739,7 +5750,7 @@ function normalizeSkyPlacementSurface(
 ): NormalizedSkyPlacementArticle {
   void duration;
   void generatedContent;
-  const fallbackSection = skyPlacementWritingSection(position, beats);
+  const fallbackSection = skyPlacementWritingSection(position, duration, beats);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
