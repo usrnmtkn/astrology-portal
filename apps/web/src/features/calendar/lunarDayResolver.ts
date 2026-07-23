@@ -6,6 +6,7 @@ import { slugContentPart } from "../../services/generatedContentKeys";
 import type { TemplateSlotValues } from "../../services/templateInterpolation";
 import type { LocationInput } from "../../types";
 import type { LunarDay, LunarDayArcPoint, LunarDayCheckpointRole, LunarDayTransit, LunarDayTransitType } from "./lunarDayTypes";
+import { sunIngressSeasonWindow } from "./seasonWindow";
 
 const dayMs = 86_400_000;
 
@@ -20,22 +21,6 @@ type NormalizedLunarSection = {
   body: string;
 };
 
-const seasonStartDates: Array<{ sign: string; month: number; day: number }> = [
-  { sign: "Capricorn", month: 1, day: 1 },
-  { sign: "Aquarius", month: 1, day: 20 },
-  { sign: "Pisces", month: 2, day: 19 },
-  { sign: "Aries", month: 3, day: 20 },
-  { sign: "Taurus", month: 4, day: 20 },
-  { sign: "Gemini", month: 5, day: 21 },
-  { sign: "Cancer", month: 6, day: 21 },
-  { sign: "Leo", month: 7, day: 22 },
-  { sign: "Virgo", month: 8, day: 23 },
-  { sign: "Libra", month: 9, day: 23 },
-  { sign: "Scorpio", month: 10, day: 23 },
-  { sign: "Sagittarius", month: 11, day: 22 },
-  { sign: "Capricorn", month: 12, day: 21 }
-];
-
 export type ResolveLunarDayOptions = {
   day: LunarCalendarDay;
   events: LunarCalendarEvent[];
@@ -49,58 +34,6 @@ function dayKeyToUtcTime(dateKey: string) {
   const [year = 0, month = 1, day = 1] = dateKey.split("-").map(Number);
 
   return Date.UTC(year, month - 1, day);
-}
-
-function localDateParts(day: LunarCalendarDay, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).formatToParts(new Date(day.date));
-
-  return {
-    year: Number(parts.find((part) => part.type === "year")?.value ?? new Date(day.date).getFullYear()),
-    month: Number(parts.find((part) => part.type === "month")?.value ?? 1),
-    day: Number(parts.find((part) => part.type === "day")?.value ?? 1)
-  };
-}
-
-function localDateKeyFromParts(year: number, month: number, day: number) {
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function seasonWindowForDay(day: LunarCalendarDay, timeZone: string) {
-  const parts = localDateParts(day, timeZone);
-  const monthDayValue = parts.month * 100 + parts.day;
-  let seasonIndex = -1;
-
-  for (let index = seasonStartDates.length - 1; index >= 0; index -= 1) {
-    const season = seasonStartDates[index];
-
-    if (season && monthDayValue >= season.month * 100 + season.day) {
-      seasonIndex = index;
-      break;
-    }
-  }
-
-  if (seasonIndex < 0) {
-    seasonIndex = seasonStartDates.length - 1;
-  }
-
-  const season = seasonStartDates[seasonIndex] ?? seasonStartDates[0];
-  const nextSeason = seasonStartDates[(seasonIndex + 1) % seasonStartDates.length] ?? seasonStartDates[1];
-  const startsPreviousYear = season.month === 12 && parts.month === 1;
-  const startYear = startsPreviousYear ? parts.year - 1 : parts.year;
-  const endYear = nextSeason.month < season.month || (season.month === 12 && nextSeason.month === 1)
-    ? startYear + 1
-    : startYear;
-
-  return {
-    sign: season.sign,
-    start: localDateKeyFromParts(startYear, season.month, season.day),
-    end: localDateKeyFromParts(endYear, nextSeason.month, nextSeason.day)
-  };
 }
 
 function lunarDayNumberFor(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
@@ -1121,7 +1054,7 @@ export function resolveLunarDay({
   generatedContent
 }: ResolveLunarDayOptions): LunarDay {
   const selectedTime = dayKeyToUtcTime(day.dateKey);
-  const season = seasonWindowForDay(day, timeZone);
+  const season = sunIngressSeasonWindow(day.dateKey, events);
   const origin = previousLunation(events, selectedTime, "New Moon");
   const culmination = nextLunation(events, selectedTime, "Full Moon")
     ?? previousLunation(events, selectedTime, "Full Moon");
