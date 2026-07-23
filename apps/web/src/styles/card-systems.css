@@ -7,12 +7,12 @@
 .app-shell.mode-guest,
 .app-shell.mode-member,
 .app-shell.mode-calendar {
-  --natal-card-padding: var(--sky-card-padding);
-  --natal-card-gap: var(--sky-card-grid-gap);
-  --natal-card-min-height: var(--sky-card-min-height);
-  --aspect-card-padding: var(--sky-card-padding);
-  --aspect-card-gap: var(--sky-card-grid-gap);
-  --aspect-card-min-height: var(--sky-card-min-height);
+  --natal-card-padding: var(--card-row-padding);
+  --natal-card-gap: var(--card-row-gap);
+  --natal-card-min-height: var(--card-row-min-height);
+  --aspect-card-padding: var(--card-row-padding);
+  --aspect-card-gap: var(--card-row-gap);
+  --aspect-card-min-height: var(--card-row-min-height);
 }
 
 .placement-table-row,
@@ -182,11 +182,11 @@
   .app-shell.mode-guest,
   .app-shell.mode-member,
   .app-shell.mode-calendar {
-    --natal-card-padding: var(--sky-card-mobile-padding);
-    --natal-card-gap: var(--sky-card-mobile-grid-gap);
-    --natal-card-min-height: var(--sky-card-mobile-min-height);
-    --aspect-card-padding: var(--sky-card-mobile-padding);
-    --aspect-card-gap: var(--sky-card-mobile-grid-gap);
-    --aspect-card-min-height: var(--sky-card-mobile-min-height);
+    --natal-card-padding: var(--card-row-padding-compact);
+    --natal-card-gap: var(--card-row-gap);
+    --natal-card-min-height: var(--card-row-min-height);
+    --aspect-card-padding: var(--card-row-padding-compact);
+    --aspect-card-gap: var(--card-row-gap);
+    --aspect-card-min-height: var(--card-row-min-height);
   }
 }

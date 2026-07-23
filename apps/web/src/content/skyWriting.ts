@@ -123,12 +123,8 @@ function beatSortDate(beat: string) {
   return Number.isNaN(date.getTime()) ? Number.POSITIVE_INFINITY : date.getTime();
 }
 
-export function formatSkyWritingAspectBeat(beat: SkyWritingAspectBeat) {
-  if (!beat.dateLine) return "";
-  const aspect = beat.aspect.trim().toLowerCase();
-  const fact = `${beat.from} ${aspect} ${beat.to}`;
-
-  return `${beat.dateLine}: ${fact}.`;
+export function formatSkyWritingAspectBeat(_beat: SkyWritingAspectBeat) {
+  return "";
 }
 
 function walkthroughParagraphs(article: AuthoredArticle, placement: SkyWritingPlacement, beats: SkyWritingAspectBeat[]) {
@@ -178,9 +174,9 @@ function authoredRetrogradeArticle(article: AuthoredArticle, placement: SkyWriti
   const sections = article.sections ?? {};
   const header = article.header ?? {};
   const paragraphs = cleanParagraphs([
-    textValue(header.whenSlot, placement) ? `When: ${textValue(header.whenSlot, placement)}` : "",
-    textValue(header.what, placement) ? `What: ${textValue(header.what, placement)}` : "",
-    textValue(header.tldr, placement) ? `TLDR: ${textValue(header.tldr, placement)}` : ""
+    textValue(header.whenSlot, placement),
+    textValue(header.what, placement),
+    textValue(header.tldr, placement)
   ]);
 
   rxSectionOrder.forEach((sectionKey) => {

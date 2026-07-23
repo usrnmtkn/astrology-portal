@@ -370,18 +370,29 @@
 
 .article-related-aspects__copy-heading {
   display: grid;
-  grid-template-columns: var(--aspect-row-glyph-width) minmax(0, 1fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: var(--aspect-row-gap, var(--card-row-gap));
   margin-bottom: var(--sp-2);
 }
 
 .article-related-aspects__copy-heading h3 {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
   margin-bottom: 0;
+  overflow-wrap: normal;
+  text-wrap: balance;
+  word-break: normal;
 }
 
 .article-related-aspects__copy-heading .aspect-row-glyphs {
+  grid-column: 2;
+  grid-row: 1;
   align-self: center;
+  justify-self: end;
+  width: auto;
+  min-width: max-content;
 }
 
 .article-related-aspect-row {
@@ -506,6 +517,16 @@
     font-size: var(--aspect-card-title-size);
   }
 
+  .article-related-aspects__copy-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .article-related-aspects__copy-heading .aspect-row-glyphs {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
   .article-related-aspects__label--outside {
     padding-inline: var(--space-3);
   }
@@ -585,7 +606,7 @@
 
 .ro-group {
   display: grid;
-  gap: 10px;
+  gap: var(--card-list-gap);
 }
 
 .ro-group-label {
@@ -877,7 +898,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--card-row-gap);
   min-width: 0;
 }
 
@@ -929,7 +950,7 @@
 .aspect-section .aspect-row,
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {
-  gap: var(--sky-card-grid-gap);
+  gap: var(--card-row-gap);
 }
 
 .placement-section .planet-placement-row {
@@ -954,7 +975,7 @@
 }
 
 .placement-section .planet-placement-row__topline {
-  gap: var(--sp-1) 14px;
+  gap: var(--sp-1) var(--card-row-gap);
 }
 
 .placement-section .planet-placement-row__meta {
@@ -978,7 +999,7 @@
 .aspect-section .aspect-row,
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {
-  --aspect-row-gap: var(--space-4);
+  --aspect-row-gap: var(--card-row-gap);
   grid-template-columns: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
   align-items: start;
 }
@@ -1005,7 +1026,7 @@
 }
 
 .aspect-section .aspect-row-timing {
-  gap: var(--sp-1) 10px;
+  gap: var(--sp-1) var(--card-row-gap);
 }
 
 .aspect-section .aspect-row-meta {

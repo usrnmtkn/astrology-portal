@@ -2,8 +2,8 @@
 .aspect-row-button,
 .aspect-row-static {
   --row-bg: var(--card-bg);
-  --aspect-row-padding: var(--sky-card-padding);
-  --aspect-row-copy-gap: var(--space-2);
+  --aspect-row-padding: var(--aspect-card-padding);
+  --aspect-row-copy-gap: var(--card-row-gap);
 
   display: grid;
   grid-template-columns: var(--aspect-row-template);
@@ -130,7 +130,7 @@
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--card-row-gap);
   max-width: 100%;
   margin: 0;
   color: var(--card-meta-color);
@@ -196,12 +196,12 @@
 
 .aspect-row-groups {
   display: grid;
-  gap: 10px;
+  gap: var(--card-list-gap);
 }
 
 .aspect-row-group {
   display: grid;
-  gap: 10px;
+  gap: var(--card-list-gap);
 }
 
 .aspect-row-group + .aspect-row-group {
@@ -271,7 +271,7 @@
 
 .daily-horoscope-writeup__section {
   display: grid;
-  gap: 10px;
+  gap: var(--card-row-gap);
 }
 
 .daily-horoscope-writeup__section + .daily-horoscope-writeup__section {
@@ -467,7 +467,7 @@
 .updates-aspect-row__detail {
   border-top: 1px solid var(--card-border);
   display: grid;
-  gap: 10px;
+  gap: var(--card-row-gap);
   margin-top: var(--space-2);
   padding-top: calc(var(--space-3) + var(--space-1) / 2);
 }

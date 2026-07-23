@@ -3,7 +3,7 @@
 ## Files
 - sign-colors-v1.json and house-transits-master-v2.json — included for completeness; byte-identical to the packages already imported for the house surface. If the repo copies match, no action; if they differ, these win.
 - fallback-atoms-v1.json — planetFunctions(10), signMechanics(12), doDont(18: "planet.direct"/"planet.retrograde"), collectiveFrames(10), signSubjects(12)
-- sky-articles-authored-v1.json — authored evergreen articles, keyed sky.<planet>.<sign> (direct) and sky.<planet>.<sign>.rx (retrograde guide). Currently 2 (Mercury in Cancer pair): these are the master examples; more arrive per author review.
+- sky-articles-authored-v1.json — the COMPLETE authored evergreen library: 216 units, an article for every planet-sign placement (120 direct, keys sky.<planet>.<sign>) and every retrograde-in-sign (96 guides, keys sky.<planet>.<sign>.rx). The Mercury-in-Cancer pair is author-locked; all other units are author-final-draft and may receive line edits in future re-imports. Every placement page renders an authored article; the composed fallback remains implemented as the safety tier but should never serve in practice.
 - TLDR-Sky-Article-Spec.md — structure, tiers, assembly order, computed slots, retired elements. It is the contract for this surface.
 
 ## Rules

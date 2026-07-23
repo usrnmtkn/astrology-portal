@@ -4666,7 +4666,7 @@ function formatCountdown(startInput: string | Date, endInput: string | Date) {
   }
 
   if (parts.totalDays < 1) {
-    return "TODAY left";
+    return "TODAY";
   }
 
   if (parts.totalDays < 60) {
@@ -5785,10 +5785,53 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
+function skyWritingDashboardContentKey(position: PlanetPosition) {
+  const planet = normalizeContentIdPart(position.planet).replace(/-/g, "_");
+  const sign = normalizeContentIdPart(position.sign).replace(/-/g, "_");
+  const suffix = position.motion === "retrograde" ? ".rx" : "";
+
+  return `sky.${planet}.${sign}${suffix}`;
+}
+
+function dashboardSkyPlacementWritingSection(
+  position: PlanetPosition,
+  generatedContent?: GeneratedContentMap
+): NormalizedSkyPlacementSection | null {
+  const contentKey = skyWritingDashboardContentKey(position);
+  const content = generatedContent?.get(contentKey);
+  const paragraphs = generatedContentParagraphs(content);
+  const body = paragraphs.join("\n\n");
+
+  if (!content || !body || !isReaderFacingCopy(body)) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "dashboard-sky-writing",
+    sourceKeys: [
+      "generated_interpretations",
+      contentKey,
+      content.id
+    ],
+    heading: content.headline || skyPlacementDisplayTitle(position),
+    body
+  };
+}
+
 function skyPlacementWritingSection(
   position: PlanetPosition,
-  beats: SkyWritingAspectBeat[] = []
+  beats: SkyWritingAspectBeat[] = [],
+  generatedContent?: GeneratedContentMap
 ): NormalizedSkyPlacementSection | null {
+  const dashboardSection = dashboardSkyPlacementWritingSection(position, generatedContent);
+
+  if (dashboardSection) {
+    return dashboardSection;
+  }
+
   const article = resolveSkyWritingArticle({
     planet: position.planet,
     sign: position.sign,
@@ -5825,8 +5868,7 @@ function normalizeSkyPlacementSurface(
   beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementArticle {
   void duration;
-  void generatedContent;
-  const fallbackSection = skyPlacementWritingSection(position, beats);
+  const fallbackSection = skyPlacementWritingSection(position, beats, generatedContent);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -15477,7 +15519,7 @@ function currentSkyRetrogradeDetailData(
       routePath: skyRetrogradeRoutePath(position),
       glyph: `${position.glyph} ℞`,
       kicker: retrogradeDetailKicker(position),
-      title: renderedHeadline || retrogradePlacementTitle(position),
+      title: retrogradePlacementTitle(position),
       meta: [formatPlacementPosition(position).toUpperCase(), retrogradeTiming].filter(Boolean).join(" · "),
       duration: retrogradeTiming ?? undefined,
       subtitle: tldr,
@@ -16220,7 +16262,7 @@ function PlacementTable({
                 retrograde={isRetrograde}
                 retrogradeDurationLabel={retrogradeDurationLabel}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
-                title={natalPlacementTitle(position)}
+                title={title}
                 variant="sky"
               />
             </SkyPlacementListItem>

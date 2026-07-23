@@ -39,14 +39,14 @@
   .portal-grid:not(.chart-layout),
   .profile-layout {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: var(--mobile-layout-gap);
   }
 
   .chart-layout,
   .sky-layout {
     grid-template-columns: 1fr;
     width: min(760px, calc(100vw - var(--page-gutter) * 2));
-    gap: 36px;
+    gap: var(--mobile-layout-gap);
   }
 
   .chart-layout__visual,
@@ -1397,11 +1397,11 @@
   .aspect-row-button,
   .aspect-row-static {
     --aspect-row-template: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
-    --aspect-row-gap: var(--sky-card-mobile-grid-gap);
-    --aspect-row-padding: var(--sky-card-mobile-padding);
+    --aspect-row-gap: var(--card-row-gap);
+    --aspect-row-padding: var(--card-row-padding-compact);
     grid-template-columns: var(--aspect-row-template);
     align-items: start;
-    min-height: var(--sky-card-mobile-min-height);
+    min-height: var(--card-row-min-height);
   }
 
   .mode-guest .aspect-section .aspect-row,
