@@ -288,10 +288,11 @@
     "synAspectLine"
    ],
    "optionalSlots": [
-    "pairSentences"
+    "pairSentences",
+    "closingLine"
    ],
-   "body": "Your {{planetATitle}} is {{aspectAdj}} {{otherName}}'s {{planetBTitle}}, {{synAspectLine}}{{#pairSentences}} {{pairSentences}}{{/pairSentences}}",
-   "note": "Synastry aspect fallback. synAspectLine = aspect-type hook with modeA/modeB/otherName filled (direction, flip side, repeat loop, advice). pairSentences = optional authored per-pair enrichment. Understanding the other person as an individual belongs to the compat placement cards, not this surface.",
+   "body": "Your {{planetATitle}} is {{aspectAdj}} {{otherName}}'s {{planetBTitle}}, {{synAspectLine}}{{#closingLine}} {{closingLine}}{{/closingLine}}",
+   "note": "Synastry aspect fallback. synAspectLine = aspect-type hook with modeA/modeB/otherName filled (direction, flip side, repeat loop, advice). pairSentences = optional authored per-pair enrichment. Understanding the other person as an individual belongs to the compat placement cards, not this surface. 2026-07-23: assembled fallback now ends with the signature closing formula (cores + motion) when available; authored pair rows return standalone before this template runs.",
    "replaces": "fallback-hook/friends.synastry-contact"
   },
   {

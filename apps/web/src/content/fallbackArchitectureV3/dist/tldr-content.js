@@ -469,10 +469,25 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
         otherName,
         // what each person's planet feels like to the other (hard aspects)
         gratesA: hooks.get(`fallback-hook/planet-grates/${planetA}`)?.body_you,
-        gratesB: hooks.get(`fallback-hook/planet-grates/${planetB}`)?.body_they
+        gratesB: hooks.get(`fallback-hook/planet-grates/${planetB}`)?.body_they,
+        sceneA: vocab.get(`fallback-vocab/planet-scene/${planetA}`)?.body,
+        sceneB: vocab.get(`fallback-vocab/planet-scene/${planetB}`)?.body,
+        askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
+        askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body
       }) : null,
-      pairSentences: pairRow?.body_you ? fill(pairRow.body_you, holders) : null
+      pairSentences: pairRow?.body_you ? fill(pairRow.body_you, holders) : null,
+      // signature closing formula for the assembled fallback (matches the natal-aspect close)
+      closingLine: (() => {
+        const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
+        const coreB = vocab.get(`fallback-vocab/planet-core/${planetB}`)?.body;
+        const motion = vocab.get(`fallback-vocab/aspect-motion/${aspect}`)?.body;
+        return coreA && coreB && motion ? `That's your ${title2(planetA)} ${aspect} ${otherName}'s ${title2(planetB)}: ${coreA} and ${coreB} ${motion}.` : null;
+      })()
     };
+    if (ctx.pairSentences) {
+      const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
+      return { headline: headlinePair, tag: typeRow?.tag ?? null, body: ctx.pairSentences, parts: [ctx.pairSentences], templateKey: T.contentKey };
+    }
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: synastry aspect slot ${slot} for ${planetA}-${aspect}-${planetB}`);
     let body = T.body.replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => ctx[key] ? inner : "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
     body = body.replace(/\s{2,}/g, " ").trim();
@@ -816,7 +831,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-23b";
+var PACKAGE_VERSION = "v3-2026-07-23c";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

@@ -408,6 +408,15 @@ button.planet-placement-row {
   white-space: normal;
 }
 
+.dignity-tooltip-copy,
+.dignity-tooltip-copy__specific {
+  display: block;
+}
+
+.dignity-tooltip-copy__specific {
+  margin-top: var(--space-2);
+}
+
 .spl-status-item {
   gap: 0.4em;
 }

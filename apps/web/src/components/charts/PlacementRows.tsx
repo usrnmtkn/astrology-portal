@@ -2,6 +2,11 @@ import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import { natalCardTagline } from "../../services/natalPlacementTaglines";
+import {
+  fallbackV3DignityGlossary,
+  fallbackV3DignityLine,
+  fallbackV3PlacementSentence
+} from "../../content/fallbackArchitectureV3Runtime";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import {
   aspectGlyph,
@@ -34,6 +39,8 @@ export type PlacementDignity = {
   label: string;
   tone: DignityTone;
   description: string;
+  glossaryDescription: string;
+  specificDescription: string;
 };
 
 export type PlacementRowStatus = {
@@ -103,7 +110,6 @@ const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: str
   fall: { adjective: "Weakened", name: "Fall", tone: "weak" }
 };
 
-const dignityDescriptions: Record<EssentialDignity, string> = { domicile: "", exaltation: "", detriment: "", fall: "" };
 
 function normalizePlacementMicrocopySection(
   slot: NormalizedPlacementMicrocopySection["slot"],
@@ -282,43 +288,53 @@ export function socialPlacementDegree(degree: number) {
   return `${rounded === 30 ? 0 : rounded}°`;
 }
 
-function placementDignityFromValue(dignity: EssentialDignity): PlacementDignity {
+function placementDignityFromValue(dignity: EssentialDignity, planet: string, voice: "you" | "they" | "sky"): PlacementDignity {
   const labelParts = dignityLabelParts[dignity];
-  const normalizedDescription = normalizePlacementMicrocopySection(
-    "dignity",
-    dignityDescriptions[dignity],
-    [`placement.dignity.${dignity}`],
-    false
-  );
+  const glossaryDescription = fallbackV3DignityGlossary(dignity);
+  const specificDescription = fallbackV3DignityLine(dignity, planet, voice);
+  const description = [glossaryDescription, specificDescription]
+    .filter(isReaderFacingCopy)
+    .join(" ");
 
   return {
     dignity,
     label: `${labelParts.adjective} · ${labelParts.name}`,
     tone: labelParts.tone,
-    description: normalizedDescription?.body ?? ""
+    description,
+    glossaryDescription,
+    specificDescription
   };
 }
 
-export function dignitiesFor(planet: string, sign: string): PlacementDignity[] {
+export function dignitiesFor(planet: string, sign: string, voice: "you" | "they" | "sky" = "you"): PlacementDignity[] {
   const dignity = planetDignities[planet]?.[sign] ?? null;
 
   if (!dignity) {
     return [];
   }
 
-  return (Array.isArray(dignity) ? dignity : [dignity]).map(placementDignityFromValue);
+  return (Array.isArray(dignity) ? dignity : [dignity]).map((value) => placementDignityFromValue(value, planet, voice));
 }
 
-export function dignityFor(planet: string, sign: string): PlacementDignity | null {
-  return dignitiesFor(planet, sign)[0] ?? null;
+export function dignityFor(planet: string, sign: string, voice: "you" | "they" | "sky" = "you"): PlacementDignity | null {
+  return dignitiesFor(planet, sign, voice)[0] ?? null;
 }
 
-export function placementDignity(position: PlanetPosition) {
-  return dignityFor(position.planet, position.sign);
+export function placementDignity(position: PlanetPosition, voice: "you" | "they" | "sky" = "you") {
+  return dignityFor(position.planet, position.sign, voice);
 }
 
 export function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
   return `${planet}${retrograde ? " Rx" : ""} in ${sign}`;
+}
+
+// Friend/event placement description: approved third-person ("they") placement
+// sentence from the v3 source. Ascendant and Midheaven are covered in 23c;
+// Descendant and IC stay empty until their rows are supplied. Never substitutes copy.
+export function friendPlacementDescription(planet: string, sign: string) {
+  const body = fallbackV3PlacementSentence(planet, sign, "they");
+
+  return isReaderFacingCopy(body) ? body : "";
 }
 
 export function natalPlacementDescription(planet: string, context: PlacementDescriptionContext = "self", ownerName?: string) {
@@ -426,11 +442,26 @@ export function DignityBadge({ dignity, uppercase = false }: { dignity: Placemen
       {dignities.map((item) => {
         const label = uppercase ? uppercaseDignityLabel(item) : item.label;
 
+        if (!item.glossaryDescription) {
+          return (
+            <span className={dignityPillClassName(item.tone)} key={item.dignity}>
+              {label}
+            </span>
+          );
+        }
+
         return (
           <FloatingTooltip
             ariaLabel={`${label}. ${item.description}`}
             className={dignityPillClassName(item.tone)}
-            content={item.description}
+            content={(
+              <span className="dignity-tooltip-copy">
+                <span>{item.glossaryDescription}</span>
+                {isReaderFacingCopy(item.specificDescription) ? (
+                  <span className="dignity-tooltip-copy__specific">{item.specificDescription}</span>
+                ) : null}
+              </span>
+            )}
             key={item.dignity}
           >
             {label}
@@ -753,19 +784,21 @@ export function FriendPlacementTable({
   showTitle?: boolean;
 }) {
   void generatedContent;
+  void descriptionContext;
+  void ownerName;
 
   return (
     <section className={`friend-placement-column ${compact ? "friend-placement-column-compact" : ""}`} aria-label={`${title} placements`}>
       {showTitle ? <h3 className="friend-placement-column-title">{title}</h3> : null}
       <div className="friend-placement-table">
         {rows.map((row) => {
-          const dignity = generatedContext === "composite" ? [] : dignitiesFor(row.label, row.sign);
+          const dignity = generatedContext === "composite" ? [] : dignitiesFor(row.label, row.sign, "they");
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
               <PlanetPlacementRow
                 degree={socialPlacementDegree(row.degree)}
-                description={row.description ?? natalPlacementDescription(row.label, generatedContext === "composite" ? "composite" : descriptionContext, ownerName)}
+                description={row.description ?? (generatedContext === "composite" ? "" : friendPlacementDescription(row.label, row.sign))}
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}

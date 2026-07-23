@@ -27,6 +27,7 @@ export type HookRow = {
   body?: string | null;
   body_you?: string | null;
   body_they?: string | null;
+  body_sky?: string | null;
   question?: string | null;
   review_status?: ReviewStatus | null;
   [key: string]: unknown;
@@ -210,10 +211,41 @@ export function fallbackV3VocabularyBody(contentKey: string) {
   return vocabularyBody(contentKey);
 }
 
+export function fallbackV3DignityGlossary(dignity: string) {
+  return vocabularyBody(`fallback-vocab/dignity-glossary/${contentIdPart(dignity)}`);
+}
+
 export function fallbackV3HookBody(contentKey: string, voice: "you" | "they" = "you") {
   const row = hookRowsByKey.get(contentKey);
   const body = voice === "you" ? row?.body_you ?? row?.body : row?.body_they ?? row?.body;
   return typeof body === "string" ? body : "";
+}
+
+// Approved per-placement sentence (planet in sign), voice-aware. "they" is the
+// third-person variant used for friend/event charts. Returns "" on SOURCE_GAP so
+// callers hide the surface rather than substitute copy. The 23c package covers
+// Ascendant and Midheaven; Descendant and IC intentionally remain uncovered.
+export function fallbackV3PlacementSentence(planet: string, sign: string, voice: "you" | "they" = "they") {
+  return fallbackV3HookBody(
+    `fallback-hook/placement-sentence/${contentIdPart(planet)}/${contentIdPart(sign)}`,
+    voice
+  );
+}
+
+// Approved essential-dignity line (dignity + planet), voice-aware. Returns "" on
+// SOURCE_GAP; coverage is partial, so most combinations hide until authored.
+// "sky" is the impersonal, transient framing for the Sky page (the placement is
+// happening now for everyone, not a trait of the reader). It reads only body_sky
+// and never falls back to the personal you/they text.
+export function fallbackV3DignityLine(dignity: string, planet: string, voice: "you" | "they" | "sky" = "you") {
+  const contentKey = `fallback-hook/dignity-line/${contentIdPart(dignity)}/${contentIdPart(planet)}`;
+
+  if (voice === "sky") {
+    const body = hookRowsByKey.get(contentKey)?.body_sky;
+    return typeof body === "string" ? body : "";
+  }
+
+  return fallbackV3HookBody(contentKey, voice);
 }
 
 export function renderHouseGlossaryV3(house: number, voice: "you" | string = "you") {
