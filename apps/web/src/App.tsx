@@ -5960,14 +5960,27 @@ const transitAxisPriority: Record<string, number> = {
 function transitAxisDuplicateKey(transit: TransitItem) {
   const pairedAngle = transitAxisPairs[transit.natalPoint];
 
-  if (!pairedAngle || !["conjunction", "opposition"].includes(transit.aspect)) {
+  if (!pairedAngle) {
     return null;
   }
 
   const axisName = ["Ascendant", "Descendant"].includes(transit.natalPoint) ? "horizon" : "meridian";
-  const canonicalPoint = transit.aspect === "conjunction" ? transit.natalPoint : pairedAngle;
 
-  return `${transit.transitPlanet}-${axisName}-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
+  if (transit.aspect === "square") {
+    return `${transit.transitPlanet}-${axisName}-square`.toLowerCase().replace(/\s+/g, "-");
+  }
+
+  if (["conjunction", "opposition"].includes(transit.aspect)) {
+    const canonicalPoint = transit.aspect === "conjunction" ? transit.natalPoint : pairedAngle;
+    return `${transit.transitPlanet}-${axisName}-conjunction-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
+  }
+
+  if (["trine", "sextile"].includes(transit.aspect)) {
+    const canonicalPoint = transit.aspect === "trine" ? transit.natalPoint : pairedAngle;
+    return `${transit.transitPlanet}-${axisName}-soft-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
+  }
+
+  return null;
 }
 
 function dedupeTransitAxisContacts<T extends TransitItem>(transits: T[]) {
