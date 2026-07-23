@@ -113,11 +113,30 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
   rowsFile: fallbackSourceRowsV3 as RowsFile
 };
 
+const readerEligibleReviewStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function isReaderEligible(row: { review_status?: ReviewStatus | null }) {
+  return readerEligibleReviewStatuses.has(String(row.review_status ?? "").trim().toLowerCase());
+}
+
 function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
+  // The package transit factory intentionally exposes review rows for admin QA.
+  // Production gets a reader-eligible view so needs_review additions stay dark.
+  const readerBundle: FallbackArchitectureV3Bundle = {
+    transitLib: {
+      authoredCards: bundle.transitLib.authoredCards.filter(isReaderEligible)
+    },
+    templatesFile: bundle.templatesFile,
+    rowsFile: {
+      hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
+      vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
+    }
+  };
+
   return createTransitSynastryRenderer(
-    bundle.transitLib,
-    bundle.templatesFile,
-    bundle.rowsFile
+    readerBundle.transitLib,
+    readerBundle.templatesFile,
+    readerBundle.rowsFile
   );
 }
 

@@ -7975,6 +7975,18 @@ function dedupeSameBeatPersonalTransits<T extends TransitItem>(transits: T[], ge
   });
 }
 
+function stableTransitCopyVariant(...parts: Array<string | number>) {
+  const seed = parts.join(":");
+  let hash = 0;
+
+  for (const character of seed) {
+    hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
+  }
+
+  const variant = (hash % 3) + 1;
+  return variant === 1 ? undefined : variant;
+}
+
 function personalTransitMadlibFallbackSection(
   transit: TransitItem,
   generatedAt: string,
@@ -7992,6 +8004,7 @@ function personalTransitMadlibFallbackSection(
       natal: normalizeContentIdPart(transit.natalPoint),
       sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
       transiting: normalizeContentIdPart(transit.transitPlanet),
+      variant: stableTransitCopyVariant(voice, transit.id),
       window: personalTransitPackageWindow(transit, generatedAt),
       voice
     });
@@ -8054,6 +8067,7 @@ function normalizeTransitHouseSurface(
       planet: normalizeContentIdPart(transit.transitPlanet),
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
       motion: transit.transitMotion,
+      variant: stableTransitCopyVariant(voice, transit.id, `house-${house}`),
       window: personalTransitPackageWindow(transit, generatedAt),
       voice
     });
@@ -8130,6 +8144,7 @@ function activeBondTransitCards(
         natalAspect: contactAspect,
         otherName: friendName,
         sign: activation.transitSign ? normalizeContentIdPart(activation.transitSign) : undefined,
+        variant: stableTransitCopyVariant(friendName, activation.id, contact.id),
         window: personalTransitPackageWindow(activation, generatedAt)
       });
 

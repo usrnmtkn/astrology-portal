@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { renderTransitHouse, renderTransitAspect, renderCompat, renderSynastryAspect, renderCircleStory, formatCircleNames, renderSkyPlacement, renderSkyLunation, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderSkyAspectCard, renderBondTransit, renderTransitLabel } from "../resolver/renderTransitSynastry.mjs";
+import { renderTransitHouse, renderTransitAspect, renderCompat, renderSynastryAspect, renderCircleStory, formatCircleNames, renderSkyPlacement, renderSkyLunation, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderSkyAspectCard, renderBondTransit, renderTransitLabel, renderLunationHoroscope, renderDoDont } from "../resolver/renderTransitSynastry.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -219,6 +219,37 @@ console.log("Rendered 12 Lilith sky placements.");
     }
   }
   console.log(`Rendered ${cx} Connections pair directions, agreement-checked.`);
+}
+
+
+// Per-rising lunation horoscopes: all 12 risings x 4 kinds, correct house math, eclipse canon
+{
+  let lh = 0;
+  for (const rs of SIGNS) for (const kd of ["new-moon", "full-moon", "eclipse-solar", "eclipse-lunar"]) {
+    const r = renderLunationHoroscope({ kind: kd, sign: "aquarius", risingSign: rs });
+    if (/\{\{/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: slot leak`);
+    if (kd.startsWith("eclipse") && /Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release leaked into eclipse`);
+    if (!kd.startsWith("eclipse") && !/Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release missing`);
+    lh++;
+  }
+  const aq = renderLunationHoroscope({ kind: "full-moon", sign: "aquarius", risingSign: "aquarius" });
+  if (!aq.body.includes("1st house")) fail("lunation horoscope: house math wrong for same-sign rising");
+  console.log(`Rendered ${lh} per-rising lunation horoscopes.`);
+}
+
+
+// Do/Don't engine: worked example from the spec (MP, July 17) + full seed coverage
+{
+  const mp = renderDoDont({ planet: "saturn", sign: "virgo", house: 4, transiting: "moon", weakPlanet: "venus", weakSign: "capricorn" });
+  if (mp.do[0] !== "File the paperwork" || mp.do[1] !== "Organize one room") fail("dodont: spec example assembly wrong: " + JSON.stringify(mp));
+  if (mp.dont.length !== 3) fail("dodont: expected 3 donts");
+  let dd = 0;
+  for (const pl of ["moon","venus","mars","mercury","saturn"]) for (const sg of SIGNS) for (const tr of SKY_PL) {
+    const r = renderDoDont({ planet: pl, sign: sg, house: ((dd % 12) + 1), transiting: tr });
+    if (r.do.length < 3 || r.dont.length < 2) fail(`dodont thin: ${pl}/${sg}/${tr}`);
+    dd++;
+  }
+  console.log(`Assembled ${dd} Do/Don't lists.`);
 }
 
 console.log(`Rendered ${syn} synastry aspect combos, ${lib.authoredCards.length} authored cards checked.`);
