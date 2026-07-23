@@ -76,7 +76,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "cc-synastry-web-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json", role: "phrasebank" },
       { label: "relationships-web.json", path: "packages/astro-knowledge/dist/relationships-web.json", role: "knowledge" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -94,7 +94,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "cc-synastry-web-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json", role: "phrasebank" },
       { label: "relationshipRegistry.ts", path: "apps/web/src/content/relationshipRegistry.ts", role: "knowledge" },
       { label: "domainRegistry.ts", path: "apps/web/src/content/domainRegistry.ts", role: "knowledge" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -109,9 +109,9 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Expose per-row provenance so QA can distinguish knowledge rows from madlib fallback.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -127,7 +127,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "relationshipRegistry.ts", path: "apps/web/src/content/relationshipRegistry.ts", role: "knowledge" },
-      { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
     ]
   },
@@ -143,11 +143,11 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Expose the per-section layer/tier/sourceKeys in the UI so QA can see which sections are source-grounded versus fallback.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
-      { label: "sourceGroundedModels.ts", path: "apps/web/src/content/sourceGroundedModels.ts", role: "source-grounded" },
-      { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
+      { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
+      { label: "fallbackArchitectureV3/dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "source-grounded" },
+      { label: "fallback-architecture-v3-dashboard-rows.json", path: "apps/web/src/content/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
       { label: "cc-natal-source-grounded-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json", role: "phrasebank" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -162,9 +162,9 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Expose section-level layer/tier/sourceKeys in the detail UI so QA can see whether a page is reviewed or fallback.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
-      { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
+      { label: "fallback-architecture-v3-dashboard-rows.json", path: "apps/web/src/content/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -203,15 +203,13 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["current placement meaning"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizeSkyPlacementSurface resolves LIVE dashboard rows keyed sky.<planet>.<sign>[.rx] first, then the sky-writing-v1 authored package, then the package fallback atoms as a safety tier.",
-    risk: "Dashboard edits now override the package, but any new imported package still needs admin local-row visibility/materialization so the owner can promote edits to generated_interpretations.",
-    nextAction: "Keep the Sky Writing Articles rows visible in admin and expose section-level layer/tier/sourceKeys in the detail UI.",
+    currentRenderPath: "normalizeSkyPlacementSurface resolves current sky placement articles through fallbackArchitectureV3/dist/tldr-content.js via renderSkyPlacement / renderSkySeason.",
+    risk: "Sky placement copy now depends on the imported fallback-architecture package and its authored/fallback review status; stale dashboard or legacy bundle rows should not serve reader copy.",
+    nextAction: "Keep fallbackArchitectureV3 imported from the package bundle and QA the detail UI for source badges, factual titles, and no legacy sky placement copy.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "generated_interpretations sky.* rows", path: "generated_interpretations:sky.{planet}.{sign}[.rx]", role: "stored-source" },
-      { label: "sky-articles-authored-v1.json", path: "apps/web/src/content/sky-writing/sky-articles-authored-v1.json", role: "source-grounded" },
-      { label: "fallback-atoms-v1.json", path: "apps/web/src/content/sky-writing/fallback-atoms-v1.json", role: "fallback-package" },
-      { label: "sign-colors-v1.json", path: "apps/web/src/content/sky-writing/sign-colors-v1.json", role: "fallback-package" }
+      { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
+      { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "renderer" }
     ]
   },
   {
@@ -226,10 +224,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Add optional normalized slots for sign context and condition modifiers if those details should return.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
-      { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
-      { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
+      { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
+      { label: "fallback-architecture-v3-dashboard-rows.json", path: "scripts/generated/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -244,10 +242,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Expose section-level layer/tier/sourceKeys in the read block and card previews.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
-      { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
-      { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
+      { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
+      { label: "fallback-architecture-v3-dashboard-rows.json", path: "scripts/generated/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -262,7 +260,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Add reviewed/source-grounded highlight rows if these cards need Layer 1 coverage, and expose layer/sourceKeys in the UI.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -277,7 +275,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Product-review Friends Circle before writing more prose: decide whether it is relationship radar, friend timing, social feed, or circle overview, then add authored rows only for the chosen job.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -308,7 +306,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "LunarCalendar.tsx", path: "apps/web/src/features/calendar/LunarCalendar.tsx", role: "renderer" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {
@@ -324,7 +322,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "lunarDayResolver.ts", path: "apps/web/src/features/calendar/lunarDayResolver.ts", role: "renderer" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "fallbackHooks.ts", path: "apps/web/src/content/fallbackHooks.ts", role: "knowledge" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" }
     ]
   },
   {
@@ -395,7 +393,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Add reviewed/source-grounded transit-through-house records if this row needs Layer 1 coverage.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
   {

@@ -3,9 +3,10 @@ import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-tem
 import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
-import { createFallbackRenderer, createTransitSynastryRenderer, normalizeAspect, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
+import { createFallbackRenderer, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
 
 export { normalizeAspect, SourceGapError };
+export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
 

@@ -314,20 +314,14 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
-    const pushUnique = (key) => {
-      if (!tryKeys.includes(key)) tryKeys.push(key);
-    };
     const push = (a, b) => {
-      pushUnique(`authored/transit-aspect/${a}/${b}/${aspect}`);
-      if (variant) pushUnique(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
-      for (const gg of groupsToTry) pushUnique(`authored/transit-aspect/${a}/${b}/${gg}`);
-      pushUnique(`authored/transit-aspect/${a}/${b}/any`);
+      if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
+      for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
+      tryKeys.push(`authored/transit-aspect/${a}/${b}/any`);
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
-    pushUnique(`authored/transit-aspect/any/${natal}/${aspect}`);
-    pushUnique(`authored/transit-aspect/any/${natal}/${g}`);
-    pushUnique(`authored/transit-aspect/any/${natal}/conjunction`);
+    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     if (v === "you") for (const k of tryKeys) {
       const c = card(k);
       if (c) return result(c, "authored/transit-aspect");
@@ -603,7 +597,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     if (elClose) paras.push(elClose);
     const pb = vocab.get(`fallback-vocab/planet-blessing/${planet}`)?.body;
     const sb = vocab.get(`fallback-vocab/sign-blessing/${sign}`)?.body;
-    if (pb && sb) paras.push(`${pb.charAt(0).toUpperCase()}${pb.slice(1)} and ${sb},`);
+    if (pb && sb) paras.push(`Wishing you ${pb} and ${sb}.`);
     return { headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "), body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.placement-article" };
   }
   function formatCircleNames(names = [], includesReader = true) {
@@ -672,7 +666,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     if (!r) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
     const body = fill(r.body_you, { signTitle: sign ? title2(sign) : "" }).replace(/^in \. /, "");
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} missing cycle sign`);
-    return { headline: r.title ?? "", body, parts: [body], templateKey: "fallback-template/calendar.phase", contentKey: r.contentKey };
+    const PHASE_NAMES = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
+    const plain = `${PHASE_NAMES[phase] ?? title2(phase)}${sign ? ` in ${title2(sign)}` : ""}`;
+    return { headline: plain, tagline: r.title ?? "", body, parts: [body], templateKey: "fallback-template/calendar.phase", contentKey: r.contentKey };
   }
   function renderVoidOfCourse({ sign, nextSign }) {
     const r = hooks.get("fallback-hook/moon-void");
@@ -777,7 +773,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const donts = [
       seed(`dodont-shadow/${planet}/${sign}`),
       seed(`dodont-friction/${transiting}`),
-      weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : null
+      // third slot: aggravated partner's shadow when supplied; otherwise the pressed
+      // planet's own friction habit (skipped automatically by de-dupe if transiting === planet)
+      weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : seed(`dodont-friction/${planet}`)
     ].filter((x) => Boolean(x));
     if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
     const uniq = (a) => [...new Set(a)];
@@ -785,7 +783,11 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   }
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
+
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-23";
 export {
+  PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
   createFallbackRenderer,

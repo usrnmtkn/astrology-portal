@@ -22,15 +22,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import { AspectPatternWriteups } from "./AspectPatternWriteups";
-import {
-  fallbackHookDefinitions,
-  lunarCalendarContentKeyDefinitions,
-  type FallbackHookDefinition,
-  type LunarCalendarContentKeyDefinition
-} from "../../web/src/content/fallbackHooks";
+import { fallbackArchitectureV3PackageVersion } from "../../web/src/content/fallbackArchitectureV3Runtime";
+import fallbackSourceRowsV3 from "../../web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
-import skyContentSnapshot from "../../web/src/content/skyContentSnapshot.json";
-import skyWritingArticles from "../../web/src/content/sky-writing/sky-articles-authored-v1.json";
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -79,6 +73,17 @@ type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "m
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
+type FallbackHookDefinition = {
+  key: string;
+  label: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  copy: {
+    headline: string;
+    summary: string;
+    body: string;
+  };
+};
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -109,33 +114,6 @@ type AdminGeneratedContentRow = {
   published_at?: string | null;
   updated_at?: string | null;
   created_at?: string | null;
-};
-
-type LocalSkySnapshotRow = {
-  id: string;
-  contentKey: string;
-  aliases?: string[];
-  surface: GeneratedContentSurface;
-  mode: GeneratedContentMode;
-  eventType: string | null;
-  targetDate: string | null;
-  headline: string | null;
-  summary: string | null;
-  body: string | null;
-  sections?: unknown;
-  blockType?: string | null;
-  provider?: string | null;
-  sourceSnapshot?: Record<string, unknown> | null;
-  model?: string | null;
-  updatedAt?: string | null;
-};
-
-type LocalSkyWritingArticle = {
-  key: string;
-  type: "direct" | "retrograde";
-  header?: Record<string, unknown>;
-  sections?: Record<string, unknown>;
-  version?: string;
 };
 
 type AdminReviewRecord = {
@@ -193,8 +171,7 @@ type AdminContentFact = {
 };
 
 type HookCatalogItem =
-  | { type: "fallback"; key: string; label: string; section: AdminFallbackHookSectionFilter; definition: FallbackHookDefinition }
-  | { type: "lunar"; key: string; label: string; section: "lunar-calendar"; definition: LunarCalendarContentKeyDefinition };
+  { type: "fallback"; key: string; label: string; section: AdminFallbackHookSectionFilter; definition: FallbackHookDefinition };
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
 
 type AdminDraft = {
@@ -975,6 +952,38 @@ function titleFromKey(contentKey: string) {
     || contentKey;
 }
 
+function packageHookSurface(key: string): GeneratedContentSurface {
+  if (key.includes("/friends") || key.includes("/relationship") || key.includes("/synastry") || key.includes("/composite")) return "friends";
+  if (key.includes("/you") || key.includes("/natal") || key.includes("/placement") || key.includes("/aspect")) return "you";
+  if (key.includes("/settings")) return "modifier";
+  return "sky";
+}
+
+function packageHookBody(row: Record<string, unknown>) {
+  const preferred = row.body_you ?? row.body ?? row.template ?? row.copy;
+  if (typeof preferred === "string") return preferred;
+  if (typeof row.body_they === "string") return row.body_they;
+  return "";
+}
+
+const fallbackHookDefinitions: FallbackHookDefinition[] = ((fallbackSourceRowsV3 as { hookRows?: Array<Record<string, unknown>> }).hookRows ?? [])
+  .map((row) => {
+    const key = typeof row.contentKey === "string" ? row.contentKey : "";
+    const label = titleFromKey(key);
+    return {
+      key,
+      label,
+      surface: packageHookSurface(key),
+      mode: "feed",
+      copy: {
+        headline: label,
+        summary: "",
+        body: packageHookBody(row)
+      }
+    };
+  })
+  .filter((definition) => Boolean(definition.key));
+
 function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
     return normalizeText(row.headline) || titleFromKey(row.content_key);
@@ -1038,7 +1047,7 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
   ) return "reference";
   if (contentKey.startsWith("compatibility.") || eventType === "friends.compatibility.planet-card") return "phrasebank";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
-  if (provider && !/phrasebank|migration|local-normalized-dashboard-source|local-sky-writing-package|manual-admin/i.test(provider)) return "legacy";
+  if (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider)) return "legacy";
   if (/^(natal|composite|transit|sky|synastry|relationship|you)[./-]/i.test(contentKey)) return "phrasebank";
   if (contentKey.includes("aspect") || contentKey.includes("placement") || contentKey.includes("synastry")) return "phrasebank";
   return "other";
@@ -1173,121 +1182,6 @@ function surfaceAreaForFallbackSection(section: AdminFallbackHookSectionFilter):
 
 function canonicalFallbackContentKey(key: string) {
   return key.startsWith("fallback-hook/") ? key : `fallback-hook/${key}`;
-}
-
-function fallbackVocabularyContentKey(family: string, value: string) {
-  const signPart = value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  return `fallback-vocab/${family}/${signPart}`;
-}
-
-function fallbackAspectVerbDependency(signPart: string) {
-  return fallbackVocabularyContentKey("aspect-verb", signPart);
-}
-
-function localSkySnapshotAdminRows(): AdminGeneratedContentRow[] {
-  const rows = (skyContentSnapshot as { rows?: LocalSkySnapshotRow[] }).rows ?? [];
-
-  return rows.map((row) => {
-    const contentParts = row.contentKey.split(".");
-    const aspectPart = row.eventType === "current-sky-aspect" ? contentParts.at(-2) ?? "" : "";
-    const dependencies = aspectPart ? [fallbackAspectVerbDependency(aspectPart)] : [];
-
-    return {
-      id: `local-sky-snapshot:${row.id}`,
-      content_key: row.contentKey,
-      surface: row.surface,
-      mode: row.mode,
-      status: "LIVE",
-      event_type: row.eventType,
-      target_date: row.targetDate,
-      headline: row.headline,
-      summary: row.summary,
-      body: row.body,
-      sections: row.sections ?? null,
-      block_type: row.blockType ?? null,
-      lane: "serving",
-      review_state: null,
-      evergreen: true,
-      provider: row.provider ?? "local-normalized-dashboard-source",
-      model: row.model ?? null,
-      source_snapshot: {
-        ...(row.sourceSnapshot ?? { source: "skyContentSnapshot" }),
-        aliases: row.aliases ?? [],
-        dependencies
-      },
-      updated_at: row.updatedAt ?? null,
-      created_at: row.updatedAt ?? null,
-      prompt_version: "local-sky-snapshot"
-    };
-  });
-}
-
-function skyWritingArticleTitle(article: LocalSkyWritingArticle) {
-  const [, planet = "", sign = ""] = article.key.split(".");
-  const planetTitle = planet.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-  const signTitle = sign.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-  return article.header?.what && typeof article.header.what === "string"
-    ? article.header.what
-    : `${planetTitle} in ${signTitle}${article.type === "retrograde" ? " retrograde" : ""}`;
-}
-
-function skyWritingArticleBody(article: LocalSkyWritingArticle) {
-  const header = article.header ?? {};
-  const sections = article.sections ?? {};
-  const rxSectionOrder = ["s1_header", "s1", "s2_header", "s2", "s3_header", "s3", "s4_header", "s4", "handoff"];
-  const directSectionOrder = ["opening", "mechanics", "lived", "shadow", "truth", "collective", "directive", "handoff"];
-  const headerParts = [header.whenSlot, header.what, header.tldr]
-    .map((value) => typeof value === "string" ? value.trim() : "")
-    .filter(Boolean);
-  const sectionParts = (article.type === "retrograde" ? rxSectionOrder : directSectionOrder)
-    .map((key) => typeof sections[key] === "string" ? sections[key].trim() : "")
-    .filter(Boolean);
-  const doDontParts = [
-    Array.isArray(sections.do) && sections.do.length > 0 ? `Do: ${sections.do.map(String).join("; ")}.` : "",
-    Array.isArray(sections.dont) && sections.dont.length > 0 ? `Don't: ${sections.dont.map(String).join("; ")}.` : ""
-  ].filter(Boolean);
-
-  return [...headerParts, ...sectionParts, ...doDontParts].join("\n\n");
-}
-
-function localSkyWritingAdminRows(): AdminGeneratedContentRow[] {
-  return (skyWritingArticles as LocalSkyWritingArticle[]).map((article) => {
-    const [, planet = "", sign = ""] = article.key.split(".");
-
-    return {
-      id: `local-sky-writing:${article.key}`,
-      content_key: article.key,
-      surface: "sky",
-      mode: "article",
-      status: "LIVE",
-      event_type: article.type === "retrograde" ? "sky-writing-retrograde" : "sky-writing-placement",
-      target_date: null,
-      headline: skyWritingArticleTitle(article),
-      summary: typeof article.header?.tldr === "string" ? article.header.tldr : null,
-      body: skyWritingArticleBody(article),
-      sections: article.sections ?? null,
-      block_type: "sky_article",
-      lane: "serving",
-      review_state: null,
-      evergreen: true,
-      provider: "local-sky-writing-package",
-      model: "author-final",
-      source_snapshot: {
-        contentSystem: "authored",
-        contentType: "sky-writing-article",
-        sourcePackage: "sky-writing-v1",
-        articleKey: article.key,
-        planet,
-        sign,
-        motion: article.type === "retrograde" ? "retrograde" : "direct",
-        version: article.version ?? null
-      },
-      updated_at: null,
-      created_at: null,
-      prompt_version: "sky-writing-v1"
-    };
-  });
 }
 
 function hookKeyFromSavedRow(row: AdminGeneratedContentRow) {
@@ -1429,10 +1323,8 @@ function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
 }
 
 function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
-  const isLocalPackageRow = row.id.startsWith("local-sky-snapshot:") || row.id.startsWith("local-sky-writing:");
-
   return {
-    id: isLocalPackageRow ? null : row.id,
+    id: row.id,
     contentKey: row.content_key,
     surface: row.surface,
     mode: row.mode,
@@ -1452,13 +1344,13 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
 }
 
 function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
-  const fallbackCopy = item.type === "fallback" ? item.definition.copy : null;
+  const fallbackCopy = item.definition.copy;
   const hook = item.key;
   return {
     id: null,
     contentKey: canonicalFallbackContentKey(hook),
-    surface: item.type === "fallback" && item.definition.surface !== "settings" ? item.definition.surface : "sky",
-    mode: item.type === "fallback" ? item.definition.mode : "feed",
+    surface: item.definition.surface,
+    mode: item.definition.mode,
     status: "DRAFT",
     headline: fallbackCopy?.headline ?? item.label,
     summary: fallbackCopy?.summary ?? "",
@@ -1548,21 +1440,7 @@ export function GeneratedContentAdminDashboard() {
   const handledHashRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
 
-  const localSkySnapshotRows = useMemo(() => localSkySnapshotAdminRows(), []);
-  const localSkyWritingRows = useMemo(() => localSkyWritingAdminRows(), []);
-  const persistedContentKeys = useMemo(() => new Set(rows.map((row) => row.content_key)), [rows]);
-  const visibleLocalSnapshots = useMemo(
-    () => localSkySnapshotRows.filter((row) => !persistedContentKeys.has(row.content_key)),
-    [localSkySnapshotRows, persistedContentKeys]
-  );
-  const visibleLocalSkyWritingRows = useMemo(
-    () => localSkyWritingRows.filter((row) => !persistedContentKeys.has(row.content_key)),
-    [localSkyWritingRows, persistedContentKeys]
-  );
-  const visibleRows = useMemo(
-    () => [...visibleLocalSkyWritingRows, ...visibleLocalSnapshots, ...rows],
-    [rows, visibleLocalSkyWritingRows, visibleLocalSnapshots]
-  );
+  const visibleRows = rows;
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
     [visibleRows]
@@ -1635,13 +1513,6 @@ export function GeneratedContentAdminDashboard() {
       key: definition.key,
       label: definition.label,
       section: fallbackSectionForKey(definition.key, definition.surface),
-      definition
-    })),
-    ...lunarCalendarContentKeyDefinitions.map((definition) => ({
-      type: "lunar" as const,
-      key: definition.key,
-      label: definition.label,
-      section: "lunar-calendar" as const,
       definition
     }))
   ], []);
@@ -2396,6 +2267,7 @@ export function GeneratedContentAdminDashboard() {
           {loadState === "loaded" ? "Access verified" : loadState === "loading" ? "Loading" : secret.trim() ? "Access saved" : "Local only"}
         </span>
         <small>{loadState === "loaded" ? `${rows.length} saved rows loaded` : "Rows not loaded"}</small>
+        <small>Fallback package {fallbackArchitectureV3PackageVersion}</small>
       </section>
     </aside>
   );

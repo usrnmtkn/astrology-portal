@@ -1,5 +1,4 @@
 import { skyBodyOrderIndex } from "../../astrologyConfig";
-import { lunarBeatArchetypeForKey, lunarBeatArchetypeLoreForKey, lunarBeatBodyForKey } from "../../content/lunarBeatCopy";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
@@ -609,38 +608,17 @@ function normalizedLunarSlot(
 }
 
 function lunarBeatBody(keys: string[]): string | null {
-  for (const key of keys) {
-    const body = lunarBeatBodyForKey(key)?.trim();
-
-    if (isReaderFacingCopy(body)) {
-      return body;
-    }
-  }
-
+  void keys;
   return null;
 }
 
 function lunarBeatArchetype(keys: string[]): string | null {
-  for (const key of keys) {
-    const archetypeTitle = lunarBeatArchetypeForKey(key)?.trim();
-
-    if (archetypeTitle) {
-      return archetypeTitle;
-    }
-  }
-
+  void keys;
   return null;
 }
 
 function lunarBeatArchetypeLore(keys: string[]): string | null {
-  for (const key of keys) {
-    const archetypeLore = lunarBeatArchetypeLoreForKey(key)?.trim() ?? "";
-
-    if (isReaderFacingCopy(archetypeLore)) {
-      return archetypeLore;
-    }
-  }
-
+  void keys;
   return null;
 }
 

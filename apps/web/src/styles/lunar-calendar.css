@@ -1445,6 +1445,7 @@ a.tx-card.has-article:hover .tx-more {
   grid-template-areas:
     "eyebrow"
     "title"
+    "tagline"
     "meta"
     "body";
   gap: var(--lunar-space-10);
@@ -1483,6 +1484,16 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-selected-card h2 span {
   font-family: var(--font-glyph);
+}
+
+.lunar-selected-card__phase-tagline {
+  grid-area: tagline;
+  margin-top: calc(var(--lunar-space-5) * -1);
+  color: var(--muted);
+  font-family: var(--lunar-selected-font-body);
+  font-size: var(--lunar-selected-meta-size);
+  font-style: italic;
+  line-height: var(--lunar-selected-meta-leading);
 }
 
 .lunar-selected-card__subtitle {

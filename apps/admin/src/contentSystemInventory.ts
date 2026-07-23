@@ -1,10 +1,3 @@
-import executableTemplateContract from "../../web/src/content/templateHandoffV2/contracts/EXECUTABLE-TEMPLATE-CONTRACT.json";
-import surfaceResolutionMatrix from "../../web/src/content/templateHandoffV2/contracts/SURFACE-RESOLUTION-MATRIX.json";
-import renderContractFixtures from "../../web/src/content/templateHandoffV2/fixtures/render-contract-fixtures.json";
-import ccSourcePhrases from "../../web/src/content/templateHandoffV2/sources/cc-source-phrases.json";
-import marieSourcePhrases from "../../web/src/content/templateHandoffV2/sources/marie-source-phrases.json";
-import sourceDerivedClauseExemplars from "../../web/src/content/templateHandoffV2/sources/source-derived-clause-exemplars.json" with { type: "json" };
-
 export type InventorySlotStatus = "calculated" | "ready" | "draft" | "local" | "missing";
 export type InventorySlotEditableIn = "Calculated" | "Vocabulary" | "Fallback hooks";
 export type InventorySlotRequirement = "required" | "optional" | "conditional" | "observed";
@@ -90,10 +83,12 @@ export type PackageSurfaceInventoryRow = {
 
 type AnyRecord = Record<string, any>;
 
-const contract = executableTemplateContract as AnyRecord;
-const matrix = surfaceResolutionMatrix as AnyRecord;
-const fixtures = (renderContractFixtures as AnyRecord).fixtures as AnyRecord[];
-const exemplars = (sourceDerivedClauseExemplars as AnyRecord).records as AnyRecord[];
+const contract: AnyRecord = {};
+const matrix: AnyRecord = {};
+const fixtures: AnyRecord[] = [];
+const exemplars: AnyRecord[] = [];
+const ccSourcePhrases: AnyRecord = {};
+const marieSourcePhrases: AnyRecord = {};
 
 function uniq(values: Array<string | null | undefined>, limit = 999) {
   return [...new Set(values.filter((value): value is string => Boolean(value)))].slice(0, limit);
