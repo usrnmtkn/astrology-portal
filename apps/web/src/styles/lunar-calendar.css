@@ -301,20 +301,12 @@
 }
 
 .lunar-calendar-segmented.segmented-control {
-  min-height: 46px;
-  --segmented-padding: calc(var(--space-1) + var(--space-1) / 4);
-  --segmented-gap: var(--lunar-space-4);
-  --segmented-item-height: 34px;
-  --segmented-item-px: 24px;
-  --segmented-active-bg: var(--card-bg);
-  --segmented-active-shadow: var(--shadow-card);
-  --segmented-bg: color-mix(in srgb, var(--surface-2) 86%, var(--card-bg));
-  --segmented-border: var(--line);
+  min-height: calc(var(--segmented-item-height) + var(--segmented-padding) * 2 + 2px);
 }
 
 .lunar-calendar-segmented .segmented-control__item {
-  min-width: 82px;
-  font-size: var(--lunar-type-body);
+  min-width: 68px;
+  font-size: var(--text-meta-size);
   font-weight: var(--weight-semibold);
 }
 

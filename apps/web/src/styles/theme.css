@@ -650,21 +650,25 @@
   --button-padding-x: var(--sp-3);
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
-  --segmented-bg: var(--surface);
-  --segmented-border: var(--line);
-  --segmented-radius: var(--radius-pill);
-  --segmented-padding: calc(var(--space-1) + var(--space-1) / 4);
-  --segmented-gap: 6px;
-  --segmented-item-height: 44px;
-  --segmented-item-px: 24px;
-  --segmented-active-bg: var(--surface-2);
+  --segmented-bg: color-mix(in srgb, var(--surface-2) 78%, var(--surface));
+  --segmented-border: color-mix(in srgb, var(--line-strong) 58%, transparent);
+  --segmented-radius: 12px;
+  --segmented-item-radius: 9px;
+  --segmented-padding: 3px;
+  --segmented-gap: 3px;
+  --segmented-item-height: 28px;
+  --segmented-item-px: 14px;
+  --segmented-active-bg: var(--surface);
+  --segmented-active-border: color-mix(in srgb, var(--line-strong) 58%, transparent);
   --segmented-active-fg: var(--ink);
   --segmented-inactive-fg: var(--muted);
   --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 88%, var(--ink) 12%);
   --segmented-hover-fg: var(--ink);
-  --segmented-active-hover-bg: color-mix(in srgb, var(--surface-2) 82%, var(--ink) 10%);
-  --segmented-shadow: var(--card-shadow);
-  --segmented-active-shadow: none;
+  --segmented-active-hover-bg: color-mix(in srgb, var(--surface) 94%, var(--ink) 6%);
+  --segmented-shadow: none;
+  --segmented-active-shadow:
+    0 1px 2px rgba(28, 32, 52, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.72) inset;
   --id-card-radius: var(--card-radius);
   --id-card-padding-y: calc(var(--space-5) + var(--space-1) / 2);
   --id-card-padding-x: var(--space-5);
@@ -927,16 +931,19 @@
   --table-row-border: var(--card-border);
   --overlay-shadow: var(--shadow-overlay);
   --modal-shadow: var(--overlay-shadow);
-  --segmented-bg: var(--surface);
+  --segmented-bg: color-mix(in srgb, var(--surface) 86%, var(--surface-2));
   --segmented-border: var(--line);
   --segmented-active-bg: var(--surface-2);
+  --segmented-active-border: var(--line);
   --segmented-active-fg: var(--ink);
   --segmented-inactive-fg: var(--muted);
   --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 82%, white 10%);
   --segmented-hover-fg: var(--ink);
   --segmented-active-hover-bg: color-mix(in srgb, var(--surface-2) 74%, white 14%);
-  --segmented-shadow: var(--card-shadow);
-  --segmented-active-shadow: none;
+  --segmented-shadow: none;
+  --segmented-active-shadow:
+    0 1px 2px rgba(4, 6, 12, 0.36),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
   --input-bg: var(--surface-2);
   --input-border: var(--line);
   --modal-bg: var(--surface);
