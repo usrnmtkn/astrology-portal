@@ -17,7 +17,7 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 - [x] `apps/web/src/features/calendar/lunarDayResolver.ts` — `source-based-madlib` tier labels: rename package-backed lunar fallback tiers to V3 package/dashboard language.
 - [x] `apps/web/src/features/calendar/lunarDayResolver.ts` — `madlibCandidates`: rename the package-backed candidate parameter so it no longer advertises a legacy madlib source.
 - [x] `scripts/test-reader-facing-content-contract.mjs` — old transit fallback assertion: replace the contract that expects `personalTransitMadlibFallbackSection` with a package-only wiring guard.
-- [ ] `scripts/test-reader-facing-content-contract.mjs` — non-package copy source guard: fail the build if reader-serving code imports a deleted/non-package content source.
+- [x] `scripts/test-reader-facing-content-contract.mjs` — non-package copy source guard: fail the build if reader-serving code imports a deleted/non-package content source.
 - [ ] `scripts/export-cc-satori-passages.mjs` — deleted `templateHandoffV2` source import: remove this legacy export script instead of repointing it.
 
 Final verification, after every checkbox above is complete:
