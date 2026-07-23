@@ -3,7 +3,7 @@
 Rule for every item: route through dashboard rows or the V3 package resolver from `apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js`; hide the surface on `SourceGapError`. Do not restore deleted legacy files, recreate deleted content, add local copy sources, or rename a fallback while keeping it alive.
 
 - [x] `apps/web/src/App.tsx` — `synastryEmergencyMadlibContent`: remove the local synastry emergency generator path.
-- [ ] `apps/web/src/App.tsx` — `synastryEmergencyMadlibPreview`: remove the local synastry preview generator path.
+- [x] `apps/web/src/App.tsx` — `synastryEmergencyMadlibPreview`: remove the local synastry preview generator path.
 - [ ] `apps/web/src/App.tsx` — `madlibSynastrySection`: remove the local synastry section generator and make synastry normalize through authored/dashboard or package output only.
 - [ ] `apps/web/src/App.tsx` — `personalTransitMadlibFallbackSection`: remove the legacy transit fallback naming/path and keep personal transits on the V3 package resolver only.
 - [ ] `apps/web/src/App.tsx` — `normalizeMadlibCardSurface`: remove the legacy madlib naming/tier for package-backed card surfaces.
