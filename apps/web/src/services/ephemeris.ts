@@ -302,7 +302,7 @@ function compactDurationLabelFromDays(days: number) {
   const roundedDays = Math.ceil(days);
 
   if (roundedDays < 1) {
-    return "TODAY left";
+    return "TODAY";
   }
 
   if (roundedDays < 30) {

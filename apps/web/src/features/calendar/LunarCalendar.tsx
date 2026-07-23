@@ -11,8 +11,8 @@ import {
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
-import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallbackArchitectureV3/renderFallbackV3";
-import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3/runtimeBundle";
+import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallbackArchitectureV3Runtime";
+import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import {
   skyAspectContentKey,
@@ -24,6 +24,7 @@ import {
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
 import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
 import type { LocationInput } from "../../types";
+import { resolveLunarCalendarLibrarySections } from "./lunarCalendarLibraryResolver";
 import { resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 
@@ -46,7 +47,7 @@ type NormalizedCalendarEventSurface = {
   sections: NormalizedCalendarEventSection[];
 };
 
-type CalendarDaySlot = "phase" | "lunation" | "moon-sign" | "season" | "transit-thread";
+type CalendarDaySlot = "phase" | "moon" | "lunation" | "moon-sign" | "season" | "transit-thread";
 
 type NormalizedCalendarDaySection = {
   slot: CalendarDaySlot;
@@ -1463,9 +1464,37 @@ function normalizeCalendarDaySurface(
   day: LunarCalendarDay,
   surfacedTransit: LunarCalendarEvent | undefined,
   timeZone: string,
-  primaryLunation?: LunarCalendarEvent
+  primaryLunation?: LunarCalendarEvent,
+  newMoonSign?: string | null
 ): NormalizedCalendarDaySurface {
   const seasonSign = seasonSignForDay(day, timeZone);
+  const transitRead = surfacedTransit ? calendarEventMadlibDescription(surfacedTransit) : "";
+  const librarySections = resolveLunarCalendarLibrarySections({
+    moonSign: day.moonSign,
+    moonPhase: day.moonPhase,
+    seasonSign,
+    newMoonSign,
+    isSeasonStart: isSeasonStart(day),
+    hasPrimaryNewOrFullMoon: Boolean(primaryLunation)
+  })
+    .map((section) => normalizedCalendarDaySection(section.slot, section.body, section.sourceKeys, section.slot === "moon"))
+    .filter((section): section is NormalizedCalendarDaySection => Boolean(section));
+
+  if (librarySections.length > 0) {
+    const sections = [
+      ...librarySections,
+      enableLunarArcContent && transitRead
+        ? normalizedCalendarDaySection("transit-thread", transitRead, [`calendar-day.transit.${surfacedTransit?.id ?? surfacedTransit?.title ?? "unknown"}`])
+        : null
+    ].filter((section): section is NormalizedCalendarDaySection => Boolean(section));
+
+    return {
+      surface: "calendar-day",
+      status: sections.some((section) => section.required) ? "partial" : "not-servable",
+      sections
+    };
+  }
+
   const lunationRead = enableLunarArcContent && primaryLunation
     ? lunationBodyForDay(day, primaryLunation, timeZone)
     : [];
@@ -1502,7 +1531,6 @@ function normalizeCalendarDaySurface(
   const seasonRead = renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkySeason({
     sign: slugContentPart(seasonSign)
   }));
-  const transitRead = surfacedTransit ? calendarEventMadlibDescription(surfacedTransit) : "";
   const sections = [
     normalizedCalendarDaySection("phase", phaseRead, [`fallback-hook/moon-phase/${phaseKey}`], true),
     normalizedCalendarDaySection("moon-sign", moonRead, [`fallback-hook/sky-placement/moon`, `calendar-day.moon-sign.${slugContentPart(day.moonSign)}`], true),
@@ -1523,9 +1551,10 @@ function dayCardBody(
   day: LunarCalendarDay,
   surfacedTransit: LunarCalendarEvent | undefined,
   timeZone: string,
-  primaryLunation?: LunarCalendarEvent
+  primaryLunation?: LunarCalendarEvent,
+  newMoonSign?: string | null
 ) {
-  return normalizeCalendarDaySurface(day, surfacedTransit, timeZone, primaryLunation).sections.map((section) => section.body);
+  return normalizeCalendarDaySurface(day, surfacedTransit, timeZone, primaryLunation, newMoonSign).sections.map((section) => section.body);
 }
 
 function dayKeyToUtcTime(dateKey: string) {
@@ -1814,7 +1843,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     : [];
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedDayBody = selectedDay
-    ? dayCardBody(selectedDay, selectedSurfacedTransit, zone, selectedPrimaryLunation)
+    ? dayCardBody(selectedDay, selectedSurfacedTransit, zone, selectedPrimaryLunation, selectedLunarDay?.arc?.origin?.sign ?? null)
     : [];
   const selectedDayBodyPresentation = selectedDay
     ? lunarDayBodyPresentation(selectedDayBody, seasonSignForDay(selectedDay, zone))

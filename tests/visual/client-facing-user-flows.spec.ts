@@ -1583,7 +1583,9 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
 
     await page.goto("/#sky/retrograde/mercury");
-    await expect(page.getByRole("heading", { name: "Mercury Rx in Cancer" })).toBeVisible();
+    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Retrograde|in Cancer is retrograde)/i);
+    await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.locator(".sky-detail-article"),

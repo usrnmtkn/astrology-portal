@@ -79,8 +79,12 @@ function setupBlankRestoreRecovery() {
       return;
     }
 
+    checkSoon({ requireVisible: true });
+  };
+
+  const checkSoon = ({ requireVisible = false }: { requireVisible?: boolean } = {}) => {
     window.setTimeout(() => {
-      if (document.visibilityState === "hidden") {
+      if (requireVisible && document.visibilityState === "hidden") {
         return;
       }
 
@@ -91,6 +95,17 @@ function setupBlankRestoreRecovery() {
   };
 
   window.addEventListener("pageshow", checkAfterRestore);
+  window.addEventListener("focus", () => checkSoon());
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      checkSoon({ requireVisible: true });
+    }
+  });
+  window.setInterval(() => {
+    if (shouldReload()) {
+      reloadOnce();
+    }
+  }, 1000);
 }
 
 void startApp();

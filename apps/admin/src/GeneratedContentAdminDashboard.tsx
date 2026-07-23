@@ -30,6 +30,7 @@ import {
 } from "../../web/src/content/fallbackHooks";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import skyContentSnapshot from "../../web/src/content/skyContentSnapshot.json";
+import skyWritingArticles from "../../web/src/content/sky-writing/sky-articles-authored-v1.json";
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -127,6 +128,14 @@ type LocalSkySnapshotRow = {
   sourceSnapshot?: Record<string, unknown> | null;
   model?: string | null;
   updatedAt?: string | null;
+};
+
+type LocalSkyWritingArticle = {
+  key: string;
+  type: "direct" | "retrograde";
+  header?: Record<string, unknown>;
+  sections?: Record<string, unknown>;
+  version?: string;
 };
 
 type AdminReviewRecord = {
@@ -779,7 +788,8 @@ function fallbackCompositionDiagnosticForDraft(draft: AdminDraft, role: AdminCon
 
 function articlePointForRow(row: AdminGeneratedContentRow): AdminArticlePointFilter {
   const normalizedKey = row.content_key.toLowerCase();
-  const keyMatch = normalizedKey.match(/^sky[./-](?:placement|article)[./-]([a-z-]+)/);
+  const keyMatch = normalizedKey.match(/^sky[./-](?:placement|article)[./-]([a-z-]+)/)
+    ?? normalizedKey.match(/^sky[./-]([a-z-]+)[./-][a-z-]+(?:[./-]rx)?$/);
   const headlineMatch = normalizeText(row.headline).toLowerCase().match(/^(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)\b/);
   const candidate = keyMatch?.[1]?.replace(/-/g, " ") || headlineMatch?.[1] || "";
   const point = candidate.split(/\s+/)[0];
@@ -951,7 +961,7 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
   ) return "reference";
   if (contentKey.startsWith("compatibility.") || eventType === "friends.compatibility.planet-card") return "phrasebank";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
-  if (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider)) return "legacy";
+  if (provider && !/phrasebank|migration|local-normalized-dashboard-source|local-sky-writing-package|manual-admin/i.test(provider)) return "legacy";
   if (/^(natal|composite|transit|sky|synastry|relationship|you)[./-]/i.test(contentKey)) return "phrasebank";
   if (contentKey.includes("aspect") || contentKey.includes("placement") || contentKey.includes("synastry")) return "phrasebank";
   return "other";
@@ -1084,6 +1094,74 @@ function localSkySnapshotAdminRows(): AdminGeneratedContentRow[] {
       updated_at: row.updatedAt ?? null,
       created_at: row.updatedAt ?? null,
       prompt_version: "local-sky-snapshot"
+    };
+  });
+}
+
+function skyWritingArticleTitle(article: LocalSkyWritingArticle) {
+  const [, planet = "", sign = ""] = article.key.split(".");
+  const planetTitle = planet.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const signTitle = sign.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  return article.header?.what && typeof article.header.what === "string"
+    ? article.header.what
+    : `${planetTitle} in ${signTitle}${article.type === "retrograde" ? " retrograde" : ""}`;
+}
+
+function skyWritingArticleBody(article: LocalSkyWritingArticle) {
+  const header = article.header ?? {};
+  const sections = article.sections ?? {};
+  const rxSectionOrder = ["s1_header", "s1", "s2_header", "s2", "s3_header", "s3", "s4_header", "s4", "handoff"];
+  const directSectionOrder = ["opening", "mechanics", "lived", "shadow", "truth", "collective", "directive", "handoff"];
+  const headerParts = [header.whenSlot, header.what, header.tldr]
+    .map((value) => typeof value === "string" ? value.trim() : "")
+    .filter(Boolean);
+  const sectionParts = (article.type === "retrograde" ? rxSectionOrder : directSectionOrder)
+    .map((key) => typeof sections[key] === "string" ? sections[key].trim() : "")
+    .filter(Boolean);
+  const doDontParts = [
+    Array.isArray(sections.do) && sections.do.length > 0 ? `Do: ${sections.do.map(String).join("; ")}.` : "",
+    Array.isArray(sections.dont) && sections.dont.length > 0 ? `Don't: ${sections.dont.map(String).join("; ")}.` : ""
+  ].filter(Boolean);
+
+  return [...headerParts, ...sectionParts, ...doDontParts].join("\n\n");
+}
+
+function localSkyWritingAdminRows(): AdminGeneratedContentRow[] {
+  return (skyWritingArticles as LocalSkyWritingArticle[]).map((article) => {
+    const [, planet = "", sign = ""] = article.key.split(".");
+
+    return {
+      id: `local-sky-writing:${article.key}`,
+      content_key: article.key,
+      surface: "sky",
+      mode: "article",
+      status: "LIVE",
+      event_type: article.type === "retrograde" ? "sky-writing-retrograde" : "sky-writing-placement",
+      target_date: null,
+      headline: skyWritingArticleTitle(article),
+      summary: typeof article.header?.tldr === "string" ? article.header.tldr : null,
+      body: skyWritingArticleBody(article),
+      sections: article.sections ?? null,
+      block_type: "sky_article",
+      lane: "serving",
+      review_state: null,
+      evergreen: true,
+      provider: "local-sky-writing-package",
+      model: "author-final",
+      source_snapshot: {
+        contentSystem: "authored",
+        contentType: "sky-writing-article",
+        sourcePackage: "sky-writing-v1",
+        articleKey: article.key,
+        planet,
+        sign,
+        motion: article.type === "retrograde" ? "retrograde" : "direct",
+        version: article.version ?? null
+      },
+      updated_at: null,
+      created_at: null,
+      prompt_version: "sky-writing-v1"
     };
   });
 }
@@ -1227,8 +1305,10 @@ function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
 }
 
 function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
+  const isLocalPackageRow = row.id.startsWith("local-sky-snapshot:") || row.id.startsWith("local-sky-writing:");
+
   return {
-    id: row.id,
+    id: isLocalPackageRow ? null : row.id,
     contentKey: row.content_key,
     surface: row.surface,
     mode: row.mode,
@@ -1330,14 +1410,19 @@ export function GeneratedContentAdminDashboard() {
   const editorRef = useRef<HTMLElement | null>(null);
 
   const localSkySnapshotRows = useMemo(() => localSkySnapshotAdminRows(), []);
+  const localSkyWritingRows = useMemo(() => localSkyWritingAdminRows(), []);
   const persistedContentKeys = useMemo(() => new Set(rows.map((row) => row.content_key)), [rows]);
   const visibleLocalSnapshots = useMemo(
     () => localSkySnapshotRows.filter((row) => !persistedContentKeys.has(row.content_key)),
     [localSkySnapshotRows, persistedContentKeys]
   );
+  const visibleLocalSkyWritingRows = useMemo(
+    () => localSkyWritingRows.filter((row) => !persistedContentKeys.has(row.content_key)),
+    [localSkyWritingRows, persistedContentKeys]
+  );
   const visibleRows = useMemo(
-    () => rows,
-    [rows]
+    () => [...visibleLocalSkyWritingRows, ...visibleLocalSnapshots, ...rows],
+    [rows, visibleLocalSkyWritingRows, visibleLocalSnapshots]
   );
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
