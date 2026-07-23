@@ -8299,39 +8299,6 @@ function sourceGroundedHouseOverlaySection({
   };
 }
 
-function houseOverlayMadlibSection({
-  direction,
-  heading,
-  house,
-  planet
-}: {
-  direction: string;
-  heading: string;
-  house: number;
-  planet: string;
-}): NormalizedHouseOverlaySection | null {
-  const houseTopic = houseLifeAreas[house] ?? readableHouseTopic(house);
-  const planetTopic = relationshipPlanetTopicSlot(planet, "friend");
-  const body = `${direction} This brings ${planetTopic} into the relationship through ${houseTopic}. Notice where the house topic becomes easier to feel, name, or respond to when this person is close.`;
-
-  if (!isReaderFacingCopy(body)) {
-    return null;
-  }
-
-  return {
-    slot: "overlay-meaning",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      `relationshipPlanetTopic.${normalizeContentIdPart(planet)}`,
-      `houseLifeAreas.${house}`
-    ],
-    heading,
-    body
-  };
-}
-
 function normalizeHouseOverlaySurface({
   contentKeys,
   direction,
@@ -8345,13 +8312,15 @@ function normalizeHouseOverlaySurface({
   house: number;
   planet: string;
 }): NormalizedHouseOverlayArticle {
+  void direction;
+  void house;
+  void planet;
   const sourceGroundedSection = sourceGroundedHouseOverlaySection({ contentKeys, heading });
-  const fallbackSection = sourceGroundedSection ? null : houseOverlayMadlibSection({ direction, heading, house, planet });
-  const sections = sourceGroundedSection ? [sourceGroundedSection] : fallbackSection ? [fallbackSection] : [];
+  const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 
   return {
     surface: "house-overlay",
-    status: sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: sourceGroundedSection ? "servable" : "not-servable",
     sections
   };
 }
