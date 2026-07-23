@@ -11017,16 +11017,6 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
   };
 }
 
-function compositePlacementFallbackSummary(position: { planet: string; sign: string; house?: number | null }) {
-  const planetTopic = relationshipPlanetTopicSlot(position.planet, "friend");
-  const signStyle = signStyleSlot(position.sign);
-  const houseCopy = position.house
-    ? `In the ${ordinalHouse(position.house)} house, that pattern is most visible through ${houseLifeAreas[position.house] ?? readableHouseTopic(position.house)}.`
-    : "Without a confirmed house, the sign still gives the clearest read on the relationship's shared tone and recurring expression.";
-
-  return `${position.planet} in ${position.sign} gives the relationship a ${signStyle} style around ${planetTopic}. ${houseCopy}`;
-}
-
 function sourceGroundedCompositeSection({
   contentKeys,
   heading
@@ -11058,25 +11048,8 @@ function compositeAspectMadlibSection(aspect: { from: string; to: string; type: 
 }
 
 function compositePlacementMadlibSection(position: { planet: string; sign: string; house?: number | null }): NormalizedCompositeSection | null {
-  const body = compositePlacementFallbackSummary(position);
-
-  if (!isReaderFacingCopy(body)) {
-    return null;
-  }
-
-  return {
-    slot: "composite-meaning",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      `relationshipPlanetTopic.${normalizeContentIdPart(position.planet)}`,
-      `signStyle.${normalizeContentIdPart(position.sign)}`,
-      ...(position.house ? [`houseLifeAreas.${position.house}`] : [])
-    ],
-    heading: `Composite ${position.planet} in ${position.sign}`,
-    body
-  };
+  void position;
+  return null;
 }
 
 function normalizeCompositeAspectSurface(aspect: { from: string; to: string; type: string; orb?: number | null }): NormalizedCompositeArticle {
