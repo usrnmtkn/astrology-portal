@@ -626,50 +626,6 @@ const currentSkyPlanetProcess: Record<string, string> = {
   venus: "connection, desire, and pleasure"
 };
 
-const currentSkySignQuality: Record<string, string> = {
-  aquarius: "a more detached, future-facing quality",
-  aries: "a sharper, more immediate quality",
-  cancer: "a more protective, memory-driven quality",
-  capricorn: "a more contained and practical quality",
-  gemini: "a quicker, more curious quality",
-  leo: "a more expressive and visible quality",
-  libra: "a more relational and comparative quality",
-  pisces: "a more porous and imaginative quality",
-  sagittarius: "a broader, more restless quality",
-  scorpio: "a more private and emotionally intense quality",
-  taurus: "a steadier and more embodied quality",
-  virgo: "a more precise and observant quality"
-};
-
-const currentSkySignObservation: Record<string, string> = {
-  aquarius: "Aquarius tends to notice patterns, systems, and the space needed to think clearly",
-  aries: "Aries tends to move quickly toward what feels urgent or alive",
-  cancer: "Cancer tends to notice what feels safe, familiar, or emotionally loaded",
-  capricorn: "Capricorn tends to look for structure, proof, and the next responsible step",
-  gemini: "Gemini tends to follow questions, conversations, and fast-moving information",
-  leo: "Leo tends to draw attention toward expression, pride, and the wish to be seen clearly",
-  libra: "Libra tends to notice balance, tension, and the social meaning of each choice",
-  pisces: "Pisces tends to blur edges, heighten feeling, and make imagination easier to access",
-  sagittarius: "Sagittarius tends to look for meaning, movement, and a wider horizon",
-  scorpio: "Scorpio tends to notice what is hidden, charged, or difficult to say plainly",
-  taurus: "Taurus tends to return attention to the body, the senses, and what feels reliable",
-  virgo: "Virgo tends to notice what needs sorting, repairing, or more careful attention"
-};
-
-const currentSkyPlanetOutcome: Record<string, string> = {
-  jupiter: "the mood may tilt toward possibility, but also toward exaggeration if the details are skipped",
-  mars: "reactions may come faster, especially where desire, frustration, or competition is already present",
-  mercury: "conversations may carry more meaning than they first reveal",
-  moon: "feelings may be easier to read through small choices, habits, and immediate needs",
-  neptune: "clarity may soften, making intuition stronger but facts a little harder to pin down",
-  pluto: "small moments may feel more charged when control, trust, or pressure is already involved",
-  saturn: "limits may feel more noticeable, especially where something needs patience or a firmer container",
-  sun: "the day may ask for attention to what is visible, active, and ready to be named",
-  "true-node": "certain choices may feel newly relevant, even before their meaning is fully clear",
-  uranus: "plans may shift quickly, especially where something has become too fixed",
-  venus: "taste, affection, money, and attraction may become easier to notice"
-};
-
 const pointAliases: Record<string, string> = {
   "north-node": "true-node"
 };

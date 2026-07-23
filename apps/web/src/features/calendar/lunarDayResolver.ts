@@ -254,154 +254,16 @@ function eclipseEventForDay(day: LunarCalendarDay, arcEvents: {
     ?? null;
 }
 
-function moonPhaseHelperSlots(moonPhase: string): TemplateSlotValues {
-  const normalizedPhase = moonPhase.trim().toLowerCase();
-
-  if (normalizedPhase.includes("new")) {
-    return {
-      moonPhaseAction: "begin simply and choose the question for the next cycle",
-      moonPhasePlainMeaning: "the lunar cycle is opening and the next focus is still taking shape",
-      moonPhaseRole: "origin point"
-    };
-  }
-
-  if (normalizedPhase.includes("waxing crescent")) {
-    return {
-      moonPhaseAction: "feed the new direction without forcing it to be complete",
-      moonPhasePlainMeaning: "the cycle is gathering energy after the new moon",
-      moonPhaseRole: "early build"
-    };
-  }
-
-  if (normalizedPhase.includes("first quarter")) {
-    return {
-      moonPhaseAction: "make the adjustment that lets the intention keep moving",
-      moonPhasePlainMeaning: "the cycle has reached a turning point where action clarifies the next step",
-      moonPhaseRole: "choice point"
-    };
-  }
-
-  if (normalizedPhase.includes("waxing gibbous")) {
-    return {
-      moonPhaseAction: "refine what is already growing and notice what needs support",
-      moonPhasePlainMeaning: "the cycle is approaching its full-moon reveal",
-      moonPhaseRole: "refinement phase"
-    };
-  }
-
-  if (normalizedPhase.includes("full")) {
-    return {
-      moonPhaseAction: "name what has become visible and respond to it clearly",
-      moonPhasePlainMeaning: "the lunar cycle is at a point of visibility, culmination, or emotional clarity",
-      moonPhaseRole: "culmination point"
-    };
-  }
-
-  if (normalizedPhase.includes("waning gibbous")) {
-    return {
-      moonPhaseAction: "sort what the full moon revealed and keep what is useful",
-      moonPhasePlainMeaning: "the cycle is moving from revelation into understanding",
-      moonPhaseRole: "meaning-making phase"
-    };
-  }
-
-  if (normalizedPhase.includes("last quarter") || normalizedPhase.includes("third quarter")) {
-    return {
-      moonPhaseAction: "simplify and clear what no longer needs energy",
-      moonPhasePlainMeaning: "the cycle has reached a clearing point before the next beginning",
-      moonPhaseRole: "release checkpoint"
-    };
-  }
-
-  if (normalizedPhase.includes("waning crescent")) {
-    return {
-      moonPhaseAction: "rest, close the loop, and let the next cycle stay quiet for now",
-      moonPhasePlainMeaning: "the cycle is winding down before the next new moon",
-      moonPhaseRole: "closing phase"
-    };
-  }
-
-  return {
-    moonPhaseAction: "notice what this phase is asking for before reacting",
-    moonPhasePlainMeaning: "the lunar cycle gives the day its emotional timing",
-    moonPhaseRole: "lunar timing point"
-  };
+function moonPhaseHelperSlots(_moonPhase: string): TemplateSlotValues {
+  return {};
 }
 
-const moonSignModes: Record<string, string> = {
-  Aries: "fast, direct, and ready to act",
-  Taurus: "steady, sensory, and slow to be rushed",
-  Gemini: "curious, changeable, and pulled toward conversation",
-  Cancer: "protective, receptive, and led by memory or mood",
-  Leo: "expressive, warm, and ready to be seen",
-  Virgo: "practical, observant, and focused on what can be improved",
-  Libra: "relational, balancing, and aware of what feels fair",
-  Scorpio: "private, intense, and drawn toward the emotional truth underneath",
-  Sagittarius: "restless, candid, and looking for a wider meaning",
-  Capricorn: "contained, responsible, and focused on what can hold up over time",
-  Aquarius: "independent, future-minded, and needing space to think",
-  Pisces: "porous, imaginative, and sensitive to what is unspoken"
-};
-
-const seasonThemes: Record<string, string> = {
-  Aries: "initiation, courage, identity, and direct action",
-  Taurus: "stability, embodiment, resources, and what can be sustained",
-  Gemini: "language, curiosity, choices, and changing information",
-  Cancer: "care, memory, belonging, and emotional safety",
-  Leo: "visibility, creativity, confidence, and heartfelt expression",
-  Virgo: "discernment, repair, usefulness, and everyday practice",
-  Libra: "relationship, balance, fairness, and mutual consideration",
-  Scorpio: "depth, honesty, privacy, and emotional complexity",
-  Sagittarius: "meaning, movement, perspective, and belief",
-  Capricorn: "structure, responsibility, time, and long-term consequences",
-  Aquarius: "systems, friendship, difference, and collective futures",
-  Pisces: "release, imagination, compassion, and what cannot be fully controlled"
-};
-
-const twoWeekArcConnections: Record<string, string> = {
-  "Aries->Libra": "If you've been starting new chapters while worrying about who you're leaving behind, this Full Moon shows that the right people support your growth.",
-  "Taurus->Scorpio": "Exposing where you've been accepting less because you didn't think you deserved more.",
-  "Gemini->Sagittarius": "If you've been keeping your message small, what if your truth could free someone else?",
-  "Cancer->Capricorn": "Where protecting yourself became isolating yourself.",
-  "Leo->Aquarius": "Your people want exactly who you are, not who you think you should be.",
-  "Virgo->Pisces": "You can't hate yourself into a version you'll love.",
-  "Libra->Aries": "Where compromising became self-betrayal.",
-  "Scorpio->Taurus": "Where holding on too tight pushes away what you want.",
-  "Sagittarius->Gemini": "Your story needs updating to match who you've become.",
-  "Capricorn->Cancer": "Where success was chosen over softness.",
-  "Aquarius->Leo": "You can't change the world while selling a version of yourself you don't believe in.",
-  "Pisces->Virgo": "Where structure will set you free."
-};
-
-const sixMonthArcConnections: Record<string, string> = {
-  Capricorn: "Foundation to legacy.",
-  Aquarius: "Innovation to revolution.",
-  Pisces: "Dream to wisdom.",
-  Aries: "Courage to command.",
-  Taurus: "Value to harvest.",
-  Gemini: "Words to vision.",
-  Cancer: "Protection to belonging.",
-  Leo: "Spark to radiance.",
-  Virgo: "Routine to excellence.",
-  Libra: "Intention to embodiment.",
-  Scorpio: "Completion to renewal.",
-  Sagittarius: "Journey to message."
-};
-
-function moonSignMode(sign: string) {
-  return moonSignModes[sign] ?? "colored by the Moon's current sign";
+function twoWeekArcConnection(_newMoonSign: string, _fullMoonSign: string) {
+  return null;
 }
 
-function seasonTheme(sign: string) {
-  return seasonThemes[sign] ?? "the wider tone of the current season";
-}
-
-function twoWeekArcConnection(newMoonSign: string, fullMoonSign: string) {
-  return twoWeekArcConnections[`${newMoonSign}->${fullMoonSign}`] ?? null;
-}
-
-function sixMonthArcConnection(newMoonSign: string) {
-  return sixMonthArcConnections[newMoonSign] ?? null;
+function sixMonthArcConnection(_newMoonSign: string) {
+  return null;
 }
 
 function mercuryRetrogradeSlots(day: LunarCalendarDay): TemplateSlotValues {
@@ -416,9 +278,7 @@ function mercuryRetrogradeSlots(day: LunarCalendarDay): TemplateSlotValues {
     mercuryRetrograde: mercuryRetrogradeEvent ? "yes" : "no",
     mercuryRetrogradeEndsAt: mercuryRetrogradeEvent?.endsAt ?? "",
     mercuryRetrogradeEvent: mercuryRetrogradeEvent?.title ?? "",
-    mercuryRxPlainFlag: mercuryRetrogradeEvent
-      ? `Mercury is retrograde in ${mercuryRetrogradeEvent.sign ?? "the current sky"}, so messages, memories, or decisions may need a second pass.`
-      : "",
+    mercuryRxPlainFlag: "",
     mercuryRetrogradeSign: mercuryRetrogradeEvent?.sign ?? "",
     mercuryRx: mercuryRetrogradeEvent ? "yes" : "no"
   };
@@ -754,14 +614,14 @@ function lunarDayTemplateSlots(
     currentSunSign: seasonSign,
     eclipseFlag: eclipseEvent ? "yes" : "no",
     eclipseType: eclipseEvent?.eclipseType ?? "",
-    moonSignMode: moonSignMode(day.moonSign),
+    moonSignMode: "",
     moonSign: day.moonSign,
     moonPhase: day.moonPhase,
     oppositeSign: oppositeSign(day.moonSign),
     phaseType: phaseTypeForMoonPhase(day.moonPhase),
     season: `${seasonSign} season`,
     seasonSign,
-    seasonTheme: seasonTheme(seasonSign),
+    seasonTheme: "",
     sunSign: seasonSign
   };
 }

@@ -13,6 +13,15 @@ The owner deleted every legacy copy library from this directory. This was delibe
 - `migration-seeds/`, `templateHandoffV2/` (superseded migration artifacts)
 - `lunar-calendar/content-library.json` (reader-facing Moon fallbacks, writeups, mantras, phase frames, lunation framing, and season prose; this was the source of the rogue rewritten Scorpio Moon paragraph)
 - `../features/calendar/lunarCalendarLibraryResolver.ts` (assembled the deleted lunar-calendar prose ahead of the approved package renderers)
+- `../services/samePlanetSynastry.ts` and its `friends.same-planet` emergency/key hierarchy; same-planet contacts now call `renderSynastryAspect` with identical planet ids.
+- `../services/horoscopes.ts` (app-authored daily, weekly, and monthly readings).
+- Hardcoded house glossary paragraphs in `App.tsx`; the house surface now calls `renderHouseGlossary`.
+- The embedded career tables in `../services/careerArchetype.ts`; selection remains local, while all career wording comes from approved `fallback-vocab/career-*` and `fallback-hook/career-*` rows.
+- The embedded `signRoadmaps` prose table in `../components/charts/SoulRoadmapCard.tsx`; roadmap fields now come from approved `fallback-vocab/roadmap-*` rows.
+- Local chart/composite placement descriptions and dignity writeups in `../components/charts/PlacementRows.tsx`.
+- Local Sky sign observations/outcomes in `registry.ts`.
+- Local Moon phase helper prose, sign modes, season themes, and lunation arc sayings in `../features/calendar/lunarDayResolver.ts`.
+- Astro-knowledge aspect-pattern copy is no longer requested or rendered. The app retains detection/geometry contexts and sends those facts to `renderAspectPattern`.
 
 The former `lunar-calendar/` directory contained no pure astronomy records. It was
 therefore removed in full. Calendar dates, times, positions, illumination, phase

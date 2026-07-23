@@ -51,6 +51,12 @@ const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
 const materializeCompatibilityRows = read("scripts/materialize-compatibility-dashboard-rows.mjs");
 const apiContentGeneration = read("api/_lib/content-generation.ts");
+const fallbackRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
+const careerArchetype = read("apps/web/src/services/careerArchetype.ts");
+const soulRoadmap = read("apps/web/src/components/charts/SoulRoadmapCard.tsx");
+const natalAspectPatterns = read("apps/web/src/services/natalAspectPatterns.ts");
+const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
+const lunarDayResolver = read("apps/web/src/features/calendar/lunarDayResolver.ts");
 
 const readerServingFiles = {
   "apps/web/src/App.tsx": app,
@@ -86,7 +92,10 @@ const deletedReaderCopySourceFragments = [
   "migration-seeds",
   "templateHandoffV2",
   "lunar-calendar/content-library",
-  "lunarCalendarLibraryResolver"
+  "lunarCalendarLibraryResolver",
+  "cc-compatibility-writeups",
+  "cc-compatibility-cards",
+  "moon-compatibility-library"
 ];
 
 for (const [file, contents] of Object.entries(readerServingFiles)) {
@@ -183,12 +192,31 @@ assert.match(adminDashboard, /Compatibility sections/, "Compatibility admin must
 assert.match(adminDashboard, /filteredCompatibilityRows/, "Compatibility admin table must render the filtered compatibility row set.");
 assert.match(adminDashboard, /handleCompatibilityCreateAction/, "Compatibility admin must open connected compatibility-specific drafts.");
 assert.ok(fallbackHookKeys.has("fallback-hook/compat-domain/moon"), "Friends compatibility fallback hooks must be discoverable in the V3 package catalog.");
-assert.match(app, /phrasebankWriteup \?\? \{/, "Compatibility dashboard rows must render even before a matching static phrasebank row exists.");
+assert.match(app, /transitSynastryFallbackRendererV3\.renderCompat\(\{/, "Compatibility cards must render through the V3 package.");
+assert.match(app, /signA:\s*normalizeContentIdPart\(yourPosition\.sign\)/, "Compatibility direction must keep the reader's sign in signA.");
+assert.match(app, /signB:\s*normalizeContentIdPart\(friendPosition\.sign\)/, "Compatibility direction must keep the friend's sign in signB.");
 assert.match(materializeCompatibilityRows, /contentSystem:\s*"authored"/, "Compatibility materialized rows must use the authored content system.");
 assert.match(materializeCompatibilityRows, /contentLevel:\s*"source-grounded"/, "Compatibility materialized rows must keep source-grounded as the trust level.");
 assert.doesNotMatch(materializeCompatibilityRows, /contentLevel:\s*"dashboard-authored"/, "Compatibility materialized rows must not invent a third content level.");
 assert.match(materializeCompatibilityRows, /block_type:\s*"compatibility_planet_card"/, "Compatibility materialized rows must use the compatibility card block type.");
 assert.match(servedFieldsContract, /reader: \["reading"\]/, "Authored natal angle rows must render only the clean reading field.");
 assert.match(servedFieldsContract, /reader: \["collective_reading"\]/, "Authored Sky point rows must render only the clean collective reading field.");
+
+// Legacy-feature replacement boundary: selection may stay app-owned, but all
+// reader words on these surfaces must cross the approved package-row gate.
+assert.match(app, /renderHouseGlossaryV3\(house\)\.body/, "House glossary must render package output verbatim.");
+assert.doesNotMatch(app, /const naturalHouseLensBodies:\s*Record<number, string>\s*=\s*\{/, "House glossary must not restore a local prose table.");
+assert.match(natalAspectPatterns, /renderAspectPatternV3\(\{/, "Aspect-pattern geometry must render through the package.");
+assert.doesNotMatch(natalAspectPatterns, /includeAspectPatternCopy:\s*"true"/, "App must not request astro-knowledge aspect-pattern copy.");
+assert.doesNotMatch(app, /friends\.same-planet|samePlanetSynastryContentKeys|samePlanetSynastryFallback/, "Same-planet synastry must not restore its legacy key or prose scheme.");
+assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/services/samePlanetSynastry.ts")), false, "Legacy samePlanetSynastry.ts must stay deleted.");
+assert.match(app, /renderSynastryAspect\(\{/, "Synastry surfaces must use the V3 package renderer.");
+assert.match(careerArchetype, /fallbackV3(?:Hook|Vocabulary)Body/, "Career selection must read approved package rows.");
+assert.doesNotMatch(careerArchetype, /const (?:signCareerTones|houseCareerThemes|planetInTenthMeanings|fallbackByPrefix)\b/, "Career prose tables must stay deleted.");
+assert.match(soulRoadmap, /fallback-vocab\/roadmap-(?:theme|sun|path|moon-style|moon-contribution|motto)/, "Soul Roadmap must assemble package vocabulary.");
+assert.doesNotMatch(soulRoadmap, /const signRoadmaps\b/, "Soul Roadmap must not restore its embedded sign prose table.");
+assert.doesNotMatch(placementRows, /const (?:chartPlacementDescriptions|compositePlacementDescriptions)\b/, "PlacementRows must not restore local reader prose.");
+assert.doesNotMatch(lunarDayResolver, /const (?:moonSignModes|seasonThemes|twoWeekArcConnections|sixMonthArcConnections)\b/, "Lunar resolver must not restore local prose tables.");
+assert.match(fallbackRuntime, /\.filter\(isReaderEligible\)/, "All directly accessed V3 rows must pass the review-status gate.");
 
 console.log("Reader-facing content contract passed.");

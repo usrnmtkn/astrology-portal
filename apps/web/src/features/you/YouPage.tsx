@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
@@ -14,6 +14,14 @@ import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
+type RelatedAspectRow = {
+  key: string;
+  node: ReactNode;
+};
+
+function isRelatedAspectRow(row: ReactNode | RelatedAspectRow): row is RelatedAspectRow {
+  return Boolean(row && typeof row === "object" && "node" in row && !isValidElement(row));
+}
 
 export type PersonalTimingSummary = {
   headline: string;
@@ -59,7 +67,7 @@ export type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
-    rows: ReactNode[];
+    rows: Array<ReactNode | RelatedAspectRow>;
   };
   meta: Array<{
     label: string;
@@ -831,7 +839,11 @@ function YouTransitArticlePage({
                 <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
                   <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>
                   <div className="article-related-aspects__list aspect-row-list">
-                    {article.relatedAspects.rows}
+                    {article.relatedAspects.rows.map((row, index) => (
+                      isRelatedAspectRow(row)
+                        ? <Fragment key={row.key || `related-aspect-${index}`}>{row.node}</Fragment>
+                        : <Fragment key={`related-aspect-${index}`}>{row}</Fragment>
+                    ))}
                   </div>
                 </section>
               ) : null}
