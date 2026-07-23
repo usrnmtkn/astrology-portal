@@ -495,6 +495,49 @@ function cacheConfirmedManualChart(userId: string, localChart: ManualChart, remo
   });
 }
 
+function mergeRemoteManualCharts(userId: string, remoteCharts: ManualChart[]) {
+  const ownerIds = localManualChartOwnerIds(userId);
+  const remoteIdentities = new Set(remoteCharts.map(chartIdentity));
+  const remoteIds = new Set(remoteCharts.map((chart) => chart.id));
+  const pendingChartIds = new Set(
+    ownerIds
+      .flatMap((ownerId) => readLocalManualCharts(ownerId))
+      .filter((chart) => (
+        chart.syncStatus !== "synced" &&
+        !remoteIdentities.has(chartIdentity(chart))
+      ))
+      .map((chart) => chart.id)
+  );
+
+  ownerIds.forEach((ownerId) => {
+    const retainedLocalCharts = readLocalManualCharts(ownerId).filter((chart) => (
+      !remoteIdentities.has(chartIdentity(chart)) &&
+      !(chart.syncStatus === "synced" && remoteIds.has(chart.id))
+    ));
+    const nextCharts = ownerId === userId
+      ? dedupeManualCharts([
+          ...retainedLocalCharts,
+          ...remoteCharts.filter((chart) => !pendingChartIds.has(chart.id))
+        ])
+      : retainedLocalCharts;
+
+    if (nextCharts.length === 0) {
+      clearLocalManualCharts(ownerId);
+      return;
+    }
+
+    writeLocalManualCharts(ownerId, nextCharts);
+  });
+
+  const retainedLocalCharts = localManualChartOwnerIds(userId)
+    .flatMap((ownerId) => readLocalManualCharts(ownerId));
+
+  return dedupeManualCharts([
+    ...retainedLocalCharts,
+    ...remoteCharts.filter((chart) => !pendingChartIds.has(chart.id))
+  ]);
+}
+
 async function hasRemoteUser(userId: string) {
   const supabase = await getSupabaseClient();
 
@@ -507,6 +550,26 @@ async function hasRemoteUser(userId: string) {
   return data.user?.id === userId;
 }
 
+async function listRemoteManualCharts(userId: string): Promise<ManualChart[]> {
+  const client = await getSupabaseClient();
+
+  if (!client) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { data, error } = await client
+    .from("manual_charts")
+    .select("*")
+    .eq("owner_user_id", userId)
+    .order("display_name", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  return dedupeManualCharts((data as ManualChartRow[]).map(rowToManualChart));
+}
+
 async function insertRemoteManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
   const client = await getSupabaseClient();
 
@@ -514,7 +577,7 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
     throw new Error("Supabase auth is not configured.");
   }
   const remoteClient = client;
-  const existingRemoteChart = (await listManualCharts(userId))
+  const existingRemoteChart = (await listRemoteManualCharts(userId))
     .find((chart) => chartIdentity(chart) === chartIdentityFromInput(input));
 
   if (existingRemoteChart) {
@@ -563,27 +626,19 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
 }
 
 export async function listManualCharts(userId: string): Promise<ManualChart[]> {
-  if (!(await hasRemoteUser(userId))) {
-    return readLocalManualCharts(userId);
+  const cachedOwnerIds = localManualChartOwnerIds(userId);
+
+  try {
+    if (!(await hasRemoteUser(userId))) {
+      return listCachedManualCharts(cachedOwnerIds);
+    }
+
+    const remoteCharts = await listRemoteManualCharts(userId);
+
+    return mergeRemoteManualCharts(userId, remoteCharts);
+  } catch {
+    return listCachedManualCharts(cachedOwnerIds);
   }
-
-  const client = await getSupabaseClient();
-
-  if (!client) {
-    return readLocalManualCharts(userId);
-  }
-
-  const { data, error } = await client
-    .from("manual_charts")
-    .select("*")
-    .eq("owner_user_id", userId)
-    .order("display_name", { ascending: true });
-
-  if (error) {
-    throw error;
-  }
-
-  return dedupeManualCharts((data as ManualChartRow[]).map(rowToManualChart));
 }
 
 export async function createManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
@@ -614,7 +669,7 @@ export async function migrateLocalManualChartsToRemote(userId: string, localUser
     return { imported: 0, skipped: 0 };
   }
 
-  const remoteCharts = await listManualCharts(userId);
+  const remoteCharts = await listRemoteManualCharts(userId);
   const remoteIdentities = new Set(remoteCharts.map(chartIdentity));
   let imported = 0;
   let skipped = 0;
