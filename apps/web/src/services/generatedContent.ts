@@ -1105,6 +1105,33 @@ export async function loadLiveGeneratedContent(
   return loadLiveGeneratedContentForSurfaces([surface], targetDate);
 }
 
+type GeneratedContentReaderBoundaryRow = Pick<
+  GeneratedContentRow,
+  "content_key" | "event_type" | "source_snapshot" | "surface"
+>;
+
+export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentReaderBoundaryRow) {
+  const contentType = typeof row.source_snapshot?.contentType === "string"
+    ? row.source_snapshot.contentType
+    : "";
+  const isSynastryGeneratedLane = row.surface === "synastry"
+    || contentType === "synastry-kb-seed"
+    || row.event_type?.startsWith("synastry-")
+    || row.content_key.startsWith("synastry.")
+    || row.content_key.startsWith("synastry-")
+    || /^A-[^/]+_B-[^/]+_/u.test(row.content_key);
+
+  if (!isSynastryGeneratedLane) {
+    return true;
+  }
+
+  // Package-originated rows are installed through
+  // loadFallbackArchitectureV3DashboardBundle and rendered by the package
+  // resolver. The generic generated-content map must never be a second
+  // synastry copy source.
+  return false;
+}
+
 export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
   targetDate?: string
@@ -1159,6 +1186,10 @@ export async function loadLiveGeneratedContentForSurfaces(
   const previewMode = readGeneratedContentPreviewMode();
 
   for (const row of rows) {
+    if (!isGeneratedContentReaderBoundaryAllowed(row)) {
+      continue;
+    }
+
     if (!isReaderServableGeneratedContentRow(row)) {
       continue;
     }
