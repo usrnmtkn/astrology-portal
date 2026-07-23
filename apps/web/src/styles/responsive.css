@@ -1689,7 +1689,10 @@
 
   .sky-detail-page {
     width: 100%;
-    padding: 104px var(--mobile-page-gutter) var(--mobile-page-gutter);
+    padding:
+      104px
+      var(--mobile-page-gutter)
+      calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
   }
 
   .article-shell,

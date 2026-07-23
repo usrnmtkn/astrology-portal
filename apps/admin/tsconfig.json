@@ -17,5 +17,6 @@
     "jsx": "react-jsx"
   },
   "include": ["src", "../web/src/*.d.ts", "../web/src/content", "../web/src/services"],
+  "exclude": ["../web/src/content/fallbackArchitectureV3/resolver"],
   "references": []
 }

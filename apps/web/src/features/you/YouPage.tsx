@@ -27,6 +27,14 @@ export type PersonalTimingSummary = {
   status: "idle" | "loading" | "ready" | "error";
 };
 
+export type DailyHoroscopeAssembly = {
+  doItems?: string[];
+  dontItems?: string[];
+  specialSections: Array<{ headline: string; body: string }>;
+  behindForecastRows: ReactNode[];
+  derivation: Record<string, unknown>;
+};
+
 export type YouTransitArticle = {
   id: string;
   title: string;
@@ -63,6 +71,7 @@ export type YouPageProps = {
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
   careerArchetypeProfile?: CareerArchetypeProfile | null;
+  dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   displayMoon: string;
   displayRising: string;
@@ -393,15 +402,16 @@ function YouNatalTab({
 
 function YouUpdatesTab({
   aspectRows,
+  dailyHoroscopeAssembly,
   dailyUpdateSummary,
   hasSavedCurrentCity,
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   onCreateChart,
-  personalTimingSummary,
   standaloneTransitRows = []
 }: {
   aspectRows: ReactNode[];
+  dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
@@ -418,7 +428,7 @@ function YouUpdatesTab({
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
-          <span className="eyebrow section-label">TLDR</span>
+          <span className="eyebrow section-label">At a Glance</span>
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
           <p>{dailyUpdateSummary.summary}</p>
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
@@ -442,24 +452,31 @@ function YouUpdatesTab({
           )}
         </section>
       )}
-      {hasSavedCurrentCity && personalTimingSummary && (
-        <section className="personal-timing-summary" aria-label="Personal timing summary">
-          <span className="eyebrow section-label">Timing</span>
-          <h3>{personalTimingSummary.headline}</h3>
-          <p>{personalTimingSummary.summary}</p>
-          {personalTimingSummary.keyFactors.length > 0 && (
-            <ul>
-              {personalTimingSummary.keyFactors.slice(0, 4).map((factor) => (
-                <li key={factor}>{factor}</li>
-              ))}
-            </ul>
-          )}
+      {hasSavedCurrentCity
+        && dailyHoroscopeAssembly?.doItems?.length === 3
+        && dailyHoroscopeAssembly.dontItems?.length === 3 ? (
+          <section className="daily-dodont" aria-label="Do and don't">
+            <div>
+              <span className="eyebrow section-label">Do</span>
+              <ul>{dailyHoroscopeAssembly.doItems.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+            <div>
+              <span className="eyebrow section-label">Don&apos;t</span>
+              <ul>{dailyHoroscopeAssembly.dontItems.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+          </section>
+        ) : null}
+      {dailyHoroscopeAssembly?.specialSections.map((section) => (
+        <section className="daily-special-section" key={section.headline}>
+          <span className="eyebrow section-label">Today&apos;s Sky</span>
+          <h3>{section.headline}</h3>
+          {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </section>
-      )}
+      ))}
       {hasSavedCurrentCity && natalAspectPatternItems && (
         <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}
-      <span className="eyebrow section-label">Aspects</span>
+      <span className="eyebrow section-label">Areas of Your Life</span>
       {!hasSavedCurrentCity && (
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
@@ -469,7 +486,7 @@ function YouUpdatesTab({
         </section>
       )}
       {hasSavedCurrentCity && aspectRows.length > 0 && (
-        <div className="updates-aspect-list" aria-label="Aspects">
+        <div className="updates-aspect-list" aria-label="Areas of your life">
           {aspectRows}
         </div>
       )}
@@ -489,6 +506,12 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
       )}
+      {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastRows.length ? (
+        <section className="daily-behind-forecast" aria-label="Behind this forecast">
+          <span className="eyebrow section-label">Behind this Forecast</span>
+          <div>{dailyHoroscopeAssembly.behindForecastRows}</div>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -858,6 +881,7 @@ export function YouPage({
   aspectRows,
   bigThreeRows,
   careerArchetypeProfile,
+  dailyHoroscopeAssembly,
   dailyUpdateSummary,
   displayMoon,
   displayRising,
@@ -971,6 +995,7 @@ export function YouPage({
           {profileTab === "transits" && (
             <YouUpdatesTab
               aspectRows={aspectRows}
+              dailyHoroscopeAssembly={dailyHoroscopeAssembly}
               dailyUpdateSummary={dailyUpdateSummary}
               hasSavedCurrentCity={hasSavedCurrentCity}
               natalAspectPatternItems={natalAspectPatternItems}

@@ -10,12 +10,9 @@ const scanRoots = [
   "packages/astro-knowledge/data/angles",
   "packages/astro-knowledge/data/synastry/aspects",
   "tldr-astro-phrasebank/phrasebank",
-  "apps/web/src/content/emergencyCopy.json",
-  "apps/web/src/content/skyContentSnapshot.json",
-  "apps/web/src/content/aspectPairSourcePhrases.json",
-  "apps/web/src/content/emergencyCopy.ts",
-  "apps/web/src/content/seasonArcCopy.ts",
-  "apps/web/src/content/lunarBeatCopy.ts"
+  "apps/web/src/content/fallbackArchitectureV3/source-rows",
+  "apps/web/src/content/fallbackArchitectureV3/templates",
+  "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js"
 ];
 
 const excludedPathParts = [

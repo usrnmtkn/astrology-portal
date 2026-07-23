@@ -60,8 +60,6 @@ import {
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
-import { knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
-import skyContentSnapshot from "./content/skyContentSnapshot.json";
 import compatibilityWriteupBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-writeups.json";
 import moonCompatibilityLibrary from "../../../tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json";
 import compatibilitySummaryBank from "../../../tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json";
@@ -72,6 +70,7 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
+  fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
   fallbackV3AspectFeel,
@@ -82,21 +81,6 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
-import {
-  placementScaffoldHasMinimumCoverage,
-  placementScaffoldSections,
-  type PlacementScaffoldSection
-} from "./content/placementScaffold";
-import {
-  sourceGroundedNatalPlacementSections as sourceGroundedNatalPlacementSectionsRuntime
-} from "./content/sourceGroundedRuntime";
-import { resolveSourceGroundedV2 } from "./content/sourceGroundedV2";
-import {
-  resolveSkyHistoricalLookback,
-  skyHistoricalLookbackSettingKey,
-  type SkyHistoricalLookback
-} from "./content/skyHistoricalLookback";
-import { formatSkyWritingAspectBeat, resolveSkyWritingArticle, type SkyWritingAspectBeat } from "./content/skyWriting";
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
@@ -622,19 +606,11 @@ function isSkyDetail(value: unknown): value is SkyDetail {
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 
-type LocalSkySnapshotRow = Omit<LiveGeneratedContent, "mode" | "blockType"> & {
-  aliases?: string[];
-  mode: LiveGeneratedContent["mode"];
-  blockType?: LiveGeneratedContent["blockType"];
+type SkyHistoricalLookback = {
+  heading: string;
+  dateLabel: string;
+  paragraphs: string[];
 };
-
-const legacyPublicLiveWritingEnabled = false;
-
-function sourceGroundedNatalPlacementSections(
-  ...args: Parameters<typeof sourceGroundedNatalPlacementSectionsRuntime>
-) {
-  return sourceGroundedNatalPlacementSectionsRuntime(...args);
-}
 
 type YouTransitArticle = {
   id: string;
@@ -1041,42 +1017,7 @@ function mergeGeneratedContentMaps(...maps: GeneratedContentMap[]) {
 }
 
 function normalizedSkySnapshotContentMap() {
-  const map: GeneratedContentMap = new Map();
-
-  if (!legacyPublicLiveWritingEnabled) {
-    return map;
-  }
-
-  const rows = (skyContentSnapshot as { rows?: LocalSkySnapshotRow[] }).rows ?? [];
-
-  rows.forEach((row) => {
-    const content: LiveGeneratedContent = {
-      id: row.id,
-      contentKey: row.contentKey,
-      surface: row.surface,
-      mode: row.mode,
-      eventType: row.eventType,
-      targetDate: row.targetDate,
-      headline: row.headline,
-      summary: row.summary,
-      body: row.body,
-      sections: row.sections,
-      blockType: row.blockType ?? null,
-      provider: row.provider ?? null,
-      sourceSnapshot: row.sourceSnapshot ?? null,
-      model: row.model,
-      updatedAt: row.updatedAt
-    };
-
-    map.set(content.contentKey, content);
-    (row.aliases ?? []).forEach((alias) => {
-      if (!map.has(alias)) {
-        map.set(alias, content);
-      }
-    });
-  });
-
-  return map;
+  return new Map() as GeneratedContentMap;
 }
 
 const normalizedSkySnapshotContent = normalizedSkySnapshotContentMap();
@@ -1869,10 +1810,6 @@ function generatedSettingEnabled(
   }
 
   return defaultValue;
-}
-
-function skyHistoricalLookbackEnabled(generatedContent: GeneratedContentMap) {
-  return generatedSettingEnabled(generatedContent, skyHistoricalLookbackSettingKey, false);
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
@@ -5739,24 +5676,16 @@ function skyAspectWritingSection(
   generatedAt?: string
 ): NormalizedSkyAspectSection | null {
   void positions;
-  const dateLine = generatedAt ? currentSkyAspectTransitRange(aspect, generatedAt) : "";
-  const body = formatSkyWritingAspectBeat({
-    aspect: aspect.type,
-    dateLine,
-    from: aspect.from,
-    to: aspect.to
-  });
-
-  return body ? {
-    slot: "meaning",
-    required: true,
-    layer: "fallback",
-    tier: "sky-writing-v1-computed",
-    sourceKeys: ["sky-writing-v1", "computed-aspect-beat"],
-    heading: skyAspectDisplayTitle(aspect),
-    body
-  } : null;
+  void generatedAt;
+  return null;
 }
+
+type SkyWritingAspectBeat = {
+  aspect: string;
+  dateLine?: string | null;
+  from: string;
+  to: string;
+};
 
 function normalizeSkyAspectSurface(
   aspect: SkySnapshot["aspects"][number],
@@ -5785,14 +5714,7 @@ function currentSkyAspectDetailArticle(
   const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
-  const historicalLookback = resolveSkyHistoricalLookback({
-    enabled: skyHistoricalLookbackEnabled(generatedContent),
-    eventIdentity: {
-      eventType: "aspect-cycle",
-      bodies: [aspect.from, aspect.to],
-      aspect: aspect.type
-    }
-  });
+  const historicalLookback = null;
 
   return {
     routePath: skyAspectRoutePath(aspect),
@@ -5905,77 +5827,44 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
-function skyWritingDashboardContentKey(position: PlanetPosition) {
-  const planet = normalizeContentIdPart(position.planet).replace(/-/g, "_");
-  const sign = normalizeContentIdPart(position.sign).replace(/-/g, "_");
-  const suffix = position.motion === "retrograde" ? ".rx" : "";
-
-  return `sky.${planet}.${sign}${suffix}`;
-}
-
-function dashboardSkyPlacementWritingSection(
-  position: PlanetPosition,
-  generatedContent?: GeneratedContentMap
-): NormalizedSkyPlacementSection | null {
-  const contentKey = skyWritingDashboardContentKey(position);
-  const content = generatedContent?.get(contentKey);
-  const paragraphs = generatedContentParagraphs(content);
-  const body = paragraphs.join("\n\n");
-
-  if (!content || !body || !isReaderFacingCopy(body)) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "dashboard-sky-writing",
-    sourceKeys: [
-      "generated_interpretations",
-      contentKey,
-      content.id
-    ],
-    heading: content.headline || skyPlacementDisplayTitle(position),
-    body
-  };
-}
-
 function skyPlacementWritingSection(
   position: PlanetPosition,
-  beats: SkyWritingAspectBeat[] = [],
-  generatedContent?: GeneratedContentMap
+  beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementSection | null {
-  const dashboardSection = dashboardSkyPlacementWritingSection(position, generatedContent);
+  const planet = normalizeContentIdPart(position.planet);
+  const sign = normalizeContentIdPart(position.sign);
+  const events = beats
+    .map((beat) => {
+      const aspect = normalizeFallbackV3Aspect(beat.aspect);
 
-  if (dashboardSection) {
-    return dashboardSection;
-  }
+      return aspect ? {
+        type: "aspect",
+        a: normalizeContentIdPart(beat.from),
+        b: normalizeContentIdPart(beat.to),
+        aspect,
+        dateLine: beat.dateLine ?? undefined
+      } : null;
+    })
+    .filter((event): event is NonNullable<typeof event> => Boolean(event));
+  const rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
+  const body = readerFacingParagraphs(rendered.parts.length ? rendered.parts : [rendered.body]).join("\n\n");
 
-  const article = resolveSkyWritingArticle({
-    planet: position.planet,
-    sign: position.sign,
-    motion: position.motion,
-    transitEnd: position.transitEnd,
-    retrogradeStart: position.retrogradeStart,
-    retrogradeEnd: position.retrogradeEnd,
-    retrogradeShadowStart: position.retrogradeShadowStart,
-    retrogradeShadowEnd: position.retrogradeShadowEnd,
-    cazimiDate: position.cazimi ? position.retrogradeStart : null
-  }, beats);
-
-  const body = article ? readerFacingParagraphs(article.paragraphs).join("\n\n") : "";
-
-  if (!article || !isReaderFacingCopy(body)) {
+  if (!body || !isReaderFacingCopy(body)) {
     return null;
   }
+
+  const layer = rendered.contentKey?.startsWith("authored/") ? "authored" : "fallback";
 
   return {
     slot: "meaning",
     required: true,
-    layer: article.layer,
-    tier: article.layer === "authored" ? "sky-writing-v1-authored" : "sky-writing-v1-fallback",
-    sourceKeys: article.sourceKeys,
+    layer,
+    tier: layer === "authored" ? "fallback-architecture-v3-authored" : "fallback-architecture-v3",
+    sourceKeys: [
+      "fallback-architecture-v3",
+      rendered.templateKey,
+      rendered.contentKey ?? ""
+    ].filter(Boolean),
     heading: skyPlacementDisplayTitle(position),
     body
   };
@@ -5988,7 +5877,8 @@ function normalizeSkyPlacementSurface(
   beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementArticle {
   void duration;
-  const fallbackSection = skyPlacementWritingSection(position, beats, generatedContent);
+  void generatedContent;
+  const fallbackSection = skyPlacementWritingSection(position, beats);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -6043,15 +5933,7 @@ function currentSkyPlacementDetailArticle({
     pointName: position.planet,
     positions
   });
-  const historicalLookback = resolveSkyHistoricalLookback({
-    enabled: skyHistoricalLookbackEnabled(generatedContent),
-    eventIdentity: {
-      eventType: isRetrograde ? "retrograde" : "planet-in-sign",
-      bodies: [position.planet],
-      sign: position.sign,
-      direction: isRetrograde ? "retrograde" : undefined
-    }
-  });
+  const historicalLookback = null;
   return {
     routePath: skyPlacementRoutePath(position),
     glyph: detailGlyphForPlacement(position),
@@ -8112,6 +7994,31 @@ function stableTransitCopyVariant(...parts: Array<string | number>) {
 
   const variant = (hash % 3) + 1;
   return variant === 1 ? undefined : variant;
+}
+
+const dailyOuterTransitPlanets = new Set(["saturn", "uranus", "neptune", "pluto"]);
+
+function dailyTransitQualifies(transit: TransitItem) {
+  const planet = normalizeContentIdPart(transit.transitPlanet);
+  const gate = dailyOuterTransitPlanets.has(planet) ? 3 : 5;
+  return transitOrbValue(transit) <= gate;
+}
+
+function dailyHeadlinerTransit(transit: TransitItem) {
+  return dailyOuterTransitPlanets.has(normalizeContentIdPart(transit.transitPlanet))
+    && transitOrbValue(transit) <= 1;
+}
+
+function dailyCalendarPhaseKey(phase: string) {
+  const normalized = phase.toLowerCase();
+  if (normalized.includes("new")) return "new-moon";
+  if (normalized.includes("waxing crescent")) return "waxing-crescent";
+  if (normalized.includes("first quarter")) return "first-quarter";
+  if (normalized.includes("waxing gibbous")) return "waxing-gibbous";
+  if (normalized.includes("full")) return "full-moon";
+  if (normalized.includes("waning gibbous")) return "disseminating";
+  if (normalized.includes("last quarter")) return "last-quarter";
+  return "balsamic";
 }
 
 function personalTransitMadlibFallbackSection(
@@ -10999,16 +10906,15 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       const ownerLabel = ownerName === "Your" ? "Your" : `${ownerName}'s`;
       const houseOwner = targetName === "your" ? "your" : targetName;
       const lifeArea = houseLifeAreas[house] ?? "life area";
+      const normalizedPlanet = normalizeContentIdPart(position.planet);
       const direction = targetName === "your"
         ? `${ownerLabel} ${position.planet} lands in your ${ordinalHouse(house)} house of ${lifeArea}.`
         : `${ownerLabel} ${position.planet} lands in ${houseOwner} ${ordinalHouse(house)} house of ${lifeArea}.`;
       const contentKeys = [
-        ...knowledgeIdsForFallbackHook("friends.house-overlay", {
-          planet: position.planet,
-          house
-        }),
-        `synastry-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
-        `relationship-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
+        "fallback-hook/friends.house-overlay",
+        `fallback-hook/friends.house-overlay/${normalizedPlanet}/${house}`,
+        `synastry-${normalizedPlanet}-in-${house}-house`,
+        `relationship-${normalizedPlanet}-in-${house}-house`,
         ...relationshipPlacementContentKeys(position.planet, position.sign, "synastry")
       ];
       const heading = `${ownerLabel} ${position.planet} in ${houseOwner} ${ordinalHouse(house)} house`;
@@ -14935,179 +14841,62 @@ function natalAngleFallbackV3NormalizedSections(position: PlanetPosition, ownerC
   }
 }
 
-function sourceGroundedNatalPlacementNormalizedSections(
+function natalPlacementV3NormalizedSections(
   position: PlanetPosition,
-  natalSky: SkySnapshot | null
-): NormalizedNatalPlacementSection[] {
-  return sourceGroundedNatalPlacementSections({
-    aspects: natalPlacementAspectFacts(position, natalSky).map((fact) => ({
-      aspect: fact.aspectType,
-      focalHouse: fact.primaryHouse,
-      focalPlanet: fact.primaryPlanet,
-      focalSign: fact.primarySign,
-      orb: fact.orb,
-      otherHouse: fact.aspectPlanetHouse,
-      otherPlanet: fact.aspectPlanet,
-      otherSign: fact.aspectPlanetSign
-    })),
-    dignityLabel: placementDignity(position)?.label ?? null,
-    natalSky,
-    ownerPerspective: "you",
-    position
-  }).map((section): NormalizedNatalPlacementSection => ({
-    slot: /house/i.test(section.heading) ? "house" : "sign",
-    required: true,
-    layer: "authored",
-    tier: "REVIEWED_CLAUSE",
-    sourceKeys: [
-      "finalSourceGroundedDashboardRecords",
-      `dashboard.natal-placement.${normalizeContentIdPart(position.planet)}.${normalizeContentIdPart(position.sign)}${position.house ? `.house_${position.house}` : ""}`
-    ],
-    heading: section.heading,
-    body: section.body
-  }));
-}
-
-function sourceGroundedNatalPlacementFallbackSections(position: PlanetPosition): NormalizedNatalPlacementSection[] {
-  const result = resolveSourceGroundedV2("me.natal_placement", {
-    degree: formatPlanetDegree(position),
-    natalBody: position.planet,
-    natalHouse: position.house ?? null,
-    natalSign: position.sign,
-    ownerPerspective: "you",
-    reliableBirthTime: Boolean(position.house)
-  });
-  const signFieldBody = firstReaderFacingCopy([
-    result.renderedFields.planetSignFallbackStory
-  ]);
-  const houseFieldBody = firstReaderFacingCopy([
-    result.renderedFields.planetSignHouseFallbackStory
-  ]);
-  const body = firstReaderFacingCopy([
-    result.expandedCopy,
-    result.renderedFields.integratedSignHouseStory,
-    ...result.finalVisibleStrings
-  ]);
-
-  if (result.readerAuthority !== "approved-fallback" || !body) {
-    return [];
-  }
-
-  const sourceKeys = [
-    result.fallbackId ?? "",
-    ...result.primarySourceKeys,
-    ...result.supportingSourceKeys
-  ].filter(Boolean);
-  const sentences = body
-    .replace(/\s+/gu, " ")
-    .trim()
-    .match(/[^.!?]+[.!?]+(?:["')\]]+)?|[^.!?]+$/gu)
-    ?.map((sentence) => sentence.trim())
-    .filter(Boolean) ?? [];
-  const signBody = signFieldBody || (position.house && sentences.length > 1
-    ? sentences.slice(0, 1).join(" ")
-    : body);
-  const houseBody = houseFieldBody || (position.house
-    ? sentences.slice(1).join(" ").trim()
-    : "");
-  const sections: NormalizedNatalPlacementSection[] = [{
-    slot: "sign",
-    required: true,
-    layer: "fallback",
-    tier: "approved-fallback",
-    sourceKeys,
-    heading: `${position.planet} in ${position.sign}`,
-    body: signBody
-  }];
-
-  if (position.house && houseBody) {
-    sections.push({
-      slot: "house",
-      required: true,
-      layer: "fallback",
-      tier: "approved-fallback",
-      sourceKeys,
-      heading: `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
-      body: houseBody
-    });
-  }
-
-  return sections;
-}
-
-function sourceGroundedNatalAspectSectionsForPlacement(
-  position: PlanetPosition,
-  natalSky: SkySnapshot | null,
   ownerContext?: ChartOwnerContext
 ): NormalizedNatalPlacementSection[] {
-  return natalPlacementAspectFacts(position, natalSky)
-    .map((fact) => {
-      const normalizedAspect = normalizeFallbackV3Aspect(fact.aspectType);
+  try {
+    const rendered = fallbackRendererV3.renderNatalPlacement({
+      dignity: placementDignity(position)?.label?.toLowerCase() ?? undefined,
+      house: position.house ?? undefined,
+      isRetrograde: position.motion === "retrograde",
+      planet: normalizeContentIdPart(position.planet),
+      sign: normalizeContentIdPart(position.sign),
+      voice: ownerContext?.ownerName ?? "you"
+    });
+    const rawParts = Array.isArray(rendered.parts) ? rendered.parts : [rendered.body];
+    const parts = rawParts
+      .map((part: unknown) => firstReaderFacingCopy([typeof part === "string" ? part : ""]))
+      .filter((part: string | null): part is string => Boolean(part));
 
-      if (!normalizedAspect) {
-        return null;
-      }
+    if (parts.length === 0) {
+      return [];
+    }
 
-      try {
-        const rendered = fallbackRendererV3.renderNatalAspect({
-          aspect: normalizedAspect,
-          planetA: normalizeContentIdPart(fact.primaryPlanet),
-          planetB: normalizeContentIdPart(fact.aspectPlanet),
-          voice: ownerContext?.ownerName ?? "you"
-        });
-        const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const sourceKeys = [
+      "tldrastro-fallback-architecture-v3",
+      rendered.templateKey
+    ].filter(Boolean);
+    const sections: NormalizedNatalPlacementSection[] = [{
+      slot: "sign",
+      required: true,
+      layer: "fallback",
+      tier: "fallback-architecture-v3",
+      sourceKeys,
+      heading: `${position.planet} in ${position.sign}`,
+      body: parts[0] ?? ""
+    }];
 
-        if (!body || !isReaderFacingCopy(body)) {
-          return null;
-        }
+    if (position.house && parts[1]) {
+      sections.push({
+        slot: "house",
+        required: true,
+        layer: "fallback",
+        tier: "fallback-architecture-v3",
+        sourceKeys,
+        heading: `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
+        body: parts[1]
+      });
+    }
 
-        const fallbackSection: NormalizedNatalPlacementSection = {
-          slot: "aspect" as const,
-          required: false,
-          layer: "fallback" as const,
-          tier: "fallback-architecture-v3",
-          aspectType: fact.aspectType,
-          group: normalizedAspectToneBucket(fact.aspectType),
-          sourceKeys: [
-            "tldrastro-fallback-architecture-v3",
-            rendered.templateKey
-          ].filter(Boolean),
-          heading: rendered.headline || `${fact.primaryPlanet} ${fact.aspectType} ${fact.aspectPlanet}`,
-          body
-        };
+    return sections.filter((section) => isReaderFacingCopy(section.body));
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return [];
+    }
 
-        return fallbackSection;
-      } catch (error) {
-        if (error instanceof FallbackV3SourceGapError) {
-          return null;
-        }
-
-        throw error;
-      }
-    })
-    .filter((section): section is NormalizedNatalPlacementSection => Boolean(section));
-}
-
-function placementScaffoldNormalizedSections(position: PlanetPosition, natalSky: SkySnapshot | null): NormalizedNatalPlacementSection[] {
-  if (!placementScaffoldHasMinimumCoverage(position)) {
-    return [];
+    throw error;
   }
-
-  return placementScaffoldSections({
-    natalSky,
-    position
-  }).map((section): NormalizedNatalPlacementSection => ({
-    slot: section.kind === "ruler_bridge" ? "ruler" : section.kind,
-    required: section.kind === "sign" || section.kind === "house",
-    layer: "fallback",
-    tier: "source-based-scaffold",
-    sourceKeys: [
-      "placementScaffoldData",
-      `${section.kind}:${normalizeContentIdPart(position.planet)}:${normalizeContentIdPart(position.sign)}${position.house ? `:${position.house}` : ""}`
-    ],
-    heading: section.heading,
-    body: section.body
-  }));
 }
 
 function normalizeNatalPlacementSurface(
@@ -15115,32 +14904,16 @@ function normalizeNatalPlacementSurface(
   natalSky: SkySnapshot | null,
   ownerContext?: ChartOwnerContext
 ): NormalizedNatalPlacementArticle {
+  void natalSky;
   const isAnglePoint = isChartAnglePoint(position.planet);
-  const sourceGroundedSections = isAnglePoint
+  const sections = isAnglePoint
     ? natalAngleFallbackV3NormalizedSections(position, ownerContext)
-    : sourceGroundedNatalPlacementNormalizedSections(position, natalSky);
-  const fallbackSections = isAnglePoint
-    ? []
-    : sourceGroundedNatalPlacementFallbackSections(position);
-  const primarySections = isAnglePoint
-    ? sourceGroundedSections
-    : (["sign", "house"] as const)
-        .map((slot) => (
-          sourceGroundedSections.find((section) => section.slot === slot)
-          ?? fallbackSections.find((section) => section.slot === slot)
-        ))
-        .filter((section): section is NormalizedNatalPlacementSection => Boolean(section));
-  // Related aspects on natal placement pages must come from authored natal copy.
-  // The V3 natal-aspect fallback is too generic for this placement context.
-  const sections = primarySections.length > 0
-    ? primarySections
-    : placementScaffoldNormalizedSections(position, natalSky);
-  const selectedReaderSections = sections.filter((section) => section.slot !== "aspect");
-  const hasSourceGroundedPrimarySection = selectedReaderSections.some((section) => section.layer === "authored");
+    : natalPlacementV3NormalizedSections(position, ownerContext);
+  const hasReaderSections = sections.some((section) => isReaderFacingCopy(section.body));
 
   return {
     surface: "natal-placement",
-    status: sections.length > 0 ? (hasSourceGroundedPrimarySection ? "servable" : "partial") : "not-servable",
+    status: hasReaderSections ? "partial" : "not-servable",
     sections
   };
 }
@@ -15176,46 +14949,6 @@ function natalPlacementModularSections({
   return normalizedNatalPlacementArticleSections(
     normalizeNatalPlacementSurface(position, natalSky, ownerContext)
   );
-}
-
-function natalAspectsForPlacement(position: PlanetPosition, natalSky: SkySnapshot | null) {
-  return (natalSky?.aspects ?? [])
-    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
-    .slice()
-    .sort((first, second) => first.orb - second.orb);
-}
-
-function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapshot | null) {
-  const positionByPlanet = new Map((natalSky?.positions ?? []).map((candidate) => [candidate.planet, candidate]));
-
-  return natalAspectsForPlacement(position, natalSky).map((aspect) => {
-    const otherPoint = aspectOtherPoint(aspect, position.planet);
-    const fromPosition = positionByPlanet.get(aspect.from);
-    const toPosition = positionByPlanet.get(aspect.to);
-    const otherPosition = positionByPlanet.get(otherPoint);
-
-    return {
-      primaryPlanet: position.planet,
-      primarySign: position.sign,
-      primaryHouse: position.house,
-      aspectType: aspect.type,
-      aspectPlanet: otherPoint,
-      aspectPlanetSign: otherPosition?.sign ?? "",
-      aspectPlanetHouse: otherPosition?.house ?? null,
-      planetA: aspect.from,
-      aspect: aspect.type,
-      planetB: aspect.to,
-      from: aspect.from,
-      to: aspect.to,
-      fromSign: fromPosition?.sign ?? "",
-      toSign: toPosition?.sign ?? "",
-      fromHouse: fromPosition?.house ?? null,
-      toHouse: toPosition?.house ?? null,
-      otherPoint,
-      orb: wholeDegreeOrb(aspect.orb),
-      meaning: ""
-    };
-  });
 }
 
 function natalPlacementSignTitle(position: PlanetPosition) {
@@ -16329,6 +16062,8 @@ function CalculationDiagnosticsPanel({
         <dd>{sampleContent?.id ?? "none"}</dd>
         <dt>Snapshot/live source</dt>
         <dd>{typeof sampleContent?.sourceSnapshot?.sourceType === "string" ? sampleContent.sourceSnapshot.sourceType : sampleContent?.provider ?? "none"}</dd>
+        <dt>Fallback package</dt>
+        <dd>{fallbackArchitectureV3PackageVersion}</dd>
         <dt>Hydration state</dt>
         <dd>{hydrationState}</dd>
         <dt>Cache age</dt>
@@ -17637,10 +17372,14 @@ function ProfileView({
       setTransitArticle(soulRoadmapYouArticle(soulRoadmapProfile));
     }
   };
-  const aspectRows = dedupeSameBeatPersonalTransits(
+  const qualifyingDailyTransits = dedupeSameBeatPersonalTransits(
     rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
     transitForm.chartDate
-  ).slice(0, 8);
+  )
+    .filter(dailyTransitQualifies)
+    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second));
+  const dailyIsHeadliner = qualifyingDailyTransits.some(dailyHeadlinerTransit);
+  const aspectRows = qualifyingDailyTransits.slice(0, dailyIsHeadliner ? 3 : 4);
   const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, transitForm.chartDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
@@ -17858,6 +17597,121 @@ function ProfileView({
       </button>
     );
   });
+  const dailyMoon = currentSky?.positions.find((position) => position.planet === "Moon") ?? null;
+  const dailyMoonDriver = currentSky && natalSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+  const dailyMoonHouse = dailyMoon
+    ? typeof dailyMoon.house === "number" && dailyMoon.house >= 1 && dailyMoon.house <= 12
+      ? dailyMoon.house
+      : natalSky?.ascendant
+        ? wholeSignHouseForSign(dailyMoon.sign, natalSky.ascendant)
+        : null
+    : null;
+  const dailyMoonLabel = (() => {
+    if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
+
+    const end = dateFromOffsetDays(
+      transitForm.chartDate,
+      Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
+    );
+    const window = `Until ${formatEditorialDate(end, true)}`;
+
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderTransitLabel({
+        transiting: "moon",
+        natal: dailyMoonDriver.natal,
+        aspect: dailyMoonDriver.aspect,
+        window
+      });
+
+      return {
+        end,
+        id: `moon-${dailyMoonDriver.aspect}-${dailyMoonDriver.natal}`,
+        rendered
+      };
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) {
+        console.warn("Daily Moon label source gap; hiding surface.", error);
+        return null;
+      }
+
+      throw error;
+    }
+  })();
+  const behindForecastRows = [
+    ...qualifyingDailyTransits.map((transit) => ({
+      end: transitItemActiveWindow(transit, transitForm.chartDate).end,
+      transit
+    })),
+    ...(dailyMoonLabel ? [{ end: dailyMoonLabel.end, moonLabel: dailyMoonLabel }] : [])
+  ]
+    .slice()
+    .sort((first, second) => first.end.getTime() - second.end.getTime())
+    .flatMap((entry) => {
+      if ("moonLabel" in entry && entry.moonLabel) {
+        return [(
+          <button className="daily-forecast-label" key={`daily-label-${entry.moonLabel.id}`} type="button">
+            <span>{entry.moonLabel.rendered.label}</span>
+            <small>{entry.moonLabel.rendered.window}</small>
+          </button>
+        )];
+      }
+
+      if (!("transit" in entry)) return [];
+      const transit = entry.transit;
+      const aspect = normalizeFallbackV3Aspect(transit.aspect);
+
+      if (!aspect) {
+        return [];
+      }
+
+      try {
+        const rendered = transitSynastryFallbackRendererV3.renderTransitLabel({
+          transiting: normalizeContentIdPart(transit.transitPlanet),
+          natal: normalizeContentIdPart(transit.natalPoint),
+          aspect,
+          window: personalTransitPackageWindow(transit, transitForm.chartDate)
+        });
+
+        return [(
+          <button
+            className="daily-forecast-label"
+            key={`daily-label-${transit.id}`}
+            onClick={() => {
+              const normalized = normalizePersonalTransitSurface(transit, transitForm.chartDate);
+              setSelectedTransitId(transit.id);
+              setActivePlacementRouteId(null);
+              setTransitArticle({
+                id: personalTransitGeneratedContentKey(transit, transitForm.chartDate),
+                title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+                glyph: pointGlyph(transit.transitPlanet),
+                subtitle: "",
+                summary: "",
+                sections: normalized.sections.map((section) => ({
+                  heading: section.heading,
+                  tldr: "",
+                  body: taggedSectionBody(section)
+                })),
+                meta: [
+                  { label: "Duration", value: transitItemTimingDisplay(transit, transitForm.chartDate).rangeLabel },
+                  { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
+                ]
+              });
+            }}
+            type="button"
+          >
+            <span>{rendered.label}</span>
+            <small>{rendered.window}</small>
+          </button>
+        )];
+      } catch (error) {
+        if (error instanceof FallbackV3SourceGapError) {
+          console.warn("Daily transit label source gap; hiding surface.", { transitId: transit.id, error });
+          return [];
+        }
+
+        throw error;
+      }
+    });
   const standaloneHouseTransitRows = Array.from(
     new Map(
       aspectRows
@@ -17931,6 +17785,107 @@ function ProfileView({
       </button>
     )];
   });
+  const dailyDoDont = (() => {
+    const seeded = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
+    const transitCandidate = qualifyingDailyTransits
+      .filter((candidate) => seeded.has(normalizeContentIdPart(candidate.natalPoint)))
+      .map((transit) => ({
+        house: transit.natalHouse ?? null,
+        natalPoint: normalizeContentIdPart(transit.natalPoint),
+        natalSign: normalizeContentIdPart(transit.natalSign),
+        orb: transitOrbValue(transit),
+        sourceId: transit.id,
+        transiting: normalizeContentIdPart(transit.transitPlanet)
+      }))[0] ?? null;
+    const moonTarget = dailyMoonDriver?.kind === "aspect"
+      ? natalPositions.find((position) => normalizeContentIdPart(position.planet) === dailyMoonDriver.natal) ?? null
+      : null;
+    const moonCandidate = dailyMoonDriver?.kind === "aspect"
+      && dailyMoonDriver.orb <= 5
+      && seeded.has(dailyMoonDriver.natal)
+      && moonTarget
+      ? {
+          house: moonTarget.house ?? null,
+          natalPoint: dailyMoonDriver.natal,
+          natalSign: normalizeContentIdPart(moonTarget.sign),
+          orb: dailyMoonDriver.orb,
+          sourceId: `moon-${dailyMoonDriver.aspect}-${dailyMoonDriver.natal}`,
+          transiting: "moon"
+        }
+      : null;
+    // The daily Moon driver owns this near-daily remedial slot whenever it
+    // touches a seeded natal planet. Fall back to the slower stack only on
+    // days when the Moon has no qualifying seeded contact.
+    const selected = moonCandidate ?? transitCandidate;
+
+    if (!selected || !selected.house) return null;
+
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderDoDont({
+        planet: selected.natalPoint,
+        sign: selected.natalSign,
+        house: selected.house,
+        transiting: selected.transiting
+      });
+      return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      console.warn("Daily Do/Don't source gap; hiding surface.", { transitId: selected.sourceId, error });
+      return null;
+    }
+  })();
+  const dailySpecialSections = (() => {
+    if (!currentSky?.moonEvent || currentSky.moonEvent.days !== 0 || !displayRising) return [];
+
+    try {
+      const kind = currentSky.moonEvent.name === "New Moon" ? "new-moon" : "full-moon";
+      const rendered = transitSynastryFallbackRendererV3.renderLunationHoroscope({
+        kind,
+        sign: normalizeContentIdPart(currentSky.moonEvent.sign),
+        risingSign: normalizeContentIdPart(displayRising)
+      });
+      return [{ headline: rendered.headline, body: rendered.body }];
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      console.warn("Daily special-day source gap; hiding surface.", error);
+      return [];
+    }
+  })();
+  const dailyHoroscopeAssembly = {
+    doItems: dailyDoDont?.do,
+    dontItems: dailyDoDont?.dont,
+    specialSections: dailySpecialSections.slice(0, 2),
+    behindForecastRows,
+    derivation: {
+      targetDate: transitForm.chartDate,
+      localNoon: true,
+      headliner: dailyIsHeadliner,
+      areaCap: dailyIsHeadliner ? 3 : 4,
+      qualifyingTransits: qualifyingDailyTransits.map((transit) => ({
+        id: transit.id,
+        transitPlanet: transit.transitPlanet,
+        natalPoint: transit.natalPoint,
+        aspect: transit.aspect,
+        orb: transitOrbValue(transit),
+        house: transit.natalHouse ?? null,
+        direction: transit.direction ?? null,
+        window: personalTransitPackageWindow(transit, transitForm.chartDate)
+      })),
+      moonDriver: dailyMoon
+        ? {
+            sign: dailyMoon.sign,
+            house: dailyMoonHouse,
+            ...(dailyMoonDriver?.kind === "aspect"
+              ? {
+                  natalPoint: dailyMoonDriver.natal,
+                  aspect: dailyMoonDriver.aspect,
+                  orb: dailyMoonDriver.orb
+                }
+              : {})
+          }
+        : null
+    }
+  };
   const dailyTimingContent = personalTimingGenerated;
   const generatedDailyHeadline = dailyTimingContent?.headline?.trim();
   const generatedDailySummary = liveGeneratedSummaryIfPresent(dailyTimingContent);
@@ -18014,6 +17969,7 @@ function ProfileView({
       <YouPage
         bigThreeRows={bigThreeRows}
         careerArchetypeProfile={careerArchetypeProfile}
+        dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
         displayMoon={displayMoon}
         displayRising={displayRising}
@@ -18050,7 +18006,7 @@ function ProfileView({
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
-        standaloneTransitRows={standaloneHouseTransitRows}
+        standaloneTransitRows={[]}
         unknownBirthTime={unknownBirthTime}
         transitArticle={transitArticle}
       />

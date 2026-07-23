@@ -4,19 +4,32 @@ How Codex assembles the daily page from the package renderers. Companion to `TLD
 
 Register note: the baseline's engine-hidden rule (no planet/sign/aspect words on the surface) applies ONLY to the top At-a-Glance slot. Everywhere else, TLDR Astro names the astrology on purpose; that is our house style and the owner has approved it across every shipped surface. Do not strip astrology vocabulary from area sections or labels to imitate Co-Star.
 
-## 1. Page skeleton, top to bottom
+## 1. Surface split (owner decision 2026-07-23)
+
+The daily content splits across TWO surfaces by what drives it:
+
+**You > Transits (chart-based, different per user):**
 
 ```
-1. Calendar strip        renderCalendarPhase (+ renderVoidOfCourse when active)
-2. AT A GLANCE           headline + body (see section 3)
-3. Do / Don't            renderDoDont (see section 4)
-4. Special-day section   lunation / eclipse / station / return days only (section 6)
-5. AREAS OF YOUR LIFE    renderTransitAspect / renderTransitHouse, one per qualifying transit
-6. Headliner deep dive   hand-authored, headliner days only
-7. Behind this forecast  renderTransitLabel stack
+1. AT A GLANCE           headline + body (see section 3)
+2. Do / Don't            renderDoDont (see section 4)
+3. Special-day section   lunation / eclipse / station / return days only (section 6)
+4. AREAS OF YOUR LIFE    renderTransitAspect / renderTransitHouse, one per qualifying transit
+5. Headliner deep dive   hand-authored, headliner days only
+6. Behind this forecast  renderTransitLabel stack
 ```
 
-Every slot must survive absence. A day with no qualifying non-Moon transit renders slots 1-3 and 7 only; that is a valid page, not an error.
+**Calendar page, lunar card (sky-wide, same for everyone):**
+
+```
+renderCalendarPhase      daily Moon phase (+ renderVoidOfCourse while a void is active)
+renderWeeklyMoon         once per week
+renderSeasonMarker       solstice/equinox days
+```
+
+The phase and void-of-course cards do NOT appear on You > Transits; they involve no chart and belong with the calendar. On the Calendar's lunar card, `renderCalendarPhase` returns `headline` ("Waxing Gibbous Moon in Scorpio") plus `tagline` ("The Refinement"); show the headline as the label with the tagline small beneath it, never the tagline alone.
+
+Every slot must survive absence. A You > Transits day with no qualifying non-Moon transit renders At a Glance, Do/Don't, and the label stack only; that is a valid page, not an error. At a Glance is the page's lead card and everything else reads quieter than it.
 
 ## 2. Day computation
 
@@ -34,7 +47,7 @@ Driver: the transiting Moon. Its whole-sign house in the user's chart supplies t
 
 ## 4. Do / Don't
 
-- Engine picks the transited natal planet: the tightest qualifying transit (section 5 gates) whose NATAL target is one of Moon, Venus, Mars, Mercury, Saturn (the seeded set). Call `renderDoDont({ planet, sign: natalSign, house: natalHouse, transiting, weakPlanet?, weakSign? })`.
+- Engine picks the transited natal planet: the tightest qualifying transit whose NATAL target is one of Moon, Venus, Mars, Mercury, Saturn (the seeded set). The transiting MOON COUNTS for Do/Don't (owner decision 2026-07-23; use the same 5-degree gate as other inners). Since the Moon aspects a seeded natal planet most days, Do/Don't appears near-daily and changes with the Moon. Slower transits win the pick only when tighter than the Moon's contact. Call `renderDoDont({ planet, sign: natalSign, house: natalHouse, transiting, weakPlanet?, weakSign? })`.
 - If no qualifying transit touches a seeded natal planet that day, OMIT the Do/Don't columns entirely. Per the baseline, the card must survive their absence; never substitute generic lists.
 - weakPlanet/weakSign: pass only when the day's derivation record identifies an aggravated natal aspect partner; otherwise omit.
 - Render as two parallel columns, exactly 3 items each, no punctuation, never explained.
@@ -87,7 +100,7 @@ Every assembled day keeps its derivation record per baseline section 8: driving 
 5. Do/Don't seeded-planet check -> render or omit.
 6. Area sections (cap 4, or 3 on headliner days), tightest first, real windows, variant rotation.
 7. Label stack for everything that qualified, soonest-ending first.
-8. Calendar strip last (it renders first visually, but depends on nothing).
+8. Calendar lunar card (phase + void + weekly moon) renders on the Calendar page, not You > Transits.
 9. Catch `SourceGapError` per surface: hide that surface, never substitute copy, log the gap.
 10. All review_status gating stays on, as everywhere else in the package.
 

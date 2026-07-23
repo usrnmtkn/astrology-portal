@@ -24,7 +24,6 @@ import {
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
 import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
 import type { LocationInput } from "../../types";
-import { resolveLunarCalendarLibrarySections } from "./lunarCalendarLibraryResolver";
 import { resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 
@@ -45,23 +44,6 @@ type NormalizedCalendarEventSurface = {
   surface: "calendar-event";
   status: "servable" | "partial" | "not-servable";
   sections: NormalizedCalendarEventSection[];
-};
-
-type CalendarDaySlot = "phase" | "moon" | "lunation" | "moon-sign" | "season" | "transit-thread";
-
-type NormalizedCalendarDaySection = {
-  slot: CalendarDaySlot;
-  required: boolean;
-  layer: CalendarEventProseLayer;
-  tier: string;
-  sourceKeys: string[];
-  body: string;
-};
-
-type NormalizedCalendarDaySurface = {
-  surface: "calendar-day";
-  status: "servable" | "partial" | "not-servable";
-  sections: NormalizedCalendarDaySection[];
 };
 
 type LunarCalendarProps = {
@@ -151,6 +133,19 @@ function dateFromDateKey(dateKey: string) {
   const [year = new Date().getFullYear(), month = 1, day = 1] = dateKey.split("-").map(Number);
 
   return new Date(year, month - 1, day);
+}
+
+function weeklyMoonVariantForDate(dateKey: string) {
+  const date = new Date(`${dateKey}T12:00:00.000Z`);
+  const day = date.getUTCDay() || 7;
+
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const isoWeek = Math.ceil((((date.getTime() - yearStart.getTime()) / 86_400_000) + 1) / 7);
+
+  // Four is the largest authored variant family. The renderer falls back to
+  // the base card for signs without the selected alternate.
+  return ((isoWeek - 1) % 4) + 1;
 }
 
 function startOfWeekDate(date: Date) {
@@ -1032,84 +1027,6 @@ function textParagraphs(value?: string | null) {
     : [];
 }
 
-type LunarDayBodyPresentation = {
-  main: string[];
-  loreTitle: string | null;
-  lore: string[];
-  prompt: string | null;
-  storyPosition: string | null;
-};
-
-function moonTitleForArchetype(name: string) {
-  const trimmed = name.trim();
-
-  if (!trimmed) return null;
-  if (trimmed.endsWith("Moon")) return trimmed;
-
-  return `${trimmed}${trimmed.endsWith("s") ? "'" : "'s"} Moon`;
-}
-
-function archetypeTitleFromLore(lore: string[]) {
-  const first = lore[0] ?? "";
-  const belongsMatch = first.match(/\bbelongs to the ([A-Z][A-Za-z' -]+?)(?:,|\s+who|\.|$)/);
-  const sentenceStartMatch = first.match(/^The ([A-Z][A-Za-z' -]+?)(?:\s+(?:is|was|got|started|began|throws|learns|knows|finally|had|built|gave|fought|returns|appears|turns|carries|discovers|reaches|opens|swears|sits|keeps|wants)\b|,|\.)/);
-  const namedMoonMatch = first.match(/^On the ([A-Z][A-Za-z' -]+? Moon)\b/);
-
-  return moonTitleForArchetype(namedMoonMatch?.[1] ?? belongsMatch?.[1] ?? sentenceStartMatch?.[1] ?? "");
-}
-
-function hasNatalPersonLanguage(paragraph: string) {
-  return /\b(?:the|this) person\b/i.test(paragraph);
-}
-
-function isDuplicateLunarIntegrationPrompt(paragraph: string) {
-  return /^Completing your .+ intention through .+ energy:/i.test(paragraph);
-}
-
-function lunarDayBodyPresentation(paragraphs: string[], seasonSign: string): LunarDayBodyPresentation {
-  const result: LunarDayBodyPresentation = {
-    main: [],
-    loreTitle: null,
-    lore: [],
-    prompt: null,
-    storyPosition: null
-  };
-  const seasonLabelPattern = new RegExp(`^${seasonSign} Season (?:cycle reflection|lessons under pressure|culmination|opening):\\s*`, "i");
-
-  paragraphs.forEach((paragraph) => {
-    if (paragraph.startsWith("Story position:")) {
-      result.storyPosition = paragraph.replace(/^Story position:\s*/, "").trim();
-      return;
-    }
-
-    if (paragraph.startsWith("Check-in:")) {
-      const prompt = paragraph.replace(/^Check-in:\s*/, "").trim();
-      result.prompt = isReaderFacingCopy(prompt) ? prompt : null;
-      return;
-    }
-
-    if (isDuplicateLunarIntegrationPrompt(paragraph)) {
-      return;
-    }
-
-    if (seasonLabelPattern.test(paragraph)) {
-      const lore = paragraph.replace(seasonLabelPattern, "").trim();
-      if (isReaderFacingCopy(lore)) {
-        result.lore.push(lore);
-      }
-      return;
-    }
-
-    if (isReaderFacingCopy(paragraph) && !hasNatalPersonLanguage(paragraph)) {
-      result.main.push(paragraph);
-    }
-  });
-
-  result.loreTitle = archetypeTitleFromLore(result.lore);
-
-  return result;
-}
-
 function formatEventCount(count: number) {
   return count === 1 ? "1 event" : `${count} events`;
 }
@@ -1373,10 +1290,6 @@ function isSeasonStart(day: LunarCalendarDay) {
   return day.events.some((event) => event.type === "ingress" && event.planet === "Sun");
 }
 
-function isSolarIngressTransit(event?: LunarCalendarEvent | null) {
-  return event?.type === "ingress" && event?.planet === "Sun";
-}
-
 function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string) {
   const seasonSign = seasonSignForDay(day, timeZone);
 
@@ -1408,163 +1321,6 @@ function calendarPhaseContentKey(phase: string) {
   if (normalized.includes("balsamic") || normalized.includes("waning crescent")) return "balsamic";
 
   return slugContentPart(phase);
-}
-
-function renderCalendarFallbackPart(render: () => { parts: string[] }) {
-  try {
-    return firstReaderFacingCopy(render().parts);
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return "";
-    }
-
-    throw error;
-  }
-}
-
-function lunationBodyForDay(day: LunarCalendarDay, lunation: LunarCalendarEvent, timeZone: string) {
-  const sign = slugContentPart(lunation.sign ?? day.moonSign);
-  const title = lunation.title.toLowerCase();
-  const eclipseKind = eclipseKindForLunation(lunation);
-  const kind = eclipseKind === "solar"
-    ? "eclipse-solar"
-    : eclipseKind === "lunar"
-      ? "eclipse-lunar"
-      : title.includes("full")
-        ? "full-moon"
-        : "new-moon";
-  const body = renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkyLunation({
-    kind,
-    sign,
-    dateLine: formatEventDateTime(lunation.startsAt, timeZone)
-  }));
-
-  return body ? [body] : [];
-}
-
-function normalizedCalendarDaySection(
-  slot: CalendarDaySlot,
-  body: string,
-  sourceKeys: string[],
-  required = false
-): NormalizedCalendarDaySection | null {
-  const copy = body.trim();
-
-  if (!isReaderFacingCopy(copy)) {
-    return null;
-  }
-
-  return {
-    slot,
-    required,
-    layer: "fallback",
-    tier: "source-based-local-calendar-day",
-    sourceKeys,
-    body: copy
-  };
-}
-
-function normalizeCalendarDaySurface(
-  day: LunarCalendarDay,
-  surfacedTransit: LunarCalendarEvent | undefined,
-  timeZone: string,
-  primaryLunation?: LunarCalendarEvent,
-  newMoonSign?: string | null
-): NormalizedCalendarDaySurface {
-  const seasonSign = seasonSignForDay(day, timeZone);
-  const transitRead = surfacedTransit ? calendarEventMadlibDescription(surfacedTransit) : "";
-  const surfacedTransitIsSolarIngress = isSolarIngressTransit(surfacedTransit);
-  const librarySections = resolveLunarCalendarLibrarySections({
-    moonSign: day.moonSign,
-    moonPhase: day.moonPhase,
-    seasonSign,
-    newMoonSign,
-    isSeasonStart: isSeasonStart(day),
-    hasPrimaryNewOrFullMoon: Boolean(primaryLunation)
-  })
-    .map((section) => normalizedCalendarDaySection(section.slot, section.body, section.sourceKeys, section.slot === "moon"))
-    .filter((section): section is NormalizedCalendarDaySection => Boolean(section));
-  const calendarLibrarySections = surfacedTransitIsSolarIngress
-    ? librarySections.filter((section) => section.slot !== "season")
-    : librarySections;
-
-  if (calendarLibrarySections.length > 0) {
-    const sections = [
-      ...calendarLibrarySections,
-      enableLunarArcContent && transitRead
-        ? normalizedCalendarDaySection("transit-thread", transitRead, [`calendar-day.transit.${surfacedTransit?.id ?? surfacedTransit?.title ?? "unknown"}`])
-        : null
-    ].filter((section): section is NormalizedCalendarDaySection => Boolean(section));
-
-    return {
-      surface: "calendar-day",
-      status: sections.some((section) => section.required) ? "partial" : "not-servable",
-      sections
-    };
-  }
-
-  const lunationRead = enableLunarArcContent && primaryLunation
-    ? lunationBodyForDay(day, primaryLunation, timeZone)
-    : [];
-
-  if (lunationRead.length > 0) {
-    const sections = lunationRead
-      .map((body, index) => normalizedCalendarDaySection(
-        "lunation",
-        body,
-        [
-          `calendar-day.lunation.${primaryLunation?.title ?? "unknown"}`,
-          `calendar-day.lunation.${index + 1}`
-        ],
-        index === 0
-      ))
-      .filter((section): section is NormalizedCalendarDaySection => Boolean(section));
-
-    return {
-      surface: "calendar-day",
-      status: sections.length > 0 ? "partial" : "not-servable",
-      sections
-    };
-  }
-
-  const phaseKey = calendarPhaseContentKey(day.moonPhase);
-  const phaseRead = renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderCalendarPhase({
-    phase: phaseKey,
-    sign: slugContentPart(day.moonSign)
-  }));
-  const moonRead = renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkyPlacement({
-    planet: "moon",
-    sign: slugContentPart(day.moonSign)
-  }));
-  const seasonRead = surfacedTransitIsSolarIngress
-    ? ""
-    : renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkySeason({
-      sign: slugContentPart(seasonSign)
-    }));
-  const sections = [
-    normalizedCalendarDaySection("phase", phaseRead, [`fallback-hook/moon-phase/${phaseKey}`], true),
-    normalizedCalendarDaySection("moon-sign", moonRead, [`fallback-hook/sky-placement/moon`, `calendar-day.moon-sign.${slugContentPart(day.moonSign)}`], true),
-    normalizedCalendarDaySection("season", seasonRead, [`fallback-hook/sky-season-opener/${slugContentPart(seasonSign)}`], false),
-    enableLunarArcContent && transitRead
-      ? normalizedCalendarDaySection("transit-thread", transitRead, [`calendar-day.transit.${surfacedTransit?.id ?? surfacedTransit?.title ?? "unknown"}`])
-      : null
-  ].filter((section): section is NormalizedCalendarDaySection => Boolean(section));
-
-  return {
-    surface: "calendar-day",
-    status: sections.some((section) => section.required) ? "partial" : "not-servable",
-    sections
-  };
-}
-
-function dayCardBody(
-  day: LunarCalendarDay,
-  surfacedTransit: LunarCalendarEvent | undefined,
-  timeZone: string,
-  primaryLunation?: LunarCalendarEvent,
-  newMoonSign?: string | null
-) {
-  return normalizeCalendarDaySurface(day, surfacedTransit, timeZone, primaryLunation, newMoonSign).sections.map((section) => section.body);
 }
 
 function dayKeyToUtcTime(dateKey: string) {
@@ -1847,23 +1603,10 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
       : null
   ), [arcEvents, generatedContent, location, selectedDay, zone]);
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
-  const selectedSurfacedTransit = selectedEvents.find(isDayCardSurfaceEvent);
   const selectedDayTransits = selectedDay
     ? selectedDayTransitEvents(selectedDay, selectedLunarDay, selectedEvents)
     : [];
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
-  const selectedDayBody = selectedDay
-    ? dayCardBody(selectedDay, selectedSurfacedTransit, zone, selectedPrimaryLunation, selectedLunarDay?.arc?.origin?.sign ?? null)
-    : [];
-  const selectedDayBodyPresentation = selectedDay
-    ? lunarDayBodyPresentation(selectedDayBody, seasonSignForDay(selectedDay, zone))
-    : {
-        main: [],
-        loreTitle: null,
-        lore: [],
-        prompt: null,
-        storyPosition: null
-      };
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
         .map((note) => ({
@@ -1875,7 +1618,57 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
-  const selectedVoidDescription = selectedDay ? voidCourseDescription(selectedDay) : "";
+  const selectedPackageWeeklyMoon = selectedDay
+    ? (() => {
+        try {
+          return calendarFallbackRendererV3.renderWeeklyMoon({
+            sign: slugContentPart(selectedDay.moonSign),
+            variant: weeklyMoonVariantForDate(selectedDay.dateKey)
+          });
+        } catch (error) {
+          if (error instanceof FallbackV3SourceGapError) return null;
+          throw error;
+        }
+      })()
+    : null;
+  const selectedDayBodyPresentation = {
+    main: selectedPackageWeeklyMoon ? [selectedPackageWeeklyMoon.body] : [],
+    loreTitle: null,
+    lore: [],
+    prompt: null,
+    storyPosition: null
+  };
+  const selectedPackagePhase = selectedDay
+    ? (() => {
+        try {
+          const rendered = calendarFallbackRendererV3.renderCalendarPhase({
+            phase: calendarPhaseContentKey(selectedDay.moonPhase),
+            sign: slugContentPart(selectedDay.moonSign)
+          }) as ReturnType<typeof calendarFallbackRendererV3.renderCalendarPhase> & { tagline?: string };
+
+          return {
+            headline: rendered.headline,
+            tagline: rendered.tagline ?? ""
+          };
+        } catch (error) {
+          if (error instanceof FallbackV3SourceGapError) return null;
+          throw error;
+        }
+      })()
+    : null;
+  const selectedPackageVoid = selectedDay?.voidOfCourse && selectedVoidNextSign
+    ? (() => {
+        try {
+          return calendarFallbackRendererV3.renderVoidOfCourse({
+            sign: slugContentPart(selectedDay.moonSign),
+            nextSign: slugContentPart(selectedVoidNextSign.sign)
+          });
+        } catch (error) {
+          if (error instanceof FallbackV3SourceGapError) return null;
+          throw error;
+        }
+      })()
+    : null;
   const selectedSeasonArc = selectedLunarDay?.arc ?? null;
   const selectedSeasonArcMilestones = useMemo(
     () => lunarArcMilestones(selectedLunarDay),
@@ -1922,16 +1715,12 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
             {seasonEyebrowForDay(selectedDay, zone)}
           </span>
           <h2>
-            {titleForDay(selectedDay)}{" "}
-            <span className={`lunar-moon-sign-glyph ${elementClassForSign(selectedDay.moonSign)}`}>
-              {titleGlyphForDay(selectedDay)}
-            </span>
+            {selectedPackagePhase?.headline ?? titleForDay(selectedDay)}
           </h2>
+          {selectedPackagePhase?.tagline && (
+            <small className="lunar-selected-card__phase-tagline">{selectedPackagePhase.tagline}</small>
+          )}
           <p className="lunar-selected-card__meta">
-            <span className="lunar-selected-card__phase-chip">
-              <span className={`lunar-moon-disc ${isWaxingPhase(selectedDay.moonPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(selectedDay)} aria-hidden="true" />
-              <em>{phaseLabelForDay(selectedDay)}</em>
-            </span>
             <span className={`lunar-selected-card__meta-element ${elementClassForSign(selectedDay.moonSign)}`}>
               {signElements[selectedDay.moonSign] ?? "Element"}
             </span>
@@ -1944,7 +1733,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               </>
             )}
           </p>
-          {selectedDayBody.length > 0 && (
+          {selectedDayBodyPresentation.main.length > 0 && (
             <div className="lunar-selected-card__body">
               {selectedDayBodyPresentation.main.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
@@ -1961,11 +1750,11 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
 
         {(selectedDayTransits.length > 0 || selectedTransitNotes.length > 0 || (selectedDay.voidOfCourse && selectedVoidWindow)) && (
           <div className="lunar-selected-card__after">
-            {selectedDay.voidOfCourse && selectedVoidWindow && (
+            {selectedPackageVoid && selectedVoidWindow && (
               <section className="lunar-selected-card__void" aria-label="Moon void of course">
                 <div className="lunar-selected-card__void-heading">
                   <span aria-hidden="true">☾</span>
-                  <strong>Moon void of course</strong>
+                  <strong>{selectedPackageVoid.headline}</strong>
                 </div>
                 <p className="lunar-selected-card__void-meta">
                   <span>{selectedVoidWindow}</span>
@@ -1986,7 +1775,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                     </>
                   )}
                 </p>
-                {selectedVoidDescription && <p>{selectedVoidDescription}</p>}
+                {selectedPackageVoid.body && <p>{selectedPackageVoid.body}</p>}
               </section>
             )}
             {selectedDayTransits.length > 0 && (
