@@ -22,10 +22,10 @@ assert.doesNotMatch(appSource, /resolveNatalAspectFallback|natalAspectFallbackDe
 assert.doesNotMatch(runtimeSource, /sourceGroundedNatalAspectComposition/u, "runtime must not expose old source-grounded natal aspect authored composition");
 assert.match(appSource, /fallbackRendererV3\.renderNatalAspect\(/u, "app natal aspects must route through the v3 fallback package renderer");
 assert.match(appSource, /normalizeFallbackV3Aspect\(aspect\.type\)/u, "app natal aspects must normalize through the v3-supported aspect set");
-assert.match(
+assert.doesNotMatch(
   appSource,
   /\.\.\.sourceGroundedNatalAspectSectionsForPlacement\(/u,
-  "natal placement pages must retain owner-approved v3 natal aspect cards"
+  "natal placement pages must not append fallback natal aspect cards; related placement aspects need authored natal copy"
 );
 assert.doesNotMatch(appSource, /isSafeNatalAspectFallbackCopy\(body\)/u, "reader must not use natal-aspect phrase denylist gates");
 assert.equal(

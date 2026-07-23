@@ -71,7 +71,7 @@ type AdminFallbackCompositionDiagnostic = {
 };
 type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
-type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
+type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
@@ -210,11 +210,14 @@ type AdminDraft = {
   reviewState: string;
   blockType: string;
   promptVersion: string;
+  sections: Record<string, unknown> | null;
+  facts: Record<string, unknown> | null;
+  reviewerNotes: string;
   sourceSnapshot: Record<string, unknown> | null;
 };
 
 type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
-type AdminVocabularyCategoryFilter = AdminVocabularySection | "all";
+type AdminVocabularyCategoryFilter = AdminVocabularySection;
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 
@@ -301,6 +304,9 @@ const adminNavGroups: Array<{
 ];
 
 const contentStatuses: GeneratedContentStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
+const fallbackHookReviewStatuses = ["needs_review", "reviewed", "approved", "approved_reuse", "deprecated", "rejected"] as const;
+const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
+const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "approved_reuse"] as const;
 const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
   { key: "all", label: "All classes" },
   { key: "phrasebank", label: "Authored app copy" },
@@ -326,6 +332,7 @@ const categoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }>
   { key: "Natal Chart", label: "Natal Chart" },
   { key: "Relationship", label: "Relationship" },
   { key: "Condition Modifiers", label: "Condition Modifiers" },
+  { key: "Fallback Hooks", label: "Fallback Hooks" },
   { key: "Fallback Templates", label: "Fallback Templates" }
 ];
 const fallbackSections: Array<{ key: AdminFallbackHookSectionFilter; label: string }> = [
@@ -501,6 +508,11 @@ function isVocabularySection(value: string): value is AdminVocabularySection {
   return vocabularySections.some((section) => section.key === value);
 }
 
+function vocabularyCategoryFromParams(page: AdminDashboardPage, params: URLSearchParams): AdminVocabularyCategoryFilter {
+  const category = params.get("category");
+  return page === "vocabulary" && category && isVocabularySection(category) ? category : "planets";
+}
+
 function vocabularyContentKey(section: AdminVocabularySection, headline: string) {
   return `vocab/${section}/${slugifyContentPart(headline)}`;
 }
@@ -514,11 +526,11 @@ function draftIsArticle(draft: AdminDraft) {
 }
 
 function draftIsFallbackHook(draft: AdminDraft) {
-  return draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/");
+  return draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/");
 }
 
 function draftIsTemplate(draft: AdminDraft) {
-  return draft.blockType === "template" || draft.contentKey.startsWith("slot-template/");
+  return draft.blockType === "template" || draft.blockType === "fallback_template" || draft.contentKey.startsWith("slot-template/");
 }
 
 function contentSystemForRole(role: AdminContentRole): Exclude<AdminContentSystemFilter, "all"> {
@@ -548,6 +560,63 @@ function rowPromptVersion(row: AdminGeneratedContentRow | AdminReviewRecord) {
 function sourceSnapshotString(snapshot: Record<string, unknown> | null | undefined, key: string) {
   const value = snapshot?.[key];
   return typeof value === "string" ? value : "";
+}
+
+function objectRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function draftPackageRecord(draft: AdminDraft) {
+  const sections = objectRecord(draft.sections);
+  return objectRecord(sections?.packageRecord) ?? {};
+}
+
+function rowPackageRecord(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  const sections = "content_key" in row ? objectRecord(row.sections) : objectRecord(row.sections);
+  return objectRecord(sections?.packageRecord) ?? {};
+}
+
+function rowIsFallbackArchitectureV3(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  const provider = "content_key" in row ? row.provider : row.provider;
+  const sourceSnapshot = sourceSnapshotForRow(row);
+  const facts = "content_key" in row ? row.facts : row.facts;
+  return provider === fallbackArchitectureV3Provider
+    || sourceSnapshotString(sourceSnapshot, "sourcePackage") === "tldrastro-fallback-architecture-v3"
+    || objectRecord(facts)?.fallbackArchitectureV3 === true;
+}
+
+function draftIsFallbackArchitectureV3(draft: AdminDraft) {
+  return draft.sourceSnapshot?.sourcePackage === "tldrastro-fallback-architecture-v3"
+    || draft.facts?.fallbackArchitectureV3 === true
+    || Boolean(draftPackageRecord(draft).content_role);
+}
+
+function packageReviewStatusForDraft(draft: AdminDraft) {
+  return sourceSnapshotString(draft.sourceSnapshot, "review_status")
+    || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
+    || (typeof draftPackageRecord(draft).review_status === "string" ? draftPackageRecord(draft).review_status as string : "")
+    || "needs_review";
+}
+
+function packageEditorialNotesForDraft(draft: AdminDraft) {
+  return typeof draftPackageRecord(draft).editorial_notes === "string" ? draftPackageRecord(draft).editorial_notes as string : "";
+}
+
+function packageFieldString(draft: AdminDraft, key: string) {
+  const sections = objectRecord(draft.sections);
+  const sectionValue = sections?.[key];
+  const packageValue = draftPackageRecord(draft)[key];
+  return typeof sectionValue === "string" ? sectionValue : typeof packageValue === "string" ? packageValue : "";
+}
+
+function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  return {
+    ...draft,
+    sections: {
+      ...(draft.sections ?? {}),
+      [key]: value
+    }
+  };
 }
 
 function normalizedSourceRole(snapshot: Record<string, unknown> | null | undefined) {
@@ -590,7 +659,6 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
 
   if (
     contentKey.startsWith("fallback-hook/") ||
-    blockType === "fallback_template" ||
     blockType === "fallback_hook" ||
     promptVersion === "fallback-hook-template-v1" ||
     sourceRole === "fallback-hook" ||
@@ -638,11 +706,12 @@ function contentRoleForDraft(draft: AdminDraft): AdminContentRole {
     headline: draft.headline,
     summary: draft.summary,
     body: draft.body,
-    sections: null,
     block_type: draft.blockType,
     lane: draft.lane,
     review_state: draft.reviewState,
     prompt_version: draft.promptVersion,
+    sections: draft.sections,
+    facts: draft.facts,
     source_snapshot: draft.sourceSnapshot
   });
 }
@@ -656,8 +725,8 @@ function contentRoleDetails(role: AdminContentRole) {
       };
     case "fallback-output":
       return {
-        label: "Fallback output",
-        detail: "Reader copy generated by the fallback resolver from templates and source lanes."
+        label: "Fallback hook/output",
+        detail: "Fallback-system copy or a fallback hook row. It is eligible only when its fallback review status is reviewed or approved."
       };
     case "fallback-helper":
       return {
@@ -773,13 +842,13 @@ function fallbackCompositionDiagnosticForDraft(draft: AdminDraft, role: AdminCon
 
   if (role === "fallback-output") {
     return {
-      title: "Fallback output check",
-      status: "Generated fallback route",
-      body: "This row represents fallback-system prose assembled from templates, hooks, and source phrases.",
+      title: "Fallback hook check",
+      status: "Fallback-system row",
+      body: "This row belongs to the fallback system. It may provide hook prose or resolver output, but it is not an authored dashboard article.",
       template: "Fallback resolver",
       slots: ["Template", "Source phrases", "Runtime facts"],
       sourceLanes: ["Fallback hooks", "Vocabulary/source rows"],
-      action: "Review the upstream source phrases and templates when the fallback wording is too thin."
+      action: "Edit the hook or its source phrases here. Set fallback review status to reviewed or approved when it is ready to be used."
     };
   }
 
@@ -930,6 +999,14 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
   const sourceRole = normalizedSourceRole(sourceSnapshot);
   const eventType = "content_key" in row ? row.event_type : row.eventType;
 
+  if (rowIsFallbackArchitectureV3(row)) {
+    const packageRole = sourceRole || String(rowPackageRecord(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
+    if (packageRole === "fallback-hook" || packageRole === "template") return "fallback-hook";
+    if (packageRole === "vocabulary") return "vocab";
+    if (packageRole === "fallback-source" || packageRole === "source-material") return "reference";
+    if (packageRole === "full-copy") return "phrasebank";
+  }
+
   if (
     contentKey.startsWith("fallback-hook/") ||
     blockType === "fallback_template" ||
@@ -972,20 +1049,66 @@ function contentClassLabel(value: AdminContentClass) {
 }
 
 function draftEventType(draft: AdminDraft) {
-  if (draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) return "fallback-hook";
+  if (draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) return "fallback-hook";
+  if (draft.blockType === "fallback_template") return "fallback-template";
   if (draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/") || draft.contentKey.startsWith("fallback-vocab/") || draft.contentKey.startsWith("guide-phrase/")) return "vocab";
   if (draft.blockType === "template" || draft.contentKey.startsWith("slot-template/")) return "slot-template";
   if (draft.blockType === "sky_article" || draft.mode === "article") return "sky_article";
   return draft.blockType || "manual-content";
 }
 
+function fallbackHookReviewStatusForDraft(draft: AdminDraft, status: GeneratedContentStatus = draft.status) {
+  if (status === "LIVE") return "approved";
+  if (status === "REVIEWED") return "reviewed";
+  if (status === "ARCHIVED") return "deprecated";
+
+  const explicitReviewStatus = sourceSnapshotString(draft.sourceSnapshot, "review_status")
+    || sourceSnapshotString(draft.sourceSnapshot, "reviewStatus");
+
+  if (explicitReviewStatus) {
+    return explicitReviewStatus;
+  }
+
+  return "needs_review";
+}
+
+function fallbackHookSourceSnapshot(draft: AdminDraft, status: GeneratedContentStatus = draft.status) {
+  const hook = draft.contentKey.replace(/^fallback-hook\//, "");
+
+  return {
+    ...(draft.sourceSnapshot ?? {}),
+    contentType: "fallback-system",
+    content_role: "fallback_hook",
+    review_status: fallbackHookReviewStatusForDraft(draft, status),
+    hook,
+    authoringSource: "admin-dashboard",
+    contentSystem: "fallback",
+    contentLevel: "madlib-fallback"
+  };
+}
+
+function fallbackTemplateSourceSnapshot(draft: AdminDraft) {
+  return {
+    ...(draft.sourceSnapshot ?? {}),
+    contentType: "fallback-system",
+    content_role: "template",
+    authoringSource: "admin-dashboard",
+    contentSystem: "fallback",
+    contentLevel: "madlib-fallback"
+  };
+}
+
 function draftSourceSnapshot(draft: AdminDraft) {
-  if (draft.blockType === "fallback_template" || draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) {
-    return {
-      ...(draft.sourceSnapshot ?? {}),
-      contentType: "template",
-      hook: draft.contentKey.replace(/^fallback-hook\//, "")
-    };
+  if (draftIsFallbackArchitectureV3(draft)) {
+    return draft.sourceSnapshot ?? {};
+  }
+
+  if (draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) {
+    return fallbackHookSourceSnapshot(draft);
+  }
+
+  if (draft.blockType === "fallback_template") {
+    return fallbackTemplateSourceSnapshot(draft);
   }
 
   return {
@@ -1008,7 +1131,8 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   const surface = "content_key" in row ? row.surface : row.surface;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
 
-  if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_template") return "Fallback Templates";
+  if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_hook") return "Fallback Hooks";
+  if (blockType === "fallback_template" || contentKey.startsWith("slot-template/")) return "Fallback Templates";
   if (surface === "sky" || contentKey.startsWith("sky")) return "Sky";
   if (surface === "synastry" || surface === "composite" || surface === "relationship" || surface === "friends") return "Relationship";
   if (contentKey.includes("angle")) return "Natal Angles";
@@ -1320,26 +1444,41 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     reviewState: row.review_state ?? "",
     blockType: row.block_type ?? "",
     promptVersion: row.prompt_version ?? "manual-admin",
+    sections: objectRecord(row.sections),
+    facts: row.facts ?? null,
+    reviewerNotes: row.reviewer_notes ?? "",
     sourceSnapshot: row.source_snapshot ?? null
   };
 }
 
 function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
   const fallbackCopy = item.type === "fallback" ? item.definition.copy : null;
+  const hook = item.key;
   return {
     id: null,
-    contentKey: canonicalFallbackContentKey(item.key),
+    contentKey: canonicalFallbackContentKey(hook),
     surface: item.type === "fallback" && item.definition.surface !== "settings" ? item.definition.surface : "sky",
     mode: item.type === "fallback" ? item.definition.mode : "feed",
     status: "DRAFT",
     headline: fallbackCopy?.headline ?? item.label,
     summary: fallbackCopy?.summary ?? "",
     body: fallbackCopy?.body ?? "",
-    lane: "serving",
+    lane: "reference",
     reviewState: "EDITORIAL_REVIEW_REQUIRED",
-    blockType: "fallback_template",
+    blockType: "fallback_hook",
     promptVersion: "fallback-hook-template-v1",
-    sourceSnapshot: null
+    sections: null,
+    facts: null,
+    reviewerNotes: "",
+    sourceSnapshot: {
+      contentType: "fallback-system",
+      content_role: "fallback_hook",
+      review_status: "needs_review",
+      hook,
+      contentSystem: "fallback",
+      contentLevel: "madlib-fallback",
+      authoringSource: "admin-dashboard"
+    }
   };
 }
 
@@ -1591,6 +1730,10 @@ export function GeneratedContentAdminDashboard() {
     };
     const needles = categoryNeedles[vocabularyCategory] ?? [];
     return vocabRows.filter((row) => {
+      const [, explicitSection] = row.content_key.split("/");
+      if (isVocabularySection(explicitSection) && explicitSection === vocabularyCategory) {
+        return true;
+      }
       const haystack = `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""} ${JSON.stringify(row.source_snapshot ?? {})}`
         .toLowerCase()
         .replace(/[-_/.:]+/g, " ");
@@ -1637,7 +1780,7 @@ export function GeneratedContentAdminDashboard() {
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
       setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area) ? area : "all");
       setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
-      setVocabularyCategory(page === "vocabulary" && params.get("category") === "relationship" ? "relationship" : "planets");
+      setVocabularyCategory(vocabularyCategoryFromParams(page, params));
       if (page === "compatibility") {
         setCompatibilitySectionFilter(compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection) ? compatibilitySection : "all");
         setCompatibilityStatusFilter(status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus)) ? status as GeneratedContentStatus | "all" : "all");
@@ -1697,6 +1840,42 @@ export function GeneratedContentAdminDashboard() {
     setAdminHash(adminHashForPage(page, params));
   }
 
+  function navigateSurfaceMapFilters(nextFilters: {
+    area?: WritingSurfaceAreaFilter;
+    section?: AdminFallbackHookSectionFilter;
+    status?: WritingSurfaceStatusFilter;
+  }) {
+    const area = nextFilters.area ?? surfaceAreaFilter;
+    const section = nextFilters.section ?? fallbackSectionFilter;
+    const status = nextFilters.status ?? surfaceStatusFilter;
+    const params = new URLSearchParams();
+    const search = query.trim();
+    if (section !== "all") params.set("section", section);
+    if (area !== "all") params.set("area", area);
+    if (status !== "all") params.set("status", status);
+    if (search) params.set("q", search);
+
+    setFallbackSectionFilter(section);
+    setSurfaceAreaFilter(area);
+    setSurfaceStatusFilter(status);
+    navigateAdminPage("hooks", params, { keepEditorOpen: true });
+  }
+
+  function vocabularyCategoryParams(category: AdminVocabularyCategoryFilter) {
+    const params = new URLSearchParams();
+    const search = query.trim();
+    if (category !== "planets") params.set("category", category);
+    if (search) params.set("q", search);
+
+    return params;
+  }
+
+  function navigateVocabularyCategory(category: AdminVocabularyCategoryFilter) {
+    const params = vocabularyCategoryParams(category);
+    setVocabularyCategory(category);
+    navigateAdminPage("vocabulary", params, { keepEditorOpen: true });
+  }
+
   async function loadDashboardData() {
     if (!secret.trim()) {
       setLoadState("idle");
@@ -1754,25 +1933,40 @@ export function GeneratedContentAdminDashboard() {
     if (!draft) return;
     setIsLoading(true);
     const status = nextStatus ?? draft.status;
+    const draftForSave = { ...draft, status };
+    const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
 
     try {
-      const body = {
-        id: draft.id ?? undefined,
-        contentKey: draft.contentKey,
-        surface: draft.surface === "friends" ? "relationship" : draft.surface,
-        mode: draft.mode,
-        status,
-        headline: draft.headline,
-        summary: draft.summary,
-        body: draft.body,
-        lane: draft.lane,
-        reviewState: status === "LIVE" || status === "REVIEWED" ? null : draft.reviewState || null,
-        blockType: draft.blockType || null,
-        promptVersion: draft.promptVersion || "manual-admin",
-        eventType: draftEventType(draft),
-        sourceSnapshot: draftSourceSnapshot(draft)
-      };
-      const method = draft.id ? "PATCH" : "POST";
+      const body = isPackageDraft
+        ? {
+            id: draftForSave.id ?? undefined,
+            headline: draftForSave.headline,
+            summary: draftForSave.summary,
+            body: draftForSave.body,
+            sections: draftForSave.sections ?? {},
+            facts: draftForSave.facts ?? {},
+            reviewerNotes: draftForSave.reviewerNotes,
+            sourceSnapshot: draftSourceSnapshot(draftForSave),
+            reviewStatus: packageReviewStatusForDraft(draftForSave),
+            editorialNotes: packageEditorialNotesForDraft(draftForSave)
+          }
+        : {
+            id: draftForSave.id ?? undefined,
+            contentKey: draftForSave.contentKey,
+            surface: draftForSave.surface === "friends" ? "relationship" : draftForSave.surface,
+            mode: draftForSave.mode,
+            status,
+            headline: draftForSave.headline,
+            summary: draftForSave.summary,
+            body: draftForSave.body,
+            lane: draftForSave.lane,
+            reviewState: status === "LIVE" || status === "REVIEWED" ? null : draftForSave.reviewState || null,
+            blockType: draftForSave.blockType || null,
+            promptVersion: draftForSave.promptVersion || "manual-admin",
+            eventType: draftEventType(draftForSave),
+            sourceSnapshot: draftSourceSnapshot(draftForSave)
+          };
+      const method = draftForSave.id ? "PATCH" : "POST";
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method,
         body: JSON.stringify(body)
@@ -1787,7 +1981,7 @@ export function GeneratedContentAdminDashboard() {
         setSelectedRowId(saved.id);
         setDraft(draftFromRow(saved));
       }
-      setMessage(`${draft.contentKey} saved as ${contentStatusLabel(status)}.`);
+      setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(status)}.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not save row.");
     } finally {
@@ -1874,6 +2068,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "sky_article",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: null
       });
       return;
@@ -1892,6 +2089,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "essay",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: null
       });
       return;
@@ -1911,6 +2111,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "vocabulary_phrase",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: null
       });
       return;
@@ -1929,6 +2132,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "template",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: null
       });
       return;
@@ -1943,11 +2149,22 @@ export function GeneratedContentAdminDashboard() {
         headline: "",
         summary: "",
         body: "",
-        lane: "serving",
+        lane: "reference",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
-        blockType: "fallback_template",
+        blockType: "fallback_hook",
         promptVersion: "fallback-hook-template-v1",
-        sourceSnapshot: null
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
+        sourceSnapshot: {
+          contentType: "fallback-system",
+          content_role: "fallback_hook",
+          review_status: "needs_review",
+          hook: "manual/new-hook",
+          contentSystem: "fallback",
+          contentLevel: "madlib-fallback",
+          authoringSource: "admin-dashboard"
+        }
       });
     }
   }
@@ -1979,6 +2196,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "compatibility_planet_card",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: {
           contentType: "friends.compatibility.planet-card",
           contentLevel: "source-grounded",
@@ -2006,6 +2226,9 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "vocabulary_phrase",
         promptVersion: "manual-admin",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: {
           contentType: "vocab",
           bucket: "vocab",
@@ -2029,14 +2252,20 @@ export function GeneratedContentAdminDashboard() {
         headline: "Compatibility card fallback",
         summary: "Simple fallback route for compatibility cards when reviewed copy is unavailable.",
         body: "",
-        lane: "serving",
+        lane: "reference",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
-        blockType: "fallback_template",
+        blockType: "fallback_hook",
         promptVersion: "fallback-hook-template-v1",
+        sections: null,
+        facts: null,
+        reviewerNotes: "",
         sourceSnapshot: {
-          contentType: "template",
+          contentType: "fallback-system",
+          content_role: "fallback_hook",
+          review_status: "needs_review",
           hook: "friends.compatibility.planet-card",
           contentLevel: "madlib-fallback",
+          contentSystem: "fallback",
           authoringSource: "admin-dashboard",
           route: "friends.compatibility"
         }
@@ -2057,6 +2286,9 @@ export function GeneratedContentAdminDashboard() {
       reviewState: "EDITORIAL_REVIEW_REQUIRED",
       blockType: "template",
       promptVersion: "manual-admin",
+      sections: null,
+      facts: null,
+      reviewerNotes: "",
       sourceSnapshot: {
         contentType: "template",
         contentFamily: "friends.compatibility.planet-card",
@@ -2084,6 +2316,54 @@ export function GeneratedContentAdminDashboard() {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
     openHookDraft(item);
+  }
+
+  function exportEditedFallbackArchitectureRows() {
+    const editedRows = rows
+      .filter((row) => rowIsFallbackArchitectureV3(row))
+      .map((row) => {
+        const record = rowPackageRecord(row);
+        const sections = objectRecord(row.sections) ?? {};
+        const current = {
+          contentKey: row.content_key,
+          headline: row.headline ?? "",
+          summary: row.summary ?? "",
+          body: row.body ?? "",
+          body_you: typeof sections.body_you === "string" ? sections.body_you : null,
+          body_they: typeof sections.body_they === "string" ? sections.body_they : null,
+          review_status: sourceSnapshotString(row.source_snapshot, "review_status") || String(record.review_status ?? ""),
+          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : ""
+        };
+        const original = {
+          headline: typeof record.headline === "string" ? record.headline : "",
+          summary: typeof record.summary === "string" ? record.summary : "",
+          body: typeof record.body === "string" ? record.body : typeof record.body_you === "string" ? record.body_you : "",
+          body_you: typeof record.body_you === "string" ? record.body_you : null,
+          body_they: typeof record.body_they === "string" ? record.body_they : null,
+          review_status: typeof record.review_status === "string" ? record.review_status : "",
+          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : ""
+        };
+        return {
+          current,
+          original,
+          changed: JSON.stringify(current) !== JSON.stringify({ contentKey: current.contentKey, ...original })
+        };
+      })
+      .filter((entry) => entry.changed)
+      .map((entry) => entry.current);
+
+    const blob = new Blob([JSON.stringify({
+      schema: "tldrastro-fallback-architecture-v3-dashboard-edits",
+      exportedAt: new Date().toISOString(),
+      rows: editedRows
+    }, null, 2)], { type: "application/json" });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = `tldrastro-fallback-architecture-v3-dashboard-edits-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(href);
+    setMessage(`Exported ${editedRows.length} edited package rows.`);
   }
 
   const nav = (
@@ -2301,6 +2581,9 @@ export function GeneratedContentAdminDashboard() {
                   <FileText size={16} aria-hidden="true" />
                   Fallback hooks
                 </button>
+                <button type="button" onClick={exportEditedFallbackArchitectureRows}>
+                  Export edited rows
+                </button>
               </div>
             </section>
             {renderContentFilters()}
@@ -2449,7 +2732,7 @@ export function GeneratedContentAdminDashboard() {
                 ["calendar", "Calendar"],
                 ["settings", "Settings"]
               ].map(([key, label]) => (
-                <button key={key} type="button" aria-pressed={surfaceAreaFilter === key} className={surfaceAreaFilter === key ? "active" : ""} onClick={() => setSurfaceAreaFilter(key as WritingSurfaceAreaFilter)}>
+                <button key={key} type="button" aria-pressed={surfaceAreaFilter === key} className={surfaceAreaFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ area: key as WritingSurfaceAreaFilter })}>
                   <span>{label}</span>
                 </button>
               ))}
@@ -2461,7 +2744,7 @@ export function GeneratedContentAdminDashboard() {
                 ["partial", "Partial"],
                 ["missing", "Missing"]
               ].map(([key, label]) => (
-                <button key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => setSurfaceStatusFilter(key as WritingSurfaceStatusFilter)}>
+                <button key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ status: key as WritingSurfaceStatusFilter })}>
                   <span>{label}</span>
                 </button>
               ))}
@@ -2503,9 +2786,24 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <div className="admin-template-tabs" role="tablist" aria-label="Vocabulary categories">
               {vocabularySections.map(({ key, label }) => (
-                <button key={key} type="button" role="tab" aria-selected={vocabularyCategory === key} className={vocabularyCategory === key ? "active" : ""} onClick={() => setVocabularyCategory(key)}>
+                <a
+                  key={key}
+                  href={adminHashForPage("vocabulary", vocabularyCategoryParams(key))}
+                  role="tab"
+                  aria-selected={vocabularyCategory === key}
+                  className={vocabularyCategory === key ? "active" : ""}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    navigateVocabularyCategory(key);
+                  }}
+                  onPointerDown={(event) => {
+                    if (event.button === 0) {
+                      navigateVocabularyCategory(key);
+                    }
+                  }}
+                >
                   {label}
-                </button>
+                </a>
               ))}
             </div>
             <label className="admin-field-wide">
@@ -2952,7 +3250,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <div className="admin-template-tabs" role="tablist" aria-label="Fallback hook sections">
         {fallbackSections.map((section) => (
-          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => setFallbackSectionFilter(section.key)}>
+          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : setFallbackSectionFilter(section.key)}>
             {section.label}
           </button>
         ))}
@@ -3110,12 +3408,21 @@ export function GeneratedContentAdminDashboard() {
     const isArticleDraft = draftIsArticle(currentDraft);
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
     const isTemplateDraft = draftIsTemplate(currentDraft);
+    const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
     const isNewDraft = !currentDraft.id;
     const vocabularySection = vocabularySectionFromKey(currentDraft.contentKey);
     const rawContentRole = contentRoleForDraft(currentDraft);
     const contentRole = contentRoleDetails(rawContentRole);
     const contentSystem = contentSystemForRole(rawContentRole);
     const fallbackDiagnostic = fallbackCompositionDiagnosticForDraft(currentDraft, rawContentRole);
+    const fallbackReviewStatus = sourceSnapshotString(currentDraft.sourceSnapshot, "review_status")
+      || sourceSnapshotString(currentDraft.sourceSnapshot, "reviewStatus")
+      || fallbackHookReviewStatusForDraft(currentDraft);
+    const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
+    const packageRecord = draftPackageRecord(currentDraft);
+    const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
+    const showPackageBodyYou = isPackageDraft && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
+    const showPackageBodyThey = isPackageDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -3127,6 +3434,70 @@ export function GeneratedContentAdminDashboard() {
         ...currentDraft,
         headline,
         contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
+      });
+    };
+    const updateFallbackReviewStatus = (reviewStatus: string) => {
+      setDraft({
+        ...currentDraft,
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          review_status: reviewStatus
+        }
+      });
+    };
+    const updatePackageReviewStatus = (reviewStatus: string) => {
+      setDraft({
+        ...currentDraft,
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          review_status: reviewStatus
+        },
+        facts: {
+          ...(currentDraft.facts ?? {}),
+          review_status: reviewStatus
+        },
+        sections: {
+          ...(currentDraft.sections ?? {}),
+          packageRecord: {
+            ...draftPackageRecord(currentDraft),
+            review_status: reviewStatus
+          }
+        }
+      });
+    };
+    const updatePackageEditorialNotes = (editorialNotes: string) => {
+      setDraft({
+        ...currentDraft,
+        sections: {
+          ...(currentDraft.sections ?? {}),
+          packageRecord: {
+            ...draftPackageRecord(currentDraft),
+            editorial_notes: editorialNotes
+          }
+        }
+      });
+    };
+    const revertPackageDraft = () => {
+      const original = draftPackageRecord(currentDraft);
+      setDraft({
+        ...currentDraft,
+        headline: typeof original.headline === "string" ? original.headline : currentDraft.headline,
+        summary: typeof original.summary === "string" ? original.summary : currentDraft.summary,
+        body: typeof original.body === "string" ? original.body : typeof original.body_you === "string" ? original.body_you : currentDraft.body,
+        sections: {
+          ...(currentDraft.sections ?? {}),
+          body_you: original.body_you ?? null,
+          body_they: original.body_they ?? null,
+          packageRecord: original
+        },
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          review_status: typeof original.review_status === "string" ? original.review_status : packageReviewStatus
+        },
+        facts: {
+          ...(currentDraft.facts ?? {}),
+          review_status: typeof original.review_status === "string" ? original.review_status : packageReviewStatus
+        }
       });
     };
 
@@ -3232,10 +3603,44 @@ export function GeneratedContentAdminDashboard() {
             <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
             {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
           </label>
+          {isPackageDraft && (
+            <section className="admin-package-edit-panel" aria-label="Package row details">
+              <div>
+                <span>content key</span>
+                <code>{currentDraft.contentKey}</code>
+              </div>
+              <div>
+                <span>role</span>
+                <strong>{packageRole || "package row"}</strong>
+              </div>
+              <label>
+                <span>review status</span>
+                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
+                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
+                </select>
+              </label>
+              <label className="admin-package-notes-field">
+                <span>editorial notes</span>
+                <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
+              </label>
+            </section>
+          )}
           <label className="admin-review-copy-editor">
             <span>{isVocabularyDraft ? "Editor note or grouping detail" : "Summary"}</span>
             <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} />
           </label>
+          {showPackageBodyYou && (
+            <label className="admin-review-copy-editor">
+              <span>body_you</span>
+              <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+            </label>
+          )}
+          {showPackageBodyThey && (
+            <label className="admin-review-copy-editor">
+              <span>body_they</span>
+              <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+            </label>
+          )}
           <label className="admin-review-copy-editor">
             <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
             <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
@@ -3244,7 +3649,7 @@ export function GeneratedContentAdminDashboard() {
             <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
             <label className="admin-title-field">
               <span>{isVocabularyDraft ? "Generated key" : "Content key"}</span>
-              <input aria-label={isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft} />
+              <input aria-label={isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
               {isVocabularyDraft && <small className="admin-field-hint">Generated from section + title. Existing rows keep their original key so published content stays connected.</small>}
             </label>
           </details>
@@ -3269,36 +3674,45 @@ export function GeneratedContentAdminDashboard() {
           <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
-              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })}>
+              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>
+              {isPackageDraft && <small className="admin-field-hint">Derived from package review status when saved.</small>}
             </label>
             <label className="admin-metadata-field">
               <span>Surface</span>
-              <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })}>
+              <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
                 {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Mode</span>
-              <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })}>
+              <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
                 {["feed", "in_depth", "article", "card"].map((mode) => <option key={mode} value={mode}>{mode}</option>)}
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Lane</span>
-              <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })}>
+              <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })} disabled={isPackageDraft}>
                 <option value="serving">serving</option>
                 <option value="reference">reference</option>
               </select>
             </label>
             <label className="admin-metadata-field">
               <span>Review state</span>
-              <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} />
+              <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
             </label>
+            {isFallbackHookDraft && (
+              <label className="admin-metadata-field">
+                <span>Fallback review status</span>
+                <select aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
+                  {fallbackHookReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
+                </select>
+              </label>
+            )}
             <label className="admin-metadata-field">
               <span>Block type</span>
-              <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} />
+              <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
             </label>
           </fieldset>
           <div className="admin-toolbar-actions">
@@ -3306,14 +3720,23 @@ export function GeneratedContentAdminDashboard() {
               <Save size={16} aria-hidden="true" />
               Save
             </button>
-            <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
-              <Check size={16} aria-hidden="true" />
-              Reviewed
-            </button>
-            <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading}>
-              <Check size={16} aria-hidden="true" />
-              Sign Off
-            </button>
+            {isPackageDraft && (
+              <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
+                Revert to package original
+              </button>
+            )}
+            {!isPackageDraft && (
+              <>
+                <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
+                  <Check size={16} aria-hidden="true" />
+                  Reviewed
+                </button>
+                <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading}>
+                  <Check size={16} aria-hidden="true" />
+                  Sign Off
+                </button>
+              </>
+            )}
           </div>
           {selectedRow && (
             <details className="admin-advanced admin-review-json">

@@ -1373,6 +1373,10 @@ function isSeasonStart(day: LunarCalendarDay) {
   return day.events.some((event) => event.type === "ingress" && event.planet === "Sun");
 }
 
+function isSolarIngressTransit(event?: LunarCalendarEvent | null) {
+  return event?.type === "ingress" && event?.planet === "Sun";
+}
+
 function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string) {
   const seasonSign = seasonSignForDay(day, timeZone);
 
@@ -1469,6 +1473,7 @@ function normalizeCalendarDaySurface(
 ): NormalizedCalendarDaySurface {
   const seasonSign = seasonSignForDay(day, timeZone);
   const transitRead = surfacedTransit ? calendarEventMadlibDescription(surfacedTransit) : "";
+  const surfacedTransitIsSolarIngress = isSolarIngressTransit(surfacedTransit);
   const librarySections = resolveLunarCalendarLibrarySections({
     moonSign: day.moonSign,
     moonPhase: day.moonPhase,
@@ -1479,10 +1484,13 @@ function normalizeCalendarDaySurface(
   })
     .map((section) => normalizedCalendarDaySection(section.slot, section.body, section.sourceKeys, section.slot === "moon"))
     .filter((section): section is NormalizedCalendarDaySection => Boolean(section));
+  const calendarLibrarySections = surfacedTransitIsSolarIngress
+    ? librarySections.filter((section) => section.slot !== "season")
+    : librarySections;
 
-  if (librarySections.length > 0) {
+  if (calendarLibrarySections.length > 0) {
     const sections = [
-      ...librarySections,
+      ...calendarLibrarySections,
       enableLunarArcContent && transitRead
         ? normalizedCalendarDaySection("transit-thread", transitRead, [`calendar-day.transit.${surfacedTransit?.id ?? surfacedTransit?.title ?? "unknown"}`])
         : null
@@ -1528,9 +1536,11 @@ function normalizeCalendarDaySurface(
     planet: "moon",
     sign: slugContentPart(day.moonSign)
   }));
-  const seasonRead = renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkySeason({
-    sign: slugContentPart(seasonSign)
-  }));
+  const seasonRead = surfacedTransitIsSolarIngress
+    ? ""
+    : renderCalendarFallbackPart(() => calendarFallbackRendererV3.renderSkySeason({
+      sign: slugContentPart(seasonSign)
+    }));
   const sections = [
     normalizedCalendarDaySection("phase", phaseRead, [`fallback-hook/moon-phase/${phaseKey}`], true),
     normalizedCalendarDaySection("moon-sign", moonRead, [`fallback-hook/sky-placement/moon`, `calendar-day.moon-sign.${slugContentPart(day.moonSign)}`], true),

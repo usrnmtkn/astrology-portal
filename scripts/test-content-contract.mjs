@@ -27,6 +27,7 @@
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import crypto from 'node:crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -49,6 +50,13 @@ const ARTIFACTS = [
   [/\{(?!friend\})[^{}]{0,40}\}/, 'unresolved placeholder other than {friend}'],
   [/\b(undefined|NaN|\[object Object\])\b/, 'serialization artifact'],
 ];
+
+const copyHash = (value) => crypto.createHash('sha1').update(String(value ?? '')).digest('hex');
+
+function transitingBodyFromAspectKey(key) {
+  const parts = String(key ?? '').split('.');
+  return parts[0] === 'aspect' && parts.length >= 4 ? parts[1] : null;
+}
 
 function checkUnit(u, failures) {
   const fail = (rule, detail) =>
@@ -110,6 +118,28 @@ function checkGlobal(units, failures) {
   for (const u of units) {
     if (u.version !== 'author-final' && finals.has(u.key)) {
       failures.push({ key: u.key, surface: u.surface, rule: 'R4-stale', detail: 'draft unit shadowed by author-final package is still exposed to the renderer' });
+    }
+  }
+
+  // R4 addendum: served transit-aspect copy may not be reused across transiting bodies.
+  const aspectBodies = new Map();
+  for (const u of units) {
+    if (u.surface !== 'aspect' || typeof u.fields?.body !== 'string' || !u.fields.body.trim()) continue;
+    const transiting = transitingBodyFromAspectKey(u.key);
+    if (!transiting) continue;
+    const hash = copyHash(u.fields.body);
+    if (!aspectBodies.has(hash)) aspectBodies.set(hash, []);
+    aspectBodies.get(hash).push({ key: u.key, transiting });
+  }
+  for (const [hash, list] of aspectBodies) {
+    const transitingBodies = new Set(list.map((item) => item.transiting));
+    if (transitingBodies.size > 1) {
+      failures.push({
+        key: list.map((item) => item.key).join(', '),
+        surface: 'aspect',
+        rule: 'R4-duplicate-aspect-copy',
+        detail: `identical body hash ${hash} is served for multiple transiting bodies: ${[...transitingBodies].sort().join(', ')}`
+      });
     }
   }
 }

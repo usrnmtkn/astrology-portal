@@ -132,8 +132,8 @@
   border-top: 1px solid var(--card-border);
 }
 
-.natal-pattern-card__section h4,
-.natal-pattern-card__supporting h4,
+.natal-pattern-card__section h3,
+.natal-pattern-card__supporting h3,
 .natal-pattern-card__activation-section h4 {
   color: var(--card-meta-color);
   font-size: var(--type-xs);
@@ -378,7 +378,7 @@
 }
 
 .career-archetype-card__header h3,
-.career-archetype-card__sections h4 {
+.career-archetype-card__sections h3 {
   margin: 0;
   color: var(--card-title-color);
   font-weight: var(--weight-semibold);
