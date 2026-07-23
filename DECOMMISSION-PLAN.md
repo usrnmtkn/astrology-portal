@@ -10,7 +10,7 @@ Rule for every item: route through dashboard rows or the V3 package resolver fro
 - [x] `apps/web/src/App.tsx` — `houseOverlayMadlibSection`: remove the local house overlay generator and hide house overlay rows when dashboard/package output is missing.
 - [x] `apps/web/src/App.tsx` — `compositeAspectFallbackSummary`: remove the local composite aspect summary generator.
 - [x] `apps/web/src/App.tsx` — `compositePlacementFallbackSummary`: remove the local composite placement summary generator.
-- [ ] `apps/web/src/App.tsx` — `compositeAspectMadlibSection`: remove the local composite aspect section generator and hide missing rows.
+- [x] `apps/web/src/App.tsx` — `compositeAspectMadlibSection`: remove the local composite aspect section generator and hide missing rows.
 - [ ] `apps/web/src/App.tsx` — `compositePlacementMadlibSection`: remove the local composite placement section generator and hide missing rows.
 - [ ] `apps/web/src/features/calendar/LunarCalendar.tsx` — `calendarEventMadlibDescription`: rename the package-backed path so it no longer advertises a legacy madlib source.
 - [ ] `apps/web/src/features/calendar/LunarCalendar.tsx` — `source-based-madlib` tier labels: rename package-backed calendar fallback tiers to V3 package/dashboard language.

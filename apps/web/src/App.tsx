@@ -11042,11 +11042,6 @@ function sourceGroundedCompositeSection({
   };
 }
 
-function compositeAspectMadlibSection(aspect: { from: string; to: string; type: string; orb?: number | null }): NormalizedCompositeSection | null {
-  void aspect;
-  return null;
-}
-
 function compositePlacementMadlibSection(position: { planet: string; sign: string; house?: number | null }): NormalizedCompositeSection | null {
   void position;
   return null;
@@ -11058,12 +11053,11 @@ function normalizeCompositeAspectSurface(aspect: { from: string; to: string; typ
     contentKeys,
     heading: `Composite ${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`
   });
-  const fallbackSection = sourceGroundedSection ? null : compositeAspectMadlibSection(aspect);
-  const sections = sourceGroundedSection ? [sourceGroundedSection] : fallbackSection ? [fallbackSection] : [];
+  const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 
   return {
     surface: "composite",
-    status: sourceGroundedSection ? "servable" : fallbackSection ? "partial" : "not-servable",
+    status: sourceGroundedSection ? "servable" : "not-servable",
     sections
   };
 }
