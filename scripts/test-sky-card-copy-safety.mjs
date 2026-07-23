@@ -150,12 +150,14 @@ assert.ok(
   "Sun Aquarius 9h natal detail must keep the concrete recognizable-example clause"
 );
 assert.ok(
-  appSource.includes("plainBody: normalized.sections.some((section) => section.layer === \"source-grounded\")"),
-  "Sky placement detail pages must render source-grounded body paragraphs instead of showing a blank article shell"
+  appSource.includes("plainBody: normalized.sections.some((section) => section.layer === \"authored\")"),
+  "Sky placement detail pages must render authored Sky-writing body paragraphs instead of showing a blank article shell"
 );
 assert.ok(
-  appSource.includes("const rowSummary = normalizedSurfacePreview(normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent))"),
-  "Sky placement list cards must prefer source-grounded summaries over stale generated/CMS summaries"
+  appSource.includes("const rowSummary = normalizedSurfacePreview(")
+    && appSource.includes("normalizeSkyPlacementSurface(")
+    && appSource.includes("skyPlacementWritingBeats({"),
+  "Sky placement list cards must prefer Sky-writing summaries over stale generated/CMS summaries"
 );
 
 console.log(`Sky card/detail and natal copy safety passed for ${placements.length} placements.`);

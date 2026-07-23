@@ -227,7 +227,7 @@ const families = [
       app.includes("natalAspectContentKey("),
       app.includes("fallback-hook/you.natal-aspect"),
       app.includes("resolveSourceGroundedV2(\"me.natal_aspect\""),
-      app.includes("isSafeNatalAspectFallbackCopy(body)"),
+      !app.includes("isSafeNatalAspectFallbackCopy(body)"),
       !app.includes("resolveNatalAspectFallback"),
       !(finalSourceGroundedRecords.records ?? []).some((record) => (
         String(record.canonicalKey ?? "").startsWith("dashboard.natal-aspect.")

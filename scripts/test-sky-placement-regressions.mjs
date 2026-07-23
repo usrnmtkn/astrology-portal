@@ -3,7 +3,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isReaderFacingCopy, readerFacingParagraphs } from "../apps/web/src/content/readerSafety.ts";
+import {
+  isReaderFacingCopy,
+  legacyCopyFingerprintReason,
+  readerFacingParagraphs
+} from "../apps/web/src/content/readerSafety.ts";
 import {
   composeNatalPlacement,
   composeSkyAspect,
@@ -365,7 +369,9 @@ assert.ok((normalizedCoverage["angle-surface"]?.READY ?? 0) >= 24, "Normalized s
 assert.ok((normalizedCoverage.daylight?.READY ?? 0) >= 3, "Normalized source must cover planetary hour, sunrise, and sunset surfaces.");
 assert.ok(sourceGroundedMercuryCancer.includes("A family conversation, household plan, or message with a long history may need another pass."), "Direct Mercury retrograde composer must use the bundled v2.2.1 exemplar fallback instead of unavailable copy.");
 assert.ok(!/Messages and decisions start moving through Cancer circumstances/i.test(sourceGroundedMercuryCancer), "Mercury retrograde runtime must not fall back to the generic planet-in-sign snapshot wording.");
-assert.equal(isReaderFacingCopy("Mercury Rx in Cancer is active here. The current emphasis may be visible in timing, mood, and the choices around it."), false, "Runtime reader safety must reject stale active-here sky fallback copy.");
+const staleActiveHereCopy = "Mercury Rx in Cancer is active here. The current emphasis may be visible in timing, mood, and the choices around it.";
+assert.equal(isReaderFacingCopy(staleActiveHereCopy), true, "Reader safety must not gate copy by stale phrase fingerprints.");
+assert.ok(legacyCopyFingerprintReason(staleActiveHereCopy), "Legacy copy canary must still detect stale active-here sky fallback copy.");
 for (const [label, rendered] of [
   ["Venus in Virgo compact", sourceGroundedVenusVirgoCompact],
   ["Mars in Gemini compact", sourceGroundedMarsGeminiCompact],
@@ -489,11 +495,11 @@ assert.ok(
 );
 assert.ok(app.includes("hash.replace(/^#\\/?/, \"\")"), "Sky detail routes must accept both #sky/... and #/sky/... hash paths.");
 assert.ok(
-  app.includes("const placementEvents = skyPlacementPackageEvents({")
+  app.includes("const placementEvents = skyPlacementWritingBeats({")
   && app.includes("const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents)")
-  && app.includes("function skyPlacementMadlibFallbackSection(")
-  && app.includes("transitSynastryFallbackRendererV3.renderSkyPlacement({"),
-  "Sky placement pages must render the V3 placement article with package event paragraphs."
+  && app.includes("function skyPlacementWritingSection(")
+  && app.includes("resolveSkyWritingArticle({"),
+  "Sky placement pages must render the Sky writing article with computed aspect beats."
 );
 assert.ok(
   !app.includes("[AUTHORED]")
@@ -512,17 +518,17 @@ assert.ok(
   && !app.includes("skyAspectContentKey(aspect.from, aspect.type, aspect.to)")
   && !app.includes("skyPlacementAppDisplaySource(generated)")
   && !app.includes("appDisplaySource ===")
-  && app.indexOf("skyPlacementMadlibFallbackSection(position, events)") >= 0
+  && app.indexOf("skyPlacementWritingSection(position, beats)") >= 0
   && app.includes("void generatedContent;"),
-  "Sky pages must use fallback-only routing: no saved/authored/source-grounded prose may outrank madlib fallback."
+  "Sky pages must use Sky writing routing: authored article first, then fallback atoms, without saved/source-grounded prose outranking the package."
 );
 assert.ok(
   app.includes("normalizedSurfacePreview(")
   && app.includes("normalizeSkyPlacementSurface(")
-  && app.includes("skyPlacementPackageEvents({")
+  && app.includes("skyPlacementWritingBeats({")
   && app.includes("planet: position.planet")
   && app.includes("positions: displayPositions"),
-  "Sky placement list rows must use the normalized package surface preview with package event paragraphs."
+  "Sky placement list rows must use the normalized Sky writing preview with computed aspect beats."
 );
 assert.ok(
   app.includes("const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);"),
@@ -551,7 +557,7 @@ assert.ok(!app.includes("You Challenge Each Other"), "Synastry rows must not fal
 assert.ok(!app.includes("This Contact Stands Out"), "Synastry rows must not fall back to generic boilerplate titles.");
 assert.ok(!app.includes("generated-daily-timing"), "Normalized section tiers must not expose generated as a third reader-facing prose layer.");
 assert.ok(!app.includes("emergencySkyPlacementCopy(position.planet, position.sign"), "Sky placement fallback must not use legacy emergency placement copy.");
-assert.ok(app.includes("fallback-architecture-v3"), "Sky placement fallback must use the v3 fallback architecture package.");
+assert.ok(app.includes("sky-writing-v1-fallback"), "Sky placement fallback must use the Sky writing fallback atoms package.");
 assert.ok(
   app.includes("function relatedSkyAspectSectionsForPlacement(")
   && app.includes("const relatedAspectSections = relatedSkyAspectSectionsForPlacement({")
@@ -560,12 +566,14 @@ assert.ok(
   "Sky placement related aspects must render as inline sections instead of click-through detail rows."
 );
 assert.ok(
-  app.includes("const articleSubCandidate = detail.suppressTldr ? \"\" : articleTldrText(detailSubtitle, detail.title)")
+  app.includes("const authoredTldr = detail.tldr ? stripArticleTitlePrefix(detail.tldr, detail.title) : \"\";")
+  && app.includes("const articleSubCandidate = detail.suppressTldr ? \"\" : articleTldrText(authoredTldr, detail.title)")
   && app.includes("articleBodyComparableCopies")
   && app.includes("function isArticleTldrBodyDuplicate(")
   && app.includes("body.startsWith(normalizedTldr)")
+  && !app.includes("articleTldrText(detailSubtitle")
   && !app.includes("articleTldrText(detailSubtitle || statement"),
-  "Sky detail TLDR must come from an independent subtitle only and must not duplicate or preview body copy."
+  "Sky detail TLDR must come from an explicit authored TLDR slot only and must not duplicate or preview body copy."
 );
 assert.ok(
   /function currentSkyAspectDetailArticle[\s\S]*subtitle: "",[\s\S]*suppressTldr: true/.test(app)
@@ -586,9 +594,11 @@ assert.ok(
 );
 assert.ok(
   app.includes("normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)")
-  && app.includes("function skyAspectMadlibFallbackSection("),
-  "Sky placement aspect rows must resolve through the sky-aspect normalizer before madlib fallback."
+  && app.includes("function skyAspectWritingSection(")
+  && app.includes("formatSkyWritingAspectBeat({"),
+  "Sky placement aspect rows must resolve through the Sky writing computed-beat wrapper."
 );
+assert.ok(!/for everyone at once/i.test(app), "Sky runtime code must not contain the retired collective aspect wrapper.");
 assert.ok(app.includes("dedupeTransitAxisContacts(rankedTransitItems"), "Friend transits must dedupe duplicate Ascendant/Descendant and MC/IC axis contacts before rendering.");
 assert.ok(app.includes("friendTransitFactLine(transit, selectedChart.displayName)"), "Friend transit cards must render owner-aware fact lines.");
 assert.ok(app.includes("transitAspectTechnicalVerb(transit.aspect)"), "Transit fact copy must use technical aspect verbs such as conjunct.");

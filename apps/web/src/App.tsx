@@ -71,9 +71,6 @@ import {
   SourceGapError as FallbackV3SourceGapError
 } from "./content/fallbackArchitectureV3Runtime";
 import {
-  type SkyEvent
-} from "./content/fallbackArchitectureV3Runtime";
-import {
   installFallbackArchitectureV3Bundle,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
@@ -99,6 +96,7 @@ import {
   skyHistoricalLookbackSettingKey,
   type SkyHistoricalLookback
 } from "./content/skyHistoricalLookback";
+import { formatSkyWritingAspectBeat, resolveSkyWritingArticle, type SkyWritingAspectBeat } from "./content/skyWriting";
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
@@ -4732,6 +4730,10 @@ function transitHouseRangeLabel(transit: TransitItem, currentSky: SkySnapshot | 
     return "";
   }
 
+  if (currentPosition.planet === "Pluto" && currentPosition.motion === "retrograde") {
+    return retrogradeRangeText(currentPosition) ?? "";
+  }
+
   return placementTransitRangeLabel(currentPosition, generatedAt);
 }
 
@@ -5598,55 +5600,29 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function skyAspectMadlibFallbackSection(
+function skyAspectWritingSection(
   aspect: SkySnapshot["aspects"][number],
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectSection | null {
-  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
+  void positions;
+  const dateLine = generatedAt ? currentSkyAspectTransitRange(aspect, generatedAt) : "";
+  const body = formatSkyWritingAspectBeat({
+    aspect: aspect.type,
+    dateLine,
+    from: aspect.from,
+    to: aspect.to
+  });
 
-  if (!normalizedAspect) {
-    return null;
-  }
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      aSign: skyAspectSign(aspect, aspect.from, positions),
-      aspect: normalizedAspect,
-      b: normalizeContentIdPart(aspect.to),
-      bSign: skyAspectSign(aspect, aspect.to, positions),
-      dateLine: generatedAt ? currentSkyAspectTransitRange(aspect, generatedAt) : undefined
-    });
-
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: rendered.templateKey.startsWith("authored/") ? "authored" : "fallback",
-      tier: rendered.templateKey.startsWith("authored/")
-        ? "fallback-architecture-v3-authored"
-        : "fallback-architecture-v3",
-      sourceKeys: [
-        "tldrastro-fallback-architecture-v3",
-        rendered.contentKey ?? "",
-        rendered.templateKey
-      ].filter(Boolean),
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
+  return body ? {
+    slot: "meaning",
+    required: true,
+    layer: "fallback",
+    tier: "sky-writing-v1-computed",
+    sourceKeys: ["sky-writing-v1", "computed-aspect-beat"],
+    heading: skyAspectDisplayTitle(aspect),
+    body
+  } : null;
 }
 
 function normalizeSkyAspectSurface(
@@ -5656,7 +5632,7 @@ function normalizeSkyAspectSurface(
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
   void generatedContent;
-  const fallbackSection = skyAspectMadlibFallbackSection(aspect, positions, generatedAt);
+  const fallbackSection = skyAspectWritingSection(aspect, positions, generatedAt);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -5750,7 +5726,7 @@ function relatedSkyAspectSectionsForPlacement({
     .slice(0, 2);
 }
 
-function skyPlacementPackageEvents({
+function skyPlacementWritingBeats({
   aspects,
   generatedAt,
   planet,
@@ -5760,23 +5736,16 @@ function skyPlacementPackageEvents({
   generatedAt: string;
   planet: string;
   positions?: PlanetPosition[];
-}): SkyEvent[] {
-  return skyAspectsForPlacement(planet, aspects).flatMap((aspect) => {
-    const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
+}): SkyWritingAspectBeat[] {
+  return skyAspectsForPlacement(planet, aspects).map((aspect) => {
+    void positions;
 
-    if (!normalizedAspect) {
-      return [];
-    }
-
-    return [{
-      type: "aspect",
-      a: normalizeContentIdPart(aspect.from),
-      aSign: normalizeContentIdPart(skyAspectSign(aspect, aspect.from, positions)),
-      aspect: normalizedAspect,
-      b: normalizeContentIdPart(aspect.to),
-      bSign: normalizeContentIdPart(skyAspectSign(aspect, aspect.to, positions)),
-      dateLine: currentSkyAspectTransitRange(aspect, generatedAt)
-    }];
+    return {
+      aspect: titleCase(aspect.type),
+      dateLine: currentSkyAspectTransitRange(aspect, generatedAt),
+      from: aspect.from,
+      to: aspect.to
+    };
   });
 }
 
@@ -5803,44 +5772,35 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
-function skyPlacementMadlibFallbackSection(
+function skyPlacementWritingSection(
   position: PlanetPosition,
-  events: SkyEvent[] = []
+  beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementSection | null {
-  let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
+  const article = resolveSkyWritingArticle({
+    planet: position.planet,
+    sign: position.sign,
+    motion: position.motion,
+    transitEnd: position.transitEnd,
+    retrogradeStart: position.retrogradeStart,
+    retrogradeEnd: position.retrogradeEnd,
+    retrogradeShadowStart: position.retrogradeShadowStart,
+    retrogradeShadowEnd: position.retrogradeShadowEnd,
+    cazimiDate: position.cazimi ? position.retrogradeStart : null
+  }, beats);
 
-  try {
-    rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
-      planet: normalizeContentIdPart(position.planet),
-      sign: normalizeContentIdPart(position.sign),
-      events
-    });
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
+  const body = article ? readerFacingParagraphs(article.paragraphs).join("\n\n") : "";
 
-    throw error;
-  }
-
-  const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-  if (!isReaderFacingCopy(body)) {
+  if (!article || !isReaderFacingCopy(body)) {
     return null;
   }
 
   return {
     slot: "meaning",
     required: true,
-    layer: "fallback",
-    tier: "fallback-architecture-v3",
-    sourceKeys: [
-      "tldrastro-fallback-architecture-v3",
-      rendered.templateKey,
-      `fallback-hook/sky-placement/${normalizeContentIdPart(position.planet)}`,
-      `fallback-vocab/sign-style/${normalizeContentIdPart(position.sign)}`
-    ],
-    heading: rendered.headline || skyPlacementDisplayTitle(position),
+    layer: article.layer,
+    tier: article.layer === "authored" ? "sky-writing-v1-authored" : "sky-writing-v1-fallback",
+    sourceKeys: article.sourceKeys,
+    heading: skyPlacementDisplayTitle(position),
     body
   };
 }
@@ -5849,16 +5809,16 @@ function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
   generatedContent?: GeneratedContentMap,
-  events: SkyEvent[] = []
+  beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementArticle {
   void duration;
   void generatedContent;
-  const fallbackSection = skyPlacementMadlibFallbackSection(position, events);
+  const fallbackSection = skyPlacementWritingSection(position, beats);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "sky-placement",
-    status: fallbackSection ? "partial" : "not-servable",
+    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
     sections
   };
 }
@@ -5883,7 +5843,7 @@ function currentSkyPlacementDetailArticle({
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
-  const placementEvents = skyPlacementPackageEvents({
+  const placementEvents = skyPlacementWritingBeats({
     aspects,
     generatedAt,
     planet: position.planet,
@@ -16094,7 +16054,7 @@ function PlacementTable({
               position,
               transitRangeLabel,
               generatedContent,
-              skyPlacementPackageEvents({
+              skyPlacementWritingBeats({
                 aspects,
                 generatedAt,
                 planet: position.planet,

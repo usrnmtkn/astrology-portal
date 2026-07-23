@@ -639,6 +639,12 @@ function articleEyebrowLabel(title: string, meta: YouTransitArticle["meta"]) {
     return "Placement";
   }
 
+  const dateRange = meta.find((row) => row.label.toLowerCase() === "date range");
+
+  if (dateRange) {
+    return cleanArticleText(dateRange.value) || dateRange.label;
+  }
+
   return meta.find((row) => cleanArticleText(row.value))?.label || "Article";
 }
 

@@ -228,6 +228,8 @@ export function renderNatalAspect(facts, opts = {}) {
     planetACore: getVocab(`fallback-vocab/planet-core/${planetA}`, { allowUnreviewed }),
     planetBCore: getVocab(`fallback-vocab/planet-core/${planetB}`, { allowUnreviewed }),
     aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, { allowUnreviewed }),
+    aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, { allowUnreviewed }),
+    possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
     pairSentences: pair,
   };
   const template = getTemplate("fallback-template/natal.aspect");

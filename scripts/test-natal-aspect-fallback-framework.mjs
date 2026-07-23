@@ -12,7 +12,6 @@ const records = JSON.parse(
   fs.readFileSync(path.join(repoRoot, "apps/web/src/content/finalSourceGroundedDashboardRecords.json"), "utf8")
 );
 const sourceGroundedBundle = path.join(os.tmpdir(), `source-grounded-v2-${Date.now()}.mjs`);
-const safetyBundle = path.join(os.tmpdir(), `natal-aspect-copy-safety-${Date.now()}.mjs`);
 
 assert.equal(
   fs.existsSync(path.join(repoRoot, "apps/web/src/content/natalAspectFallback.ts")),
@@ -23,7 +22,17 @@ assert.doesNotMatch(appSource, /resolveNatalAspectFallback|natalAspectFallbackDe
 assert.doesNotMatch(runtimeSource, /sourceGroundedNatalAspectComposition/u, "runtime must not expose old source-grounded natal aspect authored composition");
 assert.match(appSource, /fallbackRendererV3\.renderNatalAspect\(/u, "app natal aspects must route through the v3 fallback package renderer");
 assert.match(appSource, /normalizeFallbackV3Aspect\(aspect\.type\)/u, "app natal aspects must normalize through the v3-supported aspect set");
-assert.match(appSource, /isSafeNatalAspectFallbackCopy\(body\)/u, "reader must keep the natal aspect copy safety gate");
+assert.match(
+  appSource,
+  /\.\.\.sourceGroundedNatalAspectSectionsForPlacement\(/u,
+  "natal placement pages must retain owner-approved v3 natal aspect cards"
+);
+assert.doesNotMatch(appSource, /isSafeNatalAspectFallbackCopy\(body\)/u, "reader must not use natal-aspect phrase denylist gates");
+assert.equal(
+  fs.existsSync(path.join(repoRoot, "apps/web/src/content/natalAspectCopySafety.ts")),
+  false,
+  "natal aspect phrase denylist module must stay decommissioned"
+);
 
 const legacyAspectRows = (records.records ?? []).filter((record) =>
   String(record.canonicalKey ?? "").startsWith("dashboard.natal-aspect.")
@@ -44,19 +53,8 @@ await build({
   platform: "node",
   target: "node20"
 });
-await build({
-  absWorkingDir: repoRoot,
-  bundle: true,
-  entryPoints: ["apps/web/src/content/natalAspectCopySafety.ts"],
-  external: ["@tldr/astro-knowledge/timing-engine"],
-  format: "esm",
-  outfile: safetyBundle,
-  platform: "node",
-  target: "node20"
-});
 
 const { resolveSourceGroundedV2 } = await import(pathToFileURL(sourceGroundedBundle).href);
-const { unsafeNatalAspectCopyReason } = await import(pathToFileURL(safetyBundle).href);
 
 const sunSquareMoon = resolveSourceGroundedV2("me.natal_aspect", {
   aspect: "square",
@@ -66,7 +64,7 @@ const sunSquareMoon = resolveSourceGroundedV2("me.natal_aspect", {
 });
 assert.equal(sunSquareMoon.readerAuthority, "approved-fallback");
 assert.equal(sunSquareMoon.fallbackId, "fallback-hook/me.natal-aspect/sun-square-moon");
-assert.match(sunSquareMoon.expandedCopy ?? "", /Sun is square your Moon.+identity and emotion.+friction/is);
+assert.match(sunSquareMoon.expandedCopy ?? "", /That is your Sun square your Moon: identity and emotion .+\./is);
 assert.doesNotMatch(sunSquareMoon.expandedCopy ?? "", /\{\{|\}\}|SOURCE_GAP|Part of you wants one thing/u);
 
 const mercuryConjunctSun = resolveSourceGroundedV2("me.natal_aspect", {
@@ -93,8 +91,8 @@ const marsSquareSunFriend = resolveSourceGroundedV2("me.natal_aspect", {
 assert.equal(marsSquareSunFriend.readerAuthority, "approved-fallback");
 assert.match(
   marsSquareSunFriend.expandedCopy ?? "",
-  /Marie's Mars is square their Sun, meaning drive and identity are wired together in them\./u,
-  "friend natal aspect fallback must open with the chart owner's first name"
+  /That is Marie's Mars square their Sun: drive and identity .+\./u,
+  "friend natal aspect fallback must close with the chart owner's possessive headline"
 );
 assert.match(
   marsSquareSunFriend.expandedCopy ?? "",
@@ -117,8 +115,8 @@ const sunSextileNeptuneFriend = resolveSourceGroundedV2("me.natal_aspect", {
 assert.equal(sunSextileNeptuneFriend.readerAuthority, "approved-fallback");
 assert.match(
   sunSextileNeptuneFriend.expandedCopy ?? "",
-  /Marie's Sun is sextile their Neptune/u,
-  "friend natal aspect fallback must name the chart owner in the opening aspect sentence"
+  /That is Marie's Sun sextile their Neptune/u,
+  "friend natal aspect fallback must name the chart owner in the closing astrology line"
 );
 assert.doesNotMatch(
   sunSextileNeptuneFriend.expandedCopy ?? "",
@@ -134,18 +132,5 @@ const unsupported = resolveSourceGroundedV2("me.natal_aspect", {
 assert.equal(unsupported.readerAuthority, "omitted");
 assert.equal(unsupported.renderedFields.sourceMaterialStatus, "needs-source-material");
 assert.deepEqual(unsupported.finalVisibleStrings, []);
-
-for (const legacy of [
-  "Part of you wants one thing. Another part needs something else entirely.",
-  "The way they think and the person they are speak with one voice.",
-  "Uncomfortable, yes, but this is the kind of tension that pushes they to actually do something about it.",
-  "That grit wins they things other people give up on.",
-  "They can turn a small disagreement into a battle before them notice what happened.",
-  "Recurring friction that asks for an adjustment",
-  "Name both sides of the pattern before choosing the next concrete response",
-  "Neptune Square North Node is close enough to read. The title, timing, and chart context give the clearest available frame."
-]) {
-  assert.equal(unsafeNatalAspectCopyReason(legacy).length > 0, true, `Legacy generated clause must be rejected: ${legacy}`);
-}
 
 console.log("Natal aspect fallback v3 decommission regression passed.");

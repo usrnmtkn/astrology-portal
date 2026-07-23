@@ -202,5 +202,15 @@ for (const r of rowsFile.hookRows ?? []) {
   }
 }
 
+
+for (const r of rowsFile.hookRows ?? []) {
+  if (!/^fallback-hook\/(placement-sentence|placement-house-sentence|planet-intro|planet-best|angle-|aspect-|natal-core|node-|dignity-|house-meaning|house-cusp|empty-house)/.test(r.contentKey)) continue;
+  for (const field of ["body_you", "body_they"]) {
+    const t = r[field] ?? "";
+    if (/\b(this month|this week|tonight|right now|currently)\b/i.test(t))
+      fail(`${r.contentKey}: time-bound phrase in permanent natal copy (${field})`);
+  }
+}
+
 console.log(failures === 0 ? "PASS: all role-safety, grammar, and render checks passed." : `${failures} failure(s).`);
 process.exit(failures === 0 ? 0 : 1);

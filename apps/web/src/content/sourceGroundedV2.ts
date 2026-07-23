@@ -8,13 +8,17 @@ import {
   SourceGapError as FallbackV3SourceGapError,
   type AngleFacts,
   type AspectFacts
-} from "./fallbackArchitectureV3/renderFallbackV3";
-import { fallbackRendererV3 } from "./fallbackArchitectureV3/runtimeBundle";
+} from "./fallbackArchitectureV3Runtime";
+import { fallbackRendererV3 } from "./fallbackArchitectureV3Runtime";
 import { isReaderFacingCopy } from "./readerSafety";
 import { renderMustacheMadlib, type MustacheTemplateId } from "./sourceGroundedMustacheV22";
 
 export const SOURCE_GROUNDED_V2_TEMPLATE_VERSION = "2.3.0";
 const FALLBACK_V3_ASPECTS = new Set<AspectFacts["aspect"]>(["conjunction", "opposition", "square", "trine", "sextile"]);
+
+function fallbackV3ErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 export type SourceTier = "EVIDENCE_ONLY" | "REFERENCE_SCAFFOLD" | "REVIEWED_CLAUSE" | "REVIEWED_RECORD" | "RENDERED_OUTPUT" | "SOURCE_GAP";
 export type RenderMode = "card" | "detail";
@@ -1420,7 +1424,7 @@ function approvedFallbackFor(surface: SurfaceId, facts: Record<string, unknown>,
           factualAngleTitle: title,
           sourceMaterialStatus: "needs-source-material"
         },
-        supportingSourceKeys: [error.message]
+        supportingSourceKeys: [fallbackV3ErrorMessage(error)]
       });
     }
   }
@@ -1481,7 +1485,7 @@ function approvedFallbackFor(surface: SurfaceId, facts: Record<string, unknown>,
           factualAspectTitle: title,
           sourceMaterialStatus: "needs-source-material"
         },
-        supportingSourceKeys: [error.message]
+        supportingSourceKeys: [fallbackV3ErrorMessage(error)]
       });
     }
   }
@@ -1532,7 +1536,7 @@ function approvedFallbackFor(surface: SurfaceId, facts: Record<string, unknown>,
           factualPlacementTitle: title,
           sourceMaterialStatus: "needs-source-material"
         },
-        supportingSourceKeys: [error.message]
+        supportingSourceKeys: [fallbackV3ErrorMessage(error)]
       });
     }
   }

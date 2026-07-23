@@ -197,7 +197,7 @@ const sunSquareMoonFallback = v2Runtime.resolveSourceGroundedV2("me.natal_aspect
 assert.equal(sunSquareMoonFallback.readerAuthority, "approved-fallback");
 assert.match(
   sunSquareMoonFallback.expandedCopy ?? "",
-  /Sun is square your Moon.+identity and emotion.+friction/is,
+  /That is your Sun square your Moon: identity and emotion .+friction/is,
   "natal aspect fallback must render composed v3 aspect prose"
 );
 assert.doesNotMatch(
