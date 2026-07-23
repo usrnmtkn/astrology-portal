@@ -145,6 +145,8 @@ import {
   natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
+  skyAspectContentKey,
+  skyAspectInstanceContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -5372,9 +5374,57 @@ function skyAspectWritingSection(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectSection | null {
-  void positions;
-  void generatedAt;
-  return null;
+  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
+
+  if (!normalizedAspect) {
+    return null;
+  }
+
+  const firstPosition = skyAspectPosition(aspect.from, positions);
+  const secondPosition = skyAspectPosition(aspect.to, positions);
+  const firstSign = firstPosition?.sign ?? undefined;
+  const secondSign = secondPosition?.sign ?? undefined;
+  const targetDate = generatedAt ? generatedAt.slice(0, 10) : undefined;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
+      aspect: normalizedAspect,
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n").trim();
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "fallback-architecture-v3",
+      sourceKeys: [
+        "tldrastro-fallback-architecture-v3",
+        rendered.templateKey,
+        skyAspectContentKey(aspect.from, aspect.type, aspect.to),
+        skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+          firstSign,
+          secondSign,
+          targetDate
+        })
+      ].filter(Boolean),
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 type SkyWritingAspectBeat = {
