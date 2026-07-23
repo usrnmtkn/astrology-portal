@@ -45,6 +45,25 @@ const northNodeSouthNodeConjunction = renderer.renderSynastryAspect({
   aspect: "conjunction",
   otherName: "X"
 });
+const venusAscendantBondTransit = renderer.renderBondTransit({
+  transiting: "mars",
+  aspect: "square",
+  planetA: "venus",
+  planetB: "ascendant",
+  otherName: "X"
+});
+const marsAscendantTransit = renderer.renderTransitAspect({
+  transiting: "mars",
+  aspect: "square",
+  natal: "ascendant",
+  window: "Right now"
+});
+const marsNorthNodeTransit = renderer.renderTransitAspect({
+  transiting: "mars",
+  aspect: "square",
+  natal: "north-node",
+  window: "Right now"
+});
 const anglePlacementRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/placement-sentence\/(?:ascendant|midheaven)\//u.test(row.contentKey)
 );
@@ -54,22 +73,26 @@ const dignityGlossaryRows = fallbackSourceRows.vocabularyRows.filter((row) =>
 const dignityLineRows = fallbackSourceRows.hookRows.filter((row) =>
   row.contentKey.startsWith("fallback-hook/dignity-line/")
 );
+const targetSpecificTransitEffectRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/transit-effect-(?:hard|soft)\/(?:sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)\/(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north-node|south-node|lilith|ascendant|midheaven|descendant|imum-coeli)$/u.test(row.contentKey)
+);
 const bannedDignityWords = contentRoleContract.styleRules?.bannedWords ?? [];
 const bannedDignityPattern = bannedDignityWords.length > 0
   ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
   : null;
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-23d", "FallbackArchitectureV3 package version must expose the current imported stamp.");
-assert.equal(transitSynastryRows.authoredCards.length, 1_365, "23d must preserve the re-derived authored-card count.");
-assert.equal(fallbackSourceRows.hookRows.length, 2_019, "23d plus the durable dignity library must expose the complete hook count.");
-assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23d must preserve the re-derived vocabulary count.");
-assert.equal(fallbackTemplates.templates.length, 22, "23d must preserve the re-derived template count.");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-23f", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(transitSynastryRows.authoredCards.length, 1_365, "23f must preserve the re-derived authored-card count.");
+assert.equal(fallbackSourceRows.hookRows.length, 2_343, "23f plus the durable dignity library must expose the complete hook count.");
+assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23f must preserve the re-derived vocabulary count.");
+assert.equal(fallbackTemplates.templates.length, 22, "23f must preserve the re-derived template count.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
 assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
 assert.equal(anglePlacementRows.length, 24, "23c must provide all Ascendant and Midheaven placement sentences.");
 assert.equal(dignityGlossaryRows.length, 4, "23c must provide one generic glossary row for every dignity badge.");
 assert.equal(dignityLineRows.length, 28, "The durable dignity library must include 7 classical planets x 4 dignities.");
+assert.equal(targetSpecificTransitEffectRows.length, 324, "23f must include the complete target-specific transit effect library.");
 for (const row of dignityLineRows) {
   assert.equal(row.content_role, "fallback_hook", `${row.contentKey} must remain a fallback_hook.`);
   assert.equal(row.review_status, "approved", `${row.contentKey} must remain approved.`);
@@ -100,7 +123,22 @@ assert.match(
 assert.match(
   northNodeSouthNodeConjunction.body,
   /^Your North Node sits right on X's South Node, the famous crossing\b/u,
-  "23d must return the owner-approved North Node-South Node authored pair body."
+  "23f must return the owner-approved North Node-South Node authored pair body."
+);
+assert.equal(
+  venusAscendantBondTransit.headline,
+  "Mars square your Venus-Ascendant line with X",
+  "Bond-transit headlines must retain the space after 'your'."
+);
+assert.notEqual(
+  marsAscendantTransit.body,
+  marsNorthNodeTransit.body,
+  "Target-specific transit effects must keep Mars square Ascendant distinct from Mars square North Node."
+);
+assert.match(
+  app,
+  /transit\.aspect === "square"[\s\S]*\["conjunction", "opposition"\][\s\S]*\["trine", "sextile"\]/u,
+  "Friend transits must collapse square and complementary soft axis twins as well as conjunction/opposition twins."
 );
 
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");

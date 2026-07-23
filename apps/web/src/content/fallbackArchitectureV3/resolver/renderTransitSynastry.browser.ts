@@ -153,7 +153,8 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     // hard contacts (square, opposition, heavy conjunction) use the pressure effect.
     const effectFamily = g === "soft" || (g === "conjunction" && !isHeavy) ? "soft" : "hard";
     // variant rotation for repeat viewers: engine passes variant 2 or 3, base otherwise
-    const effectRaw = (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null)
+    const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v)
+      ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null)
       ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
@@ -172,6 +173,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
     let body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+  body = body.charAt(0).toUpperCase() + body.slice(1);
     // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
@@ -628,7 +630,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
     const paras: string[] = [];
     paras.push(`${timeOpen}, ${transitRef(transiting, sign)} is ${aspectAdj} the line between your ${title(planetA)} and ${otherName}'s ${title(planetB)}.`);
-    if (bondQuality && modeA && modeB) paras.push(`That contact is ${bondQuality}: ${modeA} meeting ${modeB}.`);
+    if (bondQuality && modeA && modeB) paras.push(`That line is ${bondQuality}: ${modeA} meeting ${modeB}.`);
     paras.push(effect);
     const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
