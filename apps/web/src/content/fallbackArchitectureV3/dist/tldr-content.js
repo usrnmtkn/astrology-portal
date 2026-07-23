@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -267,12 +267,14 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
 var ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 var GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+var GROUP_EXAMPLE = { hard: "square", soft: "trine" };
+var EXACT_AUTHORED_NATALS = /* @__PURE__ */ new Set(["chiron", "north-node", "south-node"]);
 var WINDOW_ASPECT = { moon: "Today", sun: "This week", mercury: "This week", venus: "This week", mars: "For the next couple of weeks", jupiter: "This month", saturn: "For the next few months", uranus: "For the next few months", neptune: "For the next few months", pluto: "For the next few months", chiron: "For the next few months", "north-node": "For the next few months", "south-node": "For the next few months", lilith: "This month" };
 var WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", mercury: "For the next few weeks", venus: "For the next few weeks", mars: "For the next month or two" };
 var WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six weeks", mars: "For the next couple of months", jupiter: "For about four months", saturn: "For about four and a half months", uranus: "For about five months", neptune: "For about five months", pluto: "For about five months", chiron: "For about five months" };
@@ -339,6 +341,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
+    tryKeys.push(`authored/transit-aspect/${transiting}/${natal}/${aspect}`);
     const push = (a, b) => {
       if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
       for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
@@ -346,14 +349,17 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
-    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    if (!EXACT_AUTHORED_NATALS.has(natal)) {
+      tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+    }
     if (v === "you") for (const k of tryKeys) {
       const c = card(k);
       if (c) return result(c, "authored/transit-aspect");
     }
     const T = tpl("fallback-template/transit.aspect");
     const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
-    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
+    const concreteAspect = GROUP_EXAMPLE[aspect] ?? aspect;
+    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}`, v);
     const effectFamily = g === "soft" || g === "conjunction" && !isHeavy ? "soft" : "hard";
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v) ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
@@ -364,7 +370,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
       transitRef: transitRef(transiting, sign),
       natalTitle: title2(natal),
       aspectName: aspect,
-      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
+      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${concreteAspect}`)?.body,
       transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
       aspectVerb: (() => {
         const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body;
@@ -831,7 +837,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-07-23f";
 export {
   PACKAGE_VERSION,

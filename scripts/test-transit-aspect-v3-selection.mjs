@@ -43,22 +43,22 @@ const oldChironCopy = /Something recent hit an old sore spot/i;
 const plutoChiron = render("pluto", "square", "chiron");
 assert.equal(
   plutoChiron.contentKey,
-  "authored/transit-aspect/any/chiron/conjunction",
-  "Pluto square Chiron should use the package's heavy-sharing Chiron fallthrough."
+  "authored/transit-aspect/pluto/chiron/square",
+  "Pluto square Chiron should use its exact Phase 1 authored unit."
 );
-assert.equal(oldChironCopy.test(plutoChiron.parts.join("\n")), true, "Pluto square Chiron should render the approved heavy-sharing Chiron copy.");
+assert.equal(oldChironCopy.test(plutoChiron.parts.join("\n")), false, "Pluto square Chiron must not render the retired planet-agnostic Chiron copy.");
 
 const jupiterChiron = render("jupiter", "square", "chiron");
 assert.equal(
   jupiterChiron.contentKey,
-  "authored/transit-aspect/any/chiron/conjunction",
-  "Jupiter square Chiron should use the package's heavy-sharing Chiron fallthrough."
+  "authored/transit-aspect/jupiter/chiron/square",
+  "Jupiter square Chiron should use its exact Phase 1 authored unit."
 );
-assert.equal(oldChironCopy.test(jupiterChiron.parts.join("\n")), true, "Jupiter square Chiron should render the approved heavy-sharing Chiron copy.");
-assert.equal(
+assert.equal(oldChironCopy.test(jupiterChiron.parts.join("\n")), false, "Jupiter square Chiron must not render the retired planet-agnostic Chiron copy.");
+assert.notEqual(
   plutoChiron.parts.join("\n"),
   jupiterChiron.parts.join("\n"),
-  "Heavy-sharing Chiron fallthrough should intentionally collapse these transit pairs to the same approved copy."
+  "Different transiting bodies must render distinct Chiron copy."
 );
 
 const venusAscendant = render("venus", "square", "ascendant");
@@ -83,10 +83,9 @@ const readerMetadataPattern = /\*?\s*(?:Anchor|Flag|Source|Corpus):/i;
 const marsNorthNode = render("mars", "square", "north-node");
 assert.equal(
   marsNorthNode.contentKey,
-  "authored/transit-aspect/any/north-node/conjunction",
-  "Mars square North Node should resolve through the package's approved North Node card."
+  "authored/transit-aspect/mars/north-node/square",
+  "Mars square North Node should resolve through the exact Phase 1 authored unit."
 );
-assert.match(renderedParts(marsNorthNode), /The same kind of person, offer, and challenge keeps finding you/i);
 assert.equal(
   readerMetadataPattern.test(renderedParts(marsNorthNode)),
   false,
@@ -94,8 +93,8 @@ assert.equal(
 );
 assert.equal(
   transitV3SameBeatKeyForContentKey(marsNorthNode.contentKey),
-  "transit-same-beat/randomness-pattern",
-  "North Node coincidence copy should carry the same-beat selection key from editorial_notes."
+  null,
+  "Phase 1 exact North Node copy should not inherit retired generic-card editorial metadata."
 );
 
 const marsNodalAxis = render("mars", "square", "nodal-axis");
