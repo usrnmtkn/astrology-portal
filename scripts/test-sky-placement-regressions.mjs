@@ -38,6 +38,12 @@ const ascendantSaturnSquare = renderer.renderSynastryAspect({
   aspect: "square",
   otherName: "X"
 });
+const northNodeSouthNodeConjunction = renderer.renderSynastryAspect({
+  planetA: "north-node",
+  planetB: "south-node",
+  aspect: "conjunction",
+  otherName: "X"
+});
 const anglePlacementRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/placement-sentence\/(?:ascendant|midheaven)\//u.test(row.contentKey)
 );
@@ -45,7 +51,11 @@ const dignityGlossaryRows = fallbackSourceRows.vocabularyRows.filter((row) =>
   row.contentKey.startsWith("fallback-vocab/dignity-glossary/")
 );
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-23c", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-23d", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(transitSynastryRows.authoredCards.length, 1_365, "23d must preserve the re-derived authored-card count.");
+assert.equal(fallbackSourceRows.hookRows.length, 1_992, "23d must expose the complete re-derived hook count.");
+assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23d must preserve the re-derived vocabulary count.");
+assert.equal(fallbackTemplates.templates.length, 22, "23d must preserve the re-derived template count.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
 assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
@@ -58,7 +68,12 @@ assert.match(placementRows, /friendPlacementDescription[\s\S]*fallbackV3Placemen
 assert.match(
   ascendantSaturnSquare.body,
   /^X's Saturn sits at a hard angle to your Ascendant, and it can feel like being graded on arrival\./u,
-  "23c must return the owner-approved Ascendant-Saturn authored pair body."
+  "23d must preserve the owner-approved Ascendant-Saturn authored pair body."
+);
+assert.match(
+  northNodeSouthNodeConjunction.body,
+  /^Your North Node sits right on X's South Node, the famous crossing\b/u,
+  "23d must return the owner-approved North Node-South Node authored pair body."
 );
 
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
