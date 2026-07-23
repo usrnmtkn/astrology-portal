@@ -202,8 +202,8 @@
       ],
       "body": "{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}, meaning {{planetACore}} and {{planetBCore}} are wired together in you. {{aspectTypeLine}}{{#pairSentences}} {{pairSentences}}{{/pairSentences}}",
       "replaces": "fallback-hook/you.natal-aspect",
-      "body_you": "{{#pairSentences}}{{pairSentences}} That is {{possessiveLow}} {{planetATitle}} {{aspectAdj}} your {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}. {{aspectTypeLine}}{{/pairSentences}}",
-      "body_they": "{{#pairSentences}}{{pairSentences}} That is {{possessiveLow}} {{planetATitle}} {{aspectAdj}} their {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} their {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}. {{aspectTypeLine}}{{/pairSentences}}",
+      "body_you": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}",
+      "body_they": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} their {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}",
       "note": "Natal aspects, app voice: fused-wiring line + aspect-type mechanics + optional per-pair section from the Natal-Aspect cookbook."
     },
     {
@@ -347,7 +347,9 @@
       ],
       "optionalSlots": [],
       "body": "{{timeOpen}}, {{transitRef}} is {{aspectAdj}} your natal {{natalTitle}}, which puts {{transitTopic}} in contact with {{natalCore}}. {{transitTypeLine}}",
-      "note": "Transit-aspect fallback. timeOpen defaults from the transiting planet's speed (Today / This week / For the next couple of weeks / This month / For the next few months) and can be overridden by the engine via facts.window."
+      "note": "Transit-aspect fallback. timeOpen defaults from the transiting planet's speed (Today / This week / For the next couple of weeks / This month / For the next few months) and can be overridden by the engine via facts.window.",
+      "body_they": "{{transitRef}} {{aspectAdj}} {{otherPoss}} natal {{natalTitle}} {{timeInline}} brings {{transitTopic}} into contact with {{natalCore}}. {{transitEffectLine}}",
+      "headline_they": "{{transitTitle}} {{aspectName}} {{otherPoss}} {{natalTitle}}"
     },
     {
       "contentKey": "fallback-template/transit.house",
@@ -363,7 +365,9 @@
       ],
       "optionalSlots": [],
       "body": "{{timeOpen}}, {{transitRef}} is moving through your {{houseOrdinal}} house. While it is there, {{houseEffect}}.",
-      "note": "House-transit fallback. houseEffect is the per-planet transit-effect-house hook with {{houseTopic}} filled in, so the reader learns what this planet DOES to that area, not just that it is there."
+      "note": "House-transit fallback. houseEffect is the per-planet transit-effect-house hook with {{houseTopic}} filled in, so the reader learns what this planet DOES to that area, not just that it is there.",
+      "body_they": "{{timeOpen}}, {{transitRef}} is moving through {{otherPoss}} {{houseOrdinal}} house. While it is there, {{houseEffect}}.",
+      "headline_they": "{{transitTitle}} moving through {{otherPoss}} {{houseOrdinal}} house"
     },
     {
       "contentKey": "fallback-template/transit.retrograde",

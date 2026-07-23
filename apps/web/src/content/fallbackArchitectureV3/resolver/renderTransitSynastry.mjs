@@ -32,28 +32,41 @@ const NEEDS_ARTICLE = new Set(["sun", "moon", "north-node", "south-node"]);
 // mid-sentence reference: "the Sun", optionally with its current sign: "the Sun in Leo"
 const transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title(planet)}${sign ? ` in ${title(sign)}` : ""}`;
 
+
+// sentence-start window phrase -> mid-sentence ("Until Nov 13" -> "through Nov 13")
+const inlineWindow = (w) => {
+  if (!w) return null;
+  if (w.startsWith("Until ")) return "through " + w.slice(6);
+  if (w.startsWith("For the next")) return "over the next" + w.slice(12);
+  if (w.startsWith("For about")) return "for about" + w.slice(9);
+  return w.charAt(0).toLowerCase() + w.slice(1);
+};
 const card = (k) => cards.get(k) ?? null;
 const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, parts: [c.body], templateKey, contentKey: c.contentKey });
 
-export function renderTransitHouse({ planet, house, sign, window: win }) {
-  const c = card(`authored/transit-house/${planet}/${house}`);
-  if (c) return result(c, "authored/transit-house");
+export function renderTransitHouse({ planet, house, sign, window: win, voice = "you" }) {
+  const v = voice === "you" ? "you" : "they";
+  if (v === "you") { const c = card(`authored/transit-house/${planet}/${house}`); if (c) return result(c, "authored/transit-house"); }
   const T = tpl("fallback-template/transit.house");
   const houseTopic = vocab.get(`fallback-vocab/house-topic/${house}`)?.body;
-  const effectRaw = hooks.get(`fallback-hook/transit-effect-house/${planet}`)?.body_you;
+  const effectRaw = hookVoice(`fallback-hook/transit-effect-house/${planet}`, v);
   const ctx = {
     timeOpen: win ?? WINDOW_HOUSE[planet] ?? "Currently",
     transitTitle: title(planet), transitRef: transitRef(planet, sign), houseOrdinal: ordinal(house),
-    houseTopic,
+    houseTopic, otherPoss: v === "they" ? `${voice}'s` : null,
     // what this planet DOES to that area of life, not just that it is visiting
     houseEffect: effectRaw && houseTopic ? fill(effectRaw, { houseTopic }) : null,
   };
   for (const slot of T.requiredSlots) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-house ${planet}/${house} (no card, fallback slot ${slot} missing)`);
-  const body = fill(T.body, ctx);
-  return { headline: fill(T.headline, ctx), body, parts: [body], templateKey: T.contentKey };
+  const body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+  return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
-export function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win }) {
+export function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }) {
+  // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
+  // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
+  const v = voice === "you" ? "you" : "they";
+  const otherPoss = v === "they" ? `${voice}'s` : null;
   const g = GROUP[aspect] ?? aspect; // accepts group names directly
   // Batch 3 sharing rule, direction-aware: a conjunction reads as the hard unit when a
   // heavy planet is involved and as the soft unit otherwise. Soft/hard only borrow the
@@ -75,22 +88,22 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-  for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
+  if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
   // fallback template
   const T = tpl("fallback-template/transit.aspect");
   // the natal planet's life areas, so type lines can say WHAT gets easier/harder
   const ANGLES = new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
   const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
   // angle targets get their own type line when one exists (richer phrasing per owner)
-  const typeLineRaw = (ANGLES.has(natal) ? hooks.get(`fallback-hook/transit-aspect-type/${aspect}/angle`)?.body_you : null)
-    ?? hooks.get(`fallback-hook/transit-aspect-type/${aspect}`)?.body_you;
+  const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null)
+    ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
   // what to expect from THIS transiting planet, landing on the natal planet's areas.
   // soft contacts (trine, sextile, light conjunction) use the flowing effect;
   // hard contacts (square, opposition, heavy conjunction) use the pressure effect.
   const effectFamily = g === "soft" || (g === "conjunction" && !isHeavy) ? "soft" : "hard";
   // variant rotation for repeat viewers: engine passes variant 2 or 3, base otherwise
-  const effectRaw = (variant ? hooks.get(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`)?.body_you : null)
-    ?? hooks.get(`fallback-hook/transit-effect-${effectFamily}/${transiting}`)?.body_you;
+  const effectRaw = (v === "you" && variant ? hooks.get(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`)?.body_you : null)
+    ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
   const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
   const ctx = {
     timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
@@ -98,17 +111,20 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
     aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
     transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
     // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they
-    natalCore: hooks.get(`fallback-hook/natal-core/${natal}`)?.body_you ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body,
+    natalCore: hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body,
+    otherPoss,
+    timeInline: inlineWindow(win ?? WINDOW_ASPECT[transiting] ?? "currently"),
+    transitEffectLine: transitEffect ? `${transitEffect.charAt(0).toUpperCase()}${transitEffect.slice(1).replace(/\.$/, "")}.` : null,
     transitTypeLine: typeLineRaw ? fill(typeLineRaw, { natalArea, transitEffect }) : typeLineRaw,
   };
   for (const slot of T.requiredSlots) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
-  let body = fill(T.body, ctx);
+  let body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
   // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
-  if (isRetrograde) {
+  if (isRetrograde && v === "you") {
     const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
     if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
   }
-  return { headline: fill(T.headline, ctx), body, parts: [body], templateKey: T.contentKey };
+  return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
 // Retrograde season card: what this planet's retrograde means and what to do with it.

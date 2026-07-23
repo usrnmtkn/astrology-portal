@@ -64,7 +64,7 @@ const sunSquareMoon = resolveSourceGroundedV2("me.natal_aspect", {
 });
 assert.equal(sunSquareMoon.readerAuthority, "approved-fallback");
 assert.equal(sunSquareMoon.fallbackId, "fallback-hook/me.natal-aspect/sun-square-moon");
-assert.match(sunSquareMoon.expandedCopy ?? "", /That is your Sun square your Moon: identity and emotion .+\./is);
+assert.match(sunSquareMoon.expandedCopy ?? "", /That's your Sun square Moon: identity and the feeling body .+\./is);
 assert.doesNotMatch(sunSquareMoon.expandedCopy ?? "", /\{\{|\}\}|SOURCE_GAP|Part of you wants one thing/u);
 
 const mercuryConjunctSun = resolveSourceGroundedV2("me.natal_aspect", {
@@ -91,7 +91,7 @@ const marsSquareSunFriend = resolveSourceGroundedV2("me.natal_aspect", {
 assert.equal(marsSquareSunFriend.readerAuthority, "approved-fallback");
 assert.match(
   marsSquareSunFriend.expandedCopy ?? "",
-  /That is Marie's Mars square their Sun: drive and identity .+\./u,
+  /That's Marie's Mars square Sun: drive and identity .+\./u,
   "friend natal aspect fallback must close with the chart owner's possessive headline"
 );
 assert.match(
@@ -115,7 +115,7 @@ const sunSextileNeptuneFriend = resolveSourceGroundedV2("me.natal_aspect", {
 assert.equal(sunSextileNeptuneFriend.readerAuthority, "approved-fallback");
 assert.match(
   sunSextileNeptuneFriend.expandedCopy ?? "",
-  /That is Marie's Sun sextile their Neptune/u,
+  /That's Marie's Sun sextile Neptune/u,
   "friend natal aspect fallback must name the chart owner in the closing astrology line"
 );
 assert.doesNotMatch(

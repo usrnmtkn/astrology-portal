@@ -178,6 +178,26 @@ console.log("Rendered 12 Lilith sky placements.");
   console.log(`Rendered ${lt} Lilith transit/synastry pieces.`);
 }
 
+
+// Friend-voice transit cards: full grid, no second-person leaks, authored library never leaks
+{
+  let fv = 0;
+  for (const tr of SKY_PL) for (const nat of ["sun","moon","venus","saturn","lilith"]) for (const asp of ["conjunction","square","trine"]) {
+    try {
+      const r = renderTransitAspect({ transiting: tr, natal: nat, aspect: asp, voice: "Sofia" });
+      if (/\b(you|your|yourself)\b/i.test(r.body + " " + r.headline)) fail(`friend transit ${tr}/${asp}/${nat}: second-person leak`);
+      if (r.contentKey) fail(`friend transit ${tr}/${asp}/${nat}: authored card leaked into friend view`);
+      fv++;
+    } catch (e) { fail(`friend transit ${tr}/${asp}/${nat}: ${e.message}`); }
+  }
+  for (const pl of ["jupiter","saturn","mars"]) for (let h = 1; h <= 12; h++) {
+    const r = renderTransitHouse({ planet: pl, house: h, voice: "Sofia" });
+    if (/\b(you|your)\b/i.test(r.body)) fail(`friend house ${pl}/${h}: second-person leak`);
+    fv++;
+  }
+  console.log(`Rendered ${fv} friend-voice transit cards.`);
+}
+
 console.log(`Rendered ${syn} synastry aspect combos, ${lib.authoredCards.length} authored cards checked.`);
 console.log(failures === 0 ? "PASS: transit + synastry layer checks passed." : `${failures} failure(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -62,6 +62,7 @@ export type HouseTransitFacts = {
   sign?: string | null;
   motion?: "direct" | "retrograde" | null;
   window?: string | null;
+  voice?: "you" | string;
 };
 
 type HouseTransitUnit = {
@@ -162,6 +163,10 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
   return {
     ...renderer,
     renderTransitHouse(facts: HouseTransitFacts) {
+      if (facts.voice && facts.voice !== "you") {
+        return renderer.renderTransitHouse(facts);
+      }
+
       const planet = normalizeHouseContentPart(facts.planet);
       const directKey = `house.${planet}.${facts.house}`;
       const requestedKey = facts.motion === "retrograde" ? `${directKey}.rx` : directKey;

@@ -14,7 +14,7 @@ The package supplies COPY. The app engine supplies SELECTION. Codex implements s
 
 ### Rendering (package side)
 
-- `renderTransitAspect({ transiting, natal, aspect, variant, window })`
+- `renderTransitAspect({ transiting, natal, aspect, variant, window, voice })` — pass `voice: friendName` on friend charts: renders authored friend-voice fallback only (the reader-voice authored library never appears in friend view; variants are reader-only). Same for `renderTransitHouse`. Friend retro/return seasons: use `renderTransitLabel` one-liners, not full cards.
   - Authored cards render first (mirror rule, heavy-aware conjunction sharing); fallback template otherwise; SOURCE_GAP only for out-of-package bodies.
   - `window` override: pass an exact phrase ("For the next ten days") when the engine knows the real window; otherwise speed-based defaults apply (Moon = "Today", Sun/Mercury/Venus = "This week", Mars = "For the next couple of weeks", Jupiter = "This month", slow bodies = "For the next few months").
   - Covers all 13 transiting bodies x 16 natal targets (13 bodies + 4 angles) x 5 aspects: verified 1,040/1,040 render.
