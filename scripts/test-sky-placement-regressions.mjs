@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import fallbackSourceRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json" with { type: "json" };
 import fallbackTemplates from "../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json" with { type: "json" };
 import transitSynastryRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json" with { type: "json" };
+import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
   PACKAGE_VERSION
@@ -50,10 +51,17 @@ const anglePlacementRows = fallbackSourceRows.hookRows.filter((row) =>
 const dignityGlossaryRows = fallbackSourceRows.vocabularyRows.filter((row) =>
   row.contentKey.startsWith("fallback-vocab/dignity-glossary/")
 );
+const dignityLineRows = fallbackSourceRows.hookRows.filter((row) =>
+  row.contentKey.startsWith("fallback-hook/dignity-line/")
+);
+const bannedDignityWords = contentRoleContract.styleRules?.bannedWords ?? [];
+const bannedDignityPattern = bannedDignityWords.length > 0
+  ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
+  : null;
 
 assert.equal(PACKAGE_VERSION, "v3-2026-07-23d", "FallbackArchitectureV3 package version must expose the current imported stamp.");
 assert.equal(transitSynastryRows.authoredCards.length, 1_365, "23d must preserve the re-derived authored-card count.");
-assert.equal(fallbackSourceRows.hookRows.length, 1_992, "23d must expose the complete re-derived hook count.");
+assert.equal(fallbackSourceRows.hookRows.length, 2_019, "23d plus the durable dignity library must expose the complete hook count.");
 assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23d must preserve the re-derived vocabulary count.");
 assert.equal(fallbackTemplates.templates.length, 22, "23d must preserve the re-derived template count.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
@@ -61,6 +69,25 @@ assert.match(app, /Fallback package/, "App calculation diagnostics must show the
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
 assert.equal(anglePlacementRows.length, 24, "23c must provide all Ascendant and Midheaven placement sentences.");
 assert.equal(dignityGlossaryRows.length, 4, "23c must provide one generic glossary row for every dignity badge.");
+assert.equal(dignityLineRows.length, 28, "The durable dignity library must include 7 classical planets x 4 dignities.");
+for (const row of dignityLineRows) {
+  assert.equal(row.content_role, "fallback_hook", `${row.contentKey} must remain a fallback_hook.`);
+  assert.equal(row.review_status, "approved", `${row.contentKey} must remain approved.`);
+  assert.ok(row.body_you && row.body_they && row.body_sky, `${row.contentKey} must keep all three voice bodies.`);
+  assert.ok(
+    row.source_keys?.some((key) => key.startsWith("cc/dignity/")),
+    `${row.contentKey} must keep its cc/dignity source key.`
+  );
+  const bodies = `${row.body_you} ${row.body_they} ${row.body_sky}`;
+  assert.doesNotMatch(bodies, /[\u2013\u2014]/u, `${row.contentKey} must not contain en/em dashes.`);
+  if (bannedDignityPattern) {
+    assert.doesNotMatch(bodies, bannedDignityPattern, `${row.contentKey} must not contain banned words.`);
+  }
+  if (row.contentKey.startsWith("fallback-hook/dignity-line/domicile/")) {
+    assert.match(row.body_you, /\bhome sign/iu, `${row.contentKey} self voice must say home sign.`);
+    assert.match(row.body_they, /\bhome sign/iu, `${row.contentKey} friend voice must say home sign.`);
+  }
+}
 assert.match(debugRuntime, /fallback-vocab\/dignity-glossary/, "Runtime must expose package dignity glossary rows.");
 assert.match(placementRows, /fallbackV3DignityGlossary/, "Dignity badges must always read their generic package glossary.");
 assert.match(placementRows, /fallbackV3DignityLine/, "Dignity badges must layer the sparse planet-specific package line when present.");
