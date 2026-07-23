@@ -1131,48 +1131,6 @@ function contentFallbackPreview(content: ContentFallback | null | undefined) {
     || null;
 }
 
-function synastryEmergencyMadlibContent(
-  friendName: string,
-  comparisonName: string,
-  comparisonIsSelf: boolean,
-  contact: Omit<SynastryContact, "summary">,
-  generatedContent?: GeneratedContentMap,
-  friendPronouns?: PronounChoice | null,
-  comparisonPronouns?: PronounChoice | null,
-  relationshipType?: string | null
-) {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const isSamePlanetContact = isSamePlanetSynastryContact(contact.friendPoint.name, contact.yourPoint.name);
-  const contentKey = isSamePlanetContact
-    ? templateFallbackContentKeys.friendsSamePlanet
-    : templateFallbackContentKeys.friendsSynastryContact;
-  const slots = {
-    ...synastryTemplateSlots(
-      friendName,
-      contact.friendPoint.name,
-      contact.aspect,
-      comparisonName,
-      contact.yourPoint.name,
-      "friend",
-      {
-        personAPronouns: friendPronouns,
-        personBPronouns: comparisonPronouns,
-        personBIsReader: comparisonIsSelf
-      }
-    ),
-    planet: contact.friendPoint.name,
-    planetTopic: relationshipPlanetTopicSlot(contact.friendPoint.name, "friend"),
-    aspectFamily: samePlanetSynastryAspectFamily(contact.aspect),
-    relationshipContext: relationshipContextNoun(relationshipType),
-    orb: wholeDegreeOrb(contact.orb)
-  };
-
-  return liveGeneratedContent(generatedContent, contentKey, slots);
-}
-
 function synastryEmergencyMadlibPreview(
   friendName: string,
   comparisonName: string,
@@ -1183,19 +1141,15 @@ function synastryEmergencyMadlibPreview(
   comparisonPronouns?: PronounChoice | null,
   relationshipType?: string | null
 ) {
-  const madlib = synastryEmergencyMadlibContent(
-    friendName,
-    comparisonName,
-    comparisonIsSelf,
-    contact,
-    generatedContent,
-    friendPronouns,
-    comparisonPronouns,
-    relationshipType
-  );
-  const paragraphs = generatedContentParagraphs(madlib);
-
-  return paragraphs[0] || firstReaderFacingCopy([madlib?.body]) || null;
+  void friendName;
+  void comparisonName;
+  void comparisonIsSelf;
+  void contact;
+  void generatedContent;
+  void friendPronouns;
+  void comparisonPronouns;
+  void relationshipType;
+  return null;
 }
 
 function repairSynastrySurfaceCopy(
@@ -1283,37 +1237,15 @@ function madlibSynastrySection(
   comparisonPronouns?: PronounChoice | null,
   relationshipType?: string | null
 ): NormalizedSurfaceSection<SynastryContactSlot> | null {
-  const madlib = synastryEmergencyMadlibContent(
-    friendName,
-    comparisonName,
-    comparisonIsSelf,
-    contact,
-    generatedContent,
-    friendPronouns,
-    comparisonPronouns,
-    relationshipType
-  );
-  const body = firstReaderFacingCopy([
-    ...generatedContentParagraphs(madlib),
-    madlib?.body,
-    madlib?.summary
-  ]);
-
-  if (!madlib || !body) {
-    return null;
-  }
-
-  return {
-    slot: "scene",
-    required: true,
-    layer: "fallback",
-    tier: "source-based-madlib",
-    sourceKeys: [
-      madlib.contentKey,
-      generatedContentSourceFile(madlib)
-    ].filter(Boolean),
-    body
-  };
+  void friendName;
+  void comparisonName;
+  void comparisonIsSelf;
+  void contact;
+  void generatedContent;
+  void friendPronouns;
+  void comparisonPronouns;
+  void relationshipType;
+  return null;
 }
 
 function normalizeSynastryContactSurface(
