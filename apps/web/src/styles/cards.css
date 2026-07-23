@@ -71,7 +71,7 @@
 
 .natal-pattern-card--collapsed summary span {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
@@ -201,7 +201,7 @@
 
 .natal-pattern-card__activation summary span {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
@@ -266,7 +266,7 @@
 
 .soul-roadmap-card__header {
   display: grid;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   padding: var(--space-6) var(--card-padding) calc(var(--space-5) + var(--space-1) / 2);
 }
 
@@ -314,7 +314,7 @@
 
 .soul-roadmap-card__points span {
   display: grid;
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
   min-width: 0;
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--card-padding);
 }
@@ -373,7 +373,7 @@
 
 .career-archetype-card__header {
   display: grid;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   padding: calc(var(--space-5) + var(--space-1) / 2) var(--card-padding) var(--space-5);
 }
 
@@ -407,7 +407,7 @@
 
 .career-archetype-card__tldr {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .career-archetype-card__tldr strong {
@@ -428,7 +428,7 @@
 
 .career-archetype-card__factors span {
   display: grid;
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
   min-width: 0;
   padding: calc(var(--space-3) + var(--space-1) / 4) var(--card-padding);
 }
@@ -463,7 +463,7 @@
 
 .career-archetype-card__sections article {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   padding: var(--space-4) var(--card-padding) calc(var(--space-4) + var(--space-1) / 2);
 }
 
@@ -475,7 +475,7 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .career-archetype-card__sections code {
@@ -584,56 +584,56 @@
 .daily-dodont > div,
 .daily-special-section,
 .daily-behind-forecast {
-  background: var(--surface, #fff);
-  border: 1px solid var(--line, rgba(20, 24, 35, 0.12));
-  border-radius: 1.25rem;
-  padding: 1rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .daily-dodont {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--space-3);
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 1rem 0 1.5rem;
+  margin: var(--space-4) 0 var(--space-6);
 }
 
 .daily-dodont ul {
   display: grid;
-  gap: 0.45rem;
+  gap: var(--space-2);
   list-style: none;
-  margin: 0.75rem 0 0;
+  margin: var(--space-3) 0 0;
   padding: 0;
 }
 
 .daily-special-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 .daily-behind-forecast {
-  margin-top: 1.5rem;
+  margin-top: var(--space-6);
 }
 
 .daily-behind-forecast > div {
   display: grid;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 .daily-forecast-label {
   align-items: start;
   background: transparent;
   border: 0;
-  border-top: 1px solid var(--line, rgba(20, 24, 35, 0.12));
+  border-top: 1px solid var(--line);
   color: inherit;
   cursor: pointer;
   display: grid;
-  gap: 0.2rem;
-  padding: 0.75rem 0;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
   text-align: left;
 }
 
 .daily-forecast-label small {
-  color: var(--muted, #626875);
+  color: var(--muted);
 }
 
 @media (max-width: 640px) {
