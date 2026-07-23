@@ -18409,6 +18409,7 @@ function ManualChartsPanel({
               showHouses
               houseSignLabelStyle={houseSignLabelStyle}
               variant="composite"
+              aspectInspector
             />
           </RelationshipChartFullscreen>
         ) : null
@@ -18530,7 +18531,7 @@ function ManualChartsPanel({
               )}
               {friendProfileTab === "composite" && selectedCompositeSky && (
                 <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
+                  <div className="chart-shell chart-shell--composite-inspector">
                     <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
                       <SkyWheel
                         positions={selectedCompositeSky.positions}
@@ -18541,20 +18542,23 @@ function ManualChartsPanel({
                         showHouses
                         houseSignLabelStyle={houseSignLabelStyle}
                         variant="composite"
+                        aspectInspector
+                        aspectInspectorControls={(
+                          <RelationshipComparePicker
+                            variant="composite"
+                            options={relationshipComparisonOptions}
+                            selectedId={selectedRelationshipComparison?.id ?? "self"}
+                            open={relationshipComparisonPickerOpen}
+                            onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                            onSelect={(id) => {
+                              setRelationshipComparisonChartId(id);
+                              setRelationshipComparisonPickerOpen(false);
+                            }}
+                          />
+                        )}
                       />
                     </div>
                   </div>
-                  <RelationshipComparePicker
-                    variant="composite"
-                    options={relationshipComparisonOptions}
-                    selectedId={selectedRelationshipComparison?.id ?? "self"}
-                    open={relationshipComparisonPickerOpen}
-                    onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                    onSelect={(id) => {
-                      setRelationshipComparisonChartId(id);
-                      setRelationshipComparisonPickerOpen(false);
-                    }}
-                  />
                 </div>
               )}
             </div>
@@ -18969,7 +18973,6 @@ function ManualChartsPanel({
                         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                         <span className="aspect-row-copy">
                           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                          <span className="aspect-row-subtitle ui-pill ui-pill--muted">{relationshipThemeTitle(aspect.from, aspect.to, aspect.type)}</span>
                           <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent, selectedChart.relationshipType)}</p>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>

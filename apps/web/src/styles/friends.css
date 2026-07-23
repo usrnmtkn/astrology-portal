@@ -734,6 +734,12 @@
   overflow: visible;
 }
 
+.chart-shell--composite-inspector,
+.chart-shell--composite-inspector > .chart-frame {
+  height: auto;
+  aspect-ratio: auto;
+}
+
 .friend-chart-page--synastry,
 .friend-chart-page--composite {
   --friend-wheel-stack-gap: 18px;
