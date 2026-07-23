@@ -971,7 +971,7 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
         slot: "description",
         required: false,
         layer,
-        tier: layer === "authored" ? "stored-source" : "source-based-madlib",
+        tier: layer === "authored" ? "stored-source" : "v3-package",
         sourceKeys: [content.contentKey],
         body: generatedDescription
       }]
@@ -995,7 +995,7 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
       slot: "description",
       required: false,
       layer: "fallback",
-      tier: "source-based-madlib",
+      tier: "v3-package",
       sourceKeys: [`fallbackArchitectureV3.calendarEvent.${event.type}`],
       body: packageDescription
     }]
