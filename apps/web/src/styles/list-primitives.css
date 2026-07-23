@@ -35,7 +35,7 @@
 .placement-section .planet-placement-list,
 .placement-section .placement-table,
 .aspect-section .aspect-row-list {
-  gap: 10px;
+  gap: var(--card-list-gap);
 }
 
 .planet-placement-list > :where(.placement-table-row, .planet-placement-row) {

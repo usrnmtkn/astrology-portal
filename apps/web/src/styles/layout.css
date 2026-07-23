@@ -35,7 +35,8 @@
 .sky-layout {
   display: grid;
   grid-template-columns: var(--chart-column-width) var(--content-column-width);
-  gap: var(--chart-layout-gap);
+  column-gap: var(--chart-layout-gap);
+  row-gap: var(--content-stack-gap);
   align-items: start;
   width: var(--chart-content-width);
   margin-inline: auto;
@@ -60,10 +61,11 @@
 
 .chart-layout__content,
 .sky-content-column {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-auto-flow: row;
+  align-content: start;
   min-width: 0;
-  gap: var(--stack-gap);
+  gap: var(--content-stack-gap);
   padding-top: 0;
 }
 

@@ -203,15 +203,15 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["current placement meaning"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizeSkyPlacementSurface resolves READY source-grounded V2 sky placement copy first, then a source-based madlib fallback frame.",
-    risk: "Generated slot-template and fallback-hook placement prose no longer feed the detail body; if those should return, they need explicit source-grounded or madlib slots.",
-    nextAction: "Expose section-level layer/tier/sourceKeys in the detail UI and create optional slots for retrograde nuance if needed.",
+    currentRenderPath: "normalizeSkyPlacementSurface resolves LIVE dashboard rows keyed sky.<planet>.<sign>[.rx] first, then the sky-writing-v1 authored package, then the package fallback atoms as a safety tier.",
+    risk: "Dashboard edits now override the package, but any new imported package still needs admin local-row visibility/materialization so the owner can promote edits to generated_interpretations.",
+    nextAction: "Keep the Sky Writing Articles rows visible in admin and expose section-level layer/tier/sourceKeys in the detail UI.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "sourceGroundedRuntime.ts", path: "apps/web/src/content/sourceGroundedRuntime.ts", role: "source-grounded" },
-      { label: "sourceGroundedV2.ts", path: "apps/web/src/content/sourceGroundedV2.ts", role: "source-grounded" },
-      { label: "finalSourceGroundedDashboardRecords.json", path: "apps/web/src/content/finalSourceGroundedDashboardRecords.json", role: "source-grounded" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/fallback-source-rows-v3.json", role: "fallback-package" }
+      { label: "generated_interpretations sky.* rows", path: "generated_interpretations:sky.{planet}.{sign}[.rx]", role: "stored-source" },
+      { label: "sky-articles-authored-v1.json", path: "apps/web/src/content/sky-writing/sky-articles-authored-v1.json", role: "source-grounded" },
+      { label: "fallback-atoms-v1.json", path: "apps/web/src/content/sky-writing/fallback-atoms-v1.json", role: "fallback-package" },
+      { label: "sign-colors-v1.json", path: "apps/web/src/content/sky-writing/sign-colors-v1.json", role: "fallback-package" }
     ]
   },
   {

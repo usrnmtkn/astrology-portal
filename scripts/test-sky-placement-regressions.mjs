@@ -146,6 +146,7 @@ function generatedContentParagraphsForTest(content) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const skyWriting = read("apps/web/src/content/skyWriting.ts");
 const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const themeCss = read("apps/web/src/styles/theme.css");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
@@ -518,9 +519,9 @@ assert.ok(
   && !app.includes("skyAspectContentKey(aspect.from, aspect.type, aspect.to)")
   && !app.includes("skyPlacementAppDisplaySource(generated)")
   && !app.includes("appDisplaySource ===")
-  && app.indexOf("skyPlacementWritingSection(position, beats)") >= 0
-  && app.includes("void generatedContent;"),
-  "Sky pages must use Sky writing routing: authored article first, then fallback atoms, without saved/source-grounded prose outranking the package."
+  && app.indexOf("skyPlacementWritingSection(position, beats, generatedContent)") >= 0
+  && app.includes("dashboardSkyPlacementWritingSection(position, generatedContent)"),
+  "Sky pages must use Sky writing routing with dashboard-authored overrides, then package-authored articles, then fallback atoms."
 );
 assert.ok(
   app.includes("normalizedSurfacePreview(")
@@ -598,10 +599,63 @@ assert.ok(
   && app.includes("formatSkyWritingAspectBeat({"),
   "Sky placement aspect rows must resolve through the Sky writing computed-beat wrapper."
 );
+assert.ok(
+  /export function formatSkyWritingAspectBeat\(_beat: SkyWritingAspectBeat\)\s*\{\s*return "";\s*\}/.test(skyWriting),
+  "Sky writing must omit computed bare aspect facts until a narrated beat atom exists."
+);
+assert.ok(
+  /function authoredRetrogradeArticle[\s\S]*textValue\(header\.whenSlot, placement\),[\s\S]*textValue\(header\.what, placement\),[\s\S]*textValue\(header\.tldr, placement\)/.test(skyWriting)
+  && !/function authoredRetrogradeArticle[\s\S]*`When:/.test(skyWriting)
+  && !/function authoredRetrogradeArticle[\s\S]*`What:/.test(skyWriting)
+  && !/function authoredRetrogradeArticle[\s\S]*`TLDR:/.test(skyWriting),
+  "Authored retrograde Sky articles must render package text without synthesized header labels."
+);
+assert.ok(!app.includes("TODAY left") && !skyWriting.includes("TODAY left"), "Sky countdown copy must not leak the TODAY left slot.");
+assert.ok(
+  app.includes("function dashboardSkyPlacementWritingSection(")
+  && app.includes("const contentKey = skyWritingDashboardContentKey(position)")
+  && app.includes("const content = generatedContent?.get(contentKey)")
+  && app.includes("tier: \"dashboard-sky-writing\"")
+  && app.includes("const dashboardSection = dashboardSkyPlacementWritingSection(position, generatedContent)"),
+  "Sky placement articles must prefer LIVE dashboard rows before the imported Sky writing package."
+);
+assert.ok(
+  adminDashboard.includes("skyWritingArticles")
+  && adminDashboard.includes("function localSkyWritingAdminRows()")
+  && adminDashboard.includes("id: `local-sky-writing:${article.key}`")
+  && adminDashboard.includes("content_key: article.key")
+  && adminDashboard.includes("provider: \"local-sky-writing-package\"")
+  && adminDashboard.includes("normalizedKey.match(/^sky[./-]([a-z-]+)[./-][a-z-]+(?:[./-]rx)?$/)")
+  && adminDashboard.includes("local-sky-writing-package|manual-admin")
+  && adminDashboard.includes("() => [...visibleLocalSkyWritingRows, ...visibleLocalSnapshots, ...rows]"),
+  "Content dashboard admin must expose Sky writing package rows and hide them after matching generated_content rows exist."
+);
 assert.ok(!/for everyone at once/i.test(app), "Sky runtime code must not contain the retired collective aspect wrapper.");
 assert.ok(app.includes("dedupeTransitAxisContacts(rankedTransitItems"), "Friend transits must dedupe duplicate Ascendant/Descendant and MC/IC axis contacts before rendering.");
 assert.ok(app.includes("friendTransitFactLine(transit, selectedChart.displayName)"), "Friend transit cards must render owner-aware fact lines.");
 assert.ok(app.includes("transitAspectTechnicalVerb(transit.aspect)"), "Transit fact copy must use technical aspect verbs such as conjunct.");
+assert.ok(
+  app.includes("function groupFriendNatalAspects(aspects: SkySnapshot[\"aspects\"]): FriendNatalAspectGroup[]")
+  && app.includes("label: \"Gifts\" as const")
+  && app.includes("label: \"Lessons\" as const")
+  && app.includes("voice: ownerContext?.ownerName ?? \"you\""),
+  "Friend natal aspects must use the natal renderer with friend voice and group rows as Gifts/Lessons."
+);
+assert.ok(
+  app.includes("function renderReaderDirectedSynastryContact(contact: SynastryContact, friendName: string)")
+  && app.includes("planetA: normalizeContentIdPart(contact.yourPoint.name)")
+  && app.includes("planetB: normalizeContentIdPart(contact.friendPoint.name)")
+  && app.includes("otherName: friendName")
+  && app.includes("tag: rendered.tag ?? null"),
+  "Friend synastry cards must use the reader-directed synastry renderer without swapping A/B."
+);
+assert.ok(
+  app.includes("...readerTransits.map((transit) => ({ transit, endpoint: contact.yourPoint.name }))")
+  && app.includes("...friendTransits.map((transit) => ({ transit, endpoint: contact.friendPoint.name }))")
+  && app.includes("Math.min(...transit.arc) <= 1")
+  && app.includes("transitSynastryFallbackRendererV3.renderBondTransit({"),
+  "Connection transits must render through renderBondTransit and gate against either shown synastry endpoint within one degree."
+);
 assert.ok(themeCss.includes("--chart-transit-degree-size: var(--chart-degree-size);"), "Transit wheel degrees must use the same size token as natal wheel degrees.");
 assert.ok(/friendProfileTab === "transits"\s*\?\s*Boolean\(selectedChart\?\.natalChart\)/.test(app), "Friend Transits must keep the chart rail when a natal chart is available.");
 assert.ok(!/transit\.note<\/p>/.test(app), "Friend transit cards must not render raw transit.note fallback copy.");

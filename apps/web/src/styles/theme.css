@@ -345,12 +345,12 @@
   --snap-next-title-size: 14px;
   --snap-next-subtitle-size: 13px;
   --sky-card-padding: var(--card-row-padding);
-  --sky-card-min-height: var(--lunar-card-min-height);
-  --sky-card-grid-gap: var(--lunar-card-grid-gap);
+  --sky-card-min-height: var(--card-row-min-height);
+  --sky-card-grid-gap: var(--card-row-gap);
   --sky-card-glyph-column-size: var(--lunar-card-glyph-column-size);
   --sky-card-mobile-padding: var(--card-row-padding-compact);
-  --sky-card-mobile-min-height: var(--lunar-card-mobile-min-height);
-  --sky-card-mobile-grid-gap: var(--lunar-card-mobile-grid-gap);
+  --sky-card-mobile-min-height: var(--card-row-min-height);
+  --sky-card-mobile-grid-gap: var(--card-row-gap);
   --sky-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-column-size);
   --sky-placement-card-padding: var(--space-6) calc(var(--space-7) - var(--space-1)) var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
   --sky-placement-card-gap: 26px;
@@ -485,6 +485,7 @@
   --card-list-gap: var(--space-2);
   --card-stack-gap: var(--space-2);
   --card-row-gap: var(--sp-2);
+  --card-row-min-height: 0px;
   --card-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5);
   --card-row-padding-compact: var(--space-3) var(--space-4);
   --card-row-padding-comfortable: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
@@ -497,6 +498,8 @@
   --snapshot-icon-size: 44px;
   --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
   --layout-gap: clamp(var(--sp-5), 6vw, 112px);
+  --content-stack-gap: var(--stack-gap);
+  --mobile-layout-gap: calc(var(--space-8) - var(--space-1));
   --gut: clamp(16px, 5vw, 24px);
   --col: 560px;
   --radius: 20px;
@@ -547,7 +550,7 @@
   --aspect-card-radius: var(--card-radius);
   --aspect-card-shadow: var(--card-shadow);
   --aspect-card-padding: var(--card-row-padding-comfortable);
-  --aspect-card-gap: 14px;
+  --aspect-card-gap: var(--card-row-gap);
   --aspect-card-min-height: 0px;
   --aspect-card-title-size: var(--text-card-title);
   --aspect-card-title-weight: var(--weight-medium);

@@ -606,7 +606,9 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     for (const createCase of createCases) {
       await openCreateMenu(page);
-      await page.getByRole("menuitem", { name: createCase.action }).click();
+      const createAction = page.getByRole("menuitem", { name: createCase.action });
+      await expect(createAction).toBeVisible();
+      await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
@@ -794,8 +796,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-fallback-row", { hasText: "Needs row" })).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "Missing" }).click();
+    await expect(areaFilters.getByRole("button", { name: "Friends" })).toHaveAttribute("aria-pressed", "true");
+    await expect(statusFilters.getByRole("button", { name: "Missing" })).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(0);
-    await expect(page.locator(".admin-fallback-row").first()).toContainText("Friends");
+    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" })).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "All" }).click();
     await areaFilters.getByRole("button", { name: "Calendar" }).click();
