@@ -1,7 +1,7 @@
 {
  "schema": "tldrastro-fallback-source-rows-v3",
  "version": "3.0.0",
- "note": "Structured source material + vocabulary for fallback generation. content_role governs rendering: vocabulary rows fill template slots only; fallback_source rows NEVER render. Grammar frames per contracts/CONTENT-ROLE-CONTRACT.json. review_status=approved_reuse means the body is carried unchanged from an already-approved bank (CC planet rows, existing fallback-vocab); needs_review rows are new drafts grounded in the cited source_keys and require editorial sign-off before the resolver treats them as eligible. hookRows are fallback_hook rows with dual-voice authored variants (body_you / body_they); {{possessive}} is the only token substituted. STYLE RULES: no em dashes; vocabulary bodies must be verbatim (or selection-only) from approved source rows cited in source_keys. Generic 'you' inside verbatim CC wording is acceptable in both voices. APPROVED: owner reviewed rendered samples in chat on 2026-07-21; all drafted rows flipped needs_review -> approved.",
+ "note": "Structured source material + vocabulary for fallback generation. content_role governs rendering: vocabulary rows fill template slots only; fallback_source rows NEVER render. Grammar frames per contracts/CONTENT-ROLE-CONTRACT.json. review_status=approved_reuse means the body is carried unchanged from an already-approved bank (CC planet rows, existing fallback-vocab); needs_review rows are new drafts grounded in the cited source_keys and require editorial sign-off before the resolver treats them as eligible. hookRows are fallback_hook rows with dual-voice authored variants (body_you / body_they); {{possessive}} is the only token substituted. STYLE RULES: no em dashes; vocabulary bodies must be verbatim (or selection-only) from approved source rows cited in source_keys. Generic 'you' inside verbatim CC wording is acceptable in both voices. APPROVED: owner reviewed rendered samples in chat on 2026-07-21; all drafted rows flipped needs_review -> approved.\n\nExported from dashboard/Supabase on 2026-07-23T21:01:50.867Z; this file is the emergency local snapshot, not the source of truth.",
  "vocabularyRows": [
   {
    "contentKey": "fallback-vocab/sign-need/aries",
@@ -8840,10 +8840,12 @@
    "body_they": "Astrologers call the Moon 'in fall' in Scorpio, meaning feelings this deep are heavy to carry, and they carry them better than they give themselves credit for.",
    "review_status": "approved",
    "source_keys": [
-    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio"
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio",
+    "cc/dignity/fall/moon"
    ],
-   "note": "plain-language pass applied",
-   "approved_via": "owner chat review 2026-07-21"
+   "note": "plain-language pass applied; sky voice grounded in cc dignity article",
+   "approved_via": "owner chat review 2026-07-21",
+   "body_sky": "Astrologers call the Moon 'in fall' in Scorpio: feelings run deep and heavy here, so the collective mood turns private and intense, and lightness has to be worked for right now."
   },
   {
    "contentKey": "fallback-hook/placement-sentence/moon/aries",
@@ -32477,6 +32479,384 @@
     "package natal-aspect register"
    ],
    "notes": "Synastry pair copy: points to points (final coverage pass), natal-depth register with signature closing."
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Jupiter 'in detriment' in the signs opposite the ones it rules: the big vision scatters into details here, so growth gets second-guessed and faith takes effort while it lasts.",
+   "body_you": "Astrologers call Jupiter 'in detriment' in the signs opposite the ones it rules, meaning the big picture scatters into detail, so you second-guess the good things: pick one path and let some things stay whole.",
+   "body_they": "Astrologers call Jupiter 'in detriment' in the signs opposite the ones it rules, meaning the big picture scatters into detail, so they second-guess the good things: they do better to pick one path and let some things stay whole.",
+   "contentKey": "fallback-hook/dignity-line/detriment/jupiter",
+   "source_keys": [
+    "cc/dignity/detriment/jupiter"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mars 'in detriment' in the signs opposite the ones it rules: action slows here, so drive waits, defends, or talks it over before it moves while it lasts.",
+   "body_you": "Astrologers call Mars 'in detriment' in the signs opposite the ones it rules, meaning action slows here, so you weigh and defend before you move: name what you want out loud so it does not turn to resentment.",
+   "body_they": "Astrologers call Mars 'in detriment' in the signs opposite the ones it rules, meaning action slows here, so they weigh and defend before moving: they do better to name what they want out loud so it does not turn to resentment.",
+   "contentKey": "fallback-hook/dignity-line/detriment/mars",
+   "source_keys": [
+    "cc/dignity/detriment/mars"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mercury 'in detriment' in the signs opposite the ones it rules: the big picture crowds out the fine print here, so facts blur and details take effort to pin down while it lasts.",
+   "body_you": "Astrologers call Mercury 'in detriment' in the signs opposite the ones it rules, meaning the big story wins over the fine print, so you reach for meaning fast: slow down and check the facts before you commit.",
+   "body_they": "Astrologers call Mercury 'in detriment' in the signs opposite the ones it rules, meaning the big story wins over the fine print, so they reach for meaning fast: they do better to check the facts before committing.",
+   "contentKey": "fallback-hook/dignity-line/detriment/mercury",
+   "source_keys": [
+    "cc/dignity/detriment/mercury"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Moon 'in detriment' in Capricorn: far from home here, so feelings get handled like tasks and comfort takes deliberate effort while it's here.",
+   "body_you": "Astrologers call the Moon 'in detriment' in Capricorn, meaning feeling sits far from home here, so you handle emotions like tasks: let yourself be cared for, not just capable.",
+   "body_they": "Astrologers call the Moon 'in detriment' in Capricorn, meaning feeling sits far from home here, so they handle emotions like tasks: they let themselves be cared for, not just capable.",
+   "contentKey": "fallback-hook/dignity-line/detriment/moon",
+   "source_keys": [
+    "cc/dignity/detriment/moon"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Saturn 'in detriment' in the signs opposite the ones it rules: limits feel colder here, so warmth and control pull against each other, and comfort takes deliberate work while it lasts.",
+   "body_you": "Astrologers call Saturn 'in detriment' in the signs opposite the ones it rules, meaning limits and warmth pull against each other, so you guard your softness: let people close without dropping your standards.",
+   "body_they": "Astrologers call Saturn 'in detriment' in the signs opposite the ones it rules, meaning limits and warmth pull against each other, so they guard their softness: they can let people close without dropping their standards.",
+   "contentKey": "fallback-hook/dignity-line/detriment/saturn",
+   "source_keys": [
+    "cc/dignity/detriment/saturn"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Sun 'in detriment' in Aquarius: out of its element here, so the group matters more than the spotlight, and standing out takes extra effort while it's here.",
+   "body_you": "Astrologers call the Sun 'in detriment' in Aquarius, meaning it works against type here, so you put the group first: build the gifts that let you stand out while you share the spotlight.",
+   "body_they": "Astrologers call the Sun 'in detriment' in Aquarius, meaning it works against type here, so they put the group first: they build the gifts that let them stand out while sharing the spotlight.",
+   "contentKey": "fallback-hook/dignity-line/detriment/sun",
+   "source_keys": [
+    "cc/dignity/detriment/sun"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Venus 'in detriment' in the signs opposite the ones it rules: love runs hot or all-or-nothing here, so desire skips the niceties and connection takes more effort while it lasts.",
+   "body_you": "Astrologers call Venus 'in detriment' in the signs opposite the ones it rules, meaning love runs rough or all-or-nothing here, so you skip the niceties: your courage and depth are the draw once you let them show.",
+   "body_they": "Astrologers call Venus 'in detriment' in the signs opposite the ones it rules, meaning love runs rough or all-or-nothing here, so they skip the niceties: their courage and depth are the draw once they let them show.",
+   "contentKey": "fallback-hook/dignity-line/detriment/venus",
+   "source_keys": [
+    "cc/dignity/detriment/venus"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Jupiter 'in domicile' in the signs it rules: at home here, so optimism, faith, and the reach for something bigger come easily across the sky right now.",
+   "body_you": "Astrologers call Jupiter 'in domicile' in its home signs, meaning it works at full strength where it rules, so faith and optimism come naturally to you: you reach for more and usually find it.",
+   "body_they": "Astrologers call Jupiter 'in domicile' in its home signs, meaning it works at full strength where it rules, so faith and optimism come naturally to them: they reach for more and usually find it.",
+   "contentKey": "fallback-hook/dignity-line/domicile/jupiter",
+   "source_keys": [
+    "cc/dignity/domicile/jupiter"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mars 'in domicile' in the signs it rules: at home here, so drive, nerve, and appetite move direct and unmistakable across the sky right now.",
+   "body_you": "Astrologers call Mars 'in domicile' in its home signs, meaning it works at full strength where it rules, so drive and nerve come naturally to you: you go after what you want, fast or strategic.",
+   "body_they": "Astrologers call Mars 'in domicile' in its home signs, meaning it works at full strength where it rules, so drive and nerve come naturally to them: they go after what they want, fast or strategic.",
+   "contentKey": "fallback-hook/dignity-line/domicile/mars",
+   "source_keys": [
+    "cc/dignity/domicile/mars"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mercury 'in domicile' in the signs it rules: at home here, so thinking, talking, and sorting information move quick and sure-footed across the sky right now.",
+   "body_you": "Astrologers call Mercury 'in domicile' in its home signs, meaning it works at full strength where it rules, so thinking and talking come quick to you: play with ideas and trust your read on the details.",
+   "body_they": "Astrologers call Mercury 'in domicile' in its home signs, meaning it works at full strength where it rules, so thinking and talking come quick to them: they play with ideas and trust their read on the details.",
+   "contentKey": "fallback-hook/dignity-line/domicile/mercury",
+   "source_keys": [
+    "cc/dignity/domicile/mercury"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Moon 'in domicile' in Cancer: home in the sign it rules, so feelings surface easily and the collective mood reaches for comfort and safety right now.",
+   "body_you": "Astrologers call the Moon 'in domicile' in Cancer, its home sign, meaning it works at full strength here, so your feelings run close to the surface: rest, retreat, and the people you love keep you safe.",
+   "body_they": "Astrologers call the Moon 'in domicile' in Cancer, its home sign, meaning it works at full strength here, so their feelings run close to the surface: rest, retreat, and the people they love keep them safe.",
+   "contentKey": "fallback-hook/dignity-line/domicile/moon",
+   "source_keys": [
+    "cc/dignity/domicile/moon"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Saturn 'in domicile' in the signs it rules: at home here, so structure, discipline, and long effort hold firm across the sky right now.",
+   "body_you": "Astrologers call Saturn 'in domicile' in its home signs, meaning it works at full strength where it rules, so structure and discipline come naturally to you: put in the long hours and make things that hold.",
+   "body_they": "Astrologers call Saturn 'in domicile' in its home signs, meaning it works at full strength where it rules, so structure and discipline come naturally to them: they put in the long hours and make things that hold.",
+   "contentKey": "fallback-hook/dignity-line/domicile/saturn",
+   "source_keys": [
+    "cc/dignity/domicile/saturn"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Sun 'in domicile' in Leo: home in the sign it rules, so warmth, confidence, and the urge to be seen come easily right now.",
+   "body_you": "Astrologers call the Sun 'in domicile' in Leo, its home sign, meaning it shines at full strength here, so warmth and confidence come naturally to you: lead with an open heart and let yourself be seen.",
+   "body_they": "Astrologers call the Sun 'in domicile' in Leo, its home sign, meaning it shines at full strength here, so warmth and confidence come naturally to them: they lead with an open heart and want to be seen.",
+   "contentKey": "fallback-hook/dignity-line/domicile/sun",
+   "source_keys": [
+    "cc/dignity/domicile/sun"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Venus 'in domicile' in the signs it rules: at home here, so attraction, taste, and pleasure come naturally, and connection feels easy right now.",
+   "body_you": "Astrologers call Venus 'in domicile' in its home signs, meaning it works at full strength where it rules, so pleasure and taste come naturally to you: you make care and beauty feel effortless.",
+   "body_they": "Astrologers call Venus 'in domicile' in its home signs, meaning it works at full strength where it rules, so pleasure and taste come naturally to them: they make care and beauty feel effortless.",
+   "contentKey": "fallback-hook/dignity-line/domicile/venus",
+   "source_keys": [
+    "cc/dignity/domicile/venus"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Jupiter 'exalted' in Cancer: at its most generous here, so care, belonging, and shared good fortune expand across the collective right now.",
+   "body_you": "Astrologers call Jupiter 'exalted' in Cancer, meaning it gives generously here, so your care multiplies: build belonging and trust that there is enough to share.",
+   "body_they": "Astrologers call Jupiter 'exalted' in Cancer, meaning it gives generously here, so their care multiplies: they build belonging and trust that there is enough to share.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/jupiter",
+   "source_keys": [
+    "cc/dignity/exaltation/jupiter"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mars 'exalted' in Capricorn: at its most disciplined here, so effort turns patient and strategic, and the collective push is built to last right now.",
+   "body_you": "Astrologers call Mars 'exalted' in Capricorn, meaning it works best here, so your effort turns disciplined: set a hard goal, break it down, and outlast the burnout.",
+   "body_they": "Astrologers call Mars 'exalted' in Capricorn, meaning it works best here, so their effort turns disciplined: they set a hard goal, break it down, and outlast the burnout.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/mars",
+   "source_keys": [
+    "cc/dignity/exaltation/mars"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mercury 'exalted' in Virgo: at its sharpest here, so the collective mind gets precise, practical, and quick to spot what does not add up right now.",
+   "body_you": "Astrologers call Mercury 'exalted' in Virgo, meaning it sharpens here, so you cut big ideas into clear pieces: your fact-checking and eye for detail are hard to beat.",
+   "body_they": "Astrologers call Mercury 'exalted' in Virgo, meaning it sharpens here, so they cut big ideas into clear pieces: their fact-checking and eye for detail are hard to beat.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/mercury",
+   "source_keys": [
+    "cc/dignity/exaltation/mercury"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Moon 'exalted' in Taurus: at ease here, so emotions settle, comfort comes simply, and the collective mood knows how to calm itself right now.",
+   "body_you": "Astrologers call the Moon 'exalted' in Taurus, meaning it settles here, so comfort comes simply to you: good food, slow days, and knowing how to calm yourself.",
+   "body_they": "Astrologers call the Moon 'exalted' in Taurus, meaning it settles here, so comfort comes simply to them: good food, slow days, and knowing how to calm themselves.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/moon",
+   "source_keys": [
+    "cc/dignity/exaltation/moon"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Saturn 'exalted' in Libra: at its fairest here, so commitments, boundaries, and hard choices come out balanced and well-reasoned right now.",
+   "body_you": "Astrologers call Saturn 'exalted' in Libra, meaning it judges fairly here, so you set clear, balanced boundaries: you know when to use charm and when to hold the line.",
+   "body_they": "Astrologers call Saturn 'exalted' in Libra, meaning it judges fairly here, so they set clear, balanced boundaries: they know when to use charm and when to hold the line.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/saturn",
+   "source_keys": [
+    "cc/dignity/exaltation/saturn"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Sun 'exalted' in Aries: at its most vital here, so courage runs high and the collective mood chases what it wants without waiting for permission.",
+   "body_you": "Astrologers call the Sun 'exalted' in Aries, meaning it thrives here, so you chase what you want without apology: ambition matters to you more than being liked.",
+   "body_they": "Astrologers call the Sun 'exalted' in Aries, meaning it thrives here, so they chase what they want without apology: ambition matters to them more than being liked.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/sun",
+   "source_keys": [
+    "cc/dignity/exaltation/sun"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Venus 'exalted' in Pisces: at its most tender here, so affection turns dreamy and generous, and the collective heart forgives easily right now.",
+   "body_you": "Astrologers call Venus 'exalted' in Pisces, meaning it softens here, so love turns tender and imaginative for you: you dream romance into being and forgive easily.",
+   "body_they": "Astrologers call Venus 'exalted' in Pisces, meaning it softens here, so love turns tender and imaginative for them: they dream romance into being and forgive easily.",
+   "contentKey": "fallback-hook/dignity-line/exaltation/venus",
+   "source_keys": [
+    "cc/dignity/exaltation/venus"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Jupiter 'in fall' in Capricorn: optimism runs cautious here, so growth comes slow and only after the work, and abundance has to be earned right now.",
+   "body_you": "Astrologers call Jupiter 'in fall' in Capricorn, meaning optimism runs cautious here, so you want proof before you bet: lean into faith and your slow, earned abundance actually lasts.",
+   "body_they": "Astrologers call Jupiter 'in fall' in Capricorn, meaning optimism runs cautious here, so they want proof before they bet: leaning into faith, their slow, earned abundance actually lasts.",
+   "contentKey": "fallback-hook/dignity-line/fall/jupiter",
+   "source_keys": [
+    "cc/dignity/fall/jupiter"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mars 'in fall' in Cancer: drive goes indirect here, so anger moves sideways and effort protects more than it attacks, even as it recovers with surprising grit right now.",
+   "body_you": "Astrologers call Mars 'in fall' in Cancer, meaning drive goes indirect here, so your anger moves sideways: aim that energy at protecting what you love and it becomes real staying power.",
+   "body_they": "Astrologers call Mars 'in fall' in Cancer, meaning drive goes indirect here, so their anger moves sideways: aimed at protecting what they love, it becomes real staying power.",
+   "contentKey": "fallback-hook/dignity-line/fall/mars",
+   "source_keys": [
+    "cc/dignity/fall/mars"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Mercury 'in fall' in Pisces: logic goes soft here, so intuition leads over facts and clear thinking has to be worked for across the sky right now.",
+   "body_you": "Astrologers call Mercury 'in fall' in Pisces, meaning logic goes soft here, so you think heart-first: give your ideas a container and your imagination becomes a real gift.",
+   "body_they": "Astrologers call Mercury 'in fall' in Pisces, meaning logic goes soft here, so they think heart-first: give their ideas a container and their imagination becomes a real gift.",
+   "contentKey": "fallback-hook/dignity-line/fall/mercury",
+   "source_keys": [
+    "cc/dignity/fall/mercury"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Saturn 'in fall' in Aries: patience runs short here, so structure fights the urge to just go, and lasting plans take real discipline to hold right now.",
+   "body_you": "Astrologers call Saturn 'in fall' in Aries, meaning patience runs short here, so you want to build and bolt at once: sleep on the impulse and you learn to lay foundations that last.",
+   "body_they": "Astrologers call Saturn 'in fall' in Aries, meaning patience runs short here, so they want to build and bolt at once: sleeping on the impulse, they learn to lay foundations that last.",
+   "contentKey": "fallback-hook/dignity-line/fall/saturn",
+   "source_keys": [
+    "cc/dignity/fall/saturn"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call the Sun 'in fall' in Libra: dimmed here, so identity leans on other people's approval, and holding a personal center takes work while it lasts.",
+   "body_you": "Astrologers call the Sun 'in fall' in Libra, meaning identity bends toward others here, so you learn yourself through relationships: keep your own goals even while you weigh everyone else's.",
+   "body_they": "Astrologers call the Sun 'in fall' in Libra, meaning identity bends toward others here, so they learn themselves through relationships: they keep their own goals even while weighing everyone else's.",
+   "contentKey": "fallback-hook/dignity-line/fall/sun",
+   "source_keys": [
+    "cc/dignity/fall/sun"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
+  },
+  {
+   "note": "sky dignity line, grounded in cc dignity article",
+   "body_sky": "Astrologers call Venus 'in fall' in Virgo: love turns critical here, so the collective eye catches every flaw first, and ease and affection have to be chosen on purpose right now.",
+   "body_you": "Astrologers call Venus 'in fall' in Virgo, meaning it turns critical here, so you notice the flaw before the charm: that sharp eye is a gift once you aim it at fixing, not judging.",
+   "body_they": "Astrologers call Venus 'in fall' in Virgo, meaning it turns critical here, so they notice the flaw before the charm: that sharp eye is a gift once aimed at fixing, not judging.",
+   "contentKey": "fallback-hook/dignity-line/fall/venus",
+   "source_keys": [
+    "cc/dignity/fall/venus"
+   ],
+   "approved_via": "owner chat review 2026-07-23",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "review_status": "approved"
   }
  ]
 }
