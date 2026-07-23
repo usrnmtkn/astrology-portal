@@ -205,6 +205,7 @@ for (const r of rowsFile.hookRows ?? []) {
 
 for (const r of rowsFile.hookRows ?? []) {
   if (!/^fallback-hook\/(placement-sentence|placement-house-sentence|planet-intro|planet-best|angle-|aspect-|natal-core|node-|dignity-|house-meaning|house-cusp|empty-house)/.test(r.contentKey)) continue;
+  if (r.contentKey.startsWith("fallback-hook/aspect-pattern-activation/")) continue; // activation copy is time-bound by design (describes a live transit)
   for (const field of ["body_you", "body_they"]) {
     const t = r[field] ?? "";
     if (/\b(this month|this week|tonight|right now|currently)\b/i.test(t))

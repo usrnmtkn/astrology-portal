@@ -93,12 +93,9 @@ function compatibilityContentSourceLabel(contentTrace?: string) {
     return null;
   }
 
-  if (contentTrace?.includes("source=dashboard-generated-content")) {
-    return "Admin";
-  }
-
-  if (contentTrace?.includes("source=cc-compatibility-writeups")) {
-    return "Fallback";
+  if (contentTrace?.includes("source=authored/compat-pair/")
+    || contentTrace?.includes("source=authored/compat-deep/")) {
+    return "Authored";
   }
 
   return null;

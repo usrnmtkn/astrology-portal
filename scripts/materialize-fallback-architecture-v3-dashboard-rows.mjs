@@ -6,7 +6,7 @@ import process from "node:process";
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architecture-v3-dashboard-rows.json");
-const importBatchId = "fallback-architecture-v3-2026-07-23";
+const importBatchId = "fallback-architecture-v3-2026-07-23b";
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");

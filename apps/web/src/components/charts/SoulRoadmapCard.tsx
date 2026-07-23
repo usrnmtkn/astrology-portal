@@ -1,4 +1,5 @@
 import { resolvePersonReference, type PersonReference, type PronounChoice } from "../../services/personReferences";
+import { fallbackV3VocabularyBody } from "../../content/fallbackArchitectureV3Runtime";
 
 type RoadmapOwnerKind = "self" | "person" | "chart";
 
@@ -43,107 +44,33 @@ export type SoulRoadmapProfile = {
   }>;
 };
 
-const signRoadmaps: Record<string, SignRoadmap> = {
-  Aries: {
-    integratedTheme: "courage, initiation, and self-directed action",
-    sunExpression: "acting on instinct, claiming agency, and fighting for what matters",
-    pathExpression: "direct action, honest confrontation, courage, and the willingness to go first",
-    moonStyle: "responding quickly, naming what they want, and letting emotion become easier to handle once it has somewhere to go",
-    moonContribution: "stay brave enough to act when the mission needs momentum",
-    keywords: ["I am", "I fight for", "I take action", "I am strong-willed"]
-  },
-  Taurus: {
-    integratedTheme: "stability, embodiment, value, and lasting security",
-    sunExpression: "building something steady, useful, beautiful, and worth protecting",
-    pathExpression: "patience, consistency, self-worth, and the slow work of making life feel secure",
-    moonStyle: "returning to the body, the senses, and what feels dependable",
-    moonContribution: "keep the mission grounded in real needs, real value, and sustainable choices",
-    keywords: ["I have", "I value", "I connect with the earth", "I create stability"]
-  },
-  Gemini: {
-    integratedTheme: "curiosity, language, learning, and mental connection",
-    sunExpression: "learning, asking questions, translating ideas, and keeping information moving",
-    pathExpression: "conversation, adaptability, observation, and the courage to keep asking better questions",
-    moonStyle: "thinking out loud, naming the pattern, and processing feelings through words",
-    moonContribution: "turn experience into language the mission can use",
-    keywords: ["I learn", "I think", "I communicate", "I intellectualize"]
-  },
-  Cancer: {
-    integratedTheme: "care, belonging, memory, and emotional protection",
-    sunExpression: "nourishing what matters, protecting what is vulnerable, and creating emotional safety",
-    pathExpression: "care, intuition, family patterns, emotional honesty, and the work of learning what needs protection",
-    moonStyle: "tracking attachment, memory, and the need to feel emotionally safe. When something affects them, they may first protect themselves or the people they love before they can explain what they feel",
-    moonContribution: "protect the heart of the mission without losing contact with what they feel",
-    keywords: ["I feel", "I nourish", "I empathize", "I mother"]
-  },
-  Leo: {
-    integratedTheme: "creative visibility, heart, leadership, and self-expression",
-    sunExpression: "creating, leading, and becoming visible for what comes from the heart",
-    pathExpression: "confidence, creative risk, play, pride, and the work of being seen without performing away the self",
-    moonStyle: "needing warmth, recognition, and a sense that their feelings matter",
-    moonContribution: "keep the mission alive with courage, generosity, and creative fire",
-    keywords: ["I will", "I am creative", "I lead", "I father"]
-  },
-  Virgo: {
-    integratedTheme: "discernment, service, healing, and useful craft",
-    sunExpression: "improving what is in front of them, serving well, and making daily practice meaningful",
-    pathExpression: "skill-building, refinement, humility, ritual, and attention to what actually works",
-    moonStyle: "sorting the details, noticing what is off, and trying to make the feeling useful",
-    moonContribution: "turn emotional information into repair, care, and practical next steps",
-    keywords: ["I analyze", "I serve", "I heal", "I cultivate", "I ritualize"]
-  },
-  Libra: {
-    integratedTheme: "relationship, fairness, beauty, and balance",
-    sunExpression: "building connection, creating harmony, and learning who they are through relationship",
-    pathExpression: "partnership, compromise, conflict, fairness, and the work of figuring out where they stand with other people",
-    moonStyle: "weighing both sides, seeking fairness, and needing relational clarity before they feel settled",
-    moonContribution: "keep the mission connected to justice, reciprocity, and the people it affects",
-    keywords: ["I balance", "I relate", "I connect", "I build relationships"]
-  },
-  Scorpio: {
-    integratedTheme: "depth, power, truth, transformation, and emotional honesty",
-    sunExpression: "uncovering what is hidden, transforming what is stagnant, and facing what others avoid",
-    pathExpression: "trust, intimacy, shadow work, emotional courage, and the willingness to go beneath the obvious story",
-    moonStyle: "listening for what is hidden, unspoken, intense, or emotionally charged. They may not trust the first explanation, and they may not feel settled until they understand what is really happening underneath it",
-    moonContribution: "point the mission toward the part of the situation people may be avoiding",
-    keywords: ["I transform", "I desire", "I feel deeply", "I go deep", "I uncover"]
-  },
-  Sagittarius: {
-    integratedTheme: "meaning, freedom, faith, teaching, and wider perspective",
-    sunExpression: "seeking truth, widening the horizon, teaching what they learn, and following the larger meaning",
-    pathExpression: "movement, honesty, study, travel, faith, and encounters with perspectives bigger than their starting point",
-    moonStyle: "trying to find the larger meaning. When something hurts, they may need space, honesty, movement, or a wider perspective before the feeling starts to make sense",
-    moonContribution: "give the mission perspective, honesty, and enough space to keep growing",
-    keywords: ["I expand", "I philosophize", "I teach", "I envision", "I understand"]
-  },
-  Capricorn: {
-    integratedTheme: "responsibility, mastery, commitment, and earned respect",
-    sunExpression: "building something solid, useful, and respected. Capricorn is not here to drift. It is here to take responsibility, commit to the work, and become someone others can rely on",
-    pathExpression: "discipline, patience, ambition, contribution, and the willingness to become reliable over time",
-    moonStyle: "organizing the feeling, taking responsibility, and asking what can be done",
-    moonContribution: "keep the mission committed, useful, and strong enough to last",
-    keywords: ["I utilize", "I contribute", "I work", "I am committed", "I mentor"]
-  },
-  Aquarius: {
-    integratedTheme: "innovation, independence, community, and future-minded change",
-    sunExpression: "questioning stale patterns, thinking differently, and making room for what comes next",
-    pathExpression: "community, experimentation, friendship, objectivity, and the courage to disrupt inherited patterns",
-    moonStyle: "stepping back, looking for the pattern, and needing emotional room to think clearly",
-    moonContribution: "keep the mission connected to the future and the people it wants to include",
-    keywords: ["I innovate", "I know", "I disrupt", "I change", "I build communities"]
-  },
-  Pisces: {
-    integratedTheme: "imagination, compassion, spirituality, and creative surrender",
-    sunExpression: "imagining what could be, creating from sensitivity, and staying connected to spirit, art, or compassion",
-    pathExpression: "intuition, faith, creativity, forgiveness, and the work of staying open without dissolving",
-    moonStyle: "absorbing the feeling, sensing what is unspoken, and needing gentleness before clarity arrives",
-    moonContribution: "keep the mission compassionate, imaginative, and connected to something larger than control",
-    keywords: ["I imagine", "I create", "I inspire", "I believe", "I dream"]
+const roadmapSigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+
+function packageRoadmap(sign: string): SignRoadmap | null {
+  const key = sign.toLowerCase();
+  const integratedTheme = fallbackV3VocabularyBody(`fallback-vocab/roadmap-theme/${key}`);
+  const sunExpression = fallbackV3VocabularyBody(`fallback-vocab/roadmap-sun/${key}`);
+  const pathExpression = fallbackV3VocabularyBody(`fallback-vocab/roadmap-path/${key}`);
+  const moonStyle = fallbackV3VocabularyBody(`fallback-vocab/roadmap-moon-style/${key}`);
+  const moonContribution = fallbackV3VocabularyBody(`fallback-vocab/roadmap-moon-contribution/${key}`);
+  const motto = fallbackV3VocabularyBody(`fallback-vocab/roadmap-motto/${key}`);
+
+  if (!integratedTheme || !sunExpression || !pathExpression || !moonStyle || !moonContribution || !motto) {
+    return null;
   }
-};
+
+  return { integratedTheme, sunExpression, pathExpression, moonStyle, moonContribution, keywords: [motto] };
+}
+
+const packageRoadmaps: Record<string, SignRoadmap> = Object.fromEntries(
+  roadmapSigns.flatMap((sign) => {
+    const roadmap = packageRoadmap(sign);
+    return roadmap ? [[sign, roadmap]] : [];
+  })
+);
 
 function cleanSign(value: string) {
-  const match = Object.keys(signRoadmaps).find((sign) => new RegExp(`\\b${sign}\\b`, "i").test(value));
+  const match = Object.keys(packageRoadmaps).find((sign) => new RegExp(`\\b${sign}\\b`, "i").test(value));
 
   return match ?? "";
 }
@@ -387,10 +314,10 @@ export function resolveSoulRoadmapProfile({
   const moonSign = cleanSign(moon);
   const northNodeSign = cleanSign(northNode);
   const risingSign = cleanSign(rising);
-  const sunRoadmap = sunSign ? signRoadmaps[sunSign] : null;
-  const moonRoadmap = moonSign ? signRoadmaps[moonSign] : null;
-  const northNodeRoadmap = northNodeSign ? signRoadmaps[northNodeSign] : null;
-  const risingRoadmap = risingSign ? signRoadmaps[risingSign] : null;
+  const sunRoadmap = sunSign ? packageRoadmaps[sunSign] : null;
+  const moonRoadmap = moonSign ? packageRoadmaps[moonSign] : null;
+  const northNodeRoadmap = northNodeSign ? packageRoadmaps[northNodeSign] : null;
+  const risingRoadmap = risingSign ? packageRoadmaps[risingSign] : null;
 
   if (!sunRoadmap || !moonRoadmap) {
     return null;

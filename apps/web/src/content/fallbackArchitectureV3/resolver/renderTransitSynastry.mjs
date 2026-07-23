@@ -105,13 +105,15 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const effectRaw = (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null)
     ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
   const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
+  const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
   const ctx = {
     timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
     transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
     aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
     transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
+    aspectVerb: (() => { const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body; const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body; return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null; })(),
     // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they
-    natalCore: hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body,
+    natalCore: natalCoreVal,
     otherPoss,
     timeInline: inlineWindow(win ?? WINDOW_ASPECT[transiting] ?? "currently"),
     transitEffectLine: transitEffect ? `${transitEffect.charAt(0).toUpperCase()}${transitEffect.slice(1).replace(/\.$/, "")}.` : null,
