@@ -1,4 +1,4 @@
-import type { CSSProperties, KeyboardEvent, MouseEvent } from "react";
+import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
@@ -350,6 +350,7 @@ type SkyWheelProps = {
   houseSignLabelStyle?: HouseSignLabelStyle;
   variant?: Exclude<WheelVariant, "synastry">;
   aspectInspector?: boolean;
+  aspectInspectorControls?: ReactNode;
 };
 
 export const SkyWheel = memo(function SkyWheel({
@@ -363,7 +364,8 @@ export const SkyWheel = memo(function SkyWheel({
   showHouses = false,
   houseSignLabelStyle = "text",
   variant = "zodiac",
-  aspectInspector = false
+  aspectInspector = false,
+  aspectInspectorControls
 }: SkyWheelProps) {
   const isAscendantAnchored = typeof ascendantLongitude === "number";
   const isNatalWheel = showHouses && isAscendantAnchored;
@@ -534,7 +536,7 @@ export const SkyWheel = memo(function SkyWheel({
     className: aspectLineClass(aspect.type),
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
   })), [transitAspects]);
-  const inspectorEnabled = aspectInspector && (variant === "natal" || variant === "zodiac");
+  const inspectorEnabled = aspectInspector;
   const inspectorPoints = useMemo(() => {
     if (!inspectorEnabled) {
       return [];
@@ -1120,6 +1122,7 @@ export const SkyWheel = memo(function SkyWheel({
           </text>
         ) : null}
         </svg>
+        {aspectInspectorControls}
         {focusedInspectorPoint ? (
           <div className="aspect-inspector-summary" role="status" aria-live="polite">
             <div className="aspect-inspector-summary__head">
