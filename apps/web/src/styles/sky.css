@@ -20,7 +20,7 @@
   --shadow-article: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
 
   display: grid;
-  width: min(1140px, 100%);
+  width: min(var(--container-article), 100%);
   margin-inline: auto;
   gap: var(--space-5);
 }
@@ -912,7 +912,7 @@
 .retro-copy,
 .retrograde-detail-line {
   color: var(--card-body-color);
-  max-width: 760px;
+  max-width: var(--container-form);
   font-family: var(--font-body);
   font-size: var(--text-description);
   font-weight: var(--weight-regular);

@@ -45,7 +45,7 @@
   .chart-layout,
   .sky-layout {
     grid-template-columns: 1fr;
-    width: min(760px, calc(100vw - var(--page-gutter) * 2));
+    width: min(var(--container-form), calc(100vw - var(--page-gutter) * 2));
     gap: var(--mobile-layout-gap);
   }
 
@@ -1610,7 +1610,7 @@
 
   .settings-page,
   .account-page {
-    width: min(100%, 560px);
+    width: min(100%, var(--container-dialog));
     gap: var(--section-gap);
   }
 
@@ -1697,7 +1697,7 @@
 
   .article-shell,
   .sky-detail-article {
-    width: min(100%, 560px);
+    width: min(100%, var(--container-dialog));
     margin-inline: auto;
   }
 
@@ -1722,5 +1722,46 @@
 
   .sky-header-date-button__location {
     display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .mode-guest .sky-header-date-button,
+  .mode-member .sky-header-date-button {
+    max-width: 112px;
+    min-width: 112px;
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (max-width: 380px) {
+  .mode-guest .brand-word,
+  .mode-member .brand-word {
+    display: none;
+  }
+
+  .mode-guest .nav-pill,
+  .mode-member .nav-pill {
+    padding-right: var(--space-2);
+  }
+}
+
+@media (max-width: 340px) {
+  .sky-today-ledger__head {
+    gap: var(--space-2);
+    padding-inline: var(--space-4);
+  }
+
+  .sky-today-ledger__head h3 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .sky-today-ledger__head p {
+    flex: 0 0 auto;
+  }
+
+  .sky-today-ledger__head p span {
+    white-space: nowrap;
   }
 }

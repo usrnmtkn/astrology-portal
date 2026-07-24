@@ -4,7 +4,7 @@
 }
 
 .mode-calendar .portal-grid.full-page-layout.calendar-layout {
-  width: min(1160px, 100%);
+  width: min(var(--container-calendar), 100%);
 }
 
 .mode-calendar .detail-panel.calendar-content-column {
@@ -24,8 +24,9 @@
   --lunar-moon-dark-edge: #0e1118;
   --lunar-moon-dark-soft: #242735;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
-  width: min(1080px, 100%);
+  width: min(var(--container-calendar-content), 100%);
   margin: 0 auto;
   color: var(--ink);
   font-family: var(--font-body);
@@ -35,6 +36,7 @@
 
 .lunar-calendar-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
   grid-template-rows: 1fr;
   min-width: 0;
@@ -129,7 +131,7 @@
 .lunar-calendar-location {
   position: relative;
   width: fit-content;
-  max-width: min(520px, 100%);
+  max-width: min(var(--container-chart-mobile), 100%);
 }
 
 .lunar-calendar-location > button {
@@ -163,7 +165,7 @@
   z-index: 20;
   display: grid;
   gap: var(--lunar-space-10);
-  width: min(360px, calc(100vw - 48px));
+  width: min(var(--container-picker), calc(100vw - 48px));
   padding: var(--lunar-space-12);
   border: 1px solid var(--card-border);
   border-radius: var(--lunar-card-radius);
@@ -1127,6 +1129,7 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-calendar-week-view {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
 }
 

@@ -20,7 +20,7 @@
 .portal-grid.full-page-layout,
 .signup-layout {
   display: block;
-  width: min(1700px, 100%);
+  width: min(var(--container-app-wide), 100%);
   overflow: visible;
 }
 
