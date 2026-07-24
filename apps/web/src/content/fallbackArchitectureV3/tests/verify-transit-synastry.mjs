@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { renderTransitHouse, renderTransitAspect, renderCompat, renderSynastryAspect, renderCircleStory, formatCircleNames, renderSkyPlacement, renderSkyLunation, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderSkyAspectCard, renderBondTransit, renderTransitLabel, renderLunationHoroscope, renderDoDont } from "../resolver/renderTransitSynastry.mjs";
+import { renderTransitHouse, renderTransitAspect, renderCompat, renderSynastryAspect, renderCircleStory, formatCircleNames, renderSkyEvent, renderSkyPlacement, renderSkyLunation, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderSkyAspectCard, renderBondTransit, renderTransitLabel, renderLunationHoroscope, renderDoDont } from "../resolver/renderTransitSynastry.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -127,6 +127,23 @@ for (const w of ["march-equinox","june-solstice","september-equinox","december-s
 for (const sg of SIGNS) for (const v of [1,2]) {
   try { const r = renderWeeklyMoon({ sign: sg, variant: v }); if (!r.body || /[\u2014\u2013]/.test(r.body)) fail(`weekly ${sg}/${v}`); cal++; }
   catch (e) { fail(`weekly ${sg}/${v}: ${e.message}`); }
+}
+try {
+  const direct = renderSkyEvent({
+    type: "station-direct",
+    a: "mercury",
+    aSign: "cancer",
+    dateLine: "This week"
+  });
+  if (!direct.body.startsWith("This week, Mercury in Cancer stations direct, and thinking, communication, and decision-making start moving again.")) {
+    fail(`station direct preview: unexpected opener (${direct.body})`);
+  }
+  if (direct.body.split(/[.!?](?:\s|$)/).filter(Boolean).length < 4 || /\{\{/.test(direct.body)) {
+    fail(`station direct preview: incomplete body (${direct.body})`);
+  }
+  cal++;
+} catch (e) {
+  fail(`station direct preview: ${e.message}`);
 }
 console.log(`Rendered ${cal} calendar pieces.`);
 

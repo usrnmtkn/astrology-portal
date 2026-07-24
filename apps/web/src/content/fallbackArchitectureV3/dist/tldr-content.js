@@ -538,6 +538,15 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
       })()
     };
   }
+  function renderSkyEvent(event) {
+    const type = event.type === "aspect" ? `aspect-${GROUP[event.aspect ?? ""] ?? event.aspect}` : event.type;
+    const contentKey = `fallback-hook/sky-event/${type}`;
+    const frame = hooks.get(contentKey)?.body_you;
+    if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
+    const body = fill(frame, eventCtx(event));
+    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
+    return { headline: "", body, parts: [body], templateKey: "fallback-template/sky.event", contentKey };
+  }
   function renderSkySeason({ sign, events = [] }) {
     const opener = hooks.get(`fallback-hook/sky-season-opener/${sign}`)?.body_you;
     const shadow = hooks.get(`fallback-hook/sky-season-shadow/${sign}`)?.body_you;
@@ -547,12 +556,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const ritual = hooks.get(`fallback-hook/sky-season-ritual/${sign}`)?.body_you;
     const paras = [opener, lore, ritual].filter(Boolean);
     for (const ev of events) {
-      const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
-      const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-      if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-      const body = fill(frame, eventCtx(ev));
-      if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-      paras.push(body);
+      paras.push(renderSkyEvent(ev).body);
     }
     paras.push(shadow, close);
     return { headline: `${title2(sign)} Season`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.season-article" };
@@ -834,7 +838,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const uniq = (a) => [...new Set(a)];
     return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkyEvent, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
