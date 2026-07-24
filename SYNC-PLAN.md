@@ -7,7 +7,7 @@
   - Location: `apps/web/src/services/manualCharts.ts`
 - [x] Flush function: upload all pending/failed local charts when a session is available; latest updated_at wins on conflict.
   - Location: `apps/web/src/services/manualCharts.ts`
-- [ ] Friends page hook: run flush on mount, window focus, visibilitychange, online, and auth session arrival.
+- [x] Friends page hook: run flush on mount, window focus, visibilitychange, online, and auth session arrival.
   - Location: new `apps/web/src/hooks/useChartSyncFlush.ts`; one `App.tsx` insertion after `rg -n` and an <=80-line read.
 - [ ] UI status: reuse the existing chart card pattern to show Saving... / Saved / Saved locally, no layout changes.
   - Location: `apps/web/src/features/friends/FriendChartsList.tsx`; `apps/web/src/features/friends/FriendChartModal.tsx`

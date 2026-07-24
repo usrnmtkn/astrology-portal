@@ -160,6 +160,7 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
   natalAspectPatternActivationEnabled,
