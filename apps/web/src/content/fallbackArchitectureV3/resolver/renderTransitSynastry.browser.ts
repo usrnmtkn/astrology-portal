@@ -470,15 +470,21 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   function renderSkyPlacement({ planet, sign, events = [] }: SkyPlacementFacts): TransitRenderResult {
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
-    const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-    const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-    const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
-    if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-    const ctx: Ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
     const paras: string[] = [];
-    if (youOpen) paras.push(fill(youOpen, ctx));
-    paras.push(fill(frame, ctx));
-    if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+    const signSpecific = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`)?.body_you;
+    if (signSpecific) {
+      if (/\{\{/.test(signSpecific)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+      paras.push(signSpecific);
+    } else {
+      const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+      const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+      const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+      if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+      const ctx: Ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
+      if (youOpen) paras.push(fill(youOpen, ctx));
+      paras.push(fill(frame, ctx));
+      if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+    }
     const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
     if (lore) paras.push(lore);
     const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
@@ -618,11 +624,37 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   // cards ("your natal Neptune") on sky pages; those belong to the You page. ----
   function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }: { a: string; b: string; aspect: string; aSign?: string; bSign?: string; dateLine?: string }): TransitRenderResult {
     const g = GROUP[aspect] ?? aspect;
+    const headline = `${title(a)} ${title(aspect)} ${title(b)}`;
+    const phrasebookKeys = [
+      ...(aSign && bSign
+        ? [
+            `fallback-hook/sky-aspect-sign/${a}/${aSign}/${aspect}/${b}/${bSign}`,
+            `fallback-hook/sky-aspect-sign/${b}/${bSign}/${aspect}/${a}/${aSign}`
+          ]
+        : []),
+      `fallback-hook/sky-aspect-exact/${a}/${aspect}/${b}`,
+      `fallback-hook/sky-aspect-exact/${b}/${aspect}/${a}`,
+      `fallback-hook/sky-aspect-pair/${a}/${b}/${g}`,
+      `fallback-hook/sky-aspect-pair/${b}/${a}/${g}`
+    ];
+    const phrasebookRow = phrasebookKeys
+      .map((contentKey) => hooks.get(contentKey))
+      .find((row) => Boolean(row?.body_you));
+    if (phrasebookRow?.body_you) {
+      if (/\{\{/.test(phrasebookRow.body_you)) throw new SourceGapError(`SOURCE_GAP: sky aspect phrasebook ${phrasebookRow.contentKey} missing slot`);
+      return {
+        headline,
+        body: phrasebookRow.body_you,
+        parts: [phrasebookRow.body_you],
+        templateKey: "fallback-template/sky.aspect-card",
+        contentKey: phrasebookRow.contentKey
+      };
+    }
     const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
     if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
     const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-    return { headline: `${title(a)} ${title(aspect)} ${title(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+    return { headline, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
   }
 
   // ---- Transits to your bond: a transiting planet activating the synastry contact between
