@@ -499,22 +499,46 @@ export function PlacementGlyphIcon({
   className,
   fallback,
   pointName,
-  retrograde = false
+  retrograde = false,
+  signName
 }: {
   className: string;
   fallback: string;
   pointName?: string;
   retrograde?: boolean;
   preferTextGlyph?: boolean;
+  signName?: string | null;
 }) {
   const retrogradeFileName = pointName && retrograde ? pointRetrogradeIconFiles[pointName] : undefined;
   const fileName = pointName ? retrogradeFileName ?? pointIconFiles[pointName] : undefined;
   const href = zodiacAssetHref(fileName);
   const useTextGlyph = !href;
+  const signKey = signName
+    ? Object.keys(zodiacSignIconFiles).find((key) => key.toLowerCase() === signName.toLowerCase())
+    : undefined;
+  const signHref = zodiacAssetHref(signKey ? zodiacSignIconFiles[signKey] : undefined);
   const glyphClassName = [
     className,
-    useTextGlyph ? "placement-glyph--text" : ""
+    useTextGlyph ? "placement-glyph--text" : "",
+    signName ? "placement-glyph-pair" : ""
   ].filter(Boolean).join(" ");
+
+  if (signName) {
+    return (
+      <span className={glyphClassName} aria-hidden="true">
+        <span className="placement-glyph-pair__planet">
+          {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
+        </span>
+        <span className="placement-glyph-pair__sign">
+          {signHref ? (
+            <img className="placement-sign-glyph-svg" src={signHref} alt="" aria-hidden="true" />
+          ) : (
+            signGlyph(signName)
+          )}
+        </span>
+      </span>
+    );
+  }
 
   return (
     <span className={glyphClassName} aria-hidden="true">
@@ -534,6 +558,7 @@ export function PlacementTableRow({
   onClick,
   pointName,
   retrograde = false,
+  sign,
   title,
   variant = "natal"
 }: {
@@ -547,6 +572,7 @@ export function PlacementTableRow({
   onClick?: () => void;
   pointName?: string;
   retrograde?: boolean;
+  sign?: string | null;
   title: string;
   variant?: "natal" | "friend" | "composite";
 }) {
@@ -560,7 +586,13 @@ export function PlacementTableRow({
   ].filter(Boolean).join(" ");
   const content = (
     <>
-      <PlacementGlyphIcon className="placement-table-row__glyph" fallback={glyph} pointName={pointName} retrograde={retrograde} />
+      <PlacementGlyphIcon
+        className="placement-table-row__glyph"
+        fallback={glyph}
+        pointName={pointName}
+        retrograde={retrograde}
+        signName={sign}
+      />
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
@@ -641,6 +673,7 @@ export function PlanetPlacementRow({
   rangeLabel,
   retrograde = false,
   retrogradeDurationLabel,
+  sign,
   statuses = [],
   title,
   variant
@@ -657,6 +690,7 @@ export function PlanetPlacementRow({
   rangeLabel?: string | null;
   retrograde?: boolean;
   retrogradeDurationLabel?: string | null;
+  sign?: string | null;
   statuses?: PlacementRowStatus[];
   title: string;
   variant: "sky" | "natal" | "friend" | "synastry" | "composite";
@@ -674,6 +708,7 @@ export function PlanetPlacementRow({
         onClick={onClick}
         pointName={pointName}
         retrograde={retrograde}
+        sign={sign}
         title={title}
         variant={variant === "composite" ? "composite" : variant === "friend" ? "friend" : "natal"}
       />
@@ -700,6 +735,7 @@ export function PlanetPlacementRow({
         pointName={pointName}
         preferTextGlyph
         retrograde={retrograde}
+        signName={sign}
       />
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
@@ -805,6 +841,7 @@ export function FriendPlacementTable({
                 onClick={onPlacementClick ? () => onPlacementClick(row) : undefined}
                 pointName={row.label}
                 retrograde={row.retrograde}
+                sign={row.sign}
                 title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
               />

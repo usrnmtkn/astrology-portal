@@ -441,7 +441,6 @@ function YouUpdatesTab({
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
-          <span className="eyebrow section-label">At a Glance</span>
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
           <p>{dailyUpdateSummary.summary}</p>
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
