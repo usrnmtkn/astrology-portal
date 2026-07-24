@@ -359,6 +359,25 @@ function removeLocalManualChartsByIdentity(userIds: string[], identities: Set<st
   });
 }
 
+function removeLocalManualChartsByIdOrIdentity(
+  userIds: string[],
+  ids: Set<string>,
+  identities: Set<string>
+) {
+  userIds.forEach((ownerId) => {
+    const nextCharts = readLocalManualCharts(ownerId).filter((chart) => (
+      !ids.has(chart.id) && !identities.has(chartIdentity(chart))
+    ));
+
+    if (nextCharts.length === 0) {
+      clearLocalManualCharts(ownerId);
+      return;
+    }
+
+    writeLocalManualCharts(ownerId, nextCharts);
+  });
+}
+
 function updateLocalManualChart(userId: string, chartId: string, input: ManualChartInput): ManualChart {
   const ownerIds = localManualChartOwnerIds(userId);
   const foundChart = findLocalManualChart(userId, chartId);
@@ -470,20 +489,30 @@ function syncErrorMessage(error: unknown) {
   return "Remote chart save failed.";
 }
 
-function markLocalManualChartPending(userId: string, chart: ManualChart, error: unknown) {
+function markLocalManualChartSyncError(
+  userId: string,
+  chart: ManualChart,
+  error: unknown,
+  syncStatus: Extract<ManualChartSyncStatus, "pending" | "failed">
+) {
   const foundChart = findLocalManualChart(userId, chart.id);
   const ownerId = foundChart?.ownerId ?? userId;
 
   return writeLocalManualChart(ownerId, {
     ...(foundChart?.chart ?? chart),
-    syncStatus: "pending",
+    syncStatus,
     syncError: syncErrorMessage(error)
   });
 }
 
+function markLocalManualChartPending(userId: string, chart: ManualChart, error: unknown) {
+  return markLocalManualChartSyncError(userId, chart, error, "pending");
+}
+
 function cacheConfirmedManualChart(userId: string, localChart: ManualChart, remoteChart: ManualChart) {
-  removeLocalManualChartsByIdentity(
+  removeLocalManualChartsByIdOrIdentity(
     localManualChartOwnerIds(userId),
+    new Set([localChart.id, remoteChart.id]),
     new Set([chartIdentity(localChart), chartIdentity(remoteChart)])
   );
 
@@ -536,6 +565,42 @@ function mergeRemoteManualCharts(userId: string, remoteCharts: ManualChart[]) {
     ...retainedLocalCharts,
     ...remoteCharts.filter((chart) => !pendingChartIds.has(chart.id))
   ]);
+}
+
+function compareUpdatedAt(first: string, second: string) {
+  const firstUpdatedAt = Date.parse(first);
+  const secondUpdatedAt = Date.parse(second);
+
+  if (Number.isFinite(firstUpdatedAt) && Number.isFinite(secondUpdatedAt)) {
+    return firstUpdatedAt - secondUpdatedAt;
+  }
+
+  return first.localeCompare(second);
+}
+
+function compareManualChartUpdatedAt(first: ManualChart, second: ManualChart) {
+  return compareUpdatedAt(first.updatedAt, second.updatedAt);
+}
+
+function pendingManualCharts(userId: string) {
+  const seenIds = new Set<string>();
+  const seenIdentities = new Set<string>();
+
+  return localManualChartOwnerIds(userId)
+    .flatMap((ownerId) => readLocalManualCharts(ownerId))
+    .filter((chart) => chart.syncStatus === "pending" || chart.syncStatus === "failed")
+    .sort((first, second) => compareManualChartUpdatedAt(second, first))
+    .filter((chart) => {
+      const identity = chartIdentity(chart);
+
+      if (seenIds.has(chart.id) || seenIdentities.has(identity)) {
+        return false;
+      }
+
+      seenIds.add(chart.id);
+      seenIdentities.add(identity);
+      return true;
+    });
 }
 
 async function hasRemoteUser(userId: string) {
@@ -693,7 +758,12 @@ export async function migrateLocalManualChartsToRemote(userId: string, localUser
   return { imported, skipped };
 }
 
-async function updateRemoteManualChart(userId: string, chartId: string, input: ManualChartInput): Promise<ManualChart> {
+async function updateRemoteManualChart(
+  userId: string,
+  chartId: string,
+  input: ManualChartInput,
+  options: { localUpdatedAt?: string } = {}
+): Promise<ManualChart> {
   const client = await getSupabaseClient();
 
   if (!client) {
@@ -718,14 +788,27 @@ async function updateRemoteManualChart(userId: string, chartId: string, input: M
   const existingChart = existingChartData ? rowToManualChart(existingChartData as ManualChartRow) : null;
   const existingIdentity = existingChart ? chartIdentity(existingChart) : null;
 
-  async function updateManualChartRow(options: { omitPronounsColumn?: boolean } = {}) {
-    return remoteClient
+  if (
+    existingChart &&
+    options.localUpdatedAt &&
+    compareUpdatedAt(existingChart.updatedAt, options.localUpdatedAt) >= 0
+  ) {
+    return existingChart;
+  }
+
+  async function updateManualChartRow(rowOptions: { omitPronounsColumn?: boolean } = {}) {
+    const updateQuery = remoteClient
       .from("manual_charts")
-      .update(inputToRow(userId, input, { ...options, storageRelationship: true }))
+      .update(inputToRow(userId, input, { ...rowOptions, storageRelationship: true }))
       .eq("id", chartId)
-      .eq("owner_user_id", userId)
+      .eq("owner_user_id", userId);
+    const guardedUpdateQuery = options.localUpdatedAt
+      ? updateQuery.lte("updated_at", options.localUpdatedAt)
+      : updateQuery;
+
+    return guardedUpdateQuery
       .select("*")
-      .single();
+      .maybeSingle();
   }
 
   let { data, error } = await updateManualChartRow();
@@ -736,6 +819,17 @@ async function updateRemoteManualChart(userId: string, chartId: string, input: M
 
   if (error) {
     throw error;
+  }
+
+  if (!data) {
+    const latestRemoteChart = (await listRemoteManualCharts(userId))
+      .find((chart) => chart.id === chartId);
+
+    if (latestRemoteChart) {
+      return latestRemoteChart;
+    }
+
+    throw new Error("Manual chart was not found after its sync update.");
   }
 
   const { error: connectionError } = await client
@@ -809,6 +903,97 @@ export async function updateManualChart(userId: string, chartId: string, input: 
   } catch (error) {
     return markLocalManualChartPending(userId, localChart, error);
   }
+}
+
+export async function flushManualChartSync(userId: string) {
+  const pendingCharts = pendingManualCharts(userId);
+  const result = {
+    attempted: 0,
+    synced: 0,
+    failed: 0,
+    conflictsResolved: 0
+  };
+
+  if (pendingCharts.length === 0) {
+    return result;
+  }
+
+  try {
+    if (!(await hasRemoteUser(userId))) {
+      return result;
+    }
+  } catch (error) {
+    pendingCharts.forEach((chart) => {
+      markLocalManualChartSyncError(userId, chart, error, "failed");
+    });
+
+    return { ...result, attempted: pendingCharts.length, failed: pendingCharts.length };
+  }
+
+  let remoteCharts: ManualChart[];
+
+  try {
+    remoteCharts = await listRemoteManualCharts(userId);
+  } catch (error) {
+    pendingCharts.forEach((chart) => {
+      markLocalManualChartSyncError(userId, chart, error, "failed");
+    });
+
+    return { ...result, attempted: pendingCharts.length, failed: pendingCharts.length };
+  }
+
+  for (const localChart of pendingCharts) {
+    result.attempted += 1;
+
+    try {
+      const matchingRemoteCharts = remoteCharts.filter((remoteChart) => (
+        remoteChart.id === localChart.id ||
+        chartIdentity(remoteChart) === chartIdentity(localChart)
+      ));
+      const matchingRemoteChart = matchingRemoteCharts
+        .sort((first, second) => compareManualChartUpdatedAt(second, first))[0];
+      let confirmedRemoteChart: ManualChart;
+
+      if (matchingRemoteChart && compareManualChartUpdatedAt(matchingRemoteChart, localChart) >= 0) {
+        confirmedRemoteChart = matchingRemoteChart;
+        result.conflictsResolved += 1;
+      } else if (matchingRemoteChart) {
+        confirmedRemoteChart = await updateRemoteManualChart(
+          userId,
+          matchingRemoteChart.id,
+          manualChartToInput(localChart),
+          { localUpdatedAt: localChart.updatedAt }
+        );
+        result.conflictsResolved += 1;
+      } else {
+        confirmedRemoteChart = await insertRemoteManualChart(userId, manualChartToInput(localChart));
+
+        if (compareManualChartUpdatedAt(confirmedRemoteChart, localChart) < 0) {
+          confirmedRemoteChart = await updateRemoteManualChart(
+            userId,
+            confirmedRemoteChart.id,
+            manualChartToInput(localChart),
+            { localUpdatedAt: localChart.updatedAt }
+          );
+        }
+      }
+
+      cacheConfirmedManualChart(userId, localChart, confirmedRemoteChart);
+      remoteCharts = [
+        ...remoteCharts.filter((chart) => (
+          chart.id !== confirmedRemoteChart.id &&
+          chartIdentity(chart) !== chartIdentity(confirmedRemoteChart)
+        )),
+        confirmedRemoteChart
+      ];
+      result.synced += 1;
+    } catch (error) {
+      markLocalManualChartSyncError(userId, localChart, error, "failed");
+      result.failed += 1;
+    }
+  }
+
+  return result;
 }
 
 export async function deleteManualChart(userId: string, chartId: string): Promise<void> {
