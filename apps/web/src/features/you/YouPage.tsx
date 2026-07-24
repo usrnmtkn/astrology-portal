@@ -520,10 +520,12 @@ function YouUpdatesTab({
         </section>
       )}
       {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastRows.length ? (
-        <section className="daily-behind-forecast" aria-label="Behind this forecast">
-          <span className="eyebrow section-label">Behind this Forecast</span>
-          <div>{dailyHoroscopeAssembly.behindForecastRows}</div>
-        </section>
+        <>
+          <span className="eyebrow section-label daily-behind-forecast-label">Behind this Forecast</span>
+          <section className="daily-behind-forecast" aria-label="Behind this forecast">
+            <div>{dailyHoroscopeAssembly.behindForecastRows}</div>
+          </section>
+        </>
       ) : null}
     </div>
   );
