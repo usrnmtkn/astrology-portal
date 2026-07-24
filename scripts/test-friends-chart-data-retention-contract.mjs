@@ -86,7 +86,7 @@ assert.match(
 );
 assert.match(
   manualChartsSource,
-  /const existingRemoteChart = \(await listManualCharts\(userId\)\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(input\)\);/,
+  /const existingRemoteChart = \(await listRemoteManualCharts\(userId\)\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(input\)\);/,
   "Creating a remote Friends chart must reuse an exact existing chart instead of adding a duplicate row."
 );
 assert.match(
