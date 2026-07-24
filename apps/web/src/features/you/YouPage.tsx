@@ -2,6 +2,7 @@ import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState,
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
@@ -9,6 +10,7 @@ import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
+import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
 
 type YouTab = "transits" | "chart";
@@ -95,7 +97,7 @@ export type YouPageProps = {
   natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   updatesChart?: ReactNode;
-  natalAspectRows: ReactNode[];
+  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
@@ -303,7 +305,7 @@ function YouNatalTab({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
-  natalAspectRows,
+  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternStatus,
   onOpenCareerDetail,
@@ -322,7 +324,7 @@ function YouNatalTab({
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
-  natalAspectRows: ReactNode[];
+  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenCareerDetail?: () => void;
@@ -396,14 +398,17 @@ function YouNatalTab({
         </>
       )}
 
-      {natalAspectRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">Aspects</span>
-          <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Natal aspects">
-            {natalAspectRows}
-          </div>
-        </>
-      )}
+      {natalAspectGroups.map((group) => (
+        <AspectGiftLessonGroup
+          ariaLabel={`Your natal aspect ${group.label}`}
+          key={group.key}
+          label={group.label}
+          listAriaLabel={`Your natal ${group.label.toLowerCase()}`}
+          listClassName="natal-aspects-list"
+        >
+          {group.aspects}
+        </AspectGiftLessonGroup>
+      ))}
     </div>
   );
 }
@@ -590,7 +595,6 @@ function cleanArticleHeading(value?: string | null) {
   return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
 }
 
-const articleGiftAspectTypes = new Set(["sextile", "trine"]);
 const articleAspectTypePattern = /\b(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\b/i;
 
 function normalizedArticleAspectType(value?: string | null) {
@@ -616,7 +620,7 @@ function articleAspectTypeFromText(value: string) {
 }
 
 function articleAspectToneBucket(aspectType?: string): AspectToneBucket {
-  return articleGiftAspectTypes.has(normalizedArticleAspectType(aspectType)) ? "gifts" : "lessons";
+  return aspectGiftOrLesson(normalizedArticleAspectType(aspectType));
 }
 
 function articleAspectGlyphPartsFromHeading(heading: string) {
@@ -903,7 +907,7 @@ export function YouPage({
   emptyHouseRows,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
-  natalAspectRows,
+  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
@@ -991,7 +995,7 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
-              natalAspectRows={natalAspectRows}
+              natalAspectGroups={natalAspectGroups}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenCareerDetail={onOpenCareerDetail}

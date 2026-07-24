@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { DeferredRender } from "../../components/DeferredRender";
+import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 
 export function SkyPlacementSection({ children }: { children: ReactNode }) {
   return (
@@ -42,9 +43,18 @@ export function SkyAspectsSection({ children }: { children: ReactNode }) {
   );
 }
 
-export function SkyAspectGroup({ children, id }: { children: ReactNode; id: string }) {
+export function SkyAspectGroup({
+  children,
+  id,
+  label
+}: {
+  children: ReactNode;
+  id: string;
+  label: AspectGiftLessonLabel;
+}) {
   return (
     <div className="aspect-row-group" key={id}>
+      <span className="eyebrow section-label aspect-row-group-label">{label}</span>
       <div className="aspects-card aspect-row-card">
         <div className="aspect-row-list">
           {children}
