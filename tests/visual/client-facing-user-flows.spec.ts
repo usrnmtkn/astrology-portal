@@ -857,6 +857,19 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
 
+    const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
+    await expect(transitCard).toBeVisible();
+    const transitDetail = transitCard.locator(".updates-aspect-row__detail");
+    await expect(transitDetail).toHaveCount(1);
+    await expect(transitDetail).toHaveText(/^[A-Z].+ in the current sky .+ natal .+\.$/);
+    await expect(transitDetail).not.toContainText(/Duration:|\borb\b/i);
+
+    const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
+    const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
+    const orbLabel = ((await transitCard.locator(".updates-aspect-row__orb").innerText()) ?? "").trim();
+    expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
+    expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
+
     await page.getByRole("tab", { name: "Synastry" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();

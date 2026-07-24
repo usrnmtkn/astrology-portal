@@ -1483,6 +1483,20 @@ function transitAspectTechnicalVerb(aspect: string) {
   return verbs[normalized] ?? titleCase(aspect).toLowerCase();
 }
 
+function transitAspectSentenceVerb(aspect: string) {
+  const normalized = normalizeAspectType(aspect);
+  const verbs: Record<string, string> = {
+    conjunction: "conjuncts",
+    opposition: "opposes",
+    square: "squares",
+    trine: "trines",
+    sextile: "sextiles",
+    quincunx: "quincunxes"
+  };
+
+  return verbs[normalized] ?? `forms a ${titleCase(aspect).toLowerCase()} aspect to`;
+}
+
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
   const summary = firstReaderFacingCopy([
     generated?.summary,
@@ -7603,11 +7617,12 @@ function friendTransitSummary(
   return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName));
 }
 
-function friendTransitFactLine(transit: TransitItem, ownerName: string) {
-  const technicalAspect = transitAspectTechnicalVerb(transit.aspect);
+function friendTransitFactSentence(transit: TransitItem, ownerName: string) {
+  const sentenceAspect = transitAspectSentenceVerb(transit.aspect);
+  const natalSign = transit.natalSign ? ` in ${transit.natalSign}` : "";
   const angleHouse = isChartAnglePoint(transit.natalPoint) ? "" : transit.natalHouse ? ` in the ${ordinalHouse(transit.natalHouse)} house` : "";
 
-  return `${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint} in ${transit.natalSign}${angleHouse}`;
+  return `${transit.transitPlanet} in the current sky ${sentenceAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}${natalSign}${angleHouse}.`;
 }
 
 function personalTransitDisplayTitle(transit: TransitItem) {
@@ -18767,7 +18782,7 @@ function ManualChartsPanel({
                             selectedChart.pronouns,
                             currentSky.generatedAt
                           );
-                          const factLine = friendTransitFactLine(transit, selectedChart.displayName);
+                          const factSentence = friendTransitFactSentence(transit, selectedChart.displayName);
                           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
 
                           return (
@@ -18781,12 +18796,7 @@ function ManualChartsPanel({
                                   <span>{timing.rangeLabel}</span>
                                 </span>
                                 <p className="updates-aspect-row__description">{summary}</p>
-                                <span className="updates-aspect-row__detail">
-                                  <span>Duration: {timing.label}</span>
-                                  <span>{transit.transitPlanet} in the current sky</span>
-                                  <span>{factLine}</span>
-                                  <span>{transit.direction ?? "active"} · orb {transit.orb}</span>
-                                </span>
+                                <p className="updates-aspect-row__detail">{factSentence}</p>
                               </span>
                               <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
                                 <span className="updates-aspect-row__dot" aria-hidden="true" />
