@@ -155,7 +155,7 @@
 }
 
 .you-empty-state p {
-  max-width: 720px;
+  max-width: var(--container-prose);
   margin: 0;
   color: var(--card-body-color);
   font-size: var(--text-description);
@@ -884,7 +884,7 @@
 .friend-profile-copy-column {
   display: grid;
   width: 100%;
-  max-width: 760px;
+  max-width: var(--container-form);
   min-width: 0;
   gap: var(--section-gap);
 }
@@ -1736,7 +1736,7 @@
 
 .friend-chart-modal {
   position: relative;
-  width: min(640px, 100%);
+  width: min(var(--container-dialog-wide), 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow: auto;
   border-radius: var(--radius);

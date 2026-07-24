@@ -481,6 +481,26 @@
   --space-8: 40px;
   --space-9: 48px;
   --space-10: 64px;
+
+  /* Shared container boundaries. Component aliases below should reference these. */
+  --container-picker: 360px;
+  --container-chart-mobile: 520px;
+  --container-dialog: 560px;
+  --container-dialog-wide: 640px;
+  --container-prose: 720px;
+  --container-form: 760px;
+  --container-reading: 820px;
+  --container-content: 1040px;
+  --container-calendar-content: 1080px;
+  --container-narrow: 1120px;
+  --container-article: 1140px;
+  --container-calendar: 1160px;
+  --container-wide: 1240px;
+  --container-friends-detail: 1380px;
+  --container-page: 1440px;
+  --container-chart-layout: 1520px;
+  --container-app-wide: 1700px;
+
   --inline-gap: var(--space-2);
   --card-list-gap: var(--space-2);
   --card-stack-gap: var(--space-2);
@@ -654,8 +674,8 @@
   --segmented-border: color-mix(in srgb, var(--line-strong) 58%, transparent);
   --segmented-radius: 12px;
   --segmented-item-radius: 9px;
-  --segmented-padding: 3px;
-  --segmented-gap: 3px;
+  --segmented-padding: calc(var(--space-1) * 0.75);
+  --segmented-gap: calc(var(--space-1) * 0.75);
   --segmented-item-height: 28px;
   --segmented-item-px: 14px;
   --segmented-active-bg: var(--surface);
@@ -689,9 +709,9 @@
   --modal-border: var(--line);
   --modal-radius: var(--radius);
   --modal-padding: var(--sp-4);
-  --modal-width: 560px;
+  --modal-width: var(--container-dialog);
   --chart-size: clamp(560px, 42vw, 700px);
-  --relationship-picker-width: 360px;
+  --relationship-picker-width: var(--container-picker);
   --deferred-placeholder-height: 180px;
   --z-nav: 100;
   --z-topbar: 1000;
@@ -723,8 +743,8 @@
   --app-muted: var(--muted);
   --app-card: var(--surface);
   --app-border: var(--card-border);
-  --page-max: 1440px;
-  --page-narrow: 1120px;
+  --page-max: var(--container-page);
+  --page-narrow: var(--container-narrow);
   --page-gutter: clamp(var(--sp-3), 5vw, 80px);
   --page-top: calc(var(--nav-height) + clamp(48px, 6vw, 72px));
   --page-bottom: clamp(64px, 8vw, 96px);
@@ -736,7 +756,7 @@
   --mobile-card-padding: var(--space-5);
   --mobile-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
   --mobile-row-gap: var(--sp-1);
-  --mobile-chart-max: 520px;
+  --mobile-chart-max: var(--container-chart-mobile);
   --mobile-control-inset: 20px;
   --mobile-edge-inset: 14px;
   --tablet-nav-reserved-width: 112px;
@@ -745,8 +765,8 @@
   --mobile-settings-control-reserved-width: 84px;
   --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;
-  --tablet-friend-page-max: 760px;
-  --friends-content-width: 1040px;
+  --tablet-friend-page-max: var(--container-form);
+  --friends-content-width: var(--container-content);
   --top-control-top: 24px;
   --top-control-height: 52px;
   --top-icon-button-size: 52px;
@@ -755,7 +775,7 @@
   --top-action-icon-size: 19px;
   --top-control-gap: 8px;
   --radius-card: var(--card-radius);
-  --chart-layout-max: 1520px;
+  --chart-layout-max: var(--container-chart-layout);
   --chart-column-width: minmax(560px, 720px);
   --content-column-width: minmax(520px, 680px);
   --chart-layout-gap: clamp(48px, 4.5vw, 80px);
@@ -776,8 +796,7 @@
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
 .app-shell.mode-friends {
-  --friends-content-width: 1040px;
-  --friends-detail-width: min(1380px, calc(100vw - clamp(112px, 10vw, 176px)));
+  --friends-detail-width: min(var(--container-friends-detail), calc(100vw - clamp(112px, 10vw, 176px)));
   --friends-wheel-size: var(--shared-chart-size);
   padding: 0;
   overflow-x: clip;

@@ -222,7 +222,7 @@ body.modal-open {
 
 .chart-modal {
   position: relative;
-  width: min(640px, 100%);
+  width: min(var(--container-dialog-wide), 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow: auto;
   border-radius: var(--radius);
