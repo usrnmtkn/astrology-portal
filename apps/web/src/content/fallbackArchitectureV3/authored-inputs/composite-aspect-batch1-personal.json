@@ -1,0 +1,372 @@
+{
+  "_meta": {
+    "batch": "composite-aspect-batch1-personal-planets",
+    "count": 30,
+    "voice": "the connection (single subject); body_you==body_they",
+    "style": "no em dash, no banned words, 'connection' not 'bond', group-differentiated (soft/hard/conjunction)",
+    "review": "needs_review",
+    "supersedes": "the venus/mars and moon/sun rows in composite-aspect-seed-2026-07-23.json"
+  },
+  "hookRows": [
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/moon/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The connection's identity and its feelings move together: what it wants and what it needs point the same way, so it is easy to feel understood here. That inner agreement is the quiet strength of this relationship, and naming feelings out loud rather than assuming they are known keeps it alive.",
+      "body_they": "The connection's identity and its feelings move together: what it wants and what it needs point the same way, so it is easy to feel understood here. That inner agreement is the quiet strength of this relationship, and naming feelings out loud rather than assuming they are known keeps it alive.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/moon (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/moon/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, purpose and mood pull in different directions: the will wants one thing, the heart wants another, and the relationship can feel divided against itself. The friction is workable once both currents get a voice instead of one overriding the other.",
+      "body_they": "In this connection, purpose and mood pull in different directions: the will wants one thing, the heart wants another, and the relationship can feel divided against itself. The friction is workable once both currents get a voice instead of one overriding the other.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/moon (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/moon/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Will and feeling are fused in this connection: identity and emotional need rise together, which makes the relationship vivid and deeply felt, sometimes to the point of losing perspective. Its gift is intensity, and its task is room to breathe.",
+      "body_they": "Will and feeling are fused in this connection: identity and emotional need rise together, which makes the relationship vivid and deeply felt, sometimes to the point of losing perspective. Its gift is intensity, and its task is room to breathe.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/moon (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mercury/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Identity and communication run smoothly in this connection: it thinks out loud with ease and finds common ground fast. Talking is how this relationship knows itself, so keeping the conversation open, even when nothing is urgent, is worth the effort.",
+      "body_they": "Identity and communication run smoothly in this connection: it thinks out loud with ease and finds common ground fast. Talking is how this relationship knows itself, so keeping the conversation open, even when nothing is urgent, is worth the effort.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mercury/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, self and voice rub against each other: opinions can feel like challenges to identity, and small debates turn personal quickly. Handled with humor, the friction sharpens both the thinking and the relationship.",
+      "body_they": "In this connection, self and voice rub against each other: opinions can feel like challenges to identity, and small debates turn personal quickly. Handled with humor, the friction sharpens both the thinking and the relationship.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mercury/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Identity and mind are one current in this connection: the relationship is what it says, and its words carry real weight. That makes it articulate and self-aware, as long as talking about the connection does not replace living it.",
+      "body_they": "Identity and mind are one current in this connection: the relationship is what it says, and its words carry real weight. That makes it articulate and self-aware, as long as talking about the connection does not replace living it.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/venus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Warmth comes easily to this connection: affection softens the edges, and the relationship is genuinely pleasant to be inside. The ease is a real gift, though it helps to keep a clear eye on the moments when a boundary matters more than harmony.",
+      "body_they": "Warmth comes easily to this connection: affection softens the edges, and the relationship is genuinely pleasant to be inside. The ease is a real gift, though it helps to keep a clear eye on the moments when a boundary matters more than harmony.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/venus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, pride and pleasure can pull apart: the wish to be admired meets the wish to be comfortable, and indulgence can paper over real differences. Named honestly, the tension makes the affection more durable than the easy version.",
+      "body_they": "In this connection, pride and pleasure can pull apart: the wish to be admired meets the wish to be comfortable, and indulgence can paper over real differences. Named honestly, the tension makes the affection more durable than the easy version.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/venus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Identity and affection merge in this connection: it wants to be loved and it loves being together, which gives the relationship real charm and glow. The work is making sure warmth is not the only thing holding it up.",
+      "body_they": "Identity and affection merge in this connection: it wants to be loved and it loves being together, which gives the relationship real charm and glow. The work is making sure warmth is not the only thing holding it up.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Drive and identity reinforce each other here: this connection gets things done, and its shared energy feels motivating rather than combative. Aimed at a common goal, that momentum makes the relationship a genuine force.",
+      "body_they": "Drive and identity reinforce each other here: this connection gets things done, and its shared energy feels motivating rather than combative. Aimed at a common goal, that momentum makes the relationship a genuine force.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, will and drive collide: two strong currents want to lead, and competition can flare into conflict fast. Pointed at a shared target instead of at each other, the same heat becomes ambition the relationship can build on.",
+      "body_they": "In this connection, will and drive collide: two strong currents want to lead, and competition can flare into conflict fast. Pointed at a shared target instead of at each other, the same heat becomes ambition the relationship can build on.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/sun/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Identity and drive are fused in this connection: it acts boldly and moves with real force, which is exciting and occasionally reckless. The gift is courage, and the task is choosing the fights that matter.",
+      "body_they": "Identity and drive are fused in this connection: it acts boldly and moves with real force, which is exciting and occasionally reckless. The gift is courage, and the task is choosing the fights that matter.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/sun/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mercury/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Feeling and thought work together in this connection: it can talk about what it feels without the words getting in the way. That fluency is a quiet advantage, and the relationship stays close by keeping the emotional conversation going.",
+      "body_they": "Feeling and thought work together in this connection: it can talk about what it feels without the words getting in the way. That fluency is a quiet advantage, and the relationship stays close by keeping the emotional conversation going.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mercury/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, heart and head fall out of step: feelings want to be felt while the mind wants to explain, and one can talk the other out of what is real. It settles when analysis makes room for plain emotion.",
+      "body_they": "In this connection, heart and head fall out of step: feelings want to be felt while the mind wants to explain, and one can talk the other out of what is real. It settles when analysis makes room for plain emotion.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mercury/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Thought and feeling are one stream in this connection: it thinks with its heart and feels through its words, which makes it perceptive and easily stirred. Its task is knowing when a mood is coloring the read.",
+      "body_they": "Thought and feeling are one stream in this connection: it thinks with its heart and feels through its words, which makes it perceptive and easily stirred. Its task is knowing when a mood is coloring the read.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mercury (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/venus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Tenderness flows freely in this connection: comfort and affection come naturally, and being together simply feels good. The sweetness is real, so it helps to keep checking that what each side wants and what it gives still line up.",
+      "body_they": "Tenderness flows freely in this connection: comfort and affection come naturally, and being together simply feels good. The sweetness is real, so it helps to keep checking that what each side wants and what it gives still line up.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/venus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, needs and wants can misalign: what feels safe and what feels pleasurable are not always the same, and small disappointments gather quietly. Naming the difference keeps the softness from curdling into resentment.",
+      "body_they": "In this connection, needs and wants can misalign: what feels safe and what feels pleasurable are not always the same, and small disappointments gather quietly. Naming the difference keeps the softness from curdling into resentment.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/venus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Feeling and affection merge in this connection: it craves closeness and offers it in kind, which makes the relationship nurturing and warm. The work is not letting comfort become the whole point.",
+      "body_they": "Feeling and affection merge in this connection: it craves closeness and offers it in kind, which makes the relationship nurturing and warm. The work is not letting comfort become the whole point.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Emotion and drive energize this connection: feeling turns into action easily, and the relationship rarely goes flat. The current keeps it alive, so it helps to notice whether the exchange leaves both sides charged or drained.",
+      "body_they": "Emotion and drive energize this connection: feeling turns into action easily, and the relationship rarely goes flat. The current keeps it alive, so it helps to notice whether the exchange leaves both sides charged or drained.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, feeling and temper run close together: moods spark reactions and reactions spark moods, and it can heat up before anyone chooses it. Slowing the first response keeps the passion from turning into a fight.",
+      "body_they": "In this connection, feeling and temper run close together: moods spark reactions and reactions spark moods, and it can heat up before anyone chooses it. Slowing the first response keeps the passion from turning into a fight.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Feeling and drive are fused in this connection: it reacts from the gut and defends what it loves fiercely, which makes it protective and intense. Its gift is passion, and its task is a breath before reacting.",
+      "body_they": "Feeling and drive are fused in this connection: it reacts from the gut and defends what it loves fiercely, which makes it protective and intense. Its gift is passion, and its task is a breath before reacting.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/moon/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/venus/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Talk comes with warmth in this connection: conversation builds common ground quickly, and there is a charm to the exchange others enjoy being near. This relationship grows through talking, so when distance creeps in, more conversation is the way back.",
+      "body_they": "Talk comes with warmth in this connection: conversation builds common ground quickly, and there is a charm to the exchange others enjoy being near. This relationship grows through talking, so when distance creeps in, more conversation is the way back.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/venus/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, taste and words can clash: what sounds right and what feels graceful pull apart, and diplomacy can blur into avoidance. Saying the slightly harder thing kindly keeps the pleasantness honest.",
+      "body_they": "In this connection, taste and words can clash: what sounds right and what feels graceful pull apart, and diplomacy can blur into avoidance. Saying the slightly harder thing kindly keeps the pleasantness honest.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/venus/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mind and affection blend in this connection: it flirts through ideas and connects through conversation, which makes it witty and easy company. The work is letting real feeling under the clever surface.",
+      "body_they": "Mind and affection blend in this connection: it flirts through ideas and connects through conversation, which makes it witty and easy company. The work is letting real feeling under the clever surface.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/venus (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Thinking and drive move well together here: this connection is quick, direct, and good at turning ideas into action. The sharpness is an asset, so it helps to keep it aimed at problems rather than at each other.",
+      "body_they": "Thinking and drive move well together here: this connection is quick, direct, and good at turning ideas into action. The sharpness is an asset, so it helps to keep it aimed at problems rather than at each other.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "In this connection, words become weapons easily: debate turns competitive and a small point can escalate into an argument. The same edge, aimed at a shared problem, makes the relationship decisive instead of combative.",
+      "body_they": "In this connection, words become weapons easily: debate turns competitive and a small point can escalate into an argument. The same edge, aimed at a shared problem, makes the relationship decisive instead of combative.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mind and drive are one current in this connection: it thinks fast and says it faster, which makes it sharp and occasionally cutting. Its gift is candor, and its task is a beat between thought and speech.",
+      "body_they": "Mind and drive are one current in this connection: it thinks fast and says it faster, which makes it sharp and occasionally cutting. Its gift is candor, and its task is a beat between thought and speech.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/mercury/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/venus/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Attraction and drive move together in this connection: desire is easy to name and the chemistry stays alive. It is at its best when affection and effort flow both ways, so neither side carries the pursuit alone.",
+      "body_they": "Attraction and drive move together in this connection: desire is easy to name and the chemistry stays alive. It is at its best when affection and effort flow both ways, so neither side carries the pursuit alone.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/venus/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/venus/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Desire runs hot in this connection, and heat cuts both ways: passion one day, friction the next. It thrives when the spark points at a shared want instead of at each other.",
+      "body_they": "Desire runs hot in this connection, and heat cuts both ways: passion one day, friction the next. It thrives when the spark points at a shared want instead of at each other.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/venus/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/venus/mars/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Love and drive are fused in this connection: attraction is immediate and physical, and the pull is hard to ignore. Its gift is real chemistry, and its task is building something the heat can rest on.",
+      "body_they": "Love and drive are fused in this connection: attraction is immediate and physical, and the pull is hard to ignore. Its gift is real chemistry, and its task is building something the heat can rest on.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "fallback-hook/synastry-pair/venus/mars (relationship meaning, re-voiced single-subject for composite)"
+      ],
+      "note": "composite pair, batch 1 (personal planets); awaiting owner approval"
+    }
+  ]
+}
