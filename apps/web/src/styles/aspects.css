@@ -466,15 +466,9 @@
 
 .updates-aspect-row__detail {
   border-top: 1px solid var(--card-border);
-  display: grid;
-  gap: var(--card-row-gap);
   margin-top: var(--space-2);
   padding-top: calc(var(--space-3) + var(--space-1) / 2);
-}
-
-.updates-aspect-row__detail span {
   color: var(--card-body-color);
-  display: block;
   font-family: var(--font-body);
   font-size: var(--text-description);
   font-weight: var(--weight-regular);
