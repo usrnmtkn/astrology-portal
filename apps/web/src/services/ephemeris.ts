@@ -1747,7 +1747,11 @@ function findSkyAspects(
                 glyph: `${firstGlyph}${secondGlyph}`,
                 primary: !firstPlanet.includes("Moon") && !secondPlanet.includes("Moon"),
                 planets: [firstPlanet, secondPlanet],
-                aspect
+                aspect,
+                // Each body's sign at exactness, so the collective write-up can read
+                // "Neptune in Aries is sextile Pluto in Aquarius" (aSign/bSign).
+                fromSign: exactPlanetSign(swe, firstPlanetId, occursAt),
+                toSign: exactPlanetSign(swe, secondPlanetId, occursAt)
               });
             }
           }

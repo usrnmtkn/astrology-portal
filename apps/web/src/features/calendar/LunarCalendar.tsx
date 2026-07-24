@@ -941,7 +941,8 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
         b: slugContentPart(second),
         aspect: slugContentPart(event.aspect),
         aSign: event.fromSign ? slugContentPart(event.fromSign) : undefined,
-        bSign: event.toSign ? slugContentPart(event.toSign) : undefined
+        bSign: event.toSign ? slugContentPart(event.toSign) : undefined,
+        dateLine: "Today"
       });
 
       return firstReaderFacingCopy(rendered.parts);
@@ -1528,6 +1529,34 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   const selectedDayTransits = selectedDay
     ? selectedDayTransitEvents(selectedDay, selectedLunarDay, selectedEvents)
     : [];
+  // Collective-energy write-ups for the aspects exact on the selected day. These
+  // read as part of the day's narrative (appended under the main Moon write-up),
+  // not as per-row call-outs. Deduped so a twice-logged aspect appears once.
+  const selectedDayAspectWriteups = useMemo(() => {
+    const writeups: string[] = [];
+    const seenAspectKeys = new Set<string>();
+
+    for (const event of selectedDayTransits) {
+      if (event.type !== "aspect" || !event.planets || !event.aspect) {
+        continue;
+      }
+
+      const aspectKey = `${event.planets[0]}-${event.aspect}-${event.planets[1]}`.toLowerCase();
+
+      if (seenAspectKeys.has(aspectKey)) {
+        continue;
+      }
+
+      const body = calendarEventPackageDescription(event);
+
+      if (body) {
+        seenAspectKeys.add(aspectKey);
+        writeups.push(body);
+      }
+    }
+
+    return writeups;
+  }, [selectedDayTransits]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
@@ -1655,10 +1684,13 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               </>
             )}
           </p>
-          {selectedDayBodyPresentation.main.length > 0 && (
+          {(selectedDayBodyPresentation.main.length > 0 || selectedDayAspectWriteups.length > 0) && (
             <div className="lunar-selected-card__body">
               {selectedDayBodyPresentation.main.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
+              ))}
+              {selectedDayAspectWriteups.map((writeup) => (
+                <p className="lunar-selected-card__aspect-writeup" key={writeup}>{writeup}</p>
               ))}
               {selectedDayBodyPresentation.prompt && (
                 <section className="lunar-selected-card__check-in" aria-label="Check-in">
