@@ -13,4 +13,4 @@
   - Location: `apps/web/src/features/friends/FriendChartsList.tsx`; `apps/web/src/features/friends/FriendChartModal.tsx`
 - [x] Contract test: chart survives a failed remote write; local cache renders before remote resolves.
   - Location: `scripts/test-friends-chart-performance-contract.mjs`
-- [ ] Run friends retention + performance contracts and the web build.
+- [x] Run friends retention + performance contracts and the web build.
