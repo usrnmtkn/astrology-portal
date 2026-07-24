@@ -93,8 +93,29 @@ assert.match(
   "Friends chart repair must filter incomplete charts before starting async repair work."
 );
 
+const readyCacheHydrationMatch = appSource.match(
+  /if \(allowCachedChartsWhileLoading && !chartsLoadedRef\.current\) \{(?<body>[\s\S]*?)\n    \}\n\n    if \(!chartsLoadedRef\.current\)/
+);
+
+assert.ok(
+  readyCacheHydrationMatch?.groups?.body,
+  "Friends chart list must hydrate from local cached rows before waiting on the remote chart list."
+);
+
+assert.match(
+  readyCacheHydrationMatch.groups.body,
+  /listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\)/,
+  "Friends chart ready-load path must include all locally cached manual chart owners before remote refresh."
+);
+
+assert.ok(
+  appSource.indexOf("if (allowCachedChartsWhileLoading && !chartsLoadedRef.current)") <
+    appSource.indexOf("listManualCharts(chartOwnerUserId)"),
+  "Friends chart cache hydration must run before the Supabase manual chart fetch."
+);
+
 console.log(JSON.stringify({
   status: "PASS",
   surface: "friends chart performance",
-  contract: "Complete friend charts do not trigger background natal/timezone repair on page load."
+  contract: "Complete friend charts do not trigger background natal/timezone repair, and chart rows hydrate from local cache before remote refresh."
 }, null, 2));
