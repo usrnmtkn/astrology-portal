@@ -609,14 +609,13 @@
   margin-bottom: var(--space-6);
 }
 
-.daily-behind-forecast {
+.daily-behind-forecast-label {
   margin-top: var(--space-6);
 }
 
 .daily-behind-forecast > div {
   display: grid;
   gap: var(--space-2);
-  margin-top: var(--space-3);
 }
 
 .daily-forecast-label {
