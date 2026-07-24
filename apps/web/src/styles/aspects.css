@@ -6,7 +6,10 @@
   --aspect-row-copy-gap: var(--card-row-gap);
 
   display: grid;
-  grid-template-columns: var(--aspect-row-template);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "glyphs glyphs"
+    "copy meta";
   align-items: start;
   width: 100%;
   gap: var(--aspect-row-gap);
@@ -26,11 +29,12 @@
 
 .aspect-row-glyphs {
   display: flex;
+  grid-area: glyphs;
   align-items: center;
   justify-content: flex-start;
   align-self: start;
-  width: var(--aspect-row-glyph-width);
-  min-width: var(--aspect-row-glyph-width);
+  width: auto;
+  min-width: 0;
   height: 25px;
   margin-top: calc(var(--space-1) / 4);
   gap: var(--aspect-row-glyph-gap);
@@ -77,6 +81,7 @@
 
 .aspect-row-copy {
   display: grid;
+  grid-area: copy;
   min-width: 0;
   gap: var(--aspect-row-copy-gap);
   text-align: left;
@@ -170,6 +175,7 @@
 
 .aspect-row-meta {
   display: inline-flex;
+  grid-area: meta;
   align-items: center;
   justify-content: center;
   width: var(--aspect-row-meta-width);
@@ -239,6 +245,16 @@
 
 .updates-section .section-label {
   margin-bottom: 0;
+}
+
+.updates-section > .section-label + .updates-aspect-list,
+.updates-section > .daily-behind-forecast-label + .daily-behind-forecast {
+  margin-top: calc(var(--section-label-gap-after) - var(--sp-3));
+}
+
+.updates-section > :where(.daily-horoscope-summary, .daily-dodont, .daily-special-section)
+  + :where(.daily-dodont, .daily-special-section) {
+  margin-top: calc(var(--card-list-gap) - var(--sp-3));
 }
 
 .daily-horoscope-summary,
@@ -366,7 +382,7 @@
 }
 
 .updates-aspect-list {
-  --updates-aspect-row-padding: var(--surface-card-padding);
+  --updates-aspect-row-padding: clamp(26px, 3.4vw, 38px);
 
   display: grid;
   gap: var(--card-list-gap);
@@ -389,6 +405,13 @@
   text-align: left;
 }
 
+.updates-aspect-row:has(> .updates-aspect-row__glyphs) {
+  grid-template-columns: minmax(0, 1fr) var(--updates-aspect-meta-width);
+  grid-template-areas:
+    "glyphs glyphs"
+    "content meta";
+}
+
 .updates-aspect-row--background {
   opacity: 0.78;
 }
@@ -407,14 +430,18 @@
   text-align: left;
 }
 
+.updates-aspect-row:has(> .updates-aspect-row__glyphs) > .updates-aspect-row__content {
+  grid-area: content;
+}
+
 .updates-aspect-row__glyphs,
 .updates-aspect-row__glyphs .aspect-row-glyphs {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   align-self: start;
-  width: var(--updates-aspect-glyph-width);
-  min-width: var(--updates-aspect-glyph-width);
+  width: auto;
+  min-width: 0;
   height: 24px;
   margin-top: calc(var(--space-1) / 2);
   gap: 6px;
@@ -423,6 +450,10 @@
   font-size: var(--updates-aspect-row-glyph-size);
   line-height: var(--leading-label);
   white-space: nowrap;
+}
+
+.updates-aspect-row > .updates-aspect-row__glyphs {
+  grid-area: glyphs;
 }
 
 .updates-aspect-row__glyphs .aspect-row-glyphs {
@@ -494,6 +525,10 @@
   white-space: nowrap;
 }
 
+.updates-aspect-row:has(> .updates-aspect-row__glyphs) > .updates-aspect-row__meta {
+  grid-area: meta;
+}
+
 .updates-aspect-row__dot {
   width: 8px;
   height: 8px;
@@ -520,7 +555,7 @@
 
 .article-related-aspects .aspect-row.article-related-aspect-row {
   --row-bg: transparent;
-  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) 0;
+  --aspect-row-padding: var(--space-6) 0;
 
   border: 0;
   border-bottom: 1px solid var(--line);

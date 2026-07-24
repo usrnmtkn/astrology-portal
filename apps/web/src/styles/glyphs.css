@@ -6,6 +6,39 @@
   object-fit: contain;
 }
 
+.placement-table-row__glyph.placement-glyph-pair,
+.planet-placement-row__glyph.placement-glyph-pair {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.placement-glyph-pair__planet,
+.placement-glyph-pair__sign {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+}
+
+.placement-glyph-pair__sign {
+  color: var(--card-title-color);
+  font-family: var(--font-glyph);
+  font-size: var(--text-glyph);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+}
+
+.placement-sign-glyph-svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  filter: var(--filter-glyph-current);
+  object-fit: contain;
+}
+
 .placement-glyph--text {
   position: relative;
   color: var(--card-title-color);

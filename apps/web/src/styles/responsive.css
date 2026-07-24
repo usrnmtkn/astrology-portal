@@ -171,20 +171,20 @@
 
 @media (max-width: 560px) {
   .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-    --friend-composite-row-template: 40px minmax(0, 1fr);
+    --friend-composite-row-template: minmax(0, 1fr);
     --friend-composite-row-gap: var(--mobile-row-gap);
     --friend-composite-row-padding: var(--mobile-card-padding) var(--mobile-page-gutter);
   }
 
   .placement-table-row {
-    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     padding: var(--mobile-row-padding);
   }
 
   .placement-table-row__glyph {
-    width: 40px;
-    min-width: 40px;
+    width: auto;
+    min-width: 0;
     font-size: var(--type-small-display-size);
   }
 
@@ -304,9 +304,7 @@
   .placement-section .planet-placement-row {
     align-items: start;
     gap: var(--sky-placement-mobile-gap);
-    grid-template-columns:
-      var(--sky-placement-mobile-glyph-column-size)
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .aspect-section .aspect-row,
@@ -318,21 +316,24 @@
   .ro-screen .sky-pl-glyph,
   .placement-section .planet-placement-row__glyph {
     align-self: start;
-    width: var(--sky-placement-mobile-glyph-column-size);
-    min-width: var(--sky-placement-mobile-glyph-column-size);
+    width: auto;
+    min-width: 0;
   }
 
   .aspect-section .aspect-row,
   .aspect-section .aspect-row-button,
   .aspect-section .aspect-row-static {
-    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "glyphs glyphs"
+      "copy meta";
     align-items: start;
   }
 
   .aspect-section .aspect-row-glyphs {
     align-self: start;
-    width: var(--sky-card-mobile-glyph-column-size);
-    min-width: var(--sky-card-mobile-glyph-column-size);
+    width: auto;
+    min-width: 0;
   }
 
   .nl-top {
@@ -1282,17 +1283,15 @@
   }
 
   .placement-section .planet-placement-row {
-    grid-template-columns:
-      var(--sky-placement-mobile-glyph-column-size)
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: var(--sky-placement-mobile-gap);
   }
 
   .placement-section .planet-placement-row__glyph {
     align-self: start;
-    width: var(--sky-placement-mobile-glyph-column-size);
-    min-width: var(--sky-placement-mobile-glyph-column-size);
+    width: auto;
+    min-width: 0;
   }
 
   .placement-section .planet-placement-row__topline {
@@ -1396,10 +1395,13 @@
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static {
-    --aspect-row-template: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
+    --aspect-row-template: minmax(0, 1fr) auto;
     --aspect-row-gap: var(--card-row-gap);
     --aspect-row-padding: var(--card-row-padding-compact);
     grid-template-columns: var(--aspect-row-template);
+    grid-template-areas:
+      "glyphs glyphs"
+      "copy meta";
     align-items: start;
     min-height: var(--card-row-min-height);
   }
@@ -1410,7 +1412,7 @@
   .mode-member .aspect-section .aspect-row,
   .mode-member .aspect-section .aspect-row-button,
   .mode-member .aspect-section .aspect-row-static {
-    --aspect-row-template: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
+    --aspect-row-template: minmax(0, 1fr) auto;
     grid-template-columns: var(--aspect-row-template);
     align-items: start;
     gap: var(--sky-card-mobile-grid-gap);
@@ -1419,20 +1421,20 @@
   .mode-guest .aspect-section .aspect-row-glyphs,
   .mode-member .aspect-section .aspect-row-glyphs {
     align-self: start;
-    grid-area: auto;
+    grid-area: glyphs;
     justify-content: flex-start;
-    width: var(--aspect-row-glyph-width);
-    min-width: var(--aspect-row-glyph-width);
+    width: auto;
+    min-width: 0;
   }
 
   .mode-guest .aspect-section .aspect-row-copy,
   .mode-member .aspect-section .aspect-row-copy {
-    grid-area: auto;
+    grid-area: copy;
   }
 
   .mode-guest .aspect-section .aspect-row-meta,
   .mode-member .aspect-section .aspect-row-meta {
-    grid-area: auto;
+    grid-area: meta;
     align-self: center;
     justify-self: end;
     padding-top: 0;

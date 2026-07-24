@@ -4515,20 +4515,6 @@ function placementTransitRangeLabel(position: PlanetPosition, generatedAt: strin
   return placementTransitRange(position, generatedAt);
 }
 
-function transitHouseRangeLabel(transit: TransitItem, currentSky: SkySnapshot | null, generatedAt: string) {
-  const currentPosition = currentSky?.positions.find((position) => position.planet === transit.transitPlanet);
-
-  if (!currentPosition) {
-    return "";
-  }
-
-  if (currentPosition.planet === "Pluto" && currentPosition.motion === "retrograde") {
-    return retrogradeRangeText(currentPosition) ?? "";
-  }
-
-  return placementTransitRangeLabel(currentPosition, generatedAt);
-}
-
 function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
   if (!position.transitEnd) {
     return null;
@@ -5191,7 +5177,7 @@ const transitAspectDefinitions = [
   { type: "opposition", exact: 180, orb: 4 }
 ] as const;
 
-const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "True Node"]);
+const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "South Node", "True Node"]);
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
 
@@ -7572,16 +7558,26 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
   });
 }
 
-function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart) {
-  const ascendant = chart.natalChart?.ascendant ?? "";
+type CurrentSkyHouseActivation = {
+  id: string;
+  house: number;
+  planet: string;
+  position: PlanetPosition;
+  sign: string;
+};
+
+function currentSkyHouseActivations(currentSky: SkySnapshot, natalSky: SkySnapshot | null) {
+  const ascendant = natalSky?.ascendant ?? "";
 
   return currentSky.positions
     .map((position) => ({
+      id: `house-transit-${normalizeContentIdPart(position.planet)}-${wholeSignHouseForSign(position.sign, ascendant) ?? "pending"}`,
       planet: position.planet,
+      position,
       sign: position.sign,
       house: wholeSignHouseForSign(position.sign, ascendant)
     }))
-    .filter((activation): activation is { planet: string; sign: string; house: number } => Boolean(activation.house))
+    .filter((activation): activation is CurrentSkyHouseActivation => Boolean(activation.house))
     .sort((first, second) => {
       const firstAngular = [1, 4, 7, 10].includes(first.house) ? 0 : 1;
       const secondAngular = [1, 4, 7, 10].includes(second.house) ? 0 : 1;
@@ -7790,9 +7786,9 @@ function normalizePersonalTransitSurface(
 }
 
 function normalizeTransitHouseSurface(
-  transit: TransitItem,
+  transit: Pick<TransitItem, "id" | "transitMotion" | "transitPlanet" | "transitSign">,
   house: number,
-  generatedAt: string,
+  windowLabel: string,
   voice: "you" | string = "you"
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
@@ -7804,7 +7800,7 @@ function normalizeTransitHouseSurface(
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
       motion: transit.transitMotion,
       variant: stableTransitCopyVariant(voice, transit.id, `house-${house}`),
-      window: personalTransitPackageWindow(transit, generatedAt),
+      window: windowLabel,
       voice
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
@@ -14679,6 +14675,7 @@ function RetrogradeCallout({
         pointName={position.planet}
         rangeLabel={row.range}
         retrograde={position.motion === "retrograde"}
+        sign={position.sign}
         statuses={[{ label: "Retrograde", tone: "retrograde" }]}
         title={title}
         variant="sky"
@@ -15143,6 +15140,7 @@ function PlacementTable({
                 rangeLabel={transitRangeLabel}
                 retrograde={isRetrograde}
                 retrogradeDurationLabel={retrogradeDurationLabel}
+                sign={position.sign}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
                 title={title}
                 variant="sky"
@@ -16575,6 +16573,7 @@ function ProfileView({
       onClick={natalSun ? () => openPlacementArticle(natalSun) : undefined}
       pointName="Sun"
       retrograde={natalSun?.motion === "retrograde"}
+      sign={natalSun?.sign ?? displaySun}
       title={natalSun ? natalPlacementSignTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
       variant="natal"
       key="sun"
@@ -16589,6 +16588,7 @@ function ProfileView({
       onClick={natalMoon ? () => openPlacementArticle(natalMoon) : undefined}
       pointName="Moon"
       retrograde={natalMoon?.motion === "retrograde"}
+      sign={natalMoon?.sign ?? displayMoon}
       title={natalMoon ? natalPlacementSignTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
       variant="natal"
       key="moon"
@@ -16600,6 +16600,7 @@ function ProfileView({
       house={natalAscendantPosition?.house || null}
       onClick={natalAscendantPosition ? () => openPlacementArticle(natalAscendantPosition) : undefined}
       pointName="Ascendant"
+      sign={natalAscendantPosition?.sign ?? (displayRising && displayRising !== "Rising pending" ? displayRising : null)}
       title={displayRising && displayRising !== "Rising pending" ? `Ascendant in ${displayRising}` : displayRising || "Rising calculating"}
       description={natalCardTagline("Ascendant")}
       variant="natal"
@@ -16617,6 +16618,7 @@ function ProfileView({
       onClick={() => openPlacementArticle(position)}
       pointName={position.planet}
       retrograde={position.motion === "retrograde"}
+      sign={position.sign}
       title={natalPlacementSignTitle(position)}
       variant="natal"
     />
@@ -16848,79 +16850,76 @@ function ProfileView({
         throw error;
       }
     });
-  const standaloneHouseTransitRows = Array.from(
-    new Map(
-      aspectRows
-        .filter((transit) => transit.natalHouse)
-        .map((transit) => [`${transit.transitPlanet}-${transit.natalHouse}`, transit])
-    ).values()
-  ).slice(0, 4).flatMap((transit) => {
-    const house = transit.natalHouse;
+  const standaloneHouseTransitRows = currentSky && natalSky
+    ? currentSkyHouseActivations(currentSky, natalSky).slice(0, 4).flatMap((activation) => {
+      const { house, position } = activation;
+      const transit = {
+        id: activation.id,
+        transitMotion: position.motion,
+        transitPlanet: position.planet,
+        transitSign: position.sign
+      };
+      const contentKey = transitHouseContentKey(transit.transitPlanet, house);
+      const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
+      const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, timingRange);
+      const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
+      const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
+      const articleSections = normalizedHouseTransit.sections.map((section) => ({
+        heading: section.heading,
+        tldr: "",
+        body: taggedSectionBody(section)
+      }));
+      const openArticle = () => {
+        setSelectedTransitId(transit.id);
+        setActivePlacementRouteId(null);
+        setTransitArticle({
+          id: contentKey,
+          title,
+          glyph: pointGlyph(transit.transitPlanet),
+          // House cards do not currently author a TLDR slot. Keep their preview
+          // copy on the updates row, but render the article from the authored
+          // headline + body fields without promoting body copy into TLDR.
+          subtitle: "",
+          summary: "",
+          sections: articleSections,
+          meta: [
+            ...(timingRange ? [{ label: "Date range", value: timingRange }] : []),
+            { label: "House", value: `${ordinalHouse(house)} House` },
+            { label: "Area", value: houseLifeAreas[house] ?? "" },
+            { label: "Transit planet", value: transit.transitPlanet }
+          ]
+        });
+      };
 
-    if (!house) {
-      return [];
-    }
-
-    const contentKey = transitHouseContentKey(transit.transitPlanet, house);
-    const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, transitForm.chartDate);
-    const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
-    const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
-    const timingRange = transitHouseRangeLabel(transit, currentSky, transitForm.chartDate);
-    const articleSections = normalizedHouseTransit.sections.map((section) => ({
-      heading: section.heading,
-      tldr: "",
-      body: taggedSectionBody(section)
-    }));
-    const openArticle = () => {
-      setSelectedTransitId(transit.id);
-      setActivePlacementRouteId(null);
-      setTransitArticle({
-        id: contentKey,
-        title,
-        glyph: pointGlyph(transit.transitPlanet),
-        // House cards do not currently author a TLDR slot. Keep their preview
-        // copy on the updates row, but render the article from the authored
-        // headline + body fields without promoting body copy into TLDR.
-        subtitle: "",
-        summary: "",
-        sections: articleSections,
-        meta: [
-          ...(timingRange ? [{ label: "Date range", value: timingRange }] : []),
-          { label: "House", value: `${ordinalHouse(house)} House` },
-          { label: "Area", value: houseLifeAreas[house] ?? "" },
-          { label: "Transit planet", value: transit.transitPlanet }
-        ]
-      });
-    };
-
-    return [(
-      <button
-        type="button"
-        className="updates-aspect-row updates-aspect-row--house"
-        key={contentKey}
-        onClick={openArticle}
-      >
-        <span className="updates-aspect-row__glyphs" aria-hidden="true">
-          <span className="planet-glyph">{pointGlyph(transit.transitPlanet)}</span>
-        </span>
-        <span className="updates-aspect-row__content">
-          <span className="updates-aspect-row__title">{title}</span>
-          <span className="updates-aspect-row__meta-line">
-            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-              {transit.term === "long" ? "Long-term" : "Short-term"}
-            </span>
-            {timingRange ? <span>{timingRange}</span> : null}
-            <span>{houseLifeAreas[house] ?? "house topic"}</span>
+      return [(
+        <button
+          type="button"
+          className="updates-aspect-row updates-aspect-row--house"
+          key={contentKey}
+          onClick={openArticle}
+        >
+          <span className="updates-aspect-row__glyphs" aria-hidden="true">
+            <span className="planet-glyph">{pointGlyph(transit.transitPlanet)}</span>
           </span>
-          {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
-        </span>
-        <span className="updates-aspect-row__meta" aria-label={`${ordinalHouse(house)} house`}>
-          <span className="updates-aspect-row__dot" aria-hidden="true" />
-          <span className="updates-aspect-row__orb">{house}</span>
-        </span>
-      </button>
-    )];
-  });
+          <span className="updates-aspect-row__content">
+            <span className="updates-aspect-row__title">{title}</span>
+            <span className="updates-aspect-row__meta-line">
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
+              </span>
+              {timingRange ? <span>{timingRange}</span> : null}
+              <span>{houseLifeAreas[house] ?? "house topic"}</span>
+            </span>
+            {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+          </span>
+          <span className="updates-aspect-row__meta" aria-label={`${ordinalHouse(house)} house`}>
+            <span className="updates-aspect-row__dot" aria-hidden="true" />
+            <span className="updates-aspect-row__orb">{house}</span>
+          </span>
+        </button>
+      )];
+    })
+    : [];
   const dailyDoDont = (() => {
     const seeded = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
     const transitCandidate = qualifyingDailyTransits
@@ -17142,7 +17141,7 @@ function ProfileView({
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
-        standaloneTransitRows={[]}
+        standaloneTransitRows={standaloneHouseTransitRows}
         unknownBirthTime={unknownBirthTime}
         transitArticle={transitArticle}
       />
@@ -17361,6 +17360,35 @@ function ManualChartsPanel({
       currentSky.generatedAt
     ).slice(0, 8)
     : [];
+  const selectedFriendHouseTransitCards = selectedChart?.natalChart && !selectedChartIsEvent
+    ? currentSkyHouseActivations(currentSky, selectedChart.natalChart)
+      .slice(0, 4)
+      .map((activation) => {
+        const transit = {
+          id: activation.id,
+          transitMotion: activation.position.motion,
+          transitPlanet: activation.position.planet,
+          transitSign: activation.position.sign
+        };
+        const timingRange = placementTransitRangeLabel(activation.position, currentSky.generatedAt);
+        const normalized = normalizeTransitHouseSurface(
+          transit,
+          activation.house,
+          timingRange,
+          selectedChart.displayName
+        );
+
+        return {
+          activation,
+          contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
+          normalized,
+          rowSummary: normalizedSurfacePreview(normalized),
+          timingRange,
+          title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
+          transit
+        };
+      })
+    : [];
   const selectedBondTransitCards = selectedChart && !selectedChartIsEvent
     ? activeBondTransitCards(
         selectedSynastryContacts,
@@ -17578,6 +17606,35 @@ function ManualChartsPanel({
         heading: cleanGeneratedSectionHeading(section.heading),
         sourceTag: section.sourceTag || section.tldr,
         body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
+      }))
+    });
+  };
+  const openFriendHouseTransitDetail = (
+    card: (typeof selectedFriendHouseTransitCards)[number]
+  ) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "transits",
+        `house-transit-${normalizeContentIdPart(card.transit.transitPlanet)}-${card.activation.house}`
+      ),
+      glyph: pointGlyph(card.transit.transitPlanet),
+      kicker: "House transit",
+      title: card.title,
+      meta: [
+        card.timingRange,
+        `${ordinalHouse(card.activation.house)} House`,
+        houseLifeAreas[card.activation.house] ?? ""
+      ].filter(Boolean).join(" · "),
+      body: [],
+      sections: card.normalized.sections.map((section) => ({
+        heading: cleanGeneratedSectionHeading(section.heading),
+        body: section.body,
+        sourceKeys: section.sourceKeys
       }))
     });
   };
@@ -18630,6 +18687,7 @@ function ManualChartsPanel({
                         onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}
                         pointName={row.label}
                         retrograde={row.retrograde}
+                        sign={row.sign}
                         title={title}
                         variant="friend"
                       />
@@ -18757,6 +18815,45 @@ function ManualChartsPanel({
                     </div>
                   </section>
                 ) : null}
+                {selectedFriendHouseTransitCards.length > 0 ? (
+                  <section className="friend-transit-group" aria-label="House transits">
+                    <span className="eyebrow section-label friend-section-label">House transits</span>
+                    <div className="updates-aspect-list friend-transit-list">
+                      {selectedFriendHouseTransitCards.map((card) => (
+                        <button
+                          className="updates-aspect-row updates-aspect-row--house"
+                          key={card.contentKey}
+                          onClick={() => openFriendHouseTransitDetail(card)}
+                          type="button"
+                        >
+                          <span className="updates-aspect-row__glyphs" aria-hidden="true">
+                            <span className="planet-glyph">{pointGlyph(card.transit.transitPlanet)}</span>
+                          </span>
+                          <span className="updates-aspect-row__content">
+                            <span className="updates-aspect-row__title">{card.title}</span>
+                            <span className="updates-aspect-row__meta-line">
+                              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                                {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
+                              </span>
+                              {card.timingRange ? <span>{card.timingRange}</span> : null}
+                              <span>{houseLifeAreas[card.activation.house] ?? "house topic"}</span>
+                            </span>
+                            {card.rowSummary ? (
+                              <span className="updates-aspect-row__description">{card.rowSummary}</span>
+                            ) : null}
+                          </span>
+                          <span
+                            className="updates-aspect-row__meta"
+                            aria-label={`${ordinalHouse(card.activation.house)} house`}
+                          >
+                            <span className="updates-aspect-row__dot" aria-hidden="true" />
+                            <span className="updates-aspect-row__orb">{card.activation.house}</span>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
                 {(["short", "long"] as const).map((durationClass) => {
                   const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
 
@@ -18809,7 +18906,7 @@ function ManualChartsPanel({
                     </section>
                   );
                 })}
-                {selectedFriendTransits.length === 0 && (
+                {selectedFriendTransits.length === 0 && selectedFriendHouseTransitCards.length === 0 && (
                   <article className="friends-logic-card">
                     <span>Transits</span>
                     <h3>No prioritized transits are active.</h3>

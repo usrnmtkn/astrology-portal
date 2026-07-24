@@ -658,7 +658,7 @@
   --friend-placement-label-size: var(--friend-row-title-size);
   --friend-placement-meta-size: var(--text-placement-meta);
   --friend-placement-summary-size: var(--text-description);
-  --friend-placement-compact-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5);
+  --friend-placement-compact-padding: var(--space-6) var(--space-5);
   --friend-placement-row-gap: 12px;
   --friend-placement-row-bg: var(--card-bg);
   --friend-placement-row-border: var(--card-border);
@@ -1048,7 +1048,7 @@
 }
 
 .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-  grid-template-columns: var(--friend-composite-row-template);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--friend-composite-row-gap);
   padding: var(--friend-composite-row-padding);
 }
@@ -2314,6 +2314,10 @@
   padding: clamp(16px, 2.5vw, 22px);
 }
 
+.compatibility-card {
+  padding-block: var(--space-6);
+}
+
 .compatibility-summary {
   position: relative;
   overflow: hidden;
@@ -2457,10 +2461,10 @@
 
 .compatibility-card__header {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   justify-items: start;
-  align-items: center;
-  gap: 10px;
+  align-items: start;
+  gap: var(--space-3);
   text-align: left;
 }
 
@@ -2601,8 +2605,8 @@
   }
 
   .compatibility-card__header {
-    gap: 8px;
-    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .compatibility-card__glyph {

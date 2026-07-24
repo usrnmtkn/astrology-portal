@@ -344,11 +344,11 @@
   --snap-phase-size: 11px;
   --snap-next-title-size: 14px;
   --snap-next-subtitle-size: 13px;
-  --sky-card-padding: var(--card-row-padding);
+  --sky-card-padding: var(--space-6) var(--space-5);
   --sky-card-min-height: var(--card-row-min-height);
   --sky-card-grid-gap: var(--card-row-gap);
   --sky-card-glyph-column-size: var(--lunar-card-glyph-column-size);
-  --sky-card-mobile-padding: var(--card-row-padding-compact);
+  --sky-card-mobile-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
   --sky-card-mobile-min-height: var(--card-row-min-height);
   --sky-card-mobile-grid-gap: var(--card-row-gap);
   --sky-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-column-size);
@@ -554,7 +554,7 @@
   --natal-card-border: var(--card-border);
   --natal-card-radius: var(--card-radius);
   --natal-card-shadow: var(--card-shadow);
-  --natal-card-padding: var(--card-row-padding);
+  --natal-card-padding: var(--space-6) var(--space-5);
   --natal-card-gap: var(--sp-2);
   --natal-card-min-height: 0px;
   --natal-card-title-size: var(--text-card-title);
@@ -569,7 +569,7 @@
   --aspect-card-border: var(--card-border);
   --aspect-card-radius: var(--card-radius);
   --aspect-card-shadow: var(--card-shadow);
-  --aspect-card-padding: var(--card-row-padding-comfortable);
+  --aspect-card-padding: var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
   --aspect-card-gap: var(--card-row-gap);
   --aspect-card-min-height: 0px;
   --aspect-card-title-size: var(--text-card-title);
