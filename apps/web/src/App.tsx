@@ -17888,6 +17888,20 @@ function ManualChartsPanel({
       };
     }
 
+    if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
+      const cachedCharts = listCachedManualCharts([
+        chartOwnerUserId,
+        profile.id,
+        ...listLocalManualChartUserIds()
+      ]);
+
+      if (cachedCharts.length > 0) {
+        chartsLoadedRef.current = true;
+        setCharts(cachedCharts);
+        setStatus("idle");
+      }
+    }
+
     if (!chartsLoadedRef.current) {
       setStatus("loading");
     }
