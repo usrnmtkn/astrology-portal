@@ -14327,6 +14327,7 @@ function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDat
 }
 
 const personalRetrogradePlanets = new Set(["Mercury", "Venus", "Mars"]);
+const retrogradeIndicatorExcludedPoints = new Set(["North Node", "South Node"]);
 
 function isPersonalRetrogradePlanet(planet: string) {
   return personalRetrogradePlanets.has(planet);
@@ -14372,7 +14373,10 @@ function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
 }
 
 function activeRetrogradePositions(positions: PlanetPosition[]) {
-  return positions.filter((position) => position.motion === "retrograde");
+  return positions.filter((position) => (
+    position.motion === "retrograde"
+    && !retrogradeIndicatorExcludedPoints.has(position.planet)
+  ));
 }
 
 function retrogradeRemainingCountLabel(generatedAt: string, position: PlanetPosition) {
