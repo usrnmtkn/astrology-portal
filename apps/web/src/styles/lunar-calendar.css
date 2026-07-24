@@ -955,7 +955,7 @@
 .tx-card {
   --tx-glyph-column: var(--sky-card-glyph-column-size);
   display: grid;
-  grid-template-columns: var(--tx-glyph-column) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   column-gap: var(--aspect-card-gap);
   row-gap: var(--sp-1);
   align-items: start;
@@ -1003,8 +1003,8 @@ a.tx-card.has-article:hover {
   align-items: center;
   justify-content: flex-start;
   gap: var(--lunar-space-8);
-  width: var(--tx-glyph-column);
-  min-width: var(--tx-glyph-column);
+  width: auto;
+  min-width: 0;
   padding-top: calc(var(--space-1) / 4);
   color: var(--ink);
   font-family: "Noto Sans Symbols", "Segoe UI Symbol", var(--font-glyph), serif;
@@ -1025,8 +1025,8 @@ a.tx-card.has-article:hover {
 }
 
 .tx-title {
-  grid-column: 2;
-  grid-row: 1;
+  grid-column: 1;
+  grid-row: 2;
   align-self: center;
   min-width: 0;
   margin: 0;
@@ -1034,8 +1034,8 @@ a.tx-card.has-article:hover {
 }
 
 .tx-body {
-  grid-column: 2;
-  grid-row: 3;
+  grid-column: 1;
+  grid-row: 4;
   min-width: 0;
   margin: 0;
   text-wrap: pretty;
@@ -1043,8 +1043,8 @@ a.tx-card.has-article:hover {
 
 .tx-foot {
   display: flex;
-  grid-column: 2;
-  grid-row: 2;
+  grid-column: 1;
+  grid-row: 3;
   align-items: center;
   gap: var(--sp-1) 10px;
   margin-top: 0;

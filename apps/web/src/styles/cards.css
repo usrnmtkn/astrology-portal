@@ -581,20 +581,32 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
-.daily-dodont > div,
 .daily-special-section,
 .daily-behind-forecast {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--card-radius);
   padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .daily-dodont {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
   display: grid;
-  gap: var(--space-3);
+  gap: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: var(--space-4) 0 var(--space-6);
+  margin: 0;
+  overflow: hidden;
+}
+
+.daily-dodont > div {
+  min-width: 0;
+  padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
+}
+
+.daily-dodont > div + div {
+  border-left: 1px solid var(--line);
 }
 
 .daily-dodont ul {
@@ -606,11 +618,11 @@
 }
 
 .daily-special-section {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .daily-behind-forecast-label {
-  margin-top: var(--space-6);
+  margin-top: 0;
 }
 
 .daily-behind-forecast > div {
@@ -638,5 +650,10 @@
 @media (max-width: 640px) {
   .daily-dodont {
     grid-template-columns: 1fr;
+  }
+
+  .daily-dodont > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
   }
 }
