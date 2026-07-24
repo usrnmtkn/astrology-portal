@@ -227,6 +227,16 @@ function eventCtx(ev) {
   };
 }
 
+export function renderSkyEvent(event) {
+  const type = event.type === "aspect" ? `aspect-${GROUP[event.aspect] ?? event.aspect}` : event.type;
+  const contentKey = `fallback-hook/sky-event/${type}`;
+  const frame = hooks.get(contentKey)?.body_you;
+  if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
+  const body = fill(frame, eventCtx(event));
+  if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
+  return { headline: "", body, parts: [body], templateKey: "fallback-template/sky.event", contentKey };
+}
+
 // Season article: opener + one paragraph per engine-supplied sky event + shadow + close.
 // events: [{ type: ingress|station-retro|station-direct|new-moon|full-moon|eclipse-lunar|eclipse-solar|aspect,
 //            a, b, aspect, sign, aSign, bSign, dateLine }]
@@ -239,12 +249,7 @@ export function renderSkySeason({ sign, events = [] }) {
   const ritual = hooks.get(`fallback-hook/sky-season-ritual/${sign}`)?.body_you;
   const paras = [opener, lore, ritual].filter(Boolean);
   for (const ev of events) {
-    const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect] ?? ev.aspect}` : ev.type;
-    const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-    if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-    const body = fill(frame, eventCtx(ev));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-    paras.push(body);
+    paras.push(renderSkyEvent(ev).body);
   }
   paras.push(shadow, close);
   const headline = `${title(sign)} Season`;

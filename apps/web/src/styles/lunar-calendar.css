@@ -1870,7 +1870,7 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-selected-card__daily-event {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--lunar-space-9);
   width: 100%;
@@ -1915,10 +1915,6 @@ a.tx-card.has-article:hover .tx-more {
   font-weight: var(--lunar-selected-label-weight);
   line-height: var(--lunar-selected-row-leading);
   white-space: nowrap;
-}
-
-.lunar-selected-card__daily-event-separator {
-  margin-left: calc(var(--space-1) / 2);
 }
 
 .lunar-selected-card__daily-event-time {
@@ -2489,7 +2485,7 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-selected-card__daily-event {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     border-radius: var(--radius-pill);
   }
 

@@ -929,7 +929,22 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
   }
 
   if (event.type === "station" && event.planet && event.direction === "direct") {
-    return "";
+    try {
+      const rendered = calendarFallbackRendererV3.renderSkyEvent({
+        type: "station-direct",
+        a: slugContentPart(event.planet),
+        aSign: event.sign ? slugContentPart(event.sign) : undefined,
+        dateLine: "This week"
+      });
+
+      return firstReaderFacingCopy(rendered.parts);
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) {
+        return "";
+      }
+
+      throw error;
+    }
   }
 
   if (event.type === "aspect" && event.planets && event.aspect) {
@@ -1785,18 +1800,11 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                     >
                       <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
                       <strong>{eventTitle}</strong>
-                      {isActiveRetrogradeEvent(event) ? (
-                        <>
-                          <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
-                          <span className="lunar-selected-card__daily-event-time">{activeRetrogradeUntilLabel(event, zone)}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
-                          <span className="lunar-selected-card__daily-event-time">{formatEventTime(event.startsAt, zone)}</span>
-                          <span aria-hidden="true">↗</span>
-                        </>
-                      )}
+                      <span className="lunar-selected-card__daily-event-time">
+                        {isActiveRetrogradeEvent(event)
+                          ? activeRetrogradeUntilLabel(event, zone)
+                          : formatEventTime(event.startsAt, zone)}
+                      </span>
                     </button>
                   );
                 })}
