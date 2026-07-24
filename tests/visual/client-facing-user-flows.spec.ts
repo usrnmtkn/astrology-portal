@@ -16,6 +16,7 @@ const fixtureLocation = {
 };
 
 const fixtureUserId = "qa-flow-user";
+const fixedNow = "2026-07-16T16:00:00.000Z";
 const themeScreenshotDir = path.join("test-results", "client-facing-theme-flow");
 const responsiveScreenshotDir = path.join("test-results", "client-facing-responsive-flow");
 
@@ -27,8 +28,36 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       body: "QA flow tests use local fallback content instead of the deployed API."
     });
   });
+  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "QA flow tests use the deterministic local content snapshot." })
+    });
+  });
 
-  await page.addInitScript(({ fixtureLocation, fixtureUserId, options }) => {
+  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options }) => {
+    const RealDate = Date;
+    const fixedTime = new RealDate(fixedNow).getTime();
+
+    class FixedDate extends RealDate {
+      constructor(...args: any[]) {
+        if (args.length === 0) {
+          super(fixedTime);
+        } else {
+          super(...args);
+        }
+      }
+
+      static now() {
+        return fixedTime;
+      }
+    }
+
+    FixedDate.UTC = RealDate.UTC;
+    FixedDate.parse = RealDate.parse;
+    window.Date = FixedDate as DateConstructor;
+
     if (!window.localStorage.getItem("tldrastro:qaFlowSeeded")) {
       window.localStorage.clear();
       window.localStorage.setItem("tldrastro:qaFlowSeeded", "true");
@@ -176,7 +205,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         }
       ]));
     }
-  }, { fixtureLocation, fixtureUserId, options });
+  }, { fixtureLocation, fixtureUserId, fixedNow, options });
 
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
@@ -786,7 +815,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await page.goto("/#you");
 
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(page.getByLabel("Profile summary")).toBeVisible();
     await expect(page.getByText("Marie Satori")).toBeVisible();
     await expect(page.getByLabel(/Natal placements|Bodies in signs and houses/)).toBeVisible();
@@ -971,6 +1000,105 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("narrow mobile sky cards and header stay inside their rails", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 320, height: 568 });
+    await seedClientState(page);
+    await page.goto("/#sky");
+
+    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
+
+    const layout = await page.evaluate(() => {
+      const tolerance = 1;
+      const nav = document.querySelector(".nav-pill")?.getBoundingClientRect();
+      const actions = document.querySelector(".topbar-actions")?.getBoundingClientRect();
+      const overflowingCardChildren = Array.from(
+        document.querySelectorAll(".retrograde-section .planet-placement-row__body > *")
+      ).flatMap((element) => {
+        const child = element.getBoundingClientRect();
+        const card = element.closest(".planet-placement-row")?.getBoundingClientRect();
+
+        if (!card || (child.left >= card.left - tolerance && child.right <= card.right + tolerance)) {
+          return [];
+        }
+
+        return [{
+          className: element.className,
+          childLeft: child.left,
+          childRight: child.right,
+          cardLeft: card.left,
+          cardRight: card.right
+        }];
+      });
+      const location = document.querySelector(".sky-today-ledger__head p span:last-child");
+      const locationStyle = location ? getComputedStyle(location) : null;
+      const locationRect = location?.getBoundingClientRect();
+      const locationLineHeight = locationStyle ? Number.parseFloat(locationStyle.lineHeight) : 0;
+
+      return {
+        headerControlsOverlap: Boolean(nav && actions && nav.right > actions.left + tolerance),
+        overflowingCardChildren,
+        locationWraps: Boolean(locationRect && locationLineHeight && locationRect.height > locationLineHeight * 1.5)
+      };
+    });
+
+    expect(layout.headerControlsOverlap, "Narrow Sky header controls do not overlap").toBe(false);
+    expect(layout.overflowingCardChildren, "Narrow Sky card contents stay inside their cards").toEqual([]);
+    expect(layout.locationWraps, "Narrow Sky location stays on one line").toBe(false);
+    await expectNoHorizontalOverflow(page, "Narrow mobile Sky");
+    await assertNoClientErrors();
+  });
+
+  test("narrow mobile calendar surfaces stay inside the page container", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 320, height: 568 });
+    await seedClientState(page);
+    await page.goto("/#calendar");
+
+    await expect(page.getByLabel("Lunar calendar")).toBeVisible();
+    await expect(page.locator(".lunar-selected-card")).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const tolerance = 1;
+      const container = document.querySelector(".lunar-calendar-view")?.getBoundingClientRect();
+      const selectors = [
+        ".lunar-calendar-body",
+        ".lunar-calendar-week-view",
+        ".lunar-week-strip",
+        ".lunar-selected-card",
+        ".lunar-week-transits"
+      ];
+      const overflowingSurfaces = selectors.flatMap((selector) => {
+        const surface = document.querySelector(selector)?.getBoundingClientRect();
+
+        if (
+          !container
+          || !surface
+          || (surface.left >= container.left - tolerance && surface.right <= container.right + tolerance)
+        ) {
+          return [];
+        }
+
+        return [{
+          selector,
+          surfaceLeft: surface.left,
+          surfaceRight: surface.right,
+          containerLeft: container.left,
+          containerRight: container.right
+        }];
+      });
+
+      return { overflowingSurfaces };
+    });
+
+    expect(layout.overflowingSurfaces, "Calendar surfaces honor the narrow page gutter").toEqual([]);
+    await expectNoHorizontalOverflow(page, "Narrow mobile Calendar");
+    await assertNoClientErrors();
+  });
+
   test("direct links restore sky and friend detail state", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
@@ -1019,7 +1147,7 @@ test.describe("client-facing user flow case studies", () => {
       await captureThemeSurface(page, theme, "sky");
 
       await page.goto("/#you");
-      await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
       await captureThemeSurface(page, theme, "you");
 
       await page.goto("/#friends?tab=charts");
@@ -1052,7 +1180,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Desktop Sky");
 
     await page.getByRole("button", { name: "You" }).click();
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "you");
     await expectNoHorizontalOverflow(page, "Desktop You");
 
@@ -1091,7 +1219,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "You" }).click();
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "you");
     await expectNoHorizontalOverflow(page, "Mobile You");
 
@@ -1138,7 +1266,7 @@ test.describe("client-facing user flow case studies", () => {
       await captureResponsiveSurface(page, viewport.name, "label-audit-sky");
 
       await page.goto("/#you");
-      await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
       await page.getByRole("tab", { name: /updates|transits/i }).click();
       await expect(page.getByRole("tab", { name: /updates|transits/i })).toHaveAttribute("aria-selected", "true");
       await expectSharedLabelContract(page, `${viewport.name} You updates`);
@@ -1484,13 +1612,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await page.goto("/#you");
 
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Read Your mission statement" }).click();
     await expect(page.getByRole("region", { name: "Your mission statement" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Your mission statement" })).toBeVisible();
 
     await page.getByRole("button", { name: "Back to updates" }).click();
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1500,13 +1628,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await page.goto("/#you");
 
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Read Your career pattern" }).click();
     await expect(page.getByRole("region", { name: "Your career pattern" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Your career pattern" })).toBeVisible();
 
     await page.getByRole("button", { name: "Back to updates" }).click();
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1516,13 +1644,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await page.goto("/#you");
 
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
 
     await page.getByRole("button", { name: "Back to updates" }).click();
-    await expect(page.getByRole("region", { name: "You" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 

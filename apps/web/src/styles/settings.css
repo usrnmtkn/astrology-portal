@@ -1,7 +1,7 @@
 .settings-page,
 .account-page {
   display: grid;
-  width: min(760px, 100%);
+  width: min(var(--container-form), 100%);
   margin: 0 auto;
   align-content: start;
   gap: var(--stack-gap);
@@ -194,7 +194,7 @@ button.settings-signout-row {
 }
 
 .account-editable-row .settings-row__field {
-  width: min(360px, 48vw);
+  width: min(var(--container-picker), 48vw);
 }
 
 .account-row-input {

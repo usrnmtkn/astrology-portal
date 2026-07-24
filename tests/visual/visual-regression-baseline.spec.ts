@@ -93,6 +93,13 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
       body: "Visual regression tests use local deterministic fallback content."
     });
   });
+  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "Visual regression tests use the deterministic local content snapshot." })
+    });
+  });
 
   await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, theme }) => {
     window.localStorage.clear();

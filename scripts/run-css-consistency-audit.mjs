@@ -66,7 +66,10 @@ const lineHeightDeclarationPattern = /\bline-height\s*:\s*([^;]+)/g;
 const radiusDeclarationPattern = /\bborder-radius\s*:\s*([^;]+)/g;
 const shadowDeclarationPattern = /\bbox-shadow\s*:\s*([^;]+)/g;
 const trackingDeclarationPattern = /\bletter-spacing\s*:\s*([^;]+)/g;
+const surfaceDeclarationPattern = /\b(?:background|background-color)\s*:\s*([^;]+)/g;
+const containerDeclarationPattern = /(?:^|;)\s*(?:width|max-width)\s*:\s*([^;]+)/g;
 const eyebrowSelectorPattern = /(?:^|,\s*)([^{}]*(?:\.eyebrow|\.section-label|eyebrow|section-label)[^{]*)/i;
+const containerSelectorPattern = /(?:page|shell|layout|container|view|panel|column|modal|popover|picker)/i;
 
 async function collectCssFiles(dir) {
   const entries = await readdir(dir);
@@ -175,6 +178,63 @@ function collectFontWeightFindings({ source, relative }) {
   return declarationFindings;
 }
 
+function collectSurfaceFindings({ source, relative }) {
+  if (path.basename(relative) === "theme.css") return [];
+
+  const declarationFindings = [];
+  let match;
+
+  while ((match = surfaceDeclarationPattern.exec(source)) !== null) {
+    const value = match[1].trim();
+    if (
+      /^(?:none|transparent|inherit|initial|unset|currentcolor)$/i.test(value)
+      || isDesignTokenized(value)
+      || !/^(?:#|rgba?\(|hsla?\(|oklch\(|oklab\()/i.test(value)
+    ) {
+      continue;
+    }
+
+    declarationFindings.push({
+      file: relative,
+      line: lineNumberFor(source, match.index),
+      declaration: match[0].trim()
+    });
+  }
+
+  return declarationFindings;
+}
+
+function collectContainerFindings({ source, relative }) {
+  const declarationFindings = [];
+
+  for (const block of parseRuleBlocks(source)) {
+    if (!containerSelectorPattern.test(block.selector)) continue;
+
+    let match;
+    while ((match = containerDeclarationPattern.exec(block.body)) !== null) {
+      const value = match[1].trim();
+      const pixelValues = [...value.matchAll(/(\d+(?:\.\d+)?)px/g)]
+        .map((pixelMatch) => Number.parseFloat(pixelMatch[1]));
+      if (
+        isDesignTokenized(value)
+        || pixelValues.length === 0
+        || Math.max(...pixelValues) < 280
+      ) {
+        continue;
+      }
+
+      declarationFindings.push({
+        file: relative,
+        line: lineNumberFor(source, block.index + match.index),
+        declaration: match[0].replace(/^;\s*/, "").trim(),
+        selector: block.selector.replace(/\s+/g, " ")
+      });
+    }
+  }
+
+  return declarationFindings;
+}
+
 function topFilesFor(declarationFindings, limit = 12) {
   const filesWithDebt = new Set(declarationFindings.map((finding) => finding.file));
 
@@ -207,6 +267,8 @@ const lineHeightFindings = [];
 const radiusFindings = [];
 const shadowFindings = [];
 const trackingFindings = [];
+const surfaceFindings = [];
+const containerFindings = [];
 
 function selectorTargetsCanonical(selector, target) {
   if (selector.includes(`:not(${target})`)) return false;
@@ -257,6 +319,8 @@ for (const filePath of files) {
   radiusFindings.push(...collectDeclarationFindings({ pattern: radiusDeclarationPattern, source, relative }));
   shadowFindings.push(...collectDeclarationFindings({ pattern: shadowDeclarationPattern, source, relative, allowZero: false }));
   trackingFindings.push(...collectDeclarationFindings({ pattern: trackingDeclarationPattern, source, relative }));
+  surfaceFindings.push(...collectSurfaceFindings({ source, relative }));
+  containerFindings.push(...collectContainerFindings({ source, relative }));
 }
 
 for (const target of canonicalEyebrowSelectors) {
@@ -296,6 +360,8 @@ const topLineHeightFiles = topFilesFor(lineHeightFindings);
 const topRadiusFiles = topFilesFor(radiusFindings);
 const topShadowFiles = topFilesFor(shadowFindings);
 const topTrackingFiles = topFilesFor(trackingFindings);
+const topSurfaceFiles = topFilesFor(surfaceFindings);
+const topContainerFiles = topFilesFor(containerFindings);
 
 const lines = [
   "# CSS Consistency Audit",
@@ -304,7 +370,7 @@ const lines = [
   "",
   "## Scope",
   "",
-  "Audits app CSS for inconsistent eyebrow labels, hardcoded spacing, and hardcoded tracking that should move behind shared design tokens.",
+  "Audits app CSS for inconsistent labels, hardcoded visual values, raw component surfaces, and untokenized container boundaries.",
   "",
   "## Summary",
   "",
@@ -318,6 +384,8 @@ const lines = [
   `- Hardcoded border-radius declarations: ${radiusFindings.length}`,
   `- Hardcoded box-shadow declarations: ${shadowFindings.length}`,
   `- Hardcoded non-token letter-spacing declarations: ${trackingFindings.length}`,
+  `- Raw component surface declarations: ${surfaceFindings.length}`,
+  `- Untokenized container boundaries: ${containerFindings.length}`,
   "",
   "## Expected Eyebrow Contract",
   "",
@@ -377,6 +445,14 @@ lines.push(
   "",
   ...topTrackingFiles.map((entry) => `- ${entry.file}: ${entry.count} hardcoded non-token letter-spacing declarations`),
   "",
+  "## Highest Surface Ownership Debt",
+  "",
+  ...topSurfaceFiles.map((entry) => `- ${entry.file}: ${entry.count} raw component surface declarations`),
+  "",
+  "## Highest Container Token Debt",
+  "",
+  ...topContainerFiles.map((entry) => `- ${entry.file}: ${entry.count} untokenized container boundaries`),
+  "",
   "## First 40 Hardcoded Spacing Findings",
   "",
   ...spacingFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
@@ -405,13 +481,21 @@ lines.push(
   "",
   ...trackingFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
+  "## First 40 Raw Component Surface Findings",
+  "",
+  ...surfaceFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  "",
+  "## First 40 Untokenized Container Findings",
+  "",
+  ...containerFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.selector}\` → \`${finding.declaration}\``),
+  "",
   "## Recommended Fix Order",
   "",
-  "1. Create a single semantic label utility for `.eyebrow`, `.section-label`, `.aspect-section-label`, `.friend-section-label`, and calendar/admin eyebrow variants.",
-  "2. Add semantic spacing tokens for page gutters, section gaps, card padding, row padding, and compact/mobile variants.",
-  "3. Replace local pixel padding/margin on repeated card and section surfaces with those tokens.",
+  "1. Keep shared page and component boundaries behind the `--container-*` scale.",
+  "2. Keep card and panel colors behind semantic surface tokens rather than component-local colors.",
+  "3. Keep repeated padding and margin values behind page, section, card, row, and compact/mobile tokens.",
   "4. Leave one-off optical offsets only when the selector name documents the exception, such as glyph alignment.",
-  "5. Add a visual regression test that captures Sky, You, Friends detail, Calendar, Settings, and Admin at desktop/mobile widths."
+  "5. Maintain desktop, mobile, light, and dark visual coverage for all client-facing surfaces."
 );
 
 await mkdir(reportDir, { recursive: true });
@@ -428,4 +512,6 @@ Hardcoded line-height declarations: ${lineHeightFindings.length}
 Hardcoded border-radius declarations: ${radiusFindings.length}
 Hardcoded box-shadow declarations: ${shadowFindings.length}
 Hardcoded non-token letter-spacing declarations: ${trackingFindings.length}
+Raw component surface declarations: ${surfaceFindings.length}
+Untokenized container boundaries: ${containerFindings.length}
 Report: ${reportPath}`);

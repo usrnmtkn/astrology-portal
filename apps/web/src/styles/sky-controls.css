@@ -14,7 +14,7 @@
 }
 
 .sky-intro {
-  max-width: 760px;
+  max-width: var(--container-form);
 }
 
 .sky-intro__lead {
@@ -49,7 +49,7 @@
   gap: 9px;
   min-width: 0;
   height: var(--top-control-height);
-  max-width: min(360px, calc(100vw - 56px));
+  max-width: min(var(--container-picker), calc(100vw - 56px));
   border: 1px solid var(--floating-button-border);
   border-radius: var(--button-radius);
   background: var(--floating-button-bg);
@@ -359,7 +359,7 @@ html[data-scrolled] .sky-header-date-button {
   z-index: var(--z-picker);
   display: grid;
   gap: 12px;
-  width: min(360px, calc(100vw - 48px));
+  width: min(var(--container-picker), calc(100vw - 48px));
   margin-top: 0;
   border: 1px solid var(--overlay-border);
   border-radius: var(--overlay-radius);

@@ -308,7 +308,7 @@
 .summary-skeleton {
   display: grid;
   gap: 8px;
-  width: min(360px, 100%);
+  width: min(var(--container-picker), 100%);
   margin-top: calc(var(--space-1) / 2);
 }
 
