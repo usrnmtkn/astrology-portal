@@ -132,6 +132,7 @@ import {
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import { loadCareerVocabulary, resolveCareerArchetypeProfile, type CareerArchetypeProfile } from "./services/careerArchetype";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
+import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
@@ -790,6 +791,10 @@ function uniqueNatalAspectRows(aspects: SkySnapshot["aspects"]) {
   const seen = new Set<string>();
 
   return aspects.filter((aspect) => {
+    if (!isDisplayableNatalAspect(aspect)) {
+      return false;
+    }
+
     const key = canonicalAspectDisplayKey(aspect);
 
     if (seen.has(key)) {
