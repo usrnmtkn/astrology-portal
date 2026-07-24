@@ -53,6 +53,18 @@ type FriendChartModalProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
 
+function chartSaveStatus(message: string) {
+  if (/\bsaved locally\b/i.test(message)) {
+    return "Saved locally";
+  }
+
+  if (/\bsaved\b/i.test(message)) {
+    return "Saved";
+  }
+
+  return null;
+}
+
 export function FriendChartModal({
   citySearchField,
   form,
@@ -66,6 +78,8 @@ export function FriendChartModal({
   onFieldChange,
   onSubmit
 }: FriendChartModalProps) {
+  const saveStatus = chartSaveStatus(message);
+
   return (
     <ModalPortal
       className="friend-chart-modal-root"
@@ -185,10 +199,14 @@ export function FriendChartModal({
 
         {citySearchField}
 
-        {message && <p className="manual-chart-message">{message}</p>}
+        {message && (
+          <p className="manual-chart-message" role="status">
+            {saveStatus ?? message}
+          </p>
+        )}
 
         <button className="manual-chart-save add-chart-submit" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? formCopy.savingSubmit : isEditing ? formCopy.saveSubmit : formCopy.submit}
+          {isSubmitting ? "Saving..." : isEditing ? formCopy.saveSubmit : formCopy.submit}
         </button>
       </form>
     </ModalPortal>
