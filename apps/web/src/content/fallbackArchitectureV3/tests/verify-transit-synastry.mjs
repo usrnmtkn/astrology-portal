@@ -157,6 +157,53 @@ for (let i = 0; i < SKY_PL.length; i++) for (let j = i + 1; j < SKY_PL.length; j
     skyAsp++;
   } catch (e) { fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: ${e.message}`); }
 }
+{
+  const hookBody = (contentKey) => rowsFileForTests.hookRows.find((row) => row.contentKey === contentKey)?.body_you;
+  const signKey = "fallback-hook/sky-aspect-sign/venus/aries/square/saturn/cancer";
+  const signSpecific = renderSkyAspectCard({
+    a: "venus",
+    b: "saturn",
+    aspect: "square",
+    aSign: "aries",
+    bSign: "cancer"
+  });
+  if (signSpecific.contentKey !== signKey || signSpecific.body !== hookBody(signKey) || signSpecific.parts.length !== 1) {
+    fail("sky aspect phrasebook: sign-specific row must stand alone and outrank exact/pair rows");
+  }
+  const signSpecificReversed = renderSkyAspectCard({
+    a: "saturn",
+    b: "venus",
+    aspect: "square",
+    aSign: "cancer",
+    bSign: "aries"
+  });
+  if (signSpecificReversed.contentKey !== signKey || signSpecificReversed.body !== hookBody(signKey)) {
+    fail("sky aspect phrasebook: reversed sign-specific lookup failed");
+  }
+
+  const exactKey = "fallback-hook/sky-aspect-exact/venus/square/saturn";
+  const exact = renderSkyAspectCard({ a: "saturn", b: "venus", aspect: "square" });
+  if (exact.contentKey !== exactKey || exact.body !== hookBody(exactKey) || exact.parts.length !== 1) {
+    fail("sky aspect phrasebook: reversed exact lookup failed");
+  }
+
+  const pairKey = "fallback-hook/sky-aspect-pair/sun/moon/hard";
+  const pair = renderSkyAspectCard({ a: "moon", b: "sun", aspect: "opposition" });
+  if (pair.contentKey !== pairKey || pair.body !== hookBody(pairKey) || pair.parts.length !== 1) {
+    fail("sky aspect phrasebook: reversed group-pair lookup failed");
+  }
+
+  const generic = renderSkyAspectCard({ a: "chiron", b: "north-node", aspect: "square" });
+  if (generic.contentKey || !generic.body.includes("Chiron") || !generic.body.includes("North Node")) {
+    fail("sky aspect phrasebook: generic frame fallback failed");
+  }
+
+  const placementKey = "fallback-hook/sky-placement-sign/venus/leo";
+  const placement = renderSkyPlacement({ planet: "venus", sign: "leo" });
+  if (placement.parts[0] !== hookBody(placementKey) || placement.parts.length < 3) {
+    fail("sky placement phrasebook: sign-specific paragraph was not preferred inside the full article");
+  }
+}
 console.log(`Rendered ${skyAsp} sky aspect cards.`);
 
 
