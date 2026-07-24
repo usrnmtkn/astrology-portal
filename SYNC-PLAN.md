@@ -11,6 +11,6 @@
   - Location: new `apps/web/src/hooks/useChartSyncFlush.ts`; one `App.tsx` insertion after `rg -n` and an <=80-line read.
 - [x] UI status: reuse the existing chart card pattern to show Saving... / Saved / Saved locally, no layout changes.
   - Location: `apps/web/src/features/friends/FriendChartsList.tsx`; `apps/web/src/features/friends/FriendChartModal.tsx`
-- [ ] Contract test: chart survives a failed remote write; local cache renders before remote resolves.
+- [x] Contract test: chart survives a failed remote write; local cache renders before remote resolves.
   - Location: `scripts/test-friends-chart-performance-contract.mjs`
 - [ ] Run friends retention + performance contracts and the web build.
