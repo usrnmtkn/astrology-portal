@@ -1,0 +1,91 @@
+{
+  "_meta": {
+    "batch": "composite-aspect-pair-seed-2026-07-23",
+    "purpose": "Seed batch of composite aspect pair hooks, mirroring fallback-hook/synastry-pair. Voice = the CONNECTION as a single subject (never two people, never 'bond'). Adapted from the natal aspect-pair cookbook meanings, re-voiced for a relationship chart. Full set is ~161 pairs x {soft, hard, conjunction}.",
+    "voice": "the connection (single subject); body_you and body_they are identical because the subject is the relationship itself, not a viewer",
+    "style": "no em dashes, plain language, banned-words clean, colon setup/payoff; use 'connection', never 'bond'",
+    "review": "needs_review until owner approves rendered output in chat"
+  },
+  "hookRows": [
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/saturn/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "A grounded connection: feeling and structure back each other up, so it holds its shape under pressure. Care shows here through reliability more than words. Say the gentle truth out loud; the structure can take it.",
+      "body_they": "A grounded connection: feeling and structure back each other up, so it holds its shape under pressure. Care shows here through reliability more than words. Say the gentle truth out loud; the structure can take it.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/moon/saturn (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/saturn/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Warmth and duty pull against each other in this connection: one side wants closeness, the other wants control, and it can turn cool or heavy when they stop negotiating. Worked honestly, it builds a security that actually lasts.",
+      "body_they": "Warmth and duty pull against each other in this connection: one side wants closeness, the other wants control, and it can turn cool or heavy when they stop negotiating. Worked honestly, it builds a security that actually lasts.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/moon/saturn (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/venus/mars/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Attraction and drive move together here: desire is easy to name and the chemistry stays alive. This connection is at its best when affection and effort flow both ways, so neither person carries the pursuit alone.",
+      "body_they": "Attraction and drive move together here: desire is easy to name and the chemistry stays alive. This connection is at its best when affection and effort flow both ways, so neither person carries the pursuit alone.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/venus/mars (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/venus/mars/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Desire runs hot in this connection, and heat cuts both ways: passion one day, friction the next. It thrives when the spark points at a shared want instead of at each other.",
+      "body_they": "Desire runs hot in this connection, and heat cuts both ways: passion one day, friction the next. It thrives when the spark points at a shared want instead of at each other.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/venus/mars (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/saturn/sun/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Identity and structure reinforce each other here: this connection takes itself seriously in the good way, and what it builds tends to hold. Respect is the fuel, so keep it mutual and this is what long partnerships are made of.",
+      "body_they": "Identity and structure reinforce each other here: this connection takes itself seriously in the good way, and what it builds tends to hold. Respect is the fuel, so keep it mutual and this is what long partnerships are made of.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/sun/saturn (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/saturn/sun/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Purpose meets pressure in this connection: one current wants to shine, the other wants proof first, and it can feel like the connection is always being tested. Met with patience, the testing becomes the foundation.",
+      "body_they": "Purpose meets pressure in this connection: one current wants to shine, the other wants proof first, and it can feel like the connection is always being tested. Met with patience, the testing becomes the foundation.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/sun/saturn (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/moon/sun/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Will and feeling sit close together in this connection: what it wants and what it needs point the same way, which makes it easy to feel understood here. The work is keeping outside noise from drowning out that shared signal.",
+      "body_they": "Will and feeling sit close together in this connection: what it wants and what it needs point the same way, which makes it easy to feel understood here. The work is keeping outside noise from drowning out that shared signal.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/moon/sun (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    },
+    {
+      "contentKey": "fallback-hook/composite-pair/mercury/saturn/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Thinking meets caution in this connection: ideas get pressure-tested and small worries can grow, so conversations sometimes stall before they start. The upside is that what finally gets said here is considered, and it holds up.",
+      "body_they": "Thinking meets caution in this connection: ideas get pressure-tested and small worries can grow, so conversations sometimes stall before they start. The upside is that what finally gets said here is considered, and it holds up.",
+      "review_status": "needs_review",
+      "source_keys": ["fallback-hook/aspect-pair/mercury/saturn (natal meaning, re-voiced for composite)"],
+      "note": "composite pair seed; awaiting owner approval"
+    }
+  ]
+}
