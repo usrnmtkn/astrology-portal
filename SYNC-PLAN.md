@@ -9,7 +9,7 @@
   - Location: `apps/web/src/services/manualCharts.ts`
 - [x] Friends page hook: run flush on mount, window focus, visibilitychange, online, and auth session arrival.
   - Location: new `apps/web/src/hooks/useChartSyncFlush.ts`; one `App.tsx` insertion after `rg -n` and an <=80-line read.
-- [ ] UI status: reuse the existing chart card pattern to show Saving... / Saved / Saved locally, no layout changes.
+- [x] UI status: reuse the existing chart card pattern to show Saving... / Saved / Saved locally, no layout changes.
   - Location: `apps/web/src/features/friends/FriendChartsList.tsx`; `apps/web/src/features/friends/FriendChartModal.tsx`
 - [ ] Contract test: chart survives a failed remote write; local cache renders before remote resolves.
   - Location: `scripts/test-friends-chart-performance-contract.mjs`
