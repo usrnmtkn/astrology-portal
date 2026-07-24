@@ -1625,8 +1625,46 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     () => lunarArcMilestones(selectedLunarDay),
     [selectedLunarDay]
   );
-  const selectedTwoWeekArcMilestones = selectedSeasonArcMilestones.filter((milestone) => milestone.group === "twoWeek");
   const selectedSixMonthArcMilestones = selectedSeasonArcMilestones.filter((milestone) => milestone.group === "sixMonth");
+  // The New Moon and Full Moon that fall within the current zodiac season, shown
+  // in the season chip. For Leo season these are the Leo New Moon and the
+  // Aquarius Full Moon (each carries its own sign from the ephemeris).
+  const selectedSeasonMoonMilestones = useMemo(() => {
+    if (!selectedSeasonArc || !selectedDay) {
+      return [] as Array<{ id: string; label: string; discClass: string; point: { sign: string; datetime: string }; isCurrent: boolean }>;
+    }
+
+    const startTime = dayKeyToUtcTime(selectedSeasonArc.season.start);
+    const endTime = dayKeyToUtcTime(selectedSeasonArc.season.end);
+    const selectedTime = dayKeyToUtcTime(selectedDay.dateKey);
+    const seasonLunations = arcEvents
+      .filter((event) => event.type === "lunation")
+      .filter((event) => {
+        const eventTime = dayKeyToUtcTime(event.dateKey);
+
+        return eventTime >= startTime && eventTime < endTime;
+      });
+    const newMoon = seasonLunations.find((event) => event.title.startsWith("New Moon")) ?? null;
+    const fullMoon = seasonLunations.find((event) => event.title.startsWith("Full Moon")) ?? null;
+
+    const rows = [
+      newMoon && { id: newMoon.id, label: "New Moon", discClass: "is-new", event: newMoon },
+      fullMoon && { id: fullMoon.id, label: "Full Moon", discClass: "is-full", event: fullMoon }
+    ].filter((row): row is { id: string; label: string; discClass: string; event: LunarCalendarEvent } => Boolean(row));
+
+    const currentId = rows
+      .filter((row) => dayKeyToUtcTime(row.event.dateKey) <= selectedTime)
+      .sort((first, second) => dayKeyToUtcTime(first.event.dateKey) - dayKeyToUtcTime(second.event.dateKey))
+      .at(-1)?.id ?? null;
+
+    return rows.map((row) => ({
+      id: row.id,
+      label: row.label,
+      discClass: row.discClass,
+      point: { sign: row.event.sign ?? "", datetime: row.event.startsAt },
+      isCurrent: row.id === currentId
+    }));
+  }, [arcEvents, selectedDay, selectedSeasonArc]);
   const monthTransitEvents = calendar ? monthTransitCardEvents(calendar.days) : [];
   const visibleWeekTransitEvents = weekTransitCardEvents(selectedWeekDays);
   const milestoneReferenceDate = visibleWeekAnchor ? new Date(visibleWeekAnchor.date) : selectedDate;
@@ -1802,13 +1840,12 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               <span>{selectedSeasonArc.season.sign} season</span>
               <small>{formatSeasonRange(selectedSeasonArc.season.start, selectedSeasonArc.season.end, zone)}</small>
             </div>
-            {selectedSeasonArcMilestones.length > 0 && (
+            {(selectedSeasonMoonMilestones.length > 0 || selectedSixMonthArcMilestones.length > 0) && (
               <div className="lunar-selected-card__arc-milestone-groups" aria-label="Lunar arc milestones">
-                {selectedTwoWeekArcMilestones.length > 0 && (
+                {selectedSeasonMoonMilestones.length > 0 && (
                   <section>
-                    <span>Two-week arc</span>
                     <ol className="lunar-selected-card__arc-milestones">
-                      {selectedTwoWeekArcMilestones.map((milestone) => (
+                      {selectedSeasonMoonMilestones.map((milestone) => (
                         <li className={milestone.isCurrent ? "is-current" : ""} key={milestone.id}>
                           <span className={`lunar-moon-disc ${milestone.discClass}`} aria-hidden="true" />
                           <strong>{milestone.label} <span>{signGlyphs[milestone.point.sign] ?? ""}</span></strong>
