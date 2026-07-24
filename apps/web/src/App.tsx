@@ -29,6 +29,7 @@ import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
+import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
 import { CareerArchetypeCard } from "./components/charts/CareerArchetypeCard";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
@@ -130,6 +131,11 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
+import {
+  aspectGiftOrLesson,
+  groupAspectsByGiftLesson,
+  type AspectGiftLessonGroup as GiftLessonGroup
+} from "./services/aspectGiftLesson";
 import { loadCareerVocabulary, resolveCareerArchetypeProfile, type CareerArchetypeProfile } from "./services/careerArchetype";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
@@ -374,11 +380,7 @@ type RenderedSynastryContact = {
   templateKey?: string;
 };
 
-type FriendNatalAspectGroup = {
-  key: "gifts" | "lessons";
-  label: "Gifts" | "Lessons";
-  aspects: SkySnapshot["aspects"];
-};
+type FriendNatalAspectGroup = GiftLessonGroup<SkySnapshot["aspects"][number]>;
 
 type SurfaceProseLayer = "authored" | "fallback";
 type NormalizedSurfaceStatus = "servable" | "partial" | "not-servable";
@@ -4686,13 +4688,10 @@ function isRetrogradeTimelineNode(node: ReactNode) {
   return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
 }
 
-const aspectGiftTypes = new Set(["sextile", "trine"]);
 const aspectTypePattern = /\b(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\b/i;
 
 function normalizedAspectToneBucket(aspectType?: string): AspectToneBucket {
-  const normalized = normalizeAspectType(aspectType ?? "");
-
-  return aspectGiftTypes.has(normalized) ? "gifts" : "lessons";
+  return natalAspectGroupKey(normalizeAspectType(aspectType ?? ""));
 }
 
 function aspectTypeFromText(value: string) {
@@ -7559,98 +7558,6 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
   });
 }
 
-function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
-  return [...aspects].sort((first, second) => {
-    const tierDiff = skyAspectConditionTier(first) - skyAspectConditionTier(second);
-
-    if (tierDiff !== 0) {
-      return tierDiff;
-    }
-
-    const durationDiff = skyAspectEstimatedDurationDays(first) - skyAspectEstimatedDurationDays(second);
-
-    if (Math.abs(durationDiff) > 0.001) {
-      return durationDiff;
-    }
-
-    if (first.orb !== second.orb) {
-      return first.orb - second.orb;
-    }
-
-    const firstFastestPlanet = fastestSkyAspectPlanet(first);
-    const secondFastestPlanet = fastestSkyAspectPlanet(second);
-
-    return skyBodyOrderIndex(firstFastestPlanet ?? "") - skyBodyOrderIndex(secondFastestPlanet ?? "");
-  });
-}
-
-function skyAspectConditionTier(aspect: SkySnapshot["aspects"][number]) {
-  if (aspect.conditions?.applying && aspect.conditions.perfects) {
-    return 0;
-  }
-
-  if (aspect.conditions?.applying) {
-    return 1;
-  }
-
-  return 2;
-}
-
-function skyAspectLifeAreaScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], area: LifeAreaFocus) {
-  const astrology = lifeAreaFocusAstrology[area];
-  const firstPosition = positions.find((position) => position.planet === aspect.from);
-  const secondPosition = positions.find((position) => position.planet === aspect.to);
-  const houseScore = [firstPosition?.house, secondPosition?.house].filter((house) => house && astrology.houses.includes(house)).length * 8;
-  const planetScore = [aspect.from, aspect.to].filter((planet) => astrology.planets.includes(planet)).length * 3;
-  const aspectScore = astrology.aspects?.includes(aspect.type) ? 1 : 0;
-  const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.sign ?? ""} ${secondPosition?.sign ?? ""}`, [area]);
-
-  return houseScore + planetScore + aspectScore + keywordScore;
-}
-
-function skyAspectPrimaryLifeArea(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
-  return focusAreas
-    .map((area) => ({ area, score: skyAspectLifeAreaScore(aspect, positions, area) }))
-    .filter((item) => item.score > 0)
-    .sort((first, second) => second.score - first.score)[0]?.area ?? null;
-}
-
-function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
-  const orderedAspects = rankSkyAspectsByTransitDuration(aspects);
-
-  if (focusAreas.length === 0) {
-    return [{ key: "all", label: "", aspects: orderedAspects }];
-  }
-
-  const groups = new Map<string, { key: string; label: string; aspects: SkySnapshot["aspects"] }>();
-  const unmatched: SkySnapshot["aspects"] = [];
-
-  orderedAspects.forEach((aspect) => {
-    const primaryArea = skyAspectPrimaryLifeArea(aspect, positions, focusAreas);
-
-    if (!primaryArea) {
-      unmatched.push(aspect);
-      return;
-    }
-
-    const group = groups.get(primaryArea) ?? {
-      key: primaryArea,
-      label: "",
-      aspects: []
-    };
-    group.aspects.push(aspect);
-    groups.set(primaryArea, group);
-  });
-
-  return [
-    ...focusAreas.flatMap((area) => {
-      const group = groups.get(area);
-      return group ? [group] : [];
-    }),
-    ...(unmatched.length > 0 ? [{ key: "other", label: "", aspects: unmatched }] : [])
-  ];
-}
-
 function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart) {
   const ascendant = chart.natalChart?.ascendant ?? "";
 
@@ -8021,18 +7928,15 @@ function renderReaderDirectedSynastryContact(
 }
 
 function natalAspectGroupKey(aspect: string): FriendNatalAspectGroup["key"] {
-  return aspect === "trine" || aspect === "sextile" ? "gifts" : "lessons";
+  return aspectGiftOrLesson(aspect);
 }
 
 function groupFriendNatalAspects(aspects: SkySnapshot["aspects"]): FriendNatalAspectGroup[] {
-  const uniqueAspects = uniqueNatalAspectRows(aspects).slice().sort((first, second) => first.orb - second.orb);
-  const gifts = uniqueAspects.filter((aspect) => natalAspectGroupKey(aspect.type) === "gifts");
-  const lessons = uniqueAspects.filter((aspect) => natalAspectGroupKey(aspect.type) === "lessons");
-
-  return [
-    { key: "gifts" as const, label: "Gifts" as const, aspects: gifts },
-    { key: "lessons" as const, label: "Lessons" as const, aspects: lessons }
-  ].filter((group) => group.aspects.length > 0);
+  return groupAspectsByGiftLesson(
+    uniqueNatalAspectRows(aspects),
+    (aspect) => aspect.type,
+    (aspect) => aspect.orb
+  );
 }
 
 function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: string; rangeLabel: string }) {
@@ -15039,7 +14943,6 @@ function TodayView({
           positions={positions}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
-          lifeAreaFocus={lifeAreaFocus}
           onOpenDetail={onOpenDetail}
         />
       )}
@@ -15063,26 +14966,24 @@ function ActiveAspects({
   positions,
   generatedAt,
   generatedContent,
-  lifeAreaFocus,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
-  lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const aspectGroups = useMemo(
-    () => groupSkyAspectsByLifeArea(aspects, positions, lifeAreaFocus),
-    [aspects, positions, lifeAreaFocus]
+    () => groupAspectsByGiftLesson(aspects, (aspect) => aspect.type, (aspect) => aspect.orb),
+    [aspects]
   );
 
   return (
     <SkyAspectsSection>
       {aspectGroups.map((group) => (
-          <SkyAspectGroup id={group.key} key={group.key}>
-              {group.aspects.map((aspect) => {
+        <SkyAspectGroup id={group.key} key={group.key} label={group.label}>
+          {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
             const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
@@ -15096,32 +14997,32 @@ function ActiveAspects({
               timing
             );
 
-                return (
-                  <button
-                    type="button"
-                    className="sky-card aspect-row aspect-row-button"
-                    key={`${aspect.from}-${aspect.to}`}
-                    aria-label={`Read more about ${title}`}
-                    onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
-                  >
-                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                    <div className="aspect-row-copy">
-                      <h3>{title}</h3>
-                      <span className="aspect-row-timing" aria-label={timing.label}>
-                        <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                          <DurationLabelText label={timing.durationLabel} />
-                        </span>
-                        <span>{timing.rangeLabel}</span>
-                      </span>
-                      {displaySummary ? <p>{displaySummary}</p> : null}
-                    </div>
-                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{wholeDegreeOrb(aspect.orb)}</span>
+            return (
+              <button
+                type="button"
+                className="sky-card aspect-row aspect-row-button"
+                key={`${aspect.from}-${aspect.to}`}
+                aria-label={`Read more about ${title}`}
+                onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
+              >
+                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                <div className="aspect-row-copy">
+                  <h3>{title}</h3>
+                  <span className="aspect-row-timing" aria-label={timing.label}>
+                    <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                      <DurationLabelText label={timing.durationLabel} />
                     </span>
-                  </button>
-                );
-              })}
+                    <span>{timing.rangeLabel}</span>
+                  </span>
+                  {displaySummary ? <p>{displaySummary}</p> : null}
+                </div>
+                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                  <span className="aspect-row-dot" aria-hidden="true" />
+                  <span>{wholeDegreeOrb(aspect.orb)}</span>
+                </span>
+              </button>
+            );
+          })}
         </SkyAspectGroup>
       ))}
     </SkyAspectsSection>
@@ -16722,29 +16623,36 @@ function ProfileView({
       />
     );
   }) : [];
-  const natalAspectItems = natalAspectRows.map((aspect) => {
-    const rowSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect));
+  const natalAspectGroups = groupAspectsByGiftLesson(
+    natalAspectRows,
+    (aspect) => aspect.type,
+    (aspect) => aspect.orb
+  ).map((group) => ({
+    ...group,
+    aspects: group.aspects.map((aspect) => {
+      const rowSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect));
 
-    return (
-      <button
-        aria-label={`Read more about ${aspect.from} ${aspect.type} ${aspect.to}`}
-        className="aspect-row aspect-row-button"
-        key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-        onClick={() => openNatalAspectArticle(aspect)}
-        type="button"
-      >
-        <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-        <span className="aspect-row-copy">
-          <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-          {rowSummary ? <p>{rowSummary}</p> : null}
-        </span>
-        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-          <span className="aspect-row-dot" aria-hidden="true" />
-          <span>{wholeDegreeOrb(aspect.orb)}</span>
-        </span>
-      </button>
-    );
-  });
+      return (
+        <button
+          aria-label={`Read more about ${aspect.from} ${aspect.type} ${aspect.to}`}
+          className="aspect-row aspect-row-button"
+          key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+          onClick={() => openNatalAspectArticle(aspect)}
+          type="button"
+        >
+          <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+          <span className="aspect-row-copy">
+            <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+            {rowSummary ? <p>{rowSummary}</p> : null}
+          </span>
+          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+            <span className="aspect-row-dot" aria-hidden="true" />
+            <span>{wholeDegreeOrb(aspect.orb)}</span>
+          </span>
+        </button>
+      );
+    })
+  }));
   const updateAspectRows = aspectRows.map((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, transitForm.chartDate);
@@ -17188,7 +17096,7 @@ function ProfileView({
         emptyHouseRows={emptyHouseRows}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
-        natalAspectRows={natalAspectItems}
+        natalAspectGroups={natalAspectGroups}
         natalAspectPatternItems={natalAspectPatternItems}
         natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}
@@ -17385,6 +17293,11 @@ function ManualChartsPanel({
         lifeAreaFocus
       )
     : [];
+  const selectedSynastryAspectGroups = groupAspectsByGiftLesson(
+    selectedSynastryContacts,
+    (contact) => contact.aspect,
+    (contact) => contact.orb
+  );
   const selectedCompatibilityCards = selectedChart && !selectedChartIsEvent
     ? compatibilityPlanetCards(
         relationshipComparisonSky,
@@ -17407,6 +17320,11 @@ function ManualChartsPanel({
     ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
     : [];
   const selectedCompositeSky = selectedChart && !selectedChartIsEvent ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
+  const selectedCompositeAspectGroups = groupAspectsByGiftLesson(
+    selectedCompositeSky?.aspects ?? [],
+    (aspect) => aspect.type,
+    (aspect) => aspect.orb
+  );
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
@@ -18753,41 +18671,44 @@ function ManualChartsPanel({
                 {selectedFriendNatalAspectGroups.length ? (
                   <>
                     {selectedFriendNatalAspectGroups.map((group) => (
-                      <section className="friend-natal-aspect-group" aria-label={`${selectedChart.displayName} natal aspect ${group.label}`} key={group.key}>
-                        <span className="eyebrow section-label friend-section-label">{group.label}</span>
-                        <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-natal-aspects-list">
-                          {group.aspects.map((aspect) => {
-                            const normalized = normalizeNatalAspectSurface(aspect, {
-                              ownerName: selectedChart.displayName,
-                              ownerKind: selectedChartIsEvent ? "chart" : "person",
-                              ownerPronouns: selectedChart.pronouns
-                            });
-                            const renderedSection = normalized.sections[0];
-                            const rowSummary = normalizedSurfacePreview(normalized);
-                            const title = renderedSection?.heading ?? `${selectedChart.displayName}'s ${aspect.from} ${aspect.type} ${aspect.to}`;
+                      <AspectGiftLessonGroup
+                        ariaLabel={`${selectedChart.displayName} natal aspect ${group.label}`}
+                        key={group.key}
+                        label={group.label}
+                        listAriaLabel={`${selectedChart.displayName} natal ${group.label.toLowerCase()}`}
+                        listClassName="friend-aspect-list friend-natal-aspects-list"
+                      >
+                        {group.aspects.map((aspect) => {
+                          const normalized = normalizeNatalAspectSurface(aspect, {
+                            ownerName: selectedChart.displayName,
+                            ownerKind: selectedChartIsEvent ? "chart" : "person",
+                            ownerPronouns: selectedChart.pronouns
+                          });
+                          const renderedSection = normalized.sections[0];
+                          const rowSummary = normalizedSurfacePreview(normalized);
+                          const title = renderedSection?.heading ?? `${selectedChart.displayName}'s ${aspect.from} ${aspect.type} ${aspect.to}`;
 
-                            return (
-                              <button
-                                aria-label={`Open full entry for ${title}`}
-                                className="aspect-row aspect-row-button friend-aspect-row"
-                                key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                                onClick={() => openFriendNatalAspectDetail(aspect)}
-                                type="button"
-                              >
-                                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                                <span className="aspect-row-copy">
-                                  <h3>{title}</h3>
-                                  {rowSummary ? <p>{rowSummary}</p> : null}
-                                </span>
-                                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                                  <span className="aspect-row-dot" aria-hidden="true" />
-                                  <span>{wholeDegreeOrb(aspect.orb)}</span>
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </section>
+                          return (
+                            <button
+                              aria-label={`Open full entry for ${title}`}
+                              className="aspect-row aspect-row-button friend-aspect-row"
+                              key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                              onClick={() => openFriendNatalAspectDetail(aspect)}
+                              type="button"
+                            >
+                              <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                              <span className="aspect-row-copy">
+                                <h3>{title}</h3>
+                                {rowSummary ? <p>{rowSummary}</p> : null}
+                              </span>
+                              <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                                <span className="aspect-row-dot" aria-hidden="true" />
+                                <span>{wholeDegreeOrb(aspect.orb)}</span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </AspectGiftLessonGroup>
                     ))}
                   </>
                 ) : null}
@@ -18911,56 +18832,63 @@ function ManualChartsPanel({
                   innerSky={relationshipComparisonSky}
                   innerIsSelf={relationshipComparisonIsSelf}
                 />
-                <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
-                <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
-                  {selectedSynastryContacts.map((contact) => {
-                    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
-                    const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
-                    const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
-                    const detailBody = rendered?.body ? [rendered.body] : [];
-                    const description = rendered?.body ? textPreview(rendered.body) : "";
+                {selectedSynastryAspectGroups.map((group) => (
+                  <AspectGiftLessonGroup
+                    ariaLabel={`${selectedChart.displayName} synastry ${group.label}`}
+                    key={group.key}
+                    label={group.label}
+                    listAriaLabel={`${selectedChart.displayName} compatibility ${group.label.toLowerCase()}`}
+                    listClassName="friend-aspect-list"
+                  >
+                    {group.aspects.map((contact) => {
+                      const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+                      const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
+                      const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
+                      const detailBody = rendered?.body ? [rendered.body] : [];
+                      const description = rendered?.body ? textPreview(rendered.body) : "";
 
-                    return (
-                      <button
-                        type="button"
-                        className="aspect-row aspect-row-button friend-aspect-row"
-                        key={contact.id}
-                        aria-label={`Open full entry for ${title}`}
-                        onClick={() => onOpenDetail({
-                          routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `synastry-${contact.id}`),
-                          glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
-                          kicker: "Synastry",
-                          title,
-                          meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
-                          body: detailBody,
-                          content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
-                        })}
-                      >
-                        <span className="aspect-row-glyphs" aria-hidden="true">
-                          <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
-                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
-                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
-                        </span>
-                        <span className="aspect-row-copy">
-                          <h3>{title}</h3>
-                          <span className="aspect-row-subtitle ui-pill ui-pill--muted">{subtitle}</span>
-                          {description ? <p className="synastry-contact-description">{description}</p> : null}
-                        </span>
-                        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
-                          <span className="aspect-row-dot" aria-hidden="true" />
-                          <span>{wholeDegreeOrb(contact.orb)}</span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                  {selectedSynastryContacts.length === 0 && (
-                    <article className="friends-logic-card">
-                      <span>Interaspects</span>
-                      <h3>Add both charts.</h3>
-                      <p>Complete birth details for both people will reveal their strongest synastry contacts.</p>
-                    </article>
-                  )}
-                </div>
+                      return (
+                        <button
+                          type="button"
+                          className="aspect-row aspect-row-button friend-aspect-row"
+                          key={contact.id}
+                          aria-label={`Open full entry for ${title}`}
+                          onClick={() => onOpenDetail({
+                            routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `synastry-${contact.id}`),
+                            glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
+                            kicker: "Synastry",
+                            title,
+                            meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+                            body: detailBody,
+                            content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
+                          })}
+                        >
+                          <span className="aspect-row-glyphs" aria-hidden="true">
+                            <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
+                            <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
+                            <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
+                          </span>
+                          <span className="aspect-row-copy">
+                            <h3>{title}</h3>
+                            <span className="aspect-row-subtitle ui-pill ui-pill--muted">{subtitle}</span>
+                            {description ? <p className="synastry-contact-description">{description}</p> : null}
+                          </span>
+                          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
+                            <span className="aspect-row-dot" aria-hidden="true" />
+                            <span>{wholeDegreeOrb(contact.orb)}</span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </AspectGiftLessonGroup>
+                ))}
+                {selectedSynastryContacts.length === 0 && (
+                  <article className="friends-logic-card">
+                    <span>Interaspects</span>
+                    <h3>Add both charts.</h3>
+                    <p>Complete birth details for both people will reveal their strongest synastry contacts.</p>
+                  </article>
+                )}
               </div>
             </div>
           )}
@@ -18998,30 +18926,38 @@ function ManualChartsPanel({
                     />
                   </section>
                 )}
-                <span className="eyebrow section-label friend-section-label">Composite aspects · by strength</span>
                 {selectedCompositeSky ? (
-                  <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label="Composite chart aspects">
-                    {selectedCompositeSky.aspects.map((aspect) => (
-                      <div className="aspect-row aspect-row-static friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}>
-                        <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                        <span className="aspect-row-copy">
-                          <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                          <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent, selectedChart.relationshipType)}</p>
-                        </span>
-                        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                          <span className="aspect-row-dot" aria-hidden="true" />
-                          <span>{wholeDegreeOrb(aspect.orb)}</span>
-                        </span>
-                      </div>
-                    ))}
-                    {selectedCompositeSky.aspects.length === 0 && (
-                      <article className="friends-logic-card">
-                        <span>Composite aspects</span>
-                        <h3>No tight major aspects found.</h3>
-                        <p>The composite chart is ready, but no single aspect is leading the relationship pattern.</p>
-                      </article>
-                    )}
-                  </div>
+                  selectedCompositeAspectGroups.length > 0 ? (
+                    selectedCompositeAspectGroups.map((group) => (
+                      <AspectGiftLessonGroup
+                        ariaLabel={`Composite aspect ${group.label}`}
+                        key={group.key}
+                        label={group.label}
+                        listAriaLabel={`Composite ${group.label.toLowerCase()}`}
+                        listClassName="friend-aspect-list"
+                      >
+                        {group.aspects.map((aspect) => (
+                          <div className="aspect-row aspect-row-static friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}>
+                            <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                            <span className="aspect-row-copy">
+                              <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+                              <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent, selectedChart.relationshipType)}</p>
+                            </span>
+                            <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                              <span className="aspect-row-dot" aria-hidden="true" />
+                              <span>{wholeDegreeOrb(aspect.orb)}</span>
+                            </span>
+                          </div>
+                        ))}
+                      </AspectGiftLessonGroup>
+                    ))
+                  ) : (
+                    <article className="friends-logic-card">
+                      <span>Composite aspects</span>
+                      <h3>No tight major aspects found.</h3>
+                      <p>The composite chart is ready, but no single aspect is leading the relationship pattern.</p>
+                    </article>
+                  )
                 ) : (
                   <article className="friends-logic-card">
                     <span>Composite</span>
