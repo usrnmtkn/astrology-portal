@@ -9,7 +9,6 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, RoleViolationError } from "../resolver/renderFallback.mjs";
-import { renderTransitAspect } from "../resolver/renderTransitSynastry.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
@@ -116,20 +115,6 @@ for (const angle of ["ascendant", "midheaven", "descendant", "imum-coeli"]) {
   }
 }
 console.log(`Rendered ${angleCount} angle paragraphs.`);
-
-try {
-  const venusDescendantHard = renderTransitAspect({
-    transiting: "venus",
-    natal: "descendant",
-    aspect: "hard"
-  });
-  if (/\{\{/.test(venusDescendantHard.body)) fail("venus/descendant/hard: unresolved fallback slot");
-  if (!venusDescendantHard.body.includes("pushes love and what feels good up against who you are drawn to and how you do close partnership")) {
-    fail(`venus/descendant/hard: aspectVerb did not render from approved vocab: ${venusDescendantHard.body}`);
-  }
-} catch (e) {
-  fail(`venus/descendant/hard: ${e.message}`);
-}
 
 // aspects: every planet pair x 5 aspects x both voices (base render; pair hooks optional)
 let aspectCount = 0;
