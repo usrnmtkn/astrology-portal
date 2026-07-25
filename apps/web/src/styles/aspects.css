@@ -401,8 +401,12 @@
   gap: var(--updates-aspect-row-gap);
   padding: var(--updates-aspect-row-padding);
   background: var(--card-bg);
-  cursor: pointer;
+  cursor: default;
   text-align: left;
+}
+
+:where(button, a).updates-aspect-row {
+  cursor: pointer;
 }
 
 .updates-aspect-row:has(> .updates-aspect-row__glyphs) {
