@@ -1,0 +1,22 @@
+{
+  "id": "tldr-astro.sky-aspect.v10.1-story-packet-handoff",
+  "version": "10.1.0-review",
+  "purpose": "Exact-copy integration handoff for 225 exact-aspect story packets after targeted word-choice refinement and selective collective-lead governance.",
+  "totalRecords": 225,
+  "approvedUserLocked": 5,
+  "editoriallyRefinedReviewReady": 220,
+  "targetedRefinements": 100,
+  "collectiveLeadEligibleRecords": 91,
+  "collectiveLeadSuppressedRecords": 134,
+  "sourceOfTruth": "sky-aspect-exact-story-packets.json",
+  "instructions": "CODEX-SKY-ASPECT-V10-STORY-PACKET-INTEGRATION.md",
+  "files": {
+    "SKY-ASPECT-EXACT-STORY-PACKETS.md": "bcf166251daaa3eafb2b2e4de575e11a9f4641f022521f41473a791284347cb1",
+    "sky-aspect-exact-story-packets.json": "66662d03af713af85a1e5f057e1044abb4f00fa903fc555caefa729c4fe90a17",
+    "sky-aspect-exact-story-packets-audit.json": "3a3f39d7aa5ad0efc5fc343fd2047bde92664fe78551ff7c5d5774b34ab70258",
+    "sky-aspect-v10-word-choice-audit.json": "4a75aa03639c1d2b55427ceb8f162e3999671ff563dd44e91a35195c9562b495",
+    "CODEX-SKY-ASPECT-V10-STORY-PACKET-INTEGRATION.md": "e938212ac0ba4e5e343bb36af15ecbc3d8be0e67f0c62fbd77f3804d202952cd",
+    "build-exact-story-packets.mjs": "870ffd7500b23d8deb18e42b674c3f2d1bfd2e715e85596aee4524b1185c32c3",
+    "refine-exact-story-packets-v10.mjs": "6a5f327736e761effd22ce1549f73ba468d33d22356116eb13bdb9b00eebbde2"
+  }
+}
