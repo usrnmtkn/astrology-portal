@@ -3,11 +3,8 @@ import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
-import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
-import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
-import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
@@ -80,7 +77,6 @@ export type YouTransitArticle = {
 export type YouPageProps = {
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
-  careerArchetypeProfile?: CareerArchetypeProfile | null;
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   displayMoon: string;
@@ -101,8 +97,6 @@ export type YouPageProps = {
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
-  onOpenCareerDetail?: () => void;
-  onOpenSoulRoadmapDetail?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
   profileAvatarUrl?: string;
@@ -114,7 +108,6 @@ export type YouPageProps = {
   signatureTitle: string;
   signaturesReady: boolean;
   standaloneTransitRows?: ReactNode[];
-  unknownBirthTime: boolean;
   transitArticle?: YouTransitArticle | null;
 };
 
@@ -298,42 +291,28 @@ function YouNatalChartPanel({
 
 function YouNatalTab({
   bigThreeRows,
-  careerArchetypeProfile,
-  displayMoon,
-  displayRising,
-  displaySun,
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
   natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternStatus,
-  onOpenCareerDetail,
-  onOpenSoulRoadmapDetail,
   planetRows,
   showNatalSignatures,
   signatureBody,
-  signatureTitle,
-  unknownBirthTime
+  signatureTitle
 }: {
   bigThreeRows: ReactNode[];
-  careerArchetypeProfile?: CareerArchetypeProfile | null;
-  displayMoon: string;
-  displayRising: string;
-  displaySun: string;
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
   natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
-  onOpenCareerDetail?: () => void;
-  onOpenSoulRoadmapDetail?: () => void;
   planetRows: ReactNode[];
   showNatalSignatures: boolean;
   signatureBody: string;
   signatureTitle: string;
-  unknownBirthTime: boolean;
 }) {
   return (
     <div className="subpane" id="sub-chart">
@@ -354,18 +333,6 @@ function YouNatalTab({
             </div>
           </section>
         </>
-      )}
-
-      <SoulRoadmapCard
-        moon={displayMoon}
-        onOpenDetail={onOpenSoulRoadmapDetail}
-        rising={displayRising}
-        risingPending={unknownBirthTime || displayRising === "Rising pending"}
-        sun={displaySun}
-      />
-
-      {careerArchetypeProfile && careerArchetypeProfile.sections.length > 0 && (
-        <CareerArchetypeCard onOpenDetail={onOpenCareerDetail} profile={careerArchetypeProfile} />
       )}
 
       {natalAspectPatternStatus && (
@@ -897,7 +864,6 @@ function YouTransitArticlePage({
 export function YouPage({
   aspectRows,
   bigThreeRows,
-  careerArchetypeProfile,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
   displayMoon,
@@ -918,8 +884,6 @@ export function YouPage({
   updatesChart,
   onCreateChart,
   onCloseTransitArticle,
-  onOpenCareerDetail,
-  onOpenSoulRoadmapDetail,
   personalTimingSummary,
   planetRows,
   profileAvatarUrl,
@@ -931,7 +895,6 @@ export function YouPage({
   signatureTitle,
   signaturesReady,
   standaloneTransitRows = [],
-  unknownBirthTime,
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
@@ -989,23 +952,16 @@ export function YouPage({
           {profileTab === "chart" && (
             <YouNatalTab
               bigThreeRows={bigThreeRows}
-              careerArchetypeProfile={careerArchetypeProfile}
-              displayMoon={displayMoon}
-              displayRising={displayRising}
-              displaySun={displaySun}
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
               natalAspectGroups={natalAspectGroups}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
-              onOpenCareerDetail={onOpenCareerDetail}
-              onOpenSoulRoadmapDetail={onOpenSoulRoadmapDetail}
               planetRows={planetRows}
               showNatalSignatures={showNatalSignatures}
               signatureBody={signatureBody}
               signatureTitle={signatureTitle}
-              unknownBirthTime={unknownBirthTime}
             />
           )}
 
