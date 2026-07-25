@@ -282,11 +282,15 @@ button.settings-signout-row {
   width: 28px;
   height: 28px;
   border-radius: var(--radius-circle);
-  background: var(--surface);
+  background: var(--control-thumb-bg);
   box-shadow: var(--control-thumb-shadow);
 }
 
 .settings-switch.is-on {
   justify-content: flex-end;
   background: var(--ink);
+}
+
+.settings-switch.is-on span {
+  background: var(--control-thumb-active-bg);
 }
