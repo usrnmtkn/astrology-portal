@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
 
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
 
@@ -796,25 +797,36 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const areaFilters = page.getByRole("group", { name: "Filter surfaces by area" });
     const statusFilters = page.getByRole("group", { name: "Filter surfaces by normalization status" });
+    const friendsV3Hook = page.locator(".admin-fallback-row", { hasText: "fallback-hook/synastry-aspect-type/conjunction" });
+    const calendarV3Hook = page.locator(".admin-fallback-row", { hasText: "fallback-hook/sky-event/eclipse-lunar" });
+    const friendsSurfaceLabels = writingSurfaceSourceMap
+      .filter((surface) => surface.area === "Friends")
+      .map((surface) => surface.surface);
+
+    expect(friendsSurfaceLabels).toEqual(expect.arrayContaining([
+      "Friends Compatibility: Planet Comparison Cards",
+      "Friends Compatibility: Exact Dynamics Lanes",
+      "Friends Synastry: Aspect Rows And Detail Pages"
+    ]));
 
     await areaFilters.getByRole("button", { name: "Friends" }).click();
-    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(1);
-    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" })).toHaveCount(0);
+    await expect(friendsV3Hook).toHaveCount(1);
+    await expect(calendarV3Hook).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "Complete" }).click();
-    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(1);
+    await expect(friendsV3Hook).toHaveCount(0);
     await expect(page.locator(".admin-fallback-row", { hasText: "Needs row" })).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "Missing" }).click();
     await expect(areaFilters.getByRole("button", { name: "Friends" })).toHaveAttribute("aria-pressed", "true");
     await expect(statusFilters.getByRole("button", { name: "Missing" })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(0);
-    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" })).toHaveCount(0);
+    await expect(friendsV3Hook).toHaveCount(1);
+    await expect(calendarV3Hook).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "All" }).click();
     await areaFilters.getByRole("button", { name: "Calendar" }).click();
-    await expect(page.locator(".admin-fallback-row", { hasText: "Lunar Calendar" }).first()).toBeVisible();
-    await expect(page.locator(".admin-fallback-row", { hasText: "Friends > Compatibility Card" })).toHaveCount(0);
+    await expect(calendarV3Hook).toHaveCount(1);
+    await expect(friendsV3Hook).toHaveCount(0);
 
     await assertNoBrowserErrors();
   });

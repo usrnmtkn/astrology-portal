@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 
@@ -19,6 +20,20 @@ const fixtureUserId = "qa-flow-user";
 const fixedNow = "2026-07-16T16:00:00.000Z";
 const themeScreenshotDir = path.join("test-results", "client-facing-theme-flow");
 const responsiveScreenshotDir = path.join("test-results", "client-facing-responsive-flow");
+const fallbackSourceRowsV3 = JSON.parse(readFileSync(
+  path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"),
+  "utf8"
+)) as {
+  hookRows: Array<{ contentKey: string; body_you?: string }>;
+};
+const mercuryAscendantHardSource = fallbackSourceRowsV3.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/synastry-pair/mercury/ascendant/hard"
+);
+const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you ?? "")
+  .split(". ")[0]
+  .replaceAll("{{holder1PossCap}}", "Your")
+  .replaceAll("{{holder2Poss}}", "Alisa's")
+  .concat(".");
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
@@ -1833,7 +1848,8 @@ test.describe("client-facing user flow case studies", () => {
     const detail = page.locator(".app-shell.mode-detail");
     const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
 
-    expect(text, "synastry detail uses the authored web bundle wording").toMatch(/Their presence and the way they carry themselves .* your thinking and how you talk and decide/i);
+    expect(mercuryAscendantHardSource, "V3 contains the approved Mercury-Ascendant hard-aspect source row").toBeTruthy();
+    expect(text, "synastry detail uses the approved V3 package wording").toContain(mercuryAscendantHardOpening);
     expect(text, "synastry detail does not show emergency stitched boilerplate").not.toMatch(/puts first impressions|Recurring friction that asks for an adjustment|how information gets processed/i);
     await assertNoClientErrors();
   });

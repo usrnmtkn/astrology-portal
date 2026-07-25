@@ -28,17 +28,19 @@ assert.match(app, /skyWithNatalAspectPatternCopy\(currentSky, aspectPatterns\)/,
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
 assert.match(app, /natalAspectPatternStatus={natalAspectPatternStatus}/, "YouPage must receive an explicit reader status.");
 assert.match(app, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");
-assert.match(app, /natalAspectPatternReaderItems\(selectedChart\?\.natalChart \?\? null\)/, "Friends natal charts must derive reader items from the selected chart snapshot only.");
+assert.match(app, /natalAspectPatternReaderItems\(selectedChart\?\.natalChart \?\? null,\s*"they"\)/, "Friends natal charts must derive reader items from the selected chart snapshot with friend voice.");
 assert.match(app, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
 assert.match(app, /<NatalAspectPatternsSection\s+items=\{selectedFriendNatalAspectPatternItems\}\s+status=\{selectedFriendNatalAspectPatternStatus\}/s, "Friends natal charts must render the shared read-only pattern section.");
 assert.match(page, /NatalAspectPatternsSection/, "YouPage must render the natal pattern section via a dedicated component.");
 
 assert.match(service, /includeAspectPatterns:\s*"true"/, "Reader data request must opt into aspect patterns.");
-assert.match(service, /includeAspectPatternCopy:\s*"true"/, "Reader data request must opt into resolved copy.");
+assert.match(service, /includeAspectPatternCopy:\s*"false"/, "Reader data request must leave server-resolved copy disabled because V3 renders it locally.");
 assert.match(service, /includeAspectPatternActivation/, "Activation requests must opt into activation math only when enabled.");
 assert.match(service, /includeAspectPatternActivationContexts/, "Activation requests must opt into activation contexts only when enabled.");
 assert.match(service, /includeAspectPatternActivationCopy/, "Activation requests must opt into resolved activation copy only when enabled.");
-assert.match(service, /activation\?\.resolvedCopy/, "Reader items must consume canonical sky.aspectPatterns.activation.resolvedCopy.");
+assert.match(service, /renderAspectPatternV3\(\{/, "Reader items must render approved V3 aspect-pattern copy locally.");
+assert.match(service, /source:\s*\{\s*recordId:\s*rendered\.templateKey,\s*contentLevel:\s*"source_grounded_template",\s*status:\s*"approved",\s*resolverVersion:\s*"v3"\s*\}/, "Locally rendered natal pattern copy must retain its V3 source-grounded template metadata.");
+assert.doesNotMatch(service, /activation\?\.resolvedCopy/, "Reader items must not depend on retired server-resolved activation copy.");
 assert.match(service, /currentDisplayOrder/, "Current display order may be used for activation emphasis.");
 assert.match(service, /fetch\(`\/api\/astrology-facts\?\$\{params\.toString\(\)\}`, \{ method: "GET" \}\)/, "Reader aspect-pattern request must be read-only.");
 assert.doesNotMatch(service, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/, "Reader aspect-pattern service must make no write requests.");
@@ -50,9 +52,9 @@ assert.doesNotMatch(component, /\bfetch\(|method:\s*"(POST|PUT|PATCH|DELETE)"/, 
 assert.doesNotMatch(component, /activationSummary|primaryTrigger|activationScore|sourceAspectId|reason|policy|diagnostics|provenance/, "Reader component must not inspect activation internals.");
 
 assert.match(component, /Patterns in your chart/, "Section title must be present.");
-assert.match(component, /Your chart does not contain one of the six larger aspect patterns currently covered here\. Your individual aspects still describe important connections between your planets\./, "Empty state wording must match approved copy.");
-assert.match(component, /Pattern notes are temporarily unavailable\./, "Unavailable state must be restrained.");
-assert.match(component, /Checking larger chart patterns\./, "Loading state must be nonblocking.");
+assert.match(component, /if \(status === "unavailable"\) \{\s*return null;/, "Unavailable pattern data must stay out of the reader surface.");
+assert.match(component, /if \(status === "loading"\) \{\s*return null;/, "Pattern loading must stay nonblocking and omit a placeholder.");
+assert.match(component, /if \(!primary\) \{\s*return null;/, "Charts without a supported pattern must not render an empty-state card.");
 assert.match(component, /primary = topLevel\[0\]/, "Highest-ranked independent item should become primary.");
 assert.match(component, /topLevel\.slice\(1\)/, "Additional independent items should be collapsed.");
 assert.match(component, /childPatternIds/, "Contained patterns must be nested under parents.");

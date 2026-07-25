@@ -28,60 +28,6 @@ function context(patternId, patternType, rank, overrides = {}) {
   };
 }
 
-function resolvedCopy(patternId, patternType, content) {
-  return {
-    patternId,
-    patternType,
-    source: {
-      contentLevel: "source_grounded_template",
-      resolverVersion: "test"
-    },
-    content: {
-      eyebrow: "",
-      headline: `${patternType} natal headline`,
-      overview: `${patternType} natal overview`,
-      sections: [],
-      ...content
-    },
-    diagnostics: {}
-  };
-}
-
-function activationCopy(patternId, patternType, content) {
-  return {
-    patternId,
-    patternType,
-    calculatedFor: "2026-07-19T00:00:00.000Z",
-    source: {
-      recordId: `${patternId}-activation-record`,
-      contentLevel: "authored",
-      status: "approved",
-      resolverVersion: "test"
-    },
-    triggerSummary: {
-      primaryActivationId: `${patternId}-activation`,
-      triggerCount: 1,
-      movingBodies: ["Saturn"],
-      targetedNatalPlanets: ["Mars"],
-      timingState: "applying"
-    },
-    content: {
-      eyebrow: "",
-      headline: `${patternType} active headline`,
-      overview: `${patternType} active overview`,
-      sections: [],
-      ...content
-    },
-    diagnostics: {
-      templateId: "hidden-from-reader",
-      usedFallback: false,
-      missingSlots: [],
-      skippedSections: [],
-      validationWarnings: []
-    }
-  };
-}
-
 function activationContext(patternId, patternType, rank, overrides = {}) {
   const trigger = {
     activationId: `${patternId}-activation`,
@@ -182,15 +128,15 @@ try {
   const activationUrl = new URL(capturedRequests[1].url, "http://localhost");
   assert.equal(capturedRequests[0].method, "GET");
   assert.equal(defaultUrl.searchParams.get("includeAspectPatterns"), "true");
-  assert.equal(defaultUrl.searchParams.get("includeAspectPatternCopy"), "true");
+  assert.equal(defaultUrl.searchParams.get("includeAspectPatternCopy"), "false");
   assert.equal(defaultUrl.searchParams.has("includeAspectPatternActivation"), false);
   assert.equal(defaultUrl.searchParams.has("includeAspectPatternActivationContexts"), false);
   assert.equal(defaultUrl.searchParams.has("includeAspectPatternActivationCopy"), false);
   assert.equal(activationUrl.searchParams.get("includeAspectPatterns"), "true");
-  assert.equal(activationUrl.searchParams.get("includeAspectPatternCopy"), "true");
+  assert.equal(activationUrl.searchParams.get("includeAspectPatternCopy"), "false");
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivation"), "true");
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationContexts"), "true");
-  assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationCopy"), "true");
+  assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationCopy"), "false");
 
   const parentId = "grand-square-a";
   const childId = "t-square-a";
@@ -202,24 +148,8 @@ try {
         context(childId, "t_square", 2, { display: { isContained: true, parentPatternIds: [parentId] } }),
         context(inactiveId, "grand_trine", 3)
       ],
-      resolvedCopy: [
-        resolvedCopy(parentId, "grand_square", {
-          eyebrow: "Natal parent",
-          headline: "Grand Square natal headline",
-          overview: "Grand Square natal overview",
-          sections: [{ id: "how_it_works", body: "Natal parent section." }]
-        }),
-        resolvedCopy(childId, "t_square", {
-          headline: "T-square supporting headline",
-          overview: "T-square natal overview"
-        }),
-        resolvedCopy(inactiveId, "grand_trine", {
-          headline: "Grand Trine additional headline",
-          overview: "Grand Trine natal overview"
-        })
-      ],
       activation: {
-        currentDisplayOrder: ["missing-pattern", childId, parentId],
+        currentDisplayOrder: [childId, parentId],
         activations: [
           {
             id: `${childId}-activation`,
@@ -249,25 +179,6 @@ try {
           }),
           activationContext(childId, "t_square", 1, {
             display: { parentPatternIds: [parentId], childPatternIds: [] }
-          })
-        ],
-        resolvedCopy: [
-          activationCopy(parentId, "grand_square", {
-            eyebrow: "Parent activation eyebrow",
-            headline: "Grand Square active headline",
-            overview: "Grand Square active overview",
-            sections: [
-              { id: "timing", body: "The parent activation is applying." },
-              { id: "watch_for", body: "" }
-            ]
-          }),
-          activationCopy(childId, "t_square", {
-            headline: "T-square active headline",
-            overview: "T-square active overview",
-            sections: [
-              { id: "current_emphasis", body: "The supporting pattern is loudest." },
-              { id: "timing", body: "The supporting activation is exact today." }
-            ]
           })
         ]
       }
@@ -299,11 +210,9 @@ try {
   const rawOnlyItems = natalAspectPatternReaderItems({
     aspectPatterns: {
       interpretationContexts: snapshot.aspectPatterns.interpretationContexts,
-      resolvedCopy: snapshot.aspectPatterns.resolvedCopy,
       activation: {
         currentDisplayOrder: snapshot.aspectPatterns.activation.currentDisplayOrder,
-        activations: snapshot.aspectPatterns.activation.activations,
-        resolvedCopy: snapshot.aspectPatterns.activation.resolvedCopy
+        activations: snapshot.aspectPatterns.activation.activations
       }
     }
   });
@@ -316,14 +225,14 @@ try {
     supportingPosition,
     childNatalPosition
   ] = renderedTextPositions(html, [
-    "Grand Square natal headline",
+    "Grand Cross",
     "Supporting pattern detail",
-    "T-square supporting headline"
+    "T-Square"
   ]);
 
   assert.ok(parentNatalPosition < supportingPosition, "Supporting patterns must remain nested after permanent natal copy.");
   assert.ok(supportingPosition < childNatalPosition, "Contained natal pattern copy must render inside supporting detail.");
-  assert.doesNotMatch(html, /Grand Square active headline|T-square active headline|Active chart patterns|natal-pattern-card__activation/, "Natal pattern cards must not render temporary activation copy.");
+  assert.doesNotMatch(html, /A moving planet is activating your Grand Cross|A moving planet is pressing on your T-square|Active chart patterns|natal-pattern-card__activation/, "Natal pattern cards must not render temporary activation copy.");
 
   const activationHtml = renderToStaticMarkup(React.createElement(NatalAspectPatternActivationsSection, { items }));
   const [
@@ -332,31 +241,28 @@ try {
     parentActivePosition
   ] = renderedTextPositions(activationHtml, [
     "Active chart patterns",
-    "T-square active headline",
-    "Grand Square active headline"
+    "T-Square",
+    "Grand Cross"
   ]);
 
   assert.ok(activationSectionPosition < childActivePosition, "Activation copy must live in the dedicated active-pattern section.");
   assert.ok(childActivePosition < parentActivePosition, "Primary active pattern should render before secondary active patterns.");
   assert.match(activationHtml, /updates-aspect-row friend-transit-row active-chart-pattern-row active-chart-pattern-row--primary/, "Primary current activation should use the transit row card treatment.");
   assert.match(activationHtml, /updates-aspect-row friend-transit-row active-chart-pattern-row active-chart-pattern-row--secondary/, "Secondary current activation should remain visible in the transit row card treatment.");
-  assert.match(activationHtml, /T-square supporting headline/, "Activation callout must name the natal pattern.");
-  assert.match(activationHtml, /updates-aspect-row__detail/, "Activation support sections should remain grouped inside the matching pattern card.");
+  assert.match(activationHtml, /A moving planet is pressing on your T-square/, "Activation callout must use approved V3 activation copy.");
+  assert.match(activationHtml, /A moving planet is activating your Grand Cross/, "Secondary activation callouts must use approved V3 activation copy.");
+  assert.doesNotMatch(activationHtml, /updates-aspect-row__detail/, "V3 activation callouts must not render retired server-provided support sections.");
   assert.doesNotMatch(activationHtml, /natal-pattern-card__activation|<summary>|active-chart-pattern-row--writeup/, "Activation callouts must not use the natal-pattern collapsible card treatment or split support sections into separate cards.");
-  assert.match(activationHtml, /Current emphasis/, "Known activation section IDs should render as reader labels.");
   assert.match(activationHtml, /Duration/, "Activation timing should render as a visible duration line.");
   assert.match(activationHtml, /Jul 14, 2026 - Jul 26, 2026 \(Exact: Jul 20, 2026\)/, "Activation duration must show a calculated range with an exact date.");
   assert.doesNotMatch(activationHtml, /Start Jul 14, 2026|Exact Jul 20, 2026|End Jul 26, 2026/, "Activation duration must not render start, exact, and end as separate fragments.");
-  assert.doesNotMatch(activationHtml, /The supporting activation is exact today\.|The parent activation is applying\./, "Activation duration must not use authored timing prose as the duration.");
   assert.doesNotMatch(activationHtml, /<h4>Timing<\/h4>/, "Activation timing should not duplicate as a subsection heading.");
-  assert.doesNotMatch(activationHtml, /Watch for/, "Empty activation sections must not render their heading.");
   assert.doesNotMatch(html, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Reader HTML must not expose activation diagnostics, provenance, or trigger internals.");
   assert.doesNotMatch(activationHtml, /hidden-from-reader|templateId|usedFallback|missingSlots|validationWarnings|primaryActivationId|triggerCount|movingBodies|targetedNatalPlanets/, "Activation HTML must not expose activation diagnostics, provenance, or trigger internals.");
 
   const inactiveSnapshot = {
     aspectPatterns: {
-      interpretationContexts: snapshot.aspectPatterns.interpretationContexts,
-      resolvedCopy: snapshot.aspectPatterns.resolvedCopy
+      interpretationContexts: snapshot.aspectPatterns.interpretationContexts
     }
   };
   const inactiveItems = natalAspectPatternReaderItems(inactiveSnapshot);
