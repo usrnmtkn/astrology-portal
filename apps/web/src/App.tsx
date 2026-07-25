@@ -205,6 +205,7 @@ import {
   type UserGeneratedSubjectType
 } from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
+import { dedupeArticleSectionHeadings } from "./utils/articleHeadings";
 
 type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
@@ -4692,7 +4693,7 @@ function SkyDetailArticle({
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
   const paragraphs = articleBody;
-  const generatedSections = (detail.sections ?? []).filter(
+  const rawGeneratedSections = (detail.sections ?? []).filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
@@ -4702,6 +4703,7 @@ function SkyDetailArticle({
     heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
     body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
   })).filter((section) => typeof section.body !== "string" || isReaderFacingCopy(section.body));
+  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title);
   const contentSections = generatedSections.filter((section) => section.role !== "aspect");
   const aspectSections = generatedSections
     .filter((section) => section.role === "aspect")
@@ -4836,9 +4838,7 @@ function SkyDetailArticle({
                     const bodyParagraphs = typeof section.body === "string"
                       ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
-                    const sectionHeading = typeof section.heading === "string" && (index > 0 || comparableText(section.heading) !== comparableText(detail.title))
-                      ? section.heading
-                      : "";
+                    const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                     const sourceTag = inferredSectionQaSourceTag(section);
                     const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
 
@@ -4920,9 +4920,7 @@ function SkyDetailArticle({
                       const bodyParagraphs = typeof section.body === "string"
                         ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                         : [];
-                      const sectionHeading = typeof section.heading === "string" && comparableText(section.heading) !== comparableText(detail.title)
-                        ? section.heading
-                        : "";
+                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? aspectGlyphPartsFromHeading(sectionHeading) : null;
                       const sourceTag = inferredSectionQaSourceTag(section);
                       const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
@@ -17430,7 +17428,9 @@ function ManualChartsPanel({
       ].filter(Boolean).join(" · "),
       body: [],
       sections: card.normalized.sections.map((section) => ({
-        heading: cleanGeneratedSectionHeading(section.heading),
+        // The page-level title already names this house transit. Repeating the
+        // resolver headline here creates a near-identical second title.
+        heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
       }))

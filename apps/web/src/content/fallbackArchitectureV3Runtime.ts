@@ -63,6 +63,7 @@ export type HouseTransitFacts = {
   motion?: "direct" | "retrograde" | null;
   window?: string | null;
   voice?: "you" | string;
+  variant?: 1 | 2 | 3 | null;
 };
 
 export type RowsFile = {

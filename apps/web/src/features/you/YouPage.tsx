@@ -9,6 +9,7 @@ import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReader
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
+import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
@@ -702,7 +703,10 @@ function YouTransitArticlePage({
 
   const displaySummary = summary && !isDuplicateArticleCopy(summary, seenCopy) ? summary : "";
   const displayIntroParagraphs = introParagraphs.filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
-  const sections = article.sections
+  const displaySummaryHeading = displaySummary
+    ? dedupeArticleSectionHeadings([{ heading: summaryHeading }], article.title)[0].heading
+    : "";
+  const rawSections = article.sections
     .map((section) => {
       const tldr = cleanArticleText(section.tldr);
       const sourceTag = contentSourceQaTag(section.sourceTag) || contentSourceQaTag(section.tldr);
@@ -722,6 +726,10 @@ function YouTransitArticlePage({
       };
     })
     .filter((section) => section.tldr || section.bodyParagraphs.length);
+  const sections = dedupeArticleSectionHeadings(
+    rawSections,
+    [article.title, ...(displaySummaryHeading ? [displaySummaryHeading] : [])]
+  );
   const mainSections = sections.filter((section) => section.role !== "aspect");
   const aspectSections = sections.filter((section) => section.role === "aspect");
   const aspectGroups = ([
@@ -789,7 +797,7 @@ function YouTransitArticlePage({
               ) : null}
               {displaySummary && !article.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
-                  <h3>{summaryHeading}</h3>
+                  {displaySummaryHeading ? <h3>{displaySummaryHeading}</h3> : null}
                   <p>{displaySummary}</p>
                 </section>
               ) : null}

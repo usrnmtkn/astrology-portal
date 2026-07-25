@@ -242,6 +242,45 @@ async function expectNoClientErrors(page: Page) {
   };
 }
 
+function headingComparisonVariants(value: string) {
+  const normalized = value
+    .normalize("NFKD")
+    .replace(/[’']/gu, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/gu, " ")
+    .trim()
+    .toLowerCase();
+  const withoutMovementVerb = normalized
+    .replace(/\b(?:is\s+)?(?:currently\s+)?(?:moving|transiting)\b/gu, "")
+    .replace(/\s+/gu, " ")
+    .trim();
+  const withoutTrailingHouse = withoutMovementVerb
+    .replace(/\s+(?:in\s+)?(?:the\s+)?\d{1,2}(?:st|nd|rd|th)?\s+house$/u, "")
+    .trim();
+
+  return Array.from(new Set([normalized, withoutMovementVerb, withoutTrailingHouse].filter(Boolean)));
+}
+
+async function expectNoDuplicateArticleHeadings(page: Page, label: string) {
+  const headings = (await page.locator(".article-page h1, .article-page h2, .article-page h3").allTextContents())
+    .map((heading) => heading.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  const seen = new Set<string>();
+  const duplicates: string[] = [];
+
+  for (const heading of headings) {
+    const variants = headingComparisonVariants(heading);
+
+    if (variants.some((variant) => seen.has(variant))) {
+      duplicates.push(heading);
+    }
+
+    variants.forEach((variant) => seen.add(variant));
+  }
+
+  expect(duplicates, `${label} does not repeat page or section headlines`).toEqual([]);
+}
+
 async function captureThemeSurface(page: Page, theme: "light" | "dark", surface: string) {
   await mkdir(themeScreenshotDir, { recursive: true });
   await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
@@ -780,6 +819,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
     await expect(page.locator("article, .sky-detail-article").first()).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
 
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
@@ -860,6 +900,12 @@ test.describe("client-facing user flow case studies", () => {
       for (const keyword of await houseTransitKeywords.allTextContents()) {
         expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
       }
+
+      await houseTransitCard.click();
+      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await expectNoDuplicateArticleHeadings(page, "You house-transit detail");
+      await page.getByRole("button", { name: "Back to updates" }).click();
+      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     }
 
     const chartTab = page.getByRole("tab", { name: /chart/i });
@@ -904,6 +950,22 @@ test.describe("client-facing user flow case studies", () => {
 
     const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(transitCard).toBeVisible();
+    const readOnlyTransitCards = page.locator("article.updates-aspect-row.friend-transit-row");
+    expect(await readOnlyTransitCards.count(), "Friend transits include read-only cards").toBeGreaterThan(0);
+    for (const readOnlyTransitCard of await readOnlyTransitCards.all()) {
+      const interactionState = await readOnlyTransitCard.evaluate((element) => ({
+        cursor: window.getComputedStyle(element).cursor,
+        role: element.getAttribute("role"),
+        tabIndex: (element as HTMLElement).tabIndex,
+        tagName: element.tagName
+      }));
+      expect(interactionState, "Read-only transit cards do not advertise click interaction").toEqual({
+        cursor: "default",
+        role: null,
+        tabIndex: -1,
+        tagName: "ARTICLE"
+      });
+    }
     const transitDetail = transitCard.locator(".updates-aspect-row__detail");
     await expect(transitDetail).toHaveCount(1);
     await expect(transitDetail).toHaveText(/^[A-Z].+ in the current sky .+ natal .+\.$/);
@@ -913,10 +975,17 @@ test.describe("client-facing user flow case studies", () => {
       .getByLabel("House transits")
       .locator(".updates-aspect-row--house")
       .first();
+    await expect(friendHouseTransitCard).toHaveCSS("cursor", "pointer");
+    await expect(friendHouseTransitCard).toHaveJSProperty("tagName", "BUTTON");
     await expect(
       friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
       "Friend house transit keyword tags follow the card description"
     ).toBeVisible();
+    await friendHouseTransitCard.click();
+    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
+    await page.getByRole("button", { name: "Close detail" }).click();
+    await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
     const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
@@ -1702,6 +1771,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Read Your mission statement" }).click();
     await expect(page.getByRole("region", { name: "Your mission statement" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Your mission statement" })).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "You mission statement detail");
 
     await page.getByRole("button", { name: "Back to updates" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
@@ -1718,6 +1788,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Read Your career pattern" }).click();
     await expect(page.getByRole("region", { name: "Your career pattern" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Your career pattern" })).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "You career detail");
 
     await page.getByRole("button", { name: "Back to updates" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
@@ -1734,6 +1805,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
+    await expectNoDuplicateArticleHeadings(page, "You natal placement detail");
 
     await page.getByRole("button", { name: "Back to updates" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
@@ -1756,6 +1828,7 @@ test.describe("client-facing user flow case studies", () => {
     await bigThree.getByRole("button").first().click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
@@ -1786,6 +1859,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.locator(".sky-pl-item button").first().click();
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Sky fallback placement detail");
     await expectReaderFacingCopy(page.locator("article, .sky-detail-article").first(), "Sky placement fallback detail");
     await assertNoClientErrors();
   });
@@ -1797,6 +1871,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.goto("/#sky/retrograde/mercury");
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Sky retrograde detail");
     await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Rx|Retrograde|in Cancer is retrograde)/i);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
@@ -1808,6 +1883,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.goto("/#you");
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+    await expectNoDuplicateArticleHeadings(page, "Hydrated You placement detail");
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }),
@@ -1870,6 +1946,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: /Ascendant in/ }).click();
     await expect(page.getByRole("button", { name: "Back to updates" })).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "You ascendant placement detail");
     await expectReaderFacingCopy(page.getByRole("region", { name: /Ascendant in/ }), "You ascendant placement fallback detail", 80);
     await assertNoClientErrors();
   });
@@ -1903,6 +1980,7 @@ test.describe("client-facing user flow case studies", () => {
     await authoredContact.click();
 
     await expect(page.getByRole("heading", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i })).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Authored synastry detail");
     const detail = page.locator(".app-shell.mode-detail");
     const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
 

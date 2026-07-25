@@ -273,8 +273,6 @@ var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "ch
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
 var ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 var GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
-var GROUP_EXAMPLE = { hard: "square", soft: "trine" };
-var EXACT_AUTHORED_NATALS = /* @__PURE__ */ new Set(["chiron", "north-node", "south-node"]);
 var WINDOW_ASPECT = { moon: "Today", sun: "This week", mercury: "This week", venus: "This week", mars: "For the next couple of weeks", jupiter: "This month", saturn: "For the next few months", uranus: "For the next few months", neptune: "For the next few months", pluto: "For the next few months", chiron: "For the next few months", "north-node": "For the next few months", "south-node": "For the next few months", lilith: "This month" };
 var WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", mercury: "For the next few weeks", venus: "For the next few weeks", mars: "For the next month or two" };
 var WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six weeks", mars: "For the next couple of months", jupiter: "For about four months", saturn: "For about four and a half months", uranus: "For about five months", neptune: "For about five months", pluto: "For about five months", chiron: "For about five months" };
@@ -306,8 +304,21 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     return r ? (voice === "you" ? r.body_you : r.body_they) ?? null : null;
   };
   const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, parts: [c.body], templateKey, contentKey: c.contentKey });
-  function renderTransitHouse({ planet, house, sign, window: win, voice = "you" }) {
+  const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] != null ? String(ctx[k]) : `{{${k}}}`).trim();
+  function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant }) {
     const v = voice === "you" ? "you" : "they";
+    if (sign) {
+      const vk = variant && variant !== 1 ? `/variant-${variant}` : "";
+      const intro = card(`authored/transit-house-intro/${planet}/${house}${vk}`) ?? card(`authored/transit-house-intro/${planet}/${house}`);
+      const synth = card(`authored/transit-house-sign/${planet}/${house}/${sign}${vk}`) ?? card(`authored/transit-house-sign/${planet}/${house}/${sign}`);
+      if (intro && synth) {
+        const pick = (c) => v === "you" ? c.body_you ?? c.body : c.body_they ?? c.body;
+        const nameCtx = { Name: v === "they" ? voice : "" };
+        const parts = [fillKeep(pick(intro), nameCtx), fillKeep(pick(synth), nameCtx)];
+        const headline = v === "you" ? `${title2(planet)} moving through your ${ordinal2(house)} house` : `${title2(planet)} moving through ${voice}'s ${ordinal2(house)} house`;
+        return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
+      }
+    }
     if (v === "you") {
       const c = card(`authored/transit-house/${planet}/${house}`);
       if (c) return result(c, "authored/transit-house");
@@ -341,7 +352,6 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
-    tryKeys.push(`authored/transit-aspect/${transiting}/${natal}/${aspect}`);
     const push = (a, b) => {
       if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
       for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
@@ -349,17 +359,14 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
-    if (!EXACT_AUTHORED_NATALS.has(natal)) {
-      tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-    }
+    tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     if (v === "you") for (const k of tryKeys) {
       const c = card(k);
       if (c) return result(c, "authored/transit-aspect");
     }
     const T = tpl("fallback-template/transit.aspect");
     const natalArea = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body ?? vocab.get(`fallback-vocab/angle-area/${natal}`)?.body;
-    const concreteAspect = GROUP_EXAMPLE[aspect] ?? aspect;
-    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${concreteAspect}`, v);
+    const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
     const effectFamily = g === "soft" || g === "conjunction" && !isHeavy ? "soft" : "hard";
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v) ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
@@ -370,7 +377,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
       transitRef: transitRef(transiting, sign),
       natalTitle: title2(natal),
       aspectName: aspect,
-      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${concreteAspect}`)?.body,
+      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
       transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
       aspectVerb: (() => {
         const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body;
@@ -538,15 +545,6 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
       })()
     };
   }
-  function renderSkyEvent(event) {
-    const type = event.type === "aspect" ? `aspect-${GROUP[event.aspect ?? ""] ?? event.aspect}` : event.type;
-    const contentKey = `fallback-hook/sky-event/${type}`;
-    const frame = hooks.get(contentKey)?.body_you;
-    if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-    const body = fill(frame, eventCtx(event));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-    return { headline: "", body, parts: [body], templateKey: "fallback-template/sky.event", contentKey };
-  }
   function renderSkySeason({ sign, events = [] }) {
     const opener = hooks.get(`fallback-hook/sky-season-opener/${sign}`)?.body_you;
     const shadow = hooks.get(`fallback-hook/sky-season-shadow/${sign}`)?.body_you;
@@ -556,7 +554,12 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const ritual = hooks.get(`fallback-hook/sky-season-ritual/${sign}`)?.body_you;
     const paras = [opener, lore, ritual].filter(Boolean);
     for (const ev of events) {
-      paras.push(renderSkyEvent(ev).body);
+      const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
+      const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
+      if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
+      const body = fill(frame, eventCtx(ev));
+      if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
+      paras.push(body);
     }
     paras.push(shadow, close);
     return { headline: `${title2(sign)} Season`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.season-article" };
@@ -627,21 +630,15 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   function renderSkyPlacement({ planet, sign, events = [] }) {
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
+    const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+    const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+    const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+    if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+    const ctx = { signTitle: title2(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
     const paras = [];
-    const signSpecific = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`)?.body_you;
-    if (signSpecific) {
-      if (/\{\{/.test(signSpecific)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-      paras.push(signSpecific);
-    } else {
-      const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-      const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-      const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
-      if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-      const ctx = { signTitle: title2(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
-      if (youOpen) paras.push(fill(youOpen, ctx));
-      paras.push(fill(frame, ctx));
-      if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-    }
+    if (youOpen) paras.push(fill(youOpen, ctx));
+    paras.push(fill(frame, ctx));
+    if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
     const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
     if (lore) paras.push(lore);
     const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
@@ -752,33 +749,11 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   }
   function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
     const g = GROUP[aspect] ?? aspect;
-    const headline = `${title2(a)} ${title2(aspect)} ${title2(b)}`;
-    const phrasebookKeys = [
-      ...aSign && bSign ? [
-        `fallback-hook/sky-aspect-sign/${a}/${aSign}/${aspect}/${b}/${bSign}`,
-        `fallback-hook/sky-aspect-sign/${b}/${bSign}/${aspect}/${a}/${aSign}`
-      ] : [],
-      `fallback-hook/sky-aspect-exact/${a}/${aspect}/${b}`,
-      `fallback-hook/sky-aspect-exact/${b}/${aspect}/${a}`,
-      `fallback-hook/sky-aspect-pair/${a}/${b}/${g}`,
-      `fallback-hook/sky-aspect-pair/${b}/${a}/${g}`
-    ];
-    const phrasebookRow = phrasebookKeys.map((contentKey) => hooks.get(contentKey)).find((row) => Boolean(row?.body_you));
-    if (phrasebookRow?.body_you) {
-      if (/\{\{/.test(phrasebookRow.body_you)) throw new SourceGapError(`SOURCE_GAP: sky aspect phrasebook ${phrasebookRow.contentKey} missing slot`);
-      return {
-        headline,
-        body: phrasebookRow.body_you,
-        parts: [phrasebookRow.body_you],
-        templateKey: "fallback-template/sky.aspect-card",
-        contentKey: phrasebookRow.contentKey
-      };
-    }
     const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
     if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
     const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-    return { headline, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+    return { headline: `${title2(a)} ${title2(aspect)} ${title2(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
   }
   function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }) {
     const g = GROUP[aspect] ?? aspect;
@@ -866,11 +841,11 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const uniq = (a) => [...new Set(a)];
     return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkyEvent, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-23g";
+var PACKAGE_VERSION = "v3-2026-07-25a";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

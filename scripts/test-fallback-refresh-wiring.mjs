@@ -164,6 +164,21 @@ assert.match(
 );
 assert.match(
   appSource,
+  /renderTransitHouse\(\{[\s\S]*?sign:\s*normalizeContentIdPart\(transit\.transitSign \?\? ""\)[\s\S]*?\}\)/u,
+  "Transit house cards must pass the transiting sign so authored layered copy can resolve."
+);
+assert.match(
+  appSource,
+  /const renderedWindow = typeof rendered\.window === "string"[\s\S]*?window: renderedWindow/u,
+  "Transit house cards must carry the resolver-returned window into app chrome."
+);
+assert.match(
+  appSource,
+  /const openFriendHouseTransitDetail[\s\S]*?sections: card\.normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
+  "Friend house-transit details must not repeat the resolver headline below the page title."
+);
+assert.match(
+  appSource,
   /renderNatalAspect\(\{[\s\S]*?voice: ownerContext\?\.ownerName \?\? "you"[\s\S]*?\}\)/u,
   "Friend natal aspects must use the natal renderer with friend voice."
 );
