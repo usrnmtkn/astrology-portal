@@ -628,6 +628,8 @@
   --control-bg: var(--surface-2);
   --control-border: var(--line);
   --control-radius: var(--card-radius-sm);
+  --control-thumb-bg: var(--surface);
+  --control-thumb-active-bg: var(--surface);
   --row-padding-y: var(--row-py);
   --row-padding-x: var(--row-px);
   --row-gap: var(--sp-2);
@@ -969,6 +971,8 @@
   --modal-border: var(--line);
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
+  --control-thumb-bg: var(--color-white);
+  --control-thumb-active-bg: var(--muted);
   --nav-surface: var(--surface);
   --nav-scrolled-bg: color-mix(in srgb, var(--bg) 76%, transparent);
   --nav-border: rgba(255, 255, 255, 0.08);
