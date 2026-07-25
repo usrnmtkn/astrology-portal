@@ -840,13 +840,18 @@ test.describe("client-facing user flow case studies", () => {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
 
-      const houseTransitKeywords = page
+      const houseTransitCard = page
         .getByLabel("House transits")
         .locator(".updates-aspect-row--house")
-        .first()
+        .first();
+      const houseTransitKeywords = houseTransitCard
         .getByLabel("House keywords")
         .locator(".house-transit-keyword");
       await expect(houseTransitKeywords.first()).toBeVisible();
+      await expect(
+        houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
+        "House transit keyword tags follow the card description"
+      ).toBeVisible();
       expect(await houseTransitKeywords.count(), "House transit keywords render as separate tags").toBeGreaterThan(1);
       for (const keyword of await houseTransitKeywords.allTextContents()) {
         expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
@@ -895,6 +900,15 @@ test.describe("client-facing user flow case studies", () => {
     await expect(transitDetail).toHaveCount(1);
     await expect(transitDetail).toHaveText(/^[A-Z].+ in the current sky .+ natal .+\.$/);
     await expect(transitDetail).not.toContainText(/Duration:|\borb\b/i);
+
+    const friendHouseTransitCard = page
+      .getByLabel("House transits")
+      .locator(".updates-aspect-row--house")
+      .first();
+    await expect(
+      friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
+      "Friend house transit keyword tags follow the card description"
+    ).toBeVisible();
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
     const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
@@ -1550,6 +1564,8 @@ test.describe("client-facing user flow case studies", () => {
     await page.goto("/#settings");
 
     await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Toggle journal prompts" })).toHaveCount(0);
+    await expect(page.getByLabel("Astrology settings").locator(".settings-row")).toHaveCount(1);
     await page.getByRole("button", { name: /Current location/i }).click();
     await expect(page.getByLabel("Current location")).toBeVisible();
     await expectFormTypography(page, ".settings-location-editor", "Settings location form");
@@ -1575,11 +1591,24 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByLabel("Theme", { exact: true }).getByRole("button", { name: "dark" }).click();
     await expect(page.locator(".app-shell")).toHaveClass(/theme-dark/);
 
-    await page.getByRole("button", { name: "Toggle gradient background" }).click();
+    const gradientSwitch = page.getByRole("button", { name: "Toggle gradient background" });
+    const dyslexiaSwitch = page.getByRole("button", { name: "Toggle dyslexia-friendly font" });
+    await expect(
+      gradientSwitch.locator("span"),
+      "Active dark-mode switch handles use a contrasting gray"
+    ).toHaveCSS("background-color", "rgb(136, 141, 153)");
+    await expect(
+      dyslexiaSwitch.locator("span"),
+      "Inactive dark-mode switch handles stay white"
+    ).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await gradientSwitch.click();
+    await expect(
+      gradientSwitch.locator("span"),
+      "Switch handles become white when toggled off"
+    ).toHaveCSS("background-color", "rgb(255, 255, 255)");
     await expect(page.locator(".app-shell")).toHaveClass(/sunrise-orb-disabled/);
 
-    await page.getByRole("button", { name: "Toggle journal prompts" }).click();
-    await expect(page.getByRole("button", { name: "Toggle journal prompts" })).toHaveAttribute("aria-pressed", "false");
+    await expect(page.getByRole("button", { name: "Toggle journal prompts" })).toHaveCount(0);
 
     await page.getByLabel("House sign labels").getByRole("button", { name: "glyph" }).click();
     await expect(page.getByLabel("House sign labels").getByRole("button", { name: "glyph" })).toHaveAttribute("aria-pressed", "true");

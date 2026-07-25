@@ -2101,25 +2101,20 @@ const naturalSignLensBodies: Record<string, string> = {
   Aquarius: "The Aquarius lens adds distance, systems, friendship, future-thinking, and the need to understand the pattern from above.",
   Pisces: "The Pisces lens adds permeability, imagination, longing, and the need to feel what cannot be fully explained."
 };
-const lifeAreaFocusOptions: Array<{
-  value: LifeAreaFocus;
-  label: string;
-  description: string;
-}> = [
-  { value: "career", label: "Career", description: "Work, visibility, reputation, ambition, and direction." },
-  { value: "relationships", label: "Relationships", description: "Partners, dating, intimacy, trust, and agreements." },
-  { value: "friends", label: "Friends", description: "Friendships, networks, community, and belonging." },
-  { value: "family", label: "Family", description: "Parents, relatives, roots, and family patterns." },
-  { value: "health", label: "Health", description: "Body, routines, energy, stress, and maintenance." },
-  { value: "money", label: "Money", description: "Income, resources, spending, debt, and shared assets." },
-  { value: "home", label: "Home", description: "Living space, privacy, security, and emotional foundation." },
-  { value: "communication", label: "Communication", description: "Conversations, messages, learning, writing, and siblings." },
-  { value: "creativity", label: "Creativity", description: "Art, pleasure, romance, self-expression, and play." },
-  { value: "emotional-needs", label: "Emotional needs", description: "Mood, memory, care, safety, and inner life." },
-  { value: "growth", label: "Growth", description: "Study, travel, belief, perspective, and long-range development." },
-  { value: "spirituality", label: "Spirituality", description: "Rest, retreat, dreams, solitude, and hidden pressure." }
-];
-const lifeAreaFocusValues = new Set<LifeAreaFocus>(lifeAreaFocusOptions.map((option) => option.value));
+const lifeAreaFocusValues = new Set<LifeAreaFocus>([
+  "career",
+  "relationships",
+  "friends",
+  "family",
+  "health",
+  "money",
+  "home",
+  "communication",
+  "creativity",
+  "emotional-needs",
+  "growth",
+  "spirituality"
+]);
 const lifeAreaFocusKeywords: Record<LifeAreaFocus, string[]> = {
   career: ["career", "work", "calling", "visibility", "reputation", "ambition", "public", "authority", "profession"],
   relationships: ["relationship", "relationships", "partner", "partnership", "partners", "dating", "romance", "love", "intimacy", "agreement", "agreements", "trust"],
@@ -11152,7 +11147,6 @@ export function App() {
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
-  const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [, setCareerVocabularyVersion] = useState(0);
@@ -11545,34 +11539,6 @@ export function App() {
         console.warn("Live relationship interpretations failed to load; unpublished content will remain hidden.", error);
         if (!cancelled) {
           setRelationshipGeneratedContent(new Map());
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [generatedContentPreviewMode, mode, skyDate]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (mode !== "settings") {
-      setSettingsGeneratedContent(new Map());
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    loadLiveGeneratedContent("you", skyDate)
-      .then((content) => {
-        if (!cancelled) {
-          setSettingsGeneratedContent(content);
-        }
-      })
-      .catch((error) => {
-        console.warn("Live settings interpretations failed to load; unpublished content will remain hidden.", error);
-        if (!cancelled) {
-          setSettingsGeneratedContent(new Map());
         }
       });
 
@@ -13378,10 +13344,7 @@ export function App() {
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                      journalPromptsEnabled={journalPromptsEnabled}
-                      generatedContent={settingsGeneratedContent}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                      onJournalPromptsChange={setJournalPromptsEnabled}
                       onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                     />
                   ) : (
@@ -13392,9 +13355,7 @@ export function App() {
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                      journalPromptsEnabled={journalPromptsEnabled}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                      onJournalPromptsChange={setJournalPromptsEnabled}
                       houseSignLabelStyle={guestHouseSignLabelStyle}
                       onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                     />
@@ -15884,12 +15845,9 @@ function SettingsView({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
-  journalPromptsEnabled,
-  generatedContent,
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
-  onJournalPromptsChange,
   onHouseSignLabelStyleChange
 }: {
   profile: UserProfile;
@@ -15897,12 +15855,9 @@ function SettingsView({
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
-  journalPromptsEnabled: boolean;
-  generatedContent: GeneratedContentMap;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
-  onJournalPromptsChange: (enabled: boolean) => void;
   onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
@@ -16031,14 +15986,6 @@ function SettingsView({
                   onChange={onDyslexiaFontChange}
                 />
               </div>
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Journal prompts</span>
-                <SwitchControl
-                  checked={journalPromptsEnabled}
-                  label="Toggle journal prompts"
-                  onChange={onJournalPromptsChange}
-                />
-              </div>
             </div>
           </div>
         </section>
@@ -16057,19 +16004,6 @@ function SettingsView({
                   onChange={updateHouseSignLabelStyle}
                 />
               </div>
-              {lifeAreaFocusOptions.map((option) => {
-                const title = option.label;
-                const description = option.description;
-
-                return (
-                  <div className="settings-row" key={option.value}>
-                    <div className="settings-row-copy">
-                      <span className="settings-row-title">{title}</span>
-                      <small className="settings-row-description">{description}</small>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </section>
@@ -16095,11 +16029,9 @@ function GuestSettingsView({
   location,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
-  journalPromptsEnabled,
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
-  onJournalPromptsChange,
   houseSignLabelStyle,
   onHouseSignLabelStyleChange
 }: {
@@ -16107,11 +16039,9 @@ function GuestSettingsView({
   location: LocationInput;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
-  journalPromptsEnabled: boolean;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
-  onJournalPromptsChange: (enabled: boolean) => void;
   houseSignLabelStyle: HouseSignLabelStyle;
   onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
@@ -16162,14 +16092,6 @@ function GuestSettingsView({
                   checked={dyslexiaFriendlyFont}
                   label="Toggle dyslexia-friendly font"
                   onChange={onDyslexiaFontChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Journal prompts</span>
-                <SwitchControl
-                  checked={journalPromptsEnabled}
-                  label="Toggle journal prompts"
-                  onChange={onJournalPromptsChange}
                 />
               </div>
             </div>
@@ -16916,15 +16838,15 @@ function ProfileView({
                 {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
               </span>
               {timingRange ? <span>{timingRange}</span> : null}
-              <span className="house-transit-keywords" aria-label="House keywords">
-                {houseLifeAreaKeywords(house).map((keyword) => (
-                  <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
-                    {keyword}
-                  </span>
-                ))}
-              </span>
             </span>
             {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+            <span className="house-transit-keywords" aria-label="House keywords">
+              {houseLifeAreaKeywords(house).map((keyword) => (
+                <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
+                  {keyword}
+                </span>
+              ))}
+            </span>
           </span>
           <span className="updates-aspect-row__meta" aria-label={`${ordinalHouse(house)} house`}>
             <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -18850,20 +18772,20 @@ function ManualChartsPanel({
                                 {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
                               </span>
                               {card.timingRange ? <span>{card.timingRange}</span> : null}
-                              <span className="house-transit-keywords" aria-label="House keywords">
-                                {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
-                                  <span
-                                    className="ui-pill ui-pill--muted house-transit-keyword"
-                                    key={`${card.contentKey}-${keyword}`}
-                                  >
-                                    {keyword}
-                                  </span>
-                                ))}
-                              </span>
                             </span>
                             {card.rowSummary ? (
                               <span className="updates-aspect-row__description">{card.rowSummary}</span>
                             ) : null}
+                            <span className="house-transit-keywords" aria-label="House keywords">
+                              {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
+                                <span
+                                  className="ui-pill ui-pill--muted house-transit-keyword"
+                                  key={`${card.contentKey}-${keyword}`}
+                                >
+                                  {keyword}
+                                </span>
+                              ))}
+                            </span>
                           </span>
                           <span
                             className="updates-aspect-row__meta"
