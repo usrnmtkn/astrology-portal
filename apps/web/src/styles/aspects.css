@@ -485,6 +485,18 @@
   line-height: var(--leading-meta);
 }
 
+.house-transit-keywords {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.house-transit-keyword {
+  max-width: 100%;
+}
+
 .updates-aspect-row__description {
   display: block;
   color: var(--card-body-color);

@@ -2415,14 +2415,6 @@
   gap: 14px;
 }
 
-.compatibility-card-list__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-width: 0;
-}
-
 .compatibility-card-list__toggle {
   display: inline-flex;
   align-items: center;
@@ -2489,15 +2481,9 @@
   line-height: var(--leading-label);
 }
 
-.compatibility-card__header p,
 .compatibility-card__function,
 .compatibility-card__receipt {
   color: var(--muted);
-}
-
-.compatibility-card__header p {
-  max-width: 42rem;
-  line-height: var(--leading-description);
 }
 
 .compatibility-card__glyph {
@@ -2599,11 +2585,6 @@
 }
 
 @media (max-width: 560px) {
-  .compatibility-card-list__header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .compatibility-card__header {
     gap: var(--space-3);
     grid-template-columns: minmax(0, 1fr);

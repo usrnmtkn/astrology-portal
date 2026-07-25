@@ -839,6 +839,18 @@ test.describe("client-facing user flow case studies", () => {
     if (await updatesTab.isVisible()) {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+
+      const houseTransitKeywords = page
+        .getByLabel("House transits")
+        .locator(".updates-aspect-row--house")
+        .first()
+        .getByLabel("House keywords")
+        .locator(".house-transit-keyword");
+      await expect(houseTransitKeywords.first()).toBeVisible();
+      expect(await houseTransitKeywords.count(), "House transit keywords render as separate tags").toBeGreaterThan(1);
+      for (const keyword of await houseTransitKeywords.allTextContents()) {
+        expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
+      }
     }
 
     const chartTab = page.getByRole("tab", { name: /chart/i });
@@ -864,6 +876,11 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("tab", { name: "Compatibility" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki compatibility chart wheel");
+    const compatibilityCards = page.getByLabel("Planet comparisons").locator(".compatibility-card");
+    await expect(compatibilityCards.first()).toBeVisible();
+    await expect(page.getByText("Planet comparisons", { exact: true }), "Compatibility cards omit the redundant section eyebrow").toHaveCount(0);
+    await expect(compatibilityCards.first().locator(".compatibility-card__header p"), "Compatibility cards omit the redundant sign-pair subtitle").toHaveCount(0);
+    await expect(compatibilityCards.first().locator(".compatibility-card__signs"), "Compatibility cards retain the labeled person and friend signs").toBeVisible();
 
     await page.getByRole("tab", { name: "Natal" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toHaveAttribute("aria-selected", "true");

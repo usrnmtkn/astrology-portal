@@ -2040,6 +2040,14 @@ const houseLifeAreas: Record<number, string> = {
   11: fallbackV3HouseTopic(11),
   12: fallbackV3HouseTopic(12)
 };
+
+function houseLifeAreaKeywords(house: number) {
+  return (houseLifeAreas[house] ?? "house topic")
+    .split(/\s*,\s*(?:and\s+)?|\s+and\s+/u)
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+}
+
 const rulerHouseRouteKeywords: Record<number, string> = {
   1: fallbackV3HouseTopic(1),
   2: fallbackV3HouseTopic(2),
@@ -16908,7 +16916,13 @@ function ProfileView({
                 {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
               </span>
               {timingRange ? <span>{timingRange}</span> : null}
-              <span>{houseLifeAreas[house] ?? "house topic"}</span>
+              <span className="house-transit-keywords" aria-label="House keywords">
+                {houseLifeAreaKeywords(house).map((keyword) => (
+                  <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
+                    {keyword}
+                  </span>
+                ))}
+              </span>
             </span>
             {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
           </span>
@@ -18836,7 +18850,16 @@ function ManualChartsPanel({
                                 {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
                               </span>
                               {card.timingRange ? <span>{card.timingRange}</span> : null}
-                              <span>{houseLifeAreas[card.activation.house] ?? "house topic"}</span>
+                              <span className="house-transit-keywords" aria-label="House keywords">
+                                {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
+                                  <span
+                                    className="ui-pill ui-pill--muted house-transit-keyword"
+                                    key={`${card.contentKey}-${keyword}`}
+                                  >
+                                    {keyword}
+                                  </span>
+                                ))}
+                              </span>
                             </span>
                             {card.rowSummary ? (
                               <span className="updates-aspect-row__description">{card.rowSummary}</span>
