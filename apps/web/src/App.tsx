@@ -79,10 +79,6 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
-import {
-  resolveSkyAspectStoryPacket,
-  SkyAspectStoryPacketSourceGapError
-} from "./content/skyAspectStoryPackets/skyAspectStoryPacketResolver.mjs";
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
@@ -5295,7 +5291,7 @@ function sourceGroundedNatalAspectNormalizedSection(
     return {
       slot: "meaning",
       required: true,
-      layer: "authored",
+      layer: "fallback",
       tier: "fallback-architecture-v3",
       sourceKeys: [
         "tldrastro-fallback-architecture-v3",
@@ -5397,16 +5393,14 @@ function skyAspectWritingSection(
   const targetDate = generatedAt ? generatedAt.slice(0, 10) : undefined;
 
   try {
-    const rendered = resolveSkyAspectStoryPacket({
-      planetA: normalizeContentIdPart(aspect.from),
-      planetB: normalizeContentIdPart(aspect.to),
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
       aspect: normalizedAspect,
-      signA: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      signB: secondSign ? normalizeContentIdPart(secondSign) : undefined,
-      audience: "reader",
-      surface: "sky"
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
     });
-    const body = rendered.body.trim();
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n").trim();
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -5416,10 +5410,10 @@ function skyAspectWritingSection(
       slot: "meaning",
       required: true,
       layer: "fallback",
-      tier: "sky-aspect-exact-story-packets-v10.1",
+      tier: "fallback-architecture-v3",
       sourceKeys: [
-        "tldrastro-sky-aspect-exact-story-packets-v10.1",
-        rendered.packetId,
+        "tldrastro-fallback-architecture-v3",
+        rendered.templateKey,
         skyAspectContentKey(aspect.from, aspect.type, aspect.to),
         skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
           firstSign,
@@ -5431,7 +5425,7 @@ function skyAspectWritingSection(
       body
     };
   } catch (error) {
-    if (error instanceof SkyAspectStoryPacketSourceGapError) {
+    if (error instanceof FallbackV3SourceGapError) {
       return null;
     }
 
