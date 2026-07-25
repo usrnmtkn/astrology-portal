@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import { AspectPatternWriteups } from "./AspectPatternWriteups";
+import { SkyAspectStoryPacketReview } from "./SkyAspectStoryPacketReview";
 import { fallbackArchitectureV3PackageVersion } from "../../web/src/content/fallbackArchitectureV3Runtime";
 import fallbackSourceRowsV3 from "../../web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
@@ -46,6 +47,7 @@ type AdminDashboardPage =
   | "hooks"
   | "aspectPatternCoverage"
   | "aspectPatternActivationCoverage"
+  | "skyAspectStoryPackets"
   | "aspectDiagnostics"
   | "users"
   | "releaseNotes";
@@ -226,6 +228,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   hooks: "surface-map",
   aspectPatternCoverage: "content/aspect-patterns",
   aspectPatternActivationCoverage: "content/aspect-patterns/activation",
+  skyAspectStoryPackets: "content/sky-aspect-story-packets",
   aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
   releaseNotes: "release-notes"
@@ -265,6 +268,7 @@ const adminNavGroups: Array<{
       { page: "slotDictionary", label: "Slots", icon: KeyRound },
       { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
       { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
+      { page: "skyAspectStoryPackets", label: "Sky Aspect Packets", icon: Sparkles },
       { page: "knowledge", label: "Fallback Hooks", icon: FileText },
       { page: "hooks", label: "Surface Map", icon: Flag }
     ]
@@ -386,6 +390,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "hooks": return "Surface Map";
     case "aspectPatternCoverage": return "Aspect Patterns";
     case "aspectPatternActivationCoverage": return "Aspect Pattern Activation";
+    case "skyAspectStoryPackets": return "Sky Aspect Packets";
     case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
     case "users": return "Users";
     case "releaseNotes": return "Release Notes";
@@ -409,6 +414,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "hooks": return "Admin / App surfaces / Surface map";
     case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
     case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
+    case "skyAspectStoryPackets": return "Admin / Language System / Sky Aspect Packets";
     case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
     case "users": return "Admin / Users";
     case "releaseNotes": return "Admin / Release notes";
@@ -440,6 +446,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Editable natal and Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
     case "aspectPatternActivationCoverage":
       return "Editable Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
+    case "skyAspectStoryPackets":
+      return "Review exact current-sky aspect packets, editorial status, and complete sign-context previews without publishing review-ready copy.";
     case "aspectDiagnostics":
       return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
     case "users":
@@ -2839,6 +2847,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "aspectPatternCoverage" && <AspectPatternWriteups initialKind="natal" secret={secret} />}
 
         {activePage === "aspectPatternActivationCoverage" && <AspectPatternWriteups initialKind="activation" secret={secret} />}
+
+        {activePage === "skyAspectStoryPackets" && <SkyAspectStoryPacketReview />}
 
         {activePage === "aspectDiagnostics" && <AspectPatternDiagnostics />}
 
