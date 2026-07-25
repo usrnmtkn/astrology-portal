@@ -85,9 +85,9 @@ const bannedDignityPattern = bannedDignityWords.length > 0
   ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
   : null;
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-23f", "FallbackArchitectureV3 package version must expose the current imported stamp.");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-23g", "FallbackArchitectureV3 package version must expose the current imported stamp.");
 assert.equal(transitSynastryRows.authoredCards.length, 1_625, "23f plus aspects-phase1-v1 must expose the re-derived authored-card count.");
-assert.equal(fallbackSourceRows.hookRows.length, 2_343, "23f plus the durable dignity library must expose the complete hook count.");
+assert.equal(fallbackSourceRows.hookRows.length, 2_484, "23f plus the complete V3 source package must expose the current hook count.");
 assert.equal(fallbackSourceRows.vocabularyRows.length, 641, "23f must preserve the re-derived vocabulary count.");
 assert.equal(fallbackTemplates.templates.length, 22, "23f must preserve the re-derived template count.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
@@ -181,7 +181,7 @@ assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers
 assert.equal(sunLeo.headline, "The Sun in Leo", "Package Sun-in-Leo headline must remain factual.");
 assert.match(
   sunLeo.body,
-  /You've been running on autopilot through a version of yourself that needs updating/,
+  /The Sun in Leo makes confidence, recognition, and creative authorship more visible/,
   "Package Sun-in-Leo copy must come from dist/tldr-content.js."
 );
 assert.doesNotMatch(
