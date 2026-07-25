@@ -178,9 +178,6 @@ export function CompatibilityTab({
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
         <section className="compatibility-card-list" aria-label="Planet comparisons">
-          <div className="compatibility-card-list__header">
-            <span className="eyebrow section-label friend-section-label">Planet comparisons</span>
-          </div>
           {cards.map((card) => {
             const writeup = card.goDeeper;
             const contentTrace = writeup.contentTrace ?? card.contentTrace;
@@ -240,7 +237,6 @@ export function CompatibilityTab({
                       </span>
                     ) : null}
                   </div>
-                  <p>{writeup.match}</p>
                 </div>
               </header>
               <div className="compatibility-card__signs" aria-label={`${card.planet} signs`}>
