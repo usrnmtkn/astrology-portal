@@ -15,6 +15,10 @@ import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallba
 import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import {
+  resolveSkyAspectStoryPacket,
+  SkyAspectStoryPacketSourceGapError
+} from "../../content/skyAspectStoryPackets/skyAspectStoryPacketResolver.mjs";
+import {
   skyAspectContentKey,
   skyAspectInstanceContentKey,
   skyIngressContentKey,
@@ -951,18 +955,19 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
     const [first, second] = event.planets;
 
     try {
-      const rendered = calendarFallbackRendererV3.renderSkyAspectCard({
-        a: slugContentPart(first),
-        b: slugContentPart(second),
+      const rendered = resolveSkyAspectStoryPacket({
+        planetA: slugContentPart(first),
+        planetB: slugContentPart(second),
         aspect: slugContentPart(event.aspect),
-        aSign: event.fromSign ? slugContentPart(event.fromSign) : undefined,
-        bSign: event.toSign ? slugContentPart(event.toSign) : undefined,
-        dateLine: "Today"
+        signA: event.fromSign ? slugContentPart(event.fromSign) : undefined,
+        signB: event.toSign ? slugContentPart(event.toSign) : undefined,
+        audience: "reader",
+        surface: "sky"
       });
 
-      return firstReaderFacingCopy(rendered.parts);
+      return rendered.body;
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
+      if (error instanceof SkyAspectStoryPacketSourceGapError) {
         return "";
       }
 
@@ -979,7 +984,9 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
     ...generatedContentParagraphs(content)
   ]);
 
-  if (content && generatedDescription) {
+  // Exact current-sky aspect packets are selected only by the V10.1 resolver.
+  // Generated and legacy soft/hard rows must not precede or replace that packet.
+  if (content && generatedDescription && event.type !== "aspect") {
     const layer = calendarEventContentLayer(content);
 
     return {
@@ -1008,13 +1015,17 @@ function normalizeCalendarEventSurface(event: LunarCalendarEvent, content: LiveG
 
   return {
     surface: "calendar-event",
-    status: "partial",
+    status: event.type === "aspect" ? "servable" : "partial",
     sections: [{
       slot: "description",
       required: false,
-      layer: "fallback",
-      tier: "v3-package",
-      sourceKeys: [`fallbackArchitectureV3.calendarEvent.${event.type}`],
+      layer: event.type === "aspect" ? "authored" : "fallback",
+      tier: event.type === "aspect" ? "sky-aspect-exact-story-packets-v10.1" : "v3-package",
+      sourceKeys: [
+        event.type === "aspect"
+          ? "tldrastro-sky-aspect-exact-story-packets-v10.1"
+          : `fallbackArchitectureV3.calendarEvent.${event.type}`
+      ],
       body: packageDescription
     }]
   };
