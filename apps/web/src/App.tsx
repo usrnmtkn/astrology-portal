@@ -30,7 +30,6 @@ import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
-import { CareerArchetypeCard } from "./components/charts/CareerArchetypeCard";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
   AspectGlyphs,
@@ -47,7 +46,6 @@ import {
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
-import { resolveSoulRoadmapProfile, SoulRoadmapCard, type SoulRoadmapProfile } from "./components/charts/SoulRoadmapCard";
 import type { PlacementHouseInsight, SocialPlacementRow } from "./components/charts/PlacementRows";
 import {
   aspectGlyph,
@@ -136,7 +134,6 @@ import {
   groupAspectsByGiftLesson,
   type AspectGiftLessonGroup as GiftLessonGroup
 } from "./services/aspectGiftLesson";
-import { loadCareerVocabulary, resolveCareerArchetypeProfile, type CareerArchetypeProfile } from "./services/careerArchetype";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
@@ -477,6 +474,7 @@ type NormalizedPersonalTransitArticle = {
 type TransitHouseSlot = "house-activation";
 type NormalizedTransitHouseSection = NormalizedSurfaceSection<TransitHouseSlot> & {
   heading: string;
+  window: string | null;
 };
 type NormalizedTransitHouseArticle = {
   surface: "transit-house";
@@ -617,81 +615,6 @@ type YouTransitArticle = {
     value: string;
   }>;
 };
-
-function careerDetailSections(profile: CareerArchetypeProfile) {
-  return profile.sections.map((section) => ({
-    heading: section.label,
-    body: section.body
-  }));
-}
-
-function careerYouArticle(profile: CareerArchetypeProfile): YouTransitArticle {
-  return {
-    id: "career-archetype",
-    title: profile.title,
-    glyph: "♔",
-    subtitle: profile.tldr,
-    tldr: profile.tldr,
-    summary: profile.summary,
-    summaryHeading: "Career pattern",
-    bodyBeforeSections: false,
-    sections: careerDetailSections(profile).map((section) => ({
-      heading: section.heading,
-      tldr: "",
-      body: section.body
-    })),
-    meta: profile.factors
-  };
-}
-
-function careerSkyDetail(profile: CareerArchetypeProfile, routePath?: string): SkyDetail {
-  return {
-    routePath,
-    glyph: "♔",
-    kicker: "Career",
-    title: profile.title,
-    meta: "Career pattern",
-    subtitle: profile.tldr,
-    tldr: profile.tldr,
-    compactHeader: true,
-    body: [profile.summary],
-    sections: careerDetailSections(profile)
-  };
-}
-
-function soulRoadmapYouArticle(profile: SoulRoadmapProfile): YouTransitArticle {
-  return {
-    id: "soul-roadmap",
-    title: profile.title,
-    glyph: "✦",
-    subtitle: profile.tldr,
-    tldr: profile.tldr,
-    summary: profile.tldr,
-    summaryHeading: profile.label,
-    bodyBeforeSections: false,
-    sections: profile.sections.map((section) => ({
-        heading: section.heading,
-        tldr: "",
-        body: section.body
-      })),
-    meta: profile.points
-  };
-}
-
-function soulRoadmapSkyDetail(profile: SoulRoadmapProfile, routePath?: string): SkyDetail {
-  return {
-    routePath,
-    glyph: "✦",
-    kicker: profile.label,
-    title: profile.title,
-    meta: "Purpose pattern",
-    subtitle: profile.tldr,
-    tldr: profile.tldr,
-    compactHeader: true,
-    body: [],
-    sections: profile.sections
-  };
-}
 
 type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
@@ -7807,26 +7730,37 @@ function normalizeTransitHouseSurface(
       voice
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const layer = rendered.templateKey.startsWith("authored/") ? "authored" : "fallback";
+    const renderedWindow = typeof rendered.window === "string" && rendered.window.trim()
+      ? rendered.window
+      : windowLabel || null;
 
     section = body && isReaderFacingCopy(body)
       ? {
           slot: "house-activation",
           required: true,
-          layer: "fallback",
-          tier: "fallback-architecture-v3",
+          layer,
+          tier: layer === "authored"
+            ? "fallback-architecture-v3-authored"
+            : "fallback-architecture-v3",
           sourceKeys: [
             "tldrastro-fallback-architecture-v3",
             rendered.contentKey ?? "",
             rendered.templateKey,
-            `fallback-template/transit.house`,
-            `fallback-vocab/house-topic/${house}`
+            ...(layer === "fallback"
+              ? [
+                  "fallback-template/transit.house",
+                  `fallback-vocab/house-topic/${house}`
+                ]
+              : [])
           ].filter(Boolean),
           heading: rendered.headline || (
             voice === "you"
               ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
               : `${transit.transitPlanet} through ${possessiveLabel(voice)} ${ordinalHouse(house)} house`
           ),
-          body
+          body,
+          window: renderedWindow
         }
       : null;
   } catch (error) {
@@ -7837,7 +7771,7 @@ function normalizeTransitHouseSurface(
 
   return {
     surface: "transit-house",
-    status: section ? "partial" : "not-servable",
+    status: section ? (section.layer === "authored" ? "servable" : "partial") : "not-servable",
     sections: section ? [section] : []
   };
 }
@@ -11149,7 +11083,6 @@ export function App() {
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
-  const [, setCareerVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
@@ -11417,24 +11350,6 @@ export function App() {
       })
       .catch((error) => {
         console.warn("Planet topic vocabulary failed to initialize; code fallbacks will be used.", error);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    loadCareerVocabulary()
-      .then(() => {
-        if (!cancelled) {
-          setCareerVocabularyVersion((version) => version + 1);
-        }
-      })
-      .catch((error) => {
-        console.warn("Career vocabulary failed to initialize; code fallbacks will be used.", error);
       });
 
     return () => {
@@ -16410,25 +16325,6 @@ function ProfileView({
   const natalAspectPatternStatus = showNatalAspectPatterns
     ? natalAspectPatternReaderStatus(showNatalAspectPatterns, natalSky, !natalSky, natalAspectPatternLoadStatus)
     : undefined;
-  const careerArchetypeProfile = resolveCareerArchetypeProfile(natalSky);
-  const natalNorthNode = natalPositions.find((position) => /north\s*node|true\s*node/i.test(position.planet));
-  const soulRoadmapProfile = resolveSoulRoadmapProfile({
-    moon: displayMoon,
-    northNode: natalNorthNode?.sign ?? "",
-    rising: displayRising,
-    risingPending: unknownBirthTime || displayRising === "Rising pending",
-    sun: displaySun
-  });
-  const openCareerDetail = () => {
-    if (careerArchetypeProfile) {
-      setTransitArticle(careerYouArticle(careerArchetypeProfile));
-    }
-  };
-  const openSoulRoadmapDetail = () => {
-    if (soulRoadmapProfile) {
-      setTransitArticle(soulRoadmapYouArticle(soulRoadmapProfile));
-    }
-  };
   const qualifyingDailyTransits = dedupeSameBeatPersonalTransits(
     rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
     transitForm.chartDate
@@ -16792,6 +16688,7 @@ function ProfileView({
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
       const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
       const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, timingRange);
+      const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
       const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
       const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
       const articleSections = normalizedHouseTransit.sections.map((section) => ({
@@ -16813,7 +16710,7 @@ function ProfileView({
           summary: "",
           sections: articleSections,
           meta: [
-            ...(timingRange ? [{ label: "Date range", value: timingRange }] : []),
+            ...(renderedWindow ? [{ label: "Date range", value: renderedWindow }] : []),
             { label: "House", value: `${ordinalHouse(house)} House` },
             { label: "Area", value: houseLifeAreas[house] ?? "" },
             { label: "Transit planet", value: transit.transitPlanet }
@@ -16837,7 +16734,7 @@ function ProfileView({
               <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                 {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
               </span>
-              {timingRange ? <span>{timingRange}</span> : null}
+              {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
             {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
             <span className="house-transit-keywords" aria-label="House keywords">
@@ -17039,7 +16936,6 @@ function ProfileView({
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
         bigThreeRows={bigThreeRows}
-        careerArchetypeProfile={careerArchetypeProfile}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
         displayMoon={displayMoon}
@@ -17059,8 +16955,6 @@ function ProfileView({
         natalTableRows={natalChartTableRows}
         updatesChart={updatesChart}
         onCreateChart={onCreateChart}
-        onOpenCareerDetail={careerArchetypeProfile ? openCareerDetail : undefined}
-        onOpenSoulRoadmapDetail={soulRoadmapProfile ? openSoulRoadmapDetail : undefined}
         onCloseTransitArticle={() => {
           setActivePlacementRouteId(null);
           setTransitArticle(null);
@@ -17078,7 +16972,6 @@ function ProfileView({
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
         standaloneTransitRows={standaloneHouseTransitRows}
-        unknownBirthTime={unknownBirthTime}
         transitArticle={transitArticle}
       />
     </Suspense>
@@ -17319,7 +17212,7 @@ function ManualChartsPanel({
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
           rowSummary: normalizedSurfacePreview(normalized),
-          timingRange,
+          timingRange: normalized.sections[0]?.window ?? timingRange,
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
         };
@@ -17397,37 +17290,6 @@ function ManualChartsPanel({
         selectedChart.natalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
       )
     : undefined;
-  const selectedFriendPronouns = selectedChart && !selectedChartIsEvent
-    ? resolvePersonReference({
-        name: selectedChart.displayName,
-        pronouns: selectedChart.pronouns
-      })
-    : null;
-  const selectedFriendCareerArchetypeProfile = selectedChart?.natalChart && !selectedChartIsEvent
-    ? resolveCareerArchetypeProfile(selectedChart.natalChart, undefined, {
-        ownerName: selectedChart.displayName,
-        pronouns: selectedFriendPronouns
-          ? {
-              subject: selectedFriendPronouns.subject,
-              object: selectedFriendPronouns.object,
-              possessive: selectedFriendPronouns.possessiveAdjective,
-              reflexive: selectedFriendPronouns.reflexive
-            }
-          : undefined
-      })
-    : null;
-  const selectedFriendSoulRoadmapProfile = selectedChart && !selectedChartIsEvent
-    ? resolveSoulRoadmapProfile({
-        moon: selectedFriendBigThree?.moon ?? "",
-        northNode: selectedChart.natalChart?.positions.find((position) => /north\s*node|true\s*node/i.test(position.planet))?.sign ?? "",
-        ownerKind: "person",
-        ownerName: selectedChart.displayName,
-        ownerPronouns: selectedChart.pronouns,
-        rising: selectedFriendBigThree?.rising ?? "",
-        risingPending: selectedChart.birthTimeUnknown || selectedFriendBigThree?.rising === "Rising pending",
-        sun: selectedFriendBigThree?.sun ?? ""
-      })
-    : null;
   const selectedFriendOccupiedHouses = new Set(
     (selectedChart?.natalChart?.positions ?? [])
       .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
@@ -17658,7 +17520,7 @@ function ManualChartsPanel({
   }, [friendProfileTab, selectedChartIsEvent]);
 
   useEffect(() => {
-    const shouldLoadRelationshipCompare = friendProfileTab === "synastry" || friendProfileTab === "composite";
+    const shouldLoadRelationshipCompare = friendProfileTab === "composite";
 
     if (!shouldLoadRelationshipCompare || !isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
       setRelationshipCompare(null);
@@ -18572,30 +18434,6 @@ function ManualChartsPanel({
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
               <div className="friend-profile-copy-column">
-                <SoulRoadmapCard
-                  className="friend-soul-roadmap-card"
-                  moon={selectedFriendBigThree?.moon ?? ""}
-                  onOpenDetail={selectedFriendSoulRoadmapProfile ? () => onOpenDetail(soulRoadmapSkyDetail(
-                    selectedFriendSoulRoadmapProfile,
-                    friendDetailRoutePath(selectedChart.id, friendProfileTab, "soul-roadmap")
-                  )) : undefined}
-                  ownerKind={selectedChartIsEvent ? "chart" : "person"}
-                  ownerName={selectedChart.displayName}
-                  ownerPronouns={selectedChart.pronouns}
-                  rising={selectedFriendBigThree?.rising ?? ""}
-                  risingPending={selectedChart.birthTimeUnknown || selectedFriendBigThree?.rising === "Rising pending"}
-                  sun={selectedFriendBigThree?.sun ?? ""}
-                />
-                {selectedFriendCareerArchetypeProfile && selectedFriendCareerArchetypeProfile.sections.length > 0 && (
-                  <CareerArchetypeCard
-                    labelClassName="section-label friend-section-label"
-                    onOpenDetail={() => onOpenDetail(careerSkyDetail(
-                      selectedFriendCareerArchetypeProfile,
-                      friendDetailRoutePath(selectedChart.id, friendProfileTab, "career")
-                    ))}
-                    profile={selectedFriendCareerArchetypeProfile}
-                  />
-                )}
                 {selectedFriendNatalAspectPatternStatus && (
                   <NatalAspectPatternsSection
                     items={selectedFriendNatalAspectPatternItems}
@@ -18876,11 +18714,6 @@ function ManualChartsPanel({
                     </p>
                   </span>
                 </article>
-                <RelationshipApiSummary
-                  mode="synastry"
-                  response={relationshipCompare}
-                  status={relationshipCompareStatus}
-                />
                 <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
                   outerSky={selectedChart.natalChart}

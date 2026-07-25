@@ -834,6 +834,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByLabel("Profile summary")).toBeVisible();
     await expect(page.getByText("Marie Satori")).toBeVisible();
     await expect(page.getByLabel(/Natal placements|Bodies in signs and houses/)).toBeVisible();
+    await expect(
+      page.locator(".soul-roadmap-card, .career-archetype-card"),
+      "Soul's Path and Career Directions stay hidden from the personal chart"
+    ).toHaveCount(0);
 
     const updatesTab = page.getByRole("tab", { name: /updates/i });
     if (await updatesTab.isVisible()) {
@@ -889,6 +893,10 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("tab", { name: "Natal" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toHaveAttribute("aria-selected", "true");
+    await expect(
+      page.locator('.friend-tab-pane[aria-label="Natal"]').locator(".soul-roadmap-card, .career-archetype-card"),
+      "Soul's Path and Career Directions stay hidden from friend charts"
+    ).toHaveCount(0);
 
     await page.getByRole("tab", { name: "Transits" }).click();
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
@@ -919,6 +927,10 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Synastry" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();
+    await expect(
+      page.getByLabel("synastry relationship summary"),
+      "Synastry omits the relationship-patterns summary card"
+    ).toHaveCount(0);
     await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
     await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
     await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
