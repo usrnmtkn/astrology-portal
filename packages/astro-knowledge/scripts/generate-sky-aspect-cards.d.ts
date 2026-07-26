@@ -25,13 +25,16 @@ export type SkyAspectCardResult = {
   provider?: string;
   model?: string;
   temperature?: number | null;
-  trimClose?: {
-    calls: number;
-    fired: number;
-    unchanged: number;
-    rejected: number;
-    errors: number;
+  repair?: {
+    fired: boolean;
+    result: "not-needed" | "unchanged" | "2→3" | "2→2" | "2→1" | "lint-failed" | "error";
+    reason: string;
+    originalScore: 1 | 2 | 3 | null;
+    repairedScore: 1 | 2 | 3 | null;
+    kept: "original" | "repaired";
+    error?: string;
   };
+  lintRetryAvoidTerms?: string[][];
   gate?: "auto-publish" | "human-review" | "regenerate";
   judge?: {
     score: 1 | 2 | 3;
@@ -57,16 +60,8 @@ export function generateCard(
     maxRetries?: number;
     withJudge?: boolean;
     judgeFeedback?: string;
-    generateFn?: (prompt: string) => Promise<string>;
-    trimCloseFn?: (text: string) => Promise<
-      string
-      | {
-        text: string;
-        fired?: boolean;
-        rejected?: boolean;
-        deleted?: string | null;
-      }
-    >;
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+    repairFn?: (text: string, reason: string) => Promise<string>;
     judgeFn?: (prompt: string) => Promise<string>;
   }
 ): Promise<SkyAspectCardResult>;
@@ -82,22 +77,24 @@ export function normalizeCardArgs(args: SkyAspectCardArgs): {
   reversed: boolean;
 };
 
-export function trimClose(
+export function closeBank(
+  n?: number,
+  random?: () => number
+): string[];
+
+export function repairCard(
   text: string,
+  reason: string,
   options?: {
     generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
   }
-): Promise<{
-  text: string;
-  fired: boolean;
-  rejected: boolean;
-  deleted: string | null;
-}>;
+): Promise<string>;
 
 declare const generator: {
+  closeBank: typeof closeBank;
   generateCard: typeof generateCard;
   normalizeCardArgs: typeof normalizeCardArgs;
-  trimClose: typeof trimClose;
+  repairCard: typeof repairCard;
 };
 
 export default generator;

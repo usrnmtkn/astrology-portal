@@ -138,38 +138,40 @@ function fewShot(n = 2) {
   return (canonical.length ? canonical : sky).slice(0, n).map((e) => e.body);
 }
 
-function closeFewShot() {
-  return [
-    [
-      `PRE-CLOSE APHORISM`,
-      `BEFORE: ...Being unique is real currency, but chasing shock value empties it fast. True originality lasts. The performance burns out quick.`,
-      `AFTER: ...The room rewards the version of us that's just strange enough. Standing out is real currency. Spend it on shock and it empties by morning.`
-    ].join("\n"),
-    [
-      `PRE-CLOSE APHORISM`,
-      `BEFORE: ...Luck comes on strong, but so does the urge to test it past reason. Optimism makes big things possible. It also makes a fall feel like it shouldn't happen at all.`,
-      `AFTER: ...The right doors keep opening on the first push. Luck comes on strong. It never stays long enough to cover a bet made on the strength of it.`
-    ].join("\n"),
-    [
-      `EXAMPLE BEAT`,
-      `BEFORE: someone pitches a wild idea and the group actually listens, a friend's big-hearted gesture lands softer than expected, the plan for tonight slides into a dreamier version before anyone objects`,
-      `AFTER: a wild pitch that suddenly has the room, a kindness that lands softer than usual, tonight's plan drifting toward the dreamier version`
-    ].join("\n"),
-    [
-      `KEEP AS THE MODEL`,
-      `EXAMPLE BEAT: a message left on read, a plan changed mid-sentence, the extra shift agreed to before anyone knows why`,
-      `CLOSE: The urge is real. The timing is not.`
-    ].join("\n")
-  ];
+function lastSentences(text, count = 2) {
+  const sentences = [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(text)]
+    .map(({ segment }) => segment.trim())
+    .filter(Boolean);
+  return sentences.slice(-count).join(" ");
 }
 
-function buildPrompt({ a, b, aspect, signA, signB }) {
+function closeBank(n = 5, random = Math.random) {
+  const golds = examples
+    .filter((entry) => (
+      entry.surface === "sky"
+      && entry.mode === "collective-aspect-card"
+      && entry.canonical
+    ))
+    .map((entry) => lastSentences(entry.body))
+    .filter(Boolean);
+  const shuffled = [...golds];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [] } = {}) {
   const normalized = normalizeCardArgs({ a, b, aspect, signA, signB });
   const { pair } = normalized;
   const field = ASPECT_FIELD[normalized.aspect];
   const meaning = { blend: pair.blend, active: pair[field], harmonious: pair.harmonious, hard: pair.hard, traditional: pair.traditional };
   const elements = [normalized.a, normalized.b, normalized.signA, normalized.signB].map((t) => `${cap(t)}=${elementOf(t) || "-"}`).join(", ");
   const failList = [...spec.outputBans.fail.map((x) => x.term)].join(", ");
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
 
   return [
     `Write ONE collective sky-aspect card for ${TITLE[normalized.a]} in ${cap(normalized.signA)} ${normalized.aspect} ${TITLE[normalized.b]} in ${cap(normalized.signB)}.`,
@@ -200,7 +202,7 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     `  - Metaphors: elemental imagery is allowed only when it matches an element in play here (${elements}). Do NOT name the element or the mechanics ("air-fire sextile", "this trine links two air signs", "fire ignites water") - the element is felt, never labeled.`,
     ``,
     `ANTI-PATTERNS (these are why weak drafts fail - avoid every one):`,
-    `  - End on one plain truth and the catch that turns on it. The sentence before that pair stays concrete narration.`,
+    `  - End on one concrete truth, then a catch that turns on it.`,
     `  - Keep the three-example beat terse and fragmentary, with no named actors or mini-stories.`,
     `  - Do NOT write "The gift is X; the shadow is Y." Weave both faces into the actual situation.`,
     `  - Do NOT explain the astrology or name the aspect geometry in the body.`,
@@ -211,8 +213,15 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     `IN-VOICE EXEMPLARS (match this register, do not copy):`,
     ...fewShot().map((b, i) => `  [${i + 1}] ${b}`),
     ``,
-    `CLOSE + EXAMPLE-BEAT DEMONSTRATIONS (imitate the AFTER shape):`,
-    ...closeFewShot().map((b, i) => `  [${i + 1}] ${b}`),
+    `RANGE OF GOOD CLOSES (real approved closes; learn the range, do not copy):`,
+    ...closeBank().map((close, i) => `  [${i + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Do not use those terms again. Do not use "gift" or "shadow" as labels.`
+        ]
+      : []),
     ``,
     `OUT OF VOICE (a weak draft - do NOT write like this: stacked endings, named mechanics, "gift is/shadow is", generic):`,
     `  We are caught in a quick current of change that feels electric and deep at once. This trine links two air signs, making adaptation fast and clear. The gift is sharp, effective change; the shadow is upheaval so fast it risks breaking before it builds. Change will not wait for comfort or consent. Adapt quickly or get left behind. Change is here. Change demands speed.`,
@@ -303,51 +312,15 @@ function cleanCardText(value) {
     .trim();
 }
 
-function buildTrimClosePrompt(text) {
+function buildRepairPrompt(text, reason) {
   return [
-    `Here is a finished card. If its final paragraph ends with TWO general maxims in a row (a summarizing lesson, then another lesson), delete the FIRST of the two so the card ends on a single truth and the catch that turns on it. Change nothing else - do not reword, do not add. If the card already ends on one truth and its catch, return it byte-for-byte unchanged. Return only the card.`,
-    ``,
-    `EXAMPLE`,
-    `BEFORE: The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. True originality lasts. The performance burns out quick.`,
-    `AFTER: The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. The performance burns out quick.`,
+    `A careful editor flagged this card: ${JSON.stringify(String(reason ?? "").trim())}.`,
+    `Fix ONLY what the note describes. End on one concrete truth and the catch that turns on it - no second aphorism, no advice.`,
+    `Change nothing else: do not reword the rest, do not add length. Return only the corrected card.`,
     ``,
     `CARD`,
     text
   ].join("\n");
-}
-
-function validateTrimCandidate(original, candidate) {
-  const cleanedCandidate = cleanCardText(candidate);
-
-  if (cleanedCandidate === original) {
-    return { text: original, fired: false, rejected: false, deleted: null };
-  }
-
-  const segments = [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(original)];
-  const firstEligible = Math.max(0, segments.length - 4);
-
-  for (let index = firstEligible; index < segments.length - 1; index += 1) {
-    const segment = segments[index];
-    const deleted = cleanCardText(
-      `${original.slice(0, segment.index)}${original.slice(segment.index + segment.segment.length)}`
-    );
-
-    if (cleanedCandidate === deleted) {
-      return {
-        text: deleted,
-        fired: true,
-        rejected: false,
-        deleted: segment.segment.trim()
-      };
-    }
-  }
-
-  return {
-    text: original,
-    fired: false,
-    rejected: true,
-    deleted: null
-  };
 }
 
 // Must return the poetic card body only. Facts such as dates, degrees, series,
@@ -411,15 +384,14 @@ async function generate(prompt, { temperature } = {}) {
   return text;
 }
 
-async function trimClose(text, { generateFn = generate } = {}) {
-  const candidate = await generateFn(buildTrimClosePrompt(text), { temperature: 0.1 });
-  return validateTrimCandidate(text, candidate);
+async function repairCard(text, reason, { generateFn = generate } = {}) {
+  return cleanCardText(await generateFn(buildRepairPrompt(text, reason), { temperature: 0.1 }));
 }
 
 async function generateCard(args, {
   maxRetries = 3,
   generateFn = generate,
-  trimCloseFn,
+  repairFn,
   withJudge = false,
   judgeFn,
   judgeFeedback
@@ -435,45 +407,27 @@ async function generateCard(args, {
     throw error;
   }
 
-  let prompt = buildPrompt(normalized);
-  if (judgeFeedback) {
-    prompt = `${prompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
-  }
-  let lastAttempt = null;
-  const trimStats = {
-    calls: 0,
-    fired: 0,
-    unchanged: 0,
-    rejected: 0,
-    errors: 0
+  const promptFor = (avoidTerms = []) => {
+    let nextPrompt = buildPrompt(normalized, { avoidTerms });
+    if (judgeFeedback) {
+      nextPrompt = `${nextPrompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
+    }
+    return nextPrompt;
   };
-  const shouldTrimClose = generateFn === generate || typeof trimCloseFn === "function";
-  const runTrimClose = trimCloseFn ?? trimClose;
+  let prompt = promptFor();
+  let lastAttempt = null;
+  const lintRetryAvoidTerms = [];
+  const repair = {
+    fired: false,
+    result: "not-needed",
+    reason: "",
+    originalScore: null,
+    repairedScore: null,
+    kept: "original"
+  };
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const generatedText = await generateFn(prompt);
-    let text = generatedText;
-
-    if (shouldTrimClose) {
-      trimStats.calls += 1;
-      try {
-        const outcome = await runTrimClose(generatedText);
-        const outcomeIsObject = outcome && typeof outcome === "object" && "text" in outcome;
-        const validated = outcomeIsObject
-          ? validateTrimCandidate(generatedText, outcome.text)
-          : validateTrimCandidate(generatedText, outcome);
-        if (outcomeIsObject && outcome.rejected && !validated.fired) {
-          validated.rejected = true;
-        }
-        text = validated.text;
-        if (validated.fired) trimStats.fired += 1;
-        else if (validated.rejected) trimStats.rejected += 1;
-        else trimStats.unchanged += 1;
-      } catch {
-        trimStats.errors += 1;
-      }
-    }
-
+    const text = cleanCardText(await generateFn(prompt));
     const lint = lintCard(text);
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
@@ -486,7 +440,8 @@ async function generateCard(args, {
         provider: config?.provider ?? "test",
         model: config?.model ?? "injected",
         temperature: config?.temperature ?? null,
-        trimClose: { ...trimStats },
+        repair: { ...repair },
+        lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
         facts: {
           a: normalized.a,
           b: normalized.b,
@@ -505,12 +460,56 @@ async function generateCard(args, {
         const tier = TIER_OF[normalized.a] ?? "luminary";
         result.judge = await judgeCard(text, { tier, judgeFn });
         result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+
+        if (result.judge.score === 2) {
+          const originalJudge = result.judge;
+          const reason = originalJudge.why || originalJudge.verdict;
+          repair.fired = true;
+          repair.reason = reason;
+          repair.originalScore = originalJudge.score;
+
+          try {
+            const repairedText = cleanCardText(
+              repairFn
+                ? await repairFn(text, reason)
+                : await repairCard(text, reason, { generateFn })
+            );
+            const repairedLint = lintCard(repairedText);
+
+            if (repairedLint.score !== 3 || repairedLint.fails !== 0) {
+              repair.result = "lint-failed";
+            } else {
+              const repairedJudge = await judgeCard(repairedText, { tier, judgeFn });
+              repair.repairedScore = repairedJudge.score;
+              repair.result = repairedText === text
+                ? "unchanged"
+                : `2→${repairedJudge.score}`;
+
+              if (repairedJudge.score > originalJudge.score) {
+                result.text = repairedText;
+                result.lint = repairedLint;
+                result.judge = repairedJudge;
+                result.gate = repairedJudge.gate;
+                repair.kept = "repaired";
+              }
+            }
+          } catch (error) {
+            repair.result = "error";
+            repair.error = error instanceof Error ? error.message : String(error);
+          }
+
+          result.repair = { ...repair };
+        }
       }
       return result;
     }
-    // feed the failures back and retry
-    const problems = lint.findings.map((f) => `${f.severity}: "${f.match || f.term}" (${f.reason || ""})`).join("; ");
-    prompt = `${prompt}\n\nYour last attempt failed the voice check: ${problems}. Rewrite it fixing exactly those, keeping the meaning and the 8 beats.`;
+    const avoidTerms = [...new Set(
+      lint.findings
+        .map((finding) => String(finding.term ?? "").trim())
+        .filter(Boolean)
+    )];
+    lintRetryAvoidTerms.push(avoidTerms);
+    prompt = promptFor(avoidTerms);
   }
   const config = generateFn === generate ? generationConfig() : null;
   return {
@@ -520,7 +519,8 @@ async function generateCard(args, {
     provider: config?.provider ?? "test",
     model: config?.model ?? "injected",
     temperature: config?.temperature ?? null,
-    trimClose: { ...trimStats },
+    repair: { ...repair },
+    lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
     text: lastAttempt?.text ?? "",
     lint: lastAttempt?.lint ?? null,
     facts: {
@@ -569,12 +569,12 @@ if (require.main === module) {
 module.exports = {
   ASPECT_FIELD,
   SourceGapError,
+  buildRepairPrompt,
   buildPrompt,
-  buildTrimClosePrompt,
+  closeBank,
   generate,
   generateCard,
   generationConfig,
   normalizeCardArgs,
-  trimClose,
-  validateTrimCandidate
+  repairCard
 };
