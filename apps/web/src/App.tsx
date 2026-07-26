@@ -150,6 +150,7 @@ import {
   natalRulerContentKey,
   natalSignContentKey,
   skyAspectInstanceContentKey,
+  skyPlacementContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -5635,6 +5636,85 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
+function normalizedCollectiveSkyPlacementFacts(position: PlanetPosition) {
+  const planet = normalizeContentIdPart(position.planet);
+  const sign = normalizeContentIdPart(position.sign);
+
+  if (!planet || !sign || !zodiacSigns.some((candidate) => normalizeContentIdPart(candidate) === sign)) {
+    return null;
+  }
+
+  return {
+    planet,
+    sign,
+    placementSource: `data/placements/sign/${planet}-${sign}.json`
+  };
+}
+
+function generatedSkyPlacementCardPassesBoundary(
+  content: LiveGeneratedContent,
+  expected: NonNullable<ReturnType<typeof normalizedCollectiveSkyPlacementFacts>>
+) {
+  const source = content.sourceSnapshot ?? {};
+  const lint = recordField(source.skyPlacementVoiceLint);
+  const facts = recordField(source.placementFacts);
+  const body = generatedContentParagraphs(content).join("\n\n").trim();
+  const paragraphs = body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()).length;
+  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
+
+  return Boolean(
+    body
+    && paragraphs === 2
+    && isReaderFacingCopy(body)
+    && !containsInternalMetadata
+    && content.contentKey === skyPlacementContentKey(expected.planet, expected.sign)
+    && content.blockType === "sky_placement"
+    && content.eventType === "collective-placement-card"
+    && lint?.score === 3
+    && lint?.fails === 0
+    && content.judgeScore === 3
+    && content.judgeGate === "auto-publish"
+    && source.contentType === "sky-placement-card"
+    && source.placementSource === expected.placementSource
+    && facts?.planet === expected.planet
+    && facts?.sign === expected.sign
+  );
+}
+
+function generatedSkyPlacementWritingSection(
+  position: PlanetPosition,
+  generatedContent?: GeneratedContentMap
+): NormalizedSkyPlacementSection | null {
+  if (!generatedContent) {
+    return null;
+  }
+
+  const expected = normalizedCollectiveSkyPlacementFacts(position);
+
+  if (!expected) {
+    return null;
+  }
+
+  const content = liveGeneratedContent(
+    generatedContent,
+    skyPlacementContentKey(expected.planet, expected.sign)
+  );
+
+  if (!content || !generatedSkyPlacementCardPassesBoundary(content, expected)) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "generated-sky-placement-lint-v1",
+    sourceKeys: [content.contentKey, expected.placementSource],
+    heading: content.headline || skyPlacementDisplayTitle(position),
+    body: generatedContentParagraphs(content).join("\n\n").trim()
+  };
+}
+
 function skyPlacementWritingSection(
   position: PlanetPosition,
   duration: string | null | undefined,
@@ -5697,14 +5777,17 @@ function normalizeSkyPlacementSurface(
   generatedContent?: GeneratedContentMap,
   beats: SkyWritingAspectBeat[] = []
 ): NormalizedSkyPlacementArticle {
-  void duration;
-  void generatedContent;
+  const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
   const fallbackSection = skyPlacementWritingSection(position, duration, beats);
-  const sections = fallbackSection ? [fallbackSection] : [];
+  const sections = generatedSection ? [generatedSection] : fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "sky-placement",
-    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
+    status: generatedSection
+      ? "servable"
+      : fallbackSection
+        ? (fallbackSection.layer === "authored" ? "servable" : "partial")
+        : "not-servable",
     sections
   };
 }
