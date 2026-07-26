@@ -54,6 +54,8 @@ assert.match(cron, /SKY_PLACEMENT_JUDGE_CALIBRATED/);
 assert.match(cron, /block_type: "sky_placement"/);
 assert.match(cron, /return `sky\.placement\.base\.\$\{planet\.replace/);
 assert.match(cron, /content_key: "like\.sky\.placement\.base\.\*"/);
+assert.match(cron, /currentSkyFacts\(new Date\(\)\)/);
+assert.match(cron, /currentPlacementPriority\(positions\)/);
 assert.match(cron, /review_state: reviewState/);
 assert.match(cron, /placementSource: expectedSource/);
 assert.match(cron, /placementDerivation: result\.facts\?\.derivedFrom \?\? null/);

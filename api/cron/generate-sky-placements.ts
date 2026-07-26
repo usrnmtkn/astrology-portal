@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
+import { currentSkyFacts, type PlanetPosition } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -205,6 +206,28 @@ function contentKeyFor({ planet, sign }: PlacementArgs) {
   return `sky.placement.base.${planet.replace(/-/g, "_")}.${sign.replace(/-/g, "_")}`;
 }
 
+function placementSlug(value: string) {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function currentPlacementPriority(positions: PlanetPosition[]) {
+  return new Map(
+    positions.flatMap((position, index) => {
+      const planet = placementSlug(position.planet);
+      const sign = placementSlug(position.sign);
+
+      if (
+        !planets.includes(planet as (typeof planets)[number])
+        || !signs.includes(sign as (typeof signs)[number])
+      ) {
+        return [];
+      }
+
+      return [[contentKeyFor({ planet, sign }), index] as const];
+    })
+  );
+}
+
 function firstParagraph(text: string) {
   return text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).find(Boolean) ?? "";
 }
@@ -232,8 +255,9 @@ async function existingPlacementRows() {
   return await response.json() as ExistingPlacementRow[];
 }
 
-function generationCandidates(rows: ExistingPlacementRow[]) {
+function generationCandidates(rows: ExistingPlacementRow[], positions: PlanetPosition[]) {
   const byKey = new Map(rows.map((row) => [row.content_key, row]));
+  const currentPriority = currentPlacementPriority(positions);
   const staleBefore = Date.now() - refreshDays() * 24 * 60 * 60 * 1000;
   const missing: Array<{ args: PlacementArgs; existing: ExistingPlacementRow | null }> = [];
   const stale: Array<{ args: PlacementArgs; existing: ExistingPlacementRow | null }> = [];
@@ -255,7 +279,12 @@ function generationCandidates(rows: ExistingPlacementRow[]) {
     }
   }
 
-  return [...missing, ...stale];
+  return [...missing, ...stale].sort((first, second) => {
+    const firstPriority = currentPriority.get(contentKeyFor(first.args)) ?? Number.MAX_SAFE_INTEGER;
+    const secondPriority = currentPriority.get(contentKeyFor(second.args)) ?? Number.MAX_SAFE_INTEGER;
+
+    return firstPriority - secondPriority;
+  });
 }
 
 async function generateWithJudgeRouting(args: PlacementArgs) {
@@ -432,8 +461,11 @@ async function savePlacementCard(
 }
 
 async function generatePlacementBatch() {
-  const rows = await existingPlacementRows();
-  const candidates = generationCandidates(rows);
+  const [rows, sky] = await Promise.all([
+    existingPlacementRows(),
+    currentSkyFacts(new Date())
+  ]);
+  const candidates = generationCandidates(rows, sky.positions);
   const limit = batchSize();
   const report = {
     requested: limit,
