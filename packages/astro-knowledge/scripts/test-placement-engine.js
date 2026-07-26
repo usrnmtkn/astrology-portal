@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const generator = require("./generate-sky-aspect-cards.js");
-const { buildJudgePrompt } = require("./judge-sky-voice.js");
+const { buildJudgePrompt, judgeConfig } = require("./judge-sky-voice.js");
 const { lintCard } = require("./lint-sky-voice.js");
 const examples = require("../voice/tldr-astro/examples.json");
 
@@ -145,6 +145,10 @@ assert.match(judgePrompt, /EVERGREEN COLLECTIVE PLACEMENT/);
 assert.match(judgePrompt, /allowed only in the final truth-and-catch pair/i);
 assert.match(judgePrompt, /failing to state the pace/i);
 assert.doesNotMatch(judgePrompt, /never "you"/i);
+const configuredJudge = judgeConfig();
+assert.ok(["openai", "claude"].includes(configuredJudge.provider));
+assert.ok(configuredJudge.model);
+assert.equal(configuredJudge.temperature, 0.1);
 
 let missingSourceModelCalls = 0;
 const missing = await generator.generatePlacementCard({

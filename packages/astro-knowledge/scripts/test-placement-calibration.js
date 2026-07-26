@@ -5,7 +5,7 @@
 // the judge proves it can separate approved placement golds from weak drafts.
 
 const path = require("path");
-const { judgeCard } = require("./judge-sky-voice.js");
+const { judgeCard, judgeConfig } = require("./judge-sky-voice.js");
 const examples = require(path.join("..", "voice", "tldr-astro", "examples.json"));
 
 const mode = "collective-placement-card";
@@ -19,7 +19,30 @@ const knownWeak = [
   "Chiron in Aries means you have a wound around identity and assertion. You may struggle to stand up for yourself, but this challenge is also your greatest gift. Heal your inner child, release what no longer serves you, and become the warrior you were meant to be."
 ];
 
+function assertCalibrationTarget() {
+  const actual = judgeConfig();
+  const expectedProvider = String(process.env.SKY_PLACEMENT_CALIBRATION_PROVIDER ?? "").trim().toLowerCase();
+  const expectedModel = String(process.env.SKY_PLACEMENT_CALIBRATION_MODEL ?? "").trim();
+
+  if (!expectedProvider || !expectedModel) {
+    throw new Error(
+      "Set SKY_PLACEMENT_CALIBRATION_PROVIDER and SKY_PLACEMENT_CALIBRATION_MODEL to the production placement-judge target."
+    );
+  }
+
+  if (actual.provider !== expectedProvider || actual.model !== expectedModel) {
+    throw new Error(
+      `Calibration target mismatch: judge resolves to ${actual.provider}/${actual.model}, expected ${expectedProvider}/${expectedModel}.`
+    );
+  }
+
+  console.log(
+    `placement judge target ${actual.provider}/${actual.model} at temperature ${actual.temperature} (matches expected production target).`
+  );
+}
+
 async function main() {
+  assertCalibrationTarget();
   let goldOff = 0;
   let goldThree = 0;
   let goldSum = 0;
@@ -72,6 +95,8 @@ async function main() {
 
 main().catch((error) => {
   console.error(`Placement calibration could not run: ${error.message}`);
-  console.error("(Set the generator provider's API key; keep SKY_PLACEMENT_JUDGE_CALIBRATED false.)");
+  console.error(
+    "(Set the expected production provider/model and its API key; keep SKY_PLACEMENT_JUDGE_CALIBRATED false.)"
+  );
   process.exit(1);
 });
