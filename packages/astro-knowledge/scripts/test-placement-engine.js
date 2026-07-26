@@ -168,7 +168,23 @@ assert.match(prompt, /evergreen base only/i);
 assert.match(prompt, /never print "The truth" or "The catch" as labels/i);
 assert.match(prompt, /BAD - visible scaffolding:[\s\S]*The truth:[\s\S]*The catch:/);
 assert.match(prompt, /GOOD - state it plainly:[\s\S]*Being seen for something real is the whole point/);
+assert.match(prompt, /DELETE THE PRE-CLOSE APHORISM - less is more/);
+assert.match(prompt, /Emotional honesty builds trust[\s\S]*GOOD - cut the maxim instead of rewording it/);
+assert.match(prompt, /Words move mountains[\s\S]*GOOD - cut the maxim and the "move mountains" cliche/);
+assert.match(prompt, /MAKE THE MIDDLE CONCRETE/);
+assert.match(prompt, /BAD - generic motivational verbs:[\s\S]*choose boldness over safety/);
+assert.match(prompt, /GOOD - observable behavior:[\s\S]*Stop choosing safety over presence/);
 assert.doesNotMatch(prompt, /For about a month the Sun sits in Leo/);
+
+const aspectPrompt = generator.buildPrompt({
+  a: "sun",
+  b: "pluto",
+  aspect: "opposition",
+  signA: "leo",
+  signB: "aquarius"
+});
+assert.doesNotMatch(aspectPrompt, /DELETE THE PRE-CLOSE APHORISM - less is more/);
+assert.doesNotMatch(aspectPrompt, /MAKE THE MIDDLE CONCRETE/);
 
 const southNodePrompt = generator.buildPlacementPrompt({ planet: "south-node", sign: "aries" });
 assert.match(southNodePrompt, /derived from North Node in Libra/i);
