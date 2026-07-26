@@ -9,10 +9,12 @@ export type FriendCircleFeedCard = {
 export type FriendCircleFeedChart = {
   id: string;
   initials: string;
+  avatarUrl?: string;
 };
 
 type FriendCircleFeedProps = {
   cards: FriendCircleFeedCard[];
+  fallbackAvatarUrl?: string;
   fallbackInitials: string;
   isLoading: boolean;
   previewCharts: FriendCircleFeedChart[];
@@ -20,6 +22,7 @@ type FriendCircleFeedProps = {
 
 export function FriendCircleFeed({
   cards,
+  fallbackAvatarUrl,
   fallbackInitials,
   isLoading,
   previewCharts
@@ -71,12 +74,12 @@ export function FriendCircleFeed({
                 <span className="friends-feed-avatar-stack" aria-hidden="true">
                   {cardPreviewCharts.map((chart) => (
                     <span className="friends-feed-avatar" key={chart.id}>
-                      {chart.initials}
+                      {chart.avatarUrl ? <img src={chart.avatarUrl} alt="" referrerPolicy="no-referrer" /> : chart.initials}
                     </span>
                   ))}
                   {cardPreviewCharts.length === 0 && (
                     <span className="friends-feed-avatar">
-                      {fallbackInitials}
+                      {fallbackAvatarUrl ? <img src={fallbackAvatarUrl} alt="" referrerPolicy="no-referrer" /> : fallbackInitials}
                     </span>
                   )}
                 </span>

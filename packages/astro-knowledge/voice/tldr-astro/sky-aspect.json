@@ -1,0 +1,131 @@
+{
+  "id": "tldr-astro.voice.sky-aspect.v1",
+  "surface": "sky",
+  "mode": "collective-aspect-card",
+  "purpose": "Output-level voice contract for the collective current-sky aspect cards. These rules apply to RENDERED card copy, not to source meaning in data/, so they are stricter than voice/banned-words.json (which the build enforces against data). Enforced by scripts/lint-sky-voice.mjs.",
+
+  "voiceDescription": "Direct, grounded, and modern, like advice from the reader's smartest, most honest friend. Names what is actually happening before it explains any astrology. Collective and third-person (never 'you'), felt but never corporate or mystical. Short, quotable sentences; ends on a plain truth.",
+
+  "person": "first-person-plural-collective",
+  "secondPersonAllowed": false,
+  "firstPersonPluralAllowed": true,
+  "personNote": "Collective sky aspects are written primarily in first-person-plural ('we', 'us', 'our'), the standard register for mundane/current-sky writing (cf. Cafe Astrology: 'we more readily tap into our deeper ambitions'). This names the collective as US and describes the shared experience, inner and outer. Third person ('people', 'the whole field') is a secondary option. Second person ('you', 'your') stays banned on this surface. Every card must establish the collective subject up front and never drift into a floating two-person vignette.",
+
+  "punctuation": {
+    "emDash": "The em dash is banned. Use a spaced hyphen ' - ' instead.",
+    "example": "knowing when the work is complete - not perfect, but complete"
+  },
+
+  "metaphorGuidance": {
+    "note": "Metaphors stay concrete and rare. Generic or mismatched metaphors are still cut (weather-as-mood, walls, machinery). But ELEMENTAL metaphors are welcome when they match the element of a planet or sign in the card - this is astrologically apt, not decoration. Water imagery is right for a Neptune card; fire imagery is right for a Sun/Leo card.",
+    "elementMatch": {
+      "water": ["neptune", "moon", "pluto", "cancer", "scorpio", "pisces"],
+      "fire": ["sun", "mars", "jupiter", "aries", "leo", "sagittarius"],
+      "earth": ["saturn", "venus", "taurus", "virgo", "capricorn"],
+      "air": ["mercury", "uranus", "gemini", "libra", "aquarius"]
+    },
+    "examples": [
+      "Neptune trine (water in play): 'compassion and imagination wash over us', 'emotional high water' - OK",
+      "Sun/Leo card (fire in play): heat, spark, burn - OK",
+      "weather-as-mood on a Mercury card (mismatch): cut"
+    ]
+  },
+
+  "seriesContext": {
+    "note": "Whether an aspect is a single pass or part of a multi-hit series (slow planets re-contact through retrograde) is a CALCULATED fact from the ephemeris, supplied at runtime as facts.series = { index, count, throughLabel }. It renders as a short, voice-neutral line in the mechanics caption (the 'what this looks like in space' layer), NEVER hardcoded into the poetic card body, which stays free of fixed dates.",
+    "showWhen": "count >= 2",
+    "render": {
+      "series": "The {ordinal} of {count} passes, running through {throughLabel}."
+    },
+    "suppressed": "When count is 1 (a single pass), render nothing. A single pass is not informative, so no line appears.",
+    "examples": [
+      "Sun opposition Pluto (count 1) -> (no line)",
+      "Uranus trine Pluto (count 5) -> The first of five passes, running through May 2028."
+    ]
+  },
+
+  "conditionalBans": [
+    {
+      "term": "steady",
+      "requiresBefore": ["stable", "strong", "solid"],
+      "reason": "'steady' is only allowed when 'stable', 'strong', or 'solid' appears before it in the card; otherwise use calm, solid, grounded, or sure."
+    }
+  ],
+
+  "shape": {
+    "note": "The card is an 8-beat template across two short paragraphs. Each beat is FILLED FROM A SOURCE; the writing sharpens the beat, it never invents astrology. This is the skeleton the generator fills.",
+    "beats": [
+      {"n": 1, "beat": "collective hook", "does": "the pair's core energy as a felt collective statement, with the tone", "source": "data/pairs blend", "example": "Belief is carrying a lot of weight right now, and mostly it serves us."},
+      {"n": 2, "beat": "aspect line", "does": "name the aspect and what it does to us, element-matched", "source": "aspect nature + element of planets/signs", "example": "With the Leo Sun trine Neptune in Aries, compassion and imagination wash over us before logic can sober us up."},
+      {"n": 3, "beat": "concrete triad", "does": "three DISTINCT lived things (no two overlapping) that show the effect", "source": "authored per pair", "example": "A cause, a song, or a piece of art hits us long before anyone needs to argue for it."},
+      {"n": 4, "beat": "two-planet actors", "does": "each planet-in-sign does its thing", "source": "sign layer (planet-in-sign behavior)", "example": "Leo gives the vision a human heart; Neptune in Aries insists it's worth fighting for."},
+      {"n": 5, "beat": "the shift in us", "does": "how the collective changes now", "source": "data/pairs harmonious", "example": "We are quicker to trust now, readier to give up our own ground for something larger."},
+      {"n": 6, "beat": "both faces", "does": "name the gift and the shadow together", "source": "harmonious + hard", "example": "Beautiful instincts, and a nice distraction from looking too closely at the math."},
+      {"n": 7, "beat": "anchor truth", "does": "the sharp aphorism plus its consequence, element-matched", "source": "authored from the pair tension", "example": "Feeling moved is not the same as being right, and emotional high water will carry a broken plan straight over the edge."},
+      {"n": 8, "beat": "quotable close", "does": "two short lines: a truth, then its catch", "source": "authored", "example": "Inspiration is real. It's also a very comfortable place to avoid details."}
+    ]
+  },
+
+  "planetTierRegister": {
+    "moon": "shared passing mood; felt, universal micro-moments (say yes, go quiet, a short reply)",
+    "mercury": "shared mental/verbal pull; messages, wording, what gets said or left unsaid",
+    "venus": "shared read on worth and care; who is valued, what a yes costs",
+    "mars": "shared impulse to act, push, argue; heat looking for a target",
+    "sun": "recognition and leadership out in the open; being seen, taking credit",
+    "jupiter": "public promises and scale; the offer, the belief, what it can deliver",
+    "saturn": "limits, rules, the record; what has to be earned or enforced",
+    "uranus": "sudden breaks and disruption; the settled thing coming apart",
+    "neptune": "blur between the story and the reality; what gets idealized or hidden",
+    "pluto": "power and control underneath; who really decides, what stays hidden",
+    "chiron": "old sore spots exposed by recognition or worth"
+  },
+
+  "useWords": {
+    "planetVerbs": ["wants", "demands", "notices", "weighs", "keeps", "tracks", "expands", "holds the line on", "disrupts", "blurs", "exposes", "points to", "carries"],
+    "collectiveSubjects": ["people", "someone", "everyone", "most people", "a group", "the room", "the group chat", "a family", "a team"],
+    "modernObjects": ["a message left on read", "a short reply", "a cancelled plan", "the extra shift", "the favor", "an unanswered text", "a screenshot", "the plan", "the deadline", "a byline", "a promotion", "a post that goes up without their name"],
+    "moodCues": ["the small drop in the stomach", "a tightness", "going quiet", "the comment replayed later", "the pull to say yes", "restlessness looking for somewhere to land"]
+  },
+
+  "outputBans": {
+    "fail": [
+      {"term": "(?<!-)\\byou\\b|(?<!-)\\byour\\b", "reason": "no second person on the collective sky surface (hyphenated 'thank-you' is exempt)"},
+      {"term": "roam", "reason": "weird word choice (owner flag)"},
+      {"term": "leverage", "reason": "owner ban; use hold, pull, advantage"},
+      {"term": "facilitat", "reason": "owner ban; use make the most of, help along"},
+      {"term": "engine", "reason": "owner ban (no motor metaphors)"},
+      {"term": "alignment", "reason": "owner ban"},
+      {"term": "unsettle", "reason": "owner ban; use upsets"},
+      {"term": "the ones that require you to shrink or perform", "reason": "specific banned sentence (owner, 2026-07-25)"},
+      {"term": "require you to shrink or perform", "reason": "specific banned phrase (owner, 2026-07-25)"},
+      {"term": "delve", "reason": "AI tell"},
+      {"term": "holistic", "reason": "AI tell"},
+      {"term": "landscape", "reason": "AI tell"},
+      {"term": "—", "reason": "em dash banned everywhere"},
+      {"term": "hold space", "reason": "mystical cliche"},
+      {"term": "step into your power", "reason": "mystical cliche"},
+      {"term": "the gift is", "reason": "template seam - weave both faces, do not label them"},
+      {"term": "the shadow is", "reason": "template seam - weave both faces, do not label them"},
+      {"term": "\\bviral\\b", "reason": "generic tic"},
+      {"term": "two (air|fire|water|earth) signs", "reason": "naming the aspect geometry in the body"},
+      {"term": "\\b(air|fire|water|earth)-(air|fire|water|earth)\\b", "reason": "naming the elements as mechanics ('air-fire sextile'); element is felt, not labeled"}
+    ],
+    "warn": [
+      {"term": "on full display", "reason": "fine for public/outer aspects, too stiff for Moon/soft ones"},
+      {"term": "open conflict", "reason": "too dramatic for soft aspects"},
+      {"term": "the situation", "reason": "vague; name it"},
+      {"term": "friction", "reason": "coaching/technical; prefer sensory or atmospheric ('reach us before logic gets a word in')"},
+      {"term": "(?<!feedback )\\bloops?\\b", "reason": "avoid bare 'loop' as a cycle comparison; use cycle. 'feedback loop' is fine."},
+      {"term": "stakeholders|rollout|deliverable", "reason": "corporate register; only for genuinely public aspects"},
+      {"term": "\\bnot [a-z]+ but\\b", "reason": "'not X but Y' construction"}
+    ]
+  },
+
+  "humanJudgment": [
+    "Vague 'things'/'thing' as filler is off, but idiomatic use ('get things done', 'the extra thing') is fine. Not machine-checked.",
+    "One reframe or catch per card, not two.",
+    "The close should be the shortest true sentence in the card."
+  ],
+
+  "exemplars": "See examples.json entries with surface 'sky' and mode 'collective-aspect-card' (sourceId prefix 'sky-moon-'). Every exemplar must score clean against this file."
+}

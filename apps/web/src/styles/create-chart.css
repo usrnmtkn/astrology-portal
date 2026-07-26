@@ -121,6 +121,13 @@
   justify-self: start;
 }
 
+.create-chart-message {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-body);
+}
+
 .create-chart-fab {
   display: inline-grid;
   grid-template-columns: 44px minmax(0, 1fr);

@@ -226,3 +226,36 @@ export async function signOutAuth() {
     throw error;
   }
 }
+
+export async function deleteOwnAccount() {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { data, error } = await supabase.auth.getSession();
+  const accessToken = data.session?.access_token;
+
+  if (error || !accessToken) {
+    throw new Error("Sign in again before deleting your account.");
+  }
+
+  const response = await fetch("/api/account", {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${accessToken}`
+    }
+  });
+  const payload = await response.json().catch(() => null) as { error?: unknown } | null;
+
+  if (!response.ok) {
+    throw new Error(
+      typeof payload?.error === "string"
+        ? payload.error
+        : "Your account could not be deleted. Please try again."
+    );
+  }
+
+  await supabase.auth.signOut({ scope: "local" });
+}
