@@ -970,6 +970,14 @@ export function SocialFriendsPanel({
   }
 
   if (!available || !profile?.handle) {
+    if (activeView === "charts" && chartContent) {
+      return (
+        <section className="friends-unified-panel" aria-label="Social friends">
+          {chartContent}
+        </section>
+      );
+    }
+
     return (
       <section className="friends-unified-panel" aria-label="Social friends">
         <div className="friends-unified-empty">
@@ -996,7 +1004,6 @@ export function SocialFriendsPanel({
             spellCheck={false}
             aria-label="Search by name or handle"
           />
-          <span className="friends-search-private-hint">Private profiles stay hidden</span>
           {queryIsActive && (
             <button
               className="friends-search-clear"

@@ -3497,7 +3497,6 @@
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 18%, transparent);
 }
 
-.friends-search-private-hint,
 .friends-searching-label {
   flex: 0 0 auto;
   color: #656c76;
@@ -4283,10 +4282,6 @@
 }
 
 @media (max-width: 700px) {
-  .friends-search-private-hint {
-    display: none;
-  }
-
   .friends-unified-tab-row {
     align-items: flex-start;
     flex-wrap: wrap;
