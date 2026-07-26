@@ -112,11 +112,22 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
 // works the moment the generator's key is set - no separate wiring. Note: it
 // runs at the generator's temperature; a dedicated low temperature (~0.1) makes
 // the judge's scores more consistent and is worth adding later.
-const { generate } = require("./generate-sky-aspect-cards.js");
+const { generate, generationConfig } = require("./generate-sky-aspect-cards.js");
 // The judge runs COLD (low temperature). Judging wants determinism, not the
 // creative 0.7 the generator uses; at 0.7 the same card scores differently
 // across runs, which is why calibration kept shifting.
 const JUDGE_TEMPERATURE = 0.1;
+
+function judgeConfig() {
+  const config = generationConfig();
+
+  return {
+    provider: config.provider,
+    model: config.model,
+    temperature: JUDGE_TEMPERATURE
+  };
+}
+
 async function judge(prompt) {
   return generate(prompt, { temperature: JUDGE_TEMPERATURE });
 }
@@ -148,6 +159,7 @@ async function judgeCard(card, opts = {}) {
 module.exports = {
   buildJudgePrompt,
   goldStandard,
+  judgeConfig,
   judgeCard,
   parseVerdict,
   PLACEMENT_TIER_OF,
