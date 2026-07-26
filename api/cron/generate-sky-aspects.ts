@@ -10,6 +10,13 @@ const supportedAspects = new Set(["conjunction", "sextile", "square", "trine", "
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
+type TrimCloseStats = {
+  calls: number;
+  fired: number;
+  unchanged: number;
+  rejected: number;
+  errors: number;
+};
 
 type RoutedGeneration = {
   result: GeneratedCardResult;
@@ -17,6 +24,7 @@ type RoutedGeneration = {
   judgePasses: number;
   totalAttempts: number;
   cappedRegeneration: boolean;
+  trimClose: TrimCloseStats;
 };
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -184,10 +192,17 @@ async function generateWithJudgeRouting(args: {
   aspect: string;
   signA: string;
   signB: string;
-}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false }> {
+}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; trimClose: TrimCloseStats }> {
   let result: GeneratedCardResult | null = null;
   let feedback = "";
   let totalAttempts = 0;
+  const trimClose: TrimCloseStats = {
+    calls: 0,
+    fired: 0,
+    unchanged: 0,
+    rejected: 0,
+    errors: 0
+  };
 
   for (let pass = 0; pass <= maxJudgeRegenerations; pass += 1) {
     result = await generateCard(args, {
@@ -195,9 +210,14 @@ async function generateWithJudgeRouting(args: {
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     totalAttempts += result.attempts ?? 0;
+    trimClose.calls += result.trimClose?.calls ?? 0;
+    trimClose.fired += result.trimClose?.fired ?? 0;
+    trimClose.unchanged += result.trimClose?.unchanged ?? 0;
+    trimClose.rejected += result.trimClose?.rejected ?? 0;
+    trimClose.errors += result.trimClose?.errors ?? 0;
 
     if (result.status !== "clean") {
-      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false };
+      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false, trimClose };
     }
 
     if (result.gate === "auto-publish" || result.gate === "human-review") {
@@ -206,7 +226,8 @@ async function generateWithJudgeRouting(args: {
         gate: result.gate,
         judgePasses: pass + 1,
         totalAttempts,
-        cappedRegeneration: false
+        cappedRegeneration: false,
+        trimClose
       };
     }
 
@@ -225,7 +246,8 @@ async function generateWithJudgeRouting(args: {
     gate: "human-review",
     judgePasses: maxJudgeRegenerations + 1,
     totalAttempts,
-    cappedRegeneration: true
+    cappedRegeneration: true,
+    trimClose
   };
 }
 
@@ -237,7 +259,7 @@ async function saveRoutedCard({
 }: {
   aspect: SkyAspect;
   first: PlanetPosition;
-  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false };
+  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; trimClose: TrimCloseStats };
   second: PlanetPosition;
 }) {
   const { result } = routed;
@@ -333,6 +355,7 @@ async function saveRoutedCard({
           cardFacts,
           skyAspectVoiceLint: result.lint,
           skyAspectJudge: persistedJudge,
+          skyAspectTrimClose: routed.trimClose,
           generationAttempts: routed.totalAttempts,
           judgePasses: routed.judgePasses,
           temperature: result.temperature
@@ -379,8 +402,13 @@ async function generateCurrentMatrix() {
     calibrationHeld: 0,
     judgeRegenerated: 0,
     retried: 0,
+    trimCloseCalls: 0,
+    trimCloseFired: 0,
+    trimCloseUnchanged: 0,
+    trimCloseRejected: 0,
+    trimCloseErrors: 0,
     skipped: [] as Array<{ aspect: string; reason: string }>,
-    cards: [] as Array<{ contentKey: string; status: string; attempts?: number }>
+    cards: [] as Array<{ contentKey: string; status: string; attempts?: number; trimCloseFired?: number }>
   };
 
   for (const aspect of sky.aspects) {
@@ -447,6 +475,11 @@ async function generateCurrentMatrix() {
     report.calibrationHeld += saved.gate === "auto-publish" && !saved.canAutoPublish ? 1 : 0;
     report.judgeRegenerated += routed.judgePasses > 1 ? 1 : 0;
     report.retried += routed.totalAttempts > routed.judgePasses ? 1 : 0;
+    report.trimCloseCalls += routed.trimClose.calls;
+    report.trimCloseFired += routed.trimClose.fired;
+    report.trimCloseUnchanged += routed.trimClose.unchanged;
+    report.trimCloseRejected += routed.trimClose.rejected;
+    report.trimCloseErrors += routed.trimClose.errors;
     report.cards.push({
       contentKey,
       status: saved.canAutoPublish
@@ -454,7 +487,8 @@ async function generateCurrentMatrix() {
         : saved.gate === "auto-publish"
           ? "draft-calibration-held"
           : "needs-review",
-      attempts: routed.totalAttempts
+      attempts: routed.totalAttempts,
+      trimCloseFired: routed.trimClose.fired
     });
   }
 

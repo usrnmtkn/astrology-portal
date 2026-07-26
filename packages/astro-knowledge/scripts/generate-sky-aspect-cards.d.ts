@@ -25,6 +25,13 @@ export type SkyAspectCardResult = {
   provider?: string;
   model?: string;
   temperature?: number | null;
+  trimClose?: {
+    calls: number;
+    fired: number;
+    unchanged: number;
+    rejected: number;
+    errors: number;
+  };
   gate?: "auto-publish" | "human-review" | "regenerate";
   judge?: {
     score: 1 | 2 | 3;
@@ -51,6 +58,15 @@ export function generateCard(
     withJudge?: boolean;
     judgeFeedback?: string;
     generateFn?: (prompt: string) => Promise<string>;
+    trimCloseFn?: (text: string) => Promise<
+      string
+      | {
+        text: string;
+        fired?: boolean;
+        rejected?: boolean;
+        deleted?: string | null;
+      }
+    >;
     judgeFn?: (prompt: string) => Promise<string>;
   }
 ): Promise<SkyAspectCardResult>;
@@ -66,9 +82,22 @@ export function normalizeCardArgs(args: SkyAspectCardArgs): {
   reversed: boolean;
 };
 
+export function trimClose(
+  text: string,
+  options?: {
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+  }
+): Promise<{
+  text: string;
+  fired: boolean;
+  rejected: boolean;
+  deleted: string | null;
+}>;
+
 declare const generator: {
   generateCard: typeof generateCard;
   normalizeCardArgs: typeof normalizeCardArgs;
+  trimClose: typeof trimClose;
 };
 
 export default generator;
