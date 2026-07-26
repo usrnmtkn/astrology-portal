@@ -150,6 +150,30 @@ async function existingCard(contentKey: string) {
   return null;
 }
 
+async function persistedCardId(contentKey: string) {
+  const params = new URLSearchParams({
+    content_key: `eq.${contentKey}`,
+    target_date: "is.null",
+    mode: "eq.feed",
+    select: "id",
+    limit: "1"
+  });
+  const key = serviceRoleKey();
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: {
+      apikey: key,
+      authorization: `Bearer ${key}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Sky-aspect persisted-row lookup failed with ${response.status}.`);
+  }
+
+  const rows = await response.json() as Array<{ id: string }>;
+  return rows[0]?.id ?? null;
+}
+
 function firstParagraph(text: string) {
   return text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).find(Boolean) ?? "";
 }
@@ -277,15 +301,18 @@ async function saveRoutedCard({
     },
     series: aspect.series ?? null
   };
+  const persistedId = await persistedCardId(contentKey);
   const response = await fetch(
-    `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
+    persistedId
+      ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(persistedId)}`
+      : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
     {
-      method: "POST",
+      method: persistedId ? "PATCH" : "POST",
       headers: {
         apikey: key,
         authorization: `Bearer ${key}`,
         "content-type": "application/json",
-        prefer: "resolution=merge-duplicates,return=representation"
+        prefer: persistedId ? "return=representation" : "resolution=merge-duplicates,return=representation"
       },
       body: JSON.stringify({
         content_key: contentKey,
