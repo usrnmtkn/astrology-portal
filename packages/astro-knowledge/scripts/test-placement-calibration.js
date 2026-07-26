@@ -9,9 +9,29 @@ const { judgeCard, judgeConfig } = require("./judge-sky-voice.js");
 const examples = require(path.join("..", "voice", "tldr-astro", "examples.json"));
 
 const mode = "collective-placement-card";
-const goldExemplars = examples.filter(
+const topperMode = "collective-placement-with-topper";
+const baseGoldExemplars = examples.filter(
   (entry) => entry.surface === "sky" && entry.mode === mode && entry.canonical
 );
+const topperGoldExemplars = examples
+  .filter(
+    (entry) => entry.surface === "sky" && entry.mode === "collective-placement-topper" && entry.canonical
+  )
+  .flatMap((topper) => {
+    const base = baseGoldExemplars.find((entry) => entry.sourceId === topper.baseSourceId);
+
+    return base
+      ? [{
+          ...topper,
+          body: `${topper.body}\n\n${base.body}`,
+          judgeMode: topperMode
+        }]
+      : [];
+  });
+const goldExemplars = [
+  ...baseGoldExemplars.map((entry) => ({ ...entry, judgeMode: mode })),
+  ...topperGoldExemplars
+];
 const knownWeak = [
   "The Sun is now in Leo, bringing powerful energy and transformation. You are invited to shine your brightest and step into your power. Trust the journey and let the universe guide you. Everything is aligning for your highest good.",
   "Venus in Virgo makes relationships practical. We may focus on details and want to improve things. This placement can be good or bad depending on how we use the energy. Remember to communicate, practice self-care, and stay open to growth. Love is the answer. Choose it every day.",
@@ -67,7 +87,7 @@ async function runPlacementCalibration({
 } = {}) {
   const goldResults = await mapWithConcurrency(goldExemplars, concurrency, async (exemplar) => {
     const result = await judgeCard(exemplar.body, {
-      mode,
+      mode: exemplar.judgeMode,
       tier: exemplar.tier || "luminary",
       samples,
       judgeFn

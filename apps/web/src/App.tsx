@@ -151,6 +151,7 @@ import {
   natalSignContentKey,
   skyAspectInstanceContentKey,
   skyPlacementBaseContentKey,
+  skyPlacementTopperContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -5746,6 +5747,112 @@ function generatedSkyPlacementCardPassesBoundary(
   );
 }
 
+const skyPlacementTopperMaxOrb = 1;
+const skyPlacementTopperAspects = new Set(["conjunction", "sextile", "square", "trine", "opposition"]);
+
+function tightestSkyPlacementTopperAspect(
+  position: PlanetPosition,
+  aspects: SkySnapshot["aspects"],
+  positions: PlanetPosition[]
+) {
+  const aspect = aspects
+    .filter((candidate) => candidate.from === position.planet || candidate.to === position.planet)
+    .filter((candidate) => skyPlacementTopperAspects.has(normalizeContentIdPart(candidate.type)))
+    .filter((candidate) => Number.isFinite(candidate.orb) && candidate.orb <= skyPlacementTopperMaxOrb)
+    .slice()
+    .sort((first, second) => first.orb - second.orb)[0];
+
+  if (!aspect) {
+    return null;
+  }
+
+  const otherName = aspect.from === position.planet ? aspect.to : aspect.from;
+  const otherPosition = positions.find((candidate) => candidate.planet === otherName);
+
+  if (!otherPosition) {
+    return null;
+  }
+
+  return {
+    planet: normalizeContentIdPart(position.planet),
+    sign: normalizeContentIdPart(position.sign),
+    aspect: normalizeContentIdPart(aspect.type),
+    other: normalizeContentIdPart(otherName),
+    otherSign: normalizeContentIdPart(otherPosition.sign)
+  };
+}
+
+function generatedSkyPlacementTopperPassesBoundary(
+  content: LiveGeneratedContent,
+  expected: NonNullable<ReturnType<typeof tightestSkyPlacementTopperAspect>>
+) {
+  const source = content.sourceSnapshot ?? {};
+  const lint = recordField(source.skyPlacementTopperVoiceLint);
+  const facts = recordField(source.skyPlacementTopperFacts);
+  const body = generatedContentParagraphs(content).join("\n\n").trim();
+  const paragraphs = body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()).length;
+  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
+
+  return Boolean(
+    body
+    && paragraphs === 1
+    && isReaderFacingCopy(body)
+    && !containsInternalMetadata
+    && content.contentKey === skyPlacementTopperContentKey(
+      expected.planet,
+      expected.sign,
+      expected.aspect,
+      expected.other
+    )
+    && content.blockType === "sky_placement"
+    && content.eventType === "collective-placement-topper"
+    && lint?.score === 3
+    && lint?.fails === 0
+    && content.judgeScore === 3
+    && content.judgeGate === "auto-publish"
+    && source.contentType === "sky-placement-topper"
+    && source.baseContentKey === skyPlacementBaseContentKey(expected.planet, expected.sign)
+    && source.judgedCombination === "topper-plus-unchanged-base"
+    && typeof source.pairSource === "string"
+    && facts?.planet === expected.planet
+    && facts.sign === expected.sign
+    && facts.aspect === expected.aspect
+    && facts.other === expected.other
+    && facts.otherSign === expected.otherSign
+  );
+}
+
+function generatedSkyPlacementTopper(
+  position: PlanetPosition,
+  aspects: SkySnapshot["aspects"],
+  positions: PlanetPosition[],
+  generatedContent?: GeneratedContentMap
+) {
+  if (!generatedContent) {
+    return null;
+  }
+
+  const expected = tightestSkyPlacementTopperAspect(position, aspects, positions);
+
+  if (!expected) {
+    return null;
+  }
+
+  const content = liveGeneratedContent(
+    generatedContent,
+    skyPlacementTopperContentKey(
+      expected.planet,
+      expected.sign,
+      expected.aspect,
+      expected.other
+    )
+  );
+
+  return content && generatedSkyPlacementTopperPassesBoundary(content, expected)
+    ? content
+    : null;
+}
+
 function generatedSkyPlacementWritingSection(
   position: PlanetPosition,
   generatedContent?: GeneratedContentMap
@@ -5840,15 +5947,35 @@ function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
   generatedContent?: GeneratedContentMap,
-  beats: SkyWritingAspectBeat[] = []
+  beats: SkyWritingAspectBeat[] = [],
+  topperContext?: {
+    aspects: SkySnapshot["aspects"];
+    positions: PlanetPosition[];
+  }
 ): NormalizedSkyPlacementArticle {
   const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
   const fallbackSection = skyPlacementWritingSection(position, duration, beats);
-  const sections = generatedSection ? [generatedSection] : fallbackSection ? [fallbackSection] : [];
+  const topper = generatedSection && topperContext
+    ? generatedSkyPlacementTopper(
+        position,
+        topperContext.aspects,
+        topperContext.positions,
+        generatedContent
+      )
+    : null;
+  const mergedGeneratedSection = generatedSection && topper
+    ? {
+        ...generatedSection,
+        tier: "generated-sky-placement-with-topper-v1",
+        sourceKeys: [topper.contentKey, ...generatedSection.sourceKeys],
+        body: `${generatedContentParagraphs(topper).join("\n\n").trim()}\n\n${generatedSection.body}`
+      }
+    : generatedSection;
+  const sections = mergedGeneratedSection ? [mergedGeneratedSection] : fallbackSection ? [fallbackSection] : [];
 
   return {
     surface: "sky-placement",
-    status: generatedSection
+    status: mergedGeneratedSection
       ? "servable"
       : fallbackSection
         ? (fallbackSection.layer === "authored" ? "servable" : "partial")
@@ -5883,7 +6010,13 @@ function currentSkyPlacementDetailArticle({
     planet: position.planet,
     positions
   });
-  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents);
+  const normalized = normalizeSkyPlacementSurface(
+    position,
+    transitRangeLabel,
+    generatedContent,
+    placementEvents,
+    { aspects, positions }
+  );
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const authoredBody = normalized.sections
@@ -15275,7 +15408,8 @@ function PlacementTable({
                 generatedAt,
                 planet: position.planet,
                 positions: displayPositions
-              })
+              }),
+              { aspects, positions: displayPositions }
             )
           );
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({

@@ -103,6 +103,15 @@ export function skyPlacementBaseContentKey(body: string, sign: string) {
   return `sky.placement.base.${moduleContentPart(body)}.${moduleContentPart(sign)}`;
 }
 
+export function skyPlacementTopperContentKey(
+  body: string,
+  sign: string,
+  aspect: string,
+  other: string
+) {
+  return `sky.placement.topper.${moduleContentPart(body)}.${moduleContentPart(sign)}.${moduleContentPart(aspect)}.${moduleContentPart(other)}`;
+}
+
 export function natalRulerContentKey(ruler: string) {
   return `natal.ruler.${moduleContentPart(ruler)}`;
 }

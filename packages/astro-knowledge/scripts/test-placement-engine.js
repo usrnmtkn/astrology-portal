@@ -22,9 +22,16 @@ const placementGolds = examples.filter((entry) => (
   && entry.mode === placementMode
   && entry.canonical
 ));
+const topperMode = "collective-placement-topper";
+const topperGolds = examples.filter((entry) => (
+  entry.surface === "sky"
+  && entry.mode === topperMode
+  && entry.canonical
+));
 
 assert.equal(aspectGolds.length, 17);
 assert.equal(placementGolds.length, 5);
+assert.equal(topperGolds.length, 2);
 
 for (const exemplar of aspectGolds) {
   const result = lintCard(exemplar.body);
@@ -41,6 +48,15 @@ for (const exemplar of placementGolds) {
     { score: result.score, fails: result.fails, warns: result.warns },
     { score: 3, fails: 0, warns: 0 },
     `${exemplar.sourceId} must be lint-clean in placement mode.`
+  );
+}
+
+for (const exemplar of topperGolds) {
+  const result = lintCard(exemplar.body, { mode: topperMode });
+  assert.deepEqual(
+    { score: result.score, fails: result.fails, warns: result.warns },
+    { score: 3, fails: 0, warns: 0 },
+    `${exemplar.sourceId} must be lint-clean in topper mode.`
   );
 }
 
@@ -272,6 +288,45 @@ assert.equal(generated.facts.planet, "sun");
 assert.equal(generated.facts.sign, "leo");
 assert.equal(generated.facts.placementSource, "data/placements/sign/sun-leo.json");
 
+const topperGold = topperGolds.find((entry) => entry.sourceId === "sky-sun-in-leo-conjunction-jupiter-topper");
+assert.ok(topperGold);
+const topperArgs = {
+  planet: "sun",
+  sign: "leo",
+  aspect: "conjunction",
+  other: "jupiter",
+  otherSign: "leo",
+  orb: 0.4,
+  baseText: sunGold.body
+};
+const topperPrompt = generator.buildPlacementTopperPrompt(topperArgs);
+assert.match(topperPrompt, /current-sky topper paragraph for Sun in Leo/i);
+assert.match(topperPrompt, /now conjunction Jupiter in Leo/i);
+assert.match(topperPrompt, /exactly one short paragraph/i);
+assert.match(topperPrompt, /Do not print the orb, degrees, dates/i);
+assert.match(topperPrompt, /EVERGREEN BASE THIS TOPPER FRAMES/);
+
+let combinedJudgePrompt = "";
+const generatedTopper = await generator.generatePlacementTopper(topperArgs, {
+  withJudge: true,
+  generateFn: async () => topperGold.body,
+  judgeFn: async (nextPrompt) => {
+    combinedJudgePrompt = nextPrompt;
+    return JSON.stringify({
+      score: 3,
+      verdict: "in-voice",
+      weakest: "none",
+      why: "The live contact cleanly frames the approved base."
+    });
+  }
+});
+assert.equal(generatedTopper.status, "clean");
+assert.equal(generatedTopper.lint.score, 3);
+assert.equal(generatedTopper.gate, "auto-publish");
+assert.equal(generatedTopper.facts.pairKey, "sun-jupiter");
+assert.match(combinedJudgePrompt, /CURRENT-ASPECT TOPPER followed by an unchanged EVERGREEN/);
+assert.ok(combinedJudgePrompt.includes(`${topperGold.body}\n\n${sunGold.body}`));
+
 const retryPrompts = [];
 const bareSteadinessDraft = sunGold.body.replace(
   "Warmth, nerve,",
@@ -312,7 +367,7 @@ const judged = await generator.generatePlacementCard({
 assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "auto-publish");
 
-  console.log("Sky-placement engine contract passed: 17 aspect golds, 5 placement golds, 168 source-backed placements.");
+  console.log("Sky-placement engine contract passed: 17 aspect golds, 5 placement golds, 2 topper golds, 168 source-backed placements.");
 }
 
 main().catch((error) => {

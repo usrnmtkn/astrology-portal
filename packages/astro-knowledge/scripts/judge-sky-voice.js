@@ -22,6 +22,8 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const sky = readJson(path.join(root, "voice", "tldr-astro", "sky-aspect.json"));
 const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"));
 const PLACEMENT_MODE = "collective-placement-card";
+const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
+const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
 
 // planet -> tier, matching how exemplars are tagged. The judge must compare a
 // card against its OWN register: an outer/generational card judged against fast
@@ -52,6 +54,26 @@ const PLACEMENT_TIER_HINT = {
 // Gold-standard exemplars from the SAME tier as the card being judged, so the
 // judge scores like-to-like. Falls back to any exemplar if the tier is thin.
 function goldStandard(tier, n = 2, mode = "collective-aspect-card") {
+  if (mode === PLACEMENT_WITH_TOPPER_MODE) {
+    return examples
+      .filter((entry) => (
+        entry.surface === "sky"
+        && entry.mode === PLACEMENT_TOPPER_MODE
+        && entry.canonical
+      ))
+      .flatMap((topper) => {
+        const base = examples.find((entry) => (
+          entry.surface === "sky"
+          && entry.mode === PLACEMENT_MODE
+          && entry.sourceId === topper.baseSourceId
+          && entry.canonical
+        ));
+
+        return base ? [`${topper.body}\n\n${base.body}`] : [];
+      })
+      .slice(0, n);
+  }
+
   const all = examples.filter((e) => e.surface === "sky" && e.mode === mode && e.canonical);
   const same = tier ? all.filter((e) => (e.tier || "luminary") === tier) : [];
   const pool = same.length >= n ? same : [...same, ...all.filter((e) => !same.includes(e))];
@@ -61,7 +83,8 @@ function goldStandard(tier, n = 2, mode = "collective-aspect-card") {
 // The rubric the judge scores against. Concrete failure modes come from real
 // weak drafts, so the judge knows exactly what to catch.
 function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } = {}) {
-  const placement = mode === PLACEMENT_MODE;
+  const placement = mode === PLACEMENT_MODE || mode === PLACEMENT_WITH_TOPPER_MODE;
+  const placementWithTopper = mode === PLACEMENT_WITH_TOPPER_MODE;
   const tierHint = placement ? PLACEMENT_TIER_HINT[tier] : TIER_HINT[tier];
   const voiceDescription = placement
     ? sky.voiceDescription.replace(
@@ -74,8 +97,10 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
     `You are the editor of a modern astrology app. You are strict. Most drafts are "borderline" until proven otherwise.`,
     ``,
     `The voice: ${voiceDescription}`,
-    placement
-      ? `This is an EVERGREEN COLLECTIVE PLACEMENT card, not a natal reading or live aspect report. Use "we" in the body; impersonal "you" is allowed only in the final truth-and-catch pair. Exactly two short paragraphs.`
+    placementWithTopper
+      ? `This is a CURRENT-ASPECT TOPPER followed by an unchanged EVERGREEN COLLECTIVE PLACEMENT base. The first paragraph must name one live contact in collective "we" voice; the two base paragraphs keep their approved placement register. Judge the three-paragraph combination as one card.`
+      : placement
+        ? `This is an EVERGREEN COLLECTIVE PLACEMENT card, not a natal reading or live aspect report. Use "we" in the body; impersonal "you" is allowed only in the final truth-and-catch pair. Exactly two short paragraphs.`
       : `Collective first-person "we", never "you". Two short paragraphs. It ends on ONE quotable pair of lines.`,
     tier ? `This card's register is ${tierHint || tier}` : ``,
     ``,
@@ -93,7 +118,9 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
       ? [
           `  - Failing to state the pace, or writing a generic sign swap that is not specific to this planet-in-sign.`,
           `  - Natal second-person framing anywhere before the final truth-and-catch pair.`,
-          `  - Treating the evergreen base like a live transit announcement or adding a current-sky topper.`
+          placementWithTopper
+            ? `  - A topper that does not clearly connect the named live aspect to this placement's specific theme, or that repeats the base instead of framing it.`
+            : `  - Treating the evergreen base like a live transit announcement or adding a current-sky topper.`
         ]
       : []),
     `  - Sounding like a generic horoscope rather than these examples.`,
