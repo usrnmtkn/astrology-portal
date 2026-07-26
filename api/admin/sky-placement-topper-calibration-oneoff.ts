@@ -43,14 +43,6 @@ type CalibrationReport = {
   weakControls: unknown[];
 };
 
-const generatePlacementCard = (
-  skyAspectGenerator as unknown as {
-    generatePlacementCard: (
-      args: { planet: string; sign: string },
-      options: { withJudge: true }
-    ) => Promise<GenerationResult>;
-  }
-).generatePlacementCard;
 const generatePlacementTopper = (
   skyAspectGenerator as unknown as {
     generatePlacementTopper: (
@@ -104,8 +96,74 @@ function isConfirmed(req: IncomingMessage) {
   return req.headers["x-one-off-confirmation"] === "run-sky-placement-topper-calibration";
 }
 
+function requireEnv(name: string) {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+
+  return value;
+}
+
+function supabaseUrl() {
+  return (process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL")).replace(/\/$/, "");
+}
+
+function serviceRoleKey() {
+  return requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+}
+
 function slug(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function baseContentKey(planet: string, sign: string) {
+  return `sky.placement.base.${planet.replace(/-/g, "_")}.${sign.replace(/-/g, "_")}`;
+}
+
+async function livePlacementBase(planet: string, sign: string) {
+  const params = new URLSearchParams({
+    content_key: `eq.${baseContentKey(planet, sign)}`,
+    target_date: "is.null",
+    mode: "eq.feed",
+    status: "eq.LIVE",
+    lane: "eq.serving",
+    review_state: "is.null",
+    select: "content_key,body,updated_at,judge_score,judge_gate,source_snapshot",
+    limit: "1"
+  });
+  const key = serviceRoleKey();
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: {
+      apikey: key,
+      authorization: `Bearer ${key}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Live placement-base lookup failed with ${response.status}.`);
+  }
+
+  const rows = await response.json() as Array<{
+    content_key: string;
+    body: string;
+    updated_at: string;
+    judge_score: number | null;
+    judge_gate: string | null;
+    source_snapshot?: Record<string, unknown> | null;
+  }>;
+  const row = rows[0];
+  const lint = row?.source_snapshot?.skyPlacementVoiceLint as { score?: number; fails?: number } | undefined;
+
+  return row
+    && row.judge_score === 3
+    && row.judge_gate === "auto-publish"
+    && lint?.score === 3
+    && lint.fails === 0
+    && row.body.split(/\n\s*\n/).filter(Boolean).length === 2
+    ? row
+    : null;
 }
 
 function tightestContacts(positions: PlanetPosition[], aspects: SkyAspect[]) {
@@ -145,18 +203,13 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
   for (const contact of tightestContacts(positions, aspects)) {
     if (samples.length >= 5) break;
 
-    const base = await generatePlacementCard({
-      planet: contact.planet,
-      sign: contact.sign
-    }, {
-      withJudge: true
-    });
+    const base = await livePlacementBase(contact.planet, contact.sign);
 
-    if (base.status !== "clean" || !base.text) {
+    if (!base) {
       skipped.push({
         ...contact,
         status: "skipped",
-        reason: base.reason ?? "base-generation-failed"
+        reason: "missing-reader-eligible-live-base"
       });
       continue;
     }
@@ -168,7 +221,7 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
       other: contact.other,
       otherSign: contact.otherSign,
       orb: contact.orb,
-      baseText: base.text
+      baseText: base.body
     }, {
       withJudge: true
     });
@@ -186,8 +239,10 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
       ...contact,
       status: topper.status,
       topper: topper.text,
-      base: base.text,
-      renderedCard: `${topper.text}\n\n${base.text}`,
+      base: base.body,
+      baseContentKey: base.content_key,
+      baseUpdatedAt: base.updated_at,
+      renderedCard: `${topper.text}\n\n${base.body}`,
       lint: topper.lint ?? null,
       judge: topper.judge ?? null,
       gate: topper.gate ?? null,
