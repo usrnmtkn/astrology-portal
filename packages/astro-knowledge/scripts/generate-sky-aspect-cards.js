@@ -23,10 +23,77 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-aspect.json"));
 const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"));
 
-const TITLE = { sun:"Sun", moon:"Moon", mercury:"Mercury", venus:"Venus", mars:"Mars", jupiter:"Jupiter", saturn:"Saturn", uranus:"Uranus", neptune:"Neptune", pluto:"Pluto", chiron:"Chiron" };
+const TITLE = {
+  sun: "Sun",
+  moon: "Moon",
+  mercury: "Mercury",
+  venus: "Venus",
+  mars: "Mars",
+  jupiter: "Jupiter",
+  saturn: "Saturn",
+  uranus: "Uranus",
+  neptune: "Neptune",
+  pluto: "Pluto",
+  chiron: "Chiron",
+  "north-node": "North Node",
+  "south-node": "South Node",
+  lilith: "Lilith"
+};
 const PLANET_ORDER = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
 const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
 const UNSOURCED_POINTS = new Set(["chiron", "lilith", "black-moon-lilith", "north-node", "south-node", "true-node", "node"]);
+const PLACEMENT_MODE = "collective-placement-card";
+const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
+const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
+const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER);
+const POINT_PLACEMENT_BODIES = new Set(["chiron", "north-node", "lilith"]);
+const PLACEMENT_BODIES = new Set([...TRADITIONAL_PLACEMENT_BODIES, ...POINT_PLACEMENT_BODIES, "south-node"]);
+const OPPOSITE_SIGN = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+const PLACEMENT_TIER_OF = {
+  sun: "luminary",
+  moon: "luminary",
+  mercury: "personal",
+  venus: "personal",
+  mars: "personal",
+  jupiter: "outer",
+  saturn: "outer",
+  uranus: "outer",
+  neptune: "outer",
+  pluto: "outer",
+  chiron: "point",
+  "north-node": "point",
+  "south-node": "point",
+  lilith: "point"
+};
+const PLACEMENT_PACE = {
+  sun: "about a month; a season-sized chapter",
+  moon: "about two and a half days; a passing collective mood",
+  mercury: "roughly two to three weeks, longer around a retrograde",
+  venus: "about four weeks, longer around a retrograde",
+  mars: "about six weeks, longer around a retrograde",
+  jupiter: "about a year; a broad public chapter",
+  saturn: "about two and a half years; a sustained structural chapter",
+  uranus: "about seven years; generational change",
+  neptune: "about fourteen years; generational atmosphere",
+  pluto: "about twenty years; an era rather than a mood",
+  chiron: "several years; a generational tender spot",
+  "north-node": "about eighteen months; a collective growth direction",
+  "south-node": "about eighteen months; a familiar pattern ready for release",
+  lilith: "about nine months; a collective refusal or taboo brought forward"
+};
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // aspect -> which data/pairs field carries its meaning
@@ -43,6 +110,97 @@ function loadPair(pairKey) {
   const p = path.join(root, "data", "pairs", `${pairKey}.json`);
   if (!fs.existsSync(p)) return null;
   return { path: p, value: readJson(p) };
+}
+
+function canonicalPlacementBody(value) {
+  const body = normalizeToken(value);
+  if (body === "true-node" || body === "node") return "north-node";
+  if (body === "black-moon-lilith") return "lilith";
+  return body;
+}
+
+function placementSourcePath(planet, sign) {
+  if (TRADITIONAL_PLACEMENT_BODIES.has(planet)) {
+    return path.join(root, "data", "placements", "sign", `${planet}-${sign}.json`);
+  }
+
+  if (POINT_PLACEMENT_BODIES.has(planet)) {
+    return path.join(root, "data", "points", "placements", "sign", `${planet}-${sign}.json`);
+  }
+
+  if (planet === "south-node") {
+    return path.join(root, "data", "points", "placements", "sign", `north-node-${OPPOSITE_SIGN[sign]}.json`);
+  }
+
+  return null;
+}
+
+function normalizePlacementArgs({ planet, body, sign }) {
+  const normalizedPlanet = canonicalPlacementBody(planet ?? body);
+  const normalizedSign = normalizeToken(sign);
+
+  if (!PLACEMENT_BODIES.has(normalizedPlanet)) {
+    throw new SourceGapError(
+      "missing-source",
+      `No collective placement source is available for '${planet ?? body}'.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  if (!SIGNS.has(normalizedSign)) {
+    throw new SourceGapError(
+      "invalid-sign",
+      `'${sign}' is not a zodiac sign.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  const sourcePath = placementSourcePath(normalizedPlanet, normalizedSign);
+
+  if (!sourcePath || !fs.existsSync(sourcePath)) {
+    throw new SourceGapError(
+      "missing-source",
+      `No approved placement source exists for ${normalizedPlanet} in ${normalizedSign}.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  const source = readJson(sourcePath);
+  const sourcePlanet = canonicalPlacementBody(source.planet ?? source.point);
+  const expectedSourcePlanet = normalizedPlanet === "south-node" ? "north-node" : normalizedPlanet;
+  const sourceSign = normalizeToken(source.key ?? source.sign);
+  const expectedSourceSign = normalizedPlanet === "south-node"
+    ? OPPOSITE_SIGN[normalizedSign]
+    : normalizedSign;
+
+  if (sourcePlanet !== expectedSourcePlanet || sourceSign !== expectedSourceSign) {
+    throw new SourceGapError(
+      "source-mismatch",
+      `Placement source facts do not match ${normalizedPlanet} in ${normalizedSign}.`,
+      {
+        planet: normalizedPlanet,
+        sign: normalizedSign,
+        sourcePlanet,
+        sourceSign
+      }
+    );
+  }
+
+  return {
+    planet: normalizedPlanet,
+    sign: normalizedSign,
+    source,
+    placementSource: path.relative(root, sourcePath).replaceAll(path.sep, "/"),
+    derivedFrom: normalizedPlanet === "south-node"
+      ? {
+          planet: "north-node",
+          sign: expectedSourceSign,
+          frame: "comfort-zone/release"
+        }
+      : null,
+    tier: PLACEMENT_TIER_OF[normalizedPlanet],
+    pace: PLACEMENT_PACE[normalizedPlanet]
+  };
 }
 
 class SourceGapError extends Error {
@@ -138,13 +296,272 @@ function fewShot(n = 2) {
   return (canonical.length ? canonical : sky).slice(0, n).map((e) => e.body);
 }
 
-function buildPrompt({ a, b, aspect, signA, signB }) {
+function lastSentences(text, count = 2) {
+  const sentences = [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(text)]
+    .map(({ segment }) => segment.trim())
+    .filter(Boolean);
+  return sentences.slice(-count).join(" ");
+}
+
+function closeBank(n = 5, random = Math.random) {
+  const golds = examples
+    .filter((entry) => (
+      entry.surface === "sky"
+      && entry.mode === "collective-aspect-card"
+      && entry.canonical
+    ))
+    .map((entry) => lastSentences(entry.body))
+    .filter(Boolean);
+  const shuffled = [...golds];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+function placementGolds() {
+  return examples.filter((entry) => (
+    entry.surface === "sky"
+    && entry.mode === PLACEMENT_MODE
+    && entry.canonical
+  ));
+}
+
+function rotatedPlacementGolds({ planet, sign }, n = 3) {
+  const sourceId = `sky-${planet}-in-${sign}`;
+  const all = placementGolds().filter((entry) => entry.sourceId !== sourceId);
+  const sameTier = all.filter((entry) => entry.tier === PLACEMENT_TIER_OF[planet]);
+  const pool = [...sameTier, ...all.filter((entry) => !sameTier.includes(entry))];
+  const offset = [...`${planet}-${sign}`].reduce((sum, character) => sum + character.charCodeAt(0), 0)
+    % Math.max(pool.length, 1);
+  const rotated = [...pool.slice(offset), ...pool.slice(0, offset)];
+
+  return rotated.slice(0, Math.min(n, rotated.length));
+}
+
+function placementCloseBank({ planet, sign }, n = 4) {
+  return rotatedPlacementGolds({ planet, sign }, placementGolds().length)
+    .map((entry) => lastSentences(entry.body))
+    .filter(Boolean)
+    .slice(0, n);
+}
+
+function placementTopperGolds() {
+  return examples.filter((entry) => (
+    entry.surface === "sky"
+    && entry.mode === PLACEMENT_TOPPER_MODE
+    && entry.canonical
+  ));
+}
+
+function normalizePlacementTopperArgs({
+  planet,
+  sign,
+  aspect,
+  other,
+  otherSign,
+  orb,
+  baseText
+}) {
+  const placement = normalizePlacementArgs({ planet, sign });
+  const normalizedOther = canonicalPlacementBody(other);
+  const normalizedOtherSign = normalizeToken(otherSign);
+  const aspectFacts = normalizeCardArgs({
+    a: placement.planet,
+    b: normalizedOther,
+    aspect,
+    signA: placement.sign,
+    signB: normalizedOtherSign
+  });
+  const normalizedOrb = Number(orb);
+  const normalizedBaseText = String(baseText ?? "").trim();
+
+  if (!Number.isFinite(normalizedOrb) || normalizedOrb < 0) {
+    throw new SourceGapError("invalid-orb", "A current numeric orb is required for a placement topper.", {
+      planet: placement.planet,
+      sign: placement.sign,
+      aspect: aspectFacts.aspect,
+      other: normalizedOther
+    });
+  }
+
+  if (normalizedBaseText.split(/\n\s*\n/).filter(Boolean).length !== 2) {
+    throw new SourceGapError("missing-base", "A clean two-paragraph placement base is required before generating its topper.", {
+      planet: placement.planet,
+      sign: placement.sign
+    });
+  }
+
+  return {
+    ...placement,
+    aspect: aspectFacts.aspect,
+    other: normalizedOther,
+    otherSign: normalizedOtherSign,
+    orb: normalizedOrb,
+    baseText: normalizedBaseText,
+    pair: aspectFacts.pair,
+    pairKey: aspectFacts.pairKey,
+    pairSource: aspectFacts.pairSource
+  };
+}
+
+function buildPlacementTopperPrompt(args, { avoidTerms = [] } = {}) {
+  const normalized = normalizePlacementTopperArgs(args);
+  const field = ASPECT_FIELD[normalized.aspect];
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
+  const failList = spec.outputBans.fail.map((entry) => entry.term).join(", ");
+  const golds = placementTopperGolds();
+
+  return [
+    `Write ONE current-sky topper paragraph for ${TITLE[normalized.planet]} in ${cap(normalized.sign)}, now ${normalized.aspect} ${TITLE[normalized.other]} in ${cap(normalized.otherSign)}.`,
+    ``,
+    `VOICE: ${spec.voiceDescription}`,
+    `MODE: live aspect layer for an evergreen collective placement base.`,
+    `PERSON: collective "we/our/us", never "you/your".`,
+    ``,
+    `SOURCE MEANING (do not add claims beyond this):`,
+    `  pair essence: ${normalized.pair.blend ?? ""}`,
+    `  active aspect face: ${normalized.pair[field] ?? ""}`,
+    `  harmonious face: ${normalized.pair.harmonious ?? ""}`,
+    `  hard face: ${normalized.pair.hard ?? ""}`,
+    ``,
+    `EVERGREEN BASE THIS TOPPER FRAMES (do not rewrite or repeat it):`,
+    normalized.baseText,
+    ``,
+    `SHAPE - exactly one short paragraph:`,
+    `  1. Name the current contact plainly.`,
+    `  2. Say what it does to this placement's specific theme right now.`,
+    `  3. End on one grounded line, not advice and not a second close.`,
+    ``,
+    `RULES:`,
+    `  - Never use these words/phrases: ${failList}.`,
+    `  - Em dash is banned; use a spaced hyphen " - " instead.`,
+    `  - Do not print the orb, degrees, dates, mechanics, elements, or series metadata.`,
+    `  - Do not write a natal reading. Never address the reader as "you".`,
+    `  - Do not restate the base's pace or summarize both base paragraphs.`,
+    `  - Keep examples fragmentary; no invented actors or mini-stories.`,
+    `  - One contact only: ${TITLE[normalized.planet]} ${normalized.aspect} ${TITLE[normalized.other]}.`,
+    ``,
+    `APPROVED TOPPER GOLDS (match the shape and register; do not copy):`,
+    ...golds.map((entry, index) => `  [${index + 1}] ${entry.body}`),
+    ``,
+    `RANGE OF APPROVED ASPECT CLOSES (learn the grounded register; do not copy or stack them):`,
+    ...closeBank(3).map((close, index) => `  [${index + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Rewrite the one-paragraph topper without those terms.`
+        ]
+      : []),
+    ``,
+    `Return only the topper paragraph.`
+  ].join("\n");
+}
+
+function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) {
+  const normalized = normalizePlacementArgs({ planet, body, sign });
+  const { source } = normalized;
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
+  const secondPersonTerm = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
+  const failList = spec.outputBans.fail
+    .filter((entry) => entry.term !== secondPersonTerm)
+    .map((entry) => entry.term)
+    .join(", ");
+  const sourceMeaning = {
+    tldr: source.tldr ?? "",
+    body: source.body ?? "",
+    strength: source.gift ?? source.business ?? "",
+    challenge: source.challenge ?? source.shadow ?? "",
+    shadow: source.shadow ?? ""
+  };
+  const derivedNote = normalized.derivedFrom
+    ? `This is South Node in ${cap(normalized.sign)}, derived from North Node in ${cap(normalized.derivedFrom.sign)}. Reframe the source's familiar South Node pattern as a collective comfort zone to recognize and release. Do not describe South Node as the growth destination.`
+    : "";
+  const golds = rotatedPlacementGolds(normalized);
+  const placementVoice = spec.voiceDescription.replace(
+    "Collective and third-person (never 'you')",
+    "Collective in the body; impersonal second person may appear only in the final truth-and-catch pair"
+  );
+
+  return [
+    `Write ONE evergreen collective sky placement card for ${TITLE[normalized.planet]} in ${cap(normalized.sign)}.`,
+    ``,
+    `VOICE: ${placementVoice}`,
+    `MODE: collective placement, not a natal reading and not a live aspect report.`,
+    `PERSON: Use collective "we/our/us" throughout the body. Impersonal "you/your/you're" is allowed ONLY in the final truth-and-catch pair.`,
+    `PACE TO STATE PLAINLY: ${normalized.pace}.`,
+    ``,
+    `SOURCE MEANING (reframe the natal "you" as collective "we"; do not add claims beyond this):`,
+    `  core: ${sourceMeaning.tldr}`,
+    `  placement behavior: ${sourceMeaning.body}`,
+    `  strength / medicine: ${sourceMeaning.strength}`,
+    `  challenge / shadow: ${sourceMeaning.challenge}`,
+    ...(sourceMeaning.shadow && sourceMeaning.shadow !== sourceMeaning.challenge
+      ? [`  additional shadow: ${sourceMeaning.shadow}`]
+      : []),
+    ...(derivedNote ? [`  DERIVED NODE AXIS RULE: ${derivedNote}`] : []),
+    ``,
+    `SHAPE - exactly two short paragraphs:`,
+    `  1. Open on a claim, never an announcement that the body is "now in" the sign.`,
+    `  2. State the pace so the reader knows whether this is a mood, chapter, or era.`,
+    `  3. Personify the planet or point in short declaratives where it fits.`,
+    `  4. Make the sign-specific behavior concrete and modern.`,
+    `  5. Name the strength and shadow as one flowing observation, never as labels.`,
+    `  6. End on ONE truth and the catch that turns on it. These words describe the SHAPE for us; never print "The truth" or "The catch" as labels. State both as plain sentences. The final pair is the only place "you" is allowed.`,
+    ``,
+    `RULES:`,
+    `  - Never use these words/phrases: ${failList}.`,
+    `  - Em dash is banned; use a spaced hyphen " - " instead.`,
+    `  - No dates, degrees, orb mechanics, live aspects, or current-sky topper. This is the evergreen base only.`,
+    `  - Do not explain astrology mechanics, dignities, or elements. Make the placement felt.`,
+    `  - Direct beats poetic. No generic weather, machinery, "shine" language, cosmic coaching, or motivational-poster maxims.`,
+    `  - Do not announce any turn with a label such as "The truth", "The catch", "The challenge is", "The downside is", "The gift is", or "The shadow is".`,
+    `  - Keep concrete examples terse. Do not invent named actors or mini-stories.`,
+    ``,
+    `CLOSE SHAPE BY DEMONSTRATION:`,
+    `  BAD - visible scaffolding: "...measuring worth by reaction. The truth: we want to be seen for what is real. The catch: if you build yourself on applause, you'll always need a crowd."`,
+    `  GOOD - state it plainly: "...measuring worth by the reaction instead of the work. Being seen for something real is the whole point. Build yourself on applause and you'll always need a crowd."`,
+    ``,
+    `DELETE THE PRE-CLOSE APHORISM - less is more:`,
+    `  BAD: "...let old hurts write today's response. Emotional honesty builds trust. If you keep sidestepping the real conversation, you'll end up talking circles around what you actually mean."`,
+    `  GOOD - cut the maxim instead of rewording it: "...let old hurts write today's response. If you keep sidestepping the real conversation, you'll end up talking circles around what you actually mean."`,
+    `  BAD: "...leave projects half-built when the next idea hits. Words move mountains, but they also run circles if we let them. It's easy to start a hundred things. You only get anywhere if you finish one."`,
+    `  GOOD - cut the maxim and the "move mountains" cliche: "...leave projects half-built when the next idea hits. It's easy to start a hundred things. You only get anywhere if you finish one."`,
+    ``,
+    `MAKE THE MIDDLE CONCRETE:`,
+    `  BAD - generic motivational verbs: "The Sun in Leo pushes us to choose boldness over safety, to lead without waiting for permission, and to create something that lands."`,
+    `  GOOD - observable behavior: "Stop choosing safety over presence. Step up before we're asked, and put our energy into work that can make an impact."`,
+    `  Follow the gold bodies: a room we're trying to light up; the check-in text, the meal prepped, the fix nobody else noticed; feelings asked to show their work before they get a seat at the table.`,
+    ``,
+    `IN-VOICE PLACEMENT GOLDS (match the shape and register; do not copy):`,
+    ...golds.map((entry, index) => `  [${index + 1} | ${entry.tier}] ${entry.body}`),
+    ``,
+    `RANGE OF APPROVED PLACEMENT CLOSES (learn the range; do not copy):`,
+    ...placementCloseBank(normalized).map((close, index) => `  [${index + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Do not use those terms again. State the closing truth and catch without labels. Keep second person out of the body; it may appear only in the final pair.`
+        ]
+      : []),
+    ``,
+    `Return only the two-paragraph card text.`
+  ].join("\n");
+}
+
+function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [] } = {}) {
   const normalized = normalizeCardArgs({ a, b, aspect, signA, signB });
   const { pair } = normalized;
   const field = ASPECT_FIELD[normalized.aspect];
   const meaning = { blend: pair.blend, active: pair[field], harmonious: pair.harmonious, hard: pair.hard, traditional: pair.traditional };
   const elements = [normalized.a, normalized.b, normalized.signA, normalized.signB].map((t) => `${cap(t)}=${elementOf(t) || "-"}`).join(", ");
   const failList = [...spec.outputBans.fail.map((x) => x.term)].join(", ");
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
 
   return [
     `Write ONE collective sky-aspect card for ${TITLE[normalized.a]} in ${cap(normalized.signA)} ${normalized.aspect} ${TITLE[normalized.b]} in ${cap(normalized.signB)}.`,
@@ -175,9 +592,8 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     `  - Metaphors: elemental imagery is allowed only when it matches an element in play here (${elements}). Do NOT name the element or the mechanics ("air-fire sextile", "this trine links two air signs", "fire ignites water") - the element is felt, never labeled.`,
     ``,
     `ANTI-PATTERNS (these are why weak drafts fail - avoid every one):`,
-    `  - THE ENDING IS ONE PAIR AND NOTHING MORE: a plain truth, then a catch that UNDERCUTS or complicates it (e.g. "Inspiration is real. It's also a very comfortable place to avoid details."). Exactly two short sentences. Once you write them, STOP.`,
-    `  - Do NOT add a third or fourth punchy line. Do NOT write two PARALLEL maxims - the second line must turn on the first, not restate it (bad: "Consistency wins. Quick wins don't last." / "Compassion is good. So is knowing when to say no." / "Conviction is powerful. Zealotry just burns the field."). Do NOT let an earlier sentence also try to close.`,
-    `  - The close is not advice. No "we have to mean it", "nobody gets to skip the wait", telling people what to do.`,
+    `  - End on one concrete truth, then a catch that turns on it.`,
+    `  - Keep the three-example beat terse and fragmentary, with no named actors or mini-stories.`,
     `  - Do NOT write "The gift is X; the shadow is Y." Weave both faces into the actual situation.`,
     `  - Do NOT explain the astrology or name the aspect geometry in the body.`,
     `  - Avoid "viral", and avoid motivational-poster lines ("adapt or get left behind", "power without purpose is chaos", "leaves ash"). Be specific and grounded instead.`,
@@ -186,6 +602,16 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     ``,
     `IN-VOICE EXEMPLARS (match this register, do not copy):`,
     ...fewShot().map((b, i) => `  [${i + 1}] ${b}`),
+    ``,
+    `RANGE OF GOOD CLOSES (real approved closes; learn the range, do not copy):`,
+    ...closeBank().map((close, i) => `  [${i + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Do not use those terms again. Do not use "gift" or "shadow" as labels.`
+        ]
+      : []),
     ``,
     `OUT OF VOICE (a weak draft - do NOT write like this: stacked endings, named mechanics, "gift is/shadow is", generic):`,
     `  We are caught in a quick current of change that feels electric and deep at once. This trine links two air signs, making adaptation fast and clear. The gift is sharp, effective change; the shadow is upheaval so fast it risks breaking before it builds. Change will not wait for comfort or consent. Adapt quickly or get left behind. Change is here. Change demands speed.`,
@@ -276,6 +702,17 @@ function cleanCardText(value) {
     .trim();
 }
 
+function buildRepairPrompt(text, reason) {
+  return [
+    `A careful editor flagged this card: ${JSON.stringify(String(reason ?? "").trim())}.`,
+    `Fix ONLY what the note describes. End on one concrete truth and the catch that turns on it - no second aphorism, no advice.`,
+    `Change nothing else: do not reword the rest, do not add length. Return only the corrected card.`,
+    ``,
+    `CARD`,
+    text
+  ].join("\n");
+}
+
 // Must return the poetic card body only. Facts such as dates, degrees, series,
 // and mechanics are deliberately not accepted here.
 async function generate(prompt, { temperature } = {}) {
@@ -337,32 +774,60 @@ async function generate(prompt, { temperature } = {}) {
   return text;
 }
 
-async function generateCard(args, {
+async function repairCard(text, reason, { generateFn = generate } = {}) {
+  return cleanCardText(await generateFn(buildRepairPrompt(text, reason), { temperature: 0.1 }));
+}
+
+async function repairPlacementTopper(text, reason, { generateFn = generate } = {}) {
+  const prompt = [
+    `A careful editor flagged this current-sky topper: ${JSON.stringify(String(reason ?? "").trim())}.`,
+    `Fix ONLY what the note describes. Keep exactly one short paragraph and end on one grounded line.`,
+    `Do not add advice, a second close, dates, degrees, orb language, or second person. Return only the corrected topper.`,
+    ``,
+    `TOPPER`,
+    text
+  ].join("\n");
+
+  return cleanCardText(await generateFn(prompt, { temperature: 0.1 }));
+}
+
+async function runCardPipeline({
+  buildPromptFor,
+  facts,
+  judgeMode,
+  judgeTier,
+  lintMode,
+  judgeTextFor = (text) => text
+}, {
   maxRetries = 3,
   generateFn = generate,
+  repairFn,
   withJudge = false,
   judgeFn,
   judgeFeedback
 } = {}) {
-  let normalized;
-
-  try {
-    normalized = normalizeCardArgs(args);
-  } catch (error) {
-    if (error instanceof SourceGapError) {
-      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
+  const promptFor = (avoidTerms = []) => {
+    let nextPrompt = buildPromptFor(avoidTerms);
+    if (judgeFeedback) {
+      nextPrompt = `${nextPrompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
     }
-    throw error;
-  }
-
-  let prompt = buildPrompt(normalized);
-  if (judgeFeedback) {
-    prompt = `${prompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
-  }
+    return nextPrompt;
+  };
+  let prompt = promptFor();
   let lastAttempt = null;
+  const lintRetryAvoidTerms = [];
+  const repair = {
+    fired: false,
+    result: "not-needed",
+    reason: "",
+    originalScore: null,
+    repairedScore: null,
+    kept: "original"
+  };
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const text = await generateFn(prompt);
-    const lint = lintCard(text);
+    const text = cleanCardText(await generateFn(prompt));
+    const lint = lintCard(text, { mode: lintMode });
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const config = generateFn === generate ? generationConfig() : null;
@@ -374,30 +839,75 @@ async function generateCard(args, {
         provider: config?.provider ?? "test",
         model: config?.model ?? "injected",
         temperature: config?.temperature ?? null,
-        facts: {
-          a: normalized.a,
-          b: normalized.b,
-          aspect: normalized.aspect,
-          signA: normalized.signA,
-          signB: normalized.signB,
-          pairKey: normalized.pairKey,
-          pairSource: normalized.pairSource
-        }
+        repair: { ...repair },
+        lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
+        facts: { ...facts }
       };
       // Second gate: the LLM judge. Opt-in so the caller controls the extra
       // model call. Attaches { judge, gate } for the cron to persist and route.
       // lazy require avoids a circular dependency (judge reuses generate()).
       if (withJudge) {
-        const { judgeCard, TIER_OF } = require("./judge-sky-voice.js");
-        const tier = TIER_OF[normalized.a] ?? "luminary";
-        result.judge = await judgeCard(text, { tier, judgeFn });
+        const { judgeCard } = require("./judge-sky-voice.js");
+        result.judge = await judgeCard(judgeTextFor(text), {
+          mode: judgeMode,
+          tier: judgeTier,
+          judgeFn
+        });
         result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+
+        if (result.judge.score === 2) {
+          const originalJudge = result.judge;
+          const reason = originalJudge.why || originalJudge.verdict;
+          repair.fired = true;
+          repair.reason = reason;
+          repair.originalScore = originalJudge.score;
+
+          try {
+            const repairedText = cleanCardText(
+              repairFn
+                ? await repairFn(text, reason)
+                : await repairCard(text, reason, { generateFn })
+            );
+            const repairedLint = lintCard(repairedText, { mode: lintMode });
+
+            if (repairedLint.score !== 3 || repairedLint.fails !== 0) {
+              repair.result = "lint-failed";
+            } else {
+              const repairedJudge = await judgeCard(judgeTextFor(repairedText), {
+                mode: judgeMode,
+                tier: judgeTier,
+                judgeFn
+              });
+              repair.repairedScore = repairedJudge.score;
+              repair.result = repairedText === text
+                ? "unchanged"
+                : `2→${repairedJudge.score}`;
+
+              if (repairedJudge.score > originalJudge.score) {
+                result.text = repairedText;
+                result.lint = repairedLint;
+                result.judge = repairedJudge;
+                result.gate = repairedJudge.gate;
+                repair.kept = "repaired";
+              }
+            }
+          } catch (error) {
+            repair.result = "error";
+            repair.error = error instanceof Error ? error.message : String(error);
+          }
+
+          result.repair = { ...repair };
+        }
       }
       return result;
     }
-    // feed the failures back and retry
-    const problems = lint.findings.map((f) => `${f.severity}: "${f.match || f.term}" (${f.reason || ""})`).join("; ");
-    prompt = `${prompt}\n\nYour last attempt failed the voice check: ${problems}. Rewrite it fixing exactly those, keeping the meaning and the 8 beats.`;
+    const avoidTerms = [...new Set(
+      lint.findings
+        .map((finding) => String(finding.retryInstruction ?? finding.term ?? "").trim())
+        .filter(Boolean)
+    )];
+    lintRetryAvoidTerms.push(avoidTerms);
+    prompt = promptFor(avoidTerms);
   }
   const config = generateFn === generate ? generationConfig() : null;
   return {
@@ -407,8 +917,34 @@ async function generateCard(args, {
     provider: config?.provider ?? "test",
     model: config?.model ?? "injected",
     temperature: config?.temperature ?? null,
+    repair: { ...repair },
+    lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
     text: lastAttempt?.text ?? "",
     lint: lastAttempt?.lint ?? null,
+    facts: { ...facts }
+  };
+}
+
+async function generateCard(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizeCardArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
+    }
+    throw error;
+  }
+
+  const aspectTier = ["sun", "moon"].includes(normalized.a)
+    ? "luminary"
+    : ["mercury", "venus", "mars"].includes(normalized.a)
+      ? "personal"
+      : "outer";
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPrompt(normalized, { avoidTerms }),
     facts: {
       a: normalized.a,
       b: normalized.b,
@@ -417,8 +953,76 @@ async function generateCard(args, {
       signB: normalized.signB,
       pairKey: normalized.pairKey,
       pairSource: normalized.pairSource
+    },
+    judgeMode: "collective-aspect-card",
+    judgeTier: aspectTier,
+    lintMode: "collective-aspect-card"
+  }, options);
+}
+
+async function generatePlacementCard(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizePlacementArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
     }
-  };
+    throw error;
+  }
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPlacementPrompt(normalized, { avoidTerms }),
+    facts: {
+      planet: normalized.planet,
+      sign: normalized.sign,
+      placementSource: normalized.placementSource,
+      derivedFrom: normalized.derivedFrom
+    },
+    judgeMode: PLACEMENT_MODE,
+    judgeTier: normalized.tier,
+    lintMode: PLACEMENT_MODE
+  }, options);
+}
+
+async function generatePlacementTopper(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizePlacementTopperArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
+    }
+    throw error;
+  }
+
+  const generateFn = options.generateFn ?? generate;
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPlacementTopperPrompt(normalized, { avoidTerms }),
+    facts: {
+      planet: normalized.planet,
+      sign: normalized.sign,
+      aspect: normalized.aspect,
+      other: normalized.other,
+      otherSign: normalized.otherSign,
+      orb: normalized.orb,
+      placementSource: normalized.placementSource,
+      pairKey: normalized.pairKey,
+      pairSource: normalized.pairSource
+    },
+    judgeMode: PLACEMENT_WITH_TOPPER_MODE,
+    judgeTier: normalized.tier,
+    lintMode: PLACEMENT_TOPPER_MODE,
+    judgeTextFor: (topperText) => `${topperText}\n\n${normalized.baseText}`
+  }, {
+    ...options,
+    generateFn,
+    repairFn: options.repairFn
+      ?? ((text, reason) => repairPlacementTopper(text, reason, { generateFn }))
+  });
 }
 
 // ---- CLI ----
@@ -454,10 +1058,22 @@ if (require.main === module) {
 
 module.exports = {
   ASPECT_FIELD,
+  PLACEMENT_TIER_OF,
   SourceGapError,
+  buildPlacementPrompt,
+  buildPlacementTopperPrompt,
+  buildRepairPrompt,
   buildPrompt,
+  closeBank,
   generate,
   generateCard,
+  generatePlacementCard,
+  generatePlacementTopper,
   generationConfig,
-  normalizeCardArgs
+  normalizeCardArgs,
+  normalizePlacementArgs,
+  normalizePlacementTopperArgs,
+  placementCloseBank,
+  repairCard,
+  repairPlacementTopper
 };

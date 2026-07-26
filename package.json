@@ -46,6 +46,7 @@
     "test:aspect-patterns-writeups-admin": "node scripts/test-aspect-pattern-writeups-admin.mjs",
     "test:aspect-patterns-writeups-runtime": "node scripts/test-aspect-pattern-writeups-runtime.mjs",
     "test:sky-aspects": "node scripts/test-sky-aspect-integration.mjs",
+    "test:sky-placements": "node scripts/test-sky-placement-app-integration.mjs && npm run test:placement-engine -w @tldr/astro-knowledge",
     "test:natal-aspect-pattern-reader": "node scripts/test-natal-aspect-pattern-reader-contract.mjs && node scripts/test-natal-aspect-pattern-reader-activation.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "content:materialize-fallback-v3": "node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs",

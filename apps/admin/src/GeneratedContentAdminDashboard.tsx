@@ -1572,12 +1572,20 @@ export function GeneratedContentAdminDashboard() {
       && matchesAdminSearch(haystack, query);
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const skyVoiceNeedsReviewRows = useMemo(
-    () => visibleRows.filter((row) => row.block_type === "sky_aspect" && row.judge_gate === "human-review"),
+    () => visibleRows.filter((row) => (
+      ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
+      && row.judge_gate === "human-review"
+      && row.review_state !== "sky-placement-topper-inactive"
+    )),
     [visibleRows]
   );
   const skyVoiceAuditRows = useMemo(
     () => visibleRows
-      .filter((row) => row.block_type === "sky_aspect" && row.judge_gate === "auto-publish")
+      .filter((row) => (
+        ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
+        && row.judge_gate === "auto-publish"
+        && row.review_state !== "sky-placement-topper-inactive"
+      ))
       .map((row) => ({ row, order: Math.random() }))
       .sort((a, b) => a.order - b.order)
       .slice(0, 5)
@@ -3309,16 +3317,31 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-sky-voice-cards">
           {tableRows.map((row) => {
             const source = objectRecord(row.source_snapshot);
-            const judge = objectRecord(source?.skyAspectJudge);
-            const facts = objectRecord(objectRecord(row.facts)?.cardFacts) ?? objectRecord(source?.cardFacts);
+            const isPlacement = row.block_type === "sky_placement";
+            const isPlacementTopper = row.event_type === "collective-placement-topper";
+            const judge = isPlacement
+              ? objectRecord(
+                  isPlacementTopper
+                    ? source?.skyPlacementTopperJudge
+                    : source?.skyPlacementJudge
+                )
+              : objectRecord(source?.skyAspectJudge);
+            const rowFacts = objectRecord(row.facts);
+            const facts = isPlacement
+              ? rowFacts
+              : objectRecord(rowFacts?.cardFacts) ?? objectRecord(source?.cardFacts);
             const pair = [facts?.a, facts?.b].filter(Boolean).join(" / ");
             const signs = [facts?.signA, facts?.signB].filter(Boolean).join(" / ");
+            const placement = [facts?.planet, facts?.sign].filter(Boolean).join(" in ");
+            const topperContact = isPlacementTopper
+              ? [facts?.aspect, facts?.other, facts?.otherSign ? `in ${facts.otherSign}` : ""].filter(Boolean).join(" ")
+              : "";
             const weakest = typeof judge?.weakest === "string" ? judge.weakest : "";
             return (
               <article key={row.id} className="admin-sky-voice-card">
                 <header>
                   <div>
-                    <h3>{row.headline || pair || "Sky aspect"}</h3>
+                    <h3>{row.headline || placement || pair || "Sky voice card"}</h3>
                     <code>{row.content_key}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
@@ -3327,9 +3350,10 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </header>
                 <dl className="admin-sky-voice-facts">
-                  <div><dt>Pair</dt><dd>{pair || "Not recorded"}</dd></div>
-                  <div><dt>Aspect</dt><dd>{String(facts?.aspect ?? "Not recorded")}</dd></div>
-                  <div><dt>Signs</dt><dd>{signs || "Not recorded"}</dd></div>
+                  <div><dt>{isPlacement ? "Placement" : "Pair"}</dt><dd>{isPlacement ? placement || "Not recorded" : pair || "Not recorded"}</dd></div>
+                  <div><dt>{isPlacement ? "Kind" : "Aspect"}</dt><dd>{isPlacement ? (isPlacementTopper ? "Current topper" : "Collective placement") : String(facts?.aspect ?? "Not recorded")}</dd></div>
+                  <div><dt>{isPlacement ? "Sign" : "Signs"}</dt><dd>{isPlacement ? String(facts?.sign ?? "Not recorded") : signs || "Not recorded"}</dd></div>
+                  {isPlacementTopper ? <div><dt>Contact</dt><dd>{topperContact || "Not recorded"}</dd></div> : null}
                 </dl>
                 <div className="admin-sky-voice-body">{row.body || "No card body saved."}</div>
                 <div className="admin-sky-voice-judge">
@@ -3342,7 +3366,7 @@ export function GeneratedContentAdminDashboard() {
               </article>
             );
           })}
-          {tableRows.length === 0 && <p className="admin-empty">No sky-aspect cards are in this view.</p>}
+          {tableRows.length === 0 && <p className="admin-empty">No sky voice cards are in this view.</p>}
         </div>
       </section>
     );
