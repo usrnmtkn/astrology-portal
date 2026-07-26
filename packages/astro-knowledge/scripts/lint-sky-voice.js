@@ -127,6 +127,17 @@ function lintCard(text) {
   if (registerDraw === 0) notes.push("drew nothing from the approved phrase bank - check the register");
   const paras = text.split(/\n\s*\n/).filter((p) => p.trim()).length;
   if (paras !== 2) notes.push(`shape: ${paras} paragraph(s), template is 2`);
+  // stacked ending: 3+ short sentences piled at the close. The template wants
+  // ONE truth + its catch (two short lines). A run of 3+ is a warn, which trips
+  // the generator's auto-regenerate loop before the card reaches the judge.
+  let closeRun = 0;
+  for (let i = sentences.length - 1; i >= 0; i--) {
+    if (sentences[i].split(/\s+/).filter(Boolean).length <= 11) closeRun++;
+    else break;
+  }
+  if (closeRun >= 3) {
+    findings.push({ severity: "warn", source: "shape", term: "stacked-ending", match: `${closeRun} short closing sentences`, reason: "land one truth and its catch, not a pile of aphorisms" });
+  }
 
   const fails = findings.filter((f) => f.severity === "fail").length;
   const warns = findings.filter((f) => f.severity === "warn").length;
