@@ -3,7 +3,19 @@ import { createRoot } from "react-dom/client";
 
 const localAdminOrigin = "http://127.0.0.1:5174";
 const blankRestoreReloadKey = "tldrastro:blankRestoreReloadAt";
+const blankRestoreResetKey = "tldrastro:blankRestoreResetAt";
 const blankRestoreReloadCooldownMs = 10000;
+const blankRestoreResetCooldownMs = 30000;
+const localUiStateKeys = [
+  "tldrastro:portalMode",
+  "tldrastro:friendsTab",
+  "tldrastro:pendingSignup",
+  "tldrastro:generatedContentPreviewMode",
+  "tldrastro:natalAspectPatterns",
+  "tldrastro:natalAspectPatternActivation",
+  "tldrastro:fallbackArchitectureV3:dashboardBundle",
+  "tldrastro:fallbackArchitectureV3:dashboardBundleVersion"
+];
 
 function isAdminContentPath() {
   return (
@@ -58,16 +70,58 @@ async function startApp() {
 function setupBlankRestoreRecovery() {
   const shouldReload = () => {
     const root = document.getElementById("root");
+    const appShell = root?.querySelector(".app-shell");
 
-    return Boolean(root && (!root.firstElementChild || !root.querySelector(".app-shell")));
+    if (!root || !root.firstElementChild || !appShell) {
+      return true;
+    }
+
+    const shellStyle = window.getComputedStyle(appShell);
+    const shellBounds = appShell.getBoundingClientRect();
+    const shellText = appShell.textContent?.trim() ?? "";
+
+    return (
+      shellText.length === 0 ||
+      shellBounds.width === 0 ||
+      shellBounds.height === 0 ||
+      shellStyle.display === "none" ||
+      shellStyle.visibility === "hidden" ||
+      shellStyle.opacity === "0"
+    );
   };
 
-  const reloadOnce = () => {
+  const clearTransientLocalState = () => {
+    for (const key of localUiStateKeys) {
+      window.localStorage.removeItem(key);
+    }
+
+    for (let index = window.sessionStorage.length - 1; index >= 0; index -= 1) {
+      const key = window.sessionStorage.key(index);
+
+      if (key?.startsWith("tldrastro:")) {
+        window.sessionStorage.removeItem(key);
+      }
+    }
+  };
+
+  const reloadOnce = ({ resetState = false }: { resetState?: boolean } = {}) => {
     const now = Date.now();
     const previous = Number(window.sessionStorage.getItem(blankRestoreReloadKey) ?? "0");
+    const previousReset = Number(window.sessionStorage.getItem(blankRestoreResetKey) ?? "0");
 
     if (Number.isFinite(previous) && now - previous < blankRestoreReloadCooldownMs) {
+      if (resetState && Number.isFinite(previousReset) && now - previousReset >= blankRestoreResetCooldownMs) {
+        clearTransientLocalState();
+        window.sessionStorage.setItem(blankRestoreResetKey, String(now));
+        window.location.replace(window.location.pathname || "/");
+      }
+
       return;
+    }
+
+    if (resetState && Number.isFinite(previousReset) && now - previousReset >= blankRestoreResetCooldownMs) {
+      clearTransientLocalState();
+      window.sessionStorage.setItem(blankRestoreResetKey, String(now));
     }
 
     window.sessionStorage.setItem(blankRestoreReloadKey, String(now));
@@ -89,7 +143,7 @@ function setupBlankRestoreRecovery() {
       }
 
       if (shouldReload()) {
-        reloadOnce();
+        reloadOnce({ resetState: true });
       }
     }, 250);
   };
@@ -103,7 +157,7 @@ function setupBlankRestoreRecovery() {
   });
   window.setInterval(() => {
     if (shouldReload()) {
-      reloadOnce();
+      reloadOnce({ resetState: true });
     }
   }, 1000);
 }
