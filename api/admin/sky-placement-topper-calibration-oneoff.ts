@@ -139,9 +139,12 @@ function tightestContacts(positions: PlanetPosition[], aspects: SkyAspect[]) {
 }
 
 async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAspect[]) {
-  const contacts = tightestContacts(positions, aspects).slice(0, 5);
+  const samples = [];
+  const skipped = [];
 
-  return await Promise.all(contacts.map(async (contact) => {
+  for (const contact of tightestContacts(positions, aspects)) {
+    if (samples.length >= 5) break;
+
     const base = await generatePlacementCard({
       planet: contact.planet,
       sign: contact.sign
@@ -150,12 +153,12 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
     });
 
     if (base.status !== "clean" || !base.text) {
-      return {
+      skipped.push({
         ...contact,
         status: "skipped",
-        reason: base.reason ?? "base-generation-failed",
-        base
-      };
+        reason: base.reason ?? "base-generation-failed"
+      });
+      continue;
     }
 
     const topper = await generatePlacementTopper({
@@ -170,12 +173,21 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
       withJudge: true
     });
 
-    return {
+    if (topper.status === "skipped" || !topper.text) {
+      skipped.push({
+        ...contact,
+        status: "skipped",
+        reason: topper.reason ?? "topper-source-gap"
+      });
+      continue;
+    }
+
+    samples.push({
       ...contact,
       status: topper.status,
-      topper: topper.text ?? "",
+      topper: topper.text,
       base: base.text,
-      renderedCard: topper.text ? `${topper.text}\n\n${base.text}` : base.text,
+      renderedCard: `${topper.text}\n\n${base.text}`,
       lint: topper.lint ?? null,
       judge: topper.judge ?? null,
       gate: topper.gate ?? null,
@@ -184,8 +196,10 @@ async function generateTopperSamples(positions: PlanetPosition[], aspects: SkyAs
       temperature: topper.temperature ?? null,
       repair: topper.repair ?? null,
       facts: topper.facts ?? null
-    };
-  }));
+    });
+  }
+
+  return { samples, skipped };
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -237,7 +251,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     const sky = await currentSkyFacts(new Date());
-    const samples = await generateTopperSamples(sky.positions, sky.aspects);
+    const sampleReport = await generateTopperSamples(sky.positions, sky.aspects);
 
     sendJson(res, 200, {
       ok: true,
@@ -245,7 +259,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       calibration,
       currentSkyGeneratedAt: sky.generatedAt,
       topperMaxOrb,
-      samples,
+      samples: sampleReport.samples,
+      skippedContacts: sampleReport.skipped,
       flags: {
         enabled: process.env.SKY_PLACEMENT_TOPPERS_ENABLED === "true",
         calibrated: process.env.SKY_PLACEMENT_TOPPER_JUDGE_CALIBRATED === "true"
