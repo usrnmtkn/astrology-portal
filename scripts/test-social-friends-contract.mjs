@@ -675,8 +675,8 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /friendTimingByUserId\[friend\.userId\][\s\S]*View chart[\s\S]*friendMenu\(friend\)/,
-  "Circle rows must carry current timing plus the chart and overflow actions."
+  /const bigThree = friendBigThree\(friend\)[\s\S]*aria-label=\{chartAvailable \? `Open \$\{friend\.displayName\}'s chart`[\s\S]*bigThree\.sun[\s\S]*bigThree\.moon[\s\S]*bigThree\.rising[\s\S]*ChevronRight[\s\S]*friendMenu\(friend\)/,
+  "Circle rows must carry only the friend's Big Three and open through the row with an arrow affordance."
 );
 assert.match(
   socialFriendsPanel,
@@ -685,18 +685,28 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /friends-person-menu[\s\S]*View chart[\s\S]*Remove friend[\s\S]*friends-remove-dialog/,
-  "Friend removal must remain behind an overflow menu and confirmation dialog."
+  /friends-person-menu[\s\S]*Chart privacy[\s\S]*Remove friend[\s\S]*friends-last-resort-action[\s\S]*Block @\{friend\.handle\}[\s\S]*friends-remove-dialog/,
+  "Friend removal and last-resort blocking must remain ordered behind the overflow menu."
+);
+assert.doesNotMatch(
+  socialFriendsPanel.match(/function friendMenu[\s\S]*?function blockMenu/)?.[0] ?? "",
+  />\s*View chart\s*</,
+  "The friend overflow must not duplicate the visible View chart action."
 );
 assert.match(
   socialFriendsPanel,
-  /setSocialFriendChartSharing[\s\S]*Your chart:[\s\S]*Their chart:[\s\S]*Chart privacy/,
-  "Friend rows must expose reciprocal chart-sharing status and a per-friend privacy control."
+  /setSocialFriendChartSharing[\s\S]*Chart privacy[\s\S]*role="switch"[\s\S]*Their setting, not yours\.[\s\S]*Done/,
+  "The friend overflow must expose an immediate sharing switch and a read-only status for the other person's chart."
 );
 assert.match(
   socialFriendsPanel,
   /blockSocialUser[\s\S]*Block \{friendToBlock\.displayName\}[\s\S]*cannot find you/,
   "Connected people and incoming requesters must be blockable behind confirmation."
+);
+assert.match(
+  socialFriendsPanel,
+  /blockMenu\(result, `lookup-request:\$\{result\.userId\}`\)[\s\S]*blockMenu\(request, `received-request:\$\{request\.requestId\}`\)/,
+  "Incoming request blocking must be tucked behind each person's overflow menu."
 );
 assert.match(
   socialFriendsPanel,

@@ -1,4 +1,4 @@
-import { MoreHorizontal, Search, X } from "lucide-react";
+import { ChevronRight, MoreHorizontal, Search, X } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -42,7 +42,6 @@ type SocialFriendsPanelProps = {
   activeView: FriendsTopLevelView;
   chartContent: ReactNode;
   chartCount: number;
-  friendTimingByUserId?: Record<string, string>;
   onAddChart: () => void;
   onFriendsChange: (friends: ConnectedSocialFriend[]) => void;
   onOpenFriend: (friend: ConnectedSocialFriend) => void;
@@ -187,7 +186,6 @@ export function SocialFriendsPanel({
   activeView,
   chartContent,
   chartCount,
-  friendTimingByUserId = {},
   onAddChart,
   onFriendsChange,
   onOpenFriend,
@@ -775,11 +773,6 @@ export function SocialFriendsPanel({
         </button>
         {menuOpen && (
           <span className="friends-person-menu" role="menu" aria-label={`${friend.displayName} actions`}>
-            {friend.friendSharesChart && friend.natalChart && (
-              <button type="button" role="menuitem" onClick={() => onOpenFriend(friend)}>
-                View chart
-              </button>
-            )}
             <button
               type="button"
               role="menuitem"
@@ -796,21 +789,56 @@ export function SocialFriendsPanel({
               role="menuitem"
               onClick={() => {
                 setOpenFriendMenuId(null);
+                setFriendToRemove(friend);
+              }}
+            >
+              Remove friend
+            </button>
+            <button
+              className="friends-danger-action friends-last-resort-action"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenFriendMenuId(null);
                 setFriendToBlock(friend);
               }}
             >
-              Block
+              Block @{friend.handle}
             </button>
+          </span>
+        )}
+      </span>
+    );
+  }
+
+  function blockMenu(person: BlockableSocialPerson, menuId: string) {
+    const menuOpen = openFriendMenuId === menuId;
+
+    return (
+      <span className="friends-row-menu-wrap">
+        <button
+          className="friends-row-menu-trigger"
+          type="button"
+          aria-label={`More options for ${person.displayName}`}
+          aria-expanded={menuOpen}
+          onClick={() => setOpenFriendMenuId((current) => (
+            current === menuId ? null : menuId
+          ))}
+        >
+          <MoreHorizontal size={18} aria-hidden="true" />
+        </button>
+        {menuOpen && (
+          <span className="friends-person-menu" role="menu" aria-label={`${person.displayName} actions`}>
             <button
               className="friends-danger-action"
               type="button"
               role="menuitem"
               onClick={() => {
                 setOpenFriendMenuId(null);
-                setFriendToRemove(friend);
+                setFriendToBlock(person);
               }}
             >
-              Remove friend
+              Block @{person.handle}
             </button>
           </span>
         )}
@@ -828,6 +856,9 @@ export function SocialFriendsPanel({
       && requestUndoUntil[result.userId] > Date.now()
     );
     const bigThree = connectedFriend ? friendBigThree(connectedFriend) : null;
+    const connectedChartAvailable = Boolean(
+      connectedFriend?.friendSharesChart && connectedFriend.natalChart
+    );
     const thirdLine = result.relationshipStatus === "request_sent"
       ? `Request sent ${outgoingRequest ? relativeSocialTime(outgoingRequest.createdAt) : ""} · they will see it next visit`
       : result.relationshipStatus === "request_received" && incomingRequest
@@ -838,9 +869,18 @@ export function SocialFriendsPanel({
 
     return (
       <div
-        className={`friends-person-row${index === activeResultIndex ? " is-keyboard-active" : ""}`}
+        className={`friends-person-row${index === activeResultIndex ? " is-keyboard-active" : ""}${connectedChartAvailable ? " is-openable" : ""}`}
         id={`friend-result-${result.userId}`}
         key={result.userId}
+        onClick={(event) => {
+          if (
+            connectedChartAvailable
+            && connectedFriend
+            && !(event.target instanceof Element && event.target.closest("button, a, [role='menu']"))
+          ) {
+            onOpenFriend(connectedFriend);
+          }
+        }}
       >
         <ProfileAvatar avatarUrl={result.avatarUrl} email="" name={result.displayName} />
         <span className="friends-person-copy">
@@ -897,26 +937,15 @@ export function SocialFriendsPanel({
               >
                 Decline
               </button>
-              <button
-                className="friends-row-text-action friends-danger-action"
-                type="button"
-                disabled={actionPending}
-                onClick={() => setFriendToBlock(result)}
-              >
-                Block
-              </button>
+              {blockMenu(result, `lookup-request:${result.userId}`)}
             </>
           )}
           {result.relationshipStatus === "friends" && connectedFriend && (
             <>
-              {connectedFriend.friendSharesChart && connectedFriend.natalChart ? (
-                <button
-                  className="friends-row-text-action"
-                  type="button"
-                  onClick={() => onOpenFriend(connectedFriend)}
-                >
-                  View chart
-                </button>
+              {connectedChartAvailable ? (
+                <span className="friends-row-arrow" aria-hidden="true">
+                  <ChevronRight size={18} />
+                </span>
               ) : (
                 <span className="friends-requested-label">
                   {connectedFriend.friendSharesChart ? "Chart pending" : "Chart paused"}
@@ -1132,52 +1161,61 @@ export function SocialFriendsPanel({
           ) : activeView === "circle" ? (
             friends.length > 0 ? (
               <div className="friends-person-list" aria-label="Circle">
-                {friends.map((friend) => (
-                  <div className="friends-person-row" key={friend.friendshipId}>
-                    <ProfileAvatar avatarUrl={friend.avatarUrl} email="" name={friend.displayName} />
-                    <span className="friends-person-copy">
-                      <span className="friends-person-identity">
-                        <strong>{friend.displayName}</strong>
-                        <small>@{friend.handle}</small>
-                      </span>
-                      <small className="friends-person-third-line">
-                        {friendTimingByUserId[friend.userId] || "Current timing is being calculated."}
-                      </small>
-                      <span className="friends-sharing-statuses">
-                        <small>
-                          Your chart: <strong>{friend.viewerSharesChart ? "Shared" : "Paused"}</strong>
-                        </small>
-                        <small>
-                          Their chart:{" "}
-                          <strong>
-                            {!friend.friendSharesChart
-                              ? "Paused"
-                              : friend.natalChart
-                                ? "Shared"
-                                : "Pending"}
-                          </strong>
-                        </small>
-                        <small>Friends since {relativeSocialTime(friend.acceptedAt)}</small>
-                      </span>
-                    </span>
-                    <span className="friends-person-actions">
-                      {friend.friendSharesChart && friend.natalChart ? (
-                        <button
-                          className="friends-row-text-action"
-                          type="button"
-                          onClick={() => onOpenFriend(friend)}
-                        >
-                          View chart
-                        </button>
-                      ) : (
-                        <span className="friends-requested-label">
-                          {friend.friendSharesChart ? "Chart pending" : "Chart paused"}
+                {friends.map((friend) => {
+                  const bigThree = friendBigThree(friend);
+                  const chartAvailable = Boolean(friend.friendSharesChart && friend.natalChart);
+
+                  return (
+                    <div
+                      className={`friends-person-row${chartAvailable ? " is-openable" : ""}`}
+                      key={friend.friendshipId}
+                      role={chartAvailable ? "link" : undefined}
+                      tabIndex={chartAvailable ? 0 : undefined}
+                      aria-label={chartAvailable ? `Open ${friend.displayName}'s chart` : undefined}
+                      onClick={(event) => {
+                        if (
+                          chartAvailable
+                          && !(event.target instanceof Element && event.target.closest("button, a, [role='menu']"))
+                        ) {
+                          onOpenFriend(friend);
+                        }
+                      }}
+                      onKeyDown={(event) => {
+                        if (
+                          chartAvailable
+                          && event.currentTarget === event.target
+                          && (event.key === "Enter" || event.key === " ")
+                        ) {
+                          event.preventDefault();
+                          onOpenFriend(friend);
+                        }
+                      }}
+                    >
+                      <ProfileAvatar avatarUrl={friend.avatarUrl} email="" name={friend.displayName} />
+                      <span className="friends-person-copy">
+                        <span className="friends-person-identity">
+                          <strong>{friend.displayName}</strong>
+                          <small>@{friend.handle}</small>
                         </span>
-                      )}
-                      {friendMenu(friend)}
-                    </span>
-                  </div>
-                ))}
+                        <small className="friends-person-third-line">
+                          ☉ {bigThree.sun ?? "pending"} · ☽ {bigThree.moon ?? "pending"} · ↑ {bigThree.rising ?? "pending"}
+                        </small>
+                      </span>
+                      <span className="friends-person-actions">
+                        {chartAvailable ? (
+                          <span className="friends-row-arrow" aria-hidden="true">
+                            <ChevronRight size={18} />
+                          </span>
+                        ) : (
+                          <span className="friends-requested-label">
+                            {friend.friendSharesChart ? "Chart pending" : "Chart paused"}
+                          </span>
+                        )}
+                        {friendMenu(friend)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="friends-unified-empty">
@@ -1235,14 +1273,7 @@ export function SocialFriendsPanel({
                           >
                             Decline
                           </button>
-                          <button
-                            className="friends-row-text-action friends-danger-action"
-                            type="button"
-                            disabled={actionPending}
-                            onClick={() => setFriendToBlock(request)}
-                          >
-                            Block
-                          </button>
+                          {blockMenu(request, `received-request:${request.requestId}`)}
                         </span>
                       </div>
                     ))}
@@ -1360,63 +1391,56 @@ export function SocialFriendsPanel({
               name={friendToManage.displayName}
             />
             <div>
-              <h2 id="friends-sharing-title">Chart privacy with {friendToManage.displayName}</h2>
-              <p>@{friendToManage.handle}</p>
+              <h2 id="friends-sharing-title">Chart privacy</h2>
+              <p>{friendToManage.displayName} · @{friendToManage.handle}</p>
             </div>
           </div>
           <div className="social-sharing-details">
-            <section>
-              <h3>Your chart: {friendToManage.viewerSharesChart ? "Shared" : "Paused"}</h3>
-              <p>
-                {friendToManage.viewerSharesChart
-                  ? `${friendToManage.displayName} can view your astrology profile and shared chart.`
-                  : `${friendToManage.displayName} cannot view your astrology profile or chart.`}
-              </p>
+            <section className="social-sharing-control-row">
+              <div>
+                <h3>{friendToManage.displayName} can see your chart</h3>
+                <p>Placements, transits, and your shared chart.</p>
+              </div>
+              <button
+                className={`social-sharing-switch${friendToManage.viewerSharesChart ? " is-active" : ""}`}
+                type="button"
+                role="switch"
+                aria-checked={friendToManage.viewerSharesChart}
+                aria-label={`Share your chart with ${friendToManage.displayName}`}
+                disabled={sharingPending}
+                onClick={() => void updateChartSharing(
+                  friendToManage,
+                  !friendToManage.viewerSharesChart
+                )}
+              >
+                <span aria-hidden="true" />
+              </button>
             </section>
-            <section>
-              <h3>
-                Their chart:{" "}
+            <section className="social-sharing-readonly-row">
+              <div>
+                <h3>You can see {friendToManage.displayName}&apos;s chart</h3>
+                <p>Their setting, not yours.</p>
+              </div>
+              <span className="social-sharing-state">
                 {!friendToManage.friendSharesChart
                   ? "Paused"
                   : friendToManage.natalChart
                     ? "Shared"
                     : "Pending"}
-              </h3>
-              <p>
-                {!friendToManage.friendSharesChart
-                  ? `${friendToManage.displayName} has paused chart sharing.`
-                  : friendToManage.natalChart
-                    ? `You can view ${friendToManage.displayName}'s shared chart.`
-                    : `${friendToManage.displayName} has not finished their chart yet.`}
-              </p>
+              </span>
             </section>
           </div>
           <p className="social-sharing-note">
-            Pausing does not remove the friendship. You can resume sharing at any time.
+            Turning your side off keeps the friendship and tells them nothing. You can turn it back on whenever you want.
           </p>
           <div className="social-sharing-actions">
             <button
-              className="social-secondary-button"
+              className="social-primary-button"
               type="button"
               disabled={sharingPending}
               onClick={() => setFriendToManage(null)}
             >
-              Close
-            </button>
-            <button
-              className={friendToManage.viewerSharesChart ? "social-secondary-button" : "social-primary-button"}
-              type="button"
-              disabled={sharingPending}
-              onClick={() => void updateChartSharing(
-                friendToManage,
-                !friendToManage.viewerSharesChart
-              )}
-            >
-              {sharingPending
-                ? "Saving…"
-                : friendToManage.viewerSharesChart
-                  ? "Pause my chart"
-                  : "Share my chart"}
+              Done
             </button>
           </div>
         </ModalPortal>

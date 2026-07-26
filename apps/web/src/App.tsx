@@ -18709,28 +18709,6 @@ function ManualChartsPanel({
     }),
     [charts, selectedChart?.id]
   );
-  const socialFriendTimingByUserId = useMemo(
-    () => Object.fromEntries(socialFriends.map((friend) => {
-      const chart = socialFriendToChart(friend);
-      const topTransit = rankTransitsByLifeAreaFocus(
-        rankedFriendTransits(currentSky, chart, sunriseOrbDegrees),
-        lifeAreaFocus
-      )[0];
-      const summary = topTransit
-        ? friendUpdateSummary(chart, topTransit, friendGeneratedContent, currentSky.generatedAt)
-        : "";
-
-      return [friend.userId, summary || "Current timing is being calculated."];
-    })),
-    [
-      currentSky,
-      friendGeneratedContent,
-      lifeAreaFocus,
-      socialFriends,
-      sunriseOrbDegrees
-    ]
-  );
-
   useEffect(() => {
     let cancelled = false;
     const chartOwnerChanged = chartOwnerUserIdRef.current !== chartOwnerUserId;
@@ -19169,7 +19147,6 @@ function ManualChartsPanel({
               />
             )}
             chartCount={friendChartListItems.length}
-            friendTimingByUserId={socialFriendTimingByUserId}
             onAddChart={openAddChartModal}
             onFriendsChange={setSocialFriends}
             onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
