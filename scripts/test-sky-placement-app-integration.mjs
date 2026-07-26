@@ -16,6 +16,11 @@ const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const vercel = JSON.parse(read("vercel.json"));
 
 assert.match(generatedContent, /\|\s+"sky_placement"/);
+assert.match(
+  migration,
+  /'fallback_aspect'[\s\S]*'fallback_hook'[\s\S]*'fallback_template'/,
+  "Placement migration must preserve the production fallback block types."
+);
 assert.match(migration, /'sky_placement'/);
 
 assert.match(app, /content\.blockType === "sky_placement"/);
