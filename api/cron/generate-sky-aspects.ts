@@ -10,11 +10,13 @@ const supportedAspects = new Set(["conjunction", "sextile", "square", "trine", "
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
-type TrimCloseStats = {
-  calls: number;
+type RepairStats = {
   fired: number;
   unchanged: number;
-  rejected: number;
+  reached3: number;
+  stayed2: number;
+  fellTo1: number;
+  lintFailed: number;
   errors: number;
 };
 
@@ -24,7 +26,8 @@ type RoutedGeneration = {
   judgePasses: number;
   totalAttempts: number;
   cappedRegeneration: boolean;
-  trimClose: TrimCloseStats;
+  repair: RepairStats;
+  lintRetryAvoidTerms: string[][];
 };
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -192,17 +195,20 @@ async function generateWithJudgeRouting(args: {
   aspect: string;
   signA: string;
   signB: string;
-}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; trimClose: TrimCloseStats }> {
+}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
   let result: GeneratedCardResult | null = null;
   let feedback = "";
   let totalAttempts = 0;
-  const trimClose: TrimCloseStats = {
-    calls: 0,
+  const repair: RepairStats = {
     fired: 0,
     unchanged: 0,
-    rejected: 0,
+    reached3: 0,
+    stayed2: 0,
+    fellTo1: 0,
+    lintFailed: 0,
     errors: 0
   };
+  const lintRetryAvoidTerms: string[][] = [];
 
   for (let pass = 0; pass <= maxJudgeRegenerations; pass += 1) {
     result = await generateCard(args, {
@@ -210,14 +216,19 @@ async function generateWithJudgeRouting(args: {
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     totalAttempts += result.attempts ?? 0;
-    trimClose.calls += result.trimClose?.calls ?? 0;
-    trimClose.fired += result.trimClose?.fired ?? 0;
-    trimClose.unchanged += result.trimClose?.unchanged ?? 0;
-    trimClose.rejected += result.trimClose?.rejected ?? 0;
-    trimClose.errors += result.trimClose?.errors ?? 0;
+    lintRetryAvoidTerms.push(...(result.lintRetryAvoidTerms ?? []));
+    if (result.repair?.fired) {
+      repair.fired += 1;
+      repair.unchanged += result.repair.result === "unchanged" ? 1 : 0;
+      repair.reached3 += result.repair.repairedScore === 3 ? 1 : 0;
+      repair.stayed2 += result.repair.result === "2→2" ? 1 : 0;
+      repair.fellTo1 += result.repair.result === "2→1" ? 1 : 0;
+      repair.lintFailed += result.repair.result === "lint-failed" ? 1 : 0;
+      repair.errors += result.repair.result === "error" ? 1 : 0;
+    }
 
     if (result.status !== "clean") {
-      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false, trimClose };
+      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false, repair, lintRetryAvoidTerms };
     }
 
     if (result.gate === "auto-publish" || result.gate === "human-review") {
@@ -227,7 +238,8 @@ async function generateWithJudgeRouting(args: {
         judgePasses: pass + 1,
         totalAttempts,
         cappedRegeneration: false,
-        trimClose
+        repair,
+        lintRetryAvoidTerms
       };
     }
 
@@ -247,7 +259,8 @@ async function generateWithJudgeRouting(args: {
     judgePasses: maxJudgeRegenerations + 1,
     totalAttempts,
     cappedRegeneration: true,
-    trimClose
+    repair,
+    lintRetryAvoidTerms
   };
 }
 
@@ -259,7 +272,7 @@ async function saveRoutedCard({
 }: {
   aspect: SkyAspect;
   first: PlanetPosition;
-  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; trimClose: TrimCloseStats };
+  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] };
   second: PlanetPosition;
 }) {
   const { result } = routed;
@@ -355,7 +368,8 @@ async function saveRoutedCard({
           cardFacts,
           skyAspectVoiceLint: result.lint,
           skyAspectJudge: persistedJudge,
-          skyAspectTrimClose: routed.trimClose,
+          skyAspectRepair: result.repair,
+          skyAspectLintRetryAvoidTerms: routed.lintRetryAvoidTerms,
           generationAttempts: routed.totalAttempts,
           judgePasses: routed.judgePasses,
           temperature: result.temperature
@@ -402,13 +416,23 @@ async function generateCurrentMatrix() {
     calibrationHeld: 0,
     judgeRegenerated: 0,
     retried: 0,
-    trimCloseCalls: 0,
-    trimCloseFired: 0,
-    trimCloseUnchanged: 0,
-    trimCloseRejected: 0,
-    trimCloseErrors: 0,
+    repairFired: 0,
+    repairReached3: 0,
+    repairStayed2: 0,
+    repairUnchanged: 0,
+    repairFellTo1: 0,
+    repairLintFailed: 0,
+    repairErrors: 0,
+    lintRetryAvoidTermsFed: 0,
     skipped: [] as Array<{ aspect: string; reason: string }>,
-    cards: [] as Array<{ contentKey: string; status: string; attempts?: number; trimCloseFired?: number }>
+    cards: [] as Array<{
+      contentKey: string;
+      status: string;
+      attempts?: number;
+      repairFired?: boolean;
+      repairResult?: string;
+      lintRetryAvoidTerms?: string[][];
+    }>
   };
 
   for (const aspect of sky.aspects) {
@@ -475,11 +499,14 @@ async function generateCurrentMatrix() {
     report.calibrationHeld += saved.gate === "auto-publish" && !saved.canAutoPublish ? 1 : 0;
     report.judgeRegenerated += routed.judgePasses > 1 ? 1 : 0;
     report.retried += routed.totalAttempts > routed.judgePasses ? 1 : 0;
-    report.trimCloseCalls += routed.trimClose.calls;
-    report.trimCloseFired += routed.trimClose.fired;
-    report.trimCloseUnchanged += routed.trimClose.unchanged;
-    report.trimCloseRejected += routed.trimClose.rejected;
-    report.trimCloseErrors += routed.trimClose.errors;
+    report.repairFired += routed.repair.fired;
+    report.repairReached3 += routed.repair.reached3;
+    report.repairStayed2 += routed.repair.stayed2;
+    report.repairUnchanged += routed.repair.unchanged;
+    report.repairFellTo1 += routed.repair.fellTo1;
+    report.repairLintFailed += routed.repair.lintFailed;
+    report.repairErrors += routed.repair.errors;
+    report.lintRetryAvoidTermsFed += routed.lintRetryAvoidTerms.reduce((sum, terms) => sum + terms.length, 0);
     report.cards.push({
       contentKey,
       status: saved.canAutoPublish
@@ -488,7 +515,9 @@ async function generateCurrentMatrix() {
           ? "draft-calibration-held"
           : "needs-review",
       attempts: routed.totalAttempts,
-      trimCloseFired: routed.trimClose.fired
+      repairFired: result.repair?.fired ?? false,
+      repairResult: result.repair?.result,
+      lintRetryAvoidTerms: routed.lintRetryAvoidTerms
     });
   }
 
