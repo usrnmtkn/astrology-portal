@@ -150,7 +150,7 @@ import {
   natalRulerContentKey,
   natalSignContentKey,
   skyAspectInstanceContentKey,
-  skyPlacementContentKey,
+  skyPlacementBaseContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -5725,7 +5725,7 @@ function generatedSkyPlacementCardPassesBoundary(
     && paragraphs === 2
     && isReaderFacingCopy(body)
     && !containsInternalMetadata
-    && content.contentKey === skyPlacementContentKey(expected.planet, expected.sign)
+    && content.contentKey === skyPlacementBaseContentKey(expected.planet, expected.sign)
     && content.blockType === "sky_placement"
     && content.eventType === "collective-placement-card"
     && lint?.score === 3
@@ -5762,7 +5762,7 @@ function generatedSkyPlacementWritingSection(
 
   const content = liveGeneratedContent(
     generatedContent,
-    skyPlacementContentKey(expected.planet, expected.sign)
+    skyPlacementBaseContentKey(expected.planet, expected.sign)
   );
 
   if (!content || !generatedSkyPlacementCardPassesBoundary(content, expected)) {

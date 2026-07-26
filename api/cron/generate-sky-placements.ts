@@ -202,7 +202,7 @@ function placementSource(planet: string, sign: string) {
 }
 
 function contentKeyFor({ planet, sign }: PlacementArgs) {
-  return `sky.placement.${planet.replace(/-/g, "_")}.${sign.replace(/-/g, "_")}`;
+  return `sky.placement.base.${planet.replace(/-/g, "_")}.${sign.replace(/-/g, "_")}`;
 }
 
 function firstParagraph(text: string) {
@@ -211,7 +211,7 @@ function firstParagraph(text: string) {
 
 async function existingPlacementRows() {
   const params = new URLSearchParams({
-    content_key: "like.sky.placement.*",
+    content_key: "like.sky.placement.base.*",
     target_date: "is.null",
     mode: "eq.feed",
     select: "id,content_key,status,updated_at",
