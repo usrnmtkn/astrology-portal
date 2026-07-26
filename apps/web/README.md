@@ -115,21 +115,24 @@ Realtime can disconnect and focus refresh is the recovery path.
 
 ### Invitations
 
-Email/phone invitations create a 30-day private link:
+The Friends UI creates a 30-day, single-use private share link:
 
-1. The inviter enters an email address or E.164 phone number.
-2. Supabase stores a SHA-256 contact hash, token digest, and masked contact
-   hint. Raw contacts and raw tokens are not persisted.
-3. The browser opens the member's email or Messages app, or lets them copy the
-   link. The app does not send the message server-side.
-4. The recipient signs in with the invited verified email or phone.
+1. The inviter creates an invite link without entering the friend's contact
+   information.
+2. Supabase stores only token-derived hashes. The raw token is returned once
+   to the inviter and is not persisted.
+3. The browser opens the native share sheet when available or lets the member
+   copy the link.
+4. The recipient opens the link and signs in or joins.
 5. The recipient previews and accepts or declines the invitation.
 6. Acceptance creates or reuses one canonical friendship and consumes the
    invitation.
 
 Keep the invitation token in the URL only long enough to capture it into
 session storage. Never log it, put it in analytics, or persist it in local
-storage.
+storage. The link is a bearer credential: anyone who receives it may use it
+once, so the UI tells members to share it privately. Contact-bound email and
+phone RPCs remain for backwards compatibility but are not surfaced.
 
 ### Social QA
 
