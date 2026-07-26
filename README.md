@@ -170,9 +170,18 @@ curl -fsSL https://tldrastro-api-27165565299.us-central1.run.app/ready
 ### Vercel
 
 - Production web app domain: `https://tldrastro.vercel.app`
+- Production branch: `main`
 - Vercel builds from the monorepo root.
-- Build command: `npm run build`
+- Build command:
+  `node scripts/assert-vercel-production-source.mjs && npm run build`
 - Output directory: `apps/web/dist`
+- Feature branches are preview-only. Do not promote a feature preview or point
+  `tldrastro.vercel.app` at it. Merge approved work into `main`; the Vercel Git
+  integration then creates the production deployment.
+- The production-source guard rejects production builds when
+  `VERCEL_GIT_COMMIT_REF` is missing or is not exactly `main`. This prevents a
+  manual `vercel --prod` from an older feature branch from replacing the live
+  app.
 - Production environment variable required for the browser app:
 
 ```bash
