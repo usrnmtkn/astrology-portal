@@ -12,6 +12,10 @@
   separate from account friendships.
 - Added friend profile and compatibility views using the accepted friend's
   shared chart.
+- Grouped discovery privacy and blocked-account access in a dedicated Social
+  card under Settings while keeping handle editing in Account.
+- Expanded overflow-menu actions to full-width interaction and selected-state
+  targets.
 
 ### Discovery And Consent
 

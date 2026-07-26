@@ -74,6 +74,9 @@ entered Charts:
   item.
 - Search temporarily replaces the active tab's content. Clearing search
   restores the previous tab.
+- The handle remains editable only in Account. Discovery privacy and blocked
+  accounts live together in **Settings → Social**; blocked members are managed
+  on the second-level Blocked accounts page.
 
 Search is live after two characters with a 180 ms debounce. Results are ranked
 by exact handle, handle prefix, full-name prefix, token prefix, and small token

@@ -259,6 +259,15 @@ button.settings-signout-row {
   line-height: var(--leading-description);
 }
 
+.settings-social-message {
+  margin: 0;
+  padding: var(--space-3) var(--row-padding-x);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
 .account-data-action {
   cursor: pointer;
 }

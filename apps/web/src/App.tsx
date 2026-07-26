@@ -13691,7 +13691,9 @@ export function App() {
                   {userProfile ? (
                     <SettingsView
                       profile={userProfile}
+                      socialProfile={ownSocialProfile}
                       onUpdateProfile={setUserProfile}
+                      onSocialProfileChange={setOwnSocialProfile}
                       theme={theme}
                       sunriseOrbEnabled={sunriseOrbEnabled}
                       onThemeChange={setTheme}
@@ -16416,7 +16418,9 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
 function SettingsView({
   profile,
+  socialProfile,
   onUpdateProfile,
+  onSocialProfileChange,
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
@@ -16426,7 +16430,9 @@ function SettingsView({
   onHouseSignLabelStyleChange
 }: {
   profile: UserProfile;
+  socialProfile: SocialProfile | null;
   onUpdateProfile: (profile: UserProfile) => void;
+  onSocialProfileChange: (socialProfile: SocialProfile) => void;
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
@@ -16439,6 +16445,9 @@ function SettingsView({
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
   const [settingsSubpage, setSettingsSubpage] = useState<SettingsSubpage>(settingsSubpageFromUrl);
+  const [accountPrivate, setAccountPrivate] = useState(socialProfile?.isPrivate ?? false);
+  const [privacyStatus, setPrivacyStatus] = useState<"ready" | "saving">("ready");
+  const [privacyMessage, setPrivacyMessage] = useState("");
   const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
   const chartSettings = normalizeChartSettings(profile.settings);
 
@@ -16457,6 +16466,10 @@ function SettingsView({
       window.removeEventListener(settingsRouteChangeEvent, syncSettingsRoute);
     };
   }, []);
+
+  useEffect(() => {
+    setAccountPrivate(socialProfile?.isPrivate ?? false);
+  }, [socialProfile?.isPrivate]);
 
   function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
     onHouseSignLabelStyleChange(houseSignLabelStyle);
@@ -16497,6 +16510,26 @@ function SettingsView({
     setCurrentCity(nextLocation.label);
     setCurrentLocationData(nextLocation);
     setCurrentLocationEditing(false);
+  }
+
+  async function updateAccountPrivacy(nextPrivate: boolean) {
+    setPrivacyStatus("saving");
+    setPrivacyMessage("");
+
+    try {
+      const savedProfile = await saveSocialPrivacy(nextPrivate);
+      setAccountPrivate(savedProfile.isPrivate);
+      setPrivacyMessage(
+        savedProfile.isPrivate
+          ? "Your account is hidden from search. Existing friends keep their current access."
+          : "People can now find you by name or @handle."
+      );
+      onSocialProfileChange(savedProfile);
+    } catch (error) {
+      setPrivacyMessage(error instanceof Error ? error.message : "Could not update your Social privacy.");
+    } finally {
+      setPrivacyStatus("ready");
+    }
   }
 
   if (settingsSubpage === "blocked-accounts") {
@@ -16555,6 +16588,51 @@ function SettingsView({
                   </span>
                 </button>
               )}
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Social settings">
+          <span className="settings-group-label">Social</span>
+          <div className="settings-card">
+            <div className="settings-list" aria-label="Social settings">
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">Private account</span>
+                  <small className="settings-row-description">
+                    Hide your profile from Find Friends. People you already accepted can still view your shared chart.
+                  </small>
+                </div>
+                <SwitchControl
+                  checked={accountPrivate}
+                  disabled={privacyStatus === "saving"}
+                  label="Make account private"
+                  onChange={(nextPrivate) => void updateAccountPrivacy(nextPrivate)}
+                />
+              </div>
+              {privacyMessage && (
+                <p className="settings-social-message" role="status" aria-live="polite">
+                  {privacyMessage}
+                </p>
+              )}
+              <button
+                className="settings-row settings-row-button"
+                type="button"
+                onClick={() => {
+                  updateSettingsSubpageUrl("blocked-accounts");
+                  setSettingsSubpage("blocked-accounts");
+                }}
+              >
+                <span className="settings-row-copy">
+                  <span className="settings-row-title">Blocked accounts</span>
+                  <small className="settings-row-description">
+                    Review and manage people you have blocked.
+                  </small>
+                </span>
+                <span className="settings-row__field">
+                  <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+                </span>
+              </button>
             </div>
           </div>
         </section>
@@ -16623,31 +16701,6 @@ function SettingsView({
           </div>
         </section>
 
-        <section className="settings-group" aria-label="Security and restrictions">
-          <span className="settings-group-label">Security &amp; restrictions</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <button
-                className="settings-row settings-row-button"
-                type="button"
-                onClick={() => {
-                  updateSettingsSubpageUrl("blocked-accounts");
-                  setSettingsSubpage("blocked-accounts");
-                }}
-              >
-                <span className="settings-row-copy">
-                  <span className="settings-row-title">Blocked accounts</span>
-                  <small className="settings-row-description">
-                    Review and manage accounts you have blocked.
-                  </small>
-                </span>
-                <span className="settings-row__field">
-                  <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-                </span>
-              </button>
-            </div>
-          </div>
-        </section>
       </div>
     </section>
   );
@@ -16775,9 +16828,6 @@ function AccountView({
   const [handleStatus, setHandleStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
   const [handleEditing, setHandleEditing] = useState(false);
   const [handleMessage, setHandleMessage] = useState("");
-  const [accountPrivate, setAccountPrivate] = useState(false);
-  const [privacyStatus, setPrivacyStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
-  const [privacyMessage, setPrivacyMessage] = useState("");
   const [accountActionStatus, setAccountActionStatus] = useState<"idle" | "exporting" | "deleting">("idle");
   const [accountActionMessage, setAccountActionMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -16805,8 +16855,6 @@ function AccountView({
         setSocialHandle(nextHandle);
         setHandleDraft(nextHandle ?? "");
         setHandleStatus("ready");
-        setAccountPrivate(socialProfile?.isPrivate ?? false);
-        setPrivacyStatus("ready");
         if (socialProfile) {
           onSocialProfileChange(socialProfile);
         }
@@ -16817,7 +16865,6 @@ function AccountView({
         }
 
         setHandleStatus("unavailable");
-        setPrivacyStatus("unavailable");
         setHandleMessage(error instanceof Error ? error.message : "Could not load your handle.");
       });
 
@@ -16906,26 +16953,6 @@ function AccountView({
         ? profile.charts.map((chart, index) => (index === 0 ? nextChart : chart))
         : [nextChart]
     });
-  };
-
-  const updateAccountPrivacy = async (nextPrivate: boolean) => {
-    setPrivacyStatus("saving");
-    setPrivacyMessage("");
-
-    try {
-      const savedProfile = await saveSocialPrivacy(nextPrivate);
-      setAccountPrivate(savedProfile.isPrivate);
-      setPrivacyStatus("ready");
-      setPrivacyMessage(
-        savedProfile.isPrivate
-          ? "Your account is private. Existing friends can still view your shared chart."
-          : "Your account can now be found by name."
-      );
-      onSocialProfileChange(savedProfile);
-    } catch (error) {
-      setPrivacyStatus("ready");
-      setPrivacyMessage(error instanceof Error ? error.message : "Could not update your account privacy.");
-    }
   };
 
   const exportAccountData = async () => {
@@ -17073,25 +17100,6 @@ function AccountView({
               aria-live="polite"
             >
               {handleMessage || "3–24 characters. Start with a letter; use letters, numbers, or underscores."}
-            </div>
-          )}
-          <div className="settings-row settings-row-control">
-            <div className="settings-row-copy">
-              <span className="settings-row-title">Private account</span>
-              <small className="settings-row-description">
-                Hide your profile from Find Friends. People you already accepted can still view your shared chart.
-              </small>
-            </div>
-            <SwitchControl
-              checked={accountPrivate}
-              disabled={privacyStatus !== "ready"}
-              label="Make account private"
-              onChange={(nextPrivate) => void updateAccountPrivacy(nextPrivate)}
-            />
-          </div>
-          {privacyMessage && (
-            <div className="account-handle-message has-message" role="status" aria-live="polite">
-              {privacyMessage}
             </div>
           )}
           <div className="settings-row">
