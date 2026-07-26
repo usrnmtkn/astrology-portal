@@ -99,6 +99,10 @@ export function skyPlacementContentKey(body: string, sign: string) {
   return `sky.placement.${moduleContentPart(body)}.${moduleContentPart(sign)}`;
 }
 
+export function skyPlacementBaseContentKey(body: string, sign: string) {
+  return `sky.placement.base.${moduleContentPart(body)}.${moduleContentPart(sign)}`;
+}
+
 export function natalRulerContentKey(ruler: string) {
   return `natal.ruler.${moduleContentPart(ruler)}`;
 }

@@ -8,6 +8,7 @@ const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), "u
 
 const app = read("apps/web/src/App.tsx");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
+const generatedContentKeys = read("apps/web/src/services/generatedContentKeys.ts");
 const migration = read(
   "apps/web/supabase/migrations/20260726203000_generated_content_sky_placement_block_type.sql"
 );
@@ -29,7 +30,11 @@ assert.match(app, /lint\?\.score === 3/);
 assert.match(app, /lint\?\.fails === 0/);
 assert.match(app, /content\.judgeScore === 3/);
 assert.match(app, /content\.judgeGate === "auto-publish"/);
-assert.match(app, /content\.contentKey === skyPlacementContentKey\(expected\.planet, expected\.sign\)/);
+assert.match(app, /content\.contentKey === skyPlacementBaseContentKey\(expected\.planet, expected\.sign\)/);
+assert.match(
+  generatedContentKeys,
+  /export function skyPlacementBaseContentKey\(body: string, sign: string\)[\s\S]*`sky\.placement\.base\.\$\{moduleContentPart\(body\)\}\.\$\{moduleContentPart\(sign\)\}`/
+);
 assert.match(app, /source\.placementSource === expected\.placementSource/);
 assert.match(app, /derivation\?\.planet === expected\.derivedFrom\.planet/);
 assert.match(app, /const generatedSection = generatedSkyPlacementWritingSection/);
@@ -47,6 +52,8 @@ assert.match(cron, /result\.judge\?\.score === 3/);
 assert.match(cron, /judgeAutoPublishEnabled\(\)/);
 assert.match(cron, /SKY_PLACEMENT_JUDGE_CALIBRATED/);
 assert.match(cron, /block_type: "sky_placement"/);
+assert.match(cron, /return `sky\.placement\.base\.\$\{planet\.replace/);
+assert.match(cron, /content_key: "like\.sky\.placement\.base\.\*"/);
 assert.match(cron, /review_state: reviewState/);
 assert.match(cron, /placementSource: expectedSource/);
 assert.match(cron, /placementDerivation: result\.facts\?\.derivedFrom \?\? null/);
