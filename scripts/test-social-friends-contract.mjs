@@ -430,8 +430,8 @@ assert.match(
 );
 assert.match(
   app,
-  /Security &amp; restrictions[\s\S]*updateSettingsSubpageUrl\("blocked-accounts"\)[\s\S]*Review and manage accounts you have blocked/,
-  "Settings must link to block management without listing blocked members."
+  /settings-group-label">Social[\s\S]*Private account[\s\S]*updateSettingsSubpageUrl\("blocked-accounts"\)[\s\S]*Review and manage people you have blocked/,
+  "The Social Settings card must link to block management without listing blocked members."
 );
 assert.match(
   blockedAccountsSettings,
