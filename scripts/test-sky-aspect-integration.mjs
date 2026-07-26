@@ -13,6 +13,21 @@ const cleanExample = examples.find((entry) => (
 
 assert.ok(cleanExample, "Expected the canonical Sun-Pluto sky example.");
 assert.equal(lintCard(cleanExample).score, 3, "Canonical sky example must remain lint-clean.");
+
+const brokenSunJupiter = [
+  "Confidence is loud, and the sense of possibility is even louder. With the Sun in Leo conjunct Jupiter in Leo, the field runs on belief, appetite, and the sense that doors should open just because we ask. A big yes to the extra shift, a plan that gets bigger after midnight, a promise made on a high - each is easier to land when the heat of the moment makes luck feel inevitable. The Sun in Leo wants to be seen and named; Jupiter in Leo expands every risk and reward we claim as ours.",
+  "We chase what we want with less hesitation, and the odds seem to tilt in our direction - until the push gets too big and the room cools off. Real confidence brings real opportunity, but the same fire that opens doors can torch what it touches if we overplay the hand. Big luck is real. So is the fallout when we act like it can’t run out.",
+  "Belief can make the room move. Overreach just makes it empty faster."
+].join("\n\n");
+const brokenSunJupiterLint = lintCard(brokenSunJupiter);
+assert.equal(brokenSunJupiterLint.score, 1);
+assert.ok(brokenSunJupiterLint.findings.some((finding) => (
+  finding.severity === "fail" && finding.term === "paragraph-count"
+)));
+assert.ok(brokenSunJupiterLint.findings.some((finding) => (
+  finding.severity === "warn" && finding.term === "double-closing-pair"
+)));
+
 const repairedExample = examples.find((entry) => (
   entry.surface === "sky"
   && entry.mode === "collective-aspect-card"
@@ -153,7 +168,8 @@ assert.equal(retried.lint.fails, 0);
 assert.deepEqual(retried.lintRetryAvoidTerms, [[
   "degree/orb mechanics",
   "collective person",
-  "(?<!-)\\byou\\b|(?<!-)\\byour\\b"
+  "(?<!-)\\byou\\b|(?<!-)\\byour\\b",
+  "paragraph-count"
 ]]);
 
 let seamCalls = 0;
