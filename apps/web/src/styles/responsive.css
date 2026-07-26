@@ -1455,6 +1455,11 @@
     justify-content: stretch;
   }
 
+  .friends-chart-toolbar-copy {
+    flex: 1 1 100%;
+    margin-right: 0;
+  }
+
   .friends-birthday-chiclet {
     width: 100%;
     margin-right: 0;
@@ -1638,6 +1643,19 @@
   .account-editable-row .settings-row__field {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .account-handle-editor {
+    display: grid;
+    justify-content: stretch;
+  }
+
+  .account-handle-input-wrap {
+    width: 100%;
+  }
+
+  .account-handle-actions {
+    justify-content: flex-end;
   }
 
   .settings-theme-control {

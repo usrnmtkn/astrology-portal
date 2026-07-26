@@ -62,6 +62,10 @@ type ExistingGeneratedContentRow = {
   provider?: string | null;
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> | null;
+  judge_score?: number | null;
+  judge_verdict?: string | null;
+  judge_gate?: string | null;
+  judge_why?: string | null;
 };
 
 type SkippedLiveGeneratedContentRow = {
@@ -291,9 +295,27 @@ function isLegacyLiveWritingCandidate(row: {
     || String(promptVersion).startsWith("migration-seed");
 }
 
-function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWritingCandidate>[0]) {
+function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWritingCandidate>[0] & {
+  blockType?: string | null;
+  block_type?: string | null;
+  judgeScore?: number | null;
+  judge_score?: number | null;
+  judgeGate?: string | null;
+  judge_gate?: string | null;
+}) {
   if (isLegacyLiveWritingCandidate(row)) {
     throw new Error("Legacy local/source-grounded generated rows cannot be published LIVE. Use fallback-hook, slot-template, vocab, or newly authored rows instead.");
+  }
+
+  if ((row.blockType ?? row.block_type) === "sky_aspect") {
+    const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
+    const lint = sourceSnapshot?.skyAspectVoiceLint as { score?: number; fails?: number } | undefined;
+    const judgeScore = row.judgeScore ?? row.judge_score;
+    const judgeGate = row.judgeGate ?? row.judge_gate;
+
+    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || judgeGate !== "auto-publish") {
+      throw new Error("Sky-aspect cards can be published only after lint 3/0 and judge auto-publish.");
+    }
   }
 }
 
@@ -410,6 +432,10 @@ async function listGeneratedContent(req: IncomingMessage) {
     "facts",
     "knowledge_ids",
     "source_snapshot",
+    "judge_score",
+    "judge_verdict",
+    "judge_gate",
+    "judge_why",
     "reviewer_notes",
     "prompt_version",
     "provider",
@@ -653,7 +679,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   for (let index = 0; index < uniqueKeys.length; index += 80) {
     const batch = uniqueKeys.slice(index, index + 80);
     const params = new URLSearchParams();
-    params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot");
+    params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot,block_type,judge_score,judge_gate");
     params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
     const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
@@ -672,7 +698,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -795,7 +821,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
         contentKey: body.contentKey ?? existing?.content_key,
         provider: body.provider ?? existing?.provider,
         promptVersion: body.promptVersion ?? existing?.prompt_version,
-        sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot
+        sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot,
+        blockType: body.blockType ?? existing?.block_type,
+        judgeScore: existing?.judge_score,
+        judgeGate: existing?.judge_gate
       });
     }
 
@@ -886,6 +915,23 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.evergreen = body.evergreen;
     patch.evergreen_at = body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null;
     patch.evergreen_by = body.evergreen ? body.evergreenBy ?? "admin" : null;
+  }
+
+  const editsSkyAspectCopy = existing?.block_type === "sky_aspect" && (
+    (body.headline !== undefined && body.headline !== existing.headline)
+    || (body.summary !== undefined && body.summary !== existing.summary)
+    || (body.body !== undefined && body.body !== existing.body)
+    || (body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections))
+  );
+
+  if (editsSkyAspectCopy) {
+    patch.status = "DRAFT";
+    patch.review_state = "sky-voice-needs-review";
+    patch.judge_score = null;
+    patch.judge_verdict = null;
+    patch.judge_gate = null;
+    patch.judge_why = "Card copy changed after judging and must be generated or judged again.";
+    patch.published_at = null;
   }
 
   if (Object.keys(patch).length === 0) {

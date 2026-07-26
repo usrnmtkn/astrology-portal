@@ -38,6 +38,7 @@
   --color-wheel-band: #ffffff;
   --color-wheel-band-line: rgba(28, 32, 52, 0.12);
   --color-status-alert: #a8772f;
+  --color-danger: #a53b36;
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
   --color-moon-phase-light: #f0cf6a;
@@ -95,6 +96,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
+  --danger: var(--color-danger);
   --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);

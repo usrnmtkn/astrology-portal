@@ -1,0 +1,22 @@
+{
+  "id": "sun-chiron",
+  "planetA": "sun",
+  "planetB": "chiron",
+  "traditional": "No classical doctrine: Chiron is a modern point. This combination is modern only.",
+  "modern": {
+    "blend": "Identity meets the old wound around worth and belonging. Being seen touches a tender place about whether one is truly valued.",
+    "harmonious": "The wound becomes a source of compassion and quiet teaching; being recognized helps heal what once went unseen.",
+    "hard": "Recognition reopens the sore spot: praise arrives but does not reach the deeper doubt about worth.",
+    "business": "Creative, healing, or teaching directions where the wound is worked in the open; guard against needing endless validation."
+  },
+  "provenance": {
+    "traditional": "none (modern point)",
+    "modern": "Chiron as the self-worth wound (Cartwright, Beyond Doorways); Sun as identity and recognition. STUB, needs owner review and a second Chiron source for depth."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets the old wound around worth and belonging. Being seen touches a tender place about whether one is truly valued.",
+  "harmonious": "The wound becomes a source of compassion and quiet teaching; being recognized helps heal what once went unseen.",
+  "hard": "Recognition reopens the sore spot: praise arrives but does not reach the deeper doubt about worth.",
+  "business": "Creative, healing, or teaching directions where the wound is worked in the open; guard against needing endless validation."
+}

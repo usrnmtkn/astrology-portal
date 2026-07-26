@@ -26,6 +26,7 @@ type FriendChartsListProps = {
   onEditChart: (chart: ManualChart) => void;
   onOpenChart: (chart: ManualChart) => void;
   onToggleChartMenu: (chartId: string) => void;
+  embedded?: boolean;
 };
 
 type MenuPosition = {
@@ -53,7 +54,8 @@ export function FriendChartsList({
   onDeleteChart,
   onEditChart,
   onOpenChart,
-  onToggleChartMenu
+  onToggleChartMenu,
+  embedded = false
 }: FriendChartsListProps) {
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>());
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
@@ -112,15 +114,24 @@ export function FriendChartsList({
 
   return (
     <>
-      <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
-        <div className="friends-chart-toolbar">
+      <section
+        className={embedded
+          ? "friends-unified-charts"
+          : "manual-chart-workspace manual-chart-workspace-list-only friends-charts-view"}
+        aria-label="Friend charts"
+      >
+        {!embedded && <div className="friends-chart-toolbar">
+          <span className="friends-chart-toolbar-copy">
+            <span className="eyebrow section-label">Private charts</span>
+            <small>Birth details you add manually are visible only to you.</small>
+          </span>
           {birthdayChiclet}
           <button className="manual-chart-add-button" type="button" onClick={onAddChart}>
-            <span>Add chart</span>
+            <span>Add private chart</span>
           </button>
-        </div>
+        </div>}
 
-        <section className="manual-chart-list" aria-label="Saved manual charts">
+        <section className={embedded ? "friends-unified-chart-list" : "manual-chart-list"} aria-label="Saved charts">
           {showMessage && message ? <p className="manual-chart-message">{message}</p> : null}
           {isLoading && (
             <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
@@ -130,14 +141,22 @@ export function FriendChartsList({
             </section>
           )}
           {!isLoading && charts.length === 0 && (
-            <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
-              <span>Charts</span>
-              <h3>No saved charts yet.</h3>
-              <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
+            <section className={embedded ? "friends-unified-empty" : "you-empty-card manual-chart-empty"} aria-label="No charts">
+              <h3>{embedded ? "No charts yet." : "No private charts yet."}</h3>
+              <p>
+                {embedded
+                  ? "Add someone's birth details to compare charts. Only you can see it."
+                  : "Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing."}
+              </p>
+              {embedded && (
+                <button className="social-primary-button" type="button" onClick={onAddChart}>
+                  Add a chart
+                </button>
+              )}
             </section>
           )}
           {charts.length > 0 && (
-            <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
+            <div className="list you-list-card manual-chart-cards" aria-label="Chart list">
               {charts.map(({ chart, initials, sun, moon, rising, needsBirthTime, active }) => (
                 <div
                   className={`manual-chart-row chart-row${openChartMenuId === chart.id ? " manual-chart-row--menu-open" : ""}`}

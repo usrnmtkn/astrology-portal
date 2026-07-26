@@ -30,6 +30,14 @@
   gap: var(--section-gap);
 }
 
+.settings-back-row {
+  justify-self: start;
+}
+
+.settings-subpage {
+  align-content: start;
+}
+
 .settings-group {
   display: grid;
   gap: var(--sp-2);
@@ -189,6 +197,179 @@ button.settings-signout-row {
   text-transform: none;
 }
 
+.settings-blocked-summary {
+  align-items: center;
+}
+
+.settings-blocked-row {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.settings-blocked-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.settings-blocked-copy strong,
+.settings-blocked-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-blocked-copy strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-body-size);
+  letter-spacing: var(--tracking-normal);
+  text-transform: none;
+}
+
+.settings-blocked-copy small {
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+}
+
+.settings-unblock-button {
+  min-height: 40px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  padding: 0 var(--space-4);
+  color: var(--ink);
+  font: inherit;
+  font-weight: var(--weight-medium);
+}
+
+.settings-unblock-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.settings-blocked-error {
+  align-items: center;
+}
+
+.settings-blocked-message {
+  margin: 0;
+  padding: var(--space-3) var(--row-padding-x);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
+.account-data-action {
+  cursor: pointer;
+}
+
+.account-data-action > svg {
+  color: var(--muted);
+}
+
+.account-delete-action .settings-row-title,
+.account-delete-action > svg {
+  color: var(--danger);
+}
+
+.account-action-message {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
+.modal-panel.account-delete-modal {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(24px, 5vw, 36px);
+}
+
+.account-delete-modal h2,
+.account-delete-modal p {
+  margin: 0;
+}
+
+.account-delete-modal h2 {
+  padding-right: var(--space-8);
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: var(--leading-heading);
+}
+
+.account-delete-modal p {
+  color: var(--card-body-color);
+  line-height: var(--leading-description);
+}
+
+.account-delete-modal label {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+}
+
+.account-delete-modal input {
+  min-height: 46px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  padding: 0 var(--space-3);
+  color: var(--ink);
+  font: inherit;
+}
+
+.account-delete-modal input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.account-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.account-delete-actions button {
+  min-height: 42px;
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-4);
+  font: inherit;
+}
+
+.account-delete-confirm-button {
+  border: 1px solid var(--danger);
+  background: var(--danger);
+  color: #fff;
+}
+
+.account-delete-confirm-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+@media (max-width: 560px) {
+  .account-delete-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-delete-actions button {
+    width: 100%;
+  }
+
+  .settings-blocked-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .settings-blocked-row .settings-unblock-button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
 .account-editable-row {
   cursor: text;
 }
@@ -239,6 +420,92 @@ button.settings-signout-row {
 
 .account-row-input::placeholder {
   color: var(--muted);
+}
+
+.account-handle-row:disabled {
+  color: inherit;
+  cursor: default;
+  opacity: 1;
+}
+
+.account-handle-editor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.account-handle-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  width: min(280px, 36vw);
+  min-width: 0;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background: var(--control-bg);
+  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
+  color: var(--muted);
+}
+
+.account-handle-input-wrap:focus-within {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.account-handle-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+.account-handle-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.account-handle-cancel,
+.account-handle-save {
+  min-height: 38px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-weight: var(--weight-medium);
+}
+
+.account-handle-cancel {
+  background: transparent;
+  color: var(--ink);
+}
+
+.account-handle-save {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.account-handle-save:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.account-handle-message {
+  padding: var(--space-3) var(--row-padding-x);
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
+.account-handle-message.has-message {
+  color: var(--ink);
 }
 
 .settings-theme-control {

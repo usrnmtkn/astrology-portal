@@ -61,6 +61,8 @@ export type LiveGeneratedContent = {
   blockType?: GeneratedContentBlockType | null;
   provider?: string | null;
   sourceSnapshot?: Record<string, unknown> | null;
+  judgeScore?: number | null;
+  judgeGate?: string | null;
   model: string | null;
   updatedAt: string;
 };
@@ -84,6 +86,8 @@ type GeneratedContentRow = {
   block_type?: GeneratedContentBlockType | null;
   flags?: string[] | null;
   provider?: string | null;
+  judge_score?: number | null;
+  judge_gate?: string | null;
   model: string | null;
   updated_at: string;
 };
@@ -432,6 +436,8 @@ function fromRow(
     sections: row.sections ?? {},
     blockType: row.block_type ?? null,
     sourceSnapshot: row.source_snapshot ?? null,
+    judgeScore: row.judge_score ?? null,
+    judgeGate: row.judge_gate ?? null,
     provider: row.provider ?? null,
     model: row.model,
     updatedAt: row.updated_at
@@ -971,7 +977,7 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     const to = from + pageSize - 1;
     const { data, error } = await supabase
       .from("generated_interpretations")
-      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .eq("provider", fallbackArchitectureV3Provider)
       .order("updated_at", { ascending: false })
       .range(from, to)
@@ -1156,7 +1162,7 @@ export async function loadLiveGeneratedContentForSurfaces(
     const to = from + pageSize - 1;
     let query = supabase
       .from("generated_interpretations")
-      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .in("surface", surfaces)
       .eq("status", "LIVE")
       .eq("lane", "serving")

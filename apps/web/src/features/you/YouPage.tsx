@@ -102,6 +102,7 @@ export type YouPageProps = {
   planetRows: ReactNode[];
   profileAvatarUrl?: string;
   profileEmail: string;
+  profileHandle?: string | null;
   profileName: string;
   setupStepsLeft: number;
   showNatalSignatures: boolean;
@@ -150,6 +151,7 @@ function YouProfileSummary({
   onEditProfile,
   profileAvatarUrl,
   profileEmail,
+  profileHandle,
   profileName,
   signaturesReady
 }: {
@@ -159,6 +161,7 @@ function YouProfileSummary({
   onEditProfile: () => void;
   profileAvatarUrl?: string;
   profileEmail: string;
+  profileHandle?: string | null;
   profileName: string;
   signaturesReady: boolean;
 }) {
@@ -206,6 +209,7 @@ function YouProfileSummary({
       />
       <div className="you-profile-copy">
         <h1>{profileName}</h1>
+        {profileHandle ? <p className="you-profile-handle">@{profileHandle}</p> : null}
         {signaturesReady ? (
           <div className="you-signature-row" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
@@ -896,6 +900,7 @@ export function YouPage({
   planetRows,
   profileAvatarUrl,
   profileEmail,
+  profileHandle,
   profileName,
   setupStepsLeft,
   showNatalSignatures,
@@ -941,6 +946,7 @@ export function YouPage({
             onEditProfile={onCreateChart}
             profileAvatarUrl={profileAvatarUrl}
             profileEmail={profileEmail}
+            profileHandle={profileHandle}
             profileName={profileName}
             signaturesReady={signaturesReady}
           />

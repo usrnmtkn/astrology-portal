@@ -73,6 +73,7 @@ type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "m
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
+type SkyVoiceQueueView = "all" | "needs-review" | "audit";
 type FallbackHookDefinition = {
   key: string;
   label: string;
@@ -106,6 +107,10 @@ type AdminGeneratedContentRow = {
   facts?: Record<string, unknown> | null;
   knowledge_ids?: string[] | null;
   source_snapshot?: Record<string, unknown> | null;
+  judge_score?: number | null;
+  judge_verdict?: string | null;
+  judge_gate?: "auto-publish" | "human-review" | "regenerate" | null;
+  judge_why?: string | null;
   reviewer_notes?: string | null;
   prompt_version?: string | null;
   provider?: string | null;
@@ -1416,6 +1421,7 @@ export function GeneratedContentAdminDashboard() {
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
   const [contentClassFilter, setContentClassFilter] = useState<AdminContentClassFilter>("all");
   const [tierFilter, setTierFilter] = useState<AdminPhrasebankTierFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
@@ -1565,6 +1571,19 @@ export function GeneratedContentAdminDashboard() {
       && (tierFilter === "all" || tierForRow(row) === tierFilter)
       && matchesAdminSearch(haystack, query);
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
+  const skyVoiceNeedsReviewRows = useMemo(
+    () => visibleRows.filter((row) => row.block_type === "sky_aspect" && row.judge_gate === "human-review"),
+    [visibleRows]
+  );
+  const skyVoiceAuditRows = useMemo(
+    () => visibleRows
+      .filter((row) => row.block_type === "sky_aspect" && row.judge_gate === "auto-publish")
+      .map((row) => ({ row, order: Math.random() }))
+      .sort((a, b) => a.order - b.order)
+      .slice(0, 5)
+      .map(({ row }) => row),
+    [visibleRows]
+  );
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
       && matchesAdminSearch(fallbackHookVisibleSearchText(row), query)
@@ -2389,7 +2408,20 @@ export function GeneratedContentAdminDashboard() {
                 </button>
               </div>
             </section>
-            <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
+            <nav className="admin-sky-voice-tabs" aria-label="Review queue views">
+              <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
+                All review
+              </button>
+              <button type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
+                Sky voice: needs review
+                <strong>{skyVoiceNeedsReviewRows.length}</strong>
+              </button>
+              <button type="button" className={skyVoiceQueueView === "audit" ? "active" : ""} onClick={() => setSkyVoiceQueueView("audit")}>
+                Sky voice: audit sample
+                <strong>{skyVoiceAuditRows.length}</strong>
+              </button>
+            </nav>
+            {skyVoiceQueueView === "all" && <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
               <div className="admin-review-filter-grid">
                 <label>
                   <span>Status</span>
@@ -2426,9 +2458,11 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </label>
               </div>
-            </section>
-            {renderBulkBar()}
-            {renderReviewTable(filteredReviewRows)}
+            </section>}
+            {skyVoiceQueueView === "all" && renderBulkBar()}
+            {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
+            {skyVoiceQueueView === "needs-review" && renderSkyVoiceQueue(skyVoiceNeedsReviewRows, "Cards held by the judge for a fast editorial decision.")}
+            {skyVoiceQueueView === "audit" && renderSkyVoiceQueue(skyVoiceAuditRows, "Random auto-publish sample for periodic voice auditing. Refresh to draw another sample.")}
           </section>
         )}
 
@@ -3263,6 +3297,52 @@ export function GeneratedContentAdminDashboard() {
             );
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
+        </div>
+      </section>
+    );
+  }
+
+  function renderSkyVoiceQueue(tableRows: AdminGeneratedContentRow[], description: string) {
+    return (
+      <section className="admin-sky-voice-queue" aria-label="Sky voice queue">
+        <p className="admin-sky-voice-description">{description}</p>
+        <div className="admin-sky-voice-cards">
+          {tableRows.map((row) => {
+            const source = objectRecord(row.source_snapshot);
+            const judge = objectRecord(source?.skyAspectJudge);
+            const facts = objectRecord(objectRecord(row.facts)?.cardFacts) ?? objectRecord(source?.cardFacts);
+            const pair = [facts?.a, facts?.b].filter(Boolean).join(" / ");
+            const signs = [facts?.signA, facts?.signB].filter(Boolean).join(" / ");
+            const weakest = typeof judge?.weakest === "string" ? judge.weakest : "";
+            return (
+              <article key={row.id} className="admin-sky-voice-card">
+                <header>
+                  <div>
+                    <h3>{row.headline || pair || "Sky aspect"}</h3>
+                    <code>{row.content_key}</code>
+                  </div>
+                  <div className="admin-review-queue-meta-strip">
+                    <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span>
+                    <span className="ui-pill admin-status">Judge {row.judge_score ?? "-"}/3</span>
+                  </div>
+                </header>
+                <dl className="admin-sky-voice-facts">
+                  <div><dt>Pair</dt><dd>{pair || "Not recorded"}</dd></div>
+                  <div><dt>Aspect</dt><dd>{String(facts?.aspect ?? "Not recorded")}</dd></div>
+                  <div><dt>Signs</dt><dd>{signs || "Not recorded"}</dd></div>
+                </dl>
+                <div className="admin-sky-voice-body">{row.body || "No card body saved."}</div>
+                <div className="admin-sky-voice-judge">
+                  <p><strong>Why</strong>{row.judge_why || "No judge rationale saved."}</p>
+                  <p><strong>Weakest</strong>{weakest || "No weakest beat recorded."}</p>
+                </div>
+                <div className="admin-review-queue-actions">
+                  <button type="button" onClick={() => openRow(row)}>Edit</button>
+                </div>
+              </article>
+            );
+          })}
+          {tableRows.length === 0 && <p className="admin-empty">No sky-aspect cards are in this view.</p>}
         </div>
       </section>
     );
