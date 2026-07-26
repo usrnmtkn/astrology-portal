@@ -37,6 +37,16 @@ const calendarSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"),
   "utf8"
 );
+const calendarRendererMethods = new Set(
+  Array.from(calendarSource.matchAll(/calendarFallbackRendererV3\.(render[A-Z]\w*)/gu), (match) => match[1])
+);
+for (const method of calendarRendererMethods) {
+  assert.equal(
+    typeof renderer[method],
+    "function",
+    `LunarCalendar calls ${method}, but the installed V3 renderer does not expose it.`
+  );
+}
 assert.match(calendarSource, /renderWeeklyMoon\(\{/u);
 assert.match(calendarSource, /main: selectedPackageWeeklyMoon \? \[selectedPackageWeeklyMoon\.body\] : \[\]/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.headline/u);

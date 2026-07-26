@@ -11,8 +11,12 @@ import {
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
-import { SourceGapError as FallbackV3SourceGapError } from "../../content/fallbackArchitectureV3Runtime";
-import { transitSynastryFallbackRendererV3 as calendarFallbackRendererV3 } from "../../content/fallbackArchitectureV3Runtime";
+import {
+  fallbackV3HookBody,
+  fallbackV3PlanetTopic,
+  SourceGapError as FallbackV3SourceGapError,
+  transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
+} from "../../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import {
   skyAspectContentKey,
@@ -889,6 +893,41 @@ function calendarEventContentLayer(content: LiveGeneratedContent): CalendarEvent
     : "authored";
 }
 
+function calendarEventPackageFailure(event: LunarCalendarEvent, error: unknown) {
+  if (!(error instanceof FallbackV3SourceGapError)) {
+    console.warn("Calendar event package copy failed; keeping the calendar card visible.", {
+      eventId: event.id,
+      eventType: event.type,
+      error
+    });
+  }
+
+  return "";
+}
+
+function calendarStationDirectPackageDescription(event: LunarCalendarEvent) {
+  if (!event.planet) {
+    return "";
+  }
+
+  const frame = fallbackV3HookBody("fallback-hook/sky-event/station-direct");
+  const planetTopic = fallbackV3PlanetTopic(event.planet);
+
+  if (!frame || !planetTopic) {
+    return "";
+  }
+
+  const planetReference = `${event.planet}${event.sign ? ` in ${event.sign}` : ""}`;
+  const body = frame
+    .replaceAll("{{dateLine}}", "This week")
+    .replaceAll("{{aRef}}", planetReference)
+    .replaceAll("{{aTopic}}", planetTopic)
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return isReaderFacingCopy(body) ? body : "";
+}
+
 function calendarEventPackageDescription(event: LunarCalendarEvent) {
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
     const sign = event.toSign ?? event.sign;
@@ -901,11 +940,7 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
 
       return firstReaderFacingCopy(rendered.parts);
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        return "";
-      }
-
-      throw error;
+      return calendarEventPackageFailure(event, error);
     }
   }
 
@@ -920,31 +955,12 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
 
       return firstReaderFacingCopy(rendered.parts);
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        return "";
-      }
-
-      throw error;
+      return calendarEventPackageFailure(event, error);
     }
   }
 
   if (event.type === "station" && event.planet && event.direction === "direct") {
-    try {
-      const rendered = calendarFallbackRendererV3.renderSkyEvent({
-        type: "station-direct",
-        a: slugContentPart(event.planet),
-        aSign: event.sign ? slugContentPart(event.sign) : undefined,
-        dateLine: "This week"
-      });
-
-      return firstReaderFacingCopy(rendered.parts);
-    } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        return "";
-      }
-
-      throw error;
-    }
+    return calendarStationDirectPackageDescription(event);
   }
 
   if (event.type === "aspect" && event.planets && event.aspect) {
@@ -962,11 +978,7 @@ function calendarEventPackageDescription(event: LunarCalendarEvent) {
 
       return firstReaderFacingCopy(rendered.parts);
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        return "";
-      }
-
-      throw error;
+      return calendarEventPackageFailure(event, error);
     }
   }
 

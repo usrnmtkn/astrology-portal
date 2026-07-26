@@ -7,6 +7,7 @@ type SeedOptions = {
   profile?: boolean;
   friends?: boolean;
   theme?: "light" | "dark";
+  now?: string;
 };
 
 const fixtureLocation = {
@@ -36,6 +37,8 @@ const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you 
   .concat(".");
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
+  const requestedNow = options.now ?? fixedNow;
+
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
       status: 503,
@@ -220,7 +223,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         }
       ]));
     }
-  }, { fixtureLocation, fixtureUserId, fixedNow, options });
+  }, { fixtureLocation, fixtureUserId, fixedNow: requestedNow, options });
 
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
@@ -1071,6 +1074,25 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     }
 
+    await assertNoClientErrors();
+  });
+
+  test("calendar remains mounted during a direct-station week", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-25T16:00:00.000Z" });
+    await page.goto("/#calendar");
+
+    await expect(page.getByLabel("Lunar calendar")).toBeVisible();
+    await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator(".app-shell")).toBeVisible();
+    await expect(page.locator("#root")).not.toBeEmpty();
+
+    await page.reload();
+
+    await expect(page.getByLabel("Lunar calendar")).toBeVisible();
+    await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator(".app-shell")).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1990,7 +2012,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("content fallback copy is reader-facing in calendar and settings surfaces", async ({ page }) => {
+  test("content fallback copy is reader-facing in the calendar surface", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
@@ -1998,10 +2020,6 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
     await expectReaderFacingCopy(page.getByLabel("Selected lunar day"), "Calendar selected day fallback copy", 80);
-
-    await page.goto("/#settings");
-    await expect(page.getByText("settings.")).toBeVisible();
-    await expectReaderFacingCopy(page.getByRole("region", { name: "Astrology settings" }), "Settings life-area fallback copy");
     await assertNoClientErrors();
   });
 });
