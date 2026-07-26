@@ -75,6 +75,33 @@ assert.ok(softLabelLint.findings.some((finding) => (
   && finding.term === "\\bthe challenge is\\b"
 )));
 
+for (const form of ["steady", "steadies", "steadiness", "steadier"]) {
+  const afterOnly = lintCard(
+    `Reliability and ${form} make us strong.\n\nWe keep the work moving.`,
+    { mode: placementMode }
+  );
+  const finding = afterOnly.findings.find((item) => (
+    item.severity === "fail"
+    && item.term === "\\bstead(y|ies|iness|ier)\\b"
+  ));
+  assert.ok(finding, `${form} must fail when strong appears only after it.`);
+  assert.match(
+    finding.retryInstruction,
+    new RegExp(`You used '${form}' without stable/strong/solid before it`)
+  );
+  assert.match(finding.retryInstruction, /calm, solid, grounded, consistent, or sure/);
+}
+
+const ledSteadyLint = lintCard(
+  "We rely on solid, steady work.\n\nWe keep the work moving.",
+  { mode: placementMode }
+);
+assert.deepEqual(
+  { score: ledSteadyLint.score, fails: ledSteadyLint.fails, warns: ledSteadyLint.warns },
+  { score: 3, fails: 0, warns: 0 },
+  "A permitted lead word before steady must satisfy the conditional ban."
+);
+
 const sunGold = placementGolds.find((entry) => entry.sourceId === "sky-sun-in-leo");
 assert.ok(sunGold);
 const bodyYou = sunGold.body.replace(
@@ -244,6 +271,30 @@ assert.equal(generated.lint.score, 3);
 assert.equal(generated.facts.planet, "sun");
 assert.equal(generated.facts.sign, "leo");
 assert.equal(generated.facts.placementSource, "data/placements/sign/sun-leo.json");
+
+const retryPrompts = [];
+const bareSteadinessDraft = sunGold.body.replace(
+  "Warmth, nerve,",
+  "Reliability and steadiness make us strong. Warmth, nerve,"
+);
+const retriedSteadiness = await generator.generatePlacementCard({
+  planet: "sun",
+  sign: "leo"
+}, {
+  generateFn: async (nextPrompt) => {
+    retryPrompts.push(nextPrompt);
+    return retryPrompts.length === 1 ? bareSteadinessDraft : sunGold.body;
+  }
+});
+assert.equal(retriedSteadiness.status, "clean");
+assert.equal(retriedSteadiness.attempts, 2);
+assert.deepEqual(retriedSteadiness.lintRetryAvoidTerms, [[
+  "You used 'steadiness' without stable/strong/solid before it - replace it with calm, solid, grounded, consistent, or sure."
+]]);
+assert.match(
+  retryPrompts[1],
+  /You used 'steadiness' without stable\/strong\/solid before it - replace it with calm, solid, grounded, consistent, or sure/
+);
 
 const judged = await generator.generatePlacementCard({
   planet: "sun",
