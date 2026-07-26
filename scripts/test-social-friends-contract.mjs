@@ -640,8 +640,13 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanel,
-  /placeholder="Search by name or @handle"[\s\S]*Private profiles stay hidden[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*requestActivityCount > 0[\s\S]*Requests/,
+  /placeholder="Search by name or @handle"[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*requestActivityCount > 0[\s\S]*Requests/,
   "Search and the permanent Circle/Charts tabs must share the panel, while Requests appears for pending social activity."
+);
+assert.doesNotMatch(
+  socialFriendsPanel,
+  /Private profiles stay hidden/,
+  "Private-profile exclusion must be enforced without adding helper copy to the search row."
 );
 assert.doesNotMatch(
   socialFriendsPanel.match(/<label className="friends-unified-search-row">[\s\S]*?<\/label>/)?.[0] ?? "",
