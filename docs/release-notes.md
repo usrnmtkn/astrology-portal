@@ -6,6 +6,9 @@
 
 - Rebuilt the Friends page as one persistent panel with live search, Circle,
   Charts, and a conditional Requests tab.
+- The Requests tab now appears for received requests, outgoing member
+  requests, or pending share links, and groups received and
+  pending activity separately with cancellation controls.
 - Added unique social handles, account profile photos, and a single person-row
   pattern for search results, requests, and accepted friends.
 - Added an empty-Circle invitation CTA and kept manually entered charts
@@ -30,8 +33,11 @@
 - Before friendship, discovery exposes only minimal identity and the Sun sign.
   Moon, Rising, birth details, and natal chart data remain private.
 - Friend requests require acceptance before either account receives chart
-  access. The Requests tab appears only when the signed-in member has an
-  incoming request.
+  access. The Requests tab appears whenever the signed-in member has received
+  or pending outgoing social activity.
+- Invitations now create a single-use private link that the member can copy or
+  send through the device share sheet without entering a friend's contact
+  information.
 - `@tldrastro` is reserved for an account with the trusted admin app role.
 
 ### Sharing And Safety

@@ -55,7 +55,12 @@ Generate at least 32 random bytes. Deliver the URL-safe plaintext token once and
 
 ### Require recipient identity match
 
-Targeted invitations are accepted only if the authenticated account has the same verified email/phone HMAC or is the securely resolved `target_user_id`. A social/shareable invite link should be a distinct future invitation type with different consent semantics.
+Targeted invitations are accepted only if the authenticated account has the
+same verified email/phone HMAC or is the securely resolved `target_user_id`.
+The beta share-link flow is a distinct `link` invitation type: it is a
+single-use bearer credential, may be claimed by the first eligible signed-in
+recipient, expires after 30 days, and remains subject to self-invite and block
+checks.
 
 ### Use server routes plus atomic database functions
 

@@ -51,7 +51,7 @@ export type SocialInvitation = {
 
 export type SocialInvitationSummary = {
   invitationId: string;
-  contactKind: "email" | "phone";
+  contactKind: "email" | "phone" | "link";
   contactHint: string;
   status: "pending" | "claimed" | "declined" | "cancelled" | "expired";
   createdAt: string;
@@ -60,7 +60,7 @@ export type SocialInvitationSummary = {
 
 export type SocialInvitationPreview = {
   invitationId: string;
-  contactKind: "email" | "phone";
+  contactKind: "email" | "phone" | "link";
   inviterUserId: string;
   inviterHandle: string;
   inviterDisplayName: string;
@@ -585,6 +585,27 @@ export async function createSocialInvitation(
   };
 }
 
+export async function createSocialShareInvitation(): Promise<SocialInvitation> {
+  const { client } = await authenticatedClient();
+  const { data, error } = await client.rpc("create_social_share_invitation");
+
+  if (error) {
+    throw socialError(error, "Could not create the invite link.");
+  }
+
+  const row = (data as InvitationRow[] | null)?.[0];
+
+  if (!row) {
+    throw new Error("Could not create the invite link.");
+  }
+
+  return {
+    invitationId: row.invitation_id,
+    token: row.invitation_token,
+    expiresAt: row.expires_at
+  };
+}
+
 export async function listSocialInvitations(): Promise<SocialInvitationSummary[]> {
   const { client } = await authenticatedClient();
   const { data, error } = await client.rpc("list_social_invitations");
@@ -737,6 +758,11 @@ export function subscribeToSocialChanges(onChange: () => void) {
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "social_notifications" },
+          onChange
+        )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "social_invitations" },
           onChange
         )
         .subscribe();
