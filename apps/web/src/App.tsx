@@ -149,7 +149,6 @@ import {
   natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
-  skyAspectContentKey,
   skyAspectInstanceContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
@@ -568,6 +567,8 @@ type SkyDetail = {
   };
   historicalLookback?: SkyHistoricalLookback | null;
   astrologyDrilldown?: GeneratedContentDrilldown | null;
+  seriesLine?: string | null;
+  mechanicsCaption?: string | null;
   content?: ContentBundle;
 };
 
@@ -4871,6 +4872,17 @@ function SkyDetailArticle({
                   ) : null}
                 </>
               )}
+              {detail.seriesLine ? (
+                <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
+                  <p>{detail.seriesLine}</p>
+                </aside>
+              ) : null}
+              {detail.mechanicsCaption ? (
+                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-label="What this looks like in space">
+                  <h3>What this looks like in space</h3>
+                  <p>{detail.mechanicsCaption}</p>
+                </aside>
+              ) : null}
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
@@ -5299,62 +5311,150 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function skyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[],
-  generatedAt?: string
-): NormalizedSkyAspectSection | null {
-  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
+const collectiveSkyAspectBodyOrder = [
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+];
 
-  if (!normalizedAspect) {
+function normalizedCollectiveSkyAspectFacts(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+) {
+  const from = normalizeContentIdPart(aspect.from);
+  const to = normalizeContentIdPart(aspect.to);
+  const fromIndex = collectiveSkyAspectBodyOrder.indexOf(from);
+  const toIndex = collectiveSkyAspectBodyOrder.indexOf(to);
+  const fromPosition = skyAspectPosition(aspect.from, positions);
+  const toPosition = skyAspectPosition(aspect.to, positions);
+
+  if (
+    fromIndex < 0
+    || toIndex < 0
+    || fromIndex === toIndex
+    || !["conjunction", "sextile", "square", "trine", "opposition"].includes(normalizeContentIdPart(aspect.type))
+    || !fromPosition?.sign
+    || !toPosition?.sign
+  ) {
     return null;
   }
 
-  const firstPosition = skyAspectPosition(aspect.from, positions);
-  const secondPosition = skyAspectPosition(aspect.to, positions);
-  const firstSign = firstPosition?.sign ?? undefined;
-  const secondSign = secondPosition?.sign ?? undefined;
-  const targetDate = generatedAt ? generatedAt.slice(0, 10) : undefined;
+  return fromIndex < toIndex
+    ? {
+        a: from,
+        b: to,
+        aspect: normalizeContentIdPart(aspect.type),
+        signA: normalizeContentIdPart(fromPosition.sign),
+        signB: normalizeContentIdPart(toPosition.sign),
+        pairKey: `${from}-${to}`,
+        pairSource: `data/pairs/${from}-${to}.json`
+      }
+    : {
+        a: to,
+        b: from,
+        aspect: normalizeContentIdPart(aspect.type),
+        signA: normalizeContentIdPart(toPosition.sign),
+        signB: normalizeContentIdPart(fromPosition.sign),
+        pairKey: `${to}-${from}`,
+        pairSource: `data/pairs/${to}-${from}.json`
+      };
+}
 
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizedAspect,
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n").trim();
+function recordField(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
 
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
+function generatedSkyAspectCardPassesBoundary(
+  content: LiveGeneratedContent,
+  expected: NonNullable<ReturnType<typeof normalizedCollectiveSkyAspectFacts>>
+) {
+  const source = content.sourceSnapshot ?? {};
+  const lint = recordField(source.skyAspectVoiceLint);
+  const facts = recordField(source.cardFacts);
+  const body = generatedContentParagraphs(content).join("\n\n").trim();
+  const containsMechanics = /\b(?:orb|degrees?)\b|°/i.test(body);
+  const containsDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(body);
+  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
 
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
-      sourceKeys: [
-        "tldrastro-fallback-architecture-v3",
-        rendered.templateKey,
-        skyAspectContentKey(aspect.from, aspect.type, aspect.to),
-        skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
-          firstSign,
-          secondSign,
-          targetDate
-        })
-      ].filter(Boolean),
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
+  return Boolean(
+    body
+    && isReaderFacingCopy(body)
+    && !containsMechanics
+    && !containsDate
+    && !containsInternalMetadata
+    && lint?.score === 3
+    && lint?.fails === 0
+    && content.judgeScore === 3
+    && content.judgeGate === "auto-publish"
+    && source.pairSource === expected.pairSource
+    && source.pairKey === expected.pairKey
+    && facts?.a === expected.a
+    && facts?.b === expected.b
+    && facts?.aspect === expected.aspect
+    && facts?.signA === expected.signA
+    && facts?.signB === expected.signB
+  );
+}
 
-    throw error;
+function generatedSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  generatedContent?: GeneratedContentMap,
+  positions?: PlanetPosition[],
+  generatedAt?: string
+): NormalizedSkyAspectSection | null {
+  if (!generatedContent) {
+    return null;
   }
+
+  const expected = normalizedCollectiveSkyAspectFacts(aspect, positions);
+
+  if (!expected) {
+    return null;
+  }
+
+  const targetDate = generatedAt?.slice(0, 10);
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const evergreenKey = skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+    firstSign,
+    secondSign
+  });
+  const datedKey = targetDate
+    ? skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+        firstSign,
+        secondSign,
+        targetDate
+      })
+    : "";
+  const content = [evergreenKey, datedKey]
+    .filter(Boolean)
+    .map((key) => liveGeneratedContent(generatedContent, key))
+    .find((candidate): candidate is LiveGeneratedContent => Boolean(
+      candidate && generatedSkyAspectCardPassesBoundary(candidate, expected)
+    ));
+
+  if (!content) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "generated-sky-aspect-lint-v1",
+    sourceKeys: [content.contentKey, expected.pairSource],
+    heading: content.headline || skyAspectDisplayTitle(aspect),
+    body: generatedContentParagraphs(content).join("\n\n").trim()
+  };
 }
 
 type SkyWritingAspectBeat = {
@@ -5370,15 +5470,44 @@ function normalizeSkyAspectSurface(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
-  void generatedContent;
-  const fallbackSection = skyAspectWritingSection(aspect, positions, generatedAt);
-  const sections = fallbackSection ? [fallbackSection] : [];
+  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const sections = generatedSection ? [generatedSection] : [];
 
   return {
     surface: "sky-aspect",
-    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
+    status: generatedSection ? "servable" : "not-servable",
     sections
   };
+}
+
+function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number]) {
+  const series = aspect.series;
+
+  if (!series || series.count < 2 || series.index < 1 || series.index > series.count || !series.throughLabel.trim()) {
+    return null;
+  }
+
+  return `The ${ordinalHouse(series.index)} of ${series.count} passes, running through ${series.throughLabel.trim()}.`;
+}
+
+function skyAspectMechanicsCaption(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+) {
+  const first = skyAspectPosition(aspect.from, positions);
+  const second = skyAspectPosition(aspect.to, positions);
+
+  if (!first || !second) {
+    return null;
+  }
+
+  const separation = typeof aspect.separation === "number"
+    ? `${aspect.separation.toFixed(1)}° apart`
+    : `${wholeDegreeOrb(aspect.orb)} orb`;
+  const firstTheme = first.theme?.trim() || natalPointTheme(first.planet);
+  const secondTheme = second.theme?.trim() || natalPointTheme(second.planet);
+
+  return `${first.planet} is at ${formatPlanetDegree(first)} ${first.sign}; ${second.planet} is at ${formatPlanetDegree(second)} ${second.sign}. They form a ${aspect.type} (${separation}). ${first.planet} stands for ${firstTheme}; ${second.planet} stands for ${secondTheme}.`;
 }
 
 function currentSkyAspectDetailArticle(
@@ -5403,6 +5532,8 @@ function currentSkyAspectDetailArticle(
     subtitle: "",
     suppressTldr: true,
     body,
+    seriesLine: skyAspectSeriesLine(aspect),
+    mechanicsCaption: skyAspectMechanicsCaption(aspect, positions),
     sections: [],
     historicalLookback,
     astrologyDrilldown: null

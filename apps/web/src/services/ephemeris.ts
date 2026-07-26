@@ -207,7 +207,8 @@ function southNodePositionFromNorthNode(northNode: CalculatedPlanet, ascendant: 
     sign,
     signGlyph,
     degree,
-    house: wholeSignHouse(sign, ascendant)
+    house: wholeSignHouse(sign, ascendant),
+    theme: themeForPoint("South Node")
   };
 }
 
@@ -216,6 +217,27 @@ function elementForSign(sign: string): SkySnapshot["dominantElement"] {
   if (["Taurus", "Virgo", "Capricorn"].includes(sign)) return "Earth";
   if (["Gemini", "Libra", "Aquarius"].includes(sign)) return "Air";
   return "Water";
+}
+
+function themeForPoint(point: string) {
+  const themes: Record<string, string> = {
+    Sun: "identity and vitality",
+    Moon: "emotional needs and instinct",
+    Mercury: "thinking and communication",
+    Venus: "love, taste, and connection",
+    Mars: "drive, anger, and desire",
+    Jupiter: "growth, faith, and opportunity",
+    Saturn: "limits, discipline, and responsibility",
+    Uranus: "freedom, disruption, and change",
+    Neptune: "dreams, sensitivity, and imagination",
+    Pluto: "power, depth, and transformation",
+    Chiron: "tenderness, repair, and old wounds",
+    Lilith: "instinct and refusal",
+    "North Node": "growth edge and future direction",
+    "South Node": "familiar patterns and release"
+  };
+
+  return themes[point] ?? point.toLowerCase();
 }
 
 async function getSwissEph() {
@@ -2196,6 +2218,7 @@ export async function getAstrodienstSky(
       house: wholeSignHouse(sign, ascendant),
       houseSystem: "whole_sign",
       motion,
+      theme: themeForPoint(planet),
       ...transitWindow,
       ...retrogradeWindow
     };

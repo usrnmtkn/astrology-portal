@@ -25,6 +25,11 @@ export type SkyAspect = {
   type: string;
   orb: number;
   meaning: string;
+  series?: {
+    index: number;
+    count: number;
+    throughLabel: string;
+  } | null;
   conditions?: AspectConditions;
 };
 
@@ -183,6 +188,7 @@ function normalizeAspect(aspect: Partial<SkyAspect>): SkyAspect | null {
     type: aspect.type,
     orb: Number(aspect.orb ?? 0),
     meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`,
+    series: aspect.series ?? null,
     conditions: aspect.conditions
   };
 }
