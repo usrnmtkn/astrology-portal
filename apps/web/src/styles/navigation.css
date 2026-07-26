@@ -404,7 +404,10 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
 .site-menu button {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
+  width: 100%;
+  min-height: 52px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -412,11 +415,18 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   color: var(--ink);
   text-align: left;
   font-weight: var(--weight-regular);
+  cursor: pointer;
 }
 
 .site-menu button.active {
   background: var(--surface-2);
   color: var(--ink);
+}
+
+.site-menu-auth {
+  display: grid;
+  gap: var(--sp-half);
+  width: 100%;
 }
 
 .site-menu button svg {
