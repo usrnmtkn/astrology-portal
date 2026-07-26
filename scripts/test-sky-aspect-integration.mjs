@@ -40,6 +40,47 @@ assert.deepEqual(
   "Reversed ephemeris input must keep each sign attached to its planet."
 );
 
+const generationPrompt = generator.buildPrompt({
+  a: "sun",
+  b: "uranus",
+  aspect: "sextile",
+  signA: "leo",
+  signB: "gemini"
+});
+
+assert.match(generationPrompt, /CLOSE \+ EXAMPLE-BEAT DEMONSTRATIONS/);
+assert.match(generationPrompt, /Standing out is real currency\. Spend it on shock and it empties by morning\./);
+assert.match(generationPrompt, /a message left on read, a plan changed mid-sentence/);
+
+const trimBefore = "The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. True originality lasts. The performance burns out quick.";
+const trimAfter = "The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. The performance burns out quick.";
+let trimPrompt = "";
+const trimmed = await generator.trimClose(trimBefore, {
+  generateFn: async (prompt, options) => {
+    trimPrompt = prompt;
+    assert.equal(options.temperature, 0.1);
+    return trimAfter;
+  }
+});
+
+assert.match(trimPrompt, /delete the FIRST of the two/i);
+assert.equal(trimmed.text, trimAfter);
+assert.equal(trimmed.fired, true);
+assert.equal(trimmed.rejected, false);
+assert.equal(trimmed.deleted, "True originality lasts.");
+
+const unchangedTrim = await generator.trimClose(trimAfter, {
+  generateFn: async () => trimAfter
+});
+assert.equal(unchangedTrim.text, trimAfter);
+assert.equal(unchangedTrim.fired, false);
+assert.equal(unchangedTrim.rejected, false);
+
+const rejectedRewrite = generator.validateTrimCandidate(trimBefore, "This rewrites the whole card.");
+assert.equal(rejectedRewrite.text, trimBefore);
+assert.equal(rejectedRewrite.fired, false);
+assert.equal(rejectedRewrite.rejected, true);
+
 const missingSource = await generator.generateCard({
   a: "sun",
   b: "north-node",
@@ -92,6 +133,32 @@ assert.equal(retried.status, "clean");
 assert.equal(retried.attempts, 2);
 assert.equal(retried.lint.score, 3);
 assert.equal(retried.lint.fails, 0);
+
+const guardedTrim = await generator.generateCard({
+  a: "sun",
+  b: "pluto",
+  aspect: "opposition",
+  signA: "leo",
+  signB: "aquarius"
+}, {
+  generateFn: async () => cleanExample,
+  trimCloseFn: async () => ({
+    text: "This attempted to rewrite the whole card.",
+    fired: false,
+    rejected: true,
+    deleted: null
+  })
+});
+
+assert.equal(guardedTrim.status, "clean");
+assert.equal(guardedTrim.text, cleanExample);
+assert.deepEqual(guardedTrim.trimClose, {
+  calls: 1,
+  fired: 0,
+  unchanged: 0,
+  rejected: 1,
+  errors: 0
+});
 
 let judgeGenerationPrompt = "";
 const judged = await generator.generateCard({

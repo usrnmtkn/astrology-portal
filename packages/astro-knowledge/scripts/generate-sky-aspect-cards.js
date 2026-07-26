@@ -138,6 +138,31 @@ function fewShot(n = 2) {
   return (canonical.length ? canonical : sky).slice(0, n).map((e) => e.body);
 }
 
+function closeFewShot() {
+  return [
+    [
+      `PRE-CLOSE APHORISM`,
+      `BEFORE: ...Being unique is real currency, but chasing shock value empties it fast. True originality lasts. The performance burns out quick.`,
+      `AFTER: ...The room rewards the version of us that's just strange enough. Standing out is real currency. Spend it on shock and it empties by morning.`
+    ].join("\n"),
+    [
+      `PRE-CLOSE APHORISM`,
+      `BEFORE: ...Luck comes on strong, but so does the urge to test it past reason. Optimism makes big things possible. It also makes a fall feel like it shouldn't happen at all.`,
+      `AFTER: ...The right doors keep opening on the first push. Luck comes on strong. It never stays long enough to cover a bet made on the strength of it.`
+    ].join("\n"),
+    [
+      `EXAMPLE BEAT`,
+      `BEFORE: someone pitches a wild idea and the group actually listens, a friend's big-hearted gesture lands softer than expected, the plan for tonight slides into a dreamier version before anyone objects`,
+      `AFTER: a wild pitch that suddenly has the room, a kindness that lands softer than usual, tonight's plan drifting toward the dreamier version`
+    ].join("\n"),
+    [
+      `KEEP AS THE MODEL`,
+      `EXAMPLE BEAT: a message left on read, a plan changed mid-sentence, the extra shift agreed to before anyone knows why`,
+      `CLOSE: The urge is real. The timing is not.`
+    ].join("\n")
+  ];
+}
+
 function buildPrompt({ a, b, aspect, signA, signB }) {
   const normalized = normalizeCardArgs({ a, b, aspect, signA, signB });
   const { pair } = normalized;
@@ -175,9 +200,8 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     `  - Metaphors: elemental imagery is allowed only when it matches an element in play here (${elements}). Do NOT name the element or the mechanics ("air-fire sextile", "this trine links two air signs", "fire ignites water") - the element is felt, never labeled.`,
     ``,
     `ANTI-PATTERNS (these are why weak drafts fail - avoid every one):`,
-    `  - THE ENDING IS ONE PAIR AND NOTHING MORE: a plain truth, then a catch that UNDERCUTS or complicates it (e.g. "Inspiration is real. It's also a very comfortable place to avoid details."). Exactly two short sentences. Once you write them, STOP.`,
-    `  - Do NOT add a third or fourth punchy line. Do NOT write two PARALLEL maxims - the second line must turn on the first, not restate it (bad: "Consistency wins. Quick wins don't last." / "Compassion is good. So is knowing when to say no." / "Conviction is powerful. Zealotry just burns the field."). Do NOT let an earlier sentence also try to close.`,
-    `  - The close is not advice. No "we have to mean it", "nobody gets to skip the wait", telling people what to do.`,
+    `  - End on one plain truth and the catch that turns on it. The sentence before that pair stays concrete narration.`,
+    `  - Keep the three-example beat terse and fragmentary, with no named actors or mini-stories.`,
     `  - Do NOT write "The gift is X; the shadow is Y." Weave both faces into the actual situation.`,
     `  - Do NOT explain the astrology or name the aspect geometry in the body.`,
     `  - Avoid "viral", and avoid motivational-poster lines ("adapt or get left behind", "power without purpose is chaos", "leaves ash"). Be specific and grounded instead.`,
@@ -186,6 +210,9 @@ function buildPrompt({ a, b, aspect, signA, signB }) {
     ``,
     `IN-VOICE EXEMPLARS (match this register, do not copy):`,
     ...fewShot().map((b, i) => `  [${i + 1}] ${b}`),
+    ``,
+    `CLOSE + EXAMPLE-BEAT DEMONSTRATIONS (imitate the AFTER shape):`,
+    ...closeFewShot().map((b, i) => `  [${i + 1}] ${b}`),
     ``,
     `OUT OF VOICE (a weak draft - do NOT write like this: stacked endings, named mechanics, "gift is/shadow is", generic):`,
     `  We are caught in a quick current of change that feels electric and deep at once. This trine links two air signs, making adaptation fast and clear. The gift is sharp, effective change; the shadow is upheaval so fast it risks breaking before it builds. Change will not wait for comfort or consent. Adapt quickly or get left behind. Change is here. Change demands speed.`,
@@ -276,6 +303,53 @@ function cleanCardText(value) {
     .trim();
 }
 
+function buildTrimClosePrompt(text) {
+  return [
+    `Here is a finished card. If its final paragraph ends with TWO general maxims in a row (a summarizing lesson, then another lesson), delete the FIRST of the two so the card ends on a single truth and the catch that turns on it. Change nothing else - do not reword, do not add. If the card already ends on one truth and its catch, return it byte-for-byte unchanged. Return only the card.`,
+    ``,
+    `EXAMPLE`,
+    `BEFORE: The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. True originality lasts. The performance burns out quick.`,
+    `AFTER: The room finally clocks the change. Being unique is real currency, but chasing shock value empties it fast. The performance burns out quick.`,
+    ``,
+    `CARD`,
+    text
+  ].join("\n");
+}
+
+function validateTrimCandidate(original, candidate) {
+  const cleanedCandidate = cleanCardText(candidate);
+
+  if (cleanedCandidate === original) {
+    return { text: original, fired: false, rejected: false, deleted: null };
+  }
+
+  const segments = [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(original)];
+  const firstEligible = Math.max(0, segments.length - 4);
+
+  for (let index = firstEligible; index < segments.length - 1; index += 1) {
+    const segment = segments[index];
+    const deleted = cleanCardText(
+      `${original.slice(0, segment.index)}${original.slice(segment.index + segment.segment.length)}`
+    );
+
+    if (cleanedCandidate === deleted) {
+      return {
+        text: deleted,
+        fired: true,
+        rejected: false,
+        deleted: segment.segment.trim()
+      };
+    }
+  }
+
+  return {
+    text: original,
+    fired: false,
+    rejected: true,
+    deleted: null
+  };
+}
+
 // Must return the poetic card body only. Facts such as dates, degrees, series,
 // and mechanics are deliberately not accepted here.
 async function generate(prompt, { temperature } = {}) {
@@ -337,9 +411,15 @@ async function generate(prompt, { temperature } = {}) {
   return text;
 }
 
+async function trimClose(text, { generateFn = generate } = {}) {
+  const candidate = await generateFn(buildTrimClosePrompt(text), { temperature: 0.1 });
+  return validateTrimCandidate(text, candidate);
+}
+
 async function generateCard(args, {
   maxRetries = 3,
   generateFn = generate,
+  trimCloseFn,
   withJudge = false,
   judgeFn,
   judgeFeedback
@@ -360,8 +440,40 @@ async function generateCard(args, {
     prompt = `${prompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
   }
   let lastAttempt = null;
+  const trimStats = {
+    calls: 0,
+    fired: 0,
+    unchanged: 0,
+    rejected: 0,
+    errors: 0
+  };
+  const shouldTrimClose = generateFn === generate || typeof trimCloseFn === "function";
+  const runTrimClose = trimCloseFn ?? trimClose;
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const text = await generateFn(prompt);
+    const generatedText = await generateFn(prompt);
+    let text = generatedText;
+
+    if (shouldTrimClose) {
+      trimStats.calls += 1;
+      try {
+        const outcome = await runTrimClose(generatedText);
+        const outcomeIsObject = outcome && typeof outcome === "object" && "text" in outcome;
+        const validated = outcomeIsObject
+          ? validateTrimCandidate(generatedText, outcome.text)
+          : validateTrimCandidate(generatedText, outcome);
+        if (outcomeIsObject && outcome.rejected && !validated.fired) {
+          validated.rejected = true;
+        }
+        text = validated.text;
+        if (validated.fired) trimStats.fired += 1;
+        else if (validated.rejected) trimStats.rejected += 1;
+        else trimStats.unchanged += 1;
+      } catch {
+        trimStats.errors += 1;
+      }
+    }
+
     const lint = lintCard(text);
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
@@ -374,6 +486,7 @@ async function generateCard(args, {
         provider: config?.provider ?? "test",
         model: config?.model ?? "injected",
         temperature: config?.temperature ?? null,
+        trimClose: { ...trimStats },
         facts: {
           a: normalized.a,
           b: normalized.b,
@@ -407,6 +520,7 @@ async function generateCard(args, {
     provider: config?.provider ?? "test",
     model: config?.model ?? "injected",
     temperature: config?.temperature ?? null,
+    trimClose: { ...trimStats },
     text: lastAttempt?.text ?? "",
     lint: lastAttempt?.lint ?? null,
     facts: {
@@ -456,8 +570,11 @@ module.exports = {
   ASPECT_FIELD,
   SourceGapError,
   buildPrompt,
+  buildTrimClosePrompt,
   generate,
   generateCard,
   generationConfig,
-  normalizeCardArgs
+  normalizeCardArgs,
+  trimClose,
+  validateTrimCandidate
 };
