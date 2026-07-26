@@ -27,10 +27,16 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 # Or use VITE_SUPABASE_ANON_KEY=... if your Supabase project shows an anon public key.
 VITE_AUTH_REDIRECT_URL=http://127.0.0.1:5173
+VITE_PHONE_AUTH_ENABLED=false
 VITE_TLDRASTRO_API_URL=http://127.0.0.1:8000
 ```
 
 For production, add the same Supabase variables in Vercel. In Supabase, enable the Google provider under Authentication, then add `https://astrology-portal.vercel.app` as an allowed redirect URL.
+
+Phone OTP remains hidden unless `VITE_PHONE_AUTH_ENABLED=true`. Enable it only
+after configuring and enabling an SMS provider under Supabase Authentication →
+Sign In / Providers → Phone. The flag is a browser-visible feature toggle, not a
+secret.
 
 ### Google sign-in setup
 
