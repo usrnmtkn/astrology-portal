@@ -6,6 +6,16 @@ export type SkyAspectCardArgs = {
   signB: string;
 };
 
+export type SkyPlacementTopperArgs = {
+  planet: string;
+  sign: string;
+  aspect: string;
+  other: string;
+  otherSign: string;
+  orb: number;
+  baseText: string;
+};
+
 export type SkyAspectCardLint = {
   score: number;
   fails: number;
@@ -66,6 +76,18 @@ export function generateCard(
   }
 ): Promise<SkyAspectCardResult>;
 
+export function generatePlacementTopper(
+  args: SkyPlacementTopperArgs,
+  options?: {
+    maxRetries?: number;
+    withJudge?: boolean;
+    judgeFeedback?: string;
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+    repairFn?: (text: string, reason: string) => Promise<string>;
+    judgeFn?: (prompt: string) => Promise<string>;
+  }
+): Promise<SkyAspectCardResult>;
+
 export function normalizeCardArgs(args: SkyAspectCardArgs): {
   a: string;
   b: string;
@@ -90,11 +112,21 @@ export function repairCard(
   }
 ): Promise<string>;
 
+export function repairPlacementTopper(
+  text: string,
+  reason: string,
+  options?: {
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+  }
+): Promise<string>;
+
 declare const generator: {
   closeBank: typeof closeBank;
   generateCard: typeof generateCard;
+  generatePlacementTopper: typeof generatePlacementTopper;
   normalizeCardArgs: typeof normalizeCardArgs;
   repairCard: typeof repairCard;
+  repairPlacementTopper: typeof repairPlacementTopper;
 };
 
 export default generator;

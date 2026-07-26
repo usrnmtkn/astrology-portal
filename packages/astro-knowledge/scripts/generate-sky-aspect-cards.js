@@ -43,6 +43,8 @@ const PLANET_ORDER = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "sat
 const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
 const UNSOURCED_POINTS = new Set(["chiron", "lilith", "black-moon-lilith", "north-node", "south-node", "true-node", "node"]);
 const PLACEMENT_MODE = "collective-placement-card";
+const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
+const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
 const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER);
 const POINT_PLACEMENT_BODIES = new Set(["chiron", "north-node", "lilith"]);
 const PLACEMENT_BODIES = new Set([...TRADITIONAL_PLACEMENT_BODIES, ...POINT_PLACEMENT_BODIES, "south-node"]);
@@ -345,6 +347,119 @@ function placementCloseBank({ planet, sign }, n = 4) {
     .map((entry) => lastSentences(entry.body))
     .filter(Boolean)
     .slice(0, n);
+}
+
+function placementTopperGolds() {
+  return examples.filter((entry) => (
+    entry.surface === "sky"
+    && entry.mode === PLACEMENT_TOPPER_MODE
+    && entry.canonical
+  ));
+}
+
+function normalizePlacementTopperArgs({
+  planet,
+  sign,
+  aspect,
+  other,
+  otherSign,
+  orb,
+  baseText
+}) {
+  const placement = normalizePlacementArgs({ planet, sign });
+  const normalizedOther = canonicalPlacementBody(other);
+  const normalizedOtherSign = normalizeToken(otherSign);
+  const aspectFacts = normalizeCardArgs({
+    a: placement.planet,
+    b: normalizedOther,
+    aspect,
+    signA: placement.sign,
+    signB: normalizedOtherSign
+  });
+  const normalizedOrb = Number(orb);
+  const normalizedBaseText = String(baseText ?? "").trim();
+
+  if (!Number.isFinite(normalizedOrb) || normalizedOrb < 0) {
+    throw new SourceGapError("invalid-orb", "A current numeric orb is required for a placement topper.", {
+      planet: placement.planet,
+      sign: placement.sign,
+      aspect: aspectFacts.aspect,
+      other: normalizedOther
+    });
+  }
+
+  if (normalizedBaseText.split(/\n\s*\n/).filter(Boolean).length !== 2) {
+    throw new SourceGapError("missing-base", "A clean two-paragraph placement base is required before generating its topper.", {
+      planet: placement.planet,
+      sign: placement.sign
+    });
+  }
+
+  return {
+    ...placement,
+    aspect: aspectFacts.aspect,
+    other: normalizedOther,
+    otherSign: normalizedOtherSign,
+    orb: normalizedOrb,
+    baseText: normalizedBaseText,
+    pair: aspectFacts.pair,
+    pairKey: aspectFacts.pairKey,
+    pairSource: aspectFacts.pairSource
+  };
+}
+
+function buildPlacementTopperPrompt(args, { avoidTerms = [] } = {}) {
+  const normalized = normalizePlacementTopperArgs(args);
+  const field = ASPECT_FIELD[normalized.aspect];
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
+  const failList = spec.outputBans.fail.map((entry) => entry.term).join(", ");
+  const golds = placementTopperGolds();
+
+  return [
+    `Write ONE current-sky topper paragraph for ${TITLE[normalized.planet]} in ${cap(normalized.sign)}, now ${normalized.aspect} ${TITLE[normalized.other]} in ${cap(normalized.otherSign)}.`,
+    ``,
+    `VOICE: ${spec.voiceDescription}`,
+    `MODE: live aspect layer for an evergreen collective placement base.`,
+    `PERSON: collective "we/our/us", never "you/your".`,
+    ``,
+    `SOURCE MEANING (do not add claims beyond this):`,
+    `  pair essence: ${normalized.pair.blend ?? ""}`,
+    `  active aspect face: ${normalized.pair[field] ?? ""}`,
+    `  harmonious face: ${normalized.pair.harmonious ?? ""}`,
+    `  hard face: ${normalized.pair.hard ?? ""}`,
+    ``,
+    `EVERGREEN BASE THIS TOPPER FRAMES (do not rewrite or repeat it):`,
+    normalized.baseText,
+    ``,
+    `SHAPE - exactly one short paragraph:`,
+    `  1. Name the current contact plainly.`,
+    `  2. Say what it does to this placement's specific theme right now.`,
+    `  3. End on one grounded line, not advice and not a second close.`,
+    ``,
+    `RULES:`,
+    `  - Never use these words/phrases: ${failList}.`,
+    `  - Em dash is banned; use a spaced hyphen " - " instead.`,
+    `  - Do not print the orb, degrees, dates, mechanics, elements, or series metadata.`,
+    `  - Do not write a natal reading. Never address the reader as "you".`,
+    `  - Do not restate the base's pace or summarize both base paragraphs.`,
+    `  - Keep examples fragmentary; no invented actors or mini-stories.`,
+    `  - One contact only: ${TITLE[normalized.planet]} ${normalized.aspect} ${TITLE[normalized.other]}.`,
+    ``,
+    `APPROVED TOPPER GOLDS (match the shape and register; do not copy):`,
+    ...golds.map((entry, index) => `  [${index + 1}] ${entry.body}`),
+    ``,
+    `RANGE OF APPROVED ASPECT CLOSES (learn the grounded register; do not copy or stack them):`,
+    ...closeBank(3).map((close, index) => `  [${index + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Rewrite the one-paragraph topper without those terms.`
+        ]
+      : []),
+    ``,
+    `Return only the topper paragraph.`
+  ].join("\n");
 }
 
 function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) {
@@ -663,12 +778,26 @@ async function repairCard(text, reason, { generateFn = generate } = {}) {
   return cleanCardText(await generateFn(buildRepairPrompt(text, reason), { temperature: 0.1 }));
 }
 
+async function repairPlacementTopper(text, reason, { generateFn = generate } = {}) {
+  const prompt = [
+    `A careful editor flagged this current-sky topper: ${JSON.stringify(String(reason ?? "").trim())}.`,
+    `Fix ONLY what the note describes. Keep exactly one short paragraph and end on one grounded line.`,
+    `Do not add advice, a second close, dates, degrees, orb language, or second person. Return only the corrected topper.`,
+    ``,
+    `TOPPER`,
+    text
+  ].join("\n");
+
+  return cleanCardText(await generateFn(prompt, { temperature: 0.1 }));
+}
+
 async function runCardPipeline({
   buildPromptFor,
   facts,
   judgeMode,
   judgeTier,
-  lintMode
+  lintMode,
+  judgeTextFor = (text) => text
 }, {
   maxRetries = 3,
   generateFn = generate,
@@ -719,7 +848,7 @@ async function runCardPipeline({
       // lazy require avoids a circular dependency (judge reuses generate()).
       if (withJudge) {
         const { judgeCard } = require("./judge-sky-voice.js");
-        result.judge = await judgeCard(text, {
+        result.judge = await judgeCard(judgeTextFor(text), {
           mode: judgeMode,
           tier: judgeTier,
           judgeFn
@@ -744,7 +873,7 @@ async function runCardPipeline({
             if (repairedLint.score !== 3 || repairedLint.fails !== 0) {
               repair.result = "lint-failed";
             } else {
-              const repairedJudge = await judgeCard(repairedText, {
+              const repairedJudge = await judgeCard(judgeTextFor(repairedText), {
                 mode: judgeMode,
                 tier: judgeTier,
                 judgeFn
@@ -857,6 +986,45 @@ async function generatePlacementCard(args, options = {}) {
   }, options);
 }
 
+async function generatePlacementTopper(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizePlacementTopperArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
+    }
+    throw error;
+  }
+
+  const generateFn = options.generateFn ?? generate;
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPlacementTopperPrompt(normalized, { avoidTerms }),
+    facts: {
+      planet: normalized.planet,
+      sign: normalized.sign,
+      aspect: normalized.aspect,
+      other: normalized.other,
+      otherSign: normalized.otherSign,
+      orb: normalized.orb,
+      placementSource: normalized.placementSource,
+      pairKey: normalized.pairKey,
+      pairSource: normalized.pairSource
+    },
+    judgeMode: PLACEMENT_WITH_TOPPER_MODE,
+    judgeTier: normalized.tier,
+    lintMode: PLACEMENT_TOPPER_MODE,
+    judgeTextFor: (topperText) => `${topperText}\n\n${normalized.baseText}`
+  }, {
+    ...options,
+    generateFn,
+    repairFn: options.repairFn
+      ?? ((text, reason) => repairPlacementTopper(text, reason, { generateFn }))
+  });
+}
+
 // ---- CLI ----
 if (require.main === module) {
   const [mode, pairKey, aspect, signA, signB] = process.argv.slice(2);
@@ -893,15 +1061,19 @@ module.exports = {
   PLACEMENT_TIER_OF,
   SourceGapError,
   buildPlacementPrompt,
+  buildPlacementTopperPrompt,
   buildRepairPrompt,
   buildPrompt,
   closeBank,
   generate,
   generateCard,
   generatePlacementCard,
+  generatePlacementTopper,
   generationConfig,
   normalizeCardArgs,
   normalizePlacementArgs,
+  normalizePlacementTopperArgs,
   placementCloseBank,
-  repairCard
+  repairCard,
+  repairPlacementTopper
 };

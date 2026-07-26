@@ -1575,6 +1575,7 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter((row) => (
       ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
       && row.judge_gate === "human-review"
+      && row.review_state !== "sky-placement-topper-inactive"
     )),
     [visibleRows]
   );
@@ -1583,6 +1584,7 @@ export function GeneratedContentAdminDashboard() {
       .filter((row) => (
         ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
         && row.judge_gate === "auto-publish"
+        && row.review_state !== "sky-placement-topper-inactive"
       ))
       .map((row) => ({ row, order: Math.random() }))
       .sort((a, b) => a.order - b.order)
@@ -3316,8 +3318,13 @@ export function GeneratedContentAdminDashboard() {
           {tableRows.map((row) => {
             const source = objectRecord(row.source_snapshot);
             const isPlacement = row.block_type === "sky_placement";
+            const isPlacementTopper = row.event_type === "collective-placement-topper";
             const judge = isPlacement
-              ? objectRecord(source?.skyPlacementJudge)
+              ? objectRecord(
+                  isPlacementTopper
+                    ? source?.skyPlacementTopperJudge
+                    : source?.skyPlacementJudge
+                )
               : objectRecord(source?.skyAspectJudge);
             const rowFacts = objectRecord(row.facts);
             const facts = isPlacement
@@ -3326,6 +3333,9 @@ export function GeneratedContentAdminDashboard() {
             const pair = [facts?.a, facts?.b].filter(Boolean).join(" / ");
             const signs = [facts?.signA, facts?.signB].filter(Boolean).join(" / ");
             const placement = [facts?.planet, facts?.sign].filter(Boolean).join(" in ");
+            const topperContact = isPlacementTopper
+              ? [facts?.aspect, facts?.other, facts?.otherSign ? `in ${facts.otherSign}` : ""].filter(Boolean).join(" ")
+              : "";
             const weakest = typeof judge?.weakest === "string" ? judge.weakest : "";
             return (
               <article key={row.id} className="admin-sky-voice-card">
@@ -3341,8 +3351,9 @@ export function GeneratedContentAdminDashboard() {
                 </header>
                 <dl className="admin-sky-voice-facts">
                   <div><dt>{isPlacement ? "Placement" : "Pair"}</dt><dd>{isPlacement ? placement || "Not recorded" : pair || "Not recorded"}</dd></div>
-                  <div><dt>{isPlacement ? "Kind" : "Aspect"}</dt><dd>{isPlacement ? "Collective placement" : String(facts?.aspect ?? "Not recorded")}</dd></div>
+                  <div><dt>{isPlacement ? "Kind" : "Aspect"}</dt><dd>{isPlacement ? (isPlacementTopper ? "Current topper" : "Collective placement") : String(facts?.aspect ?? "Not recorded")}</dd></div>
                   <div><dt>{isPlacement ? "Sign" : "Signs"}</dt><dd>{isPlacement ? String(facts?.sign ?? "Not recorded") : signs || "Not recorded"}</dd></div>
+                  {isPlacementTopper ? <div><dt>Contact</dt><dd>{topperContact || "Not recorded"}</dd></div> : null}
                 </dl>
                 <div className="admin-sky-voice-body">{row.body || "No card body saved."}</div>
                 <div className="admin-sky-voice-judge">

@@ -31,6 +31,7 @@ function toRegex(term) {
 }
 
 const PLACEMENT_MODE = "collective-placement-card";
+const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
 const SECOND_PERSON_TERM = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
 const PLACEMENT_LABEL_BANS = [
   {
@@ -122,7 +123,7 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     }
   }
 
-  if (!/\b(?:we|our|us)\b/i.test(text)) {
+  if (mode !== PLACEMENT_TOPPER_MODE && !/\b(?:we|our|us)\b/i.test(text)) {
     findings.push({
       severity: "fail",
       source: "reader-boundary",
@@ -227,13 +228,14 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   if (last.split(/\s+/).filter(Boolean).length > 22) notes.push("closer is long; end on a shorter true line");
   if (registerDraw === 0) notes.push("drew nothing from the approved phrase bank - check the register");
   const paras = text.split(/\n\s*\n/).filter((p) => p.trim()).length;
-  if (paras !== 2) {
+  const expectedParagraphs = mode === PLACEMENT_TOPPER_MODE ? 1 : 2;
+  if (paras !== expectedParagraphs) {
     findings.push({
       severity: "fail",
       source: "shape",
       term: "paragraph-count",
       match: `${paras} paragraphs`,
-      reason: "the card template is exactly two paragraphs"
+      reason: `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
     });
   }
   // stacked ending: 3+ short sentences piled at the close. The template wants
@@ -294,7 +296,7 @@ if (require.main === module) {
     const examples = readJson(path.join(voiceRoot, "tldr-astro", "examples.json"));
     const sky = examples.filter((e) => (
       e.surface === "sky"
-      && ["collective-aspect-card", PLACEMENT_MODE].includes(e.mode)
+      && ["collective-aspect-card", PLACEMENT_MODE, PLACEMENT_TOPPER_MODE].includes(e.mode)
     ));
     let bad = 0;
     for (const e of sky) {
