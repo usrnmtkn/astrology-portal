@@ -4,6 +4,10 @@ const assert = require("node:assert/strict");
 const generator = require("./generate-sky-aspect-cards.js");
 const { buildJudgePrompt, judgeConfig } = require("./judge-sky-voice.js");
 const { lintCard } = require("./lint-sky-voice.js");
+const {
+  knownWeak,
+  runPlacementCalibration
+} = require("./test-placement-calibration.js");
 const examples = require("../voice/tldr-astro/examples.json");
 
 async function main() {
@@ -149,6 +153,21 @@ const configuredJudge = judgeConfig();
 assert.ok(["openai", "claude"].includes(configuredJudge.provider));
 assert.ok(configuredJudge.model);
 assert.equal(configuredJudge.temperature, 0.1);
+
+const calibrationReport = await runPlacementCalibration({
+  concurrency: 3,
+  samples: 1,
+  judgeFn: async (prompt) => JSON.stringify({
+    score: knownWeak.some((draft) => prompt.includes(draft)) ? 1 : 3,
+    verdict: knownWeak.some((draft) => prompt.includes(draft)) ? "off-voice" : "in-voice",
+    weakest: "control",
+    why: "Deterministic integration control."
+  })
+});
+assert.equal(calibrationReport.pass, true);
+assert.equal(calibrationReport.goldMean, 3);
+assert.equal(calibrationReport.weakMean, 1);
+assert.equal(calibrationReport.separation, 2);
 
 let missingSourceModelCalls = 0;
 const missing = await generator.generatePlacementCard({
