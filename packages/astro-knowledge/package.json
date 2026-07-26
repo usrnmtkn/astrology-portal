@@ -37,6 +37,8 @@
   },
   "scripts": {
     "validate": "node scripts/validate.js",
+    "lint:sky-voice": "node scripts/lint-sky-voice.js --examples",
+    "test:judge-calibration": "node scripts/test-judge-calibration.js",
     "import:v4-rewrites": "node scripts/import-v4-rewrites.js",
     "build": "node scripts/import-v4-rewrites.js && node scripts/import-authored-placements.js && node scripts/build.js",
     "test:timing": "node scripts/test-timing-engine.js",

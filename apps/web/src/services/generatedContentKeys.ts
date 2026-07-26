@@ -141,8 +141,15 @@ export function skyAspectInstanceContentKey(
     targetDate?: string | null;
   } = {}
 ) {
-  const baseKey = skyAspectContentKey(first, aspect, second);
-  const signParts = [options.firstSign, options.secondSign]
+  const firstPart = moduleContentPart(first);
+  const secondPart = moduleContentPart(second);
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
+  const reversed = firstBody === secondPart && secondBody === firstPart;
+  const [canonicalFirstSign, canonicalSecondSign] = reversed
+    ? [options.secondSign, options.firstSign]
+    : [options.firstSign, options.secondSign];
+  const baseKey = `sky.aspect.${firstBody}.${aspectPart(aspect)}.${secondBody}`;
+  const signParts = [canonicalFirstSign, canonicalSecondSign]
     .map((value) => value ? aspectPart(value) : "")
     .filter(Boolean);
   const datePart = options.targetDate ? `.${slugContentPart(options.targetDate)}` : "";
