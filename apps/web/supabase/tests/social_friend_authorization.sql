@@ -405,6 +405,38 @@ begin
   perform public.remove_social_friend(friendship_id);
   perform set_config('request.jwt.claim.sub', member_a::text, true);
 
+  select created.invitation_id, created.invitation_token
+    into created_invitation_id, invitation_token
+  from public.create_social_share_invitation() created;
+
+  perform set_config('request.jwt.claim.sub', member_b::text, true);
+
+  if not exists (
+    select 1
+    from public.preview_social_invitation(invitation_token) preview
+    where preview.invitation_id = created_invitation_id
+      and preview.contact_kind = 'link'
+      and preview.inviter_user_id = member_a
+  ) then
+    raise exception 'Share-link recipient could not preview the inviter.';
+  end if;
+
+  select claimed.request_status
+    into request_status
+  from public.claim_social_invitation(invitation_token) claimed;
+
+  if request_status <> 'friends' then
+    raise exception 'Accepting a share link did not create the friendship.';
+  end if;
+
+  select friend.friendship_id
+    into friendship_id
+  from public.list_social_friends() friend
+  where friend.user_id = member_a;
+
+  perform public.remove_social_friend(friendship_id);
+  perform set_config('request.jwt.claim.sub', member_a::text, true);
+
   select created.invitation_id
     into created_invitation_id
   from public.create_social_invitation('email', member_invite_email) created;

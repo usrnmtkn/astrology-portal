@@ -60,7 +60,9 @@ boundary:
 
 `migrations/20260726110000_social_realtime_request_management.sql`,
 `20260726111500_social_contact_invitations.sql`, and
-`20260726123000_social_invitation_management.sql` complete the social lifecycle:
+`20260726123000_social_invitation_management.sql` complete the contact-bound
+social lifecycle. `20260726180000_social_share_links.sql` adds the beta share
+link flow:
 
 - Request, friendship, and acceptance-notification changes publish through
   Supabase Realtime while focus refresh remains the recovery path.
@@ -70,6 +72,8 @@ boundary:
   only masked contact hints to the inviter, and expire after 30 days.
 - Invitation preview and acceptance require the authenticated account's
   verified email or phone to match the intended recipient.
+- Share links do not contain contact data. They are bearer links that may be
+  accepted once by the first eligible signed-in recipient.
 - Accepting a valid invitation creates one canonical friendship, while
   cancelling, declining, blocking, and account deletion revoke the flow.
 - Per-friend chart sharing can be paused independently without removing the
@@ -77,7 +81,7 @@ boundary:
 
 Apply every Social migration from
 `20260725190000_social_handles_friendships.sql` through
-`20260726123000_social_invitation_management.sql` in timestamp order before
+`20260726180000_social_share_links.sql` in timestamp order before
 enabling the Social UI. The series is cumulative: later search, request, block,
 sharing, and invitation migrations replace earlier RPC definitions. Applying
 only the first and last file does not produce the supported schema. The client
@@ -152,6 +156,17 @@ events.
   pending requests.
 - The current beta uses browser `mailto:` and `sms:` links. Supabase does not
   deliver email or SMS for this flow.
+
+### Share Link Rules
+
+- The Friends UI creates a share link without collecting contact information.
+- Share links expire after 30 days and may be accepted once.
+- The token is a bearer credential. Anyone who receives it can preview and
+  accept after signing in, subject to blocks and the self-invite guard.
+- Only token-derived hashes are stored. The raw token is returned once to the
+  inviter and should remain in session storage only long enough to complete
+  the flow.
+- The inviter can cancel an unused link from Friends → Requests.
 
 ### Social Verification
 

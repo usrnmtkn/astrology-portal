@@ -64,6 +64,10 @@ const invitationManagementMigrationPath = path.join(
   repoRoot,
   "apps/web/supabase/migrations/20260726123000_social_invitation_management.sql"
 );
+const shareLinksMigrationPath = path.join(
+  repoRoot,
+  "apps/web/supabase/migrations/20260726180000_social_share_links.sql"
+);
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
@@ -96,6 +100,7 @@ const contactInvitationsMigration = fs.readFileSync(contactInvitationsMigrationP
 const searchVolatilityFixMigration = fs.readFileSync(searchVolatilityFixMigrationPath, "utf8");
 const rankedSearchMigration = fs.readFileSync(rankedSearchMigrationPath, "utf8");
 const invitationManagementMigration = fs.readFileSync(invitationManagementMigrationPath, "utf8");
+const shareLinksMigration = fs.readFileSync(shareLinksMigrationPath, "utf8");
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
@@ -500,8 +505,8 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /activeView === "requests"[\s\S]*incomingRequests\.map[\s\S]*Accept[\s\S]*Decline/,
-  "The permanent Requests tab must render incoming requests and their two actions."
+  /friends-received-title">Received[\s\S]*incomingRequests\.map[\s\S]*Accept[\s\S]*Decline/,
+  "The conditional Requests tab must render received requests and their two actions."
 );
 assert.match(
   app,
@@ -635,8 +640,8 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanel,
-  /placeholder="Search by name or @handle"[\s\S]*Private profiles stay hidden[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*incomingRequests\.length > 0[\s\S]*Requests/,
-  "Search and the permanent Circle/Charts tabs must share the panel, while Requests appears only for incoming requests."
+  /placeholder="Search by name or @handle"[\s\S]*Private profiles stay hidden[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*requestActivityCount > 0[\s\S]*Requests/,
+  "Search and the permanent Circle/Charts tabs must share the panel, while Requests appears for pending social activity."
 );
 assert.doesNotMatch(
   socialFriendsPanel.match(/<label className="friends-unified-search-row">[\s\S]*?<\/label>/)?.[0] ?? "",
@@ -705,8 +710,33 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /createSocialInvitation[\s\S]*Invite someone[\s\S]*Open \{inviteKind === "email" \? "email" : "messages"\}[\s\S]*Recent invitations/,
-  "Non-member email and phone invitations must have a send handoff and manageable history."
+  /createSocialShareInvitation[\s\S]*Create invite link[\s\S]*Share link[\s\S]*Copy link[\s\S]*Recent invitations/,
+  "Non-member invitations must create a shareable private link with native share, copy, and manageable history."
+);
+assert.match(
+  socialFriendsPanel,
+  /pendingInvitations[\s\S]*requestActivityCount[\s\S]*friends-pending-title">Pending invites[\s\S]*outgoingRequests\.map[\s\S]*pendingInvitations\.map[\s\S]*cancelInvitation/,
+  "Pending member requests and contact invitations must open the Requests tab and remain cancellable."
+);
+assert.match(
+  socialFriendsPanel,
+  /expires in 30 days and works once[\s\S]*Anyone with the[\s\S]*link can use it/,
+  "The invitation composer must explain the single-use link's expiry and bearer-link privacy."
+);
+assert.match(
+  shareLinksMigration,
+  /contact_kind in \('email', 'phone', 'link'\)[\s\S]*create_social_share_invitation\(\)[\s\S]*share-invite-minute[\s\S]*'Share link'[\s\S]*invitation\.contact_kind = 'link'[\s\S]*return true[\s\S]*alter publication supabase_realtime add table public\.social_invitations/,
+  "The database must create rate-limited bearer links that retain existing one-use invitation safeguards."
+);
+assert.match(
+  service,
+  /subscribeToSocialChanges[\s\S]*social_invitations/,
+  "Pending invite links must update through the Social Realtime subscription."
+);
+assert.match(
+  authorizationTest,
+  /create_social_share_invitation\(\)[\s\S]*preview\.contact_kind = 'link'[\s\S]*Accepting a share link did not create the friendship/,
+  "Cross-user authorization QA must prove a share link can be previewed and accepted once."
 );
 assert.match(
   invitationManagementMigration,
