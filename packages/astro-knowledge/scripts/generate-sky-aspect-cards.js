@@ -23,10 +23,75 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-aspect.json"));
 const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"));
 
-const TITLE = { sun:"Sun", moon:"Moon", mercury:"Mercury", venus:"Venus", mars:"Mars", jupiter:"Jupiter", saturn:"Saturn", uranus:"Uranus", neptune:"Neptune", pluto:"Pluto", chiron:"Chiron" };
+const TITLE = {
+  sun: "Sun",
+  moon: "Moon",
+  mercury: "Mercury",
+  venus: "Venus",
+  mars: "Mars",
+  jupiter: "Jupiter",
+  saturn: "Saturn",
+  uranus: "Uranus",
+  neptune: "Neptune",
+  pluto: "Pluto",
+  chiron: "Chiron",
+  "north-node": "North Node",
+  "south-node": "South Node",
+  lilith: "Lilith"
+};
 const PLANET_ORDER = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
 const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
 const UNSOURCED_POINTS = new Set(["chiron", "lilith", "black-moon-lilith", "north-node", "south-node", "true-node", "node"]);
+const PLACEMENT_MODE = "collective-placement-card";
+const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER);
+const POINT_PLACEMENT_BODIES = new Set(["chiron", "north-node", "lilith"]);
+const PLACEMENT_BODIES = new Set([...TRADITIONAL_PLACEMENT_BODIES, ...POINT_PLACEMENT_BODIES, "south-node"]);
+const OPPOSITE_SIGN = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+const PLACEMENT_TIER_OF = {
+  sun: "luminary",
+  moon: "luminary",
+  mercury: "personal",
+  venus: "personal",
+  mars: "personal",
+  jupiter: "outer",
+  saturn: "outer",
+  uranus: "outer",
+  neptune: "outer",
+  pluto: "outer",
+  chiron: "point",
+  "north-node": "point",
+  "south-node": "point",
+  lilith: "point"
+};
+const PLACEMENT_PACE = {
+  sun: "about a month; a season-sized chapter",
+  moon: "about two and a half days; a passing collective mood",
+  mercury: "roughly two to three weeks, longer around a retrograde",
+  venus: "about four weeks, longer around a retrograde",
+  mars: "about six weeks, longer around a retrograde",
+  jupiter: "about a year; a broad public chapter",
+  saturn: "about two and a half years; a sustained structural chapter",
+  uranus: "about seven years; generational change",
+  neptune: "about fourteen years; generational atmosphere",
+  pluto: "about twenty years; an era rather than a mood",
+  chiron: "several years; a generational tender spot",
+  "north-node": "about eighteen months; a collective growth direction",
+  "south-node": "about eighteen months; a familiar pattern ready for release",
+  lilith: "about nine months; a collective refusal or taboo brought forward"
+};
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // aspect -> which data/pairs field carries its meaning
@@ -43,6 +108,97 @@ function loadPair(pairKey) {
   const p = path.join(root, "data", "pairs", `${pairKey}.json`);
   if (!fs.existsSync(p)) return null;
   return { path: p, value: readJson(p) };
+}
+
+function canonicalPlacementBody(value) {
+  const body = normalizeToken(value);
+  if (body === "true-node" || body === "node") return "north-node";
+  if (body === "black-moon-lilith") return "lilith";
+  return body;
+}
+
+function placementSourcePath(planet, sign) {
+  if (TRADITIONAL_PLACEMENT_BODIES.has(planet)) {
+    return path.join(root, "data", "placements", "sign", `${planet}-${sign}.json`);
+  }
+
+  if (POINT_PLACEMENT_BODIES.has(planet)) {
+    return path.join(root, "data", "points", "placements", "sign", `${planet}-${sign}.json`);
+  }
+
+  if (planet === "south-node") {
+    return path.join(root, "data", "points", "placements", "sign", `north-node-${OPPOSITE_SIGN[sign]}.json`);
+  }
+
+  return null;
+}
+
+function normalizePlacementArgs({ planet, body, sign }) {
+  const normalizedPlanet = canonicalPlacementBody(planet ?? body);
+  const normalizedSign = normalizeToken(sign);
+
+  if (!PLACEMENT_BODIES.has(normalizedPlanet)) {
+    throw new SourceGapError(
+      "missing-source",
+      `No collective placement source is available for '${planet ?? body}'.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  if (!SIGNS.has(normalizedSign)) {
+    throw new SourceGapError(
+      "invalid-sign",
+      `'${sign}' is not a zodiac sign.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  const sourcePath = placementSourcePath(normalizedPlanet, normalizedSign);
+
+  if (!sourcePath || !fs.existsSync(sourcePath)) {
+    throw new SourceGapError(
+      "missing-source",
+      `No approved placement source exists for ${normalizedPlanet} in ${normalizedSign}.`,
+      { planet: normalizedPlanet, sign: normalizedSign }
+    );
+  }
+
+  const source = readJson(sourcePath);
+  const sourcePlanet = canonicalPlacementBody(source.planet ?? source.point);
+  const expectedSourcePlanet = normalizedPlanet === "south-node" ? "north-node" : normalizedPlanet;
+  const sourceSign = normalizeToken(source.key ?? source.sign);
+  const expectedSourceSign = normalizedPlanet === "south-node"
+    ? OPPOSITE_SIGN[normalizedSign]
+    : normalizedSign;
+
+  if (sourcePlanet !== expectedSourcePlanet || sourceSign !== expectedSourceSign) {
+    throw new SourceGapError(
+      "source-mismatch",
+      `Placement source facts do not match ${normalizedPlanet} in ${normalizedSign}.`,
+      {
+        planet: normalizedPlanet,
+        sign: normalizedSign,
+        sourcePlanet,
+        sourceSign
+      }
+    );
+  }
+
+  return {
+    planet: normalizedPlanet,
+    sign: normalizedSign,
+    source,
+    placementSource: path.relative(root, sourcePath).replaceAll(path.sep, "/"),
+    derivedFrom: normalizedPlanet === "south-node"
+      ? {
+          planet: "north-node",
+          sign: expectedSourceSign,
+          frame: "comfort-zone/release"
+        }
+      : null,
+    tier: PLACEMENT_TIER_OF[normalizedPlanet],
+    pace: PLACEMENT_PACE[normalizedPlanet]
+  };
 }
 
 class SourceGapError extends Error {
@@ -162,6 +318,110 @@ function closeBank(n = 5, random = Math.random) {
   }
 
   return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+function placementGolds() {
+  return examples.filter((entry) => (
+    entry.surface === "sky"
+    && entry.mode === PLACEMENT_MODE
+    && entry.canonical
+  ));
+}
+
+function rotatedPlacementGolds({ planet, sign }, n = 3) {
+  const sourceId = `sky-${planet}-in-${sign}`;
+  const all = placementGolds().filter((entry) => entry.sourceId !== sourceId);
+  const sameTier = all.filter((entry) => entry.tier === PLACEMENT_TIER_OF[planet]);
+  const pool = [...sameTier, ...all.filter((entry) => !sameTier.includes(entry))];
+  const offset = [...`${planet}-${sign}`].reduce((sum, character) => sum + character.charCodeAt(0), 0)
+    % Math.max(pool.length, 1);
+  const rotated = [...pool.slice(offset), ...pool.slice(0, offset)];
+
+  return rotated.slice(0, Math.min(n, rotated.length));
+}
+
+function placementCloseBank({ planet, sign }, n = 4) {
+  return rotatedPlacementGolds({ planet, sign }, placementGolds().length)
+    .map((entry) => lastSentences(entry.body))
+    .filter(Boolean)
+    .slice(0, n);
+}
+
+function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) {
+  const normalized = normalizePlacementArgs({ planet, body, sign });
+  const { source } = normalized;
+  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
+  const secondPersonTerm = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
+  const failList = spec.outputBans.fail
+    .filter((entry) => entry.term !== secondPersonTerm)
+    .map((entry) => entry.term)
+    .join(", ");
+  const sourceMeaning = {
+    tldr: source.tldr ?? "",
+    body: source.body ?? "",
+    strength: source.gift ?? source.business ?? "",
+    challenge: source.challenge ?? source.shadow ?? "",
+    shadow: source.shadow ?? ""
+  };
+  const derivedNote = normalized.derivedFrom
+    ? `This is South Node in ${cap(normalized.sign)}, derived from North Node in ${cap(normalized.derivedFrom.sign)}. Reframe the source's familiar South Node pattern as a collective comfort zone to recognize and release. Do not describe South Node as the growth destination.`
+    : "";
+  const golds = rotatedPlacementGolds(normalized);
+  const placementVoice = spec.voiceDescription.replace(
+    "Collective and third-person (never 'you')",
+    "Collective in the body; impersonal second person may appear only in the final truth-and-catch pair"
+  );
+
+  return [
+    `Write ONE evergreen collective sky placement card for ${TITLE[normalized.planet]} in ${cap(normalized.sign)}.`,
+    ``,
+    `VOICE: ${placementVoice}`,
+    `MODE: collective placement, not a natal reading and not a live aspect report.`,
+    `PERSON: Use collective "we/our/us" throughout the body. Impersonal "you/your/you're" is allowed ONLY in the final truth-and-catch pair.`,
+    `PACE TO STATE PLAINLY: ${normalized.pace}.`,
+    ``,
+    `SOURCE MEANING (reframe the natal "you" as collective "we"; do not add claims beyond this):`,
+    `  core: ${sourceMeaning.tldr}`,
+    `  placement behavior: ${sourceMeaning.body}`,
+    `  strength / medicine: ${sourceMeaning.strength}`,
+    `  challenge / shadow: ${sourceMeaning.challenge}`,
+    ...(sourceMeaning.shadow && sourceMeaning.shadow !== sourceMeaning.challenge
+      ? [`  additional shadow: ${sourceMeaning.shadow}`]
+      : []),
+    ...(derivedNote ? [`  DERIVED NODE AXIS RULE: ${derivedNote}`] : []),
+    ``,
+    `SHAPE - exactly two short paragraphs:`,
+    `  1. Open on a claim, never an announcement that the body is "now in" the sign.`,
+    `  2. State the pace so the reader knows whether this is a mood, chapter, or era.`,
+    `  3. Personify the planet or point in short declaratives where it fits.`,
+    `  4. Make the sign-specific behavior concrete and modern.`,
+    `  5. Name the strength and shadow as one flowing observation, never as labels.`,
+    `  6. End on ONE truth and the catch that turns on it. The final pair is the only place "you" is allowed.`,
+    ``,
+    `RULES:`,
+    `  - Never use these words/phrases: ${failList}.`,
+    `  - Em dash is banned; use a spaced hyphen " - " instead.`,
+    `  - No dates, degrees, orb mechanics, live aspects, or current-sky topper. This is the evergreen base only.`,
+    `  - Do not explain astrology mechanics, dignities, or elements. Make the placement felt.`,
+    `  - Direct beats poetic. No generic weather, machinery, "shine" language, cosmic coaching, or motivational-poster maxims.`,
+    `  - Do not write "The gift is" or "The shadow is."`,
+    `  - Keep concrete examples terse. Do not invent named actors or mini-stories.`,
+    ``,
+    `IN-VOICE PLACEMENT GOLDS (match the shape and register; do not copy):`,
+    ...golds.map((entry, index) => `  [${index + 1} | ${entry.tier}] ${entry.body}`),
+    ``,
+    `RANGE OF APPROVED PLACEMENT CLOSES (learn the range; do not copy):`,
+    ...placementCloseBank(normalized).map((close, index) => `  [${index + 1}] ${close}`),
+    ...(retryAvoidance.length
+      ? [
+          ``,
+          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
+          `Do not use those terms again. Keep second person out of the body; it may appear only in the final pair.`
+        ]
+      : []),
+    ``,
+    `Return only the two-paragraph card text.`
+  ].join("\n");
 }
 
 function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [] } = {}) {
@@ -388,7 +648,13 @@ async function repairCard(text, reason, { generateFn = generate } = {}) {
   return cleanCardText(await generateFn(buildRepairPrompt(text, reason), { temperature: 0.1 }));
 }
 
-async function generateCard(args, {
+async function runCardPipeline({
+  buildPromptFor,
+  facts,
+  judgeMode,
+  judgeTier,
+  lintMode
+}, {
   maxRetries = 3,
   generateFn = generate,
   repairFn,
@@ -396,19 +662,8 @@ async function generateCard(args, {
   judgeFn,
   judgeFeedback
 } = {}) {
-  let normalized;
-
-  try {
-    normalized = normalizeCardArgs(args);
-  } catch (error) {
-    if (error instanceof SourceGapError) {
-      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
-    }
-    throw error;
-  }
-
   const promptFor = (avoidTerms = []) => {
-    let nextPrompt = buildPrompt(normalized, { avoidTerms });
+    let nextPrompt = buildPromptFor(avoidTerms);
     if (judgeFeedback) {
       nextPrompt = `${nextPrompt}\n\nThe previous draft reached the editorial judge but was rejected. Rewrite from scratch while fixing this feedback: ${judgeFeedback}`;
     }
@@ -428,7 +683,7 @@ async function generateCard(args, {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const text = cleanCardText(await generateFn(prompt));
-    const lint = lintCard(text);
+    const lint = lintCard(text, { mode: lintMode });
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const config = generateFn === generate ? generationConfig() : null;
@@ -442,23 +697,18 @@ async function generateCard(args, {
         temperature: config?.temperature ?? null,
         repair: { ...repair },
         lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
-        facts: {
-          a: normalized.a,
-          b: normalized.b,
-          aspect: normalized.aspect,
-          signA: normalized.signA,
-          signB: normalized.signB,
-          pairKey: normalized.pairKey,
-          pairSource: normalized.pairSource
-        }
+        facts: { ...facts }
       };
       // Second gate: the LLM judge. Opt-in so the caller controls the extra
       // model call. Attaches { judge, gate } for the cron to persist and route.
       // lazy require avoids a circular dependency (judge reuses generate()).
       if (withJudge) {
-        const { judgeCard, TIER_OF } = require("./judge-sky-voice.js");
-        const tier = TIER_OF[normalized.a] ?? "luminary";
-        result.judge = await judgeCard(text, { tier, judgeFn });
+        const { judgeCard } = require("./judge-sky-voice.js");
+        result.judge = await judgeCard(text, {
+          mode: judgeMode,
+          tier: judgeTier,
+          judgeFn
+        });
         result.gate = result.judge.gate; // auto-publish | human-review | regenerate
 
         if (result.judge.score === 2) {
@@ -474,12 +724,16 @@ async function generateCard(args, {
                 ? await repairFn(text, reason)
                 : await repairCard(text, reason, { generateFn })
             );
-            const repairedLint = lintCard(repairedText);
+            const repairedLint = lintCard(repairedText, { mode: lintMode });
 
             if (repairedLint.score !== 3 || repairedLint.fails !== 0) {
               repair.result = "lint-failed";
             } else {
-              const repairedJudge = await judgeCard(repairedText, { tier, judgeFn });
+              const repairedJudge = await judgeCard(repairedText, {
+                mode: judgeMode,
+                tier: judgeTier,
+                judgeFn
+              });
               repair.repairedScore = repairedJudge.score;
               repair.result = repairedText === text
                 ? "unchanged"
@@ -523,6 +777,30 @@ async function generateCard(args, {
     lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
     text: lastAttempt?.text ?? "",
     lint: lastAttempt?.lint ?? null,
+    facts: { ...facts }
+  };
+}
+
+async function generateCard(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizeCardArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
+    }
+    throw error;
+  }
+
+  const aspectTier = ["sun", "moon"].includes(normalized.a)
+    ? "luminary"
+    : ["mercury", "venus", "mars"].includes(normalized.a)
+      ? "personal"
+      : "outer";
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPrompt(normalized, { avoidTerms }),
     facts: {
       a: normalized.a,
       b: normalized.b,
@@ -531,8 +809,37 @@ async function generateCard(args, {
       signB: normalized.signB,
       pairKey: normalized.pairKey,
       pairSource: normalized.pairSource
+    },
+    judgeMode: "collective-aspect-card",
+    judgeTier: aspectTier,
+    lintMode: "collective-aspect-card"
+  }, options);
+}
+
+async function generatePlacementCard(args, options = {}) {
+  let normalized;
+
+  try {
+    normalized = normalizePlacementArgs(args);
+  } catch (error) {
+    if (error instanceof SourceGapError) {
+      return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
     }
-  };
+    throw error;
+  }
+
+  return runCardPipeline({
+    buildPromptFor: (avoidTerms) => buildPlacementPrompt(normalized, { avoidTerms }),
+    facts: {
+      planet: normalized.planet,
+      sign: normalized.sign,
+      placementSource: normalized.placementSource,
+      derivedFrom: normalized.derivedFrom
+    },
+    judgeMode: PLACEMENT_MODE,
+    judgeTier: normalized.tier,
+    lintMode: PLACEMENT_MODE
+  }, options);
 }
 
 // ---- CLI ----
@@ -568,13 +875,18 @@ if (require.main === module) {
 
 module.exports = {
   ASPECT_FIELD,
+  PLACEMENT_TIER_OF,
   SourceGapError,
+  buildPlacementPrompt,
   buildRepairPrompt,
   buildPrompt,
   closeBank,
   generate,
   generateCard,
+  generatePlacementCard,
   generationConfig,
   normalizeCardArgs,
+  normalizePlacementArgs,
+  placementCloseBank,
   repairCard
 };

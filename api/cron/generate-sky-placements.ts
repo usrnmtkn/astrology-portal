@@ -34,6 +34,33 @@ const signs = [
   "aquarius",
   "pisces"
 ] as const;
+const traditionalPlacementBodies = new Set([
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+]);
+const pointPlacementBodies = new Set(["chiron", "north-node", "lilith"]);
+const oppositeSign: Record<string, string> = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
 const maxJudgeRegenerations = 2;
 
 type PlacementArgs = {
@@ -75,6 +102,11 @@ type PlacementResult = {
     body?: string;
     sign?: string;
     placementSource?: string;
+    derivedFrom?: {
+      planet?: string;
+      sign?: string;
+      frame?: string;
+    } | null;
   };
 };
 
@@ -154,7 +186,19 @@ function refreshDays() {
 }
 
 function placementSource(planet: string, sign: string) {
-  return `data/placements/sign/${planet}-${sign}.json`;
+  if (traditionalPlacementBodies.has(planet)) {
+    return `data/placements/sign/${planet}-${sign}.json`;
+  }
+
+  if (pointPlacementBodies.has(planet)) {
+    return `data/points/placements/sign/${planet}-${sign}.json`;
+  }
+
+  if (planet === "south-node" && oppositeSign[sign]) {
+    return `data/points/placements/sign/north-node-${oppositeSign[sign]}.json`;
+  }
+
+  throw new Error(`No canonical sky-placement source path for ${planet} in ${sign}.`);
 }
 
 function contentKeyFor({ planet, sign }: PlacementArgs) {
@@ -327,6 +371,7 @@ async function savePlacementCard(
             sign: args.sign
           },
           placementSource: expectedSource,
+          placementDerivation: result.facts?.derivedFrom ?? null,
           skyPlacementVoiceLint: result.lint,
           skyPlacementJudge: result.judge
             ? {

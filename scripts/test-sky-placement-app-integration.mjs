@@ -25,6 +25,7 @@ assert.match(app, /content\.judgeScore === 3/);
 assert.match(app, /content\.judgeGate === "auto-publish"/);
 assert.match(app, /content\.contentKey === skyPlacementContentKey\(expected\.planet, expected\.sign\)/);
 assert.match(app, /source\.placementSource === expected\.placementSource/);
+assert.match(app, /derivation\?\.planet === expected\.derivedFrom\.planet/);
 assert.match(app, /const generatedSection = generatedSkyPlacementWritingSection/);
 assert.match(
   app,
@@ -42,6 +43,7 @@ assert.match(cron, /SKY_PLACEMENT_JUDGE_CALIBRATED/);
 assert.match(cron, /block_type: "sky_placement"/);
 assert.match(cron, /review_state: reviewState/);
 assert.match(cron, /placementSource: expectedSource/);
+assert.match(cron, /placementDerivation: result\.facts\?\.derivedFrom \?\? null/);
 
 assert.equal(
   vercel.crons.some((entry) => entry.path === "/api/cron/generate-sky-placements"),

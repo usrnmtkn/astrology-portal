@@ -5636,18 +5636,75 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
+const collectiveSkyPlacementTraditionalBodies = new Set([
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+]);
+const collectiveSkyPlacementPointBodies = new Set(["chiron", "north-node", "lilith"]);
+const collectiveSkyPlacementOppositeSigns: Record<string, string> = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+
+function collectiveSkyPlacementSource(planet: string, sign: string) {
+  if (collectiveSkyPlacementTraditionalBodies.has(planet)) {
+    return `data/placements/sign/${planet}-${sign}.json`;
+  }
+
+  if (collectiveSkyPlacementPointBodies.has(planet)) {
+    return `data/points/placements/sign/${planet}-${sign}.json`;
+  }
+
+  if (planet === "south-node" && collectiveSkyPlacementOppositeSigns[sign]) {
+    return `data/points/placements/sign/north-node-${collectiveSkyPlacementOppositeSigns[sign]}.json`;
+  }
+
+  return null;
+}
+
 function normalizedCollectiveSkyPlacementFacts(position: PlanetPosition) {
   const planet = normalizeContentIdPart(position.planet);
   const sign = normalizeContentIdPart(position.sign);
+  const placementSource = collectiveSkyPlacementSource(planet, sign);
 
-  if (!planet || !sign || !zodiacSigns.some((candidate) => normalizeContentIdPart(candidate) === sign)) {
+  if (
+    !planet
+    || !sign
+    || !placementSource
+    || !zodiacSigns.some((candidate) => normalizeContentIdPart(candidate) === sign)
+  ) {
     return null;
   }
 
   return {
     planet,
     sign,
-    placementSource: `data/placements/sign/${planet}-${sign}.json`
+    placementSource,
+    derivedFrom: planet === "south-node"
+      ? {
+          planet: "north-node",
+          sign: collectiveSkyPlacementOppositeSigns[sign],
+          frame: "comfort-zone/release"
+        }
+      : null
   };
 }
 
@@ -5658,6 +5715,7 @@ function generatedSkyPlacementCardPassesBoundary(
   const source = content.sourceSnapshot ?? {};
   const lint = recordField(source.skyPlacementVoiceLint);
   const facts = recordField(source.placementFacts);
+  const derivation = recordField(source.placementDerivation);
   const body = generatedContentParagraphs(content).join("\n\n").trim();
   const paragraphs = body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()).length;
   const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
@@ -5678,6 +5736,13 @@ function generatedSkyPlacementCardPassesBoundary(
     && source.placementSource === expected.placementSource
     && facts?.planet === expected.planet
     && facts?.sign === expected.sign
+    && (
+      expected.derivedFrom
+        ? derivation?.planet === expected.derivedFrom.planet
+          && derivation.sign === expected.derivedFrom.sign
+          && derivation.frame === expected.derivedFrom.frame
+        : !source.placementDerivation
+    )
   );
 }
 
