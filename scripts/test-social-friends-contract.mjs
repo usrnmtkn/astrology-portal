@@ -60,6 +60,10 @@ const rankedSearchMigrationPath = path.join(
   repoRoot,
   "apps/web/supabase/migrations/20260726120000_social_search_ranking_requests.sql"
 );
+const invitationManagementMigrationPath = path.join(
+  repoRoot,
+  "apps/web/supabase/migrations/20260726123000_social_invitation_management.sql"
+);
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
@@ -91,6 +95,7 @@ const realtimeRequestMigration = fs.readFileSync(realtimeRequestMigrationPath, "
 const contactInvitationsMigration = fs.readFileSync(contactInvitationsMigrationPath, "utf8");
 const searchVolatilityFixMigration = fs.readFileSync(searchVolatilityFixMigrationPath, "utf8");
 const rankedSearchMigration = fs.readFileSync(rankedSearchMigrationPath, "utf8");
+const invitationManagementMigration = fs.readFileSync(invitationManagementMigrationPath, "utf8");
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
@@ -630,11 +635,11 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanel,
-  /placeholder="Search by name or @handle"[\s\S]*Private profiles stay hidden[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*Requests/,
-  "Search and all three permanent tabs must live in the unified panel."
+  /placeholder="Search by name or @handle"[\s\S]*Private profiles stay hidden[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*incomingRequests\.length > 0[\s\S]*Requests/,
+  "Search and the permanent Circle/Charts tabs must share the panel, while Requests appears only for incoming requests."
 );
 assert.doesNotMatch(
-  socialFriendsPanel,
+  socialFriendsPanel.match(/<label className="friends-unified-search-row">[\s\S]*?<\/label>/)?.[0] ?? "",
   /Find Friends|type="submit"|>\s*Search\s*</,
   "The unified live finder must not render a heading or submit button."
 );
@@ -672,6 +677,41 @@ assert.match(
   socialFriendsPanel,
   /friends-person-menu[\s\S]*View chart[\s\S]*Remove friend[\s\S]*friends-remove-dialog/,
   "Friend removal must remain behind an overflow menu and confirmation dialog."
+);
+assert.match(
+  socialFriendsPanel,
+  /setSocialFriendChartSharing[\s\S]*Your chart:[\s\S]*Their chart:[\s\S]*Chart privacy/,
+  "Friend rows must expose reciprocal chart-sharing status and a per-friend privacy control."
+);
+assert.match(
+  socialFriendsPanel,
+  /blockSocialUser[\s\S]*Block \{friendToBlock\.displayName\}[\s\S]*cannot find you/,
+  "Connected people and incoming requesters must be blockable behind confirmation."
+);
+assert.match(
+  socialFriendsPanel,
+  /requestUndoUntil[\s\S]*\{undoAvailable \? "Undo" : "Cancel"\}[\s\S]*requested \{relativeSocialTime\(request\.createdAt\)\}/,
+  "Outgoing requests must remain cancellable and request rows must show when they were sent."
+);
+assert.match(
+  socialFriendsPanel,
+  /listSocialNotifications[\s\S]*accepted your request[\s\S]*dismissNotification/,
+  "Acceptance notifications must be visible and dismissible."
+);
+assert.match(
+  socialFriendsPanel,
+  /createSocialInvitation[\s\S]*Invite someone[\s\S]*Open \{inviteKind === "email" \? "email" : "messages"\}[\s\S]*Recent invitations/,
+  "Non-member email and phone invitations must have a send handoff and manageable history."
+);
+assert.match(
+  invitationManagementMigration,
+  /contact_hint[\s\S]*preview_social_invitation[\s\S]*social_invitation_matches_current_user[\s\S]*social_blocks[\s\S]*claim_social_invitation[\s\S]*insert into public\.social_friendships/,
+  "Invitation preview and acceptance must verify the recipient, honor blocks, and create the canonical friendship."
+);
+assert.match(
+  authService,
+  /signInWithOtp[\s\S]*verifyOtp[\s\S]*type: "sms"/,
+  "Phone invitations require an OTP authentication path for the verified recipient."
 );
 
 console.log(JSON.stringify({

@@ -49,6 +49,25 @@ export type SocialInvitation = {
   expiresAt: string;
 };
 
+export type SocialInvitationSummary = {
+  invitationId: string;
+  contactKind: "email" | "phone";
+  contactHint: string;
+  status: "pending" | "claimed" | "declined" | "cancelled" | "expired";
+  createdAt: string;
+  expiresAt: string;
+};
+
+export type SocialInvitationPreview = {
+  invitationId: string;
+  contactKind: "email" | "phone";
+  inviterUserId: string;
+  inviterHandle: string;
+  inviterDisplayName: string;
+  inviterAvatarUrl?: string;
+  expiresAt: string;
+};
+
 export type ConnectedSocialFriend = {
   friendshipId: string;
   userId: string;
@@ -132,7 +151,48 @@ type InvitationRow = {
   expires_at: string;
 };
 
+type InvitationSummaryRow = {
+  invitation_id: string;
+  contact_kind: SocialInvitationSummary["contactKind"];
+  contact_hint: string;
+  invitation_status: SocialInvitationSummary["status"];
+  created_at: string;
+  expires_at: string;
+};
+
+type InvitationPreviewRow = {
+  invitation_id: string;
+  contact_kind: SocialInvitationPreview["contactKind"];
+  inviter_user_id: string;
+  inviter_handle: string;
+  inviter_display_name: string;
+  inviter_avatar_url: string | null;
+  expires_at: string;
+};
+
 const pendingSocialInvitationKey = "tldrastro.pending-social-invitation";
+
+function pendingInvitationToken() {
+  const sessionToken = window.sessionStorage.getItem(pendingSocialInvitationKey);
+
+  if (sessionToken) {
+    return sessionToken;
+  }
+
+  const legacyToken = window.localStorage.getItem(pendingSocialInvitationKey);
+
+  if (legacyToken) {
+    window.sessionStorage.setItem(pendingSocialInvitationKey, legacyToken);
+    window.localStorage.removeItem(pendingSocialInvitationKey);
+  }
+
+  return legacyToken;
+}
+
+export function clearPendingSocialInvitation() {
+  window.sessionStorage.removeItem(pendingSocialInvitationKey);
+  window.localStorage.removeItem(pendingSocialInvitationKey);
+}
 
 export function normalizeSocialHandle(value: string) {
   return value.trim().replace(/^@/, "").toLowerCase();
@@ -525,6 +585,35 @@ export async function createSocialInvitation(
   };
 }
 
+export async function listSocialInvitations(): Promise<SocialInvitationSummary[]> {
+  const { client } = await authenticatedClient();
+  const { data, error } = await client.rpc("list_social_invitations");
+
+  if (error) {
+    throw socialError(error, "Could not load your invitations.");
+  }
+
+  return ((data ?? []) as InvitationSummaryRow[]).map((row) => ({
+    invitationId: row.invitation_id,
+    contactKind: row.contact_kind,
+    contactHint: row.contact_hint,
+    status: row.invitation_status,
+    createdAt: row.created_at,
+    expiresAt: row.expires_at
+  }));
+}
+
+export async function cancelSocialInvitation(invitationId: string) {
+  const { client } = await authenticatedClient();
+  const { error } = await client.rpc("cancel_social_invitation", {
+    invitation_id_input: invitationId
+  });
+
+  if (error) {
+    throw socialError(error, "Could not cancel this invitation.");
+  }
+}
+
 export function socialInvitationUrl(token: string) {
   const url = new URL(window.location.href);
   url.searchParams.set("socialInvite", token);
@@ -537,16 +626,70 @@ export function captureSocialInvitationFromUrl() {
   const token = url.searchParams.get("socialInvite")?.trim();
 
   if (!token) {
+    return false;
+  }
+
+  window.sessionStorage.setItem(pendingSocialInvitationKey, token);
+  window.localStorage.removeItem(pendingSocialInvitationKey);
+  url.searchParams.delete("socialInvite");
+  window.history.replaceState(window.history.state, "", url);
+  return true;
+}
+
+export async function previewPendingSocialInvitation(): Promise<SocialInvitationPreview | null> {
+  const token = pendingInvitationToken();
+
+  if (!token) {
+    return null;
+  }
+
+  const { client } = await authenticatedClient();
+  const { data, error } = await client.rpc("preview_social_invitation", {
+    invitation_token_input: token
+  });
+
+  if (error) {
+    throw socialError(error, "Could not open this invitation.");
+  }
+
+  const row = (data as InvitationPreviewRow[] | null)?.[0];
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    invitationId: row.invitation_id,
+    contactKind: row.contact_kind,
+    inviterUserId: row.inviter_user_id,
+    inviterHandle: row.inviter_handle,
+    inviterDisplayName: row.inviter_display_name,
+    inviterAvatarUrl: row.inviter_avatar_url ?? undefined,
+    expiresAt: row.expires_at
+  };
+}
+
+export async function declinePendingSocialInvitation() {
+  const token = pendingInvitationToken();
+
+  if (!token) {
     return;
   }
 
-  window.localStorage.setItem(pendingSocialInvitationKey, token);
-  url.searchParams.delete("socialInvite");
-  window.history.replaceState(window.history.state, "", url);
+  const { client } = await authenticatedClient();
+  const { error } = await client.rpc("decline_social_invitation", {
+    invitation_token_input: token
+  });
+
+  if (error) {
+    throw socialError(error, "Could not decline this invitation.");
+  }
+
+  clearPendingSocialInvitation();
 }
 
 export async function claimPendingSocialInvitation() {
-  const token = window.localStorage.getItem(pendingSocialInvitationKey);
+  const token = pendingInvitationToken();
 
   if (!token) {
     return null;
@@ -561,7 +704,7 @@ export async function claimPendingSocialInvitation() {
     throw socialError(error, "Could not accept the invitation.");
   }
 
-  window.localStorage.removeItem(pendingSocialInvitationKey);
+  clearPendingSocialInvitation();
   return (data as Array<{
     invitation_id: string;
     request_id: string | null;

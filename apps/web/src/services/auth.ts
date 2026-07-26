@@ -49,7 +49,9 @@ function authAccountFromUser(user: User): AuthAccount {
   return {
     id: user.id,
     email: user.email ?? "",
-    name: typeof metadataName === "string" && metadataName.trim() ? metadataName : user.email?.split("@")[0] ?? "New stargazer",
+    name: typeof metadataName === "string" && metadataName.trim()
+      ? metadataName
+      : user.email?.split("@")[0] ?? user.phone ?? "New stargazer",
     provider,
     avatarUrl: typeof avatarUrl === "string" && avatarUrl.trim() ? avatarUrl : undefined
   };
@@ -204,6 +206,48 @@ export async function signInWithEmail({
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.user ? authAccountFromUser(data.user) : null;
+}
+
+export async function sendPhoneSignInCode(phone: string) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: phone.trim()
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function verifyPhoneSignInCode({
+  phone,
+  code
+}: {
+  phone: string;
+  code: string;
+}) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: phone.trim(),
+    token: code.trim(),
+    type: "sms"
   });
 
   if (error) {

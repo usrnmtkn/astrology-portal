@@ -114,9 +114,11 @@ import {
   onAuthAccountChange,
   signInWithEmail,
   signInWithProvider,
+  sendPhoneSignInCode,
   signOutAuth,
   signUpWithEmail,
-  upsertPersistedProfile
+  upsertPersistedProfile,
+  verifyPhoneSignInCode
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
@@ -169,12 +171,15 @@ import {
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
 import {
   captureSocialInvitationFromUrl,
+  clearPendingSocialInvitation,
   claimPendingSocialInvitation,
+  declinePendingSocialInvitation,
   exportSocialAccountBundle,
   isSocialFriendChart,
   listSocialFriendRequests,
   loadOwnSocialProfile,
   normalizeSocialHandle,
+  previewPendingSocialInvitation,
   saveSocialHandle,
   saveSocialPrivacy,
   socialHandleIsValid,
@@ -182,7 +187,11 @@ import {
   subscribeToSocialChanges,
   syncOwnSocialProfile
 } from "./services/socialFriends";
-import type { ConnectedSocialFriend, SocialProfile } from "./services/socialFriends";
+import type {
+  ConnectedSocialFriend,
+  SocialInvitationPreview,
+  SocialProfile
+} from "./services/socialFriends";
 import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
@@ -11246,6 +11255,9 @@ export function App() {
   const [remoteProfileReady, setRemoteProfileReady] = useState(false);
   const [ownSocialProfile, setOwnSocialProfile] = useState<SocialProfile | null>(null);
   const [pendingFriendRequestCount, setPendingFriendRequestCount] = useState(0);
+  const [pendingSocialInvitation, setPendingSocialInvitation] = useState<SocialInvitationPreview | null>(null);
+  const [socialInvitationStatus, setSocialInvitationStatus] = useState<"idle" | "loading">("idle");
+  const [socialInvitationMessage, setSocialInvitationMessage] = useState("");
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
@@ -11298,7 +11310,12 @@ export function App() {
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
 
   useEffect(() => {
-    captureSocialInvitationFromUrl();
+    const capturedInvitation = captureSocialInvitationFromUrl();
+
+    if (capturedInvitation && !userProfile) {
+      setAccountIntent("create");
+      navigateToPortalMode("profile");
+    }
   }, []);
 
   useEffect(() => {
@@ -11306,14 +11323,14 @@ export function App() {
       return;
     }
 
-    void claimPendingSocialInvitation()
-      .then((result) => {
-        if (result?.request_status === "pending") {
-          setPendingFriendRequestCount((current) => Math.max(1, current));
-        }
+    void previewPendingSocialInvitation()
+      .then((preview) => {
+        setPendingSocialInvitation(preview);
       })
       .catch((error) => {
-        console.warn("Social invitation could not be claimed yet.", error);
+        setSocialInvitationMessage(
+          error instanceof Error ? error.message : "This invitation could not be opened."
+        );
       });
   }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
 
@@ -13117,6 +13134,43 @@ export function App() {
     setCityPickerOpen(true);
   }
 
+  async function acceptSocialInvitation() {
+    setSocialInvitationStatus("loading");
+    setSocialInvitationMessage("");
+
+    try {
+      const result = await claimPendingSocialInvitation();
+      setPendingSocialInvitation(null);
+
+      if (result?.request_status === "pending") {
+        setPendingFriendRequestCount((current) => Math.max(1, current));
+      }
+      navigateToFriends();
+    } catch (error) {
+      setSocialInvitationMessage(
+        error instanceof Error ? error.message : "Could not accept this invitation."
+      );
+    } finally {
+      setSocialInvitationStatus("idle");
+    }
+  }
+
+  async function declineSocialInvitation() {
+    setSocialInvitationStatus("loading");
+    setSocialInvitationMessage("");
+
+    try {
+      await declinePendingSocialInvitation();
+      setPendingSocialInvitation(null);
+    } catch (error) {
+      setSocialInvitationMessage(
+        error instanceof Error ? error.message : "Could not decline this invitation."
+      );
+    } finally {
+      setSocialInvitationStatus("idle");
+    }
+  }
+
   return (
     <main className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
       {!isSignupMode && (
@@ -13746,6 +13800,70 @@ export function App() {
                   onSave={drawTransitChart}
                 />
             </ModalPortal>
+          )}
+
+          {pendingSocialInvitation && (
+            <ModalPortal
+              onClose={() => undefined}
+              panelClassName="social-invitation-accept-modal"
+              titleId="social-invitation-accept-title"
+              width="min(500px, calc(100vw - 32px))"
+            >
+              <div className="social-invitation-accept-identity">
+                <ProfileAvatar
+                  avatarUrl={pendingSocialInvitation.inviterAvatarUrl}
+                  email=""
+                  name={pendingSocialInvitation.inviterDisplayName}
+                />
+                <span>
+                  <span className="eyebrow section-label">Friend invitation</span>
+                  <h2 id="social-invitation-accept-title">
+                    {pendingSocialInvitation.inviterDisplayName} invited you.
+                  </h2>
+                  <small>@{pendingSocialInvitation.inviterHandle}</small>
+                </span>
+              </div>
+              <p>
+                Accepting adds you to each other&apos;s circles. Each of you can
+                pause your own chart sharing at any time.
+              </p>
+              {socialInvitationMessage && (
+                <p className="friends-invite-error" role="alert">{socialInvitationMessage}</p>
+              )}
+              <div className="friends-remove-actions">
+                <button
+                  className="social-secondary-button"
+                  type="button"
+                  disabled={socialInvitationStatus === "loading"}
+                  onClick={() => void declineSocialInvitation()}
+                >
+                  Decline
+                </button>
+                <button
+                  className="social-primary-button"
+                  type="button"
+                  disabled={socialInvitationStatus === "loading"}
+                  onClick={() => void acceptSocialInvitation()}
+                >
+                  {socialInvitationStatus === "loading" ? "Accepting…" : "Accept invitation"}
+                </button>
+              </div>
+            </ModalPortal>
+          )}
+
+          {!pendingSocialInvitation && socialInvitationMessage && (
+            <div className="friends-toast" role="alert">
+              <span>{socialInvitationMessage}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  clearPendingSocialInvitation();
+                  setSocialInvitationMessage("");
+                }}
+              >
+                Dismiss
+              </button>
+            </div>
           )}
         </>
       )}
@@ -15879,6 +15997,10 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
   const [authMessage, setAuthMessage] = useState("");
+  const [phoneAuthOpen, setPhoneAuthOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [phoneCodeSent, setPhoneCodeSent] = useState(false);
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
   const isLogin = authMode === "login";
@@ -15977,6 +16099,61 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     }
   }
 
+  async function sendPhoneCode() {
+    if (!phoneNumber.trim()) {
+      setAuthMessage("Enter a phone number with country code.");
+      return;
+    }
+
+    if (!isLogin && !form.fullName.trim()) {
+      setAuthMessage("Add your full name before continuing with phone.");
+      return;
+    }
+
+    setAuthStatus("loading");
+    setAuthMessage("");
+
+    if (!isLogin) {
+      savePendingSignupForm(form);
+    }
+
+    try {
+      await sendPhoneSignInCode(phoneNumber);
+      setPhoneCodeSent(true);
+      setAuthMessage("We sent a six-digit code to your phone.");
+    } catch (error) {
+      setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
+    } finally {
+      setAuthStatus("idle");
+    }
+  }
+
+  async function verifyPhoneCode() {
+    if (!phoneCode.trim()) {
+      setAuthMessage("Enter the six-digit code.");
+      return;
+    }
+
+    setAuthStatus("loading");
+    setAuthMessage("");
+
+    try {
+      const account = await verifyPhoneSignInCode({
+        phone: phoneNumber,
+        code: phoneCode
+      });
+
+      if (account) {
+        onCreateProfile(createUserProfile(form, "email", account));
+        clearPendingSignupForm();
+      }
+    } catch (error) {
+      setAuthMessage(error instanceof Error ? error.message : "The phone code could not be verified.");
+    } finally {
+      setAuthStatus("idle");
+    }
+  }
+
   return (
     <section className="auth-page signup-split" aria-label={isLogin ? "Log in" : "Create account"}>
       <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
@@ -16000,7 +16177,81 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
             <GoogleIcon />
             Continue with Google
           </button>
+          <button
+            className="google-auth-button"
+            type="button"
+            disabled={authStatus === "loading"}
+            onClick={() => {
+              setPhoneAuthOpen((current) => !current);
+              setAuthMessage("");
+            }}
+          >
+            Continue with phone
+          </button>
         </div>
+
+        {phoneAuthOpen && (
+          <div className="phone-auth-fields" aria-label="Phone sign in">
+            <label className="signup-field auth-field">
+              <span className="auth-label">Phone number</span>
+              <div>
+                <input
+                  className="auth-input"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="+1 212 555 0100"
+                  value={phoneNumber}
+                  disabled={phoneCodeSent}
+                  onChange={(event) => setPhoneNumber(event.target.value)}
+                />
+              </div>
+            </label>
+            {phoneCodeSent && (
+              <label className="signup-field auth-field">
+                <span className="auth-label">Six-digit code</span>
+                <div>
+                  <input
+                    className="auth-input"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    placeholder="123456"
+                    value={phoneCode}
+                    onChange={(event) => setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                  />
+                </div>
+              </label>
+            )}
+            <div className="phone-auth-actions">
+              {phoneCodeSent && (
+                <button
+                  type="button"
+                  disabled={authStatus === "loading"}
+                  onClick={() => {
+                    setPhoneCodeSent(false);
+                    setPhoneCode("");
+                    setAuthMessage("");
+                  }}
+                >
+                  Change number
+                </button>
+              )}
+              <button
+                className="signup-submit"
+                type="button"
+                disabled={authStatus === "loading"}
+                onClick={() => void (phoneCodeSent ? verifyPhoneCode() : sendPhoneCode())}
+              >
+                {authStatus === "loading"
+                  ? "Working…"
+                  : phoneCodeSent
+                    ? "Verify code"
+                    : "Send code"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {authMessage && <p className="auth-message">{authMessage}</p>}
 
