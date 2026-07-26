@@ -75,8 +75,13 @@ boundary:
 - Per-friend chart sharing can be paused independently without removing the
   friendship.
 
-Apply this migration before enabling the Social friends UI. The client shows a
-safe unavailable state while the schema is not present.
+Apply every Social migration from
+`20260725190000_social_handles_friendships.sql` through
+`20260726123000_social_invitation_management.sql` in timestamp order before
+enabling the Social UI. The series is cumulative: later search, request, block,
+sharing, and invitation migrations replace earlier RPC definitions. Applying
+only the first and last file does not produce the supported schema. The client
+shows a safe unavailable state while the schema is not present.
 
 Intended flow:
 
@@ -88,6 +93,89 @@ Intended flow:
    date, time, and location are not returned.
 6. Either member can remove the friendship or block the other to revoke chart
    access immediately.
+
+### Final Social Privacy Matrix
+
+| Relationship | Discoverable data returned |
+| --- | --- |
+| Stranger, public account | Avatar, display name, handle, Sun sign |
+| Stranger, private account | No result, including exact-handle lookup |
+| Pending request participant | Minimal request identity; no natal chart |
+| Accepted friend, sharing enabled | Social identity and the redacted shared natal chart |
+| Accepted friend, sharing paused | Social identity with `natal_chart = null` |
+| Either direction blocked | No discovery or chart access |
+
+The database is the enforcement boundary. Do not fetch a larger profile and
+hide fields in the browser. Raw email, phone, birth date, birth time, and birth
+location are never Social discovery fields.
+
+### Canonical State And Revocation
+
+- `social_profiles` has one row per account and a case-insensitive unique
+  handle.
+- `social_friend_requests` has at most one active canonical request per account
+  pair. Pending requests never grant chart access.
+- `social_friendships` has one canonical row per accepted pair, ordered by
+  `user_low_id` and `user_high_id`.
+- The low and high account each control only their own sharing column.
+- `social_blocks` is directional, but either direction is enough to deny
+  discovery, requests, and sharing.
+- `social_notifications` stores acceptance events until the recipient
+  dismisses them.
+- Remove, block, and account deletion must revoke access inside SQL in the same
+  operation. Making an account private removes it from discovery but preserves
+  accepted friendships. Browser cache and Realtime timing are not security
+  controls.
+
+### Realtime
+
+The following tables must be present in the `supabase_realtime` publication:
+
+- `public.social_friend_requests`
+- `public.social_friendships`
+- `public.social_notifications`
+
+RLS still applies to Realtime rows. The web app also reloads Social state when
+the window regains focus; retain this fallback for reconnects and missed
+events.
+
+### Contact Invitation Rules
+
+- Invitations expire after 30 days and are single-use.
+- Email is normalized to lowercase. Phone uses E.164-style `+` and digits.
+- Only SHA-256 contact and token hashes are stored. The raw token is returned
+  once to the inviter so the browser can build the private link.
+- Preview, decline, and claim require the signed-in account's verified email or
+  phone to match the invitation.
+- Cancellation is limited to the inviter.
+- Acceptance creates or reuses one canonical friendship and consumes related
+  pending requests.
+- The current beta uses browser `mailto:` and `sms:` links. Supabase does not
+  deliver email or SMS for this flow.
+
+### Social Verification
+
+Static contract:
+
+```sh
+node scripts/test-social-friends-contract.mjs
+```
+
+Full Friends contract group:
+
+```sh
+npm run qa:database-friends
+```
+
+Cross-user database authorization:
+
+```sh
+psql "$SUPABASE_TEST_DB_URL" -v ON_ERROR_STOP=1 \
+  -f apps/web/supabase/tests/social_friend_authorization.sql
+```
+
+The SQL authorization test requires at least one seeded Social profile, creates
+temporary test identities when necessary, and rolls back every mutation.
 
 The Account page also provides a JSON data export and a permanent deletion
 flow. Production deletion requires `SUPABASE_SERVICE_ROLE_KEY` on the server;
