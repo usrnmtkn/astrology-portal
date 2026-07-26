@@ -1,7 +1,7 @@
 {
   "installCommand": "npm install --include=optional",
   "devCommand": "npm run dev -w @tldr/web -- --port $PORT",
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/assert-vercel-production-source.mjs && npm run build",
   "outputDirectory": "apps/web/dist",
   "framework": "vite",
   "rewrites": [
