@@ -194,7 +194,17 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     if (m) {
       const before = text.slice(0, m.index).toLowerCase();
       const ok = (c.requiresBefore || []).some((w) => new RegExp(`\\b${w}\\b`, "i").test(before));
-      if (!ok) findings.push({ severity: "fail", source: "sky-aspect", term: c.term, match: m[0], reason: c.reason });
+      if (!ok) {
+        const required = (c.requiresBefore || []).join("/");
+        findings.push({
+          severity: "fail",
+          source: "sky-aspect",
+          term: c.term,
+          match: m[0],
+          reason: c.reason,
+          retryInstruction: `You used '${m[0]}' without ${required} before it - replace it with calm, solid, grounded, consistent, or sure.`
+        });
+      }
     }
   }
 
