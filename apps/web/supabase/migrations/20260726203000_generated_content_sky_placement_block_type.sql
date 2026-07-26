@@ -9,6 +9,9 @@ alter table public.generated_interpretations
   check (
     block_type is null
     or block_type in (
+      'fallback_aspect',
+      'fallback_hook',
+      'fallback_template',
       'sign',
       'house',
       'ruler',
@@ -28,4 +31,4 @@ alter table public.generated_interpretations
   );
 
 comment on column public.generated_interpretations.block_type is
-  'Reusable content block type. Includes sky placement/article, lunar calendar, compatibility, condition modifier, and aspect-family values.';
+  'Reusable content block type. Includes fallback aspects/hooks/templates, sky placement/article, lunar calendar, compatibility, condition modifier, and aspect-family values.';
