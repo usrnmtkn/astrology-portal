@@ -168,6 +168,8 @@ for (let i = 0; i < SKY_PL.length; i++) for (let j = i + 1; j < SKY_PL.length; j
   try {
     const r = renderSkyAspectCard({ a: SKY_PL[i], b: SKY_PL[j], aspect: asp });
     if (/\{\{|natal/.test(r.body)) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: bad output`);
+    if (!r.body.includes("and for the collective,")) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: collective wording missing`);
+    if (r.body.includes("for everyone at once")) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: retired collective wording leaked`);
     skyAsp++;
   } catch (e) { fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: ${e.message}`); }
 }
