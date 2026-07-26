@@ -8,12 +8,16 @@ do $authorization_test$
 declare
   member_a uuid;
   member_b uuid;
+  member_invite_test uuid;
   member_delete_test uuid;
   member_b_name text;
+  member_invite_email text;
   friendship_id uuid;
   request_id uuid;
   request_status text;
   acceptance_notification_id uuid;
+  created_invitation_id uuid;
+  invitation_token text;
 begin
   select profile.user_id
     into member_a
@@ -330,6 +334,92 @@ begin
 
   perform public.remove_social_friend(friendship_id);
 
+  member_invite_test := gen_random_uuid();
+  member_invite_email := 'codex-invite-'
+    || left(replace(member_invite_test::text, '-', ''), 12)
+    || '@example.com';
+
+  insert into auth.users (id, email)
+  values (member_invite_test, member_invite_email);
+
+  insert into public.social_profiles (
+    user_id,
+    handle,
+    display_name,
+    discoverable
+  )
+  values (
+    member_invite_test,
+    'invite_test_' || left(replace(member_invite_test::text, '-', ''), 8),
+    'Invitation Authorization Test',
+    true
+  );
+
+  perform set_config('request.jwt.claim.sub', member_a::text, true);
+
+  select created.invitation_id, created.invitation_token
+    into created_invitation_id, invitation_token
+  from public.create_social_invitation('email', member_invite_email) created;
+
+  if not exists (
+    select 1
+    from public.list_social_invitations() invitation
+    where invitation.invitation_id = created_invitation_id
+      and invitation.invitation_status = 'pending'
+  ) then
+    raise exception 'Created invitation was not visible to its sender.';
+  end if;
+
+  perform set_config('request.jwt.claim.sub', member_invite_test::text, true);
+
+  if not exists (
+    select 1
+    from public.preview_social_invitation(invitation_token) preview
+    where preview.invitation_id = created_invitation_id
+      and preview.inviter_user_id = member_a
+  ) then
+    raise exception 'Verified invitation recipient could not preview the inviter.';
+  end if;
+
+  select claimed.request_status
+    into request_status
+  from public.claim_social_invitation(invitation_token) claimed;
+
+  if request_status <> 'friends' then
+    raise exception 'Accepting a contact invitation did not create the friendship.';
+  end if;
+
+  if not exists (
+    select 1
+    from public.list_social_friends() friend
+    where friend.user_id = member_a
+  ) then
+    raise exception 'Invitation recipient could not read the accepted friendship.';
+  end if;
+
+  select friend.friendship_id
+    into friendship_id
+  from public.list_social_friends() friend
+  where friend.user_id = member_a;
+
+  perform public.remove_social_friend(friendship_id);
+  perform set_config('request.jwt.claim.sub', member_a::text, true);
+
+  select created.invitation_id
+    into created_invitation_id
+  from public.create_social_invitation('email', member_invite_email) created;
+
+  perform public.cancel_social_invitation(created_invitation_id);
+
+  if not exists (
+    select 1
+    from public.list_social_invitations() invitation
+    where invitation.invitation_id = created_invitation_id
+      and invitation.invitation_status = 'cancelled'
+  ) then
+    raise exception 'Cancelled invitation remained active.';
+  end if;
+
   member_delete_test := gen_random_uuid();
 
   insert into auth.users (id)
@@ -401,6 +491,9 @@ begin
     union all
     select 1 from public.social_blocks
       where blocker_user_id = member_delete_test or blocked_user_id = member_delete_test
+    union all
+    select 1 from public.social_invitations
+      where inviter_user_id = member_delete_test or claimed_by_user_id = member_delete_test
     union all
     select 1 from private.social_rate_limits where user_id = member_delete_test
     union all

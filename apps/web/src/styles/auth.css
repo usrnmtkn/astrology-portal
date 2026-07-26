@@ -91,6 +91,40 @@
   opacity: 0.6;
 }
 
+.phone-auth-fields {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.phone-auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.phone-auth-actions > button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: var(--ink);
+  font: inherit;
+}
+
+.phone-auth-actions > .signup-submit {
+  width: auto;
+  margin: 0;
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
 .google-mark {
   flex: 0 0 auto;
   width: 20px;

@@ -58,6 +58,23 @@ boundary:
 - `apps/web/supabase/tests/social_friend_authorization.sql` is a rollback-only
   two-account authorization regression test.
 
+`migrations/20260726110000_social_realtime_request_management.sql`,
+`20260726111500_social_contact_invitations.sql`, and
+`20260726123000_social_invitation_management.sql` complete the social lifecycle:
+
+- Request, friendship, and acceptance-notification changes publish through
+  Supabase Realtime while focus refresh remains the recovery path.
+- Incoming requests are consent-based; outgoing requests can be cancelled and
+  accepted-request notifications can be dismissed.
+- Email and phone invitations store hashed contacts and token digests, expose
+  only masked contact hints to the inviter, and expire after 30 days.
+- Invitation preview and acceptance require the authenticated account's
+  verified email or phone to match the intended recipient.
+- Accepting a valid invitation creates one canonical friendship, while
+  cancelling, declining, blocking, and account deletion revoke the flow.
+- Per-friend chart sharing can be paused independently without removing the
+  friendship.
+
 Apply this migration before enabling the Social friends UI. The client shows a
 safe unavailable state while the schema is not present.
 
