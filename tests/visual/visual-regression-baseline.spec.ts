@@ -17,6 +17,70 @@ const screenshotOptions = {
   timeout: 15_000
 };
 
+const routeReadyTimeoutMs = 15_000;
+const routeLoadBudgetMs = 15_000;
+
+function watchBrowserErrors(page: Page) {
+  const errors: string[] = [];
+  const ignoredConsolePatterns = [
+    /Failed to load resource/i,
+    /net::ERR_/i,
+    /favicon/i
+  ];
+
+  page.on("pageerror", (error) => {
+    errors.push(`pageerror: ${error.message}`);
+  });
+
+  page.on("console", (message) => {
+    if (message.type() !== "error") {
+      return;
+    }
+
+    const text = message.text();
+    if (ignoredConsolePatterns.some((pattern) => pattern.test(text))) {
+      return;
+    }
+
+    errors.push(`console.error: ${text}`);
+  });
+
+  return () => {
+    expect(errors, `Unexpected browser errors:\n${errors.join("\n")}`).toEqual([]);
+  };
+}
+
+async function expectRouteLoadsWithin(
+  page: Page,
+  route: string,
+  label: string,
+  assertReady: () => Promise<void>,
+  budgetMs = routeLoadBudgetMs
+) {
+  const startedAt = Date.now();
+
+  await page.goto(route);
+  await assertReady();
+
+  const elapsedMs = Date.now() - startedAt;
+  expect(elapsedMs, `${label} should become QA-ready within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
+}
+
+async function expectInteractionLoadsWithin(
+  label: string,
+  action: () => Promise<void>,
+  assertReady: () => Promise<void>,
+  budgetMs = routeLoadBudgetMs
+) {
+  const startedAt = Date.now();
+
+  await action();
+  await assertReady();
+
+  const elapsedMs = Date.now() - startedAt;
+  expect(elapsedMs, `${label} should become QA-ready within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
+}
+
 async function freezeTime(page: Page) {
   await page.addInitScript(({ fixedNow }) => {
     const RealDate = Date;
@@ -85,6 +149,7 @@ function fixtureSky(signOffset: number) {
 }
 
 async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
+  const friendNatalChart = fixtureSky(0);
   await freezeTime(page);
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -101,11 +166,13 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
     });
   });
 
-  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, theme }) => {
+  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, theme, friendNatalChart }) => {
     window.localStorage.clear();
     window.localStorage.setItem("tldrastro:theme", theme);
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");
     window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
+    window.localStorage.setItem("tldrastro:portalMode", "friends");
+    window.localStorage.setItem("tldrastro:friendsTab", "charts");
     window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
     window.localStorage.setItem("tldrastro:userProfile", JSON.stringify({
       id: fixtureUserId,
@@ -140,13 +207,13 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
         birthTimeUnknown: false,
         birthPlace: fixtureLocation.label,
         birthLocation: fixtureLocation,
-        natalChart: window.__visualRegressionFixtureSky?.(0) ?? null,
+        natalChart: friendNatalChart,
         notes: null,
         createdAt: fixedNow,
         updatedAt: fixedNow
       }
     ]));
-  }, { fixtureLocation, fixtureUserId, fixedNow, theme });
+  }, { fixtureLocation, fixtureUserId, fixedNow, theme, friendNatalChart });
 
   await page.evaluate(() => undefined);
 }
@@ -210,57 +277,94 @@ async function seedAdminApi(page: Page) {
 
 test.describe("visual regression baseline", () => {
   test("client-facing desktop and mobile surfaces match baseline", async ({ page }) => {
+    const assertNoBrowserErrors = watchBrowserErrors(page);
     await seedClientFixtureSky(page);
     await seedClientState(page, "light");
     await page.emulateMedia({ reducedMotion: "reduce" });
 
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.goto("/#sky");
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expectRouteLoadsWithin(page, "/#sky", "client sky desktop light", async () => {
+      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+    });
     await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 
-    await page.goto("/#calendar");
-    await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
+    await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop light", async () => {
+      await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
+    });
     await expect(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/#friends?tab=charts");
-    await expect(page.getByText("Nikki")).toBeVisible();
+    await expectRouteLoadsWithin(page, "/#friends?tab=charts", "client friends mobile light", async () => {
+      await expect(page.getByRole("heading", { name: "friends." })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+      await expect(page.getByLabel("Friend charts")).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.getByText("Nikki")).toBeVisible({ timeout: routeReadyTimeoutMs });
+    });
     await expect(page).toHaveScreenshot("client-friends-mobile-light.png", screenshotOptions);
+    assertNoBrowserErrors();
   });
 
   test("client-facing dark theme surfaces match baseline", async ({ page }) => {
+    const assertNoBrowserErrors = watchBrowserErrors(page);
     await seedClientFixtureSky(page);
     await seedClientState(page, "dark");
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 1440, height: 1000 });
 
-    await page.goto("/#sky");
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expectRouteLoadsWithin(page, "/#sky", "client sky desktop dark", async () => {
+      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+    });
     await expect(page).toHaveScreenshot("client-sky-desktop-dark.png", screenshotOptions);
 
-    await page.goto("/#calendar");
-    await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
+    await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop dark", async () => {
+      await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
+    });
     await expect(page).toHaveScreenshot("client-calendar-desktop-dark.png", screenshotOptions);
+    assertNoBrowserErrors();
   });
 
   test("admin dashboard surfaces match baseline", async ({ page }) => {
+    const assertNoBrowserErrors = watchBrowserErrors(page);
     await seedAdminApi(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
 
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.goto("/admin/content");
-    await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible();
+    await expectRouteLoadsWithin(page, "/admin/content", "admin home desktop", async () => {
+      await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+    });
     await expect(page).toHaveScreenshot("admin-home-desktop.png", screenshotOptions);
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
-    await expect(page.locator("h1", { hasText: "Content Library" })).toBeVisible();
+    await expectInteractionLoadsWithin(
+      "admin content library desktop",
+      async () => {
+        await page
+          .getByRole("navigation", { name: "Content operations" })
+          .getByRole("button", { name: "Content Library" })
+          .click();
+      },
+      async () => {
+        await expect(page.locator("h1", { hasText: "Content Library" })).toBeVisible({
+          timeout: routeReadyTimeoutMs
+        });
+      }
+    );
     await expect(page).toHaveScreenshot("admin-content-library-desktop.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/admin/content");
-    await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible();
+    await expectRouteLoadsWithin(page, "/admin/content", "admin home mobile", async () => {
+      await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+    });
     await expect(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
+    assertNoBrowserErrors();
   });
 });
 
