@@ -12,18 +12,29 @@ import type { FriendsTopLevelView } from "../../components/FriendsPageShell";
 import { ModalPortal } from "../../components/ModalPortal";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import {
+  blockSocialUser,
   cancelSocialFriendRequest,
+  cancelSocialInvitation,
+  createSocialInvitation,
+  dismissSocialNotification,
   listSocialFriendRequests,
   listSocialFriends,
+  listSocialInvitations,
+  listSocialNotifications,
   loadOwnSocialProfile,
   removeSocialFriend,
   respondToSocialFriendRequest,
   searchSocialProfiles,
   sendSocialFriendRequest,
+  setSocialFriendChartSharing,
+  socialInvitationUrl,
   subscribeToSocialChanges,
   type ConnectedSocialFriend,
   type SocialFriendRequest,
+  type SocialInvitation,
+  type SocialInvitationSummary,
   type SocialLookupResult,
+  type SocialNotification,
   type SocialProfile
 } from "../../services/socialFriends";
 
@@ -43,6 +54,53 @@ type PendingRemoval = {
   friend: ConnectedSocialFriend;
   timeout: number;
 };
+
+type BlockableSocialPerson = {
+  userId: string;
+  handle: string;
+  displayName: string;
+  avatarUrl?: string;
+};
+
+function relativeSocialTime(value: string) {
+  const elapsedSeconds = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 1_000));
+
+  if (elapsedSeconds < 60) {
+    return "just now";
+  }
+
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+
+  if (elapsedMinutes < 60) {
+    return `${elapsedMinutes}m ago`;
+  }
+
+  const elapsedHours = Math.floor(elapsedMinutes / 60);
+
+  if (elapsedHours < 24) {
+    return `${elapsedHours}h ago`;
+  }
+
+  const elapsedDays = Math.floor(elapsedHours / 24);
+
+  if (elapsedDays < 7) {
+    return `${elapsedDays}d ago`;
+  }
+
+  return new Date(value).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: new Date(value).getFullYear() === new Date().getFullYear() ? undefined : "numeric"
+  });
+}
+
+function invitationStatusLabel(invitation: SocialInvitationSummary) {
+  if (invitation.status === "pending") {
+    return `Sent ${relativeSocialTime(invitation.createdAt)}`;
+  }
+
+  return invitation.status[0].toUpperCase() + invitation.status.slice(1);
+}
 
 function levenshtein(firstInput: string, secondInput: string) {
   const first = firstInput.toLocaleLowerCase();
@@ -141,11 +199,23 @@ export function SocialFriendsPanel({
   const [lookupResults, setLookupResults] = useState<SocialLookupResult[]>([]);
   const [requests, setRequests] = useState<SocialFriendRequest[]>([]);
   const [friends, setFriends] = useState<ConnectedSocialFriend[]>([]);
+  const [notifications, setNotifications] = useState<SocialNotification[]>([]);
+  const [invitations, setInvitations] = useState<SocialInvitationSummary[]>([]);
   const [friendToRemove, setFriendToRemove] = useState<ConnectedSocialFriend | null>(null);
+  const [friendToBlock, setFriendToBlock] = useState<BlockableSocialPerson | null>(null);
+  const [friendToManage, setFriendToManage] = useState<ConnectedSocialFriend | null>(null);
   const [removedToastFriend, setRemovedToastFriend] = useState<ConnectedSocialFriend | null>(null);
   const [openFriendMenuId, setOpenFriendMenuId] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [actionPending, setActionPending] = useState(false);
+  const [sharingPending, setSharingPending] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [inviteKind, setInviteKind] = useState<"email" | "phone">("email");
+  const [inviteContact, setInviteContact] = useState("");
+  const [createdInvitation, setCreatedInvitation] = useState<SocialInvitation | null>(null);
+  const [invitePending, setInvitePending] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteCopied, setInviteCopied] = useState(false);
   const [searchState, setSearchState] = useState<"idle" | "loading">("idle");
   const [showSearchSkeleton, setShowSearchSkeleton] = useState(false);
   const [searchError, setSearchError] = useState("");
@@ -174,10 +244,12 @@ export function SocialFriendsPanel({
   }, [onFriendsChange]);
 
   const refreshSocialData = useCallback(async () => {
-    const [nextProfile, nextRequests, loadedFriends] = await Promise.all([
+    const [nextProfile, nextRequests, loadedFriends, nextNotifications, nextInvitations] = await Promise.all([
       loadOwnSocialProfile(),
       listSocialFriendRequests(),
-      listSocialFriends()
+      listSocialFriends(),
+      listSocialNotifications(),
+      listSocialInvitations()
     ]);
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
@@ -186,11 +258,19 @@ export function SocialFriendsPanel({
 
     setProfile(nextProfile);
     setRequests(nextRequests);
+    setNotifications(nextNotifications);
+    setInvitations(nextInvitations);
     publishFriends(nextFriends);
     onPendingRequestCountChange?.(
       nextRequests.filter((request) => request.direction === "incoming").length
     );
   }, [onPendingRequestCountChange, publishFriends]);
+
+  useEffect(() => {
+    if (activeView === "requests" && incomingRequests.length === 0 && available === true) {
+      onSelectView("circle");
+    }
+  }, [activeView, available, incomingRequests.length, onSelectView]);
 
   useEffect(() => {
     let cancelled = false;
@@ -419,6 +499,108 @@ export function SocialFriendsPanel({
     }
   }
 
+  async function dismissNotification(notification: SocialNotification) {
+    setActionPending(true);
+
+    try {
+      await dismissSocialNotification(notification.notificationId);
+      setNotifications((current) => current.filter(
+        (candidate) => candidate.notificationId !== notification.notificationId
+      ));
+    } catch (error) {
+      setSearchError(error instanceof Error ? error.message : "Could not dismiss this update.");
+    } finally {
+      setActionPending(false);
+    }
+  }
+
+  async function updateChartSharing(friend: ConnectedSocialFriend, share: boolean) {
+    setSharingPending(true);
+
+    try {
+      await setSocialFriendChartSharing(friend.friendshipId, share);
+      const nextFriend = { ...friend, viewerSharesChart: share };
+      publishFriends(friendsRef.current.map((candidate) => (
+        candidate.friendshipId === friend.friendshipId ? nextFriend : candidate
+      )));
+      setFriendToManage(nextFriend);
+      await refreshSocialData();
+    } catch (error) {
+      setSearchError(error instanceof Error ? error.message : "Could not update chart sharing.");
+    } finally {
+      setSharingPending(false);
+    }
+  }
+
+  async function confirmBlockFriend(friend: BlockableSocialPerson) {
+    setActionPending(true);
+
+    try {
+      await blockSocialUser(friend.userId);
+      setFriendToBlock(null);
+      setOpenFriendMenuId(null);
+      setLookupResults((current) => current.filter((candidate) => candidate.userId !== friend.userId));
+      await refreshSocialData();
+    } catch (error) {
+      setSearchError(error instanceof Error ? error.message : "Could not block this account.");
+    } finally {
+      setActionPending(false);
+    }
+  }
+
+  async function createInvitation() {
+    setInvitePending(true);
+    setInviteError("");
+    setInviteCopied(false);
+
+    try {
+      const invitation = await createSocialInvitation(inviteKind, inviteContact);
+      setCreatedInvitation(invitation);
+      setInvitations(await listSocialInvitations());
+    } catch (error) {
+      setInviteError(error instanceof Error ? error.message : "Could not create this invitation.");
+    } finally {
+      setInvitePending(false);
+    }
+  }
+
+  async function cancelInvitation(invitation: SocialInvitationSummary) {
+    setInvitePending(true);
+    setInviteError("");
+
+    try {
+      await cancelSocialInvitation(invitation.invitationId);
+      if (createdInvitation?.invitationId === invitation.invitationId) {
+        resetInvitationComposer();
+      }
+      setInvitations(await listSocialInvitations());
+    } catch (error) {
+      setInviteError(error instanceof Error ? error.message : "Could not cancel this invitation.");
+    } finally {
+      setInvitePending(false);
+    }
+  }
+
+  async function copyInvitationLink() {
+    if (!createdInvitation) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(socialInvitationUrl(createdInvitation.token));
+      setInviteCopied(true);
+    } catch {
+      setInviteError("Copy is unavailable. Use the send button instead.");
+    }
+  }
+
+  function resetInvitationComposer() {
+    setCreatedInvitation(null);
+    setInviteContact("");
+    setInviteError("");
+    setInviteCopied(false);
+  }
+
   function commitPendingRemoval(friend: ConnectedSocialFriend) {
     if (pendingRemovalRef.current?.friend.userId !== friend.userId) {
       return;
@@ -541,8 +723,31 @@ export function SocialFriendsPanel({
         </button>
         {menuOpen && (
           <span className="friends-person-menu" role="menu" aria-label={`${friend.displayName} actions`}>
-            <button type="button" role="menuitem" onClick={() => onOpenFriend(friend)}>
-              View chart
+            {friend.friendSharesChart && friend.natalChart && (
+              <button type="button" role="menuitem" onClick={() => onOpenFriend(friend)}>
+                View chart
+              </button>
+            )}
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenFriendMenuId(null);
+                setFriendToManage(friend);
+              }}
+            >
+              Chart privacy
+            </button>
+            <button
+              className="friends-danger-action"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenFriendMenuId(null);
+                setFriendToBlock(friend);
+              }}
+            >
+              Block
             </button>
             <button
               className="friends-danger-action"
@@ -572,7 +777,9 @@ export function SocialFriendsPanel({
     );
     const bigThree = connectedFriend ? friendBigThree(connectedFriend) : null;
     const thirdLine = result.relationshipStatus === "request_sent"
-      ? "Request sent · they will see it next visit"
+      ? `Request sent ${outgoingRequest ? relativeSocialTime(outgoingRequest.createdAt) : ""} · they will see it next visit`
+      : result.relationshipStatus === "request_received" && incomingRequest
+        ? `${publicSunLine(result.sunSign)} · requested ${relativeSocialTime(incomingRequest.createdAt)}`
       : bigThree
         ? `☉ ${bigThree.sun ?? "pending"} · ☽ ${bigThree.moon ?? "pending"} · ↑ ${bigThree.rising ?? "pending"}`
         : publicSunLine(result.sunSign);
@@ -582,8 +789,6 @@ export function SocialFriendsPanel({
         className={`friends-person-row${index === activeResultIndex ? " is-keyboard-active" : ""}`}
         id={`friend-result-${result.userId}`}
         key={result.userId}
-        role="option"
-        aria-selected={index === activeResultIndex}
       >
         <ProfileAvatar avatarUrl={result.avatarUrl} email="" name={result.displayName} />
         <span className="friends-person-copy">
@@ -607,7 +812,7 @@ export function SocialFriendsPanel({
           {result.relationshipStatus === "request_sent" && (
             <>
               <span className="friends-requested-label">Requested</span>
-              {undoAvailable && (result.requestId || outgoingRequest) && (
+              {(result.requestId || outgoingRequest) && (
                 <button
                   className="friends-row-text-action"
                   type="button"
@@ -617,7 +822,7 @@ export function SocialFriendsPanel({
                     userId: result.userId
                   })}
                 >
-                  Undo
+                  {undoAvailable ? "Undo" : "Cancel"}
                 </button>
               )}
             </>
@@ -640,17 +845,31 @@ export function SocialFriendsPanel({
               >
                 Decline
               </button>
+              <button
+                className="friends-row-text-action friends-danger-action"
+                type="button"
+                disabled={actionPending}
+                onClick={() => setFriendToBlock(result)}
+              >
+                Block
+              </button>
             </>
           )}
           {result.relationshipStatus === "friends" && connectedFriend && (
             <>
-              <button
-                className="friends-row-text-action"
-                type="button"
-                onClick={() => onOpenFriend(connectedFriend)}
-              >
-                View chart
-              </button>
+              {connectedFriend.friendSharesChart && connectedFriend.natalChart ? (
+                <button
+                  className="friends-row-text-action"
+                  type="button"
+                  onClick={() => onOpenFriend(connectedFriend)}
+                >
+                  View chart
+                </button>
+              ) : (
+                <span className="friends-requested-label">
+                  {connectedFriend.friendSharesChart ? "Chart pending" : "Chart paused"}
+                </span>
+              )}
               {friendMenu(connectedFriend)}
             </>
           )}
@@ -670,19 +889,21 @@ export function SocialFriendsPanel({
           <span>Loading friends…</span>
         </div>
         <div className="friends-unified-tab-row" aria-label="Friends views">
-          <span className="friends-unified-tabs">
+          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
             <button className={activeView === "circle" ? "active" : ""} type="button" disabled>
               Circle · 0
             </button>
             <button className={activeView === "charts" ? "active" : ""} type="button" disabled>
               Charts · {chartCount}
             </button>
-            <button className={activeView === "requests" ? "active" : ""} type="button" disabled>
-              Requests
-            </button>
           </span>
         </div>
-        <div className="friends-unified-content">
+        <div
+          className="friends-unified-content"
+          id={queryIsActive ? "friends-search-results" : `friends-${activeView}-panel`}
+          role={queryIsActive ? "region" : "tabpanel"}
+          aria-labelledby={queryIsActive ? undefined : `friends-${activeView}-tab`}
+        >
           <div className="friends-search-skeleton" aria-label="Loading friends">
             {[0, 1].map((item) => (
               <span className="friends-search-skeleton-row" key={item}>
@@ -722,11 +943,6 @@ export function SocialFriendsPanel({
             autoCorrect="off"
             spellCheck={false}
             aria-label="Search by name or handle"
-            aria-activedescendant={
-              queryIsSearchable && lookupResults[activeResultIndex]
-                ? `friend-result-${lookupResults[activeResultIndex].userId}`
-                : undefined
-            }
           />
           <span className="friends-search-private-hint">Private profiles stay hidden</span>
           {queryIsActive && (
@@ -741,13 +957,15 @@ export function SocialFriendsPanel({
           )}
         </label>
 
-        <div className={`friends-unified-tab-row${queryIsActive ? " is-searching" : ""}`} role="tablist" aria-label="Friends views">
-          <span className="friends-unified-tabs">
+        <div className={`friends-unified-tab-row${queryIsActive ? " is-searching" : ""}`}>
+          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
             <button
               className={activeView === "circle" && !queryIsActive ? "active" : ""}
               type="button"
               role="tab"
               aria-selected={activeView === "circle" && !queryIsActive}
+              aria-controls="friends-circle-panel"
+              id="friends-circle-tab"
               onClick={() => {
                 setSearchQuery("");
                 onSelectView("circle");
@@ -760,6 +978,8 @@ export function SocialFriendsPanel({
               type="button"
               role="tab"
               aria-selected={activeView === "charts" && !queryIsActive}
+              aria-controls="friends-charts-panel"
+              id="friends-charts-tab"
               onClick={() => {
                 setSearchQuery("");
                 onSelectView("charts");
@@ -767,27 +987,41 @@ export function SocialFriendsPanel({
             >
               Charts · {chartCount}
             </button>
-            <button
-              className={activeView === "requests" && !queryIsActive ? "active" : ""}
-              type="button"
-              role="tab"
-              aria-selected={activeView === "requests" && !queryIsActive}
-              onClick={() => {
-                setSearchQuery("");
-                onSelectView("requests");
-              }}
-            >
-              Requests
-              {incomingRequests.length > 0 && (
+            {incomingRequests.length > 0 && (
+              <button
+                className={`friends-requests-tab${activeView === "requests" && !queryIsActive ? " active" : ""}`}
+                type="button"
+                role="tab"
+                aria-selected={activeView === "requests" && !queryIsActive}
+                aria-controls="friends-requests-panel"
+                id="friends-requests-tab"
+                onClick={() => {
+                  setSearchQuery("");
+                  onSelectView("requests");
+                }}
+              >
+                Requests
                 <span className="friends-tab-count" aria-label={`${incomingRequests.length} pending`}>
                   {incomingRequests.length}
                 </span>
-              )}
-            </button>
+              </button>
+            )}
           </span>
           {activeView === "charts" && !queryIsActive && (
             <button className="friends-add-chart-action" type="button" onClick={onAddChart}>
               Add a chart
+            </button>
+          )}
+          {activeView === "circle" && !queryIsActive && friends.length > 0 && (
+            <button
+              className="friends-add-chart-action"
+              type="button"
+              onClick={() => {
+                resetInvitationComposer();
+                setInviteModalOpen(true);
+              }}
+            >
+              Invite someone
             </button>
           )}
           {searchState === "loading" && queryIsSearchable && (
@@ -821,7 +1055,7 @@ export function SocialFriendsPanel({
                 </div>
               )}
               {queryIsSearchable && !searchError && lookupResults.length > 0 && (
-                <div className="friends-person-list" role="listbox" aria-label="Friend search results">
+                <div className="friends-person-list" role="list" aria-label="Friend search results">
                   {lookupResults.map(resultRow)}
                 </div>
               )}
@@ -850,15 +1084,37 @@ export function SocialFriendsPanel({
                       <small className="friends-person-third-line">
                         {friendTimingByUserId[friend.userId] || "Current timing is being calculated."}
                       </small>
+                      <span className="friends-sharing-statuses">
+                        <small>
+                          Your chart: <strong>{friend.viewerSharesChart ? "Shared" : "Paused"}</strong>
+                        </small>
+                        <small>
+                          Their chart:{" "}
+                          <strong>
+                            {!friend.friendSharesChart
+                              ? "Paused"
+                              : friend.natalChart
+                                ? "Shared"
+                                : "Pending"}
+                          </strong>
+                        </small>
+                        <small>Friends since {relativeSocialTime(friend.acceptedAt)}</small>
+                      </span>
                     </span>
                     <span className="friends-person-actions">
-                      <button
-                        className="friends-row-text-action"
-                        type="button"
-                        onClick={() => onOpenFriend(friend)}
-                      >
-                        View chart
-                      </button>
+                      {friend.friendSharesChart && friend.natalChart ? (
+                        <button
+                          className="friends-row-text-action"
+                          type="button"
+                          onClick={() => onOpenFriend(friend)}
+                        >
+                          View chart
+                        </button>
+                      ) : (
+                        <span className="friends-requested-label">
+                          {friend.friendSharesChart ? "Chart pending" : "Chart paused"}
+                        </span>
+                      )}
                       {friendMenu(friend)}
                     </span>
                   </div>
@@ -868,6 +1124,16 @@ export function SocialFriendsPanel({
               <div className="friends-unified-empty">
                 <h2>Nobody here yet.</h2>
                 <p>Search a name or handle to send a request.</p>
+                <button
+                  className="social-primary-button"
+                  type="button"
+                  onClick={() => {
+                    resetInvitationComposer();
+                    setInviteModalOpen(true);
+                  }}
+                >
+                  Invite someone
+                </button>
               </div>
             )
           ) : activeView === "charts" ? (
@@ -882,7 +1148,9 @@ export function SocialFriendsPanel({
                       <strong>{request.displayName}</strong>
                       <small>@{request.handle}</small>
                     </span>
-                    <small className="friends-person-third-line">{publicSunLine(request.sunSign)}</small>
+                    <small className="friends-person-third-line">
+                      {publicSunLine(request.sunSign)} · requested {relativeSocialTime(request.createdAt)}
+                    </small>
                   </span>
                   <span className="friends-person-actions">
                     <button
@@ -901,6 +1169,14 @@ export function SocialFriendsPanel({
                     >
                       Decline
                     </button>
+                    <button
+                      className="friends-row-text-action friends-danger-action"
+                      type="button"
+                      disabled={actionPending}
+                      onClick={() => setFriendToBlock(request)}
+                    >
+                      Block
+                    </button>
                   </span>
                 </div>
               ))}
@@ -913,6 +1189,283 @@ export function SocialFriendsPanel({
           )}
         </div>
       </section>
+
+      {friendToManage && (
+        <ModalPortal
+          closeOnBackdrop={!sharingPending}
+          onClose={() => {
+            if (!sharingPending) {
+              setFriendToManage(null);
+            }
+          }}
+          panelClassName="social-sharing-modal"
+          titleId="friends-sharing-title"
+          width="min(540px, calc(100vw - 32px))"
+        >
+          <button
+            className="social-sharing-close"
+            type="button"
+            aria-label="Close chart privacy"
+            disabled={sharingPending}
+            onClick={() => setFriendToManage(null)}
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+          <div className="social-sharing-heading">
+            <ProfileAvatar
+              avatarUrl={friendToManage.avatarUrl}
+              email=""
+              name={friendToManage.displayName}
+            />
+            <div>
+              <h2 id="friends-sharing-title">Chart privacy with {friendToManage.displayName}</h2>
+              <p>@{friendToManage.handle}</p>
+            </div>
+          </div>
+          <div className="social-sharing-details">
+            <section>
+              <h3>Your chart: {friendToManage.viewerSharesChart ? "Shared" : "Paused"}</h3>
+              <p>
+                {friendToManage.viewerSharesChart
+                  ? `${friendToManage.displayName} can view your astrology profile and shared chart.`
+                  : `${friendToManage.displayName} cannot view your astrology profile or chart.`}
+              </p>
+            </section>
+            <section>
+              <h3>
+                Their chart:{" "}
+                {!friendToManage.friendSharesChart
+                  ? "Paused"
+                  : friendToManage.natalChart
+                    ? "Shared"
+                    : "Pending"}
+              </h3>
+              <p>
+                {!friendToManage.friendSharesChart
+                  ? `${friendToManage.displayName} has paused chart sharing.`
+                  : friendToManage.natalChart
+                    ? `You can view ${friendToManage.displayName}'s shared chart.`
+                    : `${friendToManage.displayName} has not finished their chart yet.`}
+              </p>
+            </section>
+          </div>
+          <p className="social-sharing-note">
+            Pausing does not remove the friendship. You can resume sharing at any time.
+          </p>
+          <div className="social-sharing-actions">
+            <button
+              className="social-secondary-button"
+              type="button"
+              disabled={sharingPending}
+              onClick={() => setFriendToManage(null)}
+            >
+              Close
+            </button>
+            <button
+              className={friendToManage.viewerSharesChart ? "social-secondary-button" : "social-primary-button"}
+              type="button"
+              disabled={sharingPending}
+              onClick={() => void updateChartSharing(
+                friendToManage,
+                !friendToManage.viewerSharesChart
+              )}
+            >
+              {sharingPending
+                ? "Saving…"
+                : friendToManage.viewerSharesChart
+                  ? "Pause my chart"
+                  : "Share my chart"}
+            </button>
+          </div>
+        </ModalPortal>
+      )}
+
+      {friendToBlock && (
+        <ModalPortal
+          closeOnBackdrop={!actionPending}
+          onClose={() => {
+            if (!actionPending) {
+              setFriendToBlock(null);
+            }
+          }}
+          panelClassName="friends-remove-dialog"
+          titleId="friends-block-title"
+          width="min(460px, calc(100vw - 32px))"
+        >
+          <div className="friends-remove-identity">
+            <ProfileAvatar avatarUrl={friendToBlock.avatarUrl} email="" name={friendToBlock.displayName} />
+            <span>
+              <h2 id="friends-block-title">Block {friendToBlock.displayName}?</h2>
+              <small>@{friendToBlock.handle}</small>
+            </span>
+          </div>
+          <p>
+            You will be removed from each other&apos;s circle. They cannot find you,
+            send a request, or view your chart. They are not notified.
+          </p>
+          <div className="friends-remove-actions">
+            <button
+              className="social-secondary-button"
+              type="button"
+              disabled={actionPending}
+              onClick={() => setFriendToBlock(null)}
+            >
+              Cancel
+            </button>
+            <button
+              className="friends-danger-button"
+              type="button"
+              disabled={actionPending}
+              onClick={() => void confirmBlockFriend(friendToBlock)}
+            >
+              {actionPending ? "Blocking…" : "Block"}
+            </button>
+          </div>
+        </ModalPortal>
+      )}
+
+      {inviteModalOpen && (
+        <ModalPortal
+          closeOnBackdrop={!invitePending}
+          onClose={() => {
+            if (!invitePending) {
+              setInviteModalOpen(false);
+            }
+          }}
+          panelClassName="friends-invite-dialog"
+          titleId="friends-invite-title"
+          width="min(560px, calc(100vw - 32px))"
+        >
+          <button
+            className="social-sharing-close"
+            type="button"
+            aria-label="Close invitation"
+            disabled={invitePending}
+            onClick={() => setInviteModalOpen(false)}
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+          <div className="friends-invite-heading">
+            <span className="eyebrow section-label">Invite a friend</span>
+            <h2 id="friends-invite-title">Bring someone into your circle.</h2>
+            <p>
+              They will receive a private link. After they join and accept,
+              you can view each other&apos;s shared charts.
+            </p>
+          </div>
+
+          {!createdInvitation ? (
+            <form
+              className="friends-invite-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void createInvitation();
+              }}
+            >
+              <div className="friends-invite-kind" role="group" aria-label="Invitation method">
+                <button
+                  className={inviteKind === "email" ? "active" : ""}
+                  type="button"
+                  aria-pressed={inviteKind === "email"}
+                  onClick={() => setInviteKind("email")}
+                >
+                  Email
+                </button>
+                <button
+                  className={inviteKind === "phone" ? "active" : ""}
+                  type="button"
+                  aria-pressed={inviteKind === "phone"}
+                  onClick={() => setInviteKind("phone")}
+                >
+                  Phone
+                </button>
+              </div>
+              <label>
+                <span>{inviteKind === "email" ? "Email address" : "Phone number"}</span>
+                <input
+                  autoFocus
+                  type={inviteKind === "email" ? "email" : "tel"}
+                  inputMode={inviteKind === "email" ? "email" : "tel"}
+                  autoComplete={inviteKind === "email" ? "email" : "tel"}
+                  placeholder={inviteKind === "email" ? "friend@example.com" : "+1 212 555 0100"}
+                  value={inviteContact}
+                  onChange={(event) => setInviteContact(event.target.value)}
+                />
+              </label>
+              <button
+                className="social-primary-button"
+                type="submit"
+                disabled={invitePending || !inviteContact.trim()}
+              >
+                {invitePending ? "Creating…" : "Create private invite"}
+              </button>
+            </form>
+          ) : (
+            <div className="friends-invite-ready" role="status">
+              <h3>Invitation ready.</h3>
+              <p>
+                Send the private link to {inviteContact}. It expires{" "}
+                {new Date(createdInvitation.expiresAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric"
+                })}.
+              </p>
+              <div className="friends-invite-send-actions">
+                <a
+                  className="social-primary-button"
+                  href={inviteKind === "email"
+                    ? `mailto:${encodeURIComponent(inviteContact)}?subject=${encodeURIComponent("Join my circle on TLDR Astro")}&body=${encodeURIComponent(`I invited you to connect on TLDR Astro. Open this private link to join and accept:\n\n${socialInvitationUrl(createdInvitation.token)}`)}`
+                    : `sms:${encodeURIComponent(inviteContact)}?&body=${encodeURIComponent(`I invited you to connect on TLDR Astro. Open this private link to join and accept: ${socialInvitationUrl(createdInvitation.token)}`)}`}
+                >
+                  Open {inviteKind === "email" ? "email" : "messages"}
+                </a>
+                <button
+                  className="social-secondary-button"
+                  type="button"
+                  onClick={() => void copyInvitationLink()}
+                >
+                  {inviteCopied ? "Copied" : "Copy link"}
+                </button>
+                <button
+                  className="friends-row-text-action"
+                  type="button"
+                  onClick={resetInvitationComposer}
+                >
+                  Invite someone else
+                </button>
+              </div>
+            </div>
+          )}
+
+          {inviteError && <p className="friends-invite-error" role="alert">{inviteError}</p>}
+
+          {invitations.length > 0 && (
+            <section className="friends-invite-history" aria-labelledby="friends-invite-history-title">
+              <h3 id="friends-invite-history-title">Recent invitations</h3>
+              <div>
+                {invitations.slice(0, 5).map((invitation) => (
+                  <div className="friends-invite-history-row" key={invitation.invitationId}>
+                    <span>
+                      <strong>{invitation.contactHint}</strong>
+                      <small>{invitationStatusLabel(invitation)}</small>
+                    </span>
+                    {invitation.status === "pending" && (
+                      <button
+                        className="friends-row-text-action friends-danger-action"
+                        type="button"
+                        disabled={invitePending}
+                        onClick={() => void cancelInvitation(invitation)}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </ModalPortal>
+      )}
 
       {friendToRemove && (
         <ModalPortal
@@ -948,6 +1501,37 @@ export function SocialFriendsPanel({
         <div className="friends-toast" role="status">
           <span>{removedToastFriend.displayName} removed from your circle.</span>
           <button type="button" onClick={undoRemoveFriend}>Undo</button>
+        </div>
+      )}
+
+      {!removedToastFriend && notifications[0] && (
+        <div className="friends-toast friends-acceptance-toast" role="status">
+          <ProfileAvatar
+            avatarUrl={notifications[0].actorAvatarUrl}
+            email=""
+            name={notifications[0].actorDisplayName}
+          />
+          <span>
+            <strong>{notifications[0].actorDisplayName}</strong> accepted your request{" "}
+            {relativeSocialTime(notifications[0].createdAt)}.
+          </span>
+          {friends.find((friend) => friend.userId === notifications[0].actorUserId) && (
+            <button
+              type="button"
+              onClick={() => onOpenFriend(
+                friends.find((friend) => friend.userId === notifications[0].actorUserId)!
+              )}
+            >
+              View chart
+            </button>
+          )}
+          <button
+            type="button"
+            disabled={actionPending}
+            onClick={() => void dismissNotification(notifications[0])}
+          >
+            Dismiss
+          </button>
         </div>
       )}
     </>
