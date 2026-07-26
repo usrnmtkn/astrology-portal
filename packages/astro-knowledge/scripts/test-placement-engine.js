@@ -44,6 +44,37 @@ for (const exemplar of placementGolds) {
   );
 }
 
+const labeledClose = `${placementGolds[0].body}\n\nThe truth: we want to be seen. The catch: applause never holds still.`;
+const labeledCloseLint = lintCard(labeledClose, { mode: placementMode });
+assert.equal(labeledCloseLint.score, 1);
+assert.ok(labeledCloseLint.findings.some((finding) => (
+  finding.severity === "fail"
+  && finding.source === "placement-label"
+  && finding.term === "\\bthe truth\\s*[:?]"
+)));
+assert.ok(labeledCloseLint.findings.some((finding) => (
+  finding.severity === "fail"
+  && finding.source === "placement-label"
+  && finding.term === "\\bthe catch\\s*[:?]"
+)));
+assert.equal(
+  lintCard(labeledClose, { mode: "collective-aspect-card" }).findings.some(
+    (finding) => finding.source === "placement-label"
+  ),
+  false,
+  "Close-label failures must remain placement-mode only."
+);
+
+const softLabel = placementGolds[0].body.replace(
+  "The catch is that",
+  "The challenge is"
+);
+const softLabelLint = lintCard(softLabel, { mode: placementMode });
+assert.ok(softLabelLint.findings.some((finding) => (
+  finding.severity === "warn"
+  && finding.term === "\\bthe challenge is\\b"
+)));
+
 const sunGold = placementGolds.find((entry) => entry.sourceId === "sky-sun-in-leo");
 assert.ok(sunGold);
 const bodyYou = sunGold.body.replace(
@@ -134,6 +165,9 @@ assert.match(prompt, /about a month; a season-sized chapter/i);
 assert.match(prompt, /The Sun in Leo: identity built through expression/i);
 assert.match(prompt, /impersonal "you\/your\/you're" is allowed ONLY in the final truth-and-catch pair/i);
 assert.match(prompt, /evergreen base only/i);
+assert.match(prompt, /never print "The truth" or "The catch" as labels/i);
+assert.match(prompt, /BAD - visible scaffolding:[\s\S]*The truth:[\s\S]*The catch:/);
+assert.match(prompt, /GOOD - state it plainly:[\s\S]*Being seen for something real is the whole point/);
 assert.doesNotMatch(prompt, /For about a month the Sun sits in Leo/);
 
 const southNodePrompt = generator.buildPlacementPrompt({ planet: "south-node", sign: "aries" });

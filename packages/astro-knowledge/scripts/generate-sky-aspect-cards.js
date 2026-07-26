@@ -396,7 +396,7 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
     `  3. Personify the planet or point in short declaratives where it fits.`,
     `  4. Make the sign-specific behavior concrete and modern.`,
     `  5. Name the strength and shadow as one flowing observation, never as labels.`,
-    `  6. End on ONE truth and the catch that turns on it. The final pair is the only place "you" is allowed.`,
+    `  6. End on ONE truth and the catch that turns on it. These words describe the SHAPE for us; never print "The truth" or "The catch" as labels. State both as plain sentences. The final pair is the only place "you" is allowed.`,
     ``,
     `RULES:`,
     `  - Never use these words/phrases: ${failList}.`,
@@ -404,8 +404,12 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
     `  - No dates, degrees, orb mechanics, live aspects, or current-sky topper. This is the evergreen base only.`,
     `  - Do not explain astrology mechanics, dignities, or elements. Make the placement felt.`,
     `  - Direct beats poetic. No generic weather, machinery, "shine" language, cosmic coaching, or motivational-poster maxims.`,
-    `  - Do not write "The gift is" or "The shadow is."`,
+    `  - Do not announce any turn with a label such as "The truth", "The catch", "The challenge is", "The downside is", "The gift is", or "The shadow is".`,
     `  - Keep concrete examples terse. Do not invent named actors or mini-stories.`,
+    ``,
+    `CLOSE SHAPE BY DEMONSTRATION:`,
+    `  BAD - visible scaffolding: "...measuring worth by reaction. The truth: we want to be seen for what is real. The catch: if you build yourself on applause, you'll always need a crowd."`,
+    `  GOOD - state it plainly: "...measuring worth by the reaction instead of the work. Being seen for something real is the whole point. Build yourself on applause and you'll always need a crowd."`,
     ``,
     `IN-VOICE PLACEMENT GOLDS (match the shape and register; do not copy):`,
     ...golds.map((entry, index) => `  [${index + 1} | ${entry.tier}] ${entry.body}`),
@@ -416,7 +420,7 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
       ? [
           ``,
           `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
-          `Do not use those terms again. Keep second person out of the body; it may appear only in the final pair.`
+          `Do not use those terms again. State the closing truth and catch without labels. Keep second person out of the body; it may appear only in the final pair.`
         ]
       : []),
     ``,
