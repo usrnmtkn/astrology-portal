@@ -126,7 +126,15 @@ function lintCard(text) {
   if (last.split(/\s+/).filter(Boolean).length > 22) notes.push("closer is long; end on a shorter true line");
   if (registerDraw === 0) notes.push("drew nothing from the approved phrase bank - check the register");
   const paras = text.split(/\n\s*\n/).filter((p) => p.trim()).length;
-  if (paras !== 2) notes.push(`shape: ${paras} paragraph(s), template is 2`);
+  if (paras !== 2) {
+    findings.push({
+      severity: "fail",
+      source: "shape",
+      term: "paragraph-count",
+      match: `${paras} paragraphs`,
+      reason: "the card template is exactly two paragraphs"
+    });
+  }
   // stacked ending: 3+ short sentences piled at the close. The template wants
   // ONE truth + its catch (two short lines). A run of 3+ is a warn, which trips
   // the generator's auto-regenerate loop before the card reaches the judge.
@@ -137,6 +145,28 @@ function lintCard(text) {
   }
   if (closeRun >= 3) {
     findings.push({ severity: "warn", source: "shape", term: "stacked-ending", match: `${closeRun} short closing sentences`, reason: "land one truth and its catch, not a pile of aphorisms" });
+  }
+  // A draft can hide two truth+catch pairs by making one line just long enough
+  // to escape the stacked-ending rule. Catch either four compact tail
+  // sentences, or two distinct short runs split by a longer sentence.
+  const tail = sentences.slice(-4);
+  const tailWordCounts = tail.map((sentence) => sentence.split(/\s+/).filter(Boolean).length);
+  const fourCompactClosers = tail.length === 4 && tailWordCounts.every((count) => count <= 13);
+  const shortRuns = tailWordCounts.reduce((runs, count) => {
+    if (count <= 11 && runs[runs.length - 1] !== true) runs.push(true);
+    if (count > 11 && runs[runs.length - 1] !== false) runs.push(false);
+    return runs;
+  }, []);
+  const splitShortPairs = shortRuns.filter(Boolean).length >= 2;
+
+  if (fourCompactClosers || splitShortPairs) {
+    findings.push({
+      severity: "warn",
+      source: "shape",
+      term: "double-closing-pair",
+      match: "two compact landing pairs in the final four sentences",
+      reason: "land one truth and its catch, not two separate closing pairs"
+    });
   }
 
   const fails = findings.filter((f) => f.severity === "fail").length;
