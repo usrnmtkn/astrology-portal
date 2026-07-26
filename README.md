@@ -40,6 +40,91 @@ Async content and registry loading must not downgrade visible copy. If a card al
 
 Cards should also never render blank. When no specific reader-facing copy exists, show the neutral review state instead of hiding text or inventing broad placeholder interpretation.
 
+## Social Friends Architecture
+
+Social friendship data is owned by Supabase. The browser is an RPC client and
+must not recreate authorization rules locally.
+
+```mermaid
+flowchart LR
+  account["Account\nhandle, privacy, chart sharing"]
+  friends["SocialFriendsPanel\nsearch, requests, circle, invitations"]
+  service["services/socialFriends.ts\nauthenticated RPCs + Realtime"]
+  database["Supabase migrations\nRLS, rate limits, canonical relationships"]
+  settings["BlockedAccountsSettings\nblock management"]
+  deletion["api/account.ts\nexport and permanent deletion"]
+
+  account --> service
+  friends --> service
+  settings --> service
+  service --> database
+  deletion --> database
+```
+
+Primary ownership:
+
+- `apps/web/src/features/friends/SocialFriendsPanel.tsx`: Friends-page state
+  and interaction UI.
+- `apps/web/src/services/socialFriends.ts`: typed Social RPC calls, invitation
+  URL handling, and Realtime subscription.
+- `apps/web/src/App.tsx`: account privacy/sharing orchestration, request count
+  in global navigation, invitation capture, and account-level settings.
+- `apps/web/src/features/settings/BlockedAccountsSettings.tsx`: the dedicated
+  blocked-accounts screen.
+- `apps/web/supabase/migrations/20260725190000_social_handles_friendships.sql`
+  through
+  `20260726123000_social_invitation_management.sql`: the cumulative database
+  contract. Apply every migration in timestamp order; later files replace some
+  earlier RPC definitions.
+- `apps/web/supabase/tests/social_friend_authorization.sql`: rollback-only
+  cross-user authorization test.
+- `scripts/test-social-friends-contract.mjs`: static contract covering the
+  complete migration and UI wiring.
+
+The invariants that must survive future changes are:
+
+1. A handle is unique case-insensitively, normalized at the database boundary,
+   and changeable only from Account. `@tldrastro` requires the trusted admin
+   app role.
+2. Private accounts are absent from discovery, even for an exact handle.
+   Search is authenticated, bounded, and rate-limited.
+3. A stranger may see only minimal social identity and Sun sign. Moon, Rising,
+   birth inputs, and the natal chart are not discovery data.
+4. A request does not grant chart access. Access begins only after acceptance
+   creates one canonical mutual friendship row.
+5. Each side controls sharing of its own chart. A paused chart must be returned
+   as `null` to the other member, not merely hidden by React.
+6. Remove, block, and account deletion must revoke access in SQL immediately.
+   Making an account private affects discovery but preserves accepted friends.
+   UI state is not an authorization boundary.
+7. Email/phone invitations are contact-bound and single-use. Store only contact
+   and token hashes. The current beta opens `mailto:` or `sms:`; there is no
+   server-side delivery provider.
+8. Realtime is an enhancement, not the only consistency path. Keep the
+   focus-refresh fallback.
+
+Run the Social gates from the monorepo root:
+
+```bash
+npm run qa:database-friends
+node scripts/test-social-friends-contract.mjs
+npm run typecheck
+npm run build:web
+```
+
+For a database-backed authorization run, execute
+`apps/web/supabase/tests/social_friend_authorization.sql` against a seeded test
+database. It wraps all mutations in a transaction and rolls back.
+
+Release order matters:
+
+1. Apply all committed Supabase migrations first.
+2. Confirm `social_friend_requests`, `social_friendships`, and
+   `social_notifications` are in the `supabase_realtime` publication.
+3. Deploy the matching frontend commit.
+4. Smoke-test search, request/accept, sharing pause/resume, remove, block, and
+   an invitation with two authenticated sessions.
+
 ## Common Commands
 
 ```bash

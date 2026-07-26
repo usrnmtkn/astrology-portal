@@ -1,12 +1,14 @@
-# Astrology Portal
+# TLDR Astro Web
 
-A starter astrology website and member portal.
+The production TLDR Astro website and member portal.
 
 ## Current scope
 
 - Guest daily current-sky dashboard by location
 - Supabase-backed account signup/sign-in UI for Google and email/password
 - Logged-in profile page with saved starter charts
+- Social handles, private-account discovery controls, consent-based friend
+  requests, shared friend charts, blocking, and contact-bound invitations
 - Swiss Ephemeris current-sky calculations with deterministic fallback data
 - Mock writing adapter that can be replaced with the supplied house style
 
@@ -49,12 +51,91 @@ If Google shows `Access blocked: Authorization Error` with `Error 401: deleted_c
 - Calculation API client: `src/services/tldrastroApi.ts`
 - Horoscope generation and writing style: `src/services/horoscopes.ts`
 - Account/auth behavior: `src/services/auth.ts`
+- Social RPCs and Realtime: `src/services/socialFriends.ts`
+- Friends experience: `src/features/friends/SocialFriendsPanel.tsx`
+- Block management: `src/features/settings/BlockedAccountsSettings.tsx`
 - Knowledge and voice content: `src/content/registry.ts`
 
 The browser ephemeris still supports current-sky UI. The FastAPI calculation
 service owns serious natal, timing, synastry, composite, and relationship compare
 responses. Start it from `services/tldrastro-api` and set
 `VITE_TLDRASTRO_API_URL` before calling the client helpers.
+
+## Social Feature Contract
+
+The Social feature uses account friendships; it is separate from manually
+entered Charts:
+
+- **Circle** contains accepted account friends.
+- **Charts** contains birth details the signed-in member entered manually and
+  remains private to that member.
+- **Requests** contains incoming requests only and appears only when its count
+  is greater than zero. The same count badges the global Friends navigation
+  item.
+- Search temporarily replaces the active tab's content. Clearing search
+  restores the previous tab.
+
+Search is live after two characters with a 180 ms debounce. Results are ranked
+by exact handle, handle prefix, full-name prefix, token prefix, and small token
+edit distance. The database, not the component, excludes private and blocked
+accounts and applies per-account rate limits.
+
+A pre-friend result may contain avatar, display name, handle, and Sun sign.
+Moon, Rising, exact birth data, and natal chart JSON are not part of discovery.
+After acceptance, a friend's photo and shared chart can be shown. Each member
+can pause their own chart independently; the friend receives a `null` chart
+from the Social RPC while sharing is paused.
+
+The request state machine is:
+
+```text
+none -> pending -> accepted -> friendship
+                 -> declined
+     -> cancelled
+```
+
+Opposite-direction simultaneous requests resolve at the database boundary and
+must not create duplicate pending rows or duplicate friendships. Removing a
+friend deletes the friendship. Blocking additionally cancels requests, hides
+both accounts from each other, and prevents new discovery or sharing until
+unblocked.
+
+`subscribeToSocialChanges` listens for request, friendship, and notification
+changes through Supabase Realtime. Do not remove the window-focus refresh:
+Realtime can disconnect and focus refresh is the recovery path.
+
+### Invitations
+
+Email/phone invitations create a 30-day private link:
+
+1. The inviter enters an email address or E.164 phone number.
+2. Supabase stores a SHA-256 contact hash, token digest, and masked contact
+   hint. Raw contacts and raw tokens are not persisted.
+3. The browser opens the member's email or Messages app, or lets them copy the
+   link. The app does not send the message server-side.
+4. The recipient signs in with the invited verified email or phone.
+5. The recipient previews and accepts or declines the invitation.
+6. Acceptance creates or reuses one canonical friendship and consumes the
+   invitation.
+
+Keep the invitation token in the URL only long enough to capture it into
+session storage. Never log it, put it in analytics, or persist it in local
+storage.
+
+### Social QA
+
+Run from the monorepo root:
+
+```bash
+npm run qa:database-friends
+node scripts/test-social-friends-contract.mjs
+npm run typecheck
+npm run build:web
+```
+
+The path-scoped workflow is
+`.github/workflows/social-friends-security.yml`. Set the repository secret
+`SUPABASE_TEST_DB_URL` to enable its rollback-only cross-user database job.
 
 ## Knowledge Base Integration
 

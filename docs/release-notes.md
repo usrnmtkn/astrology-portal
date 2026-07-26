@@ -1,5 +1,72 @@
 # Release Notes
 
+## 2026-07-26: Beta Social Friends
+
+### Friends Experience
+
+- Rebuilt the Friends page as one persistent panel with live search, Circle,
+  Charts, and a conditional Requests tab.
+- Added unique social handles, account profile photos, and a single person-row
+  pattern for search results, requests, and accepted friends.
+- Added an empty-Circle invitation CTA and kept manually entered charts
+  separate from account friendships.
+- Added friend profile and compatibility views using the accepted friend's
+  shared chart.
+
+### Discovery And Consent
+
+- Search supports names and `@handles`, ranks exact handles and name prefixes
+  first, tolerates small spelling differences, and is rate-limited.
+- Private accounts never appear in search, including exact-handle searches.
+- Before friendship, discovery exposes only minimal identity and the Sun sign.
+  Moon, Rising, birth details, and natal chart data remain private.
+- Friend requests require acceptance before either account receives chart
+  access. The Requests tab appears only when the signed-in member has an
+  incoming request.
+- `@tldrastro` is reserved for an account with the trusted admin app role.
+
+### Sharing And Safety
+
+- Accepted friends can independently pause or resume sharing their own chart
+  without removing the friendship.
+- Each friend row reports both sharing directions: the signed-in member's chart
+  and the friend's chart.
+- Making an account private removes it from discovery without removing existing
+  accepted friends.
+- Removing, blocking, or deleting an account revokes access at the database
+  boundary.
+- Blocked accounts are managed one level below Settings rather than displayed
+  on the main Settings page.
+- Account export and permanent deletion include or remove the Social records
+  owned by the account.
+
+### Requests, Realtime, And Invitations
+
+- Friend requests, friendships, and acceptance notifications update through
+  Supabase Realtime. Window-focus refresh remains a recovery path.
+- Members can cancel outgoing requests, see request timing, dismiss acceptance
+  notifications, and undo reversible UI actions.
+- Email and phone invitations use a contact-bound, single-use private link that
+  expires after 30 days.
+- Invitation contacts and tokens are stored only as hashes; the inviter sees a
+  masked contact hint.
+- The web app opens the member's email or Messages app with the invitation
+  text. TLDR Astro does not send email or SMS from a backend provider in this
+  release.
+
+### QA And Production
+
+- Added the Social contract suite and rollback-only cross-user authorization
+  test covering search privacy, simultaneous requests, acceptance, sharing
+  changes, cancellation, blocking, invitations, and account deletion.
+- Added a path-scoped GitHub Actions workflow for Social security, typecheck,
+  production build, and optional database authorization testing.
+- Applied and verified the production Supabase schema and Realtime
+  publications through
+  `20260726123000_social_invitation_management.sql`.
+- Deployed beta commit `d53cf796` to
+  `https://tldrastro.vercel.app`.
+
 ## 2026-07-15: Whole Sign Houses And Global Timezones
 
 ### Content Stability
