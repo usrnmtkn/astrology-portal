@@ -81,6 +81,10 @@ assert.match(topperCalibrationRoute, /target\.provider !== "openai"/);
 assert.match(topperCalibrationRoute, /target\.model !== "gpt-4\.1"/);
 assert.match(topperCalibrationRoute, /target\.temperature !== 0\.1/);
 assert.match(topperCalibrationRoute, /samples: 5/);
+assert.match(topperCalibrationRoute, /status: "eq\.LIVE"/);
+assert.match(topperCalibrationRoute, /judge_score === 3/);
+assert.match(topperCalibrationRoute, /skyPlacementVoiceLint/);
+assert.match(topperCalibrationRoute, /baseText: base\.body/);
 assert.match(topperCalibrationRoute, /database: false/);
 assert.match(topperCalibrationRoute, /enableFlag: false/);
 
