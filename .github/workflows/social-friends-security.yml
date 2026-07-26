@@ -1,0 +1,51 @@
+name: Social friends security
+
+on:
+  pull_request:
+    paths:
+      - "api/account.ts"
+      - "apps/web/src/features/friends/**"
+      - "apps/web/src/services/auth.ts"
+      - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/supabase/**"
+      - "scripts/test-social-friends-contract.mjs"
+      - ".github/workflows/social-friends-security.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "api/account.ts"
+      - "apps/web/src/features/friends/**"
+      - "apps/web/src/services/auth.ts"
+      - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/supabase/**"
+      - "scripts/test-social-friends-contract.mjs"
+
+jobs:
+  social-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/test-social-friends-contract.mjs
+      - run: npm run typecheck
+      - run: npm run build:web
+
+  database-authorization:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_TEST_DB_URL: ${{ secrets.SUPABASE_TEST_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run rollback-only cross-user authorization test
+        if: env.SUPABASE_TEST_DB_URL != ''
+        run: psql "$SUPABASE_TEST_DB_URL" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
+      - name: Explain missing test database
+        if: env.SUPABASE_TEST_DB_URL == ''
+        run: echo "Set SUPABASE_TEST_DB_URL to enable the rollback-only cross-user database gate."

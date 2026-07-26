@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Download,
   Eye,
   EyeOff,
   LogOut,
@@ -17,6 +18,7 @@ import {
   Sparkles,
   Star,
   Sun,
+  Trash2,
   User,
   X,
 } from "lucide-react";
@@ -81,6 +83,7 @@ import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
+import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
@@ -104,6 +107,7 @@ import {
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
 import {
+  deleteOwnAccount,
   getAuthAccount,
   isAuthConfigured,
   loadPersistedProfile,
@@ -149,7 +153,6 @@ import {
   natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
-  skyAspectContentKey,
   skyAspectInstanceContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
@@ -164,6 +167,22 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import {
+  captureSocialInvitationFromUrl,
+  claimPendingSocialInvitation,
+  exportSocialAccountBundle,
+  isSocialFriendChart,
+  listSocialFriendRequests,
+  loadOwnSocialProfile,
+  normalizeSocialHandle,
+  saveSocialHandle,
+  saveSocialPrivacy,
+  socialHandleIsValid,
+  socialFriendToChart,
+  subscribeToSocialChanges,
+  syncOwnSocialProfile
+} from "./services/socialFriends";
+import type { ConnectedSocialFriend, SocialProfile } from "./services/socialFriends";
 import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
@@ -340,8 +359,9 @@ type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
 type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 type NatalChartViewMode = "circle" | "table";
-type FriendsMainView = "circle" | "charts" | "profile";
+type FriendsMainView = "circle" | "charts" | "requests" | "profile";
 type FriendsTab = Exclude<FriendsMainView, "profile">;
+type SettingsSubpage = "root" | "blocked-accounts";
 
 type FriendTimingContext = {
   age: number | null;
@@ -568,6 +588,8 @@ type SkyDetail = {
   };
   historicalLookback?: SkyHistoricalLookback | null;
   astrologyDrilldown?: GeneratedContentDrilldown | null;
+  seriesLine?: string | null;
+  mechanicsCaption?: string | null;
   content?: ContentBundle;
 };
 
@@ -2073,14 +2095,15 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
-const friendsTabs: FriendsTab[] = ["circle", "charts"];
+const friendsTabs: FriendsTab[] = ["circle", "charts", "requests"];
+const settingsRouteChangeEvent = "tldr:settings-route-change";
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
 }
 
 function parseFriendsTab(value: string | null): FriendsTab {
-  return value === "charts" || value === "circle" ? value : "circle";
+  return value === "charts" || value === "requests" || value === "circle" ? value : "circle";
 }
 
 function parseFriendProfileTab(value: string | null): FriendProfileTab {
@@ -2092,6 +2115,37 @@ function friendsHashParts(hash: string) {
   const [path = "", query = ""] = cleanHash.split("?");
 
   return { path, params: new URLSearchParams(query) };
+}
+
+function settingsSubpageFromUrl(): SettingsSubpage {
+  try {
+    const url = new URL(window.location.href);
+    const { path, params } = friendsHashParts(url.hash);
+
+    return path === "settings" && params.get("view") === "blocked-accounts"
+      ? "blocked-accounts"
+      : "root";
+  } catch {
+    return "root";
+  }
+}
+
+function updateSettingsSubpageUrl(
+  subpage: SettingsSubpage,
+  mode: "push" | "replace" = "push"
+) {
+  try {
+    const url = new URL(window.location.href);
+
+    url.hash = subpage === "blocked-accounts"
+      ? "settings?view=blocked-accounts"
+      : "settings";
+
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+    window.dispatchEvent(new Event(settingsRouteChangeEvent));
+  } catch {
+    // Nested Settings routing is an enhancement; local navigation still works.
+  }
 }
 
 function friendsRouteStateFromUrl() {
@@ -2226,6 +2280,9 @@ function updatePortalModeUrl(nextMode: PortalMode, mode: "push" | "replace" = "p
     url.hash = portalHashForMode(nextMode);
 
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+    if (nextMode === "settings") {
+      window.dispatchEvent(new Event(settingsRouteChangeEvent));
+    }
   } catch {
     // URL state is an enhancement; keep navigation usable if history is unavailable.
   }
@@ -3622,6 +3679,10 @@ function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot):
 }
 
 function manualChartSubtitle(chart: ManualChart) {
+  if (isSocialFriendChart(chart)) {
+    return `${chart.notes ?? "Connected friend"} · Connected friend`;
+  }
+
   const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
   const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
 
@@ -4871,6 +4932,17 @@ function SkyDetailArticle({
                   ) : null}
                 </>
               )}
+              {detail.seriesLine ? (
+                <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
+                  <p>{detail.seriesLine}</p>
+                </aside>
+              ) : null}
+              {detail.mechanicsCaption ? (
+                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-label="What this looks like in space">
+                  <h3>What this looks like in space</h3>
+                  <p>{detail.mechanicsCaption}</p>
+                </aside>
+              ) : null}
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
@@ -5299,62 +5371,150 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function skyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[],
-  generatedAt?: string
-): NormalizedSkyAspectSection | null {
-  const normalizedAspect = normalizeFallbackV3Aspect(aspect.type);
+const collectiveSkyAspectBodyOrder = [
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+];
 
-  if (!normalizedAspect) {
+function normalizedCollectiveSkyAspectFacts(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+) {
+  const from = normalizeContentIdPart(aspect.from);
+  const to = normalizeContentIdPart(aspect.to);
+  const fromIndex = collectiveSkyAspectBodyOrder.indexOf(from);
+  const toIndex = collectiveSkyAspectBodyOrder.indexOf(to);
+  const fromPosition = skyAspectPosition(aspect.from, positions);
+  const toPosition = skyAspectPosition(aspect.to, positions);
+
+  if (
+    fromIndex < 0
+    || toIndex < 0
+    || fromIndex === toIndex
+    || !["conjunction", "sextile", "square", "trine", "opposition"].includes(normalizeContentIdPart(aspect.type))
+    || !fromPosition?.sign
+    || !toPosition?.sign
+  ) {
     return null;
   }
 
-  const firstPosition = skyAspectPosition(aspect.from, positions);
-  const secondPosition = skyAspectPosition(aspect.to, positions);
-  const firstSign = firstPosition?.sign ?? undefined;
-  const secondSign = secondPosition?.sign ?? undefined;
-  const targetDate = generatedAt ? generatedAt.slice(0, 10) : undefined;
+  return fromIndex < toIndex
+    ? {
+        a: from,
+        b: to,
+        aspect: normalizeContentIdPart(aspect.type),
+        signA: normalizeContentIdPart(fromPosition.sign),
+        signB: normalizeContentIdPart(toPosition.sign),
+        pairKey: `${from}-${to}`,
+        pairSource: `data/pairs/${from}-${to}.json`
+      }
+    : {
+        a: to,
+        b: from,
+        aspect: normalizeContentIdPart(aspect.type),
+        signA: normalizeContentIdPart(toPosition.sign),
+        signB: normalizeContentIdPart(fromPosition.sign),
+        pairKey: `${to}-${from}`,
+        pairSource: `data/pairs/${to}-${from}.json`
+      };
+}
 
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizedAspect,
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n").trim();
+function recordField(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
 
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
+function generatedSkyAspectCardPassesBoundary(
+  content: LiveGeneratedContent,
+  expected: NonNullable<ReturnType<typeof normalizedCollectiveSkyAspectFacts>>
+) {
+  const source = content.sourceSnapshot ?? {};
+  const lint = recordField(source.skyAspectVoiceLint);
+  const facts = recordField(source.cardFacts);
+  const body = generatedContentParagraphs(content).join("\n\n").trim();
+  const containsMechanics = /\b(?:orb|degrees?)\b|°/i.test(body);
+  const containsDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(body);
+  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
 
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
-      sourceKeys: [
-        "tldrastro-fallback-architecture-v3",
-        rendered.templateKey,
-        skyAspectContentKey(aspect.from, aspect.type, aspect.to),
-        skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
-          firstSign,
-          secondSign,
-          targetDate
-        })
-      ].filter(Boolean),
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
+  return Boolean(
+    body
+    && isReaderFacingCopy(body)
+    && !containsMechanics
+    && !containsDate
+    && !containsInternalMetadata
+    && lint?.score === 3
+    && lint?.fails === 0
+    && content.judgeScore === 3
+    && content.judgeGate === "auto-publish"
+    && source.pairSource === expected.pairSource
+    && source.pairKey === expected.pairKey
+    && facts?.a === expected.a
+    && facts?.b === expected.b
+    && facts?.aspect === expected.aspect
+    && facts?.signA === expected.signA
+    && facts?.signB === expected.signB
+  );
+}
 
-    throw error;
+function generatedSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  generatedContent?: GeneratedContentMap,
+  positions?: PlanetPosition[],
+  generatedAt?: string
+): NormalizedSkyAspectSection | null {
+  if (!generatedContent) {
+    return null;
   }
+
+  const expected = normalizedCollectiveSkyAspectFacts(aspect, positions);
+
+  if (!expected) {
+    return null;
+  }
+
+  const targetDate = generatedAt?.slice(0, 10);
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const evergreenKey = skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+    firstSign,
+    secondSign
+  });
+  const datedKey = targetDate
+    ? skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+        firstSign,
+        secondSign,
+        targetDate
+      })
+    : "";
+  const content = [evergreenKey, datedKey]
+    .filter(Boolean)
+    .map((key) => liveGeneratedContent(generatedContent, key))
+    .find((candidate): candidate is LiveGeneratedContent => Boolean(
+      candidate && generatedSkyAspectCardPassesBoundary(candidate, expected)
+    ));
+
+  if (!content) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "generated-sky-aspect-lint-v1",
+    sourceKeys: [content.contentKey, expected.pairSource],
+    heading: content.headline || skyAspectDisplayTitle(aspect),
+    body: generatedContentParagraphs(content).join("\n\n").trim()
+  };
 }
 
 type SkyWritingAspectBeat = {
@@ -5370,15 +5530,44 @@ function normalizeSkyAspectSurface(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
-  void generatedContent;
-  const fallbackSection = skyAspectWritingSection(aspect, positions, generatedAt);
-  const sections = fallbackSection ? [fallbackSection] : [];
+  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const sections = generatedSection ? [generatedSection] : [];
 
   return {
     surface: "sky-aspect",
-    status: fallbackSection ? (fallbackSection.layer === "authored" ? "servable" : "partial") : "not-servable",
+    status: generatedSection ? "servable" : "not-servable",
     sections
   };
+}
+
+function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number]) {
+  const series = aspect.series;
+
+  if (!series || series.count < 2 || series.index < 1 || series.index > series.count || !series.throughLabel.trim()) {
+    return null;
+  }
+
+  return `The ${ordinalHouse(series.index)} of ${series.count} passes, running through ${series.throughLabel.trim()}.`;
+}
+
+function skyAspectMechanicsCaption(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+) {
+  const first = skyAspectPosition(aspect.from, positions);
+  const second = skyAspectPosition(aspect.to, positions);
+
+  if (!first || !second) {
+    return null;
+  }
+
+  const separation = typeof aspect.separation === "number"
+    ? `${aspect.separation.toFixed(1)}° apart`
+    : `${wholeDegreeOrb(aspect.orb)} orb`;
+  const firstTheme = first.theme?.trim() || natalPointTheme(first.planet);
+  const secondTheme = second.theme?.trim() || natalPointTheme(second.planet);
+
+  return `${first.planet} is at ${formatPlanetDegree(first)} ${first.sign}; ${second.planet} is at ${formatPlanetDegree(second)} ${second.sign}. They form a ${aspect.type} (${separation}). ${first.planet} stands for ${firstTheme}; ${second.planet} stands for ${secondTheme}.`;
 }
 
 function currentSkyAspectDetailArticle(
@@ -5403,6 +5592,8 @@ function currentSkyAspectDetailArticle(
     subtitle: "",
     suppressTldr: true,
     body,
+    seriesLine: skyAspectSeriesLine(aspect),
+    mechanicsCaption: skyAspectMechanicsCaption(aspect, positions),
     sections: [],
     historicalLookback,
     astrologyDrilldown: null
@@ -10888,15 +11079,15 @@ const SkyRoute = lazy(() =>
   }))
 );
 
-const FriendCircleFeed = lazy(() =>
-  import("./features/friends/FriendCircleFeed").then((module) => ({
-    default: module.FriendCircleFeed
-  }))
-);
-
 const FriendChartsList = lazy(() =>
   import("./features/friends/FriendChartsList").then((module) => ({
     default: module.FriendChartsList
+  }))
+);
+
+const SocialFriendsPanel = lazy(() =>
+  import("./features/friends/SocialFriendsPanel").then((module) => ({
+    default: module.SocialFriendsPanel
   }))
 );
 
@@ -11053,12 +11244,16 @@ export function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
   const [remoteAccountId, setRemoteAccountId] = useState<string | null>(null);
   const [remoteProfileReady, setRemoteProfileReady] = useState(false);
+  const [ownSocialProfile, setOwnSocialProfile] = useState<SocialProfile | null>(null);
+  const [pendingFriendRequestCount, setPendingFriendRequestCount] = useState(0);
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
+  const [chartModalSaving, setChartModalSaving] = useState(false);
+  const [chartModalMessage, setChartModalMessage] = useState("");
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
@@ -11071,6 +11266,7 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
+  const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey) ?? readMostRecentCachedSkySnapshot();
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -11100,6 +11296,59 @@ export function App() {
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
+
+  useEffect(() => {
+    captureSocialInvitationFromUrl();
+  }, []);
+
+  useEffect(() => {
+    if (!userProfile || !remoteAccountId || !remoteProfileReady) {
+      return;
+    }
+
+    void claimPendingSocialInvitation()
+      .then((result) => {
+        if (result?.request_status === "pending") {
+          setPendingFriendRequestCount((current) => Math.max(1, current));
+        }
+      })
+      .catch((error) => {
+        console.warn("Social invitation could not be claimed yet.", error);
+      });
+  }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
+
+  useEffect(() => {
+    if (!userProfile || !remoteAccountId || !remoteProfileReady) {
+      setPendingFriendRequestCount(0);
+      return;
+    }
+
+    let cancelled = false;
+
+    function refreshPendingFriendRequests() {
+      void listSocialFriendRequests()
+        .then((requests) => {
+          if (!cancelled) {
+            setPendingFriendRequestCount(
+              requests.filter((request) => request.direction === "incoming").length
+            );
+          }
+        })
+        .catch(() => {
+          // Keep the last successful count while auth or the network reconnects.
+        });
+    }
+
+    refreshPendingFriendRequests();
+    window.addEventListener("focus", refreshPendingFriendRequests);
+    const unsubscribeFromSocialChanges = subscribeToSocialChanges(refreshPendingFriendRequests);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("focus", refreshPendingFriendRequests);
+      unsubscribeFromSocialChanges();
+    };
+  }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   function openSkyDetail(detail: SkyDetail) {
     setSelectedSkyDetail(detail);
@@ -11938,6 +12187,52 @@ export function App() {
   ]);
 
   useEffect(() => {
+    if (!remoteAccountId || !remoteProfileReady || !userProfile) {
+      return;
+    }
+
+    let cancelled = false;
+    const socialProfileSnapshot = JSON.stringify({
+      accountId: remoteAccountId,
+      displayName: userProfile.name,
+      avatarUrl: userProfile.avatarUrl ?? null,
+      natalChart: profileNatalSky
+    });
+
+    if (socialProfileSnapshot === lastSocialProfileSaveRef.current) {
+      return;
+    }
+
+    lastSocialProfileSaveRef.current = socialProfileSnapshot;
+    syncOwnSocialProfile({
+      displayName: userProfile.name,
+      avatarUrl: userProfile.avatarUrl,
+      natalChart: profileNatalSky
+    })
+      .then((socialProfile) => {
+        if (!cancelled) {
+          setOwnSocialProfile(socialProfile);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          lastSocialProfileSaveRef.current = "";
+          console.warn("Social profile sync failed.", error);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    remoteAccountId,
+    remoteProfileReady,
+    userProfile?.name,
+    userProfile?.avatarUrl,
+    profileNatalSky
+  ]);
+
+  useEffect(() => {
     if (!userProfile) {
       return;
     }
@@ -12314,6 +12609,7 @@ export function App() {
       remoteProfileReadyRef.current = false;
       setRemoteAccountId(null);
       setRemoteProfileReady(false);
+      setOwnSocialProfile(null);
       lastRemoteProfileSaveRef.current = "";
       setMode(unauthenticatedLandingMode);
       setAuthAccountChecked(true);
@@ -12324,6 +12620,7 @@ export function App() {
     remoteProfileReadyRef.current = false;
     setRemoteAccountId(account.id);
     setRemoteProfileReady(false);
+    setOwnSocialProfile(null);
 
     const pendingForm = readPendingSignupForm();
     const cachedLocalProfile = getInitialUserProfile();
@@ -12583,6 +12880,8 @@ export function App() {
     step?: "overview" | "birth" | "city";
   } = {}) {
     setChartModalStep(step);
+    setChartModalMessage("");
+    setChartModalSaving(false);
 
     if (!prefill) {
       const blankForm = createBlankTransitForm();
@@ -12625,105 +12924,166 @@ export function App() {
     closeModal?: boolean;
     nextStep?: "overview" | "birth" | "city";
   } = {}) {
-    const currentCity = transitForm.currentLocation.trim();
-    let resolvedCurrentLocationData = transitForm.currentLocationData;
-    const nextBirthDate = formatSignupBirthDate({
-      month: transitForm.birthMonth,
-      day: transitForm.birthDay,
-      year: transitForm.birthYear
-    });
-    const nextBirthTime = transitForm.unknownBirthTime
-      ? "Time unknown"
-      : formatSignupBirthTime({
+    if (chartModalSaving) {
+      return;
+    }
+
+    setChartModalSaving(true);
+    setChartModalMessage("");
+
+    try {
+      const currentCity = transitForm.currentLocation.trim();
+      let resolvedCurrentLocationData = transitForm.currentLocationData;
+      const nextBirthDate = formatSignupBirthDate({
+        month: transitForm.birthMonth,
+        day: transitForm.birthDay,
+        year: transitForm.birthYear
+      });
+      const formattedBirthTime = formatSignupBirthTime({
         hour: transitForm.birthHour,
         minute: transitForm.birthMinute,
         meridiem: transitForm.birthMeridiem
-      }) || "Birth time needed";
-    const nextName = transitForm.name.trim();
-    const birthCity = transitForm.birthPlace.trim();
-    const birthLocation = birthCity
-      ? transitForm.birthLocation?.label === birthCity
-        ? transitForm.birthLocation.timeZone
-          ? transitForm.birthLocation
-          : null
-        : null
-      : null;
+      });
+      const nextBirthTime = transitForm.unknownBirthTime
+        ? "Time unknown"
+        : formattedBirthTime || "Birth time needed";
+      const nextName = transitForm.name.trim();
+      let birthCity = transitForm.birthPlace.trim();
+      let birthLocation = birthCity && transitForm.birthLocation?.label.trim().toLocaleLowerCase() === birthCity.toLocaleLowerCase()
+        ? withTimeZone(transitForm.birthLocation)
+        : null;
 
-    if (currentCity) {
-      const nextLocation = transitForm.currentLocationData?.label === currentCity
-        ? transitForm.currentLocationData
-        : locationFromLabel(currentCity);
-
-      resolvedCurrentLocationData = nextLocation;
-      setLocation(nextLocation);
-      setManualLocation(nextLocation.label);
-      setTransitForm((currentForm) => ({
-        ...currentForm,
-        currentLocation: nextLocation.label
-      }));
-      setHasLocationPreference(true);
-    }
-
-    if (userProfile) {
-      if (birthCity && !birthLocation) {
+      if (userProfile && !nextBirthDate) {
         setChartModalStep("birth");
+        setChartModalMessage("Enter a complete date of birth.");
         return;
       }
 
-      const primaryChart = userProfile.charts[0];
-      const nextProfileName = nextName || userProfile.name;
-      let nextChart: UserChart = {
-        id: primaryChart?.id ?? `chart-${Date.now()}`,
-        name: chartNameFromProfile(nextProfileName),
-        type: "Birth chart",
-        birthDate: nextBirthDate || "Birth date needed",
-        birthTime: nextBirthTime,
-        birthCity: birthCity || "Birth city needed",
-        birthLocation
-      };
-      let nextSun = nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : userProfile.sun;
-      let nextMoon = userProfile.moon;
-      let nextRising = transitForm.unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : userProfile.rising;
-
-      if (nextBirthDate && birthLocation && nextBirthTime !== "Birth time needed") {
-        const birthDateTime = zonedDateTimeToUtc(
-          nextBirthDate,
-          transitForm.unknownBirthTime ? "12:00 PM" : nextBirthTime,
-          birthLocation.timeZone
-        );
-        const natalSky = await getAstrodienstSky(birthLocation, birthDateTime);
-        const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
-        const nextTransits = sky
-          ? rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees)
-          : [];
-
-        nextSun = natalBigThree.sun;
-        nextMoon = natalBigThree.moon;
-        nextRising = natalBigThree.rising;
-        nextChart = { ...nextChart, birthLocation: birthLocation };
-        setProfileTransits(nextTransits);
-        setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
+      if (userProfile && !transitForm.unknownBirthTime && !formattedBirthTime) {
+        setChartModalStep("birth");
+        setChartModalMessage("Enter a complete birth time, or choose “I don’t know my birth time.”");
+        return;
       }
 
-      setUserProfile({
-        ...userProfile,
-        name: nextProfileName,
-        sun: nextSun,
-        moon: nextMoon,
-        rising: nextRising,
-        currentLocation: currentCity || userProfile.currentLocation,
-        currentLocationData: resolvedCurrentLocationData ?? userProfile.currentLocationData,
-        settings: normalizeChartSettings(userProfile.settings),
-        charts: [nextChart, ...userProfile.charts.slice(1)]
-      });
-    }
+      if (userProfile && !birthCity) {
+        setChartModalStep("birth");
+        setChartModalMessage("Enter a birth place.");
+        return;
+      }
 
-    setTransitsDrawn(true);
-    setChartModalOpen(!closeModal);
-    if (nextStep) {
-      setChartModalStep(nextStep);
+      if (userProfile && birthCity && !birthLocation) {
+        try {
+          const suggestions = await searchCities(birthCity);
+          const normalizedBirthCity = birthCity.toLocaleLowerCase();
+          const suggestion = suggestions.find(({ label }) => label.trim().toLocaleLowerCase() === normalizedBirthCity) ?? suggestions[0];
+
+          if (suggestion) {
+            birthLocation = withTimeZone(suggestion);
+            birthCity = suggestion.label;
+            setTransitForm((currentForm) => ({
+              ...currentForm,
+              birthPlace: suggestion.label,
+              birthLocation
+            }));
+          }
+        } catch {
+          // The actionable location message below is more useful than a provider error.
+        }
+      }
+
+      if (userProfile && !birthLocation) {
+        setChartModalStep("birth");
+        setChartModalMessage("Choose a birth place from the suggestions so we can save its location.");
+        return;
+      }
+
+      if (currentCity) {
+        const nextLocation = transitForm.currentLocationData?.label === currentCity
+          ? transitForm.currentLocationData
+          : locationFromLabel(currentCity);
+
+        resolvedCurrentLocationData = nextLocation;
+        setLocation(nextLocation);
+        setManualLocation(nextLocation.label);
+        setTransitForm((currentForm) => ({
+          ...currentForm,
+          currentLocation: nextLocation.label
+        }));
+        setHasLocationPreference(true);
+      }
+
+      let chartCalculationFailed = false;
+
+      if (userProfile) {
+        if (!birthLocation) {
+          setChartModalStep("birth");
+          setChartModalMessage("Choose a birth place from the suggestions so we can save its location.");
+          return;
+        }
+
+        const resolvedBirthLocation = birthLocation;
+        const primaryChart = userProfile.charts[0];
+        const nextProfileName = nextName || userProfile.name;
+        let nextChart: UserChart = {
+          id: primaryChart?.id ?? `chart-${Date.now()}`,
+          name: chartNameFromProfile(nextProfileName),
+          type: "Birth chart",
+          birthDate: nextBirthDate,
+          birthTime: nextBirthTime,
+          birthCity,
+          birthLocation: resolvedBirthLocation
+        };
+        let nextSun = zodiacFromBirthDate(nextBirthDate);
+        let nextMoon = userProfile.moon;
+        let nextRising = transitForm.unknownBirthTime ? "Rising pending" : userProfile.rising;
+
+        try {
+          const birthDateTime = zonedDateTimeToUtc(
+            nextBirthDate,
+            transitForm.unknownBirthTime ? "12:00 PM" : nextBirthTime,
+            resolvedBirthLocation.timeZone
+          );
+          const natalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
+          const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
+          const nextTransits = sky
+            ? rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees)
+            : [];
+
+          nextSun = natalBigThree.sun;
+          nextMoon = natalBigThree.moon;
+          nextRising = natalBigThree.rising;
+          nextChart = { ...nextChart, birthLocation: resolvedBirthLocation };
+          setProfileTransits(nextTransits);
+          setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
+        } catch {
+          chartCalculationFailed = true;
+        }
+
+        setUserProfile({
+          ...userProfile,
+          name: nextProfileName,
+          sun: nextSun,
+          moon: nextMoon,
+          rising: nextRising,
+          currentLocation: currentCity || userProfile.currentLocation,
+          currentLocationData: resolvedCurrentLocationData ?? userProfile.currentLocationData,
+          settings: normalizeChartSettings(userProfile.settings),
+          charts: [nextChart, ...userProfile.charts.slice(1)]
+        });
+      }
+
+      setTransitsDrawn(true);
+      setChartModalOpen(!closeModal);
+      setChartModalMessage(chartCalculationFailed
+        ? "Birth details saved. Chart calculations will retry automatically."
+        : "Birth details saved.");
+      if (nextStep) {
+        setChartModalStep(nextStep);
+      }
+      navigateToPortalMode(userProfile ? "profile" : "guest");
+    } finally {
+      setChartModalSaving(false);
     }
-    navigateToPortalMode(userProfile ? "profile" : "guest");
   }
 
   const isTodayMode = mode === "guest" || mode === "member";
@@ -12801,10 +13161,16 @@ export function App() {
                   <button
                     className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
                     type="button"
+                    aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
                     onClick={navigateToFriends}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
+                    {pendingFriendRequestCount > 0 && (
+                      <span className="friends-nav-badge" aria-hidden="true">
+                        {pendingFriendRequestCount > 9 ? "9+" : pendingFriendRequestCount}
+                      </span>
+                    )}
                   </button>
                 </>
               )}
@@ -12949,9 +13315,20 @@ export function App() {
                     <SmileNavIcon />
                     <span>You</span>
                   </button>
-                  <button className={`site-menu-friends ${mode === "friends" ? "active" : ""}`} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}>
+                  <button
+                    className={`site-menu-friends ${mode === "friends" ? "active" : ""}`}
+                    type="button"
+                    role="menuitem"
+                    aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
+                    onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}
+                  >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
+                    {pendingFriendRequestCount > 0 && (
+                      <span className="friends-nav-badge friends-nav-badge-menu" aria-hidden="true">
+                        {pendingFriendRequestCount > 9 ? "9+" : pendingFriendRequestCount}
+                      </span>
+                    )}
                   </button>
                   <button className={mode === "account" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
                     <User size={20} aria-hidden="true" />
@@ -13182,6 +13559,7 @@ export function App() {
                   {userProfile ? (
                     <ProfileView
                       profile={userProfile}
+                      profileHandle={ownSocialProfile?.handle}
                       onUpdateProfile={setUserProfile}
                       transitForm={transitForm}
                       transitItems={activeTransits}
@@ -13231,6 +13609,7 @@ export function App() {
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
                     allowCachedChartsWhileLoading={!isAuthConfigured}
+                    onPendingRequestCountChange={setPendingFriendRequestCount}
                     onOpenDetail={openSkyDetail}
                   />
                 </FriendsRoute>
@@ -13238,9 +13617,16 @@ export function App() {
               {mode === "account" && userProfile && (
                 <AccountView
                   profile={userProfile}
+                  onSocialProfileChange={setOwnSocialProfile}
+                  onAccountDeleted={() => {
+                    setUserProfile(null);
+                    setOwnSocialProfile(null);
+                    navigateToPortalMode("profile");
+                  }}
                   onSignOut={async () => {
                     await signOutAuth();
                     setUserProfile(null);
+                    setOwnSocialProfile(null);
                     navigateToPortalMode("profile");
                   }}
                   onUpdateProfile={setUserProfile}
@@ -13333,9 +13719,20 @@ export function App() {
               panelClassName="chart-modal"
               titleId="chart-modal-title"
               width="640px"
-              onClose={() => setChartModalOpen(false)}
+              onClose={() => {
+                setChartModalOpen(false);
+                setChartModalMessage("");
+              }}
             >
-                <button className="chart-modal-close modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
+                <button
+                  className="chart-modal-close modal-close"
+                  type="button"
+                  aria-label="Close create chart"
+                  onClick={() => {
+                    setChartModalOpen(false);
+                    setChartModalMessage("");
+                  }}
+                >
                   ×
                 </button>
                 <CreateChartFlow
@@ -13344,6 +13741,8 @@ export function App() {
                   profile={userProfile}
                   step={chartModalStep}
                   setStep={setChartModalStep}
+                  saving={chartModalSaving}
+                  message={chartModalMessage}
                   onSave={drawTransitChart}
                 />
             </ModalPortal>
@@ -15090,6 +15489,8 @@ function CreateChartFlow({
   profile,
   step,
   setStep,
+  saving,
+  message,
   onSave
 }: {
   form: TransitForm;
@@ -15097,6 +15498,8 @@ function CreateChartFlow({
   profile: UserProfile | null;
   step: "overview" | "birth" | "city";
   setStep: (step: "overview" | "birth" | "city") => void;
+  saving: boolean;
+  message: string;
   onSave: (options?: { closeModal?: boolean; nextStep?: "overview" | "birth" | "city" }) => void | Promise<void>;
 }) {
   function updateField<Key extends keyof TransitForm>(key: Key, value: TransitForm[Key]) {
@@ -15148,6 +15551,8 @@ function CreateChartFlow({
           <p>Three quick steps to unlock your personalized sky.</p>
         </div>
 
+        {message && <p className="create-chart-message" role="status">{message}</p>}
+
         <div className="create-chart-steps" aria-label="Create your chart steps">
           {flowSteps.map((flowStep, index) => (
             <div
@@ -15196,7 +15601,10 @@ function CreateChartFlow({
           className="signup-city-search create-chart-city-search"
         />
 
-        <button className="signup-submit create-chart-save" type="submit">Save location</button>
+        {message && <p className="create-chart-message" role="status">{message}</p>}
+        <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
+          {saving ? "Saving…" : "Save location"}
+        </button>
       </form>
     );
   }
@@ -15315,7 +15723,10 @@ function CreateChartFlow({
         />
       </div>
 
-      <button className="signup-submit create-chart-save" type="submit">Save birth details</button>
+      {message && <p className="create-chart-message" role="status">{message}</p>}
+      <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
+        {saving ? "Saving…" : "Save birth details"}
+      </button>
     </form>
   );
 }
@@ -15776,8 +16187,25 @@ function SettingsView({
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
+  const [settingsSubpage, setSettingsSubpage] = useState<SettingsSubpage>(settingsSubpageFromUrl);
   const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
   const chartSettings = normalizeChartSettings(profile.settings);
+
+  useEffect(() => {
+    function syncSettingsRoute() {
+      setSettingsSubpage(settingsSubpageFromUrl());
+    }
+
+    window.addEventListener("popstate", syncSettingsRoute);
+    window.addEventListener("hashchange", syncSettingsRoute);
+    window.addEventListener(settingsRouteChangeEvent, syncSettingsRoute);
+
+    return () => {
+      window.removeEventListener("popstate", syncSettingsRoute);
+      window.removeEventListener("hashchange", syncSettingsRoute);
+      window.removeEventListener(settingsRouteChangeEvent, syncSettingsRoute);
+    };
+  }, []);
 
   function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
     onHouseSignLabelStyleChange(houseSignLabelStyle);
@@ -15818,6 +16246,17 @@ function SettingsView({
     setCurrentCity(nextLocation.label);
     setCurrentLocationData(nextLocation);
     setCurrentLocationEditing(false);
+  }
+
+  if (settingsSubpage === "blocked-accounts") {
+    return (
+      <BlockedAccountsSettings
+        onBack={() => {
+          updateSettingsSubpageUrl("root", "replace");
+          setSettingsSubpage("root");
+        }}
+      />
+    );
   }
 
   return (
@@ -15932,6 +16371,32 @@ function SettingsView({
             </div>
           </div>
         </section>
+
+        <section className="settings-group" aria-label="Security and restrictions">
+          <span className="settings-group-label">Security &amp; restrictions</span>
+          <div className="settings-card">
+            <div className="settings-list">
+              <button
+                className="settings-row settings-row-button"
+                type="button"
+                onClick={() => {
+                  updateSettingsSubpageUrl("blocked-accounts");
+                  setSettingsSubpage("blocked-accounts");
+                }}
+              >
+                <span className="settings-row-copy">
+                  <span className="settings-row-title">Blocked accounts</span>
+                  <small className="settings-row-description">
+                    Review and manage accounts you have blocked.
+                  </small>
+                </span>
+                <span className="settings-row__field">
+                  <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   );
@@ -16036,11 +16501,15 @@ function GuestSettingsView({
 
 function AccountView({
   profile,
+  onAccountDeleted,
   onSignOut,
+  onSocialProfileChange,
   onUpdateProfile
 }: {
   profile: UserProfile;
+  onAccountDeleted: () => void;
   onSignOut: () => void | Promise<void>;
+  onSocialProfileChange: (socialProfile: SocialProfile) => void;
   onUpdateProfile: (profile: UserProfile) => void;
 }) {
   const primaryChart = profile.charts[0];
@@ -16050,6 +16519,18 @@ function AccountView({
   const [draftBirthDate, setDraftBirthDate] = useState(savedBirthDate);
   const [draftBirthTime, setDraftBirthTime] = useState(savedBirthTime);
   const [draftBirthCity, setDraftBirthCity] = useState(savedBirthCity);
+  const [socialHandle, setSocialHandle] = useState<string | null>(null);
+  const [handleDraft, setHandleDraft] = useState("");
+  const [handleStatus, setHandleStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
+  const [handleEditing, setHandleEditing] = useState(false);
+  const [handleMessage, setHandleMessage] = useState("");
+  const [accountPrivate, setAccountPrivate] = useState(false);
+  const [privacyStatus, setPrivacyStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
+  const [privacyMessage, setPrivacyMessage] = useState("");
+  const [accountActionStatus, setAccountActionStatus] = useState<"idle" | "exporting" | "deleting">("idle");
+  const [accountActionMessage, setAccountActionMessage] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
   useEffect(() => {
     setDraftBirthDate(savedBirthDate);
@@ -16057,10 +16538,93 @@ function AccountView({
     setDraftBirthCity(savedBirthCity);
   }, [savedBirthDate, savedBirthTime, savedBirthCity]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    setHandleStatus("loading");
+    setHandleMessage("");
+
+    loadOwnSocialProfile()
+      .then((socialProfile) => {
+        if (cancelled) {
+          return;
+        }
+
+        const nextHandle = socialProfile?.handle ?? null;
+        setSocialHandle(nextHandle);
+        setHandleDraft(nextHandle ?? "");
+        setHandleStatus("ready");
+        setAccountPrivate(socialProfile?.isPrivate ?? false);
+        setPrivacyStatus("ready");
+        if (socialProfile) {
+          onSocialProfileChange(socialProfile);
+        }
+      })
+      .catch((error) => {
+        if (cancelled) {
+          return;
+        }
+
+        setHandleStatus("unavailable");
+        setPrivacyStatus("unavailable");
+        setHandleMessage(error instanceof Error ? error.message : "Could not load your handle.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [onSocialProfileChange, profile.id]);
+
   const birthDraftDirty =
     draftBirthDate !== savedBirthDate ||
     draftBirthTime !== savedBirthTime ||
     draftBirthCity !== savedBirthCity;
+  const normalizedHandleDraft = normalizeSocialHandle(handleDraft);
+  const handleDraftValid = socialHandleIsValid(normalizedHandleDraft);
+  const handleDraftDirty = normalizedHandleDraft !== (socialHandle ?? "");
+
+  const startHandleEdit = () => {
+    setHandleDraft(socialHandle ?? "");
+    setHandleEditing(true);
+    setHandleMessage("");
+  };
+
+  const cancelHandleEdit = () => {
+    setHandleDraft(socialHandle ?? "");
+    setHandleEditing(false);
+    setHandleMessage("");
+  };
+
+  const saveHandle = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!handleDraftValid) {
+      setHandleMessage("Use 3–24 characters, starting with a letter. Letters, numbers, and underscores only.");
+      return;
+    }
+
+    setHandleStatus("saving");
+    setHandleMessage("");
+
+    try {
+      const savedProfile = await saveSocialHandle({
+        handle: normalizedHandleDraft,
+        displayName: profile.name,
+        avatarUrl: profile.avatarUrl
+      });
+      const nextHandle = savedProfile.handle ?? normalizedHandleDraft;
+
+      setSocialHandle(nextHandle);
+      setHandleDraft(nextHandle);
+      setHandleEditing(false);
+      setHandleStatus("ready");
+      setHandleMessage(`Handle updated to @${nextHandle}.`);
+      onSocialProfileChange(savedProfile);
+    } catch (error) {
+      setHandleStatus("ready");
+      setHandleMessage(error instanceof Error ? error.message : "Could not update your handle.");
+    }
+  };
 
   const saveBirthChartDetails = () => {
     const nextBirthDate = draftBirthDate.trim();
@@ -16093,6 +16657,81 @@ function AccountView({
     });
   };
 
+  const updateAccountPrivacy = async (nextPrivate: boolean) => {
+    setPrivacyStatus("saving");
+    setPrivacyMessage("");
+
+    try {
+      const savedProfile = await saveSocialPrivacy(nextPrivate);
+      setAccountPrivate(savedProfile.isPrivate);
+      setPrivacyStatus("ready");
+      setPrivacyMessage(
+        savedProfile.isPrivate
+          ? "Your account is private. Existing friends can still view your shared chart."
+          : "Your account can now be found by name."
+      );
+      onSocialProfileChange(savedProfile);
+    } catch (error) {
+      setPrivacyStatus("ready");
+      setPrivacyMessage(error instanceof Error ? error.message : "Could not update your account privacy.");
+    }
+  };
+
+  const exportAccountData = async () => {
+    setAccountActionStatus("exporting");
+    setAccountActionMessage("");
+
+    try {
+      const social = await exportSocialAccountBundle();
+      const exportPayload = {
+        exportedAt: new Date().toISOString(),
+        account: {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          provider: profile.provider
+        },
+        profile,
+        social
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
+        type: "application/json"
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+
+      anchor.href = url;
+      anchor.download = `tldr-astro-${social.profile?.handle ?? "account"}-export.json`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setAccountActionMessage("Your account export was downloaded.");
+    } catch (error) {
+      setAccountActionMessage(error instanceof Error ? error.message : "Could not export your account.");
+    } finally {
+      setAccountActionStatus("idle");
+    }
+  };
+
+  const deleteAccount = async () => {
+    if (deleteConfirmation !== "DELETE") {
+      return;
+    }
+
+    setAccountActionStatus("deleting");
+    setAccountActionMessage("");
+
+    try {
+      await deleteOwnAccount();
+      setDeleteDialogOpen(false);
+      onAccountDeleted();
+    } catch (error) {
+      setAccountActionStatus("idle");
+      setAccountActionMessage(error instanceof Error ? error.message : "Could not delete your account.");
+    }
+  };
+
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
@@ -16117,6 +16756,93 @@ function AccountView({
             <span className="settings-row__label">Email</span>
             <span className="settings-row__value">{profile.email}</span>
           </div>
+          {handleEditing ? (
+            <form className="settings-row account-handle-edit-row" onSubmit={saveHandle}>
+              <label className="settings-row__label" htmlFor="account-social-handle">Handle</label>
+              <span className="account-handle-editor">
+                <span className="account-handle-input-wrap">
+                  <span aria-hidden="true">@</span>
+                  <input
+                    id="account-social-handle"
+                    value={handleDraft}
+                    onChange={(event) => {
+                      setHandleDraft(event.target.value);
+                      setHandleMessage("");
+                    }}
+                    placeholder="your_handle"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    aria-describedby="account-handle-help"
+                    autoFocus
+                  />
+                </span>
+                <span className="account-handle-actions">
+                  <button type="button" className="account-handle-cancel" onClick={cancelHandleEdit}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="account-handle-save"
+                    disabled={handleStatus === "saving" || !handleDraftValid || !handleDraftDirty}
+                  >
+                    {handleStatus === "saving" ? "Saving…" : "Save"}
+                  </button>
+                </span>
+              </span>
+            </form>
+          ) : (
+            <button
+              type="button"
+              className="settings-row settings-row-button account-handle-row"
+              onClick={startHandleEdit}
+              disabled={handleStatus !== "ready"}
+            >
+              <span className="settings-row__label">Handle</span>
+              <span className="settings-row__field">
+                <span className="settings-row__value">
+                  {handleStatus === "loading"
+                    ? "Loading…"
+                    : handleStatus === "unavailable"
+                      ? "Unavailable"
+                      : socialHandle
+                        ? `@${socialHandle}`
+                        : "Choose a handle"}
+                </span>
+                {handleStatus === "ready" && <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />}
+              </span>
+            </button>
+          )}
+          {(handleEditing || handleMessage) && (
+            <div
+              id="account-handle-help"
+              className={`account-handle-message${handleMessage ? " has-message" : ""}`}
+              role={handleMessage ? "status" : undefined}
+              aria-live="polite"
+            >
+              {handleMessage || "3–24 characters. Start with a letter; use letters, numbers, or underscores."}
+            </div>
+          )}
+          <div className="settings-row settings-row-control">
+            <div className="settings-row-copy">
+              <span className="settings-row-title">Private account</span>
+              <small className="settings-row-description">
+                Hide your profile from Find Friends. People you already accepted can still view your shared chart.
+              </small>
+            </div>
+            <SwitchControl
+              checked={accountPrivate}
+              disabled={privacyStatus !== "ready"}
+              label="Make account private"
+              onChange={(nextPrivate) => void updateAccountPrivacy(nextPrivate)}
+            />
+          </div>
+          {privacyMessage && (
+            <div className="account-handle-message has-message" role="status" aria-live="polite">
+              {privacyMessage}
+            </div>
+          )}
           <div className="settings-row">
             <span className="settings-row__label">Signed in with</span>
             <span className="settings-row__value settings-row__value--provider">{profile.provider === "google" ? "Google" : "Email"}</span>
@@ -16193,12 +16919,116 @@ function AccountView({
           </div>
         </div>
       </section>
+
+      <section className="settings-group account-data-group" aria-label="Account data">
+        <span className="settings-group-label">Your data</span>
+        <div className="settings-card">
+          <div className="settings-list">
+            <button
+              type="button"
+              className="settings-row settings-row-button account-data-action"
+              disabled={accountActionStatus !== "idle"}
+              onClick={() => void exportAccountData()}
+            >
+              <span className="settings-row-copy">
+                <span className="settings-row-title">Export account</span>
+                <small className="settings-row-description">
+                  Download your profile, chart data, friendships, requests, and blocked accounts.
+                </small>
+              </span>
+              <Download size={19} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="settings-row settings-row-button account-data-action account-delete-action"
+              disabled={accountActionStatus !== "idle"}
+              onClick={() => {
+                setDeleteConfirmation("");
+                setDeleteDialogOpen(true);
+                setAccountActionMessage("");
+              }}
+            >
+              <span className="settings-row-copy">
+                <span className="settings-row-title">Delete account</span>
+                <small className="settings-row-description">
+                  Permanently remove your account, profile, friendships, requests, and saved charts.
+                </small>
+              </span>
+              <Trash2 size={19} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+        {accountActionMessage && (
+          <p className="account-action-message" role="status" aria-live="polite">
+            {accountActionMessage}
+          </p>
+        )}
+      </section>
+
+      {deleteDialogOpen && (
+        <ModalPortal
+          closeOnBackdrop={accountActionStatus !== "deleting"}
+          onClose={() => {
+            if (accountActionStatus !== "deleting") {
+              setDeleteDialogOpen(false);
+            }
+          }}
+          panelClassName="account-delete-modal"
+          titleId="account-delete-title"
+          width="min(500px, calc(100vw - 32px))"
+        >
+          <button
+            className="modal-close"
+            type="button"
+            aria-label="Close delete account dialog"
+            disabled={accountActionStatus === "deleting"}
+            onClick={() => setDeleteDialogOpen(false)}
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
+          <span className="eyebrow section-label">Permanent action</span>
+          <h2 id="account-delete-title">Delete your TLDR Astro account?</h2>
+          <p>
+            This permanently removes your profile, charts, friend connections, requests, blocks, and account login.
+            This cannot be undone.
+          </p>
+          <label htmlFor="account-delete-confirmation">
+            Type <strong>DELETE</strong> to confirm
+          </label>
+          <input
+            id="account-delete-confirmation"
+            value={deleteConfirmation}
+            onChange={(event) => setDeleteConfirmation(event.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <div className="account-delete-actions">
+            <button
+              type="button"
+              className="account-handle-cancel"
+              disabled={accountActionStatus === "deleting"}
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              Keep account
+            </button>
+            <button
+              type="button"
+              className="account-delete-confirm-button"
+              disabled={deleteConfirmation !== "DELETE" || accountActionStatus === "deleting"}
+              onClick={() => void deleteAccount()}
+            >
+              {accountActionStatus === "deleting" ? "Deleting…" : "Delete account"}
+            </button>
+          </div>
+        </ModalPortal>
+      )}
     </section>
   );
 }
 
 function ProfileView({
   profile,
+  profileHandle,
   transitForm,
   transitItems,
   currentSky,
@@ -16217,6 +17047,7 @@ function ProfileView({
   generatedContent
 }: {
   profile: UserProfile;
+  profileHandle?: string | null;
   onUpdateProfile: (profile: UserProfile) => void;
   transitForm: TransitForm;
   transitItems: TransitItem[];
@@ -16962,6 +17793,7 @@ function ProfileView({
         planetRows={planetPlacementRows}
         profileAvatarUrl={profile.avatarUrl}
         profileEmail={profile.email}
+        profileHandle={profileHandle}
         profileName={profile.name}
         setupStepsLeft={setupStepsLeft}
         showNatalSignatures={showNatalSignatures}
@@ -17023,6 +17855,7 @@ function ManualChartsPanel({
   chartRefreshKey,
   chartsReady,
   allowCachedChartsWhileLoading,
+  onPendingRequestCountChange,
   onOpenDetail
 }: {
   profile: UserProfile;
@@ -17037,6 +17870,7 @@ function ManualChartsPanel({
   chartRefreshKey: number;
   chartsReady: boolean;
   allowCachedChartsWhileLoading: boolean;
+  onPendingRequestCountChange: (count: number) => void;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const initialCachedCharts = useMemo(
@@ -17046,6 +17880,7 @@ function ManualChartsPanel({
   const [charts, setCharts] = useState<ManualChart[]>(() => (
     allowCachedChartsWhileLoading ? initialCachedCharts : []
   ));
+  const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
@@ -17066,16 +17901,23 @@ function ManualChartsPanel({
   const [message, setMessage] = useState("");
   const chartsLoadedRef = useRef(false);
   const chartOwnerUserIdRef = useRef(chartOwnerUserId);
+  const socialFriendCharts = useMemo(
+    () => socialFriends.map(socialFriendToChart),
+    [socialFriends]
+  );
+  const allFriendCharts = useMemo(
+    () => [...socialFriendCharts, ...charts],
+    [charts, socialFriendCharts]
+  );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
-  const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
+  const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
+  const selectedSocialFriend = selectedChart
+    ? socialFriends.find((friend) => socialFriendToChart(friend).id === selectedChart.id) ?? null
+    : null;
   const isEventForm = form.chartType === "event";
   const formCopy = chartFormCopy[form.chartType];
   const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
-  const upcomingBirthday = useMemo(
-    () => upcomingBirthdayChiclet(charts, currentSky.generatedAt),
-    [charts, currentSky.generatedAt]
-  );
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
@@ -17094,7 +17936,7 @@ function ManualChartsPanel({
       natalChart: profileNatalSky,
       isSelf: true
     };
-    const chartOptions = charts
+    const chartOptions = allFriendCharts
       .filter((chart) => chart.id !== selectedChart?.id && chart.chartType !== "event")
       .map((chart) => ({
         id: chart.id,
@@ -17106,14 +17948,14 @@ function ManualChartsPanel({
       }));
 
     return [selfOption, ...chartOptions];
-  }, [charts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
+  }, [allFriendCharts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
   const selectedRelationshipComparison = relationshipComparisonOptions.find((option) => option.id === relationshipComparisonChartId) ?? relationshipComparisonOptions[0];
   const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
   const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
   const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
     ? null
-    : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
+    : allFriendCharts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
   const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
   const selectedRelationshipContextType = relationshipComparisonIsSelf
     ? selectedChart?.relationshipType
@@ -17592,43 +18434,7 @@ function ManualChartsPanel({
     profile.charts[0]?.birthLocation?.label,
     profile.charts[0]?.birthLocation?.timeZone
   ]);
-  const circleCards = useMemo(
-    () => resolvedFriendsMainView === "circle"
-      ? circleFeedPreviewCards(
-          currentSky,
-          charts,
-          friendGeneratedContent,
-          lifeAreaFocus,
-          sunriseOrbDegrees,
-          profileTransits
-        )
-      : [],
-    [resolvedFriendsMainView, currentSky, charts, friendGeneratedContent, lifeAreaFocus, sunriseOrbDegrees, profileTransits]
-  );
-  const selectableCircleCards = useMemo(
-    () => circleCards.map((card) => {
-      const detail = "detail" in card && isSkyDetail(card.detail) ? card.detail : null;
-
-      return {
-        ...card,
-        onSelect: detail ? () => onOpenDetail(detail) : undefined
-      };
-    }),
-    [circleCards, onOpenDetail]
-  );
   const isLoadingCharts = status === "loading";
-  const circlePreviewCharts = useMemo(
-    () => {
-      const personCharts = charts.filter((chart) => chart.chartType !== "event");
-
-      return (personCharts.length > 1 ? personCharts.slice(0, 2) : personCharts.slice(0, 1)).map((chart) => ({
-        id: chart.id,
-        initials: profileInitials(chart.displayName, chart.displayName)
-      }));
-    },
-    [charts]
-  );
-  const circleFallbackInitials = profileInitials(profile.name, profile.email);
   const friendChartListItems = useMemo(
     () => charts.map((chart) => {
       const bigThree = manualChartBigThree(chart);
@@ -17645,14 +18451,27 @@ function ManualChartsPanel({
     }),
     [charts, selectedChart?.id]
   );
-  const birthdayChiclet = upcomingBirthday ? (
-    <div className="friends-birthday-chiclet" aria-label={`${upcomingBirthday.chart.displayName}'s birthday is ${birthdayDateLabel(upcomingBirthday.date)}`}>
-      <span aria-hidden="true">🎂</span>
-      <strong>{upcomingBirthday.chart.displayName}'s birthday</strong>
-      <span>{birthdayDateLabel(upcomingBirthday.date)}</span>
-      <b className="ui-pill ui-pill--retrograde">{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
-    </div>
-  ) : null;
+  const socialFriendTimingByUserId = useMemo(
+    () => Object.fromEntries(socialFriends.map((friend) => {
+      const chart = socialFriendToChart(friend);
+      const topTransit = rankTransitsByLifeAreaFocus(
+        rankedFriendTransits(currentSky, chart, sunriseOrbDegrees),
+        lifeAreaFocus
+      )[0];
+      const summary = topTransit
+        ? friendUpdateSummary(chart, topTransit, friendGeneratedContent, currentSky.generatedAt)
+        : "";
+
+      return [friend.userId, summary || "Current timing is being calculated."];
+    })),
+    [
+      currentSky,
+      friendGeneratedContent,
+      lifeAreaFocus,
+      socialFriends,
+      sunriseOrbDegrees
+    ]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -17708,7 +18527,10 @@ function ManualChartsPanel({
           chartsLoadedRef.current = true;
           setCharts(nextCharts);
           setSelectedChartId((currentId) => (
-            currentId && nextCharts.some((chart) => chart.id === currentId)
+            currentId && (
+              nextCharts.some((chart) => chart.id === currentId)
+              || socialFriendCharts.some((chart) => chart.id === currentId)
+            )
               ? currentId
               : null
           ));
@@ -17730,7 +18552,7 @@ function ManualChartsPanel({
     return () => {
       cancelled = true;
     };
-  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
+  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id, socialFriendCharts]);
 
   useEffect(() => {
     if (!chartsReady || charts.length === 0) {
@@ -17817,9 +18639,9 @@ function ManualChartsPanel({
         return "self";
       }
 
-      return charts.some((chart) => chart.id === currentId) ? currentId : "self";
+      return allFriendCharts.some((chart) => chart.id === currentId) ? currentId : "self";
     });
-  }, [charts, selectedChart?.id]);
+  }, [allFriendCharts, selectedChart?.id]);
 
   useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
@@ -18069,37 +18891,38 @@ function ManualChartsPanel({
     <Suspense fallback={<FeatureLoadingFallback />}>
       <FriendsPageShell
         activeView={resolvedFriendsMainView}
+        beforeTabs={(
+          <SocialFriendsPanel
+            activeView={resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView}
+            chartContent={(
+              <FriendChartsList
+                charts={friendChartListItems}
+                embedded
+                isLoading={isLoadingCharts}
+                message={message}
+                openChartMenuId={openChartMenuId}
+                showMessage={!friendChartModalOpen}
+                onAddBirthTime={addBirthTime}
+                onAddChart={openAddChartModal}
+                onDeleteChart={requestDeleteChart}
+                onEditChart={editChart}
+                onOpenChart={openFriendProfile}
+                onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
+              />
+            )}
+            chartCount={friendChartListItems.length}
+            friendTimingByUserId={socialFriendTimingByUserId}
+            onAddChart={openAddChartModal}
+            onFriendsChange={setSocialFriends}
+            onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
+            onPendingRequestCountChange={onPendingRequestCountChange}
+            onSelectView={(view) => selectFriendsTab(view)}
+          />
+        )}
         detailVariant={friendProfileTab}
         isDetailView={isFriendDetailView}
         onBackToCharts={() => selectFriendsTab("charts")}
-        onSelectView={(view) => selectFriendsTab(view)}
       >
-
-      {resolvedFriendsMainView === "circle" && (
-        <FriendCircleFeed
-          cards={selectableCircleCards}
-          fallbackInitials={circleFallbackInitials}
-          isLoading={isLoadingCharts}
-          previewCharts={circlePreviewCharts}
-        />
-      )}
-
-      {resolvedFriendsMainView === "charts" && (
-        <FriendChartsList
-          birthdayChiclet={birthdayChiclet}
-          charts={friendChartListItems}
-          isLoading={isLoadingCharts}
-          message={message}
-          openChartMenuId={openChartMenuId}
-          showMessage={!friendChartModalOpen}
-          onAddBirthTime={addBirthTime}
-          onAddChart={openAddChartModal}
-          onDeleteChart={requestDeleteChart}
-          onEditChart={editChart}
-          onOpenChart={openFriendProfile}
-          onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
-        />
-      )}
 
       {friendChartModalOpen && (
         <FriendChartModal
@@ -18243,6 +19066,7 @@ function ManualChartsPanel({
         <FriendDetail
           activeTab={friendProfileTab}
           ariaLabel={`${selectedChart.displayName} chart profile`}
+          avatarUrl={selectedSocialFriend?.avatarUrl}
           chartRail={(
             <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
               {friendProfileTab === "natal" && selectedChart.natalChart && (
@@ -18393,9 +19217,10 @@ function ManualChartsPanel({
           isEventChart={selectedChartIsEvent}
           moon={selectedFriendBigThree?.moon ?? "Pending"}
           name={selectedChart.displayName}
-          onEdit={() => editChart(selectedChart)}
+          onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
           onTabChange={changeFriendProfileTab}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}
+          subtitle={selectedSocialFriend ? `@${selectedSocialFriend.handle}` : undefined}
           sun={selectedFriendBigThree?.sun ?? "Pending"}
           tabs={selectedChartIsEvent
             ? [

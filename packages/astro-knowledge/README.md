@@ -6,6 +6,7 @@ Standalone shared content package for astrological meaning. This repository is t
 
 - `data/` is meaning: authored JSON only, one editable entry per file where possible.
 - `voice/` is voice: rendering constraints, profiles, banned words, and prompt stubs. It does not contain astrology meaning.
+  - `voice/tldr-astro/sky-aspect.json` is the output-level voice contract for collective current-sky aspect cards (third-person, planet-speed tier register, output bans that are stricter than the meaning-level `banned-words.json`, and the two-paragraph card shape). Approved examples carry `surface: "sky"` and `mode: "collective-aspect-card"` in `examples.json`. Check rendered cards with `npm run lint:sky-voice`.
 - `generated/` is voice-rendered content: approved output created from `data/` plus a voice profile.
 - `sources/` is traceable imported source material used to create generated corpora, such as review CSVs and rewrite workbooks.
 - `scripts/` is build tooling: validation and compilation only. No astrology interpretation lives in code.

@@ -21,6 +21,7 @@ export type PlanetPosition = {
   house: number;
   houseSystem?: "whole_sign";
   motion: "direct" | "retrograde";
+  theme?: string;
   transitStart?: string | null;
   transitEnd?: string | null;
   transitRemainingLabel?: string | null;
@@ -104,6 +105,11 @@ export type SkySnapshot = {
     separation?: number;
     orb: number;
     applying?: boolean;
+    series?: {
+      index: number;
+      count: number;
+      throughLabel: string;
+    } | null;
     conditions?: AspectConditions;
   }>;
   transitToNatalAspects?: Array<{

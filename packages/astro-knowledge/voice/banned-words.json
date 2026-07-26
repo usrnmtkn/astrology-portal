@@ -134,6 +134,24 @@
         "completing",
         "being released"
       ]
+    },
+    {
+      "term": "running tally",
+      "reason": "Tired, old phrasing (owner flag, 2026-07-25).",
+      "useInstead": [
+        "keeps track of",
+        "keeps count of",
+        "notices"
+      ]
+    },
+    {
+      "term": "dynamic interplay",
+      "reason": "Generative-AI tell.",
+      "useInstead": [
+        "back and forth",
+        "push and pull",
+        "how they interact"
+      ]
     }
   ]
 }

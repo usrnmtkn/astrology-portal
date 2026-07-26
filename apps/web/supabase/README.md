@@ -25,6 +25,58 @@ Intended flow:
 4. Invitee creates or signs into their account and calls `accept_invite(token)`.
 5. Supabase marks the invite accepted, links the manual chart to the invitee, and creates the reciprocal connection.
 
+## Social Handles + Account Friends
+
+`migrations/20260725190000_social_handles_friendships.sql` adds the first
+handle-based account friendship flow:
+
+- `social_profiles`: unique handles, display identity, and a friend-safe derived
+  natal chart projection. Raw birth inputs remain in owner-only
+  `user_profiles`.
+- `social_friend_requests`: pending, accepted, declined, and cancelled requests.
+- `social_friendships`: one canonical mutual row per accepted account pair.
+- Exact-handle lookup, request, response, list, and remove RPCs.
+
+`migrations/20260725215000_social_default_handles.sql` adds
+`ensure_own_social_profile`, which assigns a default handle from the member's
+display name and retries with numeric suffixes when another member already owns
+that handle. Existing member-chosen handles are preserved.
+
+`migrations/20260725220000_reserve_admin_handle.sql` reserves `@tldrastro` for
+an account with `app_metadata.role = admin`. A database trigger rejects the
+handle for every other account, including direct table writes.
+
+`migrations/20260725234500_social_blocks_audit.sql` adds the launch safety
+boundary:
+
+- Blocking immediately removes an existing friendship, cancels pending
+  requests, and hides both accounts from one another.
+- Every discovery, request, acceptance, and shared-chart read re-checks the
+  block boundary.
+- Privacy-safe audit events record social state changes without storing birth,
+  chart, email, or phone data.
+- `apps/web/supabase/tests/social_friend_authorization.sql` is a rollback-only
+  two-account authorization regression test.
+
+Apply this migration before enabling the Social friends UI. The client shows a
+safe unavailable state while the schema is not present.
+
+Intended flow:
+
+1. Each signed-in member receives a unique default handle and may change it in Account.
+2. One member looks up the other's exact handle and selects `Add as friend`.
+3. The recipient accepts the request in the Requests card.
+4. Both members can open each other's account-owned chart from Friends.
+5. Only the redacted derived natal chart is shared; email, phone, exact birth
+   date, time, and location are not returned.
+6. Either member can remove the friendship or block the other to revoke chart
+   access immediately.
+
+The Account page also provides a JSON data export and a permanent deletion
+flow. Production deletion requires `SUPABASE_SERVICE_ROLE_KEY` on the server;
+the browser sends its access token to `/api/account`, and the server verifies
+that token before deleting exactly that authenticated user.
+
 Apply with Supabase CLI:
 
 ```sh
