@@ -110,6 +110,7 @@ import {
   deleteOwnAccount,
   getAuthAccount,
   isAuthConfigured,
+  isPhoneAuthEnabled,
   loadPersistedProfile,
   onAuthAccountChange,
   signInWithEmail,
@@ -239,7 +240,7 @@ type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | 
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
-type SignupProvider = "email" | "google";
+type SignupProvider = "email" | "google" | "phone";
 
 const defaultLocation: LocationInput = {
   label: "New York City, NY",
@@ -3787,7 +3788,7 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
 }
 
 function normalizeSignupProvider(value: string | undefined, fallback: SignupProvider): SignupProvider {
-  return value === "email" || value === "google" ? value : fallback;
+  return value === "email" || value === "google" || value === "phone" ? value : fallback;
 }
 
 function readPendingSignupForm() {
@@ -3825,7 +3826,8 @@ function clearPendingSignupForm() {
 function providerLabel(provider: SignupProvider) {
   const labels: Record<SignupProvider, string> = {
     email: "Email",
-    google: "Google"
+    google: "Google",
+    phone: "Phone"
   };
 
   return labels[provider];
@@ -16103,21 +16105,12 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
   async function sendPhoneCode() {
     if (!phoneNumber.trim()) {
-      setAuthMessage("Enter a phone number with country code.");
-      return;
-    }
-
-    if (!isLogin && !form.fullName.trim()) {
-      setAuthMessage("Add your full name before continuing with phone.");
+      setAuthMessage("Enter your phone number.");
       return;
     }
 
     setAuthStatus("loading");
     setAuthMessage("");
-
-    if (!isLogin) {
-      savePendingSignupForm(form);
-    }
 
     try {
       await sendPhoneSignInCode(phoneNumber);
@@ -16139,6 +16132,10 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     setAuthStatus("loading");
     setAuthMessage("");
 
+    if (!isLogin) {
+      savePendingSignupForm(form);
+    }
+
     try {
       const account = await verifyPhoneSignInCode({
         phone: phoneNumber,
@@ -16146,7 +16143,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
       });
 
       if (account) {
-        onCreateProfile(createUserProfile(form, "email", account));
+        onCreateProfile(createUserProfile(form, "phone", account));
         clearPendingSignupForm();
       }
     } catch (error) {
@@ -16179,20 +16176,22 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
             <GoogleIcon />
             Continue with Google
           </button>
-          <button
-            className="google-auth-button"
-            type="button"
-            disabled={authStatus === "loading"}
-            onClick={() => {
-              setPhoneAuthOpen((current) => !current);
-              setAuthMessage("");
-            }}
-          >
-            Continue with phone
-          </button>
+          {isPhoneAuthEnabled && (
+            <button
+              className="google-auth-button"
+              type="button"
+              disabled={authStatus === "loading"}
+              onClick={() => {
+                setPhoneAuthOpen((current) => !current);
+                setAuthMessage("");
+              }}
+            >
+              Continue with phone
+            </button>
+          )}
         </div>
 
-        {phoneAuthOpen && (
+        {isPhoneAuthEnabled && phoneAuthOpen && (
           <div className="phone-auth-fields" aria-label="Phone sign in">
             <label className="signup-field auth-field">
               <span className="auth-label">Phone number</span>
@@ -17104,7 +17103,7 @@ function AccountView({
           )}
           <div className="settings-row">
             <span className="settings-row__label">Signed in with</span>
-            <span className="settings-row__value settings-row__value--provider">{profile.provider === "google" ? "Google" : "Email"}</span>
+            <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
           </div>
           <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
             <span className="settings-row__action">Sign out</span>
@@ -19175,7 +19174,7 @@ function ManualChartsPanel({
             onFriendsChange={setSocialFriends}
             onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
             onPendingRequestCountChange={onPendingRequestCountChange}
-            onSelectView={(view) => selectFriendsTab(view)}
+            onSelectView={(view, historyMode) => selectFriendsTab(view, historyMode)}
           />
         )}
         detailVariant={friendProfileTab}

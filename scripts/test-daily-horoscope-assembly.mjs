@@ -50,7 +50,16 @@ assert.match(dailyAssembly, /localNoon: true/u);
 
 const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 const lunarCalendarSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"), "utf8");
-assert.match(youPageSource, />At a Glance</u);
+assert.match(
+  youPageSource,
+  /useState<YouTab>\("transits"\)/u,
+  "You must open on the personalized Transits tab instead of Natal Chart."
+);
+assert.match(
+  youPageSource,
+  /aria-label="Daily horoscope summary"/u,
+  "You > Transits must render the personalized daily summary."
+);
 assert.doesNotMatch(youPageSource, /aria-label="Personal timing summary"/u);
 assert.doesNotMatch(youPageSource, /Daily calendar/u, "Sky-wide phase and void copy must stay off You > Transits.");
 assert.match(appSource, /dailyOuterTransitPlanets[\s\S]*?gate = dailyOuterTransitPlanets\.has\(planet\) \? 3 : 5/u);

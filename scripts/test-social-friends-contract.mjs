@@ -700,6 +700,11 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
+  /initialViewResolvedRef[\s\S]*activeViewRef\.current === "circle" && nextFriends\.length === 0[\s\S]*onSelectViewRef\.current\("charts", "replace"\)/,
+  "Friends must default to Charts once when the initial Circle is empty without preventing later Circle selection."
+);
+assert.match(
+  socialFriendsPanel,
   /createSocialInvitation[\s\S]*Invite someone[\s\S]*Open \{inviteKind === "email" \? "email" : "messages"\}[\s\S]*Recent invitations/,
   "Non-member email and phone invitations must have a send handoff and manageable history."
 );
@@ -712,6 +717,41 @@ assert.match(
   authService,
   /signInWithOtp[\s\S]*verifyOtp[\s\S]*type: "sms"/,
   "Phone invitations require an OTP authentication path for the verified recipient."
+);
+assert.doesNotMatch(
+  app,
+  /Add your full name before continuing with phone/,
+  "Sending a phone OTP must not require profile details before authentication."
+);
+assert.match(
+  app,
+  /savePendingSignupForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*createUserProfile\(form, "phone", account\)/,
+  "Phone signup must defer profile details until code verification and preserve the phone provider."
+);
+assert.doesNotMatch(
+  authService,
+  /user\.email\?\.split\("@"\)\[0\]\s*\?\?\s*user\.phone/,
+  "A phone number must never become the member's public display name."
+);
+assert.match(
+  authService,
+  /unsupported phone provider[\s\S]*Phone sign-in is not available right now/,
+  "Disabled SMS providers must render actionable member-facing copy instead of a backend error."
+);
+assert.match(
+  authService,
+  /digits\.length === 10[\s\S]*`\+1\$\{digits\}`[\s\S]*signInWithOtp\([\s\S]*normalizePhoneForOtp\(phone\)[\s\S]*verifyOtp\([\s\S]*normalizePhoneForOtp\(phone\)/,
+  "Ten-digit US mobile input must normalize consistently for both OTP delivery and verification."
+);
+assert.match(
+  authService,
+  /VITE_PHONE_AUTH_ENABLED === "true"/,
+  "Phone authentication must require an explicit environment feature flag."
+);
+assert.match(
+  app,
+  /\{isPhoneAuthEnabled && \([\s\S]*Continue with phone[\s\S]*\{isPhoneAuthEnabled && phoneAuthOpen && \(/,
+  "The phone entry point and OTP form must stay hidden until the provider is enabled."
 );
 
 console.log(JSON.stringify({

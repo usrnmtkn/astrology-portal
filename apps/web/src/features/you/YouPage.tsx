@@ -910,7 +910,7 @@ export function YouPage({
   standaloneTransitRows = [],
   transitArticle
 }: YouPageProps) {
-  const [profileTab, setProfileTab] = useState<YouTab>("chart");
+  const [profileTab, setProfileTab] = useState<YouTab>("transits");
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const activeChart = profileTab === "transits" && updatesChart ? updatesChart : natalChart;
   const activeChartLabel = profileTab === "transits" && updatesChart ? "Transit chart" : "Natal chart";

@@ -47,7 +47,7 @@ type SocialFriendsPanelProps = {
   onFriendsChange: (friends: ConnectedSocialFriend[]) => void;
   onOpenFriend: (friend: ConnectedSocialFriend) => void;
   onPendingRequestCountChange?: (count: number) => void;
-  onSelectView: (view: FriendsTopLevelView) => void;
+  onSelectView: (view: FriendsTopLevelView, historyMode?: "push" | "replace") => void;
 };
 
 type PendingRemoval = {
@@ -224,6 +224,12 @@ export function SocialFriendsPanel({
   const searchSequence = useRef(0);
   const pendingRemovalRef = useRef<PendingRemoval | null>(null);
   const friendsRef = useRef<ConnectedSocialFriend[]>([]);
+  const initialViewResolvedRef = useRef(false);
+  const activeViewRef = useRef(activeView);
+  const onSelectViewRef = useRef(onSelectView);
+
+  activeViewRef.current = activeView;
+  onSelectViewRef.current = onSelectView;
 
   const incomingRequests = useMemo(
     () => requests.filter((request) => request.direction === "incoming"),
@@ -264,6 +270,8 @@ export function SocialFriendsPanel({
     onPendingRequestCountChange?.(
       nextRequests.filter((request) => request.direction === "incoming").length
     );
+
+    return nextFriends;
   }, [onPendingRequestCountChange, publishFriends]);
 
   useEffect(() => {
@@ -276,9 +284,17 @@ export function SocialFriendsPanel({
     let cancelled = false;
 
     refreshSocialData()
-      .then(() => {
+      .then((nextFriends) => {
         if (!cancelled) {
           setAvailable(true);
+
+          if (!initialViewResolvedRef.current) {
+            initialViewResolvedRef.current = true;
+
+            if (activeViewRef.current === "circle" && nextFriends.length === 0) {
+              onSelectViewRef.current("charts", "replace");
+            }
+          }
         }
       })
       .catch(() => {

@@ -20,6 +20,10 @@ const supabasePublishableKey = (
 const authRedirectUrl = import.meta.env.VITE_AUTH_REDIRECT_URL as string | undefined;
 
 export const isAuthConfigured = Boolean(supabaseUrl && supabasePublishableKey);
+export const isPhoneAuthEnabled = (
+  isAuthConfigured
+  && import.meta.env.VITE_PHONE_AUTH_ENABLED === "true"
+);
 
 let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
 
@@ -51,7 +55,7 @@ function authAccountFromUser(user: User): AuthAccount {
     email: user.email ?? "",
     name: typeof metadataName === "string" && metadataName.trim()
       ? metadataName
-      : user.email?.split("@")[0] ?? user.phone ?? "New stargazer",
+      : user.email?.split("@")[0] ?? "New stargazer",
     provider,
     avatarUrl: typeof avatarUrl === "string" && avatarUrl.trim() ? avatarUrl : undefined
   };
@@ -215,6 +219,25 @@ export async function signInWithEmail({
   return data.user ? authAccountFromUser(data.user) : null;
 }
 
+function normalizePhoneForOtp(phone: string) {
+  const trimmedPhone = phone.trim();
+  const digits = trimmedPhone.replace(/\D/g, "");
+
+  if (trimmedPhone.startsWith("+")) {
+    return `+${digits}`;
+  }
+
+  if (digits.length === 10) {
+    return `+1${digits}`;
+  }
+
+  if (digits.length === 11 && digits.startsWith("1")) {
+    return `+${digits}`;
+  }
+
+  return trimmedPhone;
+}
+
 export async function sendPhoneSignInCode(phone: string) {
   const supabase = await getSupabaseClient();
 
@@ -223,10 +246,14 @@ export async function sendPhoneSignInCode(phone: string) {
   }
 
   const { error } = await supabase.auth.signInWithOtp({
-    phone: phone.trim()
+    phone: normalizePhoneForOtp(phone)
   });
 
   if (error) {
+    if (/unsupported phone provider/i.test(error.message)) {
+      throw new Error("Phone sign-in is not available right now. Please use Google or email.");
+    }
+
     throw error;
   }
 }
@@ -245,7 +272,7 @@ export async function verifyPhoneSignInCode({
   }
 
   const { data, error } = await supabase.auth.verifyOtp({
-    phone: phone.trim(),
+    phone: normalizePhoneForOtp(phone),
     token: code.trim(),
     type: "sms"
   });

@@ -16,6 +16,11 @@
   card under Settings while keeping handle editing in Account.
 - Expanded overflow-menu actions to full-width interaction and selected-state
   targets.
+- Phone signup now sends the verification code using only the phone number.
+  Profile details, including the member's full name, are collected after
+  verification; phone numbers are never used as public display names.
+- Phone authentication remains hidden behind `VITE_PHONE_AUTH_ENABLED` until
+  the production SMS provider is configured.
 
 ### Discovery And Consent
 
