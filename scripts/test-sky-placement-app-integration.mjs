@@ -12,6 +12,7 @@ const migration = read(
   "apps/web/supabase/migrations/20260726203000_generated_content_sky_placement_block_type.sql"
 );
 const cron = read("api/cron/generate-sky-placements.ts");
+const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const vercel = JSON.parse(read("vercel.json"));
 
 assert.match(generatedContent, /\|\s+"sky_placement"/);
@@ -47,8 +48,26 @@ assert.match(cron, /placementDerivation: result\.facts\?\.derivedFrom \?\? null/
 
 assert.equal(
   vercel.crons.some((entry) => entry.path === "/api/cron/generate-sky-placements"),
-  false,
-  "Placement cron must remain unscheduled until the engine and all source files land."
+  true,
+  "Placement cron must be scheduled after owner-approved enablement."
 );
+assert.deepEqual(
+  vercel.crons.find((entry) => entry.path === "/api/cron/generate-sky-placements"),
+  {
+    path: "/api/cron/generate-sky-placements",
+    schedule: "25 10 * * *"
+  }
+);
+assert.match(
+  dashboard,
+  /\["sky_aspect", "sky_placement"\]\.includes\(row\.block_type \?\? ""\)[\s\S]*row\.judge_gate === "human-review"/
+);
+assert.match(
+  dashboard,
+  /\["sky_aspect", "sky_placement"\]\.includes\(row\.block_type \?\? ""\)[\s\S]*row\.judge_gate === "auto-publish"/
+);
+assert.match(dashboard, /source\?\.skyPlacementJudge/);
+assert.match(dashboard, /isPlacement \? "Placement" : "Pair"/);
+assert.match(dashboard, /isPlacement \? "Sign" : "Signs"/);
 
 console.log("Sky-placement app integration contract passed.");
