@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -84,70 +84,78 @@ function localApiRoutePlugin() {
   };
 }
 
-export default defineConfig({
-  plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
-  assetsInclude: ["**/*.wasm"],
-  build: {
-    modulePreload: {
-      resolveDependencies(_url, deps) {
-        return deps.filter((dep) => !dep.includes("swisseph-"));
-      }
-    },
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("vite/preload-helper")) {
-            return "vendor";
-          }
-          if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
-            if (id.includes("sky-web.json")) {
-              return "astro-knowledge-sky";
+export default defineConfig(({ mode }) => {
+  const localEnv = loadEnv(mode, dirname(fileURLToPath(import.meta.url)), "");
+
+  for (const [key, value] of Object.entries(localEnv)) {
+    process.env[key] ??= value;
+  }
+
+  return {
+    plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
+    assetsInclude: ["**/*.wasm"],
+    build: {
+      modulePreload: {
+        resolveDependencies(_url, deps) {
+          return deps.filter((dep) => !dep.includes("swisseph-"));
+        }
+      },
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("vite/preload-helper")) {
+              return "vendor";
             }
-            if (id.includes("natal-web.json")) {
-              return "astro-knowledge-natal";
+            if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
+              if (id.includes("sky-web.json")) {
+                return "astro-knowledge-sky";
+              }
+              if (id.includes("natal-web.json")) {
+                return "astro-knowledge-natal";
+              }
+              if (id.includes("relationships-web.json")) {
+                return "astro-knowledge-relationships";
+              }
+              if (id.includes("sky.json")) {
+                return "astro-knowledge-sky";
+              }
+              if (id.includes("natal.json")) {
+                return "astro-knowledge-natal";
+              }
+              if (id.includes("relationships.json") || id.includes("synastry.json") || id.includes("composite.json")) {
+                return "astro-knowledge-relationships";
+              }
+              if (id.includes("web.json")) {
+                return "astro-knowledge-web";
+              }
+              return "astro-knowledge";
             }
-            if (id.includes("relationships-web.json")) {
-              return "astro-knowledge-relationships";
+            if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+              return "react";
             }
-            if (id.includes("sky.json")) {
-              return "astro-knowledge-sky";
+            if (id.includes("node_modules/@supabase")) {
+              return "supabase";
             }
-            if (id.includes("natal.json")) {
-              return "astro-knowledge-natal";
+            if (id.includes("node_modules/lucide-react")) {
+              return "icons";
             }
-            if (id.includes("relationships.json") || id.includes("synastry.json") || id.includes("composite.json")) {
-              return "astro-knowledge-relationships";
+            if (id.includes("node_modules/swisseph-wasm")) {
+              return "swisseph";
             }
-            if (id.includes("web.json")) {
-              return "astro-knowledge-web";
+            if (id.includes("node_modules")) {
+              return "vendor";
             }
-            return "astro-knowledge";
-          }
-          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
-            return "react";
-          }
-          if (id.includes("node_modules/@supabase")) {
-            return "supabase";
-          }
-          if (id.includes("node_modules/lucide-react")) {
-            return "icons";
-          }
-          if (id.includes("node_modules/swisseph-wasm")) {
-            return "swisseph";
-          }
-          if (id.includes("node_modules")) {
-            return "vendor";
           }
         }
       }
+    },
+    server: {
+      host: "127.0.0.1",
+      port: 5173,
+      strictPort: true
+    },
+    optimizeDeps: {
+      exclude: ["swisseph-wasm"]
     }
-  },
-  server: {
-    host: "127.0.0.1",
-    port: 5173,
-    strictPort: true
-  },
-  optimizeDeps: {
-    exclude: ["swisseph-wasm"]
-  }
+  };
 });
