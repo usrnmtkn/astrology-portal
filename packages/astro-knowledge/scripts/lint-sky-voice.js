@@ -32,6 +32,45 @@ function toRegex(term) {
 
 const PLACEMENT_MODE = "collective-placement-card";
 const SECOND_PERSON_TERM = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
+const PLACEMENT_LABEL_BANS = [
+  {
+    term: "\\bthe truth\\s*[:?]",
+    pattern: /\bthe truth\s*[:?]/i,
+    reason: "State the closing truth plainly; do not expose the placement template as a label."
+  },
+  {
+    term: "\\bthe catch\\s*[:?]",
+    pattern: /\bthe catch\s*[:?]/i,
+    reason: "State the closing catch plainly; do not expose the placement template as a label."
+  },
+  {
+    term: "\\bthe catch is this\\b",
+    pattern: /\bthe catch is this\b/i,
+    reason: "State the closing catch plainly; do not announce the turn."
+  }
+];
+const PLACEMENT_LABEL_WARNINGS = [
+  {
+    term: "\\bthe challenge is\\b",
+    pattern: /\bthe challenge is\b/i,
+    reason: "Possible placement-template seam; weave the challenge into the observation."
+  },
+  {
+    term: "\\bthe downside is\\b",
+    pattern: /\bthe downside is\b/i,
+    reason: "Possible placement-template seam; state the downside without a label."
+  },
+  {
+    term: "the gift is",
+    pattern: /\bthe gift is\b/i,
+    reason: "Possible placement-template seam; weave the gift into the observation."
+  },
+  {
+    term: "the shadow is",
+    pattern: /\bthe shadow is\b/i,
+    reason: "Possible placement-template seam; weave the shadow into the observation."
+  }
+];
 
 function closerSentenceCount(sentences) {
   let count = 0;
@@ -118,6 +157,36 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   for (const b of sky.outputBans.warn) {
     const m = text.match(toRegex(b.term));
     if (m) findings.push({ severity: "warn", source: "sky-aspect", term: b.term, match: m[0], reason: b.reason });
+  }
+  if (mode === PLACEMENT_MODE) {
+    for (const ban of PLACEMENT_LABEL_BANS) {
+      const match = text.match(ban.pattern);
+      if (match) {
+        findings.push({
+          severity: "fail",
+          source: "placement-label",
+          term: ban.term,
+          match: match[0],
+          reason: ban.reason
+        });
+      }
+    }
+    for (const warning of PLACEMENT_LABEL_WARNINGS) {
+      const match = text.match(warning.pattern);
+      const alreadyFlagged = findings.some((finding) => (
+        finding.severity === "warn"
+        && finding.match?.toLowerCase() === match?.[0].toLowerCase()
+      ));
+      if (match && !alreadyFlagged) {
+        findings.push({
+          severity: "warn",
+          source: "placement-label",
+          term: warning.term,
+          match: match[0],
+          reason: warning.reason
+        });
+      }
+    }
   }
   // conditional bans: term is allowed only if one of requiresBefore appears earlier
   for (const c of sky.conditionalBans || []) {
