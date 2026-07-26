@@ -774,7 +774,7 @@ async function runCardPipeline({
     }
     const avoidTerms = [...new Set(
       lint.findings
-        .map((finding) => String(finding.term ?? "").trim())
+        .map((finding) => String(finding.retryInstruction ?? finding.term ?? "").trim())
         .filter(Boolean)
     )];
     lintRetryAvoidTerms.push(avoidTerms);
