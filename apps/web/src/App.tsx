@@ -85,7 +85,11 @@ import type { RelationshipComparisonOption } from "./features/friends/Relationsh
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
-import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
+import {
+  NatalAspectPatternActivationsSection,
+  NatalAspectPatternsSection,
+  resolvedNatalAspectPatternSectionLabel
+} from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -18560,6 +18564,48 @@ function ManualChartsPanel({
       relatedAspects: article.relatedAspects
     });
   };
+  const openFriendNatalAspectPatternDetail = (
+    item: NatalAspectPatternReaderItem,
+    nestedItems: NatalAspectPatternReaderItem[]
+  ) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    const copy = item.copy.content;
+    const detailSections = [item, ...nestedItems].flatMap((patternItem, patternIndex) => {
+      const patternCopy = patternItem.copy.content;
+      const prefix = patternIndex === 0 ? "" : `${patternCopy.headline}: `;
+
+      return patternCopy.sections
+        .map((section) => ({
+          heading: resolvedNatalAspectPatternSectionLabel(section),
+          body: section.body.trim()
+        }))
+        .filter((section): section is { heading: string; body: string } => Boolean(section.heading && section.body))
+        .map((section) => ({
+          heading: `${prefix}${section.heading}`,
+          body: section.body
+        }));
+    });
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "natal",
+        `natal-pattern-${normalizeContentIdPart(item.patternId)}`
+      ),
+      glyph: "",
+      kicker: copy.eyebrow || "Chart pattern",
+      title: copy.headline,
+      meta: copy.eyebrow || "Chart pattern",
+      suppressTldr: true,
+      bodyBeforeSections: true,
+      plainBody: true,
+      body: [copy.overview],
+      sections: detailSections
+    });
+  };
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
     if (!selectedChart?.natalChart) {
       return;
@@ -19631,6 +19677,7 @@ function ManualChartsPanel({
                 {selectedFriendNatalAspectPatternStatus && (
                   <NatalAspectPatternsSection
                     items={selectedFriendNatalAspectPatternItems}
+                    onOpenDetail={openFriendNatalAspectPatternDetail}
                     status={selectedFriendNatalAspectPatternStatus}
                   />
                 )}

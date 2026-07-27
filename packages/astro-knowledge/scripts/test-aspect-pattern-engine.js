@@ -464,7 +464,7 @@ function authoredRecordFor(context, overrides = {}) {
   const resolved = resolveAspectPatternCopy(context, { authoredRecords: [authored] });
   assert.equal(resolved.source.contentLevel, "source_grounded_template");
   assert.equal(resolved.source.resolverVersion, "v3");
-  assert.notEqual(resolved.source.recordId, authored.id, "Frozen v3.3 copy must not be overridden by stale authored v1 records.");
+  assert.notEqual(resolved.source.recordId, authored.id, "Locked v3.5 copy must not be overridden by stale authored v1 records.");
 }
 
 {
@@ -519,9 +519,10 @@ function authoredRecordFor(context, overrides = {}) {
   const yod = contextFor(interpretationContextsFor(fixtures.yod), "yod");
   const yodCopy = resolveAspectPatternCopy(yod);
   const text = copyText(yodCopy);
-  assert.match(yodCopy.content.headline, /different response|possible/i);
+  assert.match(yodCopy.content.headline, /more than you can carry|possible/i);
   assert.equal(yodCopy.source.contentLevel, "source_grounded_template");
-  assert.match(text, /balancing direction/i);
+  assert.match(text, /Opposite .+reference point/i);
+  assert.match(text, /An agreement can look reasonable and still place too much weight on you over time/i);
   assert.doesNotMatch(text, /\b(Finger of God|fate|destiny|chosen|special mission|unavoidable calling)\b/i);
 }
 
@@ -554,7 +555,7 @@ function authoredRecordFor(context, overrides = {}) {
   assert.throws(
     () => resolveAspectPatternCopy(malformed),
     AspectPatternV3SourceGapError,
-    "Missing required v3.3 clauses must fail closed instead of emitting emergency boilerplate."
+    "Missing required v3.5 clauses must fail closed instead of emitting emergency boilerplate."
   );
 }
 

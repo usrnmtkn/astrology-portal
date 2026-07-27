@@ -16,6 +16,7 @@ const real = require("../engine/aspect-patterns/fixtures/real/index.js");
 const examples = require("../voice/tldr-astro/pattern-examples.json");
 const { generationConfig } = require("./generate-sky-aspect-cards.js");
 const { lintPatternCard } = require("./lint-pattern-voice.js");
+const judgeMod = require("./judge-pattern-voice.js");
 const { detectPatterns, rankAspectPatterns, buildAspectPatternInterpretationContexts } = eng;
 
 const MODEL_CONFIG = generationConfig();
@@ -95,10 +96,29 @@ console.log(`Pattern voice gate  (LLM judge: ${HAS_KEY ? `ON - ${MODEL_CONFIG.pr
 console.log(`TEETH CHECK: PASS (old 11-block shape lint ${teeth.score}, ${teeth.fails} structural fails)\n`);
 
 async function run() {
-  const judgeMod = HAS_KEY ? require("./judge-pattern-voice.js") : null;
-  if (judgeMod) {
+  for (const exemplar of examples.filter((example) => example.canonical)) {
+    if (!exemplar.content?.overview || !Array.isArray(exemplar.content?.sections)) {
+      throw new Error(`Pattern gold ${exemplar.sourceId} must use structured content.`);
+    }
+    const serialized = judgeMod.serializePatternCard(exemplar.content);
+    if (!serialized.includes("[LEVEL 1: OVERVIEW]") || !serialized.includes("[LEVEL 2:")) {
+      throw new Error(`Pattern gold ${exemplar.sourceId} is missing explicit judge boundaries.`);
+    }
+    const exact = await judgeMod.judgeCard(exemplar.content, {
+      patternType: exemplar.pattern,
+      tier: exemplar.tier,
+      judgeFn: async () => {
+        throw new Error("Exact canonical gold must not require a stochastic judge call.");
+      }
+    });
+    if (exact.score !== 3 || exact.exactGold !== true) {
+      throw new Error(`Pattern gold ${exemplar.sourceId} did not receive its deterministic score 3.`);
+    }
+  }
+
+  if (HAS_KEY) {
     for (const exemplar of examples.filter((example) => example.canonical)) {
-      const verdict = await judgeMod.judgeCard(exemplar.body, {
+      const verdict = await judgeMod.judgeCard(exemplar.content, {
         patternType: exemplar.pattern,
         tier: exemplar.tier,
         samples: 3
@@ -117,12 +137,16 @@ async function run() {
     const lf = lint.findings.filter((x) => x.severity === "fail");
     if (lf.length) { lintFails++; for (const f of lf) console.log(`   LINT FAIL ${f.source}:${f.term} ${f.match || ""}`); }
     let jline = "";
-    if (judgeMod) {
+    if (HAS_KEY) {
       try {
-        const text = [c.content.overview, ...c.content.sections.map((s) => s.body)].filter(Boolean).join("\n\n");
-        const v = await judgeMod.judgeCard(text, { apexPlanet: c.ctx.roles?.apex, focalPlanet: c.ctx.roles?.focalPlanet, patternType: c.ctx.patternType, samples: 3 });
+        const v = await judgeMod.judgeCard(c.content, { apexPlanet: c.ctx.roles?.apex, focalPlanet: c.ctx.roles?.focalPlanet, patternType: c.ctx.patternType, samples: 3 });
         jline = `  judge ${v.score} (${v.gate})`;
-        if (v.score === 1) { judgeFails++; console.log(`   JUDGE FAIL ${c.key} [${c.variant}]: ${v.why} | weakest: ${v.weakest || ""}`); }
+        if (v.score === 1) {
+          judgeFails++;
+          console.log(`   JUDGE FAIL ${c.key} [${c.variant}]: ${v.why} | weakest: ${v.weakest || ""}`);
+        } else if (v.score === 2) {
+          console.log(`   JUDGE REVIEW ${c.key} [${c.variant}]: ${v.why} | weakest: ${v.weakest || ""}`);
+        }
       } catch (e) {
         judgeFails++;
         jline = `  judge ERROR ${e.message}`;

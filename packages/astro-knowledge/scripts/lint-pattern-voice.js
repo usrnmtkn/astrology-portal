@@ -165,7 +165,7 @@ if (require.main === module) {
     const examples = readJson(path.join(voiceRoot, "tldr-astro", "pattern-examples.json"));
     let bad = 0;
     for (const e of examples) {
-      const r = lintPatternCard(e.body);
+      const r = lintPatternCard(e.content || e.body);
       if (r.fails) { bad++; for (const f of r.findings.filter((x) => x.severity === "fail")) console.log(`     FAIL ${f.source}:${f.term} ${f.match || ""}`); }
       console.log(`${r.score === 3 ? "OK " : "!! "} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}`);
     }

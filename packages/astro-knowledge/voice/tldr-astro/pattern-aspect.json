@@ -2,7 +2,7 @@
   "id": "tldr-astro.voice.pattern-aspect.v1",
   "surface": "pattern",
   "mode": "natal-aspect-pattern-reader",
-  "purpose": "Output-level voice contract for the natal aspect-pattern reader (Yod, T-square, Grand Cross, Grand Trine, Kite, Mystic Rectangle). Applies to RENDERED card copy assembled by engine/aspect-patterns/v3-copy-resolver.js from the frozen v3.3 template + contract. The three structural gates (validate_patterns / render_matrix / gold_render) cover tokens, sign/house variation, and grammar; this file covers whether the copy sounds like Marie and holds the two-level shape. Enforced by scripts/lint-pattern-voice.js (mechanical) + scripts/judge-pattern-voice.js (LLM).",
+  "purpose": "Output-level voice contract for the natal aspect-pattern reader (Yod, T-square, Grand Cross, Grand Trine, Kite, Mystic Rectangle). Applies to RENDERED card copy assembled by engine/aspect-patterns/v3-copy-resolver.js from the locked v3.5 template + contract. The three structural gates (validate_patterns / render_matrix / gold_render) cover tokens, sign/house variation, and grammar; this file covers whether the copy sounds like Marie and holds the two-level shape. Enforced by scripts/lint-pattern-voice.js (mechanical) + scripts/judge-pattern-voice.js (LLM).",
 
   "voiceDescription": "Direct, grounded, and modern, like the reader's smartest, most honest friend explaining their own chart. Names the felt experience in plain lived terms first, then explains how the geometry works. Two levels, kept apart: the lived paragraph never names the mechanics, the mechanics never crowd the lived paragraph. Concrete and quotable; ends on a plain reading note, not a pep talk.",
 
@@ -20,11 +20,11 @@
   },
 
   "shape": {
-    "note": "Two levels. Each beat is FILLED FROM THE FROZEN TEMPLATE + CONTRACT; the writing sharpens the beat, it never invents astrology. This is the skeleton the resolver fills; the judge scores whether it reads as ONE lived paragraph + a tight mechanics pass, not a pile of headers.",
+    "note": "Two levels. Each beat is filled from the locked template + contract; the writing sharpens the beat, it never invents astrology. This is the skeleton the resolver fills; the judge scores whether it reads as one lived paragraph + a tight mechanics pass, not a pile of headers.",
     "levels": [
       {"level": "L1 lived", "beats": [
         {"id": "overview", "does": "name the pattern and its core tension in one or two you-voice sentences", "source": "template opening"},
-        {"id": "feel", "does": "ONE lived paragraph: each planet in its sign/house, then the recurring dynamic and the returning question", "source": "template feel (merged)"}
+        {"id": "feel", "does": "ONE lived paragraph: personal planets use resolved planet-in-sign behavior, outer planets share one generation-level background sentence, houses locate the pattern when known, then the recurring dynamic returns", "source": "template feel (merged)"}
       ]},
       {"level": "L2 mechanics", "beats": [
         {"id": "level_2", "does": "the geometry: what the figure is, applied to these planets", "source": "template L2 opening"},
