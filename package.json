@@ -45,6 +45,7 @@
     "test:aspect-patterns-activation-authored": "node scripts/test-aspect-pattern-activation-authored-copy.mjs",
     "test:aspect-patterns-writeups-admin": "node scripts/test-aspect-pattern-writeups-admin.mjs",
     "test:aspect-patterns-writeups-runtime": "node scripts/test-aspect-pattern-writeups-runtime.mjs",
+    "test:aspect-patterns": "npm run test:aspect-patterns -w @tldr/astro-knowledge && npm run test:aspect-patterns-v3 -w @tldr/astro-knowledge && npm run test:pattern-voice -w @tldr/astro-knowledge && npm run test:natal-aspect-pattern-reader",
     "test:sky-aspects": "node scripts/test-sky-aspect-integration.mjs",
     "test:natal-aspect-pattern-reader": "node scripts/test-natal-aspect-pattern-reader-contract.mjs && node scripts/test-natal-aspect-pattern-reader-activation.mjs && node scripts/test-natal-aspect-pattern-unknown-time.mjs",
     "test:natal-aspect-pattern-unknown-time": "node scripts/test-natal-aspect-pattern-unknown-time.mjs",
