@@ -5530,9 +5530,13 @@ function generatedSkyAspectWritingSection(
 
 type SkyWritingAspectBeat = {
   aspect: string;
+  applying?: boolean;
   dateLine?: string | null;
+  exactDate?: string | null;
   from: string;
+  fromSign?: string | null;
   to: string;
+  toSign?: string | null;
 };
 
 function normalizeSkyAspectSurface(
@@ -5660,6 +5664,73 @@ function relatedSkyAspectSectionsForPlacement({
     .slice(0, 2);
 }
 
+function skyPlacementAspectExactDate(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  positions?: PlanetPosition[]
+) {
+  const from = skyAspectPosition(aspect.from, positions);
+  const to = skyAspectPosition(aspect.to, positions);
+  const fromSpeed = typeof from?.speed === "number" ? from.speed : averageDailyMotion[aspect.from] ?? 0;
+  const toSpeed = typeof to?.speed === "number" ? to.speed : averageDailyMotion[aspect.to] ?? 0;
+  const relativeSpeed = Math.max(0.05, Math.abs(fromSpeed - toSpeed));
+  const offsetDays = aspect.orb / relativeSpeed;
+  const exactDate = dateFromOffsetDays(
+    generatedAt,
+    aspect.applying === false ? -offsetDays : offsetDays
+  );
+  const generatedDate = new Date(generatedAt);
+  const includeYear = exactDate.getFullYear() !== generatedDate.getFullYear();
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    ...(includeYear ? { year: "numeric" } : {})
+  }).format(exactDate);
+}
+
+function skyPlacementEgressDateLabel(position: PlanetPosition, generatedAt: string) {
+  if (!position.transitEnd) {
+    return null;
+  }
+
+  const egress = new Date(position.transitEnd);
+  const generatedDate = new Date(generatedAt);
+
+  if (Number.isNaN(egress.getTime()) || Number.isNaN(generatedDate.getTime())) {
+    return null;
+  }
+
+  const yearsAway = Math.abs(egress.getTime() - generatedDate.getTime()) / (365.25 * 86_400_000);
+
+  if (yearsAway >= 2) {
+    return new Intl.DateTimeFormat("en-US", { year: "numeric" }).format(egress);
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    ...(egress.getFullYear() !== generatedDate.getFullYear() ? { year: "numeric" } : {})
+  }).format(egress);
+}
+
+function skyPlacementArticleAspects(
+  planet: string,
+  aspects: SkySnapshot["aspects"]
+) {
+  return aspects
+    .filter((aspect) => aspect.from === planet || aspect.to === planet)
+    .filter((aspect) => Boolean(normalizeFallbackV3Aspect(aspect.type)))
+    .slice()
+    .sort((first, second) => {
+      const applyingPriority = Number(second.applying !== false) - Number(first.applying !== false);
+      const conjunctionPriority = Number(second.type === "conjunction") - Number(first.type === "conjunction");
+
+      return applyingPriority || conjunctionPriority || first.orb - second.orb;
+    })
+    .slice(0, 1);
+}
+
 function skyPlacementWritingBeats({
   aspects,
   generatedAt,
@@ -5671,14 +5742,19 @@ function skyPlacementWritingBeats({
   planet: string;
   positions?: PlanetPosition[];
 }): SkyWritingAspectBeat[] {
-  return skyAspectsForPlacement(planet, aspects).map((aspect) => {
-    void positions;
+  return skyPlacementArticleAspects(planet, aspects).map((aspect) => {
+    const fromPosition = skyAspectPosition(aspect.from, positions);
+    const toPosition = skyAspectPosition(aspect.to, positions);
 
     return {
       aspect: titleCase(aspect.type),
+      applying: aspect.applying,
       dateLine: currentSkyAspectTransitRange(aspect, generatedAt),
+      exactDate: skyPlacementAspectExactDate(aspect, generatedAt, positions),
       from: aspect.from,
-      to: aspect.to
+      fromSign: fromPosition?.sign ?? null,
+      to: aspect.to,
+      toSign: toPosition?.sign ?? null
     };
   });
 }
@@ -5709,7 +5785,8 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
 function skyPlacementWritingSection(
   position: PlanetPosition,
   duration: string | null | undefined,
-  beats: SkyWritingAspectBeat[] = []
+  beats: SkyWritingAspectBeat[] = [],
+  generatedAt = new Date().toISOString()
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
   const sign = normalizeContentIdPart(position.sign);
@@ -5720,9 +5797,13 @@ function skyPlacementWritingSection(
       return aspect ? {
         type: "aspect",
         a: normalizeContentIdPart(beat.from),
+        aSign: beat.fromSign ? normalizeContentIdPart(beat.fromSign) : undefined,
+        applying: beat.applying,
         b: normalizeContentIdPart(beat.to),
+        bSign: beat.toSign ? normalizeContentIdPart(beat.toSign) : undefined,
         aspect,
-        dateLine: beat.dateLine ?? undefined
+        dateLine: beat.dateLine ?? undefined,
+        exactDate: beat.exactDate ?? undefined
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
@@ -5735,7 +5816,12 @@ function skyPlacementWritingSection(
         window: duration ?? undefined,
         format: "article"
       })
-    : transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
+    : transitSynastryFallbackRendererV3.renderSkyPlacement({
+        planet,
+        sign,
+        events,
+        egressDate: skyPlacementEgressDateLabel(position, generatedAt)
+      });
   const renderedParagraphs = hasRetrogradeArticle
     ? [rendered.headline, ...(rendered.parts.length ? rendered.parts : [rendered.body])]
     : (rendered.parts.length ? rendered.parts : [rendered.body]);
@@ -5766,11 +5852,12 @@ function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
   generatedContent?: GeneratedContentMap,
-  beats: SkyWritingAspectBeat[] = []
+  beats: SkyWritingAspectBeat[] = [],
+  generatedAt = new Date().toISOString()
 ): NormalizedSkyPlacementArticle {
   void duration;
   void generatedContent;
-  const fallbackSection = skyPlacementWritingSection(position, duration, beats);
+  const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt);
   const sections = fallbackSection ? [fallbackSection] : [];
 
   return {
@@ -5806,7 +5893,13 @@ function currentSkyPlacementDetailArticle({
     planet: position.planet,
     positions
   });
-  const normalized = normalizeSkyPlacementSurface(position, transitRangeLabel, generatedContent, placementEvents);
+  const normalized = normalizeSkyPlacementSurface(
+    position,
+    transitRangeLabel,
+    generatedContent,
+    placementEvents,
+    generatedAt
+  );
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const authoredBody = normalized.sections

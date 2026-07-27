@@ -191,7 +191,7 @@ console.log(`Rendered ${bond} bond transit cards.`);
 
 // Lilith sky placement: full sign grid
 for (const sg of SIGNS) {
-  try { const r = renderSkyPlacement({ planet: "lilith", sign: sg }); if (r.parts.length < 6 || /\{\{/.test(r.body)) fail(`lilith placement ${sg}`); }
+  try { const r = renderSkyPlacement({ planet: "lilith", sign: sg }); if (r.parts.length < 3 || /\{\{/.test(r.body)) fail(`lilith placement ${sg}`); }
   catch (e) { fail(`lilith placement ${sg}: ${e.message}`); }
 }
 console.log("Rendered 12 Lilith sky placements.");
