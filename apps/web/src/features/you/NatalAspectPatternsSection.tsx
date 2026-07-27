@@ -5,10 +5,16 @@ import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReader
 export type NatalAspectPatternsSectionStatus = "loading" | "ready" | "unavailable";
 
 const sectionLabels: Record<string, string> = {
+  feel: "What this can feel like",
+  shows_up: "Where it tends to show up",
+  complicated: "When it gets complicated",
+  another_response: "Another response",
+  level_2: "How the pattern works",
   how_it_works: "How it works",
   planet_roles: "Planet roles",
   pressure_or_support: "Pressure and support",
   derived_point: "Reference point",
+  reference_point: "Reference point",
   watch_for: "Watch for",
   confidence_note: "Reading note"
 };
@@ -23,12 +29,16 @@ const activationSectionLabels: Record<string, string> = {
   confidence_note: "Reading note"
 };
 
-function sectionLabel(sectionId: string) {
-  return sectionLabels[sectionId] ?? sectionId.replace(/_/g, " ");
+function sectionLabel(sectionId: string): string | null {
+  return sectionLabels[sectionId] ?? null;
 }
 
-function activationSectionLabel(sectionId: string) {
-  return activationSectionLabels[sectionId] ?? sectionId.replace(/_/g, " ");
+function activationSectionLabel(sectionId: string): string | null {
+  return activationSectionLabels[sectionId] ?? null;
+}
+
+function resolvedSectionLabel(section: { id: string; title?: string }): string | null {
+  return section.title ?? sectionLabel(section.id);
 }
 
 function independentItems(items: NatalAspectPatternReaderItem[]) {
@@ -109,7 +119,7 @@ function PatternCopyBody({
   item: NatalAspectPatternReaderItem;
 }) {
   const copy = item.copy.content;
-  const sections = copy.sections.filter((section) => section.body.trim());
+  const sections = copy.sections.filter((section) => section.body.trim() && sectionLabel(section.id));
 
   return (
     <>
@@ -123,7 +133,7 @@ function PatternCopyBody({
         <div className="natal-pattern-card__sections">
           {sections.map((section) => (
             <section key={`${item.patternId}-${section.id}-${section.body}`} className="natal-pattern-card__section">
-              <h3>{sectionLabel(section.id)}</h3>
+              <h3>{resolvedSectionLabel(section)}</h3>
               <p>{section.body}</p>
             </section>
           ))}
@@ -190,7 +200,7 @@ function ActiveNowCallout({
   const activation = item.activationCopy?.content;
   if (!activation) return null;
 
-  const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing");
+  const sections = activation.sections.filter((section) => section.body.trim() && section.id !== "timing" && activationSectionLabel(section.id));
   const timingWindow = timingOverride ?? item.activationTimingWindow;
   const emphasisLabel = item.activationEmphasis === "primary" ? "Now" : "Also";
   const activeRangeLabel = timingWindow

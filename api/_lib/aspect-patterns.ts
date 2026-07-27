@@ -89,7 +89,7 @@ function aspectPatternType(value: string | number | null | undefined): AspectTyp
   return aspectPatternTypes.has(normalized) ? normalized as AspectType : null;
 }
 
-function normalizedAspectPatternPlanets(snapshot: SkySnapshot): NormalizedPlanet[] {
+function normalizedAspectPatternPlanets(snapshot: SkySnapshot, includeHouses: boolean): NormalizedPlanet[] {
   return snapshot.positions.flatMap((position) => {
     const id = aspectPatternPointId(position.planet);
     if (!id) return [];
@@ -98,7 +98,7 @@ function normalizedAspectPatternPlanets(snapshot: SkySnapshot): NormalizedPlanet
       id,
       longitude: position.longitude,
       sign: slugPart(position.sign),
-      house: position.house
+      ...(includeHouses ? { house: position.house } : {})
     } as NormalizedPlanet;
   });
 }
@@ -150,19 +150,23 @@ export function aspectPatternsFromSkySnapshot(
     transitAspects?: TransitToNatalActivationAspect[];
     authoredRecords?: AuthoredAspectPatternRecord[];
     activationAuthoredRecords?: AuthoredAspectPatternActivationRecord[];
+    timeKnown?: boolean;
   } = {}
 ): AspectPatternDetectionResult {
-  const planets = normalizedAspectPatternPlanets(snapshot);
+  const timeKnown = options.timeKnown !== false;
+  const planets = normalizedAspectPatternPlanets(snapshot, timeKnown);
   const detection = detectPatterns({
     planets,
     aspects: normalizedAspectPatternAspects(snapshot)
   });
-  const rankingContext = {
-    planets,
-    ascendantSign: snapshot.ascendant,
-    ascendantLongitude: snapshot.ascendantLongitude,
-    midheavenLongitude: snapshot.midheavenLongitude
-  };
+  const rankingContext = timeKnown
+    ? {
+        planets,
+        ascendantSign: snapshot.ascendant,
+        ascendantLongitude: snapshot.ascendantLongitude,
+        midheavenLongitude: snapshot.midheavenLongitude
+      }
+    : { planets };
   const ranking = rankAspectPatterns(detection, rankingContext);
   const rankedDetection = {
     ...detection,

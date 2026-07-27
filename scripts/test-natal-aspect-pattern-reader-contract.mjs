@@ -22,7 +22,7 @@ assert.match(service, /import\.meta\.env\.PROD\) return false/, "Local storage o
 assert.match(service, /VITE_ENABLE_NATAL_ASPECT_PATTERN_ACTIVATION/, "Activation visibility must be guarded by a separate feature flag.");
 assert.match(service, /natalAspectPatternActivationFlagStorageKey = "tldrastro:natalAspectPatternActivation"/, "Activation local dev override must be narrow.");
 assert.match(service, /if \(!natalAspectPatternReaderEnabled\(\)\) return false/, "Activation must require the permanent natal pattern reader.");
-assert.match(app, /if \(showNatalAspectPatterns\) {\s*fetchNatalAspectPatternsWithCopy\(birthLocation, birthDateTime, \{ includeActivationCopy: showNatalAspectPatternActivation \}\)/s, "Natal aspect-pattern copy must load only when the feature is enabled.");
+assert.match(app, /if \(showNatalAspectPatterns\) {\s*fetchNatalAspectPatternsWithCopy\(birthLocation, birthDateTime, \{ includeActivationCopy: showNatalAspectPatternActivation, timeKnown: !unknownBirthTime \}\)/s, "Natal aspect-pattern copy must load only when the feature is enabled and must declare whether the birth time is known.");
 assert.match(app, /setProfileNatalAspectPatternStatus\(showNatalAspectPatterns \? "loading" : "idle"\)/, "Pattern loading must not block the natal chart.");
 assert.match(app, /skyWithNatalAspectPatternCopy\(currentSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
@@ -34,13 +34,15 @@ assert.match(app, /<NatalAspectPatternsSection\s+items=\{selectedFriendNatalAspe
 assert.match(page, /NatalAspectPatternsSection/, "YouPage must render the natal pattern section via a dedicated component.");
 
 assert.match(service, /includeAspectPatterns:\s*"true"/, "Reader data request must opt into aspect patterns.");
-assert.match(service, /includeAspectPatternCopy:\s*"false"/, "Reader data request must leave server-resolved copy disabled because V3 renders it locally.");
+assert.match(service, /includeAspectPatternCopy:\s*"true"/, "Reader data request must ask for governed resolver copy; the astro-knowledge resolver is the canonical copy system.");
+assert.match(service, /options\.timeKnown === false/, "Reader data request must forward unknown birth time to the API.");
+assert.match(service, /params\.set\("timeKnown", "false"\)/, "Unknown birth time must reach the API as an explicit request field.");
 assert.match(service, /includeAspectPatternActivation/, "Activation requests must opt into activation math only when enabled.");
 assert.match(service, /includeAspectPatternActivationContexts/, "Activation requests must opt into activation contexts only when enabled.");
-assert.match(service, /includeAspectPatternActivationCopy/, "Activation requests must opt into resolved activation copy only when enabled.");
-assert.match(service, /renderAspectPatternV3\(\{/, "Reader items must render approved V3 aspect-pattern copy locally.");
-assert.match(service, /source:\s*\{\s*recordId:\s*rendered\.templateKey,\s*contentLevel:\s*"source_grounded_template",\s*status:\s*"approved",\s*resolverVersion:\s*"v3"\s*\}/, "Locally rendered natal pattern copy must retain its V3 source-grounded template metadata.");
-assert.doesNotMatch(service, /activation\?\.resolvedCopy/, "Reader items must not depend on retired server-resolved activation copy.");
+assert.match(service, /params\.set\("includeAspectPatternActivationCopy", "true"\)/, "Activation requests must use governed resolver activation copy.");
+assert.doesNotMatch(service, /renderAspectPatternV3|fallbackArchitectureV3Runtime|SourceGapError/, "Reader items must not render retired local V3 aspect-pattern copy; the governed resolver is canonical.");
+assert.match(service, /resolvedCopy/, "Reader items must consume server-resolved governed copy.");
+assert.doesNotMatch(service, /package_\$\{|package_1|package_2/, "Reader items must never synthesize generic package section ids.");
 assert.match(service, /currentDisplayOrder/, "Current display order may be used for activation emphasis.");
 assert.match(service, /fetch\(`\/api\/astrology-facts\?\$\{params\.toString\(\)\}`, \{ method: "GET" \}\)/, "Reader aspect-pattern request must be read-only.");
 assert.doesNotMatch(service, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/, "Reader aspect-pattern service must make no write requests.");
@@ -93,6 +95,10 @@ assert.match(component, /copy\.headline/, "Reader must render resolved headline.
 assert.match(component, /copy\.overview/, "Reader must render resolved overview.");
 assert.match(component, /copy\.sections\.filter/, "Empty resolved sections must not render headings.");
 assert.match(component, /sectionLabel\(section\.id\)/, "Reader labels should map section IDs to human labels.");
+assert.doesNotMatch(component, /replace\(\/_\/g, " "\)/, "Reader must never render a raw section id as a heading.");
+assert.match(component, /section\.body\.trim\(\) && sectionLabel\(section\.id\)/, "Sections without an approved reader label must not render at all.");
+assert.match(component, /section\.id !== "timing" && activationSectionLabel\(section\.id\)/, "Activation sections without an approved reader label must not render at all.");
+assert.match(component, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
 assert.match(types, /aspectPatterns\?: import\("@tldr\/astro-knowledge\/aspect-pattern-engine"\)\.AspectPatternDetectionResult/, "SkySnapshot must carry canonical aspect pattern data.");
 assert.match(styles, /natal-patterns-section/);
 assert.match(styles, /natal-pattern-card__supporting/);
