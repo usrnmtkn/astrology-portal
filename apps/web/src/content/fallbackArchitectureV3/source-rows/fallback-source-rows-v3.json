@@ -37013,6 +37013,282 @@
    ],
    "notes": "Target-specific soft-contact effect: transiting venus on natal imum-coeli.",
    "approved_via": "owner chat approval 2026-07-23 (transit effect library)"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You've been running on autopilot through a version of yourself that needs updating. The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with. Use it on the part of your life that has been needing your attention.",
+   "body_they": "You've been running on autopilot through a version of yourself that needs updating. The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with. Use it on the part of your life that has been needing your attention.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner screenshot 2026-07-27",
+    "outputs/sky-placement-gold-sun-leo.md"
+   ],
+   "notes": "Voice-first placement hook. Pair-authored copy overrides the generic planet hook.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "For about a month, warmth, nerve, and the urge to make something with our name on it run hotter. We want to be looked at doing the thing we are proud of, not just to have done it. Confidence comes cleanest when it has something generous to point at: a project, a person, or a cause worth making visible.",
+   "body_they": "For about a month, warmth, nerve, and the urge to make something with our name on it run hotter. We want to be looked at doing the thing we are proud of, not just to have done it. Confidence comes cleanest when it has something generous to point at: a project, a person, or a cause worth making visible.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-gold-sun-leo.md"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The catch is that Leo measures by applause, and applause is a fickle ruler. The same heat that makes us bold can make us touchy about credit, quick to put on a show, and slow to stay when somebody else has the spotlight. Build from the inside out and people notice. Chase the clout directly and you'll just watch it land on somebody else.",
+   "body_they": "The catch is that Leo measures by applause, and applause is a fickle ruler. The same heat that makes us bold can make us touchy about credit, quick to put on a show, and slow to stay when somebody else has the spotlight. Build from the inside out and people notice. Chase the clout directly and you'll just watch it land on somebody else.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-gold-sun-leo.md"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
+   "body_they": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner screenshot 2026-07-27"
+   ],
+   "notes": "Voice-first placement hook, restored from the stronger prior card.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
+   "body_they": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner screenshot 2026-07-27",
+    "packages/astro-knowledge/data/placements/sign/moon-capricorn.json"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is yours to do, then let yourself be human off the clock.",
+   "body_they": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is yours to do, then let yourself be human off the clock.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner screenshot 2026-07-27"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You already know the conversation you have been avoiding. Mercury's move into Cancer changes the voice in the room: thinking and talking turn protective, intuitive, and feeling-led, and words that would not come before may come easier now. Say the thing while the channel is open.",
+   "body_they": "You already know the conversation you have been avoiding. Mercury's move into Cancer changes the voice in the room: thinking and talking turn protective, intuitive, and feeling-led, and words that would not come before may come easier now. Say the thing while the channel is open.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner screenshot 2026-07-27"
+   ],
+   "notes": "Voice-first placement hook, restored from the stronger prior card.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "For the next few weeks, memory sits in on every conversation. We hear the tone behind the words, remember how the last version went, and decide what feels true before we can explain why. The right sentence can reach somebody here because it sounds like a person, not a press release.",
+   "body_they": "For the next few weeks, memory sits in on every conversation. We hear the tone behind the words, remember how the last version went, and decide what feels true before we can explain why. The right sentence can reach somebody here because it sounds like a person, not a press release.",
+   "review_status": "approved",
+   "source_keys": [
+    "packages/astro-knowledge/data/placements/sign/mercury-cancer.json"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The catch is speaking in hints and resenting people for missing them. Sensitivity can make the message kinder, or it can make the message impossible to find. Say what happened, say what you need, and leave the scavenger hunt out of it.",
+   "body_they": "The catch is speaking in hints and resenting people for missing them. Sensitivity can make the message kinder, or it can make the message impossible to find. Say what happened, say what you need, and leave the scavenger hunt out of it.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-sign-trap/cancer",
+    "fallback-hook/sky-placement-practice/mercury"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You've been calling it picky, but it is really your taste getting clearer. Venus in Virgo turns attraction practical. Let yourself want what you actually want, not what photographs well.",
+   "body_they": "You've been calling it picky, but it is really your taste getting clearer. Venus in Virgo turns attraction practical. Let yourself want what you actually want, not what photographs well.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first placement hook.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "For about four weeks, affection, taste, and money all bend toward the useful: the gesture that actually helps over the grand one, the person who remembers how we take our coffee over the one who performs romance. Venus here reads love as attention, clocking what someone needs before they ask and quietly handling it.",
+   "body_they": "For about four weeks, affection, taste, and money all bend toward the useful: the gesture that actually helps over the grand one, the person who remembers how we take our coffee over the one who performs romance. Venus here reads love as attention, clocking what someone needs before they ask and quietly handling it.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Push practical love too far and it curdles: help hardens into control, and care shows up as a list of corrections. We start loving people by fixing them, or earning our keep by staying useful until there is nothing left over. Care lands best with no invoice attached. Try to be needed instead of loved and you'll end up neither.",
+   "body_they": "Push practical love too far and it curdles: help hardens into control, and care shows up as a list of corrections. We start loving people by fixing them, or earning our keep by staying useful until there is nothing left over. Care lands best with no invoice attached. Try to be needed instead of loved and you'll end up neither.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
+   "body_they": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first placement hook.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
+   "body_they": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
+   "body_they": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The old doubt about being allowed to go first gets loud again. Chiron in Aries presses on the right to want things, take up space, and act without attaching a written apology.",
+   "body_they": "The old doubt about being allowed to go first gets loud again. Chiron in Aries presses on the right to want things, take up space, and act without attaching a written apology.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first placement hook.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Chiron sits in a sign for years, so a whole generation carries this tender spot together. We see it in whose anger is allowed, who gets called selfish, and what happens when somebody finally stops asking permission.",
+   "body_they": "Chiron sits in a sign for years, so a whole generation carries this tender spot together. We see it in whose anger is allowed, who gets called selfish, and what happens when somebody finally stops asking permission.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The wound shows up two ways: freezing when it is time to assert, or overcorrecting into aggression to cover the freeze. Both are the same bruise. You don't heal the fear of being too much by staying small. You heal it by taking up room and surviving the discomfort.",
+   "body_they": "The wound shows up two ways: freezing when it is time to assert, or overcorrecting into aggression to cover the freeze. Both are the same bruise. You don't heal the fear of being too much by staying small. You heal it by taking up room and surviving the discomfort.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-moon-chiron.md"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-hook/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Some structures do not reform; they compost. Pluto in Aquarius is taking apart the arrangements that stopped serving anyone and growing something stranger in their place.",
+   "body_they": "Some structures do not reform; they compost. Pluto in Aquarius is taking apart the arrangements that stopped serving anyone and growing something stranger in their place.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first placement hook.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lived/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pluto takes about twenty years to cross a sign, so this is an era, not a mood. In Aquarius it goes to work on power itself: who holds it, who it runs through, and how much of it now lives in networks, machines, and crowds instead of a few hands at the top. The systems we treat as permanent are exactly the ones being quietly rebuilt.",
+   "body_they": "Pluto takes about twenty years to cross a sign, so this is an era, not a mood. In Aquarius it goes to work on power itself: who holds it, who it runs through, and how much of it now lives in networks, machines, and crowds instead of a few hands at the top. The systems we treat as permanent are exactly the ones being quietly rebuilt.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first lived-expression slot.",
+   "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-turn/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The shadow is the group that swallows the person: control dressed up as progress, the crowd deciding it speaks for everyone. Pluto keeps exposing which shared structures serve the many and which only claim to. You do not get to opt out of an era this size. You only get to decide what you are helping to build inside it.",
+   "body_they": "The shadow is the group that swallows the person: control dressed up as progress, the crowd deciding it speaks for everyone. Pluto keeps exposing which shared structures serve the many and which only claim to. You do not get to opt out of an era this size. You only get to decide what you are helping to build inside it.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-placement-golds-venus-pluto.md"
+   ],
+   "notes": "Voice-first shadow-and-turn slot.",
+   "approved_via": "owner feedback, 2026-07-27"
   }
  ]
 }

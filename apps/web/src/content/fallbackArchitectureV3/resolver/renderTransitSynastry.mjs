@@ -505,46 +505,88 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
-// ---- Sky page: planet-in-sign placement article (Title/duration are app chrome; this
-// returns the longer-form write-up). Structure: per-planet write-up (pace + theme in the
-// sign's register) -> sign lore -> sign trap -> one paragraph per aspect the planet makes
-// while in the sign (engine-supplied events, same frames as the season article). ----
-// Structure (owner's Saturn-ingress sample): you-voice opener -> mechanics/collective write-up
-// -> sign lore -> sign trap -> practice -> one paragraph per aspect made during the stay
-// -> element collective close -> sign-off blessing. Owner-authored ingress articles
-// (authored/sky-ingress/{planet}/{sign}) render verbatim first.
+const SKY_PLACEMENT_ASPECT_INTERACTION = {
+  conjunction: "amplify each other",
+  square: "push against each other",
+  opposition: "pull from opposite ends",
+  trine: "work together with less friction",
+  sextile: "open a workable route between them"
+};
+
+function capitalizeSentence(value) {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+}
+
+function skyPlacementAspectParagraph(placementPlanet, ev) {
+  if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
+  const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+  const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
+    ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
+  const aRef = transitRef(ev.a, ev.aSign);
+  const bRef = transitRef(ev.b, ev.bSign);
+  const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction"
+    ? "amplify momentum"
+    : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+  const timing = ev.exactDate
+    ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}`
+    : ev.dateLine ?? "In the current aspect window";
+  const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+  const effect = specific ?? pairEffect(ev);
+  if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
+  return `${fact} ${capitalizeSentence(effect)}`.trim();
+}
+
+// ---- Sky page: voice-first planet-in-sign article. One memorable hook, one
+// concrete lived paragraph, and one shadow/turn. Authored pair slots win; the
+// generic planet/sign rows are coverage only. ----
 export function renderSkyPlacement({ planet, sign, events = [] }) {
+  const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
   const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
-  if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
-  const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-  const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-  const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
-  if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-  const ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
-  const paras = [];
-  if (youOpen) paras.push(fill(youOpen, ctx));
-  paras.push(fill(frame, ctx));
-  if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-  const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
-  if (lore) paras.push(lore);
-  const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
-  if (trap) paras.push(`The ${title(sign)} trap to watch while ${transitRef(planet)} is here is ${trap}`);
-  const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
-  if (practice) paras.push(practice);
-  for (const ev of events) {
-    const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect] ?? ev.aspect}` : ev.type;
-    const evFrame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-    if (!evFrame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-    const body = fill(evFrame, eventCtx(ev));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-    paras.push(body);
+  if (authoredArticle) {
+    const parts = [authoredArticle.body, ...aspectParas].filter(Boolean);
+    return {
+      headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+      body: parts.join("\n\n"),
+      parts,
+      templateKey: "authored/sky-ingress",
+      contentKey: authoredArticle.contentKey
+    };
   }
-  const elClose = hooks.get(`fallback-hook/sky-element-close/${ELEMENT[sign]}`)?.body_you;
-  if (elClose) paras.push(elClose);
-  const pb = vocab.get(`fallback-vocab/planet-blessing/${planet}`)?.body;
-  const sb = vocab.get(`fallback-vocab/sign-blessing/${sign}`)?.body;
-  if (pb && sb) paras.push(`Wishing you ${pb} and ${sb}.`);
-  return { headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "), body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.placement-article" };
+  const template = tpl("fallback-template/sky.placement-article");
+  if (!template) throw new SourceGapError("SOURCE_GAP: missing template fallback-template/sky.placement-article");
+  const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+  const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+  const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+  if (!fallbackHook || !frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  const ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
+  const placementRef = capitalizeSentence(transitRef(planet));
+  const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you
+    ?? fill(fallbackHook, ctx);
+  const lived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you
+    ?? fill(frame, ctx);
+  const authoredTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+  const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
+  const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
+  const fallbackTurn = trap ? `The catch is ${trap}${practice ? ` ${practice}` : ""}` : practice;
+  const templateCtx = {
+    planetTitle: placementRef,
+    signTitle: title(sign),
+    hook,
+    lived,
+    turn: authoredTurn ?? fallbackTurn
+  };
+  for (const slot of template.requiredSlots ?? []) {
+    if (!templateCtx[slot]) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing ${slot}`);
+  }
+  const baseBody = fillKeep(template.body, templateCtx);
+  if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+  const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+  return {
+    headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+    body: parts.join("\n\n"),
+    parts,
+    templateKey: template.contentKey
+  };
 }
 
 // ---- Calendar page (CALENDAR-CONTENT-SPEC.md): lunar phases, void of course, season
