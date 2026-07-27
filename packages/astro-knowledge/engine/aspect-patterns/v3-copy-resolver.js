@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const PACKAGE_ROOT = path.resolve(__dirname, "../..");
-const TEMPLATE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-templates-v3.3.md");
+const TEMPLATE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-templates-v3.5.md");
 const TABLE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-tables-v1.md");
 const SOURCE_ROWS_PATH = path.resolve(
   PACKAGE_ROOT,
@@ -44,6 +44,7 @@ const L2_SECTION_IDS = Object.freeze([
 ]);
 
 const TOKEN_PATTERN = /\{([a-zA-Z_0-9]+)\.([a-zA-Z_0-9]+)\}/g;
+const OUTER_PLANETS = new Set(["uranus", "neptune", "pluto"]);
 
 const COMPACT_ROLE_GLOSSES = Object.freeze({
   sun: "how you shine",
@@ -72,6 +73,36 @@ const COMPACT_HOUSE_AREAS = Object.freeze({
   10: "career and reputation",
   11: "community",
   12: "the inner life"
+});
+
+const DECISION_HOUSE_AREAS = Object.freeze({
+  1: "your sense of self",
+  2: "your financial security",
+  3: "communication",
+  4: "your home life",
+  5: "your creative life",
+  6: "your daily responsibilities",
+  7: "your relationships",
+  8: "shared trust",
+  9: "your beliefs",
+  10: "your reputation",
+  11: "your community",
+  12: "your private life"
+});
+
+const DECISION_HOUSE_TESTS = Object.freeze({
+  1: "when you act on it",
+  2: "when the cost becomes real",
+  3: "when you have to explain it",
+  4: "at home",
+  5: "when it becomes personal",
+  6: "in daily practice",
+  7: "when another person has a say",
+  8: "in private",
+  9: "when it is tested against what you believe",
+  10: "on paper",
+  11: "when the group is involved",
+  12: "when no one else can see it"
 });
 
 const COORDINATE_VERBS = new Set([
@@ -238,10 +269,22 @@ function parseAuthoredTables(markdown) {
       "focal-demand-by-planet",
       ["planet", "focal_demand", "focal_interruption"]
     ),
-    apex: parseMarkdownTable(
+    patternNarrative: parseMarkdownTable(
       markdown,
-      "apex-pressure-by-planet",
-      ["planet", "apex_pressure", "repeating_question"]
+      "pattern-narrative-by-planet",
+      [
+        "planet",
+        "base_contribution",
+        "lived_title",
+        "lived_need",
+        "incomplete_first_answer",
+        "returning_lived_example"
+      ]
+    ),
+    backgroundAnchor: parseMarkdownTable(
+      markdown,
+      "background-anchor-by-planet",
+      ["planet", "background_anchor"]
     )
   };
 }
@@ -287,7 +330,7 @@ function resolveAspectPatternV3Copy(context) {
   const heading = PATTERN_HEADINGS[context.patternType];
   const spec = templates[heading];
   if (!heading || !spec) {
-    throw new AspectPatternV3SourceGapError(`No v3.3 template for ${context.patternType}.`);
+    throw new AspectPatternV3SourceGapError(`No v3.5 template for ${context.patternType}.`);
   }
 
   const confidence = normalizeConfidence(context.geometry?.confidence);
@@ -367,7 +410,7 @@ function makeResolvedCopy(context, headline, overview, sections, skippedSections
     patternId: context.patternId,
     patternType: context.patternType,
     source: {
-      recordId: `aspect-pattern-v3.3:${context.patternType}:${context.geometry.confidence}:${hasHouses ? "known" : "unknown"}`,
+      recordId: `aspect-pattern-v3.5:${context.patternType}:${context.geometry.confidence}:${hasHouses ? "known" : "unknown"}`,
       contentLevel: "source_grounded_template",
       status: "approved",
       resolverVersion: "v3"
@@ -379,7 +422,7 @@ function makeResolvedCopy(context, headline, overview, sections, skippedSections
       sections
     },
     diagnostics: {
-      templateId: `aspect-pattern-templates-v3.3:${PATTERN_HEADINGS[context.patternType]}`,
+      templateId: `aspect-pattern-templates-v3.5:${PATTERN_HEADINGS[context.patternType]}`,
       usedFallback: false,
       missingSlots: [],
       skippedSections: [...new Set(skippedSections)].sort(),
@@ -389,17 +432,17 @@ function makeResolvedCopy(context, headline, overview, sections, skippedSections
 }
 
 function readingNoteSection(context, confidence) {
-  const label = {
-    exact: "Close",
-    strong: "Clear",
-    wide: "Wider",
-    partial: "Partial"
+  const sentence = {
+    exact: "This is a close pattern in the chart.",
+    strong: "This pattern is clear in the chart.",
+    wide: "This is a wider pattern in the chart.",
+    partial: "This is a partial pattern in the chart."
   }[confidence];
   const maximumOrb = formatNumber(context.geometry?.maximumOrb);
   return {
     id: "confidence_note",
     title: "Reading note",
-    body: `${label}. The widest link is ${maximumOrb} ${Number(maximumOrb) === 1 ? "degree" : "degrees"}.`
+    body: `${sentence} Its widest link is ${maximumOrb} ${Number(maximumOrb) === 1 ? "degree" : "degrees"}.`
   };
 }
 
@@ -427,6 +470,7 @@ function buildResolvedRoles(context, hasHouses) {
     roles.oppA = memberRole(oppA);
     roles.oppB = memberRole(oppB);
     roles.apex = memberRole(context.roles.apex);
+    roles.ends = resolveMemberGroup([roles.oppA, roles.oppB], hasHouses);
     roles.empty_leg = resolvePointRole(
       context.roles.emptyLeg || derivedPoint(context, "empty_leg"),
       hasHouses
@@ -436,16 +480,22 @@ function buildResolvedRoles(context, hasHouses) {
     ordered.forEach((member, index) => {
       roles[`c${index + 1}`] = resolveMemberRole(member, hasHouses);
     });
+    roles.corners = resolveMemberGroup(
+      [roles.c1, roles.c2, roles.c3, roles.c4],
+      hasHouses
+    );
   } else if (context.patternType === "grand_trine") {
     const ordered = members.slice().sort(compareMemberLongitude);
     ordered.forEach((member, index) => {
       roles[`t${index + 1}`] = resolveMemberRole(member, hasHouses);
     });
+    roles.trio = resolveMemberGroup([roles.t1, roles.t2, roles.t3], hasHouses);
   } else if (context.patternType === "kite") {
     const orderedTrine = sortPlanetsByLongitude(context.roles.grandTrinePlanets, byPlanet);
     orderedTrine.forEach((planet, index) => {
       roles[`t${index + 1}`] = memberRole(planet);
     });
+    roles.trio = resolveMemberGroup([roles.t1, roles.t2, roles.t3], hasHouses);
     roles.focal = memberRole(context.roles.focalPlanet);
     roles.focal.opposes = titleToken(context.roles.opposedTrinePlanet);
     addFocalClauses(roles.focal, context.roles.focalPlanet);
@@ -453,8 +503,8 @@ function buildResolvedRoles(context, hasHouses) {
     const orderedBase = sortPlanetsByLongitude(context.roles.basePlanets, byPlanet);
     roles.base1 = memberRole(orderedBase[0]);
     roles.base2 = memberRole(orderedBase[1]);
+    roles.bases = resolveMemberGroup([roles.base1, roles.base2], hasHouses);
     roles.apex = memberRole(context.roles.apex);
-    addApexClauses(roles.apex, context.roles.apex);
     roles.reference = resolvePointRole(
       context.roles.falloutPoint || derivedPoint(context, "fallout_point"),
       hasHouses
@@ -469,6 +519,8 @@ function buildResolvedRoles(context, hasHouses) {
     roles.oa2 = memberRole(axisA[1]);
     roles.ob1 = memberRole(axisB[0]);
     roles.ob2 = memberRole(axisB[1]);
+    roles.axisA = resolveMemberGroup([roles.oa1, roles.oa2], hasHouses);
+    roles.axisB = resolveMemberGroup([roles.ob1, roles.ob2], hasHouses);
     roles.oppositionA = {
       ...roles.oa1,
       ...(hasHouses ? { area: oppositionArea(roles.oa1, roles.oa2, hasHouses) } : {})
@@ -500,25 +552,108 @@ function resolveMemberRole(member, hasHouses) {
   const placementLead = firstSentence(placement);
   const concreteBehavior = placementBehavior(placementLead, signNeed);
   const shortBehavior = concreteBehavior.split(/[;,:]/)[0].trim();
+  const narrative = tables.patternNarrative.get(planet);
+  if (!narrative) {
+    throw new AspectPatternV3SourceGapError(`Missing pattern narrative row for ${planet}.`);
+  }
 
   const role = {
     planet: planetTitle,
     sign: signTitle,
     role_gloss: roleGloss,
-    sign_pull: shortBehavior,
+    sign_need: signNeed,
     sign_behavior: shortBehavior,
-    response_example: `often by making room for ${signNeed}`,
-    pressure_response: `lean harder on ${signNeed}`
+    response_example: OUTER_PLANETS.has(planet)
+      ? `Here, ${planetTitle} in ${signTitle} ${shortBehavior}.`
+      : `In this part of life, you also need ${signNeed}.`,
+    base_contribution: narrative.base_contribution,
+    lived_title: narrative.lived_title,
+    lived_need: narrative.lived_need,
+    incomplete_first_answer: narrative.incomplete_first_answer,
+    returning_lived_example: narrative.returning_lived_example
   };
 
+  if (OUTER_PLANETS.has(planet)) {
+    const background = tables.backgroundAnchor.get(planet);
+    if (!background) {
+      throw new AspectPatternV3SourceGapError(`Missing background-anchor row for ${planet}.`);
+    }
+    role.background_anchor = background.background_anchor;
+    role.is_outer = true;
+  }
+
   if (houseArea) {
+    role.house_ordinal = ordinal(member.house);
     role.house_label = `the ${ordinal(member.house)} house of ${houseArea}`;
     role.house_area = houseArea;
     role.house_context = `around ${houseArea}`;
-    role.sign_house_pull = concreteBehavior;
+    role.decision_area = DECISION_HOUSE_AREAS[member.house];
+    role.decision_test = DECISION_HOUSE_TESTS[member.house];
     role.sign_house_response = concreteBehavior;
   }
   return role;
+}
+
+function resolveMemberGroup(memberRoles, hasHouses) {
+  const roles = memberRoles.filter(Boolean);
+  if (roles.length === 0) {
+    throw new AspectPatternV3SourceGapError("Pattern member group could not be resolved.");
+  }
+
+  const personal = roles.filter((role) => !role.is_outer);
+  const outer = roles.filter((role) => role.is_outer);
+  const sentences = personal.map((role) => {
+    const placement = `Your ${role.planet} in ${role.sign} ${stripTerminalPunctuation(role.sign_behavior)}`;
+    if (!hasHouses) {
+      return `${placement}.`;
+    }
+    if (!role.house_ordinal || !role.house_area) {
+      throw new AspectPatternV3SourceGapError(`Missing house label for ${role.planet} group introduction.`);
+    }
+    return `${placement}, and in the ${role.house_ordinal} house that plays out through ${role.house_area}.`;
+  });
+
+  if (outer.length > 0) {
+    const names = joinWords(outer.map((role) => role.planet));
+    const signs = joinWords(outer.map((role) => role.sign));
+    const verb = outer.length === 1 ? "moves" : "move";
+    const possessive = outer.length === 1 ? "its sign" : "their signs";
+    const describe = outer.length === 1 ? "describes" : "describe";
+    sentences.push(
+      `${names} ${verb} slowly, so ${possessive}, ${signs}, ${describe} a generation before ${outer.length === 1 ? "it describes" : "they describe"} you alone.`
+    );
+    if (hasHouses) {
+      const anchors = outer.map((role) => {
+        if (!role.house_label || !role.background_anchor) {
+          throw new AspectPatternV3SourceGapError(`Missing outer-planet group anchor for ${role.planet}.`);
+        }
+        return `${role.planet} anchors ${role.background_anchor} in ${role.house_label}`;
+      });
+      sentences.push(`In your chart, ${joinClauses(anchors)}.`);
+    } else {
+      const anchors = outer.map((role) => {
+        if (!role.background_anchor) {
+          throw new AspectPatternV3SourceGapError(`Missing outer-planet group anchor for ${role.planet}.`);
+        }
+        return `${role.planet} carries ${role.background_anchor}`;
+      });
+      sentences.push(`In this pattern, ${joinClauses(anchors)}.`);
+    }
+  }
+
+  return { intro: sentences.join(" ") };
+}
+
+function joinWords(values) {
+  if (values.length <= 1) return values[0] || "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
+}
+
+function joinClauses(values) {
+  if (values.length <= 1) return values[0] || "";
+  if (values.length === 2) return `${values[0]}, while ${values[1]}`;
+  return `${values.slice(0, -1).join("; ")}; and ${values.at(-1)}`;
 }
 
 function resolvePointRole(point, hasHouses) {
@@ -530,7 +665,6 @@ function resolvePointRole(point, hasHouses) {
     sign: titleToken(sign),
     balancing_move: `making room for ${signNeed}`,
     behavior: `making room for ${signNeed}`,
-    sign_pull: `moves toward ${signNeed}`,
     sign_behavior: `moves toward ${signNeed}`
   };
   if (hasHouses && Number.isInteger(point.house)) {
@@ -546,13 +680,6 @@ function addFocalClauses(role, planet) {
   if (!row) throw new AspectPatternV3SourceGapError(`Missing focal-demand row for ${planet}.`);
   role.focal_demand = row.focal_demand;
   role.focal_interruption = row.focal_interruption;
-}
-
-function addApexClauses(role, planet) {
-  const row = tables.apex.get(normalizeToken(planet));
-  if (!row) throw new AspectPatternV3SourceGapError(`Missing apex-pressure row for ${planet}.`);
-  role.apex_pressure = row.apex_pressure;
-  role.repeating_question = row.repeating_question;
 }
 
 function oppositionArea(first, second, hasHouses) {
@@ -577,7 +704,7 @@ function renderRequired(template, roles, location) {
   });
   if (missing.length > 0 || /{[^}]+}/.test(rendered)) {
     throw new AspectPatternV3SourceGapError(
-      `Required v3.3 clauses are missing at ${location}: ${[...new Set(missing)].join(", ")}.`,
+      `Required v3.5 clauses are missing at ${location}: ${[...new Set(missing)].join(", ")}.`,
       { location, missing: [...new Set(missing)] }
     );
   }

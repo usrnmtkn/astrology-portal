@@ -6,7 +6,7 @@ unknown-time per pattern, plus out-of-sign Grand Trine and Kite. Path-portable."
 import re, json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
-TPL=ROOT/"aspect-pattern-templates-v3.3.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
+TPL=ROOT/"aspect-pattern-templates-v3.5.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
 TABLES=ROOT/"aspect-pattern-tables-v1.md"
 print(f"Template: {TPL}\nTables:   {TABLES}\nContract: {CONTRACT}\n")
 C=json.loads(CONTRACT.read_text()); PATTERNS=C["patterns"]
@@ -18,6 +18,15 @@ SIGN_ADJ={"Leo":"boldly","Aquarius":"at a cool distance","Cancer":"protectively"
 HOUSE_AREA={1:"identity",2:"money and worth",3:"communication",4:"home and family",
  5:"creativity",6:"daily work",7:"partnership",8:"shared trust",
  9:"belief",10:"career and reputation",11:"community",12:"the inner life"}
+DECISION_AREA={1:"your sense of self",2:"your financial security",3:"communication",
+ 4:"your home life",5:"your creative life",6:"your daily responsibilities",
+ 7:"your relationships",8:"shared trust",9:"your beliefs",
+ 10:"your reputation",11:"your community",12:"your private life"}
+DECISION_TEST={1:"when you act on it",2:"when the cost becomes real",
+ 3:"when you have to explain it",4:"at home",5:"when it becomes personal",
+ 6:"in daily practice",7:"when another person has a say",8:"in private",
+ 9:"when it is tested against what you believe",10:"on paper",
+ 11:"when the group is involved",12:"when no one else can see it"}
 ROLE_GLOSS={"Sun":"how you shine","Moon":"what feels safe","Mars":"how you push",
  "Saturn":"what you answer to","Venus":"what you value","Mercury":"how you think and talk",
  "Jupiter":"what you believe","Uranus":"where you break form","Neptune":"what you imagine","Pluto":"where you transform"}
@@ -33,7 +42,25 @@ def table_rows(heading, columns):
     return out
 
 FOCAL=table_rows("focal-demand-by-planet",("planet","focal_demand","focal_interruption"))
-APEX=table_rows("apex-pressure-by-planet",("planet","apex_pressure","repeating_question"))
+PATTERN_NARRATIVE=table_rows(
+    "pattern-narrative-by-planet",
+    (
+        "planet",
+        "base_contribution",
+        "lived_title",
+        "lived_need",
+        "incomplete_first_answer",
+        "returning_lived_example",
+    ),
+)
+BACKGROUND=table_rows("background-anchor-by-planet",("planet","background_anchor"))
+OUTER={"Uranus","Neptune","Pluto"}
+
+def ordinal(value):
+    suffix="th"
+    if value%100 not in (11,12,13):
+        suffix={1:"st",2:"nd",3:"rd"}.get(value%10,"th")
+    return f"{value}{suffix}"
 
 PLACEMENT_BEHAVIOR={
  "Sun":"leads visibly and takes pride in what it creates",
@@ -48,24 +75,71 @@ PLACEMENT_BEHAVIOR={
  "Pluto":"stays with the hard question until something changes",
 }
 
-def val(pre,fld,ch):
+def group_intro(members,ch,include_houses):
+    personal=[ch[member] for member in members if ch[member]["planet"] not in OUTER]
+    outer=[ch[member] for member in members if ch[member]["planet"] in OUTER]
+    sentences=[]
+    for role in personal:
+        p,s,h=role["planet"],role["sign"],role["house"]
+        if include_houses:
+            sentences.append(f"Your {p} in {s} {PLACEMENT_BEHAVIOR[p]}, and in the {ordinal(h)} house that plays out through {HOUSE_AREA[h]}.")
+        else:
+            sentences.append(f"Your {p} in {s} {PLACEMENT_BEHAVIOR[p]}.")
+    if outer:
+        names=[role["planet"] for role in outer]
+        signs=[role["sign"] for role in outer]
+        joined_names=" and ".join(names)
+        joined_signs=" and ".join(signs)
+        verb="moves" if len(outer)==1 else "move"
+        possessive="its sign" if len(outer)==1 else "their signs"
+        describe="describes" if len(outer)==1 else "describe"
+        described="it describes" if len(outer)==1 else "they describe"
+        sentences.append(f"{joined_names} {verb} slowly, so {possessive}, {joined_signs}, {describe} a generation before {described} you alone.")
+        if include_houses:
+            anchors=[
+                f"{role['planet']} anchors {BACKGROUND[role['planet']]['background_anchor']} in the {ordinal(role['house'])} house of {HOUSE_AREA[role['house']]}"
+                for role in outer
+            ]
+            sentences.append(f"In your chart, {', while '.join(anchors)}.")
+        else:
+            anchors=[
+                f"{role['planet']} carries {BACKGROUND[role['planet']]['background_anchor']}"
+                for role in outer
+            ]
+            sentences.append(f"In this pattern, {', while '.join(anchors)}.")
+    return " ".join(sentences)
+
+def val(pre,fld,ch,include_houses=True):
     d=ch[pre]; s=d["sign"]; h=d["house"]; p=d["planet"]
+    if fld=="intro": return group_intro(d["members"],ch,include_houses)
     adj=SIGN_ADJ.get(s,"in its way"); area=HOUSE_AREA.get(h,"that area")
-    focal=FOCAL.get(p,{}); apex=APEX.get(p,{})
+    focal=FOCAL.get(p,{})
+    narrative=PATTERN_NARRATIVE.get(p,{})
     return {"planet":p,"sign":s,"opposes":d.get("opposes","Saturn"),
       "house_label":f"the {h}{ {1:'st',2:'nd',3:'rd'}.get(h,'th') } house{'' if p=='_' else f' of {area}'}".replace("  "," "),
-      "house_area":area,"house_context":f"around {area}","role_gloss":ROLE_GLOSS.get(p,"that part of you"),
-      "sign_house_pull":PLACEMENT_BEHAVIOR.get(p,f"can respond {adj}"),
+      "house_area":area,"house_context":f"around {area}",
+      "decision_area":DECISION_AREA.get(h,"that part of your life"),
+      "decision_test":DECISION_TEST.get(h,"in practice"),
+      "role_gloss":ROLE_GLOSS.get(p,"that part of you"),
+      "sign_need":f"room to respond {adj}",
+      "base_contribution":narrative.get("base_contribution",f"understand {area}"),
+      "lived_title":narrative.get("lived_title",f"The answer keeps leaving {area} out"),
+      "lived_need":narrative.get("lived_need",f"a need to include {area}"),
+      "incomplete_first_answer":narrative.get("incomplete_first_answer",f"The first answer leaves {area} unresolved"),
+      "returning_lived_example":narrative.get("returning_lived_example",f"The subject returns through {area}"),
       "sign_house_response":PLACEMENT_BEHAVIOR.get(p,f"can respond {adj}"),
-      "sign_pull":PLACEMENT_BEHAVIOR.get(p,f"can respond {adj}"),"sign_behavior":f"acts {adj}","response_example":f"often {adj}",
-      "pressure_response":f"push {adj}","balancing_move":f"answer {adj} instead","behavior":f"a {adj} check",
-      "apex_pressure":apex.get("apex_pressure",f"a {adj} weight"),
-      "repeating_question":apex.get("repeating_question",f"the question of what {area} requires"),
+      "sign_behavior":f"acts {adj}",
+      "response_example":(
+          f"Here, {p} in {s} {PLACEMENT_BEHAVIOR[p]}."
+          if p in OUTER
+          else f"In this part of life, you also need room to respond {adj}."
+      ),
+      "balancing_move":f"answer {adj} instead","behavior":f"a {adj} check",
       "focal_demand":focal.get("focal_demand",f"a {adj} standard"),
       "focal_interruption":focal.get("focal_interruption",f"a snag around {area}"),
       "area":area}.get(fld,f"[{fld}]")
 TOK=re.compile(r"\{([a-zA-Z_0-9]+)\.([a-zA-Z_0-9]+)\}")
-def render(t,ch): return TOK.sub(lambda m:val(m.group(1),m.group(2),ch),t)
+def render(t,ch,include_houses=True): return TOK.sub(lambda m:val(m.group(1),m.group(2),ch,include_houses),t)
 
 def parse():
     idx={}
@@ -92,7 +166,7 @@ def parse():
                 if m.group(2).strip().startswith("(none"): continue  # not-applicable marker, not rendered copy
                 sec[m.group(1)]=m.group(2); continue
             m=re.match(r"^(opening) ([a-z/]+):\s*(.*)$",l)
-            if m: sec[f"opening {m.group(2)}"]=m.group(3)
+            if m: sec[f"{lvl}:opening {m.group(2)}"]=m.group(3)
         out[name]=sec
     return out
 P=parse()
@@ -103,7 +177,7 @@ CH={
  "GRAND CROSS":{"c1":("Sun","Aries",1),"c2":("Mars","Libra",7),"c3":("Moon","Cancer",4),"c4":("Saturn","Capricorn",10)},
  "GRAND TRINE":{"t1":("Sun","Leo",1),"t2":("Jupiter","Sagittarius",9),"t3":("Mars","Aries",5)},
  "KITE":{"t1":("Sun","Leo",1),"t2":("Moon","Sagittarius",5),"t3":("Mars","Aries",9),"focal":("Saturn","Libra",3)},
- "YOD":{"base1":("Moon","Cancer",1),"base2":("Venus","Virgo",3),"apex":("Saturn","Scorpio",8),"reference":("_","Taurus",2)},
+ "YOD":{"base1":("Pluto","Scorpio",8),"base2":("Neptune","Capricorn",10),"apex":("Moon","Gemini",3),"reference":("_","Sagittarius",9)},
  "MYSTIC RECTANGLE":{"oa1":("Sun","Aries",1),"oa2":("Mars","Libra",7),"ob1":("Moon","Gemini",3),"ob2":("Saturn","Sagittarius",9)},
 }
 def chart(name):
@@ -111,6 +185,16 @@ def chart(name):
     for r,(p,s,h) in CH[name].items(): ch[r]={"planet":p,"sign":s,"house":h,"opposes":"Saturn"}
     if "oa1" in ch: ch["oppositionA"]=dict(ch["oa1"])
     if "ob1" in ch: ch["oppositionB"]=dict(ch["ob1"])
+    for group,members in {
+        "ends":["oppA","oppB"],
+        "corners":["c1","c2","c3","c4"],
+        "trio":["t1","t2","t3"],
+        "bases":["base1","base2"],
+        "axisA":["oa1","oa2"],
+        "axisB":["ob1","ob2"],
+    }.items():
+        present=[member for member in members if member in ch]
+        if present: ch[group]={"members":present,"planet":"_","sign":"Cancer","house":1}
     return ch
 
 def grammar_fails(label,text):
@@ -130,8 +214,18 @@ def grammar_fails(label,text):
 
 TABLE_CLAUSES={
     row[field]
-    for table,fields in ((FOCAL,("focal_demand","focal_interruption")),
-                         (APEX,("apex_pressure","repeating_question")))
+    for table,fields in (
+        (FOCAL,("focal_demand","focal_interruption")),
+        (
+            PATTERN_NARRATIVE,
+            (
+                "base_contribution",
+                "lived_need",
+                "incomplete_first_answer",
+                "returning_lived_example",
+            ),
+        ),
+    )
     for row in table.values()
     for field in fields
 }
@@ -160,7 +254,7 @@ def voice_fails(label,text):
 
 VOICE_REGRESSION_PROBES={
  "comma-pileup":"They keep an easy rhythm between love, pleasure, taste, and what you value and emotional needs, moods, and what makes you feel safe.",
- "appended-tail":f"Saturn adds {APEX['Saturn']['apex_pressure']} for achievement and structure in career, reputation, and public role.",
+ "appended-tail":f"Saturn adds {FOCAL['Saturn']['focal_demand']} for achievement and structure in career, reputation, and public role.",
  "decorated-scaffold":"Your Venus moves through communication, learning, and everyday connections in a curious, restless, talkative way: you win people over.",
  "can-need":"Uranus can need room to express what it believes.",
  "can-reflexive":"Mars can throw yourself into things with real flair.",
@@ -174,19 +268,19 @@ fails=[]; rendered=0
 for name,spec in PATTERNS.items():
     sec=P[name]; ch=chart(name)
     L1=[s for s in ["feel","shows_up","complicated","another_response"] if s in sec]
-    exact=" ".join(render(sec[k],ch) for k in (["opening exact"]+L1) if k in sec and sec.get(k))
+    exact=" ".join(render(sec[k],ch) for k in (["L1:opening exact"]+L1) if k in sec and sec.get(k))
     fails+=grammar_fails(f"{name}/exact-L1",exact)
     fails+=voice_fails(f"{name}/exact-L1",exact); rendered+=1
     if "unknown_time L1" in sec:
-        unknown_l1=render(sec["unknown_time L1"],ch)
+        unknown_l1=render(sec["unknown_time L1"],ch,False)
         fails+=grammar_fails(f"{name}/unknown-L1",unknown_l1)
         fails+=voice_fails(f"{name}/unknown-L1",unknown_l1); rendered+=1
     if "unknown_time L2" in sec:
-        unknown_l2=render(sec["unknown_time L2"],ch)
+        unknown_l2=render(sec["unknown_time L2"],ch,False)
         fails+=grammar_fails(f"{name}/unknown-L2",unknown_l2)
         fails+=voice_fails(f"{name}/unknown-L2",unknown_l2); rendered+=1
-    if "opening wide" in sec:
-        wide=" ".join(render(sec[k],ch) for k in (["opening wide"]+L1) if k in sec and sec.get(k))
+    if "L1:opening wide" in sec:
+        wide=" ".join(render(sec[k],ch) for k in (["L1:opening wide"]+L1) if k in sec and sec.get(k))
         fails+=grammar_fails(f"{name}/wide-L1",wide)
         fails+=voice_fails(f"{name}/wide-L1",wide); rendered+=1
     if "partial_L1" in sec:
