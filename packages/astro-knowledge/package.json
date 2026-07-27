@@ -51,7 +51,9 @@
     "fixtures:aspect-patterns": "node scripts/print-aspect-pattern-fixtures.js",
     "fixtures:aspect-patterns-v3": "node scripts/print-aspect-pattern-v3-real-renders.js",
     "fixtures:aspect-pattern-activations": "node scripts/print-aspect-pattern-activation-fixtures.js",
-    "import:authored-placements": "node scripts/import-authored-placements.js"
+    "import:authored-placements": "node scripts/import-authored-placements.js",
+    "lint:pattern-voice": "node scripts/lint-pattern-voice.js --examples",
+    "test:pattern-voice": "node scripts/test-pattern-voice.mjs"
   },
   "license": "UNLICENSED",
   "private": true
