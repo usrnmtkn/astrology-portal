@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const generator = require("../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js");
 const { lintCard } = require("../packages/astro-knowledge/scripts/lint-sky-voice.js");
+const { buildJudgePrompt } = require("../packages/astro-knowledge/scripts/judge-sky-voice.js");
 const examples = require("../packages/astro-knowledge/voice/tldr-astro/examples.json");
 const cleanExample = examples.find((entry) => (
   entry.surface === "sky"
@@ -73,6 +74,18 @@ const generationPrompt = generator.buildPrompt({
 assert.match(generationPrompt, /RANGE OF GOOD CLOSES/);
 assert.doesNotMatch(generationPrompt, /Standing out is real currency/);
 assert.doesNotMatch(generationPrompt, /a friend's big-hearted gesture/);
+
+const judgePrompt = buildJudgePrompt(cleanExample, { tier: "luminary" });
+for (const family of [
+  "self_negotiation",
+  "softened_conviction",
+  "downplayed_desire",
+  "reduced_ambition",
+  "avoidance_disguised_as_caution"
+]) {
+  assert.match(judgePrompt, new RegExp(family));
+}
+assert.doesNotMatch(judgePrompt, /Stop shrinking/i);
 
 const canonicalCloses = new Set(
   examples
