@@ -545,6 +545,14 @@ export interface AspectPatternInterpretationContext {
     rank: number;
     isPrimary: boolean;
     isContained: boolean;
+    isSuppressed?: boolean;
+    supersededByPatternIds?: string[];
+    isWithheldForMoonTimeUncertainty?: boolean;
+    moonTimeUncertainty?: {
+      status: "uncertain";
+      qualifyingStart?: string;
+      qualifyingEnd?: string;
+    };
     parentPatternIds: string[];
     childPatternIds: string[];
   };
@@ -743,6 +751,7 @@ export interface ResolvedAspectPatternCopy {
     overview: string;
     sections: Array<{
       id: string;
+      title?: string;
       body: string;
     }>;
   };
@@ -768,6 +777,14 @@ export interface AspectPatternRankingInput {
   imumCoeliLongitude?: number;
   icLongitude?: number;
   ranking?: RankedAspectPatternContext;
+  moonTimeUncertainty?: Array<{
+    patternId: string;
+    qualifyingStart?: string;
+    qualifyingEnd?: string;
+  }> | Record<string, {
+    qualifyingStart?: string;
+    qualifyingEnd?: string;
+  }>;
 }
 
 export const ASPECT_PATTERN_DETECTOR_VERSION: string;

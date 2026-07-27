@@ -213,8 +213,13 @@ assert.match(servedFieldsContract, /reader: \["collective_reading"\]/, "Authored
 // reader words on these surfaces must cross the approved package-row gate.
 assert.match(app, /renderHouseGlossaryV3\(house\)\.body/, "House glossary must render package output verbatim.");
 assert.doesNotMatch(app, /const naturalHouseLensBodies:\s*Record<number, string>\s*=\s*\{/, "House glossary must not restore a local prose table.");
-assert.match(natalAspectPatterns, /renderAspectPatternV3\(\{/, "Aspect-pattern geometry must render through the package.");
-assert.doesNotMatch(natalAspectPatterns, /includeAspectPatternCopy:\s*"true"/, "App must not request astro-knowledge aspect-pattern copy.");
+// Aspect patterns are the one reader surface served by the governed
+// astro-knowledge resolver: its records carry editorial review status,
+// confidence eligibility, and semantic section ids, so the server-resolved
+// copy is canonical and the local V3 hooks are retired for this surface.
+assert.doesNotMatch(natalAspectPatterns, /renderAspectPatternV3|fallbackArchitectureV3Runtime/, "Aspect-pattern copy must not render through retired local V3 hooks.");
+assert.match(natalAspectPatterns, /includeAspectPatternCopy:\s*"true"/, "Aspect-pattern reader must request governed astro-knowledge resolver copy.");
+assert.match(natalAspectPatterns, /resolvedCopy/, "Aspect-pattern reader must consume server-resolved governed copy.");
 assert.doesNotMatch(app, /friends\.same-planet|samePlanetSynastryContentKeys|samePlanetSynastryFallback/, "Same-planet synastry must not restore its legacy key or prose scheme.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/services/samePlanetSynastry.ts")), false, "Legacy samePlanetSynastry.ts must stay deleted.");
 assert.match(app, /renderSynastryAspect\(\{/, "Synastry surfaces must use the V3 package renderer.");
