@@ -197,6 +197,7 @@ import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
   natalAspectPatternActivationEnabled,
+  natalAspectPatternPillSummary,
   natalAspectPatternReaderEnabled,
   natalAspectPatternReaderItems,
   natalAspectPatternReaderStatus,
@@ -11227,6 +11228,26 @@ async function getAstrodienstSky(
   return calculateSky(...args);
 }
 
+async function natalSkyWithAspectPatternsForStorage(
+  natalSky: SkySnapshot,
+  location: LocationInput,
+  date: Date,
+  timeKnown: boolean,
+  enabled: boolean
+) {
+  if (!enabled) {
+    return natalSky;
+  }
+
+  try {
+    const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
+    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+  } catch (error) {
+    console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
+    return natalSky;
+  }
+}
+
 function FeatureLoadingFallback() {
   return <div className="feature-loading-fallback" aria-hidden="true" />;
 }
@@ -18797,10 +18818,13 @@ function ManualChartsPanel({
         moon: bigThree.moon,
         rising: bigThree.rising,
         needsBirthTime: manualChartNeedsBirthTime(chart),
-        active: selectedChart?.id === chart.id
+        active: selectedChart?.id === chart.id,
+        patternSummary: showFriendNatalAspectPatterns && chart.chartType === "person"
+          ? natalAspectPatternPillSummary(chart.natalChart)
+          : null
       };
     }),
-    [charts, selectedChart?.id]
+    [charts, selectedChart?.id, showFriendNatalAspectPatterns]
   );
   useEffect(() => {
     let cancelled = false;
@@ -18907,9 +18931,17 @@ function ManualChartsPanel({
       }
 
       const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-      const natalChart = await getAstrodienstSky(
+      const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
+      const calculatedNatalChart = await getAstrodienstSky(
         birthLocation,
-        zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone)
+        birthDateTime
+      );
+      const natalChart = await natalSkyWithAspectPatternsForStorage(
+        calculatedNatalChart,
+        birthLocation,
+        birthDateTime,
+        !chart.birthTimeUnknown,
+        showFriendNatalAspectPatterns
       );
       const input: ManualChartInput = {
         chartType: chart.chartType,
@@ -19132,9 +19164,17 @@ function ManualChartsPanel({
       const birthTimeForChart = form.birthTimeUnknown
         ? "12:00 PM"
         : twentyFourHourTimeToDisplay(form.birthTime);
-      const natalChart = await getAstrodienstSky(
+      const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
+      const calculatedNatalChart = await getAstrodienstSky(
         birthLocation,
-        zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone)
+        birthDateTime
+      );
+      const natalChart = await natalSkyWithAspectPatternsForStorage(
+        calculatedNatalChart,
+        birthLocation,
+        birthDateTime,
+        !form.birthTimeUnknown,
+        showFriendNatalAspectPatterns
       );
       const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
       const input: ManualChartInput = {
@@ -19245,6 +19285,7 @@ function ManualChartsPanel({
             onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
             onPendingRequestCountChange={onPendingRequestCountChange}
             onSelectView={(view, historyMode) => selectFriendsTab(view, historyMode)}
+            showPatternPills={showFriendNatalAspectPatterns}
           />
         )}
         detailVariant={friendProfileTab}
