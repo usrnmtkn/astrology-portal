@@ -2,7 +2,7 @@
   "id": "tldr-astro.voice.pattern-aspect.v1",
   "surface": "pattern",
   "mode": "natal-aspect-pattern-reader",
-  "purpose": "Output-level voice contract for the natal aspect-pattern reader (Yod, T-square, Grand Cross, Grand Trine, Kite, Mystic Rectangle). Applies to RENDERED card copy assembled by engine/aspect-patterns/v3-copy-resolver.js from the locked v3.5 template + contract. The three structural gates (validate_patterns / render_matrix / gold_render) cover tokens, sign/house variation, and grammar; this file covers whether the copy sounds like Marie and holds the two-level shape. Enforced by scripts/lint-pattern-voice.js (mechanical) + scripts/judge-pattern-voice.js (LLM).",
+  "purpose": "Output-level voice contract for the natal aspect-pattern reader (Yod, T-square, Grand Cross, Grand Trine, Kite, Mystic Rectangle). Applies to RENDERED card copy assembled by engine/aspect-patterns/v3-copy-resolver.js from the locked v3.7 template + contract. The three structural gates (validate_patterns / render_matrix / gold_render) cover tokens, sign/house variation, and grammar; this file covers whether the copy sounds like Marie and holds the two-level shape. Enforced by scripts/lint-pattern-voice.js (mechanical) + scripts/judge-pattern-voice.js (LLM).",
 
   "voiceDescription": "Direct, grounded, and modern, like the reader's smartest, most honest friend explaining their own chart. Names the felt experience in plain lived terms first, then explains how the geometry works. Two levels, kept apart: the lived paragraph never names the mechanics, the mechanics never crowd the lived paragraph. Concrete and quotable; ends on a plain reading note, not a pep talk.",
 

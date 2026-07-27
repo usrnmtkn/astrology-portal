@@ -5,7 +5,7 @@ Path-portable; reads the shared contract; prints resolved inputs."""
 import re, json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
-TPL=ROOT/"aspect-pattern-templates-v3.5.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
+TPL=ROOT/"aspect-pattern-templates-v3.7.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
 print(f"Template: {TPL}\nContract: {CONTRACT}\n")
 C=json.loads(CONTRACT.read_text()); FIELDS=C["fields"]; PATTERNS=C["patterns"]
 SIGN_FIELDS={f for f,fl in FIELDS.items() if fl["sign"]}
@@ -26,6 +26,8 @@ def val(pre,fld,ch,include_houses=True):
         if include_houses: part+=f"-{HOUSEBEH[role['house']]}"
         parts.append(part)
       return "INTRO-"+"|".join(parts)
+    if fld == "sign_list":
+      return "SIGNS-"+"|".join(ch[member]["sign"] for member in d["members"])
     return {"planet":p,"sign":s,"opposes":d.get("opposes","Saturn"),
       "house_label":f"the {h}th house","house_area":f"HA-{HOUSEBEH[h]}","house_context":f"HC-{HOUSEBEH[h]}",
       "decision_area":f"DA-{HOUSEBEH[h]}","decision_test":f"DT-{HOUSEBEH[h]}",
@@ -36,6 +38,7 @@ def val(pre,fld,ch,include_houses=True):
       "lived_need":f"a need to include {ROLE.get(p,'x')}",
       "incomplete_first_answer":f"The first answer leaves {ROLE.get(p,'x')} unresolved",
       "returning_lived_example":f"The subject returns through {ROLE.get(p,'x')}",
+      "moon_condition":f"MC-{SIGNBEH[s]}",
       "sign_house_response":f"{SIGNBEH[s]}-{HOUSEBEH[h]}",
       "sign_behavior":SIGNBEH[s],"response_example":SIGNBEH[s],
       "balancing_move":SIGNBEH[s],"behavior":SIGNBEH[s],
@@ -68,7 +71,7 @@ def parse():
             m=re.match(r"^([a-z_]+)(?:\s*\([^)]*\))?:\s*(.*)$",l)
             if m and m.group(1) in ("feel","shows_up","complicated","another_response","how_it_works","planet_roles","watch_for","reference_point"):
                 sec[m.group(1)]=m.group(2); continue
-            m=re.match(r"^(opening) ([a-z/]+):\s*(.*)$",l)
+            m=re.match(r"^(opening) ([a-z_/]+):\s*(.*)$",l)
             if m: sec[f"opening {m.group(2)}"]=m.group(3)
         out[name]=sec
     return out
@@ -104,7 +107,7 @@ def role_has_group_token(text,ch,role,field):
       if isinstance(data,dict)
     )
 
-SURF={"known_L1":["feel","shows_up","complicated","another_response"],
+SURF={"known_L1":["opening exact","opening moon_decision","feel","shows_up","complicated","another_response"],
       "known_L2":["how_it_works","planet_roles","watch_for","reference_point"],
       "unknown_L1":["unknown_time L1"],"unknown_L2":["unknown_time L2"]}
 fails=[]; rows=0
@@ -116,7 +119,11 @@ for name,spec in PATTERNS.items():
         for r in roles+["oppositionA","oppositionB"]:
             if r not in ch: continue
             # only audit a role on a surface if a sign token for it appears there
-            has_sign=any(f"{{{r}.{sf}}}" in text for sf in SIGN_FIELDS) or role_has_group_token(text,ch,r,"intro")
+            has_sign=(
+              any(f"{{{r}.{sf}}}" in text for sf in SIGN_FIELDS)
+              or role_has_group_token(text,ch,r,"intro")
+              or role_has_group_token(text,ch,r,"sign_list")
+            )
             if has_sign:
                 include_houses=surf.startswith("known")
                 a=render(text,ch,include_houses); b=render(text,flip(ch,r,"sign","Capricorn"),include_houses)

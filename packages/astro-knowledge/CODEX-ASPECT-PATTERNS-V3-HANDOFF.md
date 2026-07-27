@@ -6,7 +6,7 @@ No stored per-chart bodies; no example-specific reasoning inside templates.
 
 ## 0. Canonical sources
 ```
-Canonical copy: aspect-pattern-templates-v3.5.md   (all six, fully generalized,
+Canonical copy: aspect-pattern-templates-v3.7.md   (all six, fully generalized,
   complete confidence branches, single namespace, house-aware, unknown-time L1+L2)
 Historical reference only (DO NOT implement copy or schema from these):
   aspect-pattern-canonical-spec-v2.md, aspect-pattern-model-v3-tsquare.md,
@@ -119,7 +119,7 @@ Each pattern has AUTHORED `unknown_time L1` AND `unknown_time L2` bodies (house-
 sign-resolved) in the templates file - use them rather than dropping house sentences
 one by one.
 
-Authored base tables now live alongside `aspect-pattern-templates-v3.5.md`:
+Authored base tables now live alongside `aspect-pattern-templates-v3.7.md`:
 focal-demand-by-planet (Kite) and pattern-narrative-by-planet (all six patterns,
 with Yod-specific apex fields), with 10 primary rows each, plus the three-row
 background-anchor-by-planet table. Everything else reuses existing layers (planet-function, planet-in-sign
@@ -223,7 +223,7 @@ six files (so no older same-named copy can be picked up):
   Must print "GOLD RENDER: PASS".
 Resolver-policy branches (moon_time_uncertainty, contained-pattern precedence,
 missing_derived_point, Chiron-secondary) are asserted present in THIS handoff by the
-validator. LOCKED AT V3.5: once all three pass from the clean directory, table authoring may
+validator. LOCKED AT V3.7: once all three pass from the clean directory, table authoring may
 change only the VALUES supplied to existing tokens - never add, rename, or
 re-contract a token. Re-run all three after any edit. A later issue is either a
 token-value problem (fix the table value) or a renderer bug (fix resolution) - never
