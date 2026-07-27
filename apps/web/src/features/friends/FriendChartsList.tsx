@@ -219,11 +219,11 @@ export function FriendChartsList({
             >
               <button type="button" role="menuitem" onClick={() => onEditChart(activeMenuItem.chart)}>
                 <Pencil size={17} aria-hidden="true" />
-                <span>Edit chart</span>
+                <span>Edit</span>
               </button>
               <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => onDeleteChart(activeMenuItem.chart)}>
                 <Trash2 size={17} aria-hidden="true" />
-                <span>Delete chart</span>
+                <span>Delete</span>
               </button>
             </span>,
             document.body
