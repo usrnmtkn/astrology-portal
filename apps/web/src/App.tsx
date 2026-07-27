@@ -487,6 +487,8 @@ type NormalizedSkyAspectArticle = {
 type SkyPlacementSlot = "meaning";
 type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> & {
   heading: string;
+  tagline?: string | null;
+  moves?: string[];
 };
 type NormalizedSkyPlacementArticle = {
   surface: "sky-placement";
@@ -584,6 +586,8 @@ type SkyDetail = {
   title: string;
   meta: string;
   duration?: string;
+  tagline?: string;
+  moves?: string[];
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;
@@ -4872,6 +4876,9 @@ function SkyDetailArticle({
               ) : null}
             </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
+            {detail.tagline ? (
+              <p className="article-sub sky-detail-tagline">{detail.tagline}</p>
+            ) : null}
             {detail.duration ? (
               <p className="article-duration">{detail.duration}</p>
             ) : null}
@@ -4945,6 +4952,14 @@ function SkyDetailArticle({
                   ) : null}
                 </>
               )}
+              {detail.moves?.length ? (
+                <section className="article-section sky-detail-section sky-placement-moves" aria-label="Try this">
+                  <h3>Try this</h3>
+                  <ul>
+                    {detail.moves.map((move) => <li key={move}>{move}</li>)}
+                  </ul>
+                </section>
+              ) : null}
               {detail.seriesLine ? (
                 <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
                   <p>{detail.seriesLine}</p>
@@ -5997,7 +6012,10 @@ function skyPlacementWritingSection(
     return null;
   }
 
-  const layer = rendered.contentKey?.startsWith("authored/") ? "authored" : "fallback";
+  const layer = (
+    rendered.contentKey?.startsWith("authored/")
+    || rendered.contentKey?.startsWith("fallback-hook/sky-placement-hook/")
+  ) ? "authored" : "fallback";
 
   return {
     slot: "meaning",
@@ -6010,6 +6028,8 @@ function skyPlacementWritingSection(
       rendered.contentKey ?? ""
     ].filter(Boolean),
     heading: skyPlacementDisplayTitle(position),
+    tagline: rendered.tagline,
+    moves: rendered.moves,
     body
   };
 }
@@ -6042,11 +6062,19 @@ function normalizeSkyPlacementSurface(
         body: `${generatedContentParagraphs(topper).join("\n\n").trim()}\n\n${generatedSection.body}`
       }
     : generatedSection;
-  const sections = mergedGeneratedSection ? [mergedGeneratedSection] : fallbackSection ? [fallbackSection] : [];
+  const approvedFallbackSection = fallbackSection?.layer === "authored" ? fallbackSection : null;
+  const sections = approvedFallbackSection
+    ? [approvedFallbackSection]
+    : mergedGeneratedSection
+      ? [mergedGeneratedSection]
+      : fallbackSection
+        ? [fallbackSection]
+        : [];
+  const hasAuthoredSection = Boolean(approvedFallbackSection || mergedGeneratedSection);
 
   return {
     surface: "sky-placement",
-    status: mergedGeneratedSection
+    status: hasAuthoredSection
       ? "servable"
       : fallbackSection
         ? (fallbackSection.layer === "authored" ? "servable" : "partial")
@@ -6090,6 +6118,7 @@ function currentSkyPlacementDetailArticle({
   );
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
+  const placementSection = normalized.sections[0];
   const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
     .flatMap((section) => readerFacingParagraphs([section.body]));
@@ -6114,6 +6143,8 @@ function currentSkyPlacementDetailArticle({
     title,
     meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
     duration: transitRangeLabel ?? undefined,
+    tagline: placementSection?.tagline ?? undefined,
+    moves: placementSection?.moves,
     retrograde: isRetrograde,
     plainBody: normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: authoredBody.length > 0 && !isRetrograde,

@@ -27,6 +27,7 @@ const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts"
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
 const sunLeo = renderer.renderSkyPlacement({ planet: "sun", sign: "leo" });
+const sunAries = renderer.renderSkyPlacement({ planet: "sun", sign: "aries" });
 const mercuryCancerIngress = renderer.renderSkyPlacement({ planet: "mercury", sign: "cancer" });
 const mercuryCancerRetrograde = renderer.renderTransitRetro({
   planet: "mercury",
@@ -80,6 +81,12 @@ const targetSpecificTransitEffectRows = fallbackSourceRows.hookRows.filter((row)
 const authoredTransitAspectRows = transitSynastryRows.authoredCards.filter((row) =>
   row.contentKey.startsWith("authored/transit-aspect/")
 );
+const approvedSkyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn|moves)\//u.test(row.contentKey)
+);
+const approvedSkyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/sky-placement-(?:hook|lived|turn)\//u.test(row.contentKey)
+);
 const bannedDignityWords = contentRoleContract.styleRules?.bannedWords ?? [];
 const bannedDignityPattern = bannedDignityWords.length > 0
   ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
@@ -102,6 +109,11 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
+assert.equal(approvedSkyPlacementRows.length, 766, "The package must include 745 newly approved rows plus the 21 existing canonical rows.");
+assert.equal(approvedSkyPlacementCoreRows.length, 468, "Every non-Lilith placement pair must have approved hook, lived, and turn rows.");
+for (const row of approvedSkyPlacementRows) {
+  assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
+}
 for (const row of authoredTransitAspectRows) {
   assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
 }
@@ -174,21 +186,35 @@ assert.match(
   /The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with/,
   "Package Sun-in-Leo copy must come from dist/tldr-content.js."
 );
-assert.doesNotMatch(
-  sunLeo.body,
-  /(?:^|\n\n)(?!Wishing you )[^.\n]*warm light and generous shine,\s*$/iu,
-  "Sky placement articles must not end with an incomplete trailing-comma blessing fragment."
-);
 assert.match(
   sunLeo.body.trim(),
-  /Wishing you warm light and generous shine\.$/u,
-  "Sun-in-Leo package copy should include the completed blessing sentence."
+  /Chase the clout directly and you'll just watch it land on somebody else\.$/u,
+  "Sun-in-Leo package copy must end on the approved shadow-and-turn paragraph."
 );
 assert.doesNotMatch(
   sunLeo.body,
   /lamplight|The Sun crosses from Cancer into Leo|shell drawn around it/i,
   "Package Sun-in-Leo copy must not contain the retired rogue Leo passage."
 );
+assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
+assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
+assert.equal(
+  sunAries.contentKey,
+  "fallback-hook/sky-placement-hook/sun/aries",
+  "Approved pair rows must be identifiable so the app can prioritize them over generated drafts."
+);
+assert.deepEqual(
+  sunAries.parts.slice(0, 3),
+  [
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-hook/sun/aries")?.body_you,
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-lived/sun/aries")?.body_you,
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-turn/sun/aries")?.body_you
+  ],
+  "Approved Sky placement articles must render hook, lived expression, and turn in order."
+);
+assert.match(app, /approvedFallbackSection[\s\S]*mergedGeneratedSection/u, "Owner-approved package rows must take precedence over generated Sky placement cards.");
+assert.match(app, /sky-detail-tagline/u, "Sky placement taglines must render below the article title.");
+assert.match(app, /sky-placement-moves/u, "Sky placement moves must render as an action list.");
 assert.match(app, /return `\$\{skyDisplayPlanetName\(position\.planet\)\} Rx in \$\{position\.sign\}`;/, "Retrograde Sky ID title must stay factual in the app route.");
 assert.equal(
   mercuryCancerRetrograde.headline,
