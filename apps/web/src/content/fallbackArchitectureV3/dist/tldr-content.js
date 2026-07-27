@@ -845,7 +845,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-25a";
+var PACKAGE_VERSION = "v3-2026-07-27i";
 export {
   PACKAGE_VERSION,
   RoleViolationError,
