@@ -332,6 +332,22 @@
    "note": "Same-sign compat fallback: merged portrait per Writing Rules; no pluralization by string substitution."
   },
   {
+   "contentKey": "fallback-template/sky.placement-article",
+   "content_role": "template",
+   "surface": "sky",
+   "headline": "{{planetTitle}} in {{signTitle}}",
+   "requiredSlots": [
+    "hook",
+    "lived",
+    "turn"
+   ],
+   "optionalSlots": [
+    "currentAspects"
+   ],
+   "body": "{{hook}}\n\n{{lived}}\n\n{{turn}}",
+   "note": "Voice-first placement frame: memorable hook, concrete lived expression with pace, then shadow/turn. One exact-dated current aspect may be appended. Sign lore, blessings, adjective-triplet openers, and the 'for everyone at once' wrapper do not render in the article."
+  },
+  {
    "contentKey": "fallback-template/transit.aspect",
    "content_role": "template",
    "surface": "you",

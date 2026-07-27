@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// ../../../../private/tmp/tldrastro-sky-commit.MyRxQu/apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -267,7 +267,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// ../../../../private/tmp/tldrastro-sky-commit.MyRxQu/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -627,38 +627,74 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     }
     return { headline: `${title2(risingSign)} & ${title2(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
   }
+  const SKY_PLACEMENT_ASPECT_INTERACTION = {
+    conjunction: "amplify each other",
+    square: "push against each other",
+    opposition: "pull from opposite ends",
+    trine: "work together with less friction",
+    sextile: "open a workable route between them"
+  };
+  function capitalizeSentence(value) {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+  }
+  function skyPlacementAspectParagraph(placementPlanet, ev) {
+    if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
+    const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+    const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
+    const aRef = transitRef(ev.a, ev.aSign);
+    const bRef = transitRef(ev.b, ev.bSign);
+    const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction" ? "amplify momentum" : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+    const timing = ev.exactDate ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}` : ev.dateLine ?? "In the current aspect window";
+    const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+    const effect = specific ?? pairEffectOf(ev);
+    if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
+    return `${fact} ${capitalizeSentence(effect)}`.trim();
+  }
   function renderSkyPlacement({ planet, sign, events = [] }) {
+    const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
-    if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
-    const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+    if (authoredArticle) {
+      const parts2 = [authoredArticle.body, ...aspectParas].filter((part) => Boolean(part));
+      return {
+        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
+        body: parts2.join("\n\n"),
+        parts: parts2,
+        templateKey: "authored/sky-ingress",
+        contentKey: authoredArticle.contentKey
+      };
+    }
+    const template = tpl("fallback-template/sky.placement-article");
+    const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
     const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
     const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
-    if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+    if (!fallbackHook || !frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
     const ctx = { signTitle: title2(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
-    const paras = [];
-    if (youOpen) paras.push(fill(youOpen, ctx));
-    paras.push(fill(frame, ctx));
-    if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-    const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
-    if (lore) paras.push(lore);
+    const placementRef = capitalizeSentence(transitRef(planet));
+    const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you ?? fill(fallbackHook, ctx);
+    const lived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you ?? fill(frame, ctx);
+    const authoredTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
     const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
-    if (trap) paras.push(`The ${title2(sign)} trap to watch while ${transitRef(planet)} is here is ${trap}`);
     const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
-    if (practice) paras.push(practice);
-    for (const ev of events) {
-      const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
-      const evFrame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-      if (!evFrame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-      const body = fill(evFrame, eventCtx(ev));
-      if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-      paras.push(body);
+    const fallbackTurn = trap ? `The catch is ${trap}${practice ? ` ${practice}` : ""}` : practice;
+    const templateCtx = {
+      planetTitle: placementRef,
+      signTitle: title2(sign),
+      hook,
+      lived,
+      turn: authoredTurn ?? fallbackTurn
+    };
+    for (const slot of template.requiredSlots ?? []) {
+      if (!templateCtx[slot]) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing ${slot}`);
     }
-    const elClose = hooks.get(`fallback-hook/sky-element-close/${ELEMENT[sign]}`)?.body_you;
-    if (elClose) paras.push(elClose);
-    const pb = vocab.get(`fallback-vocab/planet-blessing/${planet}`)?.body;
-    const sb = vocab.get(`fallback-vocab/sign-blessing/${sign}`)?.body;
-    if (pb && sb) paras.push(`Wishing you ${pb} and ${sb}.`);
-    return { headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "), body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.placement-article" };
+    const baseBody = fillKeep(template.body, templateCtx);
+    if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+    const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+    return {
+      headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
+      body: parts.join("\n\n"),
+      parts,
+      templateKey: template.contentKey
+    };
   }
   function formatCircleNames(names = [], includesReader = true) {
     const clean = names.map((n) => {
@@ -844,8 +880,8 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-27i";
+// ../../../../private/tmp/tldrastro-sky-commit.MyRxQu/apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-28b";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

@@ -90,6 +90,8 @@ export type SkyEvent = {
   aSign?: string;
   bSign?: string;
   dateLine?: string;
+  exactDate?: string;
+  applying?: boolean;
   [key: string]: unknown;
 };
 

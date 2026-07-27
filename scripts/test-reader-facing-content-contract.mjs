@@ -156,7 +156,11 @@ assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "
 assert.match(app, /transitSynastryFallbackRendererV3\.renderTransitRetro\(\{[\s\S]*format: "article"/u, "Retrograde Sky placement pages must use the fallbackArchitectureV3 retrograde article renderer.");
 assert.doesNotMatch(app, /resolveSkyWritingArticle\(\{/, "Sky placement detail/list rendering must not use the retired Sky writing package resolver.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
-assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing")), false, "Retired sky-writing source folder must not exist.");
+assert.equal(
+  fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing/TLDR-Sky-Article-Spec.md")),
+  true,
+  "The voice-first spec must remain available as the Sky placement contract."
+);
 assert.doesNotMatch(app, /skyWriting|sky-writing-v1/u, "App reader surfaces must not reference the retired Sky writing package.");
 assert.doesNotMatch(app, /emergencySkyPlacementCopy/, "Sky placement detail/list rendering must not use the legacy emergency placement helper.");
 assert.doesNotMatch(app, /emergencyDetailFallbackCopy/, "Sky detail renderer must not use emergency detail fallback copy.");
@@ -164,6 +168,17 @@ assert.match(app, /function normalizeSkyPlacementSurface/, "Sky placement detail
 assert.match(app, /skyPlacementWritingSection/, "Sky placement detail rendering must include the fallbackArchitectureV3 authored/fallback section.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
 assert.match(app, /skyPlacementWritingBeats\(\{[\s\S]*aspects,[\s\S]*generatedAt,[\s\S]*planet: position\.planet/, "Sky placement rendering must pass computed aspect beats into the fallbackArchitectureV3 sky placement resolver.");
+assert.match(app, /exactDate:\s*skyPlacementAspectExactDate\(/, "Sky placement aspect beats must carry a computed exact date.");
+assert.match(app, /applying:\s*aspect\.applying/, "Sky placement aspect beats must preserve applying/separating state.");
+assert.match(app, /egressDate:\s*skyPlacementEgressDateLabel\(/, "Sky placement articles must receive a computed sign-egress date.");
+assert.ok(
+  fallbackSourceRowsV3.hookRows.some((row) => row.contentKey === "fallback-hook/sky-placement-hook/sun/leo"),
+  "The V3 bank must expose the voice-first Sun-in-Leo hook."
+);
+assert.ok(
+  fallbackSourceRowsV3.hookRows.some((row) => row.contentKey === "fallback-hook/sky-placement-lived/sun/leo"),
+  "The V3 bank must expose the concrete Sun-in-Leo lived-expression slot."
+);
 assert.doesNotMatch(app, /emergencyFallbackParagraph/, "Sky detail renderer must not render a final emergency fallback when normalized slots are empty.");
 assert.doesNotMatch(app, /from ["'][^"']*emergencyCopy["']/, "App reader surfaces must not import legacy emergency copy.");
 assert.doesNotMatch(app, /emergency[A-Z][A-Za-z0-9_]*/, "App reader surfaces must not call legacy emergency helpers.");
