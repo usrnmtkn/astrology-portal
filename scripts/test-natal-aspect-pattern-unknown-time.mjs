@@ -65,6 +65,12 @@ function copyTexts(resolvedCopy) {
   ]);
 }
 
+function withoutHouseFields(value) {
+  return JSON.parse(JSON.stringify(value, (key, fieldValue) => (
+    key === "house" ? undefined : fieldValue
+  )));
+}
+
 const vite = await createServer({
   root: repoRoot,
   server: { middlewareMode: true, hmr: false },
@@ -88,10 +94,10 @@ try {
     const unknown = aspectPatternsFromSkySnapshot(snapshot, { includeCopy: true, timeKnown: false });
 
     // Planetary geometry must be identical: unknown birth time only removes
-    // angle-derived context, it never changes what was detected.
-    assert.equal(
-      JSON.stringify(unknown.patterns),
-      JSON.stringify(known.patterns),
+    // house-derived context, it never changes what was detected.
+    assert.deepEqual(
+      withoutHouseFields(unknown.patterns),
+      withoutHouseFields(known.patterns),
       `${fixtureName}: unknown birth time must not change detected pattern geometry.`
     );
     assert.equal(
