@@ -464,7 +464,7 @@ function authoredRecordFor(context, overrides = {}) {
   const resolved = resolveAspectPatternCopy(context, { authoredRecords: [authored] });
   assert.equal(resolved.source.contentLevel, "source_grounded_template");
   assert.equal(resolved.source.resolverVersion, "v3");
-  assert.notEqual(resolved.source.recordId, authored.id, "Locked v3.5 copy must not be overridden by stale authored v1 records.");
+  assert.notEqual(resolved.source.recordId, authored.id, "Locked v3.7 copy must not be overridden by stale authored v1 records.");
 }
 
 {
@@ -555,7 +555,7 @@ function authoredRecordFor(context, overrides = {}) {
   assert.throws(
     () => resolveAspectPatternCopy(malformed),
     AspectPatternV3SourceGapError,
-    "Missing required v3.5 clauses must fail closed instead of emitting emergency boilerplate."
+    "Missing required v3.7 clauses must fail closed instead of emitting emergency boilerplate."
   );
 }
 

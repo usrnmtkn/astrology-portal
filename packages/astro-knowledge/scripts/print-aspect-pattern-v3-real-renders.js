@@ -44,7 +44,7 @@ function renderCard(copy) {
 }
 
 const output = [
-  "# Aspect-pattern v3.5 real-chart render audit",
+  "# Aspect-pattern v3.7 real-chart render audit",
   "",
   "De-identified calculated real-chart fixtures. Every pattern is rendered at exact, wide, and partial confidence with known and unknown birth time.",
   ""

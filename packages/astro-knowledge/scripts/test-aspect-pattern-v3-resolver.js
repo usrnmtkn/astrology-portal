@@ -280,13 +280,71 @@ for (const timeKnown of [true, false]) {
         sign: member.planet === "Pluto" ? "scorpio" : member.planet === "Neptune" ? "capricorn" : "gemini"
       }))
     }, "strong");
+    const moonConditions = new Map([
+      ["aries", "room to act, speak honestly, and make your own choices"],
+      ["taurus", "reliability, predictable daily demands, and enough peace to trust the life the decision creates"],
+      ["gemini", "clear information, open conversation, and room to adjust"],
+      ["cancer", "to know who will show up and what will continue to feel like home"],
+      ["leo", "to be seen, appreciated, and taken seriously by the people closest to you"],
+      ["virgo", "clear responsibilities and a daily routine you can realistically manage"],
+      ["libra", "a fair decision that does not require you to give up your own position"],
+      ["scorpio", "privacy, the full truth, trustworthy people, and no one holding all the power"],
+      ["sagittarius", "freedom, possibility, and a future that still feels worth moving toward"],
+      ["capricorn", "a responsible plan that does not leave you carrying the entire outcome alone"],
+      ["aquarius", "room to think independently, question the plan, and change your mind"],
+      ["pisces", "quiet, emotional breathing room, and a life that still feels meaningful"]
+    ]);
+    const sharedDecisionOpening = "Pluto helps you see when a shared financial arrangement, obligation, or relationship has become unequal, controlling, or too heavy to keep carrying. Neptune pulls you toward work that feels meaningful, not simply the job with the safest paycheck or most impressive title. The risk is solving the money, power, or career problem while building a life that leaves you exhausted, unsupported, or disconnected from yourself.";
+    const sharedDecisionClose = "Until the plan makes room for that need, you may be able to defend the choice without feeling at home in it.";
+    const renderedByMoonSign = new Map();
+
+    for (const [sign, condition] of moonConditions) {
+      const signContext = {
+        ...marieContext,
+        members: marieContext.members.map((member) => (
+          member.planet === "Moon" ? { ...member, sign } : member
+        ))
+      };
+      const resolved = resolveAspectPatternCopy(signContext);
+      const signTitle = sign[0].toUpperCase() + sign.slice(1);
+      const expected = `${sharedDecisionOpening} Your Moon in ${signTitle} needs ${condition}. ${sharedDecisionClose}`;
+
+      assertCleanResolvedCopy(resolved, `yod/moon-decision/${sign}`);
+      assert.equal(
+        resolved.content.headline,
+        "A good plan can still leave you out of it",
+        `${signTitle} Moon must retain the approved synthesis heading.`
+      );
+      assert.equal(
+        resolved.content.overview,
+        expected,
+        `${signTitle} Moon must resolve its governed emotional condition.`
+      );
+      assert.doesNotMatch(
+        resolved.content.overview,
+        /consistency, rest, and dependable care|\[Sign\]|sign-specific emotional condition/i,
+        `${signTitle} Moon must not be overridden by generic or unresolved Moon copy.`
+      );
+      assert.equal(
+        resolved.source.contentLevel,
+        "source_grounded_template",
+        `${signTitle} Moon must resolve through the canonical V3 template, not emergency copy.`
+      );
+      renderedByMoonSign.set(sign, resolved.content.overview);
+    }
+
     assert.equal(
-      resolveAspectPatternCopy(marieContext).content.overview,
-      "Pluto helps you see what has to change. Neptune helps you keep the future from shrinking to the safest available option. Because the decision affects both shared trust and your reputation, the plan has to work in private as well as it does on paper. Your Moon will not call it settled until you know what you can rely on once the decision is made.",
-      "The Marie-style Yod opening should read as one lived decision, not assembled chart components."
+      new Set(renderedByMoonSign.values()).size,
+      moonConditions.size,
+      "All 12 Moon signs must produce meaningfully distinct Yod synthesis endings."
     );
   } else {
     assert.doesNotMatch(feel, /\bhouse\b/i);
+    assert.doesNotMatch(
+      feel,
+      /shared financial arrangement|money, power, or career problem|safest paycheck/i,
+      "Unknown-time Yod copy must not invent the house-specific decision synthesis."
+    );
   }
 }
 
@@ -363,4 +421,4 @@ assert.equal(
   );
 }
 
-console.log("Aspect-pattern v3.5 resolver tests passed.");
+console.log("Aspect-pattern v3.7 resolver tests passed.");
