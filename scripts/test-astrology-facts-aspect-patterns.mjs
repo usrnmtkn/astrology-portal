@@ -120,8 +120,12 @@ try {
 
   const presentWithCopy = buildAstrologyFactsApiResponse(snapshotFromFixture(fixtures.grand_square), true, true).body;
   assert.ok(presentWithCopy.sky.aspectPatterns.resolvedCopy);
-  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy.length, presentWithCopy.sky.aspectPatterns.interpretationContexts.length);
-  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy[0].source.resolverVersion, "aspect_pattern_copy_resolver_v1");
+  const readerVisibleContexts = presentWithCopy.sky.aspectPatterns.interpretationContexts.filter((context) => (
+    !context.display?.isSuppressed
+    && !context.display?.isWithheldForMoonTimeUncertainty
+  ));
+  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy.length, readerVisibleContexts.length);
+  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy[0].source.resolverVersion, "v3");
 
   const result = present.sky.aspectPatterns;
   const grandSquares = patternsOf(result, "grand_square");
