@@ -6,7 +6,7 @@ import re, sys, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-TPL = ROOT / "aspect-pattern-templates-v3.3.md"
+TPL = ROOT / "aspect-pattern-templates-v3.5.md"
 TABLES = ROOT / "aspect-pattern-tables-v1.md"
 HANDOFF = ROOT / "CODEX-ASPECT-PATTERNS-V3-HANDOFF.md"
 CONTRACT = ROOT / "aspect-pattern-contract.json"
@@ -51,11 +51,11 @@ def parse_table(heading, columns):
         rows.append(dict(zip(columns,values)))
     return rows
 
-def validate_table(heading, columns):
+def validate_table(heading, columns, expected_planets):
     rows=parse_table(heading,columns)
     planets=[row["planet"] for row in rows]
-    if planets != C["eligible_primary"]:
-        err("tables",f"table '{heading}' must contain the exact 10 primary rows in locked order; got {planets}")
+    if planets != expected_planets:
+        err("tables",f"table '{heading}' must contain the locked rows {expected_planets}; got {planets}")
     for row in rows:
         for column in columns[1:]:
             value=row[column].strip()
@@ -71,8 +71,28 @@ def validate_table(heading, columns):
             if value.endswith((".","!","?",";",":")):
                 err(where,"value must be a sentence fragment without terminal punctuation",value)
 
-validate_table("focal-demand-by-planet",["planet","focal_demand","focal_interruption"])
-validate_table("apex-pressure-by-planet",["planet","apex_pressure","repeating_question"])
+validate_table(
+    "focal-demand-by-planet",
+    ["planet","focal_demand","focal_interruption"],
+    C["eligible_primary"],
+)
+validate_table(
+    "pattern-narrative-by-planet",
+    [
+        "planet",
+        "base_contribution",
+        "lived_title",
+        "lived_need",
+        "incomplete_first_answer",
+        "returning_lived_example",
+    ],
+    C["eligible_primary"],
+)
+validate_table(
+    "background-anchor-by-planet",
+    ["planet", "background_anchor"],
+    ["Uranus", "Neptune", "Pluto"],
+)
 
 # ---- parse patterns -> section key -> text (+ level) ----
 def parse():
@@ -100,7 +120,7 @@ def parse():
             if m and m.group(1) in ("feel","shows_up","complicated","another_response","how_it_works","planet_roles","watch_for","reference_point"):
                 sec[m.group(1)]=(lvl,m.group(2)); continue
             m=re.match(r"^(title|opening) ([a-z/]+):\s*(.*)$",l)
-            if m: sec[f"{m.group(1)} {m.group(2)}"]=(lvl,m.group(3)); continue
+            if m: sec[f"{lvl}:{m.group(1)} {m.group(2)}"]=(lvl,m.group(3)); continue
         out[name]=(blk,sec)
     return out
 P=parse()
@@ -120,7 +140,7 @@ if extra_in_reg: err("template",f"registry doc has fields not in contract: {sort
 
 # ---- global checks ----
 if "—" in TPL.read_text(): err("template","em dash present")
-if not lines[0].lower().startswith("# aspect pattern templates v3.3"): err("template","header not canonical v3.3",lines[0])
+if not lines[0].lower().startswith("# aspect pattern templates v3.5"): err("template","header not canonical v3.5",lines[0])
 for a in C["banned_aliases"]:
     for l in lines:
         if re.search(r"\{"+re.escape(a)+r"[.}]",l): err("template",f"banned alias {{{a}}}",l)
@@ -136,6 +156,14 @@ used_fields={f for _,f in used}
 declared=set(FIELDS)
 unused=declared-used_fields-set(C["reserved_tokens"])
 if unused: err("contract",f"registered fields never used (declared-but-unused): {sorted(unused)}")
+
+# Member-intro sign needs must be composed by the resolver. A direct scaffold
+# misattributes sign-only language to the named planet and is especially wrong
+# for generation-level outer-planet placements.
+for line in lines:
+    for match in re.finditer(r"\byou need \{([a-zA-Z_0-9]+)\.sign_need\}", line, re.I):
+        if match.group(1) not in {"apex", "focal"}:
+            err("template",f"direct sign-need scaffold targets non-apex/non-focal role '{match.group(1)}'",line)
 
 # ---- per-pattern: sections present, required-by-section, geometry-at-L2, unknown-time ----
 GEOM=re.compile(r"\b(apex|empty leg|opposition|quincunx|sextile|trine by degree)\b",re.I)
@@ -185,7 +213,7 @@ for name,spec in PATTERNS.items():
 
 # ---- handoff checks ----
 h=HANDOFF.read_text()
-if "v3.3.md" not in h: err("handoff","does not name v3.3 canonical")
+if "v3.5.md" not in h: err("handoff","does not name v3.5 canonical")
 if "= 10 bodies" not in h: err("handoff","not locked to 10 primary bodies")
 if re.search(r"=\s*11\b|11 rows each",h): err("handoff","stale 11-count")
 if "—" in h: err("handoff","em dash")

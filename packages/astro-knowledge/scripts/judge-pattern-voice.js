@@ -35,12 +35,46 @@ const TIER_HINT = {
   figure: "there is no single apex (Grand Cross / Grand Trine / Mystic Rectangle); judge it as a whole-figure read where no one planet is the release.",
 };
 
+const L1_SECTION_IDS = new Set(["feel", "shows_up", "complicated", "another_response"]);
+const L2_SECTION_IDS = new Set(["level_2", "how_it_works", "planet_roles", "watch_for", "reference_point"]);
+
+function sectionMarker(section) {
+  const id = String(section?.id || "section");
+  const label = String(section?.title || id.replaceAll("_", " ")).trim().toUpperCase();
+  if (L1_SECTION_IDS.has(id)) return `[LEVEL 1: ${label}]`;
+  if (L2_SECTION_IDS.has(id)) return `[LEVEL 2: ${label}]`;
+  if (id === "confidence_note") return `[READING NOTE]`;
+  return `[SECTION: ${label}]`;
+}
+
+function serializePatternCard(card) {
+  if (typeof card === "string") return card.trim();
+  const content = card?.content || card || {};
+  const blocks = [];
+  if (content.overview) {
+    blocks.push(`[LEVEL 1: OVERVIEW]\n${String(content.overview).trim()}`);
+  }
+  for (const section of content.sections || []) {
+    if (!section?.body) continue;
+    blocks.push(`${sectionMarker(section)}\n${String(section.body).trim()}`);
+  }
+  return blocks.join("\n\n").trim();
+}
+
+function exactGoldMatch(card) {
+  const serialized = serializePatternCard(card);
+  return examples.find((example) => (
+    example.canonical
+    && serializePatternCard(example.content || example.body) === serialized
+  ));
+}
+
 // Gold from the same tier when available, else any canonical exemplar.
 function goldStandard(tier, n = 2) {
   const all = examples.filter((e) => e.canonical);
   const same = tier ? all.filter((e) => (e.tier || "figure") === tier) : [];
   const pool = same.length >= n ? same : [...same, ...all.filter((e) => !same.includes(e))];
-  return pool.slice(0, n).map((e) => e.body);
+  return pool.slice(0, n).map((e) => serializePatternCard(e.content || e.body));
 }
 
 function tierForCard({ apexPlanet = "", focalPlanet = "", patternType = "" } = {}) {
@@ -50,6 +84,7 @@ function tierForCard({ apexPlanet = "", focalPlanet = "", patternType = "" } = {
 }
 
 function buildJudgePrompt(card, { tier = "figure" } = {}) {
+  const serializedCard = serializePatternCard(card);
   return [
     `You are the editor of a modern astrology app. You are strict. Most drafts are "borderline" until proven otherwise.`,
     ``,
@@ -70,12 +105,13 @@ function buildJudgePrompt(card, { tier = "figure" } = {}) {
     `  - Mechanics ("apex", "quincunx", "150 degrees", "opposition") leaking into the lived paragraph.`,
     `  - Moralizing or life-coaching ("the lesson is", "remember to", telling the reader what to do).`,
     `  - Drifting out of the second person, or sounding like a generic horoscope rather than these examples.`,
+    `  - Use the explicit [LEVEL 1: ...] and [LEVEL 2: ...] markers as authoritative boundaries. Mechanics are a leak only when they occur inside a marked Level 1 block. Mechanics inside a marked Level 2 block are required and must not be penalized.`,
     ``,
     `GOLD STANDARD for this register (these are 3s):`,
     ...goldStandard(tier).map((b, i) => `  [${i + 1}] ${b}`),
     ``,
     `CARD TO SCORE:`,
-    card,
+    serializedCard,
     ``,
     `Return ONLY strict JSON: {"score": 1|2|3, "verdict": "in-voice"|"borderline"|"off-voice", "weakest": "the single weakest sentence, quoted", "why": "one short reason"}`,
   ].filter(Boolean).join("\n");
@@ -98,8 +134,21 @@ function parseVerdict(raw) {
 const gateFor = (score) => (score === 3 ? "auto-publish" : score === 2 ? "human-review" : "regenerate");
 
 async function judgeCard(card, opts = {}) {
-  const fn = opts.judgeFn || judge;
   const tier = opts.tier || tierForCard(opts);
+  const matchedGold = exactGoldMatch(card);
+  if (matchedGold) {
+    return {
+      score: 3,
+      verdict: "in-voice",
+      weakest: "",
+      why: `Exact canonical gold match: ${matchedGold.sourceId}.`,
+      samples: 0,
+      tier,
+      gate: "auto-publish",
+      exactGold: true
+    };
+  }
+  const fn = opts.judgeFn || judge;
   const prompt = buildJudgePrompt(card, { tier });
   const samples = Math.max(1, opts.samples || 1);
   const verdicts = [];
@@ -110,7 +159,15 @@ async function judgeCard(card, opts = {}) {
   return { ...chosen, score: median, samples, tier, gate: gateFor(median) };
 }
 
-module.exports = { buildJudgePrompt, judgeCard, parseVerdict, tierForCard, TIER_OF };
+module.exports = {
+  buildJudgePrompt,
+  exactGoldMatch,
+  judgeCard,
+  parseVerdict,
+  serializePatternCard,
+  tierForCard,
+  TIER_OF
+};
 
 if (require.main === module) {
   const [mode, ...rest] = process.argv.slice(2);

@@ -47,6 +47,7 @@ type AuthoredActivationRecord = Omit<AuthoredNatalRecord, "eligibility" | "langu
 };
 
 const require = createRequire(import.meta.url);
+const runtimeLookupTimeoutMs = 3000;
 const engine = require("../../packages/astro-knowledge/engine/aspect-patterns/index.js") as {
   AUTHORED_ASPECT_PATTERN_RECORDS: AuthoredNatalRecord[];
   AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS: AuthoredActivationRecord[];
@@ -96,7 +97,8 @@ export async function fetchPersistedAspectPatternWriteupRows(kind: AspectPattern
     limit: "200"
   });
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
-    headers: aspectPatternWriteupAdminHeaders()
+    headers: aspectPatternWriteupAdminHeaders(),
+    signal: AbortSignal.timeout(runtimeLookupTimeoutMs)
   });
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
@@ -140,10 +142,19 @@ export function persistedAuthoredRecordsFromRows(kind: AspectPatternWriteupKind,
 export async function loadAspectPatternProductionAuthoredRecords(kind: "natal") : Promise<AuthoredNatalRecord[]>;
 export async function loadAspectPatternProductionAuthoredRecords(kind: "activation") : Promise<AuthoredActivationRecord[]>;
 export async function loadAspectPatternProductionAuthoredRecords(kind: AspectPatternWriteupKind) {
-  const persisted = persistedAuthoredRecordsFromRows(kind, await fetchPersistedAspectPatternWriteupRows(kind))
-    .filter((record) => record.status === "approved");
   const codeBacked = kind === "activation"
     ? engine.AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS
     : engine.AUTHORED_ASPECT_PATTERN_RECORDS;
-  return persisted.concat(codeBacked);
+
+  try {
+    const persisted = persistedAuthoredRecordsFromRows(kind, await fetchPersistedAspectPatternWriteupRows(kind))
+      .filter((record) => record.status === "approved");
+    return persisted.concat(codeBacked);
+  } catch (error) {
+    console.warn(
+      `Aspect-pattern ${kind} persistence lookup failed; using code-backed records.`,
+      error
+    );
+    return codeBacked;
+  }
 }

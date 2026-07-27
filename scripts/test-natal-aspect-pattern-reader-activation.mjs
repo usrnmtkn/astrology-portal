@@ -375,20 +375,11 @@ try {
   assert.equal(missingCopyItems.length, 2, "Contexts without governed resolved copy must be skipped, never rendered bare.");
 
   const html = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, { items, status: "ready" }));
-  const [
-    parentNatalPosition,
-    supportingPosition,
-    childNatalPosition
-  ] = renderedTextPositions(html, [
-    "Grand Cross across Sun, Moon, Mars, and Saturn",
-    "Supporting pattern detail",
-    "T-Square with Mars at the action point"
-  ]);
-
-  assert.ok(parentNatalPosition < supportingPosition, "Supporting patterns must remain nested after permanent natal copy.");
-  assert.ok(supportingPosition < childNatalPosition, "Contained natal pattern copy must render inside supporting detail.");
-  assert.match(html, /Reading note/, "Confidence qualifications must render under their reader-facing label.");
-  assert.match(html, /This pattern is wide, so read it as a loose tendency/, "Confidence note bodies must reach the reader.");
+  assert.match(html, /Grand Cross across Sun, Moon, Mars, and Saturn/, "The primary pattern quote must remain visible.");
+  assert.match(html, />Details</, "The compact pattern preview must expose its detail reader.");
+  assert.doesNotMatch(html, /T-Square with Mars at the action point/, "Contained pattern copy must move with its parent into the detail reader.");
+  assert.doesNotMatch(html, /Reading note/, "Long-form pattern sections must not render on the natal overview.");
+  assert.doesNotMatch(html, /This pattern is wide, so read it as a loose tendency/, "Confidence notes must move into the detail reader.");
   assert.doesNotMatch(html, /package 1|package_1|leaked generic/, "Generic package sections must never render, as heading or body.");
   assert.doesNotMatch(html, /Mars is pressing on your T-Square response point|Saturn is contacting one corner of your Grand Cross|Active chart patterns|natal-pattern-card__activation/, "Natal pattern cards must not render temporary activation copy.");
 

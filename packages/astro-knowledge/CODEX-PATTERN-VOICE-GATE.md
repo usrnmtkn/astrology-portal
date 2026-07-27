@@ -10,13 +10,17 @@ Marie and holds the two-level shape.
 - `voice/tldr-astro/pattern-aspect.json` - the surface voice contract. Inversions vs
   the sky rubric: second person REQUIRED (we/us/our fails), degrees/orb ALLOWED in the
   mechanics level, shape checks for the two-level pattern (over-section + duplicate-beat).
-- `voice/tldr-astro/pattern-examples.json` - canonical gold exemplars (tightened Yod /
-  T-square / Grand Cross), used as the judge's like-register gold standard.
+- `voice/tldr-astro/pattern-examples.json` - canonical structured gold exemplars
+  (tightened Yod / T-square / Grand Cross), used as the judge's like-register gold
+  standard. Gold and production cards pass through the same labeled serializer.
 - `scripts/lint-pattern-voice.js` - mechanical gate. `lintPatternCard(card)` accepts the
   resolver's `card.content` ({overview, sections}) or a plain string. Scores 1-3.
 - `scripts/judge-pattern-voice.js` - LLM gate. Reuses `generate()` from
   generate-sky-aspect-cards.js (same provider/model/key), runs COLD (temp 0.1),
-  tiers by apex/focal planet. `judgeCard(text, {apexPlanet, focalPlanet, patternType, samples})`.
+  tiers by apex/focal planet. `judgeCard(content, {apexPlanet, focalPlanet,
+  patternType, samples})`. `serializePatternCard(content)` marks Level 1, Level 2,
+  and the reading note explicitly before any model call. Exact canonical matches
+  receive a deterministic 3, matching the rubric and preventing judge drift.
 - `scripts/test-pattern-voice.mjs` - renders all 6 real fixtures through the production
   v3 resolver (unknown-time + a house-injected known-time variant), lints every card,
   and judges when a model key is present.
@@ -35,7 +39,8 @@ Marie and holds the two-level shape.
 1. Set the generator's model key (same env as sky: `OPENAI_API_KEY` or
    `ANTHROPIC_API_KEY`, honoring `CONTENT_GENERATION_PROVIDER[_SKY_ASPECT]`).
    Then `npm run test:pattern-voice` also judges each card (samples=3, median);
-   a median score of 1 fails the suite, a 2 is human-review, a 3 is auto-publish.
+   a median score of 1 fails the suite, a 2 is human-review with its reason printed,
+   and a 3 is auto-publish.
 2. Add `test:pattern-voice` to the aspect-pattern test group so it runs with
    test-aspect-pattern-*. It is deterministic without a key (mechanical only) and
    safe to run in CI; the LLM half only activates when a key is present.
