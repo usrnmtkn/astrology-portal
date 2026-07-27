@@ -1015,8 +1015,8 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("button", { name: "More actions for Nikki" })).toBeVisible();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await expect(page.getByRole("menu", { name: "Nikki actions" })).toBeVisible();
-    await expect(page.getByRole("menuitem", { name: "Edit chart" })).toBeVisible();
-    await expect(page.getByRole("menuitem", { name: "Delete chart" })).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: "Edit" })).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: "Delete" })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1545,7 +1545,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByText("Nikki")).toBeVisible();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
-    await page.getByRole("menuitem", { name: "Delete chart" }).click();
+    await page.getByRole("menuitem", { name: "Delete" }).click();
     await expect(page.getByRole("heading", { name: "Delete Nikki?" })).toBeVisible();
     await expect(page.getByText("This removes the saved chart and cannot be undone.")).toBeVisible();
 
@@ -1562,7 +1562,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByText("Nikki")).toBeVisible();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
-    await page.getByRole("menuitem", { name: "Edit chart" }).click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
 
     const editChartDialog = page.getByRole("dialog", { name: "Edit chart" });
     await expect(editChartDialog).toBeVisible();
