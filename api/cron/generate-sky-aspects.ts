@@ -10,6 +10,15 @@ const supportedAspects = new Set(["conjunction", "sextile", "square", "trine", "
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
+type RepairStats = {
+  fired: number;
+  unchanged: number;
+  reached3: number;
+  stayed2: number;
+  fellTo1: number;
+  lintFailed: number;
+  errors: number;
+};
 
 type RoutedGeneration = {
   result: GeneratedCardResult;
@@ -17,6 +26,8 @@ type RoutedGeneration = {
   judgePasses: number;
   totalAttempts: number;
   cappedRegeneration: boolean;
+  repair: RepairStats;
+  lintRetryAvoidTerms: string[][];
 };
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -150,6 +161,30 @@ async function existingCard(contentKey: string) {
   return null;
 }
 
+async function persistedCardId(contentKey: string) {
+  const params = new URLSearchParams({
+    content_key: `eq.${contentKey}`,
+    target_date: "is.null",
+    mode: "eq.feed",
+    select: "id",
+    limit: "1"
+  });
+  const key = serviceRoleKey();
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: {
+      apikey: key,
+      authorization: `Bearer ${key}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Sky-aspect persisted-row lookup failed with ${response.status}.`);
+  }
+
+  const rows = await response.json() as Array<{ id: string }>;
+  return rows[0]?.id ?? null;
+}
+
 function firstParagraph(text: string) {
   return text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).find(Boolean) ?? "";
 }
@@ -160,10 +195,20 @@ async function generateWithJudgeRouting(args: {
   aspect: string;
   signA: string;
   signB: string;
-}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false }> {
+}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
   let result: GeneratedCardResult | null = null;
   let feedback = "";
   let totalAttempts = 0;
+  const repair: RepairStats = {
+    fired: 0,
+    unchanged: 0,
+    reached3: 0,
+    stayed2: 0,
+    fellTo1: 0,
+    lintFailed: 0,
+    errors: 0
+  };
+  const lintRetryAvoidTerms: string[][] = [];
 
   for (let pass = 0; pass <= maxJudgeRegenerations; pass += 1) {
     result = await generateCard(args, {
@@ -171,9 +216,19 @@ async function generateWithJudgeRouting(args: {
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     totalAttempts += result.attempts ?? 0;
+    lintRetryAvoidTerms.push(...(result.lintRetryAvoidTerms ?? []));
+    if (result.repair?.fired) {
+      repair.fired += 1;
+      repair.unchanged += result.repair.result === "unchanged" ? 1 : 0;
+      repair.reached3 += result.repair.repairedScore === 3 ? 1 : 0;
+      repair.stayed2 += result.repair.result === "2→2" ? 1 : 0;
+      repair.fellTo1 += result.repair.result === "2→1" ? 1 : 0;
+      repair.lintFailed += result.repair.result === "lint-failed" ? 1 : 0;
+      repair.errors += result.repair.result === "error" ? 1 : 0;
+    }
 
     if (result.status !== "clean") {
-      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false };
+      return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false, repair, lintRetryAvoidTerms };
     }
 
     if (result.gate === "auto-publish" || result.gate === "human-review") {
@@ -182,7 +237,9 @@ async function generateWithJudgeRouting(args: {
         gate: result.gate,
         judgePasses: pass + 1,
         totalAttempts,
-        cappedRegeneration: false
+        cappedRegeneration: false,
+        repair,
+        lintRetryAvoidTerms
       };
     }
 
@@ -201,7 +258,9 @@ async function generateWithJudgeRouting(args: {
     gate: "human-review",
     judgePasses: maxJudgeRegenerations + 1,
     totalAttempts,
-    cappedRegeneration: true
+    cappedRegeneration: true,
+    repair,
+    lintRetryAvoidTerms
   };
 }
 
@@ -213,7 +272,7 @@ async function saveRoutedCard({
 }: {
   aspect: SkyAspect;
   first: PlanetPosition;
-  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false };
+  routed: RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] };
   second: PlanetPosition;
 }) {
   const { result } = routed;
@@ -277,15 +336,18 @@ async function saveRoutedCard({
     },
     series: aspect.series ?? null
   };
+  const persistedId = await persistedCardId(contentKey);
   const response = await fetch(
-    `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
+    persistedId
+      ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(persistedId)}`
+      : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
     {
-      method: "POST",
+      method: persistedId ? "PATCH" : "POST",
       headers: {
         apikey: key,
         authorization: `Bearer ${key}`,
         "content-type": "application/json",
-        prefer: "resolution=merge-duplicates,return=representation"
+        prefer: persistedId ? "return=representation" : "resolution=merge-duplicates,return=representation"
       },
       body: JSON.stringify({
         content_key: contentKey,
@@ -306,6 +368,8 @@ async function saveRoutedCard({
           cardFacts,
           skyAspectVoiceLint: result.lint,
           skyAspectJudge: persistedJudge,
+          skyAspectRepair: result.repair,
+          skyAspectLintRetryAvoidTerms: routed.lintRetryAvoidTerms,
           generationAttempts: routed.totalAttempts,
           judgePasses: routed.judgePasses,
           temperature: result.temperature
@@ -352,8 +416,23 @@ async function generateCurrentMatrix() {
     calibrationHeld: 0,
     judgeRegenerated: 0,
     retried: 0,
+    repairFired: 0,
+    repairReached3: 0,
+    repairStayed2: 0,
+    repairUnchanged: 0,
+    repairFellTo1: 0,
+    repairLintFailed: 0,
+    repairErrors: 0,
+    lintRetryAvoidTermsFed: 0,
     skipped: [] as Array<{ aspect: string; reason: string }>,
-    cards: [] as Array<{ contentKey: string; status: string; attempts?: number }>
+    cards: [] as Array<{
+      contentKey: string;
+      status: string;
+      attempts?: number;
+      repairFired?: boolean;
+      repairResult?: string;
+      lintRetryAvoidTerms?: string[][];
+    }>
   };
 
   for (const aspect of sky.aspects) {
@@ -420,6 +499,14 @@ async function generateCurrentMatrix() {
     report.calibrationHeld += saved.gate === "auto-publish" && !saved.canAutoPublish ? 1 : 0;
     report.judgeRegenerated += routed.judgePasses > 1 ? 1 : 0;
     report.retried += routed.totalAttempts > routed.judgePasses ? 1 : 0;
+    report.repairFired += routed.repair.fired;
+    report.repairReached3 += routed.repair.reached3;
+    report.repairStayed2 += routed.repair.stayed2;
+    report.repairUnchanged += routed.repair.unchanged;
+    report.repairFellTo1 += routed.repair.fellTo1;
+    report.repairLintFailed += routed.repair.lintFailed;
+    report.repairErrors += routed.repair.errors;
+    report.lintRetryAvoidTermsFed += routed.lintRetryAvoidTerms.reduce((sum, terms) => sum + terms.length, 0);
     report.cards.push({
       contentKey,
       status: saved.canAutoPublish
@@ -427,7 +514,10 @@ async function generateCurrentMatrix() {
         : saved.gate === "auto-publish"
           ? "draft-calibration-held"
           : "needs-review",
-      attempts: routed.totalAttempts
+      attempts: routed.totalAttempts,
+      repairFired: result.repair?.fired ?? false,
+      repairResult: result.repair?.result,
+      lintRetryAvoidTerms: routed.lintRetryAvoidTerms
     });
   }
 

@@ -46,9 +46,9 @@
 
   "conditionalBans": [
     {
-      "term": "steady",
+      "term": "\\bstead(y|ies|iness|ier)\\b",
       "requiresBefore": ["stable", "strong", "solid"],
-      "reason": "'steady' is only allowed when 'stable', 'strong', or 'solid' appears before it in the card; otherwise use calm, solid, grounded, or sure."
+      "reason": "The 'steady' word family is only allowed when 'stable', 'strong', or 'solid' appears before it in the card; otherwise use calm, solid, grounded, consistent, or sure."
     }
   ],
 
