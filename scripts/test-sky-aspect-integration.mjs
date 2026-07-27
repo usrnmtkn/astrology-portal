@@ -14,6 +14,28 @@ const cleanExample = examples.find((entry) => (
 assert.ok(cleanExample, "Expected the canonical Sun-Pluto sky example.");
 assert.equal(lintCard(cleanExample).score, 3, "Canonical sky example must remain lint-clean.");
 
+const brokenSunJupiter = [
+  "Confidence is loud, and the sense of possibility is even louder. With the Sun in Leo conjunct Jupiter in Leo, the field runs on belief, appetite, and the sense that doors should open just because we ask. A big yes to the extra shift, a plan that gets bigger after midnight, a promise made on a high - each is easier to land when the heat of the moment makes luck feel inevitable. The Sun in Leo wants to be seen and named; Jupiter in Leo expands every risk and reward we claim as ours.",
+  "We chase what we want with less hesitation, and the odds seem to tilt in our direction - until the push gets too big and the room cools off. Real confidence brings real opportunity, but the same fire that opens doors can torch what it touches if we overplay the hand. Big luck is real. So is the fallout when we act like it can’t run out.",
+  "Belief can make the room move. Overreach just makes it empty faster."
+].join("\n\n");
+const brokenSunJupiterLint = lintCard(brokenSunJupiter);
+assert.equal(brokenSunJupiterLint.score, 1);
+assert.ok(brokenSunJupiterLint.findings.some((finding) => (
+  finding.severity === "fail" && finding.term === "paragraph-count"
+)));
+assert.ok(brokenSunJupiterLint.findings.some((finding) => (
+  finding.severity === "warn" && finding.term === "double-closing-pair"
+)));
+
+const repairedExample = examples.find((entry) => (
+  entry.surface === "sky"
+  && entry.mode === "collective-aspect-card"
+  && entry.canonical
+  && entry.sourceId !== "sky-sun-opposition-pluto"
+))?.body;
+assert.ok(repairedExample, "Expected a second canonical sky example for repair tests.");
+
 const normalized = generator.normalizeCardArgs({
   a: "Pluto",
   b: "Sun",
@@ -39,6 +61,54 @@ assert.deepEqual(
   },
   "Reversed ephemeris input must keep each sign attached to its planet."
 );
+
+const generationPrompt = generator.buildPrompt({
+  a: "sun",
+  b: "uranus",
+  aspect: "sextile",
+  signA: "leo",
+  signB: "gemini"
+});
+
+assert.match(generationPrompt, /RANGE OF GOOD CLOSES/);
+assert.doesNotMatch(generationPrompt, /Standing out is real currency/);
+assert.doesNotMatch(generationPrompt, /a friend's big-hearted gesture/);
+
+const canonicalCloses = new Set(
+  examples
+    .filter((entry) => (
+      entry.surface === "sky"
+      && entry.mode === "collective-aspect-card"
+      && entry.canonical
+    ))
+    .map((entry) => (
+      [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(entry.body)]
+        .map(({ segment }) => segment.trim())
+        .filter(Boolean)
+        .slice(-2)
+        .join(" ")
+    ))
+);
+const sampledCloses = generator.closeBank(5, () => 0.42);
+assert.equal(sampledCloses.length, 5);
+assert.equal(new Set(sampledCloses).size, 5);
+for (const close of sampledCloses) {
+  assert.ok(canonicalCloses.has(close), "Every rotating close must come verbatim from a canonical exemplar.");
+}
+
+let repairPrompt = "";
+const repairedCard = await generator.repairCard(cleanExample, "The ending adds a second aphorism.", {
+  generateFn: async (prompt, options) => {
+    repairPrompt = prompt;
+    assert.equal(options.temperature, 0.1);
+    return repairedExample;
+  }
+});
+
+assert.match(repairPrompt, /careful editor flagged this card/i);
+assert.match(repairPrompt, /The ending adds a second aphorism\./);
+assert.match(repairPrompt, /Fix ONLY what the note describes/);
+assert.equal(repairedCard, repairedExample);
 
 const missingSource = await generator.generateCard({
   a: "sun",
@@ -82,7 +152,10 @@ const retried = await generator.generateCard({
   generateFn: async (prompt) => {
     calls += 1;
     if (calls === 2) {
-      assert.match(prompt, /last attempt failed the voice check/i);
+      assert.match(prompt, /LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE\(S\)/);
+      assert.match(prompt, /"degree\/orb mechanics"/);
+      assert.match(prompt, /"collective person"/);
+      assert.match(prompt, /Do not use "gift" or "shadow" as labels/);
     }
     return calls === 1 ? "You can read the 2° orb in the draft." : cleanExample;
   }
@@ -92,6 +165,36 @@ assert.equal(retried.status, "clean");
 assert.equal(retried.attempts, 2);
 assert.equal(retried.lint.score, 3);
 assert.equal(retried.lint.fails, 0);
+assert.deepEqual(retried.lintRetryAvoidTerms, [[
+  "degree/orb mechanics",
+  "collective person",
+  "(?<!-)\\byou\\b|(?<!-)\\byour\\b",
+  "paragraph-count"
+]]);
+
+let seamCalls = 0;
+const seamRetry = await generator.generateCard({
+  a: "mars",
+  b: "saturn",
+  aspect: "sextile",
+  signA: "gemini",
+  signB: "aries"
+}, {
+  maxRetries: 2,
+  generateFn: async (prompt) => {
+    seamCalls += 1;
+    if (seamCalls === 2) {
+      assert.match(prompt, /"the gift is"/);
+      assert.match(prompt, /"the shadow is"/);
+    }
+    return seamCalls === 1
+      ? "We find ourselves moving with enough restraint to keep the whole plan on its feet.\n\nThe gift is momentum. The shadow is overreach."
+      : cleanExample;
+  }
+});
+
+assert.equal(seamRetry.status, "clean");
+assert.deepEqual(seamRetry.lintRetryAvoidTerms, [["the gift is", "the shadow is"]]);
 
 let judgeGenerationPrompt = "";
 const judged = await generator.generateCard({
@@ -118,6 +221,81 @@ const judged = await generator.generateCard({
 assert.match(judgeGenerationPrompt, /previous draft reached the editorial judge/i);
 assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "auto-publish");
+
+let repairJudgeCalls = 0;
+let repairReason = "";
+const repairedToThree = await generator.generateCard({
+  a: "sun",
+  b: "pluto",
+  aspect: "opposition",
+  signA: "leo",
+  signB: "aquarius"
+}, {
+  withJudge: true,
+  generateFn: async () => cleanExample,
+  repairFn: async (text, reason) => {
+    assert.equal(text, cleanExample);
+    repairReason = reason;
+    return repairedExample;
+  },
+  judgeFn: async () => {
+    repairJudgeCalls += 1;
+    return JSON.stringify(repairJudgeCalls === 1 ? {
+      score: 2,
+      verdict: "borderline",
+      weakest: "The ending.",
+      why: "The ending adds a second aphorism."
+    } : {
+      score: 3,
+      verdict: "in-voice",
+      weakest: "none",
+      why: "The repaired close lands cleanly."
+    });
+  }
+});
+
+assert.equal(repairReason, "The ending adds a second aphorism.");
+assert.equal(repairedToThree.text, repairedExample);
+assert.equal(repairedToThree.judge.score, 3);
+assert.equal(repairedToThree.gate, "auto-publish");
+assert.deepEqual(repairedToThree.repair, {
+  fired: true,
+  result: "2→3",
+  reason: "The ending adds a second aphorism.",
+  originalScore: 2,
+  repairedScore: 3,
+  kept: "repaired"
+});
+
+const repairedStillTwo = await generator.generateCard({
+  a: "sun",
+  b: "pluto",
+  aspect: "opposition",
+  signA: "leo",
+  signB: "aquarius"
+}, {
+  withJudge: true,
+  generateFn: async () => cleanExample,
+  repairFn: async () => repairedExample,
+  judgeFn: async () => JSON.stringify({
+    score: 2,
+    verdict: "borderline",
+    weakest: "The ending.",
+    why: "The ending remains slightly generic."
+  })
+});
+
+assert.equal(repairedStillTwo.text, cleanExample, "A tied repair must preserve the original card.");
+assert.equal(repairedStillTwo.judge.score, 2);
+assert.equal(repairedStillTwo.gate, "human-review");
+assert.deepEqual(repairedStillTwo.repair, {
+  fired: true,
+  result: "2→2",
+  reason: "The ending remains slightly generic.",
+  originalScore: 2,
+  repairedScore: 2,
+  kept: "original"
+});
 
 const review = await generator.generateCard({
   a: "sun",

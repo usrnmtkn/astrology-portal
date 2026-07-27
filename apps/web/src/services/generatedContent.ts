@@ -35,6 +35,7 @@ export type GeneratedContentBlockType =
   | "ruler"
   | "natal_aspect"
   | "sky_aspect"
+  | "sky_placement"
   | "daily_horoscope"
   | "transit_to_natal_aspect"
   | "synastry_aspect"

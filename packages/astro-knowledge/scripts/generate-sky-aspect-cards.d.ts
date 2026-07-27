@@ -6,6 +6,16 @@ export type SkyAspectCardArgs = {
   signB: string;
 };
 
+export type SkyPlacementTopperArgs = {
+  planet: string;
+  sign: string;
+  aspect: string;
+  other: string;
+  otherSign: string;
+  orb: number;
+  baseText: string;
+};
+
 export type SkyAspectCardLint = {
   score: number;
   fails: number;
@@ -25,6 +35,16 @@ export type SkyAspectCardResult = {
   provider?: string;
   model?: string;
   temperature?: number | null;
+  repair?: {
+    fired: boolean;
+    result: "not-needed" | "unchanged" | "2→3" | "2→2" | "2→1" | "lint-failed" | "error";
+    reason: string;
+    originalScore: 1 | 2 | 3 | null;
+    repairedScore: 1 | 2 | 3 | null;
+    kept: "original" | "repaired";
+    error?: string;
+  };
+  lintRetryAvoidTerms?: string[][];
   gate?: "auto-publish" | "human-review" | "regenerate";
   judge?: {
     score: 1 | 2 | 3;
@@ -50,7 +70,20 @@ export function generateCard(
     maxRetries?: number;
     withJudge?: boolean;
     judgeFeedback?: string;
-    generateFn?: (prompt: string) => Promise<string>;
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+    repairFn?: (text: string, reason: string) => Promise<string>;
+    judgeFn?: (prompt: string) => Promise<string>;
+  }
+): Promise<SkyAspectCardResult>;
+
+export function generatePlacementTopper(
+  args: SkyPlacementTopperArgs,
+  options?: {
+    maxRetries?: number;
+    withJudge?: boolean;
+    judgeFeedback?: string;
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+    repairFn?: (text: string, reason: string) => Promise<string>;
     judgeFn?: (prompt: string) => Promise<string>;
   }
 ): Promise<SkyAspectCardResult>;
@@ -66,9 +99,34 @@ export function normalizeCardArgs(args: SkyAspectCardArgs): {
   reversed: boolean;
 };
 
+export function closeBank(
+  n?: number,
+  random?: () => number
+): string[];
+
+export function repairCard(
+  text: string,
+  reason: string,
+  options?: {
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+  }
+): Promise<string>;
+
+export function repairPlacementTopper(
+  text: string,
+  reason: string,
+  options?: {
+    generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+  }
+): Promise<string>;
+
 declare const generator: {
+  closeBank: typeof closeBank;
   generateCard: typeof generateCard;
+  generatePlacementTopper: typeof generatePlacementTopper;
   normalizeCardArgs: typeof normalizeCardArgs;
+  repairCard: typeof repairCard;
+  repairPlacementTopper: typeof repairPlacementTopper;
 };
 
 export default generator;
