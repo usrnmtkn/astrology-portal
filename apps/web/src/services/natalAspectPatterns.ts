@@ -6,7 +6,6 @@ import type {
   ResolvedAspectPatternActivationCopy,
   ResolvedAspectPatternCopy
 } from "@tldr/astro-knowledge/aspect-pattern-engine";
-import { renderAspectPatternV3, SourceGapError } from "../content/fallbackArchitectureV3Runtime";
 
 type NatalAspectPatternReaderStatus = "loading" | "ready" | "unavailable";
 
@@ -75,7 +74,7 @@ export function natalAspectPatternActivationEnabled() {
 export async function fetchNatalAspectPatternsWithCopy(
   location: LocationInput,
   date: Date,
-  options: { includeActivationCopy?: boolean } = {}
+  options: { includeActivationCopy?: boolean; timeKnown?: boolean } = {}
 ): Promise<AspectPatternDetectionResult> {
   const params = new URLSearchParams({
     lat: String(location.latitude),
@@ -83,13 +82,17 @@ export async function fetchNatalAspectPatternsWithCopy(
     label: location.label,
     date: date.toISOString(),
     includeAspectPatterns: "true",
-    includeAspectPatternCopy: "false"
+    includeAspectPatternCopy: "true"
   });
+
+  if (options.timeKnown === false) {
+    params.set("timeKnown", "false");
+  }
 
   if (options.includeActivationCopy) {
     params.set("includeAspectPatternActivation", "true");
     params.set("includeAspectPatternActivationContexts", "true");
-    params.set("includeAspectPatternActivationCopy", "false");
+    params.set("includeAspectPatternActivationCopy", "true");
   }
 
   if (location.timeZone) {
@@ -199,57 +202,32 @@ function activationTimingWindowFromContext(context: AspectPatternActivationInter
 
 export function natalAspectPatternReaderItems(
   snapshot: SkySnapshot | null,
-  voice: "you" | "they" = "you"
+  _voice: "you" | "they" = "you"
 ): NatalAspectPatternReaderItem[] {
   const contexts = snapshot?.aspectPatterns?.interpretationContexts ?? [];
-  const activations = snapshot?.aspectPatterns?.activation?.activations ?? [];
-  const activationContexts = snapshot?.aspectPatterns?.activation?.interpretationContexts ?? [];
-  const activationDisplayOrder = snapshot?.aspectPatterns?.activation?.currentDisplayOrder ?? [];
-  const contextById = new Map(contexts.map((context) => [context.patternId, context]));
-  const activationById = new Map((activations as PatternActivationTimingSource[]).map((activation) => [activation.patternId, activation]));
+  const resolvedCopies = snapshot?.aspectPatterns?.resolvedCopy ?? [];
+  const activation = snapshot?.aspectPatterns?.activation as
+    | (NonNullable<AspectPatternDetectionResult["activation"]> & { resolvedCopy?: ResolvedAspectPatternActivationCopy[] })
+    | undefined;
+  const activations = activation?.activations ?? [];
+  const activationContexts = activation?.interpretationContexts ?? [];
+  const activationResolvedCopies = activation?.resolvedCopy ?? [];
+  const activationDisplayOrder = activation?.currentDisplayOrder ?? [];
+  const copyById = new Map(resolvedCopies.map((copy) => [copy.patternId, copy]));
+  const activationById = new Map((activations as PatternActivationTimingSource[]).map((entry) => [entry.patternId, entry]));
   const activationContextById = new Map(activationContexts.map((context) => [context.patternId, context]));
+  const activationCopyById = new Map(activationResolvedCopies.map((copy) => [copy.patternId, copy]));
   const primaryActivePatternId = activationDisplayOrder[0] ?? null;
 
-  return contexts.flatMap((rawContext) => {
-    const context = rawContext as any;
-    try {
-    const apex = "apex" in context.roles ? context.roles.apex : "focalPlanet" in context.roles ? context.roles.focalPlanet : undefined;
-    const element = context.patternType === "grand_trine"
-      ? context.roles.elementConsistency === "same_element" ? String(context.members[0]?.sign ?? "").toLowerCase() : undefined
-      : undefined;
-    const rendered = renderAspectPatternV3({
-      type: context.patternType,
-      apexTitle: apex,
-      element,
-      voice
-    });
-    const copy = {
-      patternId: context.patternId,
-      patternType: context.patternType,
-      source: { recordId: rendered.templateKey, contentLevel: "source_grounded_template", status: "approved", resolverVersion: "v3" },
-      content: { headline: rendered.headline, overview: rendered.parts[0] ?? rendered.body, sections: rendered.parts.slice(1).map((body: string, index: number) => ({ id: `package_${index + 1}`, body })) },
-      diagnostics: { templateId: rendered.templateKey, usedFallback: false, missingSlots: [], skippedSections: [] }
-    } as ResolvedAspectPatternCopy;
-    const activationContext = activationContextById.get(context.patternId);
-    let activationCopy: ResolvedAspectPatternActivationCopy | undefined;
-    if (activationContext) {
-      const active = renderAspectPatternV3({
-        type: context.patternType,
-        apexTitle: apex,
-        element,
-        activation: true,
-        voice
-      });
-      activationCopy = {
-        patternId: context.patternId,
-        patternType: context.patternType,
-        triggerSummary: {
-          movingBodies: activationContext.triggers.map((trigger) => trigger.movingBody),
-          targetedNatalPlanets: activationContext.triggers.map((trigger) => trigger.targetNatalPlanet)
-        },
-        content: { headline: active.headline, overview: active.body, sections: [] }
-      } as unknown as ResolvedAspectPatternActivationCopy;
+  return contexts.flatMap((context) => {
+    const copy = copyById.get(context.patternId);
+
+    if (!copy) {
+      return [];
     }
+
+    const activationContext = activationContextById.get(context.patternId);
+    const activationCopy = activationContext ? activationCopyById.get(context.patternId) : undefined;
     const activationEmphasis: NatalAspectPatternReaderItem["activationEmphasis"] = activationCopy
       ? context.patternId === primaryActivePatternId ? "primary" : "secondary"
       : "none";
@@ -269,10 +247,6 @@ export function natalAspectPatternReaderItems(
       parentPatternIds: context.display.parentPatternIds.slice(),
       childPatternIds: context.display.childPatternIds.slice()
     }];
-    } catch (error) {
-      if (error instanceof SourceGapError) return [];
-      throw error;
-    }
   }).sort((first, second) => first.rank - second.rank || first.patternId.localeCompare(second.patternId));
 }
 
