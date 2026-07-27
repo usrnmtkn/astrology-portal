@@ -6,6 +6,10 @@ const {
   normalizeDegrees
 } = require("../timing/aspects");
 const { SIGNS, TRADITIONAL_RULERS } = require("../timing/constants");
+const {
+  AspectPatternV3SourceGapError,
+  resolveAspectPatternV3Copy
+} = require("./v3-copy-resolver");
 
 const PLANET_IDS = Object.freeze(CANONICAL_PAIR_ORDER.slice());
 const PLANET_SET = new Set(PLANET_IDS);
@@ -55,7 +59,7 @@ const DEFAULT_RANKING_POLICY = Object.freeze({
 });
 const ASPECT_PATTERN_DETECTOR_VERSION = "aspect_pattern_detector_v1";
 const ASPECT_PATTERN_CONTEXT_BUILDER_VERSION = "aspect_pattern_interpretation_context_v1";
-const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "aspect_pattern_copy_resolver_v1";
+const ASPECT_PATTERN_COPY_RESOLVER_VERSION = "v3";
 const ASPECT_PATTERN_ACTIVATION_VERSION = "aspect_pattern_activation_v1";
 const ASPECT_PATTERN_ACTIVATION_CONTEXT_BUILDER_VERSION = "aspect_pattern_activation_interpretation_context_v1";
 const ASPECT_PATTERN_ACTIVATION_COPY_RESOLVER_VERSION = "aspect_pattern_activation_copy_resolver_v1";
@@ -274,7 +278,7 @@ const PATTERN_COPY_JOBS = Object.freeze({
 });
 const PATTERN_DISPLAY_NAMES = Object.freeze({
   t_square: "T-square",
-  grand_square: "Grand Square",
+  grand_square: "Grand Cross",
   grand_trine: "Grand Trine",
   kite: "Kite",
   yod: "Yod",
@@ -369,7 +373,11 @@ function oppositePoint(planet, planetById) {
   if (!source || typeof source.longitude !== "number") {
     throw new Error(`Cannot derive opposite point without longitude for ${planet}`);
   }
-  return makeZodiacPoint(source.longitude + 180, planetById);
+  const point = makeZodiacPoint(source.longitude + 180, planetById);
+  if (Number.isInteger(source.house) && source.house >= 1 && source.house <= 12) {
+    point.house = ((source.house + 5) % 12) + 1;
+  }
+  return point;
 }
 
 function roundNumber(value) {
@@ -1160,7 +1168,10 @@ function buildAspectPatternInterpretationContexts(detectionResult, context = {})
   const displayOrder = ranking && Array.isArray(ranking.displayOrder)
     ? ranking.displayOrder.filter((patternId) => patternById.has(patternId))
     : patterns.map((pattern) => pattern.id);
-  const orderedPatternIds = displayOrder.concat(patterns.map((pattern) => pattern.id).filter((patternId) => !displayOrder.includes(patternId)));
+  const initialPatternIds = displayOrder.concat(patterns.map((pattern) => pattern.id).filter((patternId) => !displayOrder.includes(patternId)));
+  const containment = containmentDisplayPolicy(patterns, relationships);
+  const orderedPatternIds = applyContainmentPrecedence(initialPatternIds, containment);
+  const moonTimeUncertainty = normalizeMoonTimeUncertainty(context.moonTimeUncertainty);
 
   return orderedPatternIds.map((patternId, index) => {
     const pattern = patternById.get(patternId);
@@ -1180,7 +1191,11 @@ function buildAspectPatternInterpretationContexts(detectionResult, context = {})
       display: {
         rank: index + 1,
         isPrimary: index === 0,
-        isContained: relationships.some((relationship) => relationship.relationship === "contains" && relationship.childPatternId === pattern.id),
+        isContained: containment.get(pattern.id)?.suppressed === true,
+        isSuppressed: containment.get(pattern.id)?.suppressed === true,
+        supersededByPatternIds: containment.get(pattern.id)?.supersededByPatternIds ?? [],
+        isWithheldForMoonTimeUncertainty: moonTimeUncertainty.has(pattern.id),
+        moonTimeUncertainty: moonTimeUncertainty.get(pattern.id),
         parentPatternIds,
         childPatternIds
       },
@@ -1217,6 +1232,69 @@ function buildAspectPatternInterpretationContexts(detectionResult, context = {})
       }
     };
   });
+}
+
+function containmentDisplayPolicy(patterns, relationships) {
+  const byId = new Map(patterns.map((pattern) => [pattern.id, pattern]));
+  const result = new Map(patterns.map((pattern) => [
+    pattern.id,
+    { suppressed: false, supersededByPatternIds: [], promoteBeforePatternIds: [] }
+  ]));
+
+  for (const relationship of relationships) {
+    if (relationship.relationship !== "contains") continue;
+    const parent = byId.get(relationship.parentPatternId);
+    const child = byId.get(relationship.childPatternId);
+    if (!parent || !child) continue;
+    const parentConfidence = parent.geometry?.confidence;
+    const childConfidence = child.geometry?.confidence;
+    const parentSuppresses = ["exact", "strong"].includes(parentConfidence)
+      || !(
+        ["wide", "partial"].includes(parentConfidence)
+        && childConfidence === "exact"
+      );
+    const state = result.get(child.id);
+    if (!parentSuppresses) {
+      state.promoteBeforePatternIds = unique(state.promoteBeforePatternIds.concat(parent.id)).sort();
+      continue;
+    }
+    state.suppressed = true;
+    state.supersededByPatternIds = unique(state.supersededByPatternIds.concat(parent.id)).sort();
+  }
+  return result;
+}
+
+function applyContainmentPrecedence(patternIds, containment) {
+  const uniqueIds = unique(patternIds);
+  const visible = uniqueIds.filter((patternId) => containment.get(patternId)?.suppressed !== true);
+  for (const patternId of visible.slice()) {
+    for (const parentId of containment.get(patternId)?.promoteBeforePatternIds ?? []) {
+      const childIndex = visible.indexOf(patternId);
+      const parentIndex = visible.indexOf(parentId);
+      if (childIndex === -1 || parentIndex === -1 || childIndex < parentIndex) continue;
+      visible.splice(childIndex, 1);
+      visible.splice(parentIndex, 0, patternId);
+    }
+  }
+  return visible.concat(uniqueIds.filter((patternId) => containment.get(patternId)?.suppressed === true));
+}
+
+function normalizeMoonTimeUncertainty(value) {
+  const result = new Map();
+  const entries = Array.isArray(value)
+    ? value
+    : value && typeof value === "object"
+      ? Object.entries(value).map(([patternId, detail]) => ({ patternId, ...(detail || {}) }))
+      : [];
+  for (const entry of entries) {
+    if (!entry || typeof entry.patternId !== "string") continue;
+    result.set(entry.patternId, {
+      status: "uncertain",
+      qualifyingStart: entry.qualifyingStart,
+      qualifyingEnd: entry.qualifyingEnd
+    });
+  }
+  return result;
 }
 
 function emptyPatternRanking(patternId) {
@@ -2064,8 +2142,8 @@ function buildAuthoredAspectPatternActivationRecords() {
     }),
     authoredActivationRecord("grand_square", "opposition_axis", {
       route: "member",
-      headline: "{{primary_moving_body}} is contacting one corner of your Grand Square",
-      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Square. One corner of the four-part setup may stand out without reducing the pattern to one component.",
+      headline: "{{primary_moving_body}} is contacting one corner of your Grand Cross",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Cross. One corner of the four-part setup may stand out without reducing the pattern to one component.",
       role: "{{primary_target_planet}} is one member of the four-planet structure. It is a doorway into the wider pattern, not a single outlet.",
       watch: "Notice which corner asks for attention first, without assuming all four sides have the same volume."
     }),
@@ -2236,7 +2314,7 @@ function activationTemplatesForPattern(patternType, level) {
 
 function activationOverview(patternType) {
   if (patternType === "t_square") return "{{primary_moving_body}} is contacting the {{primary_target_role}} in your T-square, so you may notice more around how this pattern handles pressure.";
-  if (patternType === "grand_square") return "{{primary_moving_body}} is contacting one member of your Grand Square, so one doorway into the wider four-part setup may stand out for now.";
+  if (patternType === "grand_square") return "{{primary_moving_body}} is contacting one member of your Grand Cross, so one doorway into the wider four-part setup may stand out for now.";
   if (patternType === "grand_trine") return "{{primary_moving_body}} may make an already familiar response inside your Grand Trine easier to notice or use.";
   if (patternType === "kite") return "{{primary_moving_body}} is contacting your Kite without removing either part of its structure: the underlying Grand Trine and the opposition.";
   if (patternType === "yod") return "{{primary_moving_body}} may make the timing and adjustment work in your Yod more noticeable without making it a fixed outcome.";
@@ -2263,7 +2341,7 @@ function activationWatchForTemplate(patternType) {
   return "Notice how this contact draws attention to an existing natal setup without changing it.";
 }
 
-function resolveAspectPatternCopy(context, options = {}) {
+function resolveLegacyAspectPatternCopy(context, options = {}) {
   const sourceRecords = Array.isArray(options.records) ? options.records : [];
   const authoredRecords = Array.isArray(options.authoredRecords)
     ? options.authoredRecords
@@ -2287,8 +2365,27 @@ function resolveAspectPatternCopy(context, options = {}) {
   return result;
 }
 
+function resolveLegacyAspectPatternCopies(contexts, options = {}) {
+  return contexts.map((context) => resolveLegacyAspectPatternCopy(context, options));
+}
+
+function resolveAspectPatternCopy(context, options = {}) {
+  if (options.useLegacyResolver === true) {
+    return resolveLegacyAspectPatternCopy(context, options);
+  }
+  return resolveAspectPatternV3Copy(context);
+}
+
 function resolveAspectPatternCopies(contexts, options = {}) {
-  return contexts.map((context) => resolveAspectPatternCopy(context, options));
+  return contexts.flatMap((context) => {
+    if (
+      context?.display?.isSuppressed
+      || context?.display?.isWithheldForMoonTimeUncertainty
+    ) {
+      return [];
+    }
+    return [resolveAspectPatternCopy(context, options)];
+  });
 }
 
 function normalizeAuthoredRecords(records) {
@@ -2883,7 +2980,7 @@ function qualifiedIntro(patternType) {
 
 function directIntro(patternType) {
   if (patternType === "t_square") return "This T-square shows {{member_planets}} working through pressure and response.";
-  if (patternType === "grand_square") return "This Grand Square ties {{member_planets}} into one connected pressure pattern.";
+  if (patternType === "grand_square") return "This Grand Cross ties {{member_planets}} into one connected pressure pattern.";
   if (patternType === "grand_trine") return "This Grand Trine shows {{member_planets}} working together with less friction.";
   if (patternType === "kite") return "This Kite connects {{member_planets}} through ease and an important opposition.";
   if (patternType === "yod") return "This Yod may connect {{member_planets}} through repeated adjustment.";
@@ -3002,6 +3099,7 @@ module.exports = {
   PATTERN_COPY_JOBS,
   PLANET_IDS,
   SUPPORTED_ASPECTS,
+  AspectPatternV3SourceGapError,
   buildAspectGraph,
   buildAspectPatternActivationInterpretationContexts,
   buildAspectPatternInterpretationContexts,

@@ -39,7 +39,8 @@ export function buildAstrologyFactsApiResponse(
   includeAspectPatternActivationContexts = false,
   includeAspectPatternActivationCopy = false,
   authoredRecords?: Parameters<typeof aspectPatternsFromSkySnapshot>[1]["authoredRecords"],
-  activationAuthoredRecords?: Parameters<typeof aspectPatternsFromSkySnapshot>[1]["activationAuthoredRecords"]
+  activationAuthoredRecords?: Parameters<typeof aspectPatternsFromSkySnapshot>[1]["activationAuthoredRecords"],
+  timeKnown = true
 ) {
   const aspectPatterns = includeAspectPatterns
     ? aspectPatternsFromSkySnapshot(sky, {
@@ -49,7 +50,8 @@ export function buildAstrologyFactsApiResponse(
         includeActivationCopy: includeAspectPatternActivationCopy,
         calculatedFor: sky.generatedAt,
         authoredRecords,
-        activationAuthoredRecords
+        activationAuthoredRecords,
+        timeKnown
       })
     : undefined;
   const skyResponse = aspectPatterns ? { ...sky, aspectPatterns } : sky;
@@ -115,6 +117,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const includeAspectPatternActivation = includeAspectPatterns && booleanParam(requestUrl, "includeAspectPatternActivation");
     const includeAspectPatternActivationContexts = includeAspectPatternActivation && booleanParam(requestUrl, "includeAspectPatternActivationContexts");
     const includeAspectPatternActivationCopy = includeAspectPatternActivationContexts && booleanParam(requestUrl, "includeAspectPatternActivationCopy");
+    const timeKnown = requestUrl.searchParams.get("timeKnown") == null ? true : booleanParam(requestUrl, "timeKnown");
     const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
     const authoredRecords = includeAspectPatternCopy
       ? await loadAspectPatternProductionAuthoredRecords("natal")
@@ -130,7 +133,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       includeAspectPatternActivationContexts,
       includeAspectPatternActivationCopy,
       authoredRecords,
-      activationAuthoredRecords
+      activationAuthoredRecords,
+      timeKnown
     );
 
     if (!body.validation.ok) {

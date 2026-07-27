@@ -12605,7 +12605,7 @@ export function App() {
         });
 
         if (showNatalAspectPatterns) {
-          fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime, { includeActivationCopy: showNatalAspectPatternActivation })
+          fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime, { includeActivationCopy: showNatalAspectPatternActivation, timeKnown: !unknownBirthTime })
             .then((aspectPatterns) => {
               if (cancelled) {
                 return;
