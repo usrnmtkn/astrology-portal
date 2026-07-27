@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const {
+  AspectPatternV3SourceGapError,
   ASPECT_PATTERN_CONTEXT_BUILDER_VERSION,
   ASPECT_PATTERN_DETECTOR_VERSION,
   buildAspectPatternInterpretationContexts,
@@ -461,8 +462,9 @@ function authoredRecordFor(context, overrides = {}) {
   const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
   const authored = authoredRecordFor(context);
   const resolved = resolveAspectPatternCopy(context, { authoredRecords: [authored] });
-  assert.equal(resolved.source.contentLevel, "authored");
-  assert.equal(resolved.source.recordId, authored.id);
+  assert.equal(resolved.source.contentLevel, "source_grounded_template");
+  assert.equal(resolved.source.resolverVersion, "v3");
+  assert.notEqual(resolved.source.recordId, authored.id, "Frozen v3.3 copy must not be overridden by stale authored v1 records.");
 }
 
 {
@@ -489,8 +491,8 @@ function authoredRecordFor(context, overrides = {}) {
   const tSquareCopy = resolveAspectPatternCopy(tSquare);
   const text = copyText(tSquareCopy);
   assert.match(text, /Mars/);
-  assert.match(text, /empty leg/i);
-  assert.match(text, /Taurus|Scorpio|Aquarius|Leo|Aries|Cancer|Gemini|Virgo|Libra|Sagittarius|Capricorn|Pisces/);
+  assert.match(text, /balancing response/i);
+  assert.match(text, /bold|relational|protective|structured|fairness|belonging/i);
 }
 
 {
@@ -506,20 +508,20 @@ function authoredRecordFor(context, overrides = {}) {
   const grandTrine = contextFor(kiteContexts, "grand_trine");
   const text = copyText(resolveAspectPatternCopy(kite));
   assert.match(text, /Grand Trine/i);
-  assert.match(text, /opposition/i);
+  assert.match(text, /opposite/i);
   assert.ok(kite.display.childPatternIds.includes(grandTrine.patternId));
   const copies = resolveAspectPatternCopies(kiteContexts);
-  assert.equal(copies.length, kiteContexts.length);
-  assert.ok(copies.some((copy) => copy.patternId === grandTrine.patternId));
+  assert.equal(copies.length, 1, "An exact Kite must suppress its contained Grand Trine from reader copy.");
+  assert.equal(copies[0].patternId, kite.patternId);
 }
 
 {
   const yod = contextFor(interpretationContextsFor(fixtures.yod), "yod");
   const yodCopy = resolveAspectPatternCopy(yod);
   const text = copyText(yodCopy);
-  assert.match(yodCopy.content.headline, /adjustment|possible/i);
-  assert.equal(yodCopy.source.contentLevel, "authored");
-  assert.match(text, /fallout point/i);
+  assert.match(yodCopy.content.headline, /different response|possible/i);
+  assert.equal(yodCopy.source.contentLevel, "source_grounded_template");
+  assert.match(text, /balancing direction/i);
   assert.doesNotMatch(text, /\b(Finger of God|fate|destiny|chosen|special mission|unavoidable calling)\b/i);
 }
 
@@ -528,9 +530,9 @@ function authoredRecordFor(context, overrides = {}) {
     planets: fixtures.wide_grand_trine.planets
   })[0];
   const copy = resolveAspectPatternCopy(wide);
-  assert.equal(copy.source.contentLevel, "authored");
+  assert.equal(copy.source.contentLevel, "source_grounded_template");
   assert.equal(copy.source.status, "approved");
-  assert.match(copyText(copy), /\bwide\b/i);
+  assert.match(copyText(copy), /\bwider?\b/i);
 }
 
 {
@@ -542,17 +544,18 @@ function authoredRecordFor(context, overrides = {}) {
 {
   const noHouse = contextFor(interpretationContextsFor(fixtures.t_square, { planets: fixtures.t_square.planets.map(({ house, ...planet }) => planet) }), "t_square");
   const copy = resolveAspectPatternCopy(noHouse);
-  assert.match(copyText(copy), /empty leg points toward/i);
+  assert.match(copyText(copy), /balancing response/i);
   assert.doesNotMatch(copyText(copy), /\bhouse undefined\b|undefined/i);
 }
 
 {
   const context = contextFor(interpretationContextsFor(fixtures.t_square), "t_square");
   const malformed = { ...context, roles: { type: "t_square" }, derivedPoints: [] };
-  const emergency = resolveAspectPatternCopy(malformed);
-  assert.equal(emergency.source.contentLevel, "emergency_fallback");
-  assert.ok(emergency.content.headline);
-  assert.ok(emergency.content.overview);
+  assert.throws(
+    () => resolveAspectPatternCopy(malformed),
+    AspectPatternV3SourceGapError,
+    "Missing required v3.3 clauses must fail closed instead of emitting emergency boilerplate."
+  );
 }
 
 {
