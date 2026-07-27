@@ -38,6 +38,13 @@ const TIER_HINT = {
   personal: "a fast, personal-collective pull around the mind, worth, or drive; concrete and immediate.",
   outer: "a slow, generational, world-scale shift. It is LEGITIMATELY more sweeping and less about a single day. Do NOT penalize it for not sounding like a fast daily card - judge it against its own register.",
 };
+const SELF_REDUCTION_FAMILIES = [
+  ["self_negotiation", "accepting less before anyone has responded"],
+  ["softened_conviction", "weakening how clearly someone speaks"],
+  ["downplayed_desire", "pretending a desire or need matters less"],
+  ["reduced_ambition", "disguising power, drive, or aspiration"],
+  ["avoidance_disguised_as_caution", "giving fear a more respectable name"],
+];
 const PLACEMENT_TIER_OF = {
   sun: "luminary", moon: "luminary",
   mercury: "personal", venus: "personal", mars: "personal",
@@ -124,6 +131,9 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
         ]
       : []),
     `  - Sounding like a generic horoscope rather than these examples.`,
+    `  - Vague shrink/shrinking shorthand for self-reduction. If that behavior appears, identify the precise family and score generic shorthand no higher than 2:`,
+    ...SELF_REDUCTION_FAMILIES.map(([key, meaning]) => `      ${key} = ${meaning}.`),
+    `    These are not synonyms. Do not collapse them into one generic diagnosis.`,
     ``,
     `GOLD STANDARD for this register (these are 3s):`,
     ...goldStandard(tier, 2, mode).map((b, i) => `  [${i + 1}] ${b}`),
