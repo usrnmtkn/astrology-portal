@@ -1,106 +1,377 @@
 {
   "_note": "Single machine-readable contract. validate_patterns.py and render_matrix.py and gold_render.py all read THIS. The template's human TOKEN REGISTRY must match fields[]. Frozen: values may change, contracts may not.",
-  "allowed_prefixes": ["apex","focal","empty_leg","reference","oppositionA","oppositionB",
-    "c1","c2","c3","c4","t1","t2","t3","base1","base2","oppA","oppB","oa1","oa2","ob1","ob2"],
-  "banned_aliases": ["apex_planet","focal_planet","ref_sign","empty_sign","sign_house_behavior","sign_action","sign_resolve_move","fo"],
-  "reserved_tokens": ["house_context","sign_behavior"],
+  "allowed_prefixes": [
+    "apex",
+    "focal",
+    "empty_leg",
+    "reference",
+    "oppositionA",
+    "oppositionB",
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "t1",
+    "t2",
+    "t3",
+    "base1",
+    "base2",
+    "oppA",
+    "oppB",
+    "oa1",
+    "oa2",
+    "ob1",
+    "ob2"
+  ],
+  "banned_aliases": [
+    "apex_planet",
+    "focal_planet",
+    "ref_sign",
+    "empty_sign",
+    "sign_house_behavior",
+    "sign_action",
+    "sign_resolve_move",
+    "fo"
+  ],
+  "reserved_tokens": [
+    "house_context",
+    "sign_behavior"
+  ],
   "_reserved_note": "house_context is a source component of sign_house_pull/response (not rendered directly); sign_behavior is the house-free variant reserved for future unknown-time use (sign_pull is used today).",
   "fields": {
-    "planet":{"sign":false,"house":false},
-    "sign":{"sign":false,"house":false},
-    "opposes":{"sign":false,"house":false},
-    "house_label":{"sign":false,"house":false},
-    "house_area":{"sign":false,"house":true},
-    "house_context":{"sign":false,"house":true},
-    "role_gloss":{"sign":false,"house":false},
-    "sign_house_pull":{"sign":true,"house":true},
-    "sign_house_response":{"sign":true,"house":true},
-    "sign_pull":{"sign":true,"house":false},
-    "sign_behavior":{"sign":true,"house":false},
-    "response_example":{"sign":true,"house":false},
-    "pressure_response":{"sign":true,"house":false},
-    "balancing_move":{"sign":true,"house":false},
-    "behavior":{"sign":true,"house":false},
-    "apex_pressure":{"sign":true,"house":true},
-    "repeating_question":{"sign":true,"house":true},
-    "focal_demand":{"sign":true,"house":true},
-    "focal_interruption":{"sign":true,"house":true},
-    "area":{"sign":false,"house":true}
+    "planet": {
+      "sign": false,
+      "house": false
+    },
+    "sign": {
+      "sign": false,
+      "house": false
+    },
+    "opposes": {
+      "sign": false,
+      "house": false
+    },
+    "house_label": {
+      "sign": false,
+      "house": false
+    },
+    "house_area": {
+      "sign": false,
+      "house": true
+    },
+    "house_context": {
+      "sign": false,
+      "house": true
+    },
+    "role_gloss": {
+      "sign": false,
+      "house": false
+    },
+    "sign_house_pull": {
+      "sign": true,
+      "house": true
+    },
+    "sign_house_response": {
+      "sign": true,
+      "house": true
+    },
+    "sign_pull": {
+      "sign": true,
+      "house": false
+    },
+    "sign_behavior": {
+      "sign": true,
+      "house": false
+    },
+    "response_example": {
+      "sign": true,
+      "house": false
+    },
+    "pressure_response": {
+      "sign": true,
+      "house": false
+    },
+    "balancing_move": {
+      "sign": true,
+      "house": false
+    },
+    "behavior": {
+      "sign": true,
+      "house": false
+    },
+    "apex_pressure": {
+      "sign": true,
+      "house": true
+    },
+    "repeating_question": {
+      "sign": true,
+      "house": true
+    },
+    "focal_demand": {
+      "sign": true,
+      "house": true
+    },
+    "focal_interruption": {
+      "sign": true,
+      "house": true
+    },
+    "area": {
+      "sign": false,
+      "house": true
+    }
   },
-  "banned_words": ["reckoning","tapestry","delve","holistic","landscape","weave","woven","profound","whisper","engine","nestled"],
-  "eligible_primary": ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"],
+  "banned_words": [
+    "reckoning",
+    "tapestry",
+    "delve",
+    "holistic",
+    "landscape",
+    "weave",
+    "woven",
+    "profound",
+    "whisper",
+    "engine",
+    "nestled"
+  ],
+  "eligible_primary": [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto"
+  ],
   "chiron": "secondary",
   "table_rows": 10,
   "patterns": {
     "T-SQUARE": {
-      "roles": ["oppA","oppB","apex","empty_leg"],
-      "house_roles": ["oppA","oppB","apex","empty_leg"],
-      "sections": {"L1":["feel","shows_up","complicated","another_response"],"L2":["how_it_works","planet_roles","watch_for"]},
+      "roles": [
+        "oppA",
+        "oppB",
+        "apex",
+        "empty_leg"
+      ],
+      "house_roles": [
+        "oppA",
+        "oppB",
+        "apex",
+        "empty_leg"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "planet_roles"
+        ]
+      },
       "required_by_section": {
-        "feel":["oppA.sign_house_pull","oppB.sign_house_pull","apex.sign_house_response"],
-        "shows_up":["apex.response_example"],
-        "complicated":["apex.pressure_response"],
-        "another_response":["empty_leg.balancing_move"],
-        "planet_roles":["empty_leg.balancing_move"],
-        "watch_for":["empty_leg.balancing_move"]
+        "feel": [
+          "oppA.sign_house_pull",
+          "oppB.sign_house_pull",
+          "apex.sign_house_response",
+          "apex.response_example",
+          "apex.pressure_response"
+        ],
+        "planet_roles": [
+          "empty_leg.balancing_move"
+        ]
       },
       "overrides": []
     },
     "GRAND CROSS": {
-      "roles": ["c1","c2","c3","c4"],
-      "house_roles": ["c1","c2","c3","c4"],
-      "sections": {"L1":["feel","shows_up","complicated"],"L2":["how_it_works","planet_roles","watch_for"]},
+      "roles": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "house_roles": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "planet_roles"
+        ]
+      },
       "required_by_section": {
-        "feel":["c1.sign_house_pull","c2.sign_house_pull","c3.sign_house_pull","c4.sign_house_pull"],
-        "planet_roles":["c1.role_gloss","c3.role_gloss"]
+        "feel": [
+          "c1.sign_house_pull",
+          "c2.sign_house_pull",
+          "c3.sign_house_pull",
+          "c4.sign_house_pull"
+        ],
+        "planet_roles": [
+          "c1.role_gloss",
+          "c3.role_gloss"
+        ]
       },
       "overrides": []
     },
     "GRAND TRINE": {
-      "roles": ["t1","t2","t3"],
-      "house_roles": ["t1","t2","t3"],
-      "sections": {"L1":["feel","shows_up","complicated"],"L2":["how_it_works","planet_roles","watch_for"]},
-      "required_by_section": {
-        "feel":["t1.sign_house_pull","t2.sign_house_pull","t3.sign_house_pull"],
-        "planet_roles":["t1.role_gloss"]
+      "roles": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "house_roles": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "how_it_works",
+          "planet_roles"
+        ]
       },
-      "overrides": ["out_of_sign"]
+      "required_by_section": {
+        "feel": [
+          "t1.sign_house_pull",
+          "t2.sign_house_pull",
+          "t3.sign_house_pull"
+        ],
+        "planet_roles": [
+          "t1.role_gloss"
+        ]
+      },
+      "overrides": [
+        "out_of_sign"
+      ]
     },
     "KITE": {
-      "roles": ["t1","t2","t3","focal"],
-      "house_roles": ["t1","t2","t3","focal"],
-      "sections": {"L1":["feel","shows_up","complicated"],"L2":["how_it_works","planet_roles","watch_for"]},
-      "required_by_section": {
-        "feel":["t1.sign_house_pull","t2.sign_house_pull","t3.sign_house_pull","focal.sign_house_response","focal.focal_demand","focal.focal_interruption"],
-        "planet_roles":["focal.sign_house_response"]
+      "roles": [
+        "t1",
+        "t2",
+        "t3",
+        "focal"
+      ],
+      "house_roles": [
+        "t1",
+        "t2",
+        "t3",
+        "focal"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "how_it_works",
+          "planet_roles"
+        ]
       },
-      "overrides": ["out_of_sign"]
+      "required_by_section": {
+        "feel": [
+          "t1.sign_house_pull",
+          "t2.sign_house_pull",
+          "t3.sign_house_pull",
+          "focal.sign_house_response",
+          "focal.focal_demand",
+          "focal.focal_interruption"
+        ],
+        "planet_roles": [
+          "focal.sign_house_response"
+        ]
+      },
+      "overrides": [
+        "out_of_sign"
+      ]
     },
     "YOD": {
-      "roles": ["base1","base2","apex","reference"],
-      "house_roles": ["base1","base2","apex","reference"],
-      "sections": {"L1":["feel","shows_up","complicated","another_response"],"L2":["how_it_works","planet_roles","watch_for","reference_point"]},
+      "roles": [
+        "base1",
+        "base2",
+        "apex",
+        "reference"
+      ],
+      "house_roles": [
+        "base1",
+        "base2",
+        "apex",
+        "reference"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "planet_roles",
+          "reference_point"
+        ]
+      },
       "required_by_section": {
-        "feel":["base1.sign_house_pull","base2.sign_house_pull","apex.sign_house_response"],
-        "complicated":["apex.repeating_question"],
-        "another_response":["reference.behavior","reference.area"],
-        "reference_point":["reference.behavior","reference.area"]
+        "feel": [
+          "base1.sign_house_pull",
+          "base2.sign_house_pull",
+          "apex.sign_house_response",
+          "apex.repeating_question"
+        ],
+        "reference_point": [
+          "reference.behavior",
+          "reference.area"
+        ]
       },
       "overrides": []
     },
     "MYSTIC RECTANGLE": {
-      "roles": ["oa1","oa2","ob1","ob2"],
-      "house_roles": ["oa1","oa2","ob1","ob2"],
-      "sections": {"L1":["feel","shows_up","complicated"],"L2":["how_it_works","planet_roles","watch_for"]},
+      "roles": [
+        "oa1",
+        "oa2",
+        "ob1",
+        "ob2"
+      ],
+      "house_roles": [
+        "oa1",
+        "oa2",
+        "ob1",
+        "ob2"
+      ],
+      "sections": {
+        "L1": [
+          "feel"
+        ],
+        "L2": [
+          "planet_roles"
+        ]
+      },
       "required_by_section": {
-        "feel":["oa1.sign_house_pull","oa2.sign_house_pull","ob1.sign_house_pull","ob2.sign_house_pull","oa1.role_gloss","ob1.role_gloss"],
-        "shows_up":["oppositionA.area","oppositionB.area"],
-        "planet_roles":["oa1.role_gloss","ob1.role_gloss"]
+        "feel": [
+          "oa1.sign_house_pull",
+          "oa2.sign_house_pull",
+          "ob1.sign_house_pull",
+          "ob2.sign_house_pull",
+          "oa1.role_gloss",
+          "ob1.role_gloss",
+          "oppositionA.area",
+          "oppositionB.area"
+        ],
+        "planet_roles": [
+          "oa1.role_gloss",
+          "ob1.role_gloss"
+        ]
       },
       "overrides": []
     }
   },
   "handoff_required_rules": [
-    "moon_time_uncertainty", "contained", "= 10 bodies", "SECONDARY", "missing_derived_point"
+    "moon_time_uncertainty",
+    "contained",
+    "= 10 bodies",
+    "SECONDARY",
+    "missing_derived_point"
   ]
 }

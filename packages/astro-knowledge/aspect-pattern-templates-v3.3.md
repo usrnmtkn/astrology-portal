@@ -69,19 +69,19 @@ title exact/strong: **{apex.planet} is where the pressure shows first**
 title wide: **A wider T-square** | title partial: **Possible T-square**
 opening exact: Your {oppA.planet}, {oppB.planet}, and {apex.planet} form a T-square, and {apex.planet} is the first place the pressure tends to show.
 opening wide: Your {oppA.planet}, {oppB.planet}, and {apex.planet} form a wider T-square. You may recognize {apex.planet} as one place this pressure shows, though it may not work the same way every time.
-feel: Your {oppA.planet} in {oppA.house_label} {oppA.sign_house_pull}. Your {oppB.planet} in {oppB.house_label} {oppB.sign_house_pull}. {apex.planet} in {apex.house_label} {apex.sign_house_response}.
-shows_up: When {oppA.planet} and {oppB.planet} stay divided, {apex.planet} may end the suspense first, {apex.response_example}. That response brings relief while the pull between {oppA.role_gloss} and {oppB.role_gloss} stays intact.
-complicated: {apex.planet} can make its response feel like the only honest option. You may {apex.pressure_response}, then find the original conflict between {oppA.role_gloss} and {oppB.role_gloss} still waiting.
-another_response: Across from {apex.planet}, the less automatic response falls in {empty_leg.house_label}, in {empty_leg.sign}. It points toward {empty_leg.house_area}: {empty_leg.balancing_move}. No planet is missing from your chart.
+feel: Your {oppA.planet} in {oppA.house_label} {oppA.sign_house_pull}. Your {oppB.planet} in {oppB.house_label} {oppB.sign_house_pull}. Those two pull opposite ways, and {apex.planet} in {apex.house_label} {apex.sign_house_response}, tending to end the suspense first, {apex.response_example}. That brings relief while the underlying pull stays intact, so you {apex.pressure_response} and then find the original conflict still waiting.
+shows_up: (none)
+complicated: (none)
+another_response: (none)
 unknown_time L1: Your {oppA.planet}, {oppB.planet}, and {apex.planet} form a T-square. Your {oppA.planet} {oppA.sign_pull} while your {oppB.planet} {oppB.sign_pull}, pulling different ways, and {apex.planet} is where that tension tends to become a response, {apex.response_example}. The response brings relief while the pull stays intact.
 
 ### Level 2  (How the pressure moves / {apex.planet}'s role / What happens when pressure builds)
 title exact/strong: **How the T-square works** | wide: **How this wider T-square works** | partial: **How a possible T-square works**
-opening exact: A T-square is two planets in opposition, both squaring a third. The apex is where the built-up tension tends to become a response.
+opening exact: A T-square is two planets in opposition, both squaring a third. Two parts of you keep pulling opposite ways, {oppA.role_gloss} against {oppB.role_gloss}, and when neither can be ignored, {apex.planet}, the apex, is where the tension becomes a response.
 opening wide: Because the links are wider, the apex may gather the tension in some situations more than as a rule.
-how_it_works: Two parts of you keep pulling opposite ways: {oppA.role_gloss} and {oppB.role_gloss}. When neither can be ignored, {apex.planet} often carries the response.
+how_it_works: (none)
 planet_roles: {apex.planet} is the apex, so it tends to be the first place the pressure shows. Opposite it, the empty leg in {empty_leg.sign}, in {empty_leg.house_label}, is not a missing piece or a guaranteed solution - it is the less automatic response, toward {empty_leg.house_area}: {empty_leg.balancing_move}.
-watch_for: Notice when {apex.planet}'s response becomes so automatic that other options receive less consideration. The less automatic response appears through {empty_leg.balancing_move}.
+watch_for: (none)
 unknown_time L2: A T-square is two planets in opposition, both squaring a third, the apex. Here {apex.planet} tends to be where the tension becomes a response, {apex.response_example}. Opposite it, a less automatic balancing response appears through {empty_leg.balancing_move}.
 
 ### Partial
@@ -97,18 +97,18 @@ title exact/strong: **Four pressures compete for the same time and energy**
 title wide: **A wider Grand Cross** | partial: **Possible Grand Cross**
 opening exact: Your {c1.planet}, {c2.planet}, {c3.planet}, and {c4.planet} tie {c1.house_area}, {c2.house_area}, {c3.house_area}, and {c4.house_area} into one pattern, and more than one can need a response at the same time.
 opening wide: Your {c1.planet}, {c2.planet}, {c3.planet}, and {c4.planet} form a wider Grand Cross. You may feel the squeeze across these areas during certain periods rather than as a constant.
-feel: Your {c1.planet} in {c1.house_label} {c1.sign_house_pull}. Your {c2.planet} in {c2.house_label} {c2.sign_house_pull}. Your {c3.planet} in {c3.house_label} {c3.sign_house_pull}. Your {c4.planet} in {c4.house_label} {c4.sign_house_pull}.
-shows_up: One decision rarely settles all four pressures. A move that protects {c1.house_area} can strain {c4.house_area}; a demand from {c2.house_area} can interrupt {c3.house_area}. Each move relieves one pressure point while shifting the weight onto the other three.
-complicated: You may stay functional by treating every demand as urgent, then find you are answering the loudest problem while your own needs wait for a quieter week that never quite arrives.
+feel: Your {c1.planet} in {c1.house_label} {c1.sign_house_pull}. Your {c2.planet} in {c2.house_label} {c2.sign_house_pull}. Your {c3.planet} in {c3.house_label} {c3.sign_house_pull}. Your {c4.planet} in {c4.house_label} {c4.sign_house_pull}. One decision rarely settles all four: a move that protects {c1.house_area} can strain {c4.house_area}, and a demand from {c2.house_area} can interrupt {c3.house_area}. You may stay functional by treating every demand as urgent, then find you are answering the loudest problem while your own needs wait for a quieter week that never arrives.
+shows_up: (none)
+complicated: (none)
 another_response: (none)
 unknown_time L1: Your {c1.planet}, {c2.planet}, {c3.planet}, and {c4.planet} form a Grand Cross. Your {c1.planet} {c1.sign_pull} and your {c3.planet} {c3.sign_pull}; your {c2.planet} {c2.sign_pull} and your {c4.planet} {c4.sign_pull}. More than one can need a response at once, and settling one tends to unsettle another.
 ### Level 2  (How the conflict keeps moving / The four competing responses / Where the cycle repeats)
 title exact/strong: **How the Grand Cross works** | wide: **How this wider Grand Cross works** | partial: **How a possible Grand Cross works**
-opening exact: A Grand Cross is two oppositions at right angles, so four planets square and oppose each other in a closed figure with no single outlet.
+opening exact: A Grand Cross is two oppositions at right angles, so four planets square and oppose each other in a closed figure with no single outlet. Each corner sits in tension with the two beside it and the one across, so pressure hands off around the figure and easing one corner tends to load another.
 opening wide: Because the links are wider, the four-way squeeze may show up in certain periods more than as a constant.
-how_it_works: The four planets sit at four corners, each in tension with the two beside it and the one across. Pressure hands off around the figure, so easing one corner tends to load another.
+how_it_works: (none)
 planet_roles: {c1.planet} and {c3.planet} form one opposition, {c1.role_gloss} against {c3.role_gloss}. {c2.planet} and {c4.planet} form the other, {c2.role_gloss} against {c4.role_gloss}. No planet is the whole story, and none is the release the way a T-square has an apex.
-watch_for: The cycle repeats wherever solving one demand quietly creates the next. Watch the reflex to treat everything as urgent.
+watch_for: (none)
 unknown_time L2: A Grand Cross is two oppositions at right angles: {c1.planet} against {c3.planet}, {c2.planet} against {c4.planet}. Your {c1.planet} {c1.sign_pull}, and the tension it adds hands off around the figure with no single outlet.
 ### Partial
 L1: Your {c1.planet}, {c2.planet}, {c3.planet}, and {c4.planet} come close to a Grand Cross. You may recognize the squeeze when several areas want attention at once. It may not operate constantly, and transits can make it more noticeable.
@@ -123,9 +123,9 @@ title exact/strong: **Several parts of you tend to support the same response**
 title wide: **A wider Grand Trine** | partial: **Possible Grand Trine**
 opening exact: Your {t1.planet}, {t2.planet}, and {t3.planet} tend to support the same response. Once one part moves in a certain direction, the other two are less likely to argue with it.
 opening wide: Your {t1.planet}, {t2.planet}, and {t3.planet} form a wider Grand Trine. You may notice their agreement in certain situations rather than in every part of your life.
-feel: Your {t1.planet} in {t1.house_label} {t1.sign_house_pull}. Your {t2.planet} in {t2.house_label} {t2.sign_house_pull}. {t3.planet} in {t3.house_label} {t3.sign_house_pull}. Because these responses reinforce one another, one can make the next feel natural before you have stopped to question the direction.
-shows_up: You may return to the same response because it works without much internal friction. The pattern can feel ordinary because the three planets reinforce it before you have to explain why it comes so naturally.
-complicated: That agreement lowers the pressure to question your first response. You may repeat a familiar approach, skip useful feedback, or assume that ease means the approach is working.
+feel: Your {t1.planet} in {t1.house_label} {t1.sign_house_pull}. Your {t2.planet} in {t2.house_label} {t2.sign_house_pull}. {t3.planet} in {t3.house_label} {t3.sign_house_pull}. Because these responses reinforce one another, one makes the next feel natural before you have stopped to question the direction. The agreement lowers the pressure to check your first response, so you may repeat a familiar approach, skip useful feedback, or read ease as proof the approach is working.
+shows_up: (none)
+complicated: (none)
 another_response: (none)
 unknown_time L1: Your {t1.planet}, {t2.planet}, and {t3.planet} form a Grand Trine. Your {t1.planet} {t1.sign_pull}, your {t2.planet} {t2.sign_pull}, and your {t3.planet} {t3.sign_pull}, and the three tend to support the same response. It can feel natural enough to lean on without questioning.
 ### Level 2  (Where the ease comes from / How the planets cooperate / Where ease can become inertia)
@@ -134,7 +134,7 @@ opening exact: A Grand Trine is three planets roughly 120 degrees apart in a clo
 opening wide: Because one or more links are wider, the agreement may be situational rather than constant.
 how_it_works: The three planets share an element, so they share a style of response and rarely work against each other. The parts agree before you have to reconcile them.
 planet_roles: {t1.planet}, {t2.planet}, and {t3.planet} pass momentum between {t1.role_gloss}, {t2.role_gloss}, and {t3.role_gloss}. Ease here is not talent or success; it means these parts cooperate before you have had to explain why.
-watch_for: Because nothing inside the pattern pushes back, it can go soft. Watch for coasting on the flow, skipping the friction that would sharpen it, and reading comfort as progress.
+watch_for: (none)
 OVERRIDE out_of_sign (replaces how_it_works): Your {t1.planet}, {t2.planet}, and {t3.planet} form trines by degree even though they do not all sit in signs of the same element. The cooperation can still show up in stretches, but the planets do not share one automatic style, so what feels easy in one moment may need translation in another.
 unknown_time L2: A Grand Trine is three planets in a closed triangle that share a style of response. Your {t1.planet} {t1.sign_pull}, and {t2.planet} and {t3.planet} rarely work against it. The same ease can also let the pattern go soft.
 ### Partial
@@ -150,9 +150,9 @@ title exact/strong: **{focal.planet} gives the easy flow a demand**
 title wide: **A wider Kite** | partial: **Possible Kite**
 opening exact: Your {t1.planet}, {t2.planet}, and {t3.planet} run an easy current between {t1.role_gloss}, {t2.role_gloss}, and {t3.role_gloss}. {focal.planet} stands across from {focal.opposes} and adds {focal.focal_demand}.
 opening wide: Your {t1.planet}, {t2.planet}, {t3.planet}, and {focal.planet} form a wider Kite, with {focal.planet} opposite {focal.opposes}. The pull between the easier response and {focal.planet}'s demand may become clear in certain situations rather than every time.
-feel: Your {t1.planet} in {t1.house_label} {t1.sign_house_pull}. Your {t2.planet} in {t2.house_label} {t2.sign_house_pull}. Your {t3.planet} in {t3.house_label} {t3.sign_house_pull}. Together these responses reinforce one another. {focal.planet} in {focal.house_label} {focal.sign_house_response}, introducing {focal.focal_demand} that the momentum still has to hold up under: {focal.focal_interruption}.
-shows_up: This tends to appear when a response that usually works meets {focal.focal_interruption}. The trine maintains the momentum; {focal.planet} brings in the condition that cannot be skipped.
-complicated: The easy triangle can make a response feel complete before it has met {focal.focal_demand}. {focal.planet} is where {focal.focal_interruption} reveals what still needs attention.
+feel: Your {t1.planet} in {t1.house_label} {t1.sign_house_pull}. Your {t2.planet} in {t2.house_label} {t2.sign_house_pull}. Your {t3.planet} in {t3.house_label} {t3.sign_house_pull}, and together these responses reinforce one another. {focal.planet} in {focal.house_label} {focal.sign_house_response}, introducing {focal.focal_demand}, a condition the momentum has to hold up under: {focal.focal_interruption}. The easy flow can make a response feel complete before it has met that demand, and {focal.planet} is where {focal.focal_interruption} shows what still needs attention.
+shows_up: (none)
+complicated: (none)
 another_response: (none - the focal point is {focal.planet}, covered at L2)
 unknown_time L1: Your {t1.planet} {t1.sign_pull}, and with {t2.planet} and {t3.planet} the three run an easy current, until {focal.planet} adds {focal.focal_demand}. The trine maintains the momentum; {focal.planet} brings the condition that cannot be skipped.
 ### Level 2  (What gives the pattern direction / {focal.planet}'s role / Where pressure interrupts the flow)
@@ -161,7 +161,7 @@ opening exact: A Kite is a Grand Trine with one more planet opposite one corner.
 opening wide: Because the links are wider, the direction {focal.planet} adds may come and go rather than hold.
 how_it_works: On its own a Grand Trine can drift. {focal.planet} opposite {focal.opposes} gives the flow something to push against, so the ease has a target instead of circling.
 planet_roles ("{focal.planet}'s role"): {focal.planet} sits across from {focal.opposes} and becomes the point that draws the pattern forward - not a T-square apex under pressure, but the condition the flow has to meet. {focal.planet} in {focal.house_label} {focal.sign_house_response}.
-watch_for: Watch the moment a response feels done before it is. {focal.planet} is where {focal.focal_interruption} turns up.
+watch_for: (none)
 unknown_time L2: A Kite is a Grand Trine with {focal.planet} opposite one corner, which gives the easy flow a target: {focal.focal_demand}. The trine maintains the momentum; {focal.planet} is the condition it has to meet.
 OVERRIDE out_of_sign (Kite; when the contained trine is out of sign): The three trine planets connect by degree even though they do not all share one elemental style. The cooperation can still support the pattern, but the response may need more translation before {focal.planet} gives it direction.
 ### Partial
@@ -175,20 +175,20 @@ MECHANIC: Two planets in an easy sextile that both reach a third at 150 degrees,
 ### Level 1
 title exact/strong: **{apex.planet} keeps needing a different response**
 title wide: **A wider Yod** | partial: **Possible Yod**
-opening exact: Your {base1.planet} and {base2.planet} can keep an easy rhythm between {base1.role_gloss} and {base2.role_gloss}. {apex.planet} in {apex.house_label} adds {apex.apex_pressure}.
+opening exact: Your {base1.planet} and {base2.planet} keep an easy rhythm between {base1.role_gloss} and {base2.role_gloss}. {apex.planet} in {apex.house_label} adds {apex.apex_pressure}.
 opening wide: Your {base1.planet}, {base2.planet}, and {apex.planet} form a wider Yod. The pull to keep adjusting toward {apex.planet} may surface in some situations more than as a constant.
-feel: Your {base1.planet} in {base1.house_label} {base1.sign_house_pull}. Your {base2.planet} in {base2.house_label} {base2.sign_house_pull}. {apex.planet} in {apex.house_label} {apex.sign_house_response}. A response that works for the first two may create a new problem when {apex.planet} has to be included.
-shows_up: An answer that worked in one situation may fail when the terms change. {apex.planet} needs a different response from the one that comes naturally to {base1.planet} and {base2.planet}. The same question returns until all three can take part without one being handled as an afterthought.
-complicated: {base1.planet} and {base2.planet} can produce a workable first response, and then {apex.planet} comes back later with {apex.repeating_question}.
-another_response: Opposite {apex.planet}, the balancing direction falls in {reference.house_label}, in {reference.sign}, pointing toward {reference.area}: {reference.behavior}. It is a direction to lean toward, not another planet in your chart.
+feel: Your {base1.planet} in {base1.house_label} {base1.sign_house_pull}. Your {base2.planet} in {base2.house_label} {base2.sign_house_pull}. {apex.planet} in {apex.house_label} {apex.sign_house_response}, and a response that satisfies the first two tends to leave {apex.planet} out. {base1.planet} and {base2.planet} produce a workable first answer, and then {apex.planet} comes back later with {apex.repeating_question}. The same question returns until all three can take part, none handled as an afterthought.
+shows_up: (none)
+complicated: (none)
+another_response: (none)
 unknown_time L1: Your {base1.planet} {base1.sign_pull} and your {base2.planet} {base2.sign_pull}, keeping an easy rhythm, while {apex.planet} adds {apex.apex_pressure}. A response that works for the first two may need reworking once {apex.planet} is included.
 ### Level 2  (Why the response keeps changing / {apex.planet}'s role / Where adjustment becomes necessary + Reference point)
 title exact/strong: **How the Yod works** | wide: **How this wider Yod works** | partial: **How a possible Yod works**
-opening exact: A Yod is two planets in an easy sextile that both reach a third at 150 degrees, an angle with no natural resting place. That third planet, the apex, is what the other two keep adjusting to.
+opening exact: A Yod is two planets in an easy sextile that both reach a third at 150 degrees, an angle with no natural resting place. {base1.planet} and {base2.planet} sit comfortably together, but both meet {apex.planet} at that awkward angle, so the response that suits their rhythm keeps missing {apex.planet}, and you adjust again.
 opening wide: Because the links are wider, the pull to keep adjusting may surface in some situations more than as a rule.
-how_it_works: {base1.planet} and {base2.planet} sit comfortably together, but both meet {apex.planet} at that awkward angle. So the response that suits their rhythm keeps missing {apex.planet}, and you adjust, and adjust again.
+how_it_works: (none)
 planet_roles ("{apex.planet}'s role"): {apex.planet} is the apex, the point everything has to keep accommodating. In {apex.house_label} it weighs {apex.role_gloss}. It is not punishment; it is the part that will not be smoothed over, only answered honestly.
-watch_for: Adjustment becomes necessary whenever an old answer stops holding under new weight. Watch for the same question returning each time the situation outgrows the last fix.
+watch_for: (none)
 reference_point ("Reference point"): Opposite {apex.planet}, the balancing direction falls in {reference.house_label}, in {reference.sign}. It points toward {reference.area}, approached through {reference.behavior}. It is a reference point, not another planet in your chart.
 unknown_time L2: A Yod is two planets in a sextile that both reach {apex.planet} at an awkward 150-degree angle, so {base1.planet} and {base2.planet} keep adjusting to {apex.planet}, which adds {apex.apex_pressure}. Opposite it is an unoccupied balancing direction in {reference.sign}.
 ### Partial
@@ -204,18 +204,18 @@ title exact/strong: **One disagreement can help you understand the other**
 title wide: **A wider Mystic Rectangle** | partial: **Possible Mystic Rectangle**
 opening exact: Your {oa1.planet}, {oa2.planet}, {ob1.planet}, and {ob2.planet} hold two opposing pulls, but the supportive links between them give the pressure more than one route.
 opening wide: Your {oa1.planet}, {oa2.planet}, {ob1.planet}, and {ob2.planet} form a wider Mystic Rectangle. The mix of tension and available responses may become recognizable in certain situations rather than as a constant pattern.
-feel: Your {oa1.planet} in {oa1.house_label} {oa1.sign_house_pull}, and your {oa2.planet} in {oa2.house_label} {oa2.sign_house_pull}, setting {oa1.role_gloss} against {oa2.role_gloss}. Your {ob1.planet} in {ob1.house_label} {ob1.sign_house_pull}, and your {ob2.planet} in {ob2.house_label} {ob2.sign_house_pull}, setting {ob1.role_gloss} against {ob2.role_gloss}. One conflict can help you understand the other.
-shows_up: A conflict around {oppositionA.area} can change how you respond to {oppositionB.area}. The supportive links make it easier to carry a useful response from one conflict into the other.
-complicated: Because the pattern offers more than one workable route, you may settle the immediate situation before the underlying conflict has been named. The resolution can look elegant while the original resentment or clash of values stays live underneath.
+feel: Your {oa1.planet} in {oa1.house_label} {oa1.sign_house_pull}, and your {oa2.planet} in {oa2.house_label} {oa2.sign_house_pull}, setting {oa1.role_gloss} against {oa2.role_gloss}. Your {ob1.planet} in {ob1.house_label} {ob1.sign_house_pull}, and your {ob2.planet} in {ob2.house_label} {ob2.sign_house_pull}, setting {ob1.role_gloss} against {ob2.role_gloss}. A conflict around {oppositionA.area} changes how you respond to {oppositionB.area}, so one disagreement can help you understand the other. The risk is smoothness: because there is always a workable route, you may settle the immediate situation before the underlying conflict is named, and the resolution can look elegant while the original clash of values stays live underneath.
+shows_up: (none)
+complicated: (none)
 another_response: (none)
 unknown_time L1: Your {oa1.planet}, {oa2.planet}, {ob1.planet}, and {ob2.planet} form a Mystic Rectangle. Your {oa1.planet} {oa1.sign_pull} while your {oa2.planet} {oa2.sign_pull}; your {ob1.planet} {ob1.sign_pull} while your {ob2.planet} {ob2.sign_pull}. The easier links let one conflict help you understand the other.
 ### Level 2  (How tension and support connect / The two opposing pairs / Where compromise can hide the conflict)
 title exact/strong: **How the Mystic Rectangle works** | wide: **How this wider Mystic Rectangle works** | partial: **How a possible Mystic Rectangle works**
-opening exact: A Mystic Rectangle is two oppositions whose ends are joined by trines and sextiles, so every hard angle has an easier one beside it.
+opening exact: A Mystic Rectangle is two oppositions whose ends are joined by trines and sextiles, so every hard angle has an easier one beside it. The oppositions supply the tension and the softer links supply the ways out, so a conflict here rarely locks up.
 opening wide: Because the links are wider, the balance of tension and easy routes may vary by situation rather than hold.
-how_it_works: The two oppositions supply the tension; the trines and sextiles supply the ways out. A conflict here rarely locks up - there is usually a softer angle to move through.
+how_it_works: (none)
 planet_roles ("The two opposing pairs"): {oa1.planet} opposes {oa2.planet} ({oa1.role_gloss} against {oa2.role_gloss}) and {ob1.planet} opposes {ob2.planet} ({ob1.role_gloss} against {ob2.role_gloss}). The supportive links let one opposition throw light on the other.
-watch_for: The risk is smoothness. Because you can always find a reasonable route, you may broker a compromise before the real disagreement is named, leaving the resentment or values-gap running under a tidy resolution.
+watch_for: (none)
 unknown_time L2: A Mystic Rectangle is two oppositions joined by easier angles: {oa1.planet} against {oa2.planet}, {ob1.planet} against {ob2.planet}. Your {oa1.planet} {oa1.sign_pull}, and the soft links give the resulting conflict more than one route out.
 ### Partial
 L1: Your chart comes close to a Mystic Rectangle. You may recognize how one conflict changes the way you respond to another, instead of leaving you with a complete standoff.
