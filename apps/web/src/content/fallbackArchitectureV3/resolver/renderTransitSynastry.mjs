@@ -505,17 +505,41 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
-// ---- Sky page: planet-in-sign placement article (Title/duration are app chrome; this
-// returns the longer-form write-up). Structure: per-planet write-up (pace + theme in the
-// sign's register) -> sign lore -> sign trap -> one paragraph per aspect the planet makes
-// while in the sign (engine-supplied events, same frames as the season article). ----
-// Structure (owner's Saturn-ingress sample): you-voice opener -> mechanics/collective write-up
-// -> sign lore -> sign trap -> practice -> one paragraph per aspect made during the stay
-// -> element collective close -> sign-off blessing. Owner-authored ingress articles
-// (authored/sky-ingress/{planet}/{sign}) render verbatim first.
+// ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
+// hook -> lived expression -> shadow/turn, with a short tagline and three moves.
+// Generic rows remain coverage for unapproved pairs such as Lilith. ----
 export function renderSkyPlacement({ planet, sign, events = [] }) {
   const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
   if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
+  const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
+  const pairHook = hooks.get(pairKey)?.body_you;
+  const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
+  const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+  const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+  const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
+    .split(/\r?\n/u)
+    .map((move) => move.trim())
+    .filter(Boolean);
+  const eventParas = events.map((ev) => {
+    const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect] ?? ev.aspect}` : ev.type;
+    const evFrame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
+    if (!evFrame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
+    const body = fill(evFrame, eventCtx(ev));
+    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
+    return body;
+  });
+  if (pairHook && pairLived && pairTurn) {
+    const parts = [pairHook, pairLived, pairTurn, ...eventParas];
+    return {
+      headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+      tagline,
+      moves,
+      body: parts.join("\n\n"),
+      parts,
+      templateKey: "fallback-template/sky.placement-article",
+      contentKey: pairKey
+    };
+  }
   const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
   const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
   const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
@@ -531,14 +555,7 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
   if (trap) paras.push(`The ${title(sign)} trap to watch while ${transitRef(planet)} is here is ${trap}`);
   const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
   if (practice) paras.push(practice);
-  for (const ev of events) {
-    const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect] ?? ev.aspect}` : ev.type;
-    const evFrame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-    if (!evFrame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-    const body = fill(evFrame, eventCtx(ev));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-    paras.push(body);
-  }
+  paras.push(...eventParas);
   const elClose = hooks.get(`fallback-hook/sky-element-close/${ELEMENT[sign]}`)?.body_you;
   if (elClose) paras.push(elClose);
   const pb = vocab.get(`fallback-vocab/planet-blessing/${planet}`)?.body;
