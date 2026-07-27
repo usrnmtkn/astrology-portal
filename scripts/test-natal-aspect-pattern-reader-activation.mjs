@@ -121,6 +121,7 @@ try {
   const { renderToStaticMarkup } = await import("react-dom/server");
   const {
     fetchNatalAspectPatternsWithCopy,
+    natalAspectPatternPillSummary,
     natalAspectPatternReaderItems
   } = await vite.ssrLoadModule("/apps/web/src/services/natalAspectPatterns.ts");
   const {
@@ -176,6 +177,90 @@ try {
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationContexts"), "true");
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationCopy"), "true", "Activation copy must come from the governed resolver too.");
   assert.equal(unknownTimeUrl.searchParams.get("timeKnown"), "false", "Unknown birth time must reach the API explicitly.");
+
+  const patternFixture = (id, type, confidence, maximumOrb) => ({
+    id,
+    type,
+    planets: [],
+    sourceAspectIds: [],
+    roles: {},
+    derivedPoints: [],
+    geometry: {
+      orbPolicyId: "test",
+      maximumOrb,
+      averageOrb: maximumOrb,
+      weakestAspectOrb: maximumOrb,
+      isOutOfSign: false,
+      confidence,
+      warnings: []
+    }
+  });
+
+  assert.deepEqual(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [
+          patternFixture("grand-cross", "grand_square", "strong", 1.5),
+          patternFixture("t-square", "t_square", "exact", 0.5),
+          patternFixture("yod", "yod", "exact", 0.8),
+          patternFixture("wide-kite", "kite", "wide", 2)
+        ],
+        relationships: [
+          {
+            parentPatternId: "grand-cross",
+            childPatternId: "t-square",
+            relationship: "contains"
+          }
+        ],
+        ranking: {
+          displayOrder: ["yod", "grand-cross", "t-square", "wide-kite"]
+        }
+      }
+    }),
+    {
+      label: "Yod +1",
+      patternNames: ["Yod", "Grand Cross"]
+    },
+    "the pill should show ranked exact/strong parent patterns and collapse contained children"
+  );
+
+  assert.deepEqual(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [
+          patternFixture("wide-parent", "grand_square", "wide", 2.5),
+          patternFixture("exact-child", "t_square", "exact", 0.5)
+        ],
+        relationships: [
+          {
+            parentPatternId: "wide-parent",
+            childPatternId: "exact-child",
+            relationship: "contains"
+          }
+        ],
+        ranking: {
+          displayOrder: ["wide-parent", "exact-child"]
+        }
+      }
+    }),
+    {
+      label: "T-square",
+      patternNames: ["T-square"]
+    },
+    "a confident child should remain visible when its parent is not confident"
+  );
+
+  assert.equal(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [patternFixture("wide-yod", "yod", "wide", 2.5)],
+        relationships: [],
+        ranking: { displayOrder: ["wide-yod"] }
+      }
+    }),
+    null,
+    "wide patterns should not receive a discovery pill"
+  );
 
   const parentId = "grand-square-a";
   const childId = "t-square-a";
