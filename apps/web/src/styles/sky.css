@@ -1340,7 +1340,7 @@
   border-right: 0;
   border-bottom: 0;
   border-left: 0;
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--ink);
   cursor: pointer;
   padding: calc(var(--space-4) - var(--space-1) / 4) var(--space-5);
@@ -1394,7 +1394,7 @@
 }
 
 .sky-today-ledger__foot:hover {
-  background: color-mix(in srgb, var(--surface-2) 88%, var(--ink) 4%);
+  background: color-mix(in srgb, var(--surface) 94%, var(--ink) 4%);
 }
 
 .sky-today-ledger__foot:hover .sky-today-ledger__arrow {
