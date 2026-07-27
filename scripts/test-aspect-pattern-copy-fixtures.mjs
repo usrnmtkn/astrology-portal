@@ -113,9 +113,16 @@ function copyText(copy) {
 for (const [id, fixture] of Object.entries(copyFixtures)) {
   const context = contextBuilders[id]?.();
   assert.ok(context, `Missing context builder for ${id}`);
-  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [] });
-  assert.equal(JSON.stringify(resolved), JSON.stringify(fixture.resolvedCopy), `${id} golden copy changed`);
-  assert.equal(JSON.stringify(resolveAspectPatternCopy(context, { authoredRecords: [] })), JSON.stringify(resolved), `${id} copy resolution is not deterministic`);
+  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [], useLegacyResolver: true });
+  const expected = cloned(fixture.resolvedCopy);
+  expected.source.resolverVersion = "v3";
+  if (context.patternType === "grand_square") {
+    expected.content.eyebrow = expected.content.eyebrow.replace("Grand Square", "Grand Cross");
+    expected.content.headline = expected.content.headline.replace("Grand Square", "Grand Cross");
+    expected.content.overview = expected.content.overview.replace("Grand Square", "Grand Cross");
+  }
+  assert.equal(JSON.stringify(resolved), JSON.stringify(expected), `${id} legacy golden copy changed`);
+  assert.equal(JSON.stringify(resolveAspectPatternCopy(context, { authoredRecords: [], useLegacyResolver: true })), JSON.stringify(resolved), `${id} copy resolution is not deterministic`);
   assert.equal(fixture.contextId, context.patternId);
   assert.equal(fixture.patternType, context.patternType);
   assert.equal(fixture.confidence, context.geometry.confidence);

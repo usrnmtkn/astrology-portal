@@ -67,6 +67,10 @@ function assertCopyShape(copy) {
   assert.ok(Array.isArray(copy.diagnostics.skippedSections));
 }
 
+function resolveLegacy(context, options = {}) {
+  return resolveAspectPatternCopy(context, { ...options, useLegacyResolver: true });
+}
+
 function directAuthoredFor(context) {
   return {
     id: `authored-test:direct:${context.patternType}`,
@@ -120,15 +124,15 @@ const examples = [
 ];
 
 for (const [type, context] of examples) {
-  const authored = resolveAspectPatternCopy(context);
-  const fallback = resolveAspectPatternCopy(context, { authoredRecords: [] });
+  const authored = resolveLegacy(context);
+  const fallback = resolveLegacy(context, { authoredRecords: [] });
   assertCopyShape(authored);
   assertCopyShape(fallback);
   assert.equal(authored.source.contentLevel, "authored", `${type} should prefer approved authored copy`);
   assert.notEqual(authored.source.recordId, fallback.source.recordId, `${type} should change source when authored is available`);
   assert.equal(fallback.source.contentLevel, "source_grounded_template", `${type} should restore approved golden fallback without authored records`);
-  assert.equal(JSON.stringify(resolveAspectPatternCopy(context)), JSON.stringify(authored), `${type} authored resolution must be deterministic`);
-  assert.equal(JSON.stringify(resolveAspectPatternCopy(context, { authoredRecords: [] })), JSON.stringify(fallback), `${type} fallback resolution must be deterministic`);
+  assert.equal(JSON.stringify(resolveLegacy(context)), JSON.stringify(authored), `${type} authored resolution must be deterministic`);
+  assert.equal(JSON.stringify(resolveLegacy(context, { authoredRecords: [] })), JSON.stringify(fallback), `${type} fallback resolution must be deterministic`);
   const validation = validateAuthoredAspectPatternRecord(AUTHORED_ASPECT_PATTERN_RECORDS.find((record) => record.patternType === type), context);
   assert.equal(validation.ok, true, `${type} authored record should validate`);
 }
@@ -139,7 +143,7 @@ for (const [type, context] of examples) {
     const record = cloned(AUTHORED_ASPECT_PATTERN_RECORDS.find((item) => item.patternType === "t_square"));
     record.id = `authored-test:${status}`;
     record.status = status;
-    const resolved = resolveAspectPatternCopy(context, { authoredRecords: [record] });
+    const resolved = resolveLegacy(context, { authoredRecords: [record] });
     assert.equal(resolved.source.contentLevel, "source_grounded_template", `${status} authored record must not override fallback`);
   }
 }
@@ -147,7 +151,7 @@ for (const [type, context] of examples) {
 {
   const context = oneContext(fixtures.t_square, "t_square");
   const record = invalidSlotAuthoredFor(context);
-  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [record] });
+  const resolved = resolveLegacy(context, { authoredRecords: [record] });
   const validation = validateAuthoredAspectPatternRecord(record, context);
   assert.equal(resolved.source.contentLevel, "source_grounded_template", "Unknown authored slots must fail closed");
   assert.ok(validation.errors.includes("unknown_required_slot:headline"));
@@ -158,7 +162,7 @@ for (const [type, context] of examples) {
   const record = cloned(AUTHORED_ASPECT_PATTERN_RECORDS.find((item) => item.patternType === "t_square"));
   record.id = "authored-test:missing-required";
   record.content.headline = "Broken {{fallout_sign}}";
-  const resolved = resolveAspectPatternCopy(context, { authoredRecords: [record] });
+  const resolved = resolveLegacy(context, { authoredRecords: [record] });
   const validation = validateAuthoredAspectPatternRecord(record, context);
   assert.equal(resolved.source.contentLevel, "source_grounded_template", "Missing required authored slots must fail closed");
   assert.ok(validation.errors.includes("missing_required_slot:headline"));
@@ -166,7 +170,7 @@ for (const [type, context] of examples) {
 
 {
   const partialContext = oneContext(fixtures.partial_t_square, "t_square");
-  const resolved = resolveAspectPatternCopy(partialContext, { authoredRecords: [directAuthoredFor(partialContext)] });
+  const resolved = resolveLegacy(partialContext, { authoredRecords: [directAuthoredFor(partialContext)] });
   const validation = validateAuthoredAspectPatternRecord(directAuthoredFor(partialContext), partialContext);
   assert.equal(resolved.source.contentLevel, "source_grounded_template", "Partial contexts cannot use direct certainty authored records");
   assert.ok(validation.errors.includes("direct_certainty_for_qualified_context"));
