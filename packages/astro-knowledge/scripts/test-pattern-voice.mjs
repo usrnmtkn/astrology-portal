@@ -91,9 +91,38 @@ if (teeth.score !== 1 || teeth.fails !== 4 || requiredTeeth.some((term) => !teet
   process.exit(1);
 }
 
+const crossLevelSentence = "You can solve the visible problem and still leave your own needs outside the plan.";
+const crossLevelDuplicateProbe = lintPatternCard({
+  overview: crossLevelSentence,
+  sections: [
+    { id: "level_2", body: crossLevelSentence },
+    { id: "confidence_note", body: "This pattern is clear in the chart." }
+  ]
+});
+if (
+  crossLevelDuplicateProbe.score !== 1
+  || !crossLevelDuplicateProbe.findings.some((finding) => finding.term === "cross-level-dup")
+) {
+  console.error("CROSS-LEVEL DUP CHECK: FAIL (duplicate sentence was not rejected)");
+  process.exit(1);
+}
+
+const sameLevelRepeatProbe = lintPatternCard({
+  overview: crossLevelSentence,
+  sections: [
+    { id: "feel", body: crossLevelSentence },
+    { id: "level_2", body: "The geometry explains why the pressure keeps moving instead of settling in one place." }
+  ]
+});
+if (sameLevelRepeatProbe.findings.some((finding) => finding.term === "cross-level-dup")) {
+  console.error("CROSS-LEVEL DUP CHECK: FAIL (same-level repetition was misclassified)");
+  process.exit(1);
+}
+
 let lintFails = 0, judgeFails = 0, resolveErrors = 0;
 console.log(`Pattern voice gate  (LLM judge: ${HAS_KEY ? `ON - ${MODEL_CONFIG.provider}/${MODEL_CONFIG.model}` : "OFF - no model key"})`);
 console.log(`TEETH CHECK: PASS (old 11-block shape lint ${teeth.score}, ${teeth.fails} structural fails)\n`);
+console.log("CROSS-LEVEL DUP CHECK: PASS (verbatim L1/L2 repetition fails mechanically)\n");
 
 async function run() {
   for (const exemplar of examples.filter((example) => example.canonical)) {

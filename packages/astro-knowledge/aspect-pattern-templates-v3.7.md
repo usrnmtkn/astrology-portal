@@ -1,4 +1,4 @@
-# Aspect pattern templates v3.5 (canonical - supersedes v3.4 and all earlier drafts)
+# Aspect pattern templates v3.7 (canonical - supersedes v3.6 and all earlier drafts)
 
 Invariant copy assumes no particular planet's style; confidence branches complete at
 both levels; one token namespace; house-aware empty-leg and reference clauses;
@@ -31,7 +31,9 @@ Fields (suffix | type | source | grammatical contract | sign? | house?):
   lived_need        | noun phrase | pattern narrative table | completes "brings ___" | - | -
   incomplete_first_answer | sentence | pattern narrative table | the Yod answer that works but remains incomplete | - | -
   returning_lived_example | sentence | pattern narrative table | a recognizable way the Yod subject returns | - | -
+  moon_condition     | complement | Moon-condition table | completes "Your Moon in [sign] needs ___" | Y | -
   intro             | sentences | placement layer + background-anchor table | planet-resolved member introduction; known-time includes houses, unknown-time is house-free | Y | Y
+  sign_list         | noun list | chart member signs | comma-separated signs for compact Level 2 mechanics context | Y | -
   sign_house_response | verb phrase | sign-behavior + house_context | completes "{planet} in {house_label} ___" (apex/focal) | Y | Y
   sign_behavior     | verb phrase | sign-behavior only | house-free (unknown time) | Y | -
   response_example  | sentence | sign layer or placement layer | personal apex/focal need, or outer-planet placement response | Y | -
@@ -44,7 +46,7 @@ Fields (suffix | type | source | grammatical contract | sign? | house?):
 A token in the templates but not in this registry, or a registered token never used,
 is a validation failure. Required clauses per pattern and every structural rule are
 checked by validate_patterns.py; the per-role label-blind (sign) and house-blind
-audits are proven by render_matrix.py. LOCKED AT V3.5: after this passes, table authoring
+audits are proven by render_matrix.py. LOCKED AT V3.7: after this passes, table authoring
 may change only the VALUES supplied to existing tokens - not add, rename, or change
 any token's grammatical contract.
 
@@ -89,7 +91,7 @@ opening wide: Because the links are wider, the apex may gather the tension in so
 how_it_works: (none)
 planet_roles: {apex.planet} is the apex, so it tends to be the first place the pressure shows. Opposite it, the empty leg in {empty_leg.sign}, in {empty_leg.house_label}, is not a missing piece or a guaranteed solution - it is the less automatic response, toward {empty_leg.house_area}: {empty_leg.balancing_move}.
 watch_for: (none)
-unknown_time L2: A T-square is two planets in opposition, both squaring a third, the apex. Here {apex.planet} tends to be where the tension becomes a response. {apex.response_example} Opposite it, a less automatic balancing response appears through {empty_leg.balancing_move}.
+unknown_time L2: A T-square is two planets in opposition, both squaring a third, the apex. Here {apex.planet} tends to be where the tension becomes a response. Opposite it, a less automatic balancing response appears through {empty_leg.balancing_move}.
 
 ### Partial
 L1: Your {oppA.planet}, {oppB.planet}, and {apex.planet} come close to a T-square, with {apex.planet} near the pressure point. You may recognize two needs that will not line up and the pull to respond through {apex.planet} when the tension has nowhere to go. It may not run as one constant pattern, and it can sharpen under transit.
@@ -116,7 +118,7 @@ opening wide: Because the links are wider, the four-way squeeze may show up in c
 how_it_works: (none)
 planet_roles: {c1.planet} and {c3.planet} form one opposition, {c1.role_gloss} against {c3.role_gloss}. {c2.planet} and {c4.planet} form the other, {c2.role_gloss} against {c4.role_gloss}. No planet is the whole story, and none is the release the way a T-square has an apex.
 watch_for: (none)
-unknown_time L2: A Grand Cross is two oppositions at right angles: {c1.planet} against {c3.planet}, {c2.planet} against {c4.planet}. {corners.intro} The pressure hands off around the figure with no single outlet.
+unknown_time L2: A Grand Cross is two oppositions at right angles: {c1.planet} against {c3.planet}, {c2.planet} against {c4.planet}. The four corners fall in {corners.sign_list}. The pressure hands off around the figure with no single outlet.
 ### Partial
 L1: Your {c1.planet}, {c2.planet}, {c3.planet}, and {c4.planet} come close to a Grand Cross. You may recognize the squeeze when several areas want attention at once. It may not operate constantly, and transits can make it more noticeable.
 L2: Your chart approaches a Grand Cross, four planets near two right-angled oppositions. You may recognize the pattern without experiencing it as a constant feature.
@@ -143,7 +145,7 @@ how_it_works: The three planets share an element, so they share a style of respo
 planet_roles: {t1.planet}, {t2.planet}, and {t3.planet} pass momentum between {t1.role_gloss}, {t2.role_gloss}, and {t3.role_gloss}. Ease here is not talent or success; it means these parts cooperate before you have had to explain why.
 watch_for: (none)
 OVERRIDE out_of_sign (replaces how_it_works): Your {t1.planet}, {t2.planet}, and {t3.planet} form trines by degree even though they do not all sit in signs of the same element. The cooperation can still show up in stretches, but the planets do not share one automatic style, so what feels easy in one moment may need translation in another.
-unknown_time L2: A Grand Trine is three planets in a closed triangle that share a style of response. {trio.intro} Their agreement can also let the pattern go soft.
+unknown_time L2: A Grand Trine is three planets in a closed triangle that share a style of response. The three planets fall in {trio.sign_list}. Because those signs work in the same element, the responses reinforce one another without much internal friction.
 ### Partial
 L1: Your {t1.planet}, {t2.planet}, and {t3.planet} come close to a Grand Trine. You may notice their agreement in certain areas more than as a constant, and it can be easy to miss because it feels ordinary.
 L2: Your chart approaches a Grand Trine, three planets near a closed triangle. You may recognize it in stretches rather than as a constant feature.
@@ -183,6 +185,7 @@ MECHANIC: Two planets in an easy sextile that both reach a third at 150 degrees,
 title exact/strong: **{apex.lived_title}**
 title wide: **A wider Yod** | partial: **Possible Yod**
 opening exact: {base1.planet} helps you {base1.base_contribution}. {base2.planet} helps you {base2.base_contribution}. Because the decision affects both {base1.decision_area} and {base2.decision_area}, the plan has to work {base1.decision_test} as well as it does {base2.decision_test}. Your {apex.planet} will not call it settled until you {apex.base_contribution}.
+opening moon_decision: Pluto helps you see when a shared financial arrangement, obligation, or relationship has become unequal, controlling, or too heavy to keep carrying. Neptune pulls you toward work that feels meaningful, not simply the job with the safest paycheck or most impressive title. The risk is solving the money, power, or career problem while building a life that leaves you exhausted, unsupported, or disconnected from yourself. Your {apex.planet} in {apex.sign} needs {apex.moon_condition}. Until the plan makes room for that need, you may be able to defend the choice without feeling at home in it.
 opening wide: Your {base1.planet}, {base2.planet}, and {apex.planet} form a wider Yod. The pull to keep adjusting toward {apex.planet} may surface in some situations more than as a constant.
 feel: {bases.intro} The first plan is likely to satisfy those two responses. But your {apex.planet} in {apex.house_label} brings {apex.lived_need}. {apex.response_example} {apex.incomplete_first_answer}. {apex.returning_lived_example}.
 shows_up: (none)
@@ -223,7 +226,7 @@ opening wide: Because the links are wider, the balance of tension and easy route
 how_it_works: (none)
 planet_roles ("The two opposing pairs"): {oa1.planet} opposes {oa2.planet} ({oa1.role_gloss} against {oa2.role_gloss}) and {ob1.planet} opposes {ob2.planet} ({ob1.role_gloss} against {ob2.role_gloss}). The supportive links let one opposition throw light on the other.
 watch_for: (none)
-unknown_time L2: A Mystic Rectangle is two oppositions joined by easier angles: {oa1.planet} against {oa2.planet}, {ob1.planet} against {ob2.planet}. {axisA.intro} {axisB.intro} The softer links give the resulting conflict more than one route out.
+unknown_time L2: A Mystic Rectangle is two oppositions joined by easier angles: {oa1.planet} against {oa2.planet}, {ob1.planet} against {ob2.planet}. One axis falls in {axisA.sign_list}; the other falls in {axisB.sign_list}. The softer links give the resulting conflict more than one route out.
 ### Partial
 L1: Your chart comes close to a Mystic Rectangle. You may recognize how one conflict changes the way you respond to another, instead of leaving you with a complete standoff.
 L2: Your chart approaches a Mystic Rectangle, two near-oppositions linked by soft angles. You may recognize the pattern without experiencing it as a constant feature.

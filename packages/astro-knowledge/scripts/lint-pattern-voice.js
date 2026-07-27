@@ -46,6 +46,17 @@ function normalizeCard(card) {
   return { text, sections, overview };
 }
 
+function normalizedSentences(value) {
+  return (String(value || "").match(/[^.!?]+(?:[.!?]+|$)/g) || [])
+    .map((sentence) => sentence
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/[.,;:!?]+$/g, "")
+      .trim())
+    .filter((sentence) => sentence.split(/\s+/).filter(Boolean).length >= 6);
+}
+
 function lintPatternCard(card) {
   const { text, sections, overview } = normalizeCard(card);
   const findings = [];
@@ -115,6 +126,32 @@ function lintPatternCard(card) {
   for (const [id, body] of l1Texts) {
     const m = body.match(geomRe);
     if (m) findings.push({ severity: "fail", source: "shape", term: `geometry-in-L1:${id}`, match: m[0], reason: "Geometry belongs in Level 2; the lived paragraph must stay felt." });
+  }
+
+  // ---- no complete sentence may be repeated across lived Level 1 and mechanics Level 2 ----
+  if (sections.length) {
+    const levelOneBodies = [
+      overview,
+      ...sections.filter((section) => L1_BODY_IDS.includes(section.id)).map((section) => section.body)
+    ];
+    const levelTwoBodies = sections
+      .filter((section) => !L1_BODY_IDS.includes(section.id) && section.id !== "confidence_note")
+      .map((section) => section.body);
+    const levelOneSentences = new Set(levelOneBodies.flatMap(normalizedSentences));
+    const levelTwoSentences = new Set(levelTwoBodies.flatMap(normalizedSentences));
+    const crossLevelDuplicates = [...levelOneSentences]
+      .filter((sentence) => levelTwoSentences.has(sentence))
+      .sort();
+
+    for (const sentence of crossLevelDuplicates) {
+      findings.push({
+        severity: "fail",
+        source: "shape",
+        term: "cross-level-dup",
+        match: sentence,
+        reason: "A sentence is repeated across Level 1 and Level 2."
+      });
+    }
   }
 
   // ---- shape: over-sectioning + duplicate beats (needs structured sections) ----

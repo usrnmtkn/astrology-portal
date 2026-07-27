@@ -1,5 +1,5 @@
 {
-  "_note": "Single machine-readable v3.5 contract. validate_patterns.py, render_matrix.py, and gold_render.py all read THIS. The template's human TOKEN REGISTRY must match fields[]. Locked after the planet-resolved group-intro amendment and the lived Yod decision amendment: values may change, contracts may not.",
+  "_note": "Single machine-readable v3.7 contract. validate_patterns.py, render_matrix.py, and gold_render.py all read THIS. The template's human TOKEN REGISTRY must match fields[]. Locked after the unknown-time cross-level deduplication amendment: values may change, contracts may not.",
   "allowed_prefixes": [
     "apex",
     "focal",
@@ -106,9 +106,17 @@
       "sign": false,
       "house": false
     },
+    "moon_condition": {
+      "sign": true,
+      "house": false
+    },
     "intro": {
       "sign": true,
       "house": true
+    },
+    "sign_list": {
+      "sign": true,
+      "house": false
     },
     "sign_house_response": {
       "sign": true,
@@ -380,6 +388,11 @@
           "base2.decision_area",
           "base1.decision_test",
           "base2.decision_test"
+        ],
+        "L1:opening moon_decision": [
+          "apex.planet",
+          "apex.sign",
+          "apex.moon_condition"
         ],
         "feel": [
           "bases.intro",

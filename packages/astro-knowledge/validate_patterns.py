@@ -6,7 +6,7 @@ import re, sys, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-TPL = ROOT / "aspect-pattern-templates-v3.5.md"
+TPL = ROOT / "aspect-pattern-templates-v3.7.md"
 TABLES = ROOT / "aspect-pattern-tables-v1.md"
 HANDOFF = ROOT / "CODEX-ASPECT-PATTERNS-V3-HANDOFF.md"
 CONTRACT = ROOT / "aspect-pattern-contract.json"
@@ -51,15 +51,15 @@ def parse_table(heading, columns):
         rows.append(dict(zip(columns,values)))
     return rows
 
-def validate_table(heading, columns, expected_planets):
+def validate_table(heading, columns, key_column, expected_keys):
     rows=parse_table(heading,columns)
-    planets=[row["planet"] for row in rows]
-    if planets != expected_planets:
-        err("tables",f"table '{heading}' must contain the locked rows {expected_planets}; got {planets}")
+    keys=[row[key_column] for row in rows]
+    if keys != expected_keys:
+        err("tables",f"table '{heading}' must contain the locked rows {expected_keys}; got {keys}")
     for row in rows:
         for column in columns[1:]:
             value=row[column].strip()
-            where=f"{heading}/{row['planet']}/{column}"
+            where=f"{heading}/{row[key_column]}/{column}"
             if not value:
                 err(where,"required token value is blank")
                 continue
@@ -74,6 +74,7 @@ def validate_table(heading, columns, expected_planets):
 validate_table(
     "focal-demand-by-planet",
     ["planet","focal_demand","focal_interruption"],
+    "planet",
     C["eligible_primary"],
 )
 validate_table(
@@ -86,12 +87,23 @@ validate_table(
         "incomplete_first_answer",
         "returning_lived_example",
     ],
+    "planet",
     C["eligible_primary"],
 )
 validate_table(
     "background-anchor-by-planet",
     ["planet", "background_anchor"],
+    "planet",
     ["Uranus", "Neptune", "Pluto"],
+)
+validate_table(
+    "moon-condition-by-sign",
+    ["sign", "moon_condition"],
+    "sign",
+    [
+        "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+    ],
 )
 
 # ---- parse patterns -> section key -> text (+ level) ----
@@ -119,7 +131,7 @@ def parse():
             m=re.match(r"^([a-z_]+)(?:\s*\([^)]*\))?:\s*(.*)$",l)
             if m and m.group(1) in ("feel","shows_up","complicated","another_response","how_it_works","planet_roles","watch_for","reference_point"):
                 sec[m.group(1)]=(lvl,m.group(2)); continue
-            m=re.match(r"^(title|opening) ([a-z/]+):\s*(.*)$",l)
+            m=re.match(r"^(title|opening) ([a-z_/]+):\s*(.*)$",l)
             if m: sec[f"{lvl}:{m.group(1)} {m.group(2)}"]=(lvl,m.group(3)); continue
         out[name]=(blk,sec)
     return out
@@ -140,7 +152,7 @@ if extra_in_reg: err("template",f"registry doc has fields not in contract: {sort
 
 # ---- global checks ----
 if "—" in TPL.read_text(): err("template","em dash present")
-if not lines[0].lower().startswith("# aspect pattern templates v3.5"): err("template","header not canonical v3.5",lines[0])
+if not lines[0].lower().startswith("# aspect pattern templates v3.7"): err("template","header not canonical v3.7",lines[0])
 for a in C["banned_aliases"]:
     for l in lines:
         if re.search(r"\{"+re.escape(a)+r"[.}]",l): err("template",f"banned alias {{{a}}}",l)
@@ -213,7 +225,7 @@ for name,spec in PATTERNS.items():
 
 # ---- handoff checks ----
 h=HANDOFF.read_text()
-if "v3.5.md" not in h: err("handoff","does not name v3.5 canonical")
+if "v3.7.md" not in h: err("handoff","does not name v3.7 canonical")
 if "= 10 bodies" not in h: err("handoff","not locked to 10 primary bodies")
 if re.search(r"=\s*11\b|11 rows each",h): err("handoff","stale 11-count")
 if "—" in h: err("handoff","em dash")

@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const PACKAGE_ROOT = path.resolve(__dirname, "../..");
-const TEMPLATE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-templates-v3.5.md");
+const TEMPLATE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-templates-v3.7.md");
 const TABLE_PATH = path.join(PACKAGE_ROOT, "aspect-pattern-tables-v1.md");
 const SOURCE_ROWS_PATH = path.resolve(
   PACKAGE_ROOT,
@@ -68,7 +68,7 @@ const COMPACT_HOUSE_AREAS = Object.freeze({
   5: "creativity",
   6: "daily work",
   7: "partnership",
-  8: "shared trust",
+  8: "shared money, obligations, and intimacy",
   9: "belief",
   10: "career and reputation",
   11: "community",
@@ -83,7 +83,7 @@ const DECISION_HOUSE_AREAS = Object.freeze({
   5: "your creative life",
   6: "your daily responsibilities",
   7: "your relationships",
-  8: "shared trust",
+  8: "shared money, obligations, and who holds power",
   9: "your beliefs",
   10: "your reputation",
   11: "your community",
@@ -100,7 +100,7 @@ const DECISION_HOUSE_TESTS = Object.freeze({
   7: "when another person has a say",
   8: "in private",
   9: "when it is tested against what you believe",
-  10: "on paper",
+  10: "in your career and public life",
   11: "when the group is involved",
   12: "when no one else can see it"
 });
@@ -219,7 +219,7 @@ function parsePatternBlock(lines) {
       continue;
     }
 
-    const opening = line.match(/^opening (exact|wide):\s*(.+)$/);
+    const opening = line.match(/^opening ([a-z_]+):\s*(.+)$/);
     if (opening) {
       pattern[level].openings[opening[1]] = opening[2].trim();
       continue;
@@ -285,11 +285,17 @@ function parseAuthoredTables(markdown) {
       markdown,
       "background-anchor-by-planet",
       ["planet", "background_anchor"]
+    ),
+    moonCondition: parseMarkdownTable(
+      markdown,
+      "moon-condition-by-sign",
+      ["sign", "moon_condition"],
+      "sign"
     )
   };
 }
 
-function parseMarkdownTable(markdown, heading, expectedColumns) {
+function parseMarkdownTable(markdown, heading, expectedColumns, keyColumn = "planet") {
   const headingMatch = markdown.match(new RegExp(`^## ${escapeRegex(heading)}[^\\n]*$`, "m"));
   if (!headingMatch || headingMatch.index === undefined) {
     throw new AspectPatternV3SourceGapError(`Missing authored table: ${heading}.`);
@@ -321,7 +327,7 @@ function parseMarkdownTable(markdown, heading, expectedColumns) {
     const values = cells(line);
     if (values.length !== columns.length) continue;
     const row = Object.fromEntries(columns.map((column, index) => [column, values[index]]));
-    rows.set(normalizeToken(row.planet), row);
+    rows.set(normalizeToken(row[keyColumn]), row);
   }
   return rows;
 }
@@ -330,7 +336,7 @@ function resolveAspectPatternV3Copy(context) {
   const heading = PATTERN_HEADINGS[context.patternType];
   const spec = templates[heading];
   if (!heading || !spec) {
-    throw new AspectPatternV3SourceGapError(`No v3.5 template for ${context.patternType}.`);
+    throw new AspectPatternV3SourceGapError(`No v3.7 template for ${context.patternType}.`);
   }
 
   const confidence = normalizeConfidence(context.geometry?.confidence);
@@ -352,6 +358,11 @@ function resolveAspectPatternV3Copy(context) {
 
   const titleKey = confidence === "wide" ? "wide" : "exact";
   const openingKey = confidence === "wide" ? "wide" : "exact";
+  const levelOneOpeningKey = confidence === "wide"
+    ? "wide"
+    : usesMoonDecisionSynthesis(context, roles, hasHouses)
+      ? "moon_decision"
+      : "exact";
   const headline = renderRequired(spec.L1.titles[titleKey], roles, `${heading}/${titleKey}-title`);
   const sections = [];
   let overview;
@@ -364,7 +375,11 @@ function resolveAspectPatternV3Copy(context) {
       body: renderRequired(spec.L2.unknown, roles, `${heading}/unknown-L2`)
     });
   } else {
-    overview = renderRequired(spec.L1.openings[openingKey], roles, `${heading}/${openingKey}-opening`);
+    overview = renderRequired(
+      spec.L1.openings[levelOneOpeningKey],
+      roles,
+      `${heading}/${levelOneOpeningKey}-opening`
+    );
     for (const sectionId of L1_SECTION_IDS) {
       const template = spec.L1.sections[sectionId];
       if (!template) continue;
@@ -410,7 +425,7 @@ function makeResolvedCopy(context, headline, overview, sections, skippedSections
     patternId: context.patternId,
     patternType: context.patternType,
     source: {
-      recordId: `aspect-pattern-v3.5:${context.patternType}:${context.geometry.confidence}:${hasHouses ? "known" : "unknown"}`,
+      recordId: `aspect-pattern-v3.7:${context.patternType}:${context.geometry.confidence}:${hasHouses ? "known" : "unknown"}`,
       contentLevel: "source_grounded_template",
       status: "approved",
       resolverVersion: "v3"
@@ -422,7 +437,7 @@ function makeResolvedCopy(context, headline, overview, sections, skippedSections
       sections
     },
     diagnostics: {
-      templateId: `aspect-pattern-templates-v3.5:${PATTERN_HEADINGS[context.patternType]}`,
+      templateId: `aspect-pattern-templates-v3.7:${PATTERN_HEADINGS[context.patternType]}`,
       usedFallback: false,
       missingSlots: [],
       skippedSections: [...new Set(skippedSections)].sort(),
@@ -444,6 +459,20 @@ function readingNoteSection(context, confidence) {
     title: "Reading note",
     body: `${sentence} Its widest link is ${maximumOrb} ${Number(maximumOrb) === 1 ? "degree" : "degrees"}.`
   };
+}
+
+function usesMoonDecisionSynthesis(context, roles, hasHouses) {
+  if (!hasHouses || context.patternType !== "yod" || roles.apex?.planet !== "Moon") {
+    return false;
+  }
+
+  const baseMembers = context.members.filter((member) => context.roles.basePlanets.includes(member.planet));
+  const pluto = baseMembers.find((member) => normalizeToken(member.planet) === "pluto");
+  const neptune = baseMembers.find((member) => normalizeToken(member.planet) === "neptune");
+
+  return pluto?.house === 8
+    && neptune?.house === 10
+    && Boolean(roles.apex.moon_condition);
 }
 
 function derivedSectionUnavailable(context, sectionId, hasHouses) {
@@ -582,6 +611,14 @@ function resolveMemberRole(member, hasHouses) {
     role.is_outer = true;
   }
 
+  if (planet === "moon") {
+    const moonCondition = tables.moonCondition.get(sign);
+    if (!moonCondition?.moon_condition) {
+      throw new AspectPatternV3SourceGapError(`Missing Moon-condition row for ${sign}.`);
+    }
+    role.moon_condition = moonCondition.moon_condition;
+  }
+
   if (houseArea) {
     role.house_ordinal = ordinal(member.house);
     role.house_label = `the ${ordinal(member.house)} house of ${houseArea}`;
@@ -641,7 +678,10 @@ function resolveMemberGroup(memberRoles, hasHouses) {
     }
   }
 
-  return { intro: sentences.join(" ") };
+  return {
+    intro: sentences.join(" "),
+    sign_list: joinWords(roles.map((role) => role.sign))
+  };
 }
 
 function joinWords(values) {
@@ -704,7 +744,7 @@ function renderRequired(template, roles, location) {
   });
   if (missing.length > 0 || /{[^}]+}/.test(rendered)) {
     throw new AspectPatternV3SourceGapError(
-      `Required v3.5 clauses are missing at ${location}: ${[...new Set(missing)].join(", ")}.`,
+      `Required v3.7 clauses are missing at ${location}: ${[...new Set(missing)].join(", ")}.`,
       { location, missing: [...new Set(missing)] }
     );
   }

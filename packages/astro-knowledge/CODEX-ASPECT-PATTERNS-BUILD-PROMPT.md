@@ -1,4 +1,4 @@
-# Codex prompt: build the aspect-pattern resolver against the LOCKED v3.5 contract
+# Codex prompt: build the aspect-pattern resolver against the LOCKED v3.7 contract
 
 The aspect-pattern reader copy is redesigned, consolidated, and locked. Your job is
 to implement the resolver that renders it - not to edit the copy, tokens, or contract.
@@ -6,7 +6,7 @@ to implement the resolver that renders it - not to edit the copy, tokens, or con
 ## The package (all in packages/astro-knowledge/)
 - `aspect-pattern-contract.json` - SINGLE source of truth (token registry, per-pattern
   required-by-section clauses, namespaces, eligible bodies, banned lists). Read this.
-- `aspect-pattern-templates-v3.5.md` - canonical two-level copy for all six patterns.
+- `aspect-pattern-templates-v3.7.md` - canonical two-level copy for all six patterns.
 - `aspect-pattern-tables-v1.md` - two authored 10-row tables
   (focal-demand-by-planet, pattern-narrative-by-planet) plus the three-row
   outer-planet background-anchor table. Token values.
@@ -39,7 +39,7 @@ All three must pass before and after any change:
 - `python3 validate_patterns.py` -> VALIDATOR: PASS (0 errors)
 - `python3 render_matrix.py`      -> RENDER MATRIX: PASS
 - `python3 gold_render.py`        -> GOLD RENDER: PASS
-Re-run after any edit. LOCKED AT V3.5: you may change token values (table entries) only - never
+Re-run after any edit. LOCKED AT V3.7: you may change token values (table entries) only - never
 add, rename, or re-contract a token, and never edit the templates' structure. Any issue
 is either a token-value fix (edit the table) or a renderer bug (fix resolution); it is
 NOT a template redesign unless a real chart proves the contract cannot express a meaning.
