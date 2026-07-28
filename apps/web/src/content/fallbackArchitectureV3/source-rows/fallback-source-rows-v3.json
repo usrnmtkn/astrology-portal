@@ -6694,8 +6694,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/aries",
    "content_role": "vocabulary",
    "body": "Do the hard thing first",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6704,8 +6704,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/aries",
    "content_role": "vocabulary",
    "body": "Picking a fight to feel something",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6714,8 +6714,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/taurus",
    "content_role": "vocabulary",
    "body": "Cook instead of ordering",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6724,8 +6724,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/taurus",
    "content_role": "vocabulary",
    "body": "Buying comfort you'll return",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6734,8 +6734,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/gemini",
    "content_role": "vocabulary",
    "body": "Make the call you've been texting around",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6744,8 +6744,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/gemini",
    "content_role": "vocabulary",
    "body": "Saying it three different ways",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6754,8 +6754,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/cancer",
    "content_role": "vocabulary",
    "body": "Check on your person",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6764,8 +6764,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/cancer",
    "content_role": "vocabulary",
    "body": "Reheating old arguments",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6774,8 +6774,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/leo",
    "content_role": "vocabulary",
    "body": "Give the compliment out loud",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6784,8 +6784,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/leo",
    "content_role": "vocabulary",
    "body": "Waiting to be noticed",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6794,8 +6794,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/virgo",
    "content_role": "vocabulary",
    "body": "Fix the small annoying thing",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6804,8 +6804,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/virgo",
    "content_role": "vocabulary",
    "body": "Redoing other people's work",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6814,8 +6814,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/libra",
    "content_role": "vocabulary",
    "body": "Make the decision by noon",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6824,8 +6824,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/libra",
    "content_role": "vocabulary",
    "body": "Polling everyone you know",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6834,8 +6834,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/scorpio",
    "content_role": "vocabulary",
    "body": "Say the real reason",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6844,8 +6844,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/scorpio",
    "content_role": "vocabulary",
    "body": "Testing people in silence",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6854,8 +6854,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/sagittarius",
    "content_role": "vocabulary",
    "body": "Take the long way home",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6864,8 +6864,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/sagittarius",
    "content_role": "vocabulary",
    "body": "Doubling down mid-argument",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6874,8 +6874,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/capricorn",
    "content_role": "vocabulary",
    "body": "Knock out the boring errand",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6884,8 +6884,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/capricorn",
    "content_role": "vocabulary",
    "body": "Working through dinner",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6894,8 +6894,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/aquarius",
    "content_role": "vocabulary",
    "body": "Text the group chat first",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6904,8 +6904,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/aquarius",
    "content_role": "vocabulary",
    "body": "Debating instead of deciding",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6914,8 +6914,8 @@
    "contentKey": "fallback-vocab/dodont-moon-do/pisces",
    "content_role": "vocabulary",
    "body": "Leave a gap in the schedule",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
@@ -6924,8 +6924,8 @@
    "contentKey": "fallback-vocab/dodont-moon-dont/pisces",
    "content_role": "vocabulary",
    "body": "Saying yes on autopilot",
-   "review_status": "draft",
-   "approved_via": "drafted in chat 2026-07-27; PENDING OWNER APPROVAL - flip review_status to approved to activate the Moon day layer",
+   "review_status": "approved",
+   "approved_via": "owner approval, chat 2026-07-28",
    "source_keys": [
     "owner design session (do/don't Moon layer)"
    ]
