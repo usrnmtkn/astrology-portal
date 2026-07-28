@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 
@@ -37,7 +37,7 @@ function activationSectionLabel(sectionId: string): string | null {
   return activationSectionLabels[sectionId] ?? null;
 }
 
-function resolvedSectionLabel(section: { id: string; title?: string }): string | null {
+export function resolvedNatalAspectPatternSectionLabel(section: { id: string; title?: string }): string | null {
   return section.title ?? sectionLabel(section.id);
 }
 
@@ -52,10 +52,14 @@ function childItems(parent: NatalAspectPatternReaderItem, items: NatalAspectPatt
 
 export function NatalAspectPatternsSection({
   items,
-  status
+  onOpenDetail,
+  status,
+  title = "Patterns in your chart"
 }: {
   items: NatalAspectPatternReaderItem[];
+  onOpenDetail?: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   status: NatalAspectPatternsSectionStatus;
+  title?: string;
 }) {
   if (status === "unavailable") {
     return null;
@@ -74,87 +78,60 @@ export function NatalAspectPatternsSection({
   }
 
   return (
-    <section className="natal-patterns-section" aria-label="Patterns in your chart">
-      <span className="eyebrow section-label">Patterns in your chart</span>
+    <section className="natal-patterns-section" aria-label={title}>
+      <span className="eyebrow section-label">{title}</span>
       <div className="natal-patterns-stack">
-        <PatternCopyCard item={primary} variant="primary" childItems={childItems(primary, items)} />
+        <PatternPreviewCard
+          item={primary}
+          variant="primary"
+          nestedItems={childItems(primary, items)}
+          onOpenDetail={onOpenDetail}
+        />
         {additional.map((item) => (
-          <details className="natal-pattern-card natal-pattern-card--collapsed" key={item.patternId}>
-            <summary>
-              <span>
-                {item.copy.content.eyebrow ? <em>{item.copy.content.eyebrow}</em> : null}
-                <strong>{item.copy.content.headline}</strong>
-              </span>
-              <ChevronDown size={18} aria-hidden="true" />
-            </summary>
-            <PatternCopyBody item={item} childItems={childItems(item, items)} />
-          </details>
+          <PatternPreviewCard
+            item={item}
+            key={item.patternId}
+            variant="additional"
+            nestedItems={childItems(item, items)}
+            onOpenDetail={onOpenDetail}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-function PatternCopyCard({
-  childItems: nestedItems,
+function PatternPreviewCard({
   item,
+  nestedItems,
+  onOpenDetail,
   variant
 }: {
-  childItems: NatalAspectPatternReaderItem[];
   item: NatalAspectPatternReaderItem;
-  variant: "primary" | "nested";
-}) {
-  return (
-    <article className={`natal-pattern-card natal-pattern-card--${variant}`}>
-      <PatternCopyBody item={item} childItems={nestedItems} />
-    </article>
-  );
-}
-
-function PatternCopyBody({
-  childItems: nestedItems,
-  item
-}: {
-  childItems: NatalAspectPatternReaderItem[];
-  item: NatalAspectPatternReaderItem;
+  nestedItems: NatalAspectPatternReaderItem[];
+  onOpenDetail?: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
+  variant: "primary" | "additional";
 }) {
   const copy = item.copy.content;
-  const sections = copy.sections.filter((section) => section.body.trim() && sectionLabel(section.id));
 
   return (
-    <>
+    <article className={`natal-pattern-card natal-pattern-card--${variant}`}>
       <header className="natal-pattern-card__header">
         {copy.eyebrow ? <span>{copy.eyebrow}</span> : null}
         <h3>{copy.headline}</h3>
         <p>{copy.overview}</p>
       </header>
-
-      {sections.length > 0 ? (
-        <div className="natal-pattern-card__sections">
-          {sections.map((section) => (
-            <section key={`${item.patternId}-${section.id}-${section.body}`} className="natal-pattern-card__section">
-              <h3>{resolvedSectionLabel(section)}</h3>
-              <p>{section.body}</p>
-            </section>
-          ))}
-        </div>
-      ) : null}
-
-      {nestedItems.length > 0 ? (
-        <div className="natal-pattern-card__supporting" aria-label="Supporting pattern detail">
-          <h3>Supporting pattern detail</h3>
-          {nestedItems.map((child) => (
-            <details key={child.patternId} className="natal-pattern-card__supporting-item">
-              <summary>
-                <span>{child.copy.content.headline}</span>
-                <ChevronDown size={16} aria-hidden="true" />
-              </summary>
-              <PatternCopyBody item={child} childItems={[]} />
-            </details>
-          ))}
-        </div>
-      ) : null}
-    </>
+      <div className="natal-pattern-card__actions">
+        <button
+          type="button"
+          className="natal-pattern-card__details-button"
+          onClick={() => onOpenDetail?.(item, nestedItems)}
+        >
+          <span>Details</span>
+          <ChevronRight size={17} aria-hidden="true" />
+        </button>
+      </div>
+    </article>
   );
 }
 

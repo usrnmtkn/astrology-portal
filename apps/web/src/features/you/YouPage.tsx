@@ -8,7 +8,12 @@ import { NatalChartDataTable, type NatalChartDataTableRow } from "../../componen
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
-import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection, type NatalAspectPatternsSectionStatus } from "./NatalAspectPatternsSection";
+import {
+  NatalAspectPatternActivationsSection,
+  NatalAspectPatternsSection,
+  resolvedNatalAspectPatternSectionLabel,
+  type NatalAspectPatternsSectionStatus
+} from "./NatalAspectPatternsSection";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 
 type YouTab = "transits" | "chart";
@@ -112,6 +117,63 @@ export type YouPageProps = {
   standaloneTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
+
+type NatalAspectPatternDetailSelection = {
+  item: NatalAspectPatternReaderItem;
+  nestedItems: NatalAspectPatternReaderItem[];
+};
+
+function natalAspectPatternDetailArticle({
+  item,
+  nestedItems
+}: NatalAspectPatternDetailSelection): YouTransitArticle {
+  const copy = item.copy.content;
+  const sections = copy.sections
+    .map((section) => ({
+      body: section.body.trim(),
+      heading: resolvedNatalAspectPatternSectionLabel(section)
+    }))
+    .filter((section): section is { body: string; heading: string } => Boolean(section.body && section.heading))
+    .map((section) => ({
+      heading: section.heading,
+      tldr: "",
+      body: section.body
+    }));
+  const supportingSections = nestedItems.flatMap((nestedItem) => {
+    const nestedCopy = nestedItem.copy.content;
+    const nestedIntro = {
+      heading: `Supporting pattern: ${nestedCopy.headline}`,
+      tldr: "",
+      body: nestedCopy.overview
+    };
+    const nestedSections = nestedCopy.sections
+      .map((section) => ({
+        body: section.body.trim(),
+        heading: resolvedNatalAspectPatternSectionLabel(section)
+      }))
+      .filter((section): section is { body: string; heading: string } => Boolean(section.body && section.heading))
+      .map((section) => ({
+        heading: `${nestedCopy.eyebrow || "Supporting pattern"}: ${section.heading}`,
+        tldr: "",
+        body: section.body
+      }));
+
+    return [nestedIntro, ...nestedSections];
+  });
+  const patternLabel = copy.eyebrow || "Chart pattern";
+
+  return {
+    id: `natal-aspect-pattern-${item.patternId}`,
+    title: copy.headline,
+    subtitle: patternLabel,
+    summary: "",
+    bodyBeforeSections: true,
+    plainBody: true,
+    body: [copy.overview],
+    sections: [...sections, ...supportingSections],
+    meta: [{ label: patternLabel, value: patternLabel }]
+  };
+}
 
 function YouEmptyState({
   onCreateChart,
@@ -302,6 +364,7 @@ function YouNatalTab({
   natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternStatus,
+  onOpenNatalAspectPatternDetail,
   planetRows,
   showNatalSignatures,
   signatureBody,
@@ -314,6 +377,7 @@ function YouNatalTab({
   natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
+  onOpenNatalAspectPatternDetail: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   planetRows: ReactNode[];
   showNatalSignatures: boolean;
   signatureBody: string;
@@ -343,6 +407,7 @@ function YouNatalTab({
       {natalAspectPatternStatus && (
         <NatalAspectPatternsSection
           items={natalAspectPatternItems ?? []}
+          onOpenDetail={onOpenNatalAspectPatternDetail}
           status={natalAspectPatternStatus}
         />
       )}
@@ -669,9 +734,11 @@ function articleEyebrowGlyphs(article: YouTransitArticle) {
 
 function YouTransitArticlePage({
   article,
+  backAriaLabel = "Back to updates",
   onClose
 }: {
   article: YouTransitArticle;
+  backAriaLabel?: string;
   onClose: () => void;
 }) {
   useLayoutEffect(() => {
@@ -753,7 +820,7 @@ function YouTransitArticlePage({
       aria-label={`${article.title} article`}
       aria-labelledby="you-transit-article-title"
     >
-      <button className="sky-detail-back floating-back-button" type="button" aria-label="Back to updates" onClick={onClose}>
+      <button className="sky-detail-back floating-back-button" type="button" aria-label={backAriaLabel} onClick={onClose}>
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
@@ -912,6 +979,7 @@ export function YouPage({
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("transits");
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
+  const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
   const activeChart = profileTab === "transits" && updatesChart ? updatesChart : natalChart;
   const activeChartLabel = profileTab === "transits" && updatesChart ? "Transit chart" : "Natal chart";
   const natalTableContent = natalTableRows.length > 0 ? (
@@ -920,6 +988,16 @@ export function YouPage({
 
   if (!hasSavedBirthDetails) {
     return <YouEmptyState onCreateChart={onCreateChart} setupStepsLeft={setupStepsLeft} />;
+  }
+
+  if (natalAspectPatternDetail) {
+    return (
+      <YouTransitArticlePage
+        article={natalAspectPatternDetailArticle(natalAspectPatternDetail)}
+        backAriaLabel="Back to natal chart"
+        onClose={() => setNatalAspectPatternDetail(null)}
+      />
+    );
   }
 
   if (transitArticle && onCloseTransitArticle) {
@@ -972,6 +1050,9 @@ export function YouPage({
               natalAspectGroups={natalAspectGroups}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
+              onOpenNatalAspectPatternDetail={(item, nestedItems) => {
+                setNatalAspectPatternDetail({ item, nestedItems });
+              }}
               planetRows={planetRows}
               showNatalSignatures={showNatalSignatures}
               signatureBody={signatureBody}

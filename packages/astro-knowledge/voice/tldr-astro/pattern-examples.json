@@ -1,0 +1,87 @@
+[
+  {
+    "sourceId": "pattern-yod-saturn-apex",
+    "surface": "pattern",
+    "mode": "natal-aspect-pattern-reader",
+    "pattern": "yod",
+    "tier": "outer",
+    "canonical": true,
+    "note": "Gold: the v3.7 relationship-level Yod. It defines the plan the base pair can agree on, uses planet-resolved placement behavior, names the apex need that plan misses, and explains the reference point as a change of perspective.",
+    "content": {
+      "overview": "Venus helps you recognize what feels worth choosing. Moon helps you know what you can rely on once the decision is made. Because the decision affects both communication and your creative life, the plan has to work when you have to explain it as well as it does when it becomes personal. Your Saturn will not call it settled until you understand what can be sustained.",
+      "sections": [
+        {
+          "id": "feel",
+          "body": "Your Venus in Gemini wins people over with wit and easy conversation, and in the 3rd house that plays out through communication. Your Moon in Leo loves big, and in the 5th house that plays out through creativity. The first plan is likely to satisfy those two responses. But your Saturn in the 10th house of career and reputation brings a need to know what is sustainable, required, and actually yours to carry. In this part of life, you also need achievement and structure. An agreement can look reasonable and still place too much weight on you over time. The subject can return through another deadline, an unpaid cost, or a responsibility no one named clearly."
+        },
+        {
+          "id": "level_2",
+          "title": "How the Yod works",
+          "body": "A Yod has two planets that work together and a third whose needs do not fit their first solution. Here, Venus and Moon form the cooperative pair. Each meets Saturn at 150 degrees. That angle offers no automatic compromise, so a plan that suits Venus and Moon must be adjusted to include Saturn."
+        },
+        {
+          "id": "planet_roles",
+          "body": "Saturn is the apex: the planet whose needs do not fit the first solution. In this chart, that missing need appears in the 10th house of career and reputation. The plan must be revised until it includes that need."
+        },
+        {
+          "id": "reference_point",
+          "body": "Opposite Saturn is a reference point in Cancer, located in the 4th house. It is not another planet or a missing piece. When the same issue returns, it points toward a perspective the first plan may have missed: away from the immediate demands of career and reputation and toward the wider view of home and family. In practice, that means making room for safety and belonging."
+        }
+      ]
+    }
+  },
+  {
+    "sourceId": "pattern-t-square-venus-apex",
+    "surface": "pattern",
+    "mode": "natal-aspect-pattern-reader",
+    "pattern": "t_square",
+    "tier": "personal",
+    "canonical": true,
+    "note": "Gold: the v3.7 relationship-level T-square. The two competing aims are named first, outer planets are framed as shared generational background, and the apex is the first personal response.",
+    "content": {
+      "overview": "You may understand what has to change and see where the old approach has stopped working, especially where communication meets belief. When those aims pull apart, the inner life is where you tend to respond first.",
+      "sections": [
+        {
+          "id": "feel",
+          "body": "Pluto and Uranus move slowly, so their signs, Gemini and Sagittarius, describe a generation before they describe you alone. In your chart, Pluto anchors pressure, power, and what has to change in the 3rd house of communication, while Uranus anchors disruption and the need for a different form in the 9th house of belief. When both sides cannot lead, you tend to answer through the inner life. In this part of life, you also need meaning and gentleness. That can settle the immediate pressure without resolving the original conflict, so the same disagreement returns when the first answer stops holding."
+        },
+        {
+          "id": "level_2",
+          "title": "How the T-square works",
+          "body": "A T-square is two planets in opposition, both squaring a third. Two parts of you keep pulling opposite ways, where you transform against where you break form, and when neither can be ignored, Venus, the apex, is where the tension becomes a response."
+        },
+        {
+          "id": "planet_roles",
+          "body": "Venus is the apex, so it tends to be the first place the pressure shows. Opposite it, the empty leg in Virgo, in the 6th house, is not a missing piece or a guaranteed solution - it is the less automatic response, toward daily work: making room for order and usefulness."
+        }
+      ]
+    }
+  },
+  {
+    "sourceId": "pattern-grand-cross-figure",
+    "surface": "pattern",
+    "mode": "natal-aspect-pattern-reader",
+    "pattern": "grand_square",
+    "tier": "figure",
+    "canonical": true,
+    "note": "Gold: the v3.7 relationship-level Grand Cross. The two conflicts are named as pairs, personal planets use resolved placement behavior, outer planets are framed as shared background, and the lived consequence is one system with no single outlet.",
+    "content": {
+      "overview": "You may understand what has to change while also trying to see where the old approach has stopped working, and you may notice what feels safe enough to trust while trying to see what needs a direct response. These conflicts meet across communication, daily work, belief, and the inner life.",
+      "sections": [
+        {
+          "id": "feel",
+          "body": "One conflict runs between communication and belief; the other runs between daily work and the inner life. Your Moon in Virgo shows care by being useful, and in the 6th house that plays out through daily work. Your Mars in Pisces looks calm on the outside while something restless paces around inside you, and in the 12th house that plays out through the inner life. Pluto and Uranus move slowly, so their signs, Gemini and Sagittarius, describe a generation before they describe you alone. In your chart, Pluto anchors pressure, power, and what has to change in the 3rd house of communication, while Uranus anchors disruption and the need for a different form in the 9th house of belief. Because both conflicts share the same system, a choice that helps one side can press on another. You may answer the loudest demand first and find that another need has been waiting the whole time."
+        },
+        {
+          "id": "level_2",
+          "title": "How the Grand Cross works",
+          "body": "A Grand Cross is two oppositions at right angles, so four planets square and oppose each other in a closed figure with no single outlet. Each corner sits in tension with the two beside it and the one across, so pressure hands off around the figure and easing one corner tends to load another."
+        },
+        {
+          "id": "planet_roles",
+          "body": "Pluto and Uranus form one opposition, where you transform against where you break form. Moon and Mars form the other, what feels safe against how you push. No planet is the whole story, and none is the release the way a T-square has an apex."
+        }
+      ]
+    }
+  }
+]

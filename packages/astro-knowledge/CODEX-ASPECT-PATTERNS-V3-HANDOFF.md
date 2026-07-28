@@ -6,7 +6,7 @@ No stored per-chart bodies; no example-specific reasoning inside templates.
 
 ## 0. Canonical sources
 ```
-Canonical copy: aspect-pattern-templates-v3.3.md   (all six, fully generalized,
+Canonical copy: aspect-pattern-templates-v3.7.md   (all six, fully generalized,
   complete confidence branches, single namespace, house-aware, unknown-time L1+L2)
 Historical reference only (DO NOT implement copy or schema from these):
   aspect-pattern-canonical-spec-v2.md, aspect-pattern-model-v3-tsquare.md,
@@ -17,12 +17,13 @@ Historical reference only (DO NOT implement copy or schema from these):
 ## 0b. Eligible bodies (LOCKED)
 PRIMARY detector (creates/suppresses patterns): Sun, Moon, Mercury, Venus, Mars,
 Jupiter, Saturn, Uranus, Neptune, Pluto = 10 bodies. focal-demand-by-planet and
-apex-pressure-by-planet tables = 10 rows each.
+pattern-narrative-by-planet tables = 10 rows each. background-anchor-by-planet =
+Uranus, Neptune, and Pluto only.
 SECONDARY / optional: Chiron may appear as a participant ("Chiron participates in
 this pattern") or via an expanded-pattern setting, but must NOT create or suppress a
 primary Grand Cross, Kite, or Yod in v1. Chiron gets its own table row only when the
 secondary-participation behavior is designed.
-EXCLUDED: nodes and angles (points, not bodies; no focal_demand / apex_pressure grammar).
+EXCLUDED: nodes and angles (points, not bodies; no focal_demand / pattern narrative grammar).
 
 ## 1. Locked schema
 ```
@@ -35,14 +36,16 @@ resolved_instance:
     max_orb, confidence, birth_time_confidence
 resolved_clauses:   # resolver OUTPUTS, assembled from participant fields - not stored natal text
   per participant: role_gloss, house_label, house_area, house_context,
-    sign_house_pull, sign_house_response, sign_pull, sign_behavior
-  apex extra (T-square): response_example, pressure_response  # REQUIRED for a
-    resolved T-square apex (used in shows_up / complicated). If the source layer
-    cannot produce both, FAIL validation rather than drop a required section.
+    decision_area, decision_test,
+    base_contribution, sign_need, sign_house_response, sign_behavior
+  composed groups: ends.intro, corners.intro, trio.intro, bases.intro,
+    axisA.intro, axisB.intro
+  apex extra (T-square): response_example
   focal: focal_demand, focal_interruption            # Kite - BOTH REQUIRED; fail
     validation if unavailable (templates cannot render feel/shows_up/complicated without them)
-  apex: apex_pressure, repeating_question            # Yod - BOTH REQUIRED; fail
-    validation if unavailable (same reason)
+  every member: base_contribution                    # REQUIRED relationship-level action
+  Yod apex: lived_title, lived_need, incomplete_first_answer,
+    returning_lived_example                         # ALL REQUIRED; fail validation
   reference: reference_behavior, reference_area       # Yod / balancing points
   opposition: area                                    # Grand Cross / Mystic Rectangle
   empty_leg: balancing_move
@@ -68,14 +71,14 @@ house_label         "the 4th house".  SOURCE: house number.
 house_area          noun phrase "home, family, and privacy". SOURCE: house-topic layer.
 house_context       prepositional "at home, with family, or around where you live".
                     SOURCE: house-context layer (new 12-row table or derived).
-sign_house_pull     verb phrase completing "Your {planet} in {house_label} ___"
-                    ("wants room to act from your own center"). SOURCE: planet-in-sign
-                    behavior layer + house_context. Non-action (opposition-end / trine).
+decision_area       single lived house concern ("your reputation"). SOURCE: derived
+                    12-house decision layer; used by the Yod opening only.
+decision_test       adverbial lived test ("in private", "on paper"). SOURCE: derived
+                    12-house decision layer; used by the Yod opening only.
 sign_house_response verb phrase completing "{planet} in {house_label} ___"
                     ("protects its privacy before explaining what went wrong"). The
-                    response form for apex / focal; SAME grammatical frame as sign_house_pull.
-response_example    short clause for shows_up ("often by protecting your space").
-pressure_response   short clause for complicated ("retreat, guard the people you love").
+                    response form for apex / focal.
+response_example    short clause for the T-square apex ("often by protecting your space").
 balancing_move      empty-leg response by empty_leg SIGN ("name the limit out loud...").
                     SOURCE: sign layer (the sign's core need/response).
 focal_demand        what the Kite focal introduces ("a standard, a delay, or a fact
@@ -83,31 +86,43 @@ focal_demand        what the Kite focal introduces ("a standard, a delay, or a f
                     (NEW, 10 rows; +1 if Chiron is enabled as secondary), refined by sign/house.
 focal_interruption  the lived event where the focal interrupts ("questions, deadlines,
                     and repeated effort"). SOURCE: focal planet + SIGN + house.
-apex_pressure       what the Yod apex adds ("consequences that are harder to smooth
-                    over"). SOURCE: apex-pressure-by-planet table (10 primary rows;
-                    optional Chiron only after secondary participation is designed) + SIGN + house.
-repeating_question  the concrete returning question ("can you keep paying for,
-                    promising, or carrying this..."). SOURCE: apex planet + SIGN + house.
+sign_need           source-only sign complement. It may support personal apex/focal
+                    responses, but must not be attributed directly to a named
+                    base, corner, or opposition-end planet.
+group.intro         a resolver-composed member introduction. Personal planets use
+                    planet-in-sign placement behavior; Uranus, Neptune, and Pluto
+                    use one combined generation/background sentence plus chart
+                    houses when birth time is known.
+base_contribution   a planet-level action completing "you may ___"
+                    ("understand what has to change"). SOURCE: pattern-narrative-by-planet.
+lived_title         the reader-facing Yod title resolved from the apex planet.
+lived_need          noun phrase completing "{planet} brings ___".
+incomplete_first_answer  a complete sentence naming how the first answer can work
+                    and remain incomplete.
+returning_lived_example  a complete sentence naming a recognizable way the issue
+                    returns. These four Yod-apex values come from pattern-narrative-by-planet.
 reference_behavior  what the balancing SIGN points to ("the body, budget, comfort, and
                     plain routine" for Taurus; "information, a conversation, or a smaller
                     next decision" for Gemini). SOURCE: sign layer, per reference sign.
 opposition.area     lived area of an opposition ("a conflict about money and trust").
                     SOURCE: the two planets + their houses.
-sign_pull/sign_behavior  HOUSE-FREE variants of sign_house_pull/sign_house_response
-                    for unknown birth time. SOURCE: planet-in-sign layer only.
+sign_behavior       HOUSE-FREE sign behavior reserved for future use.
+                    SOURCE: planet-in-sign layer only.
 ```
 Namespace is single and role-based (matches the templates file): apex.planet,
 focal.planet (+ focal.opposes), empty_leg.{sign,house_label,house_area,balancing_move},
 reference.{sign,house_label,area,behavior}; members c1..c4 / t1..t3 / base1,base2 /
-oppA,oppB / oa1,oa2,ob1,ob2. Always use the dotted form (apex.planet); never an
+oppA,oppB / oa1,oa2,ob1,ob2; groups ends / corners / trio / bases / axisA / axisB.
+Always use the dotted form (apex.planet); never an
 underscore alias such as apex-underscore-planet.
 Each pattern has AUTHORED `unknown_time L1` AND `unknown_time L2` bodies (house-free,
 sign-resolved) in the templates file - use them rather than dropping house sentences
 one by one.
 
-Authored base tables now live in `aspect-pattern-templates-v3.3.md`:
-focal-demand-by-planet (Kite) and apex-pressure-by-planet (Yod), with 10 primary
-rows each. Everything else reuses existing layers (planet-function, planet-in-sign
+Authored base tables now live alongside `aspect-pattern-templates-v3.7.md`:
+focal-demand-by-planet (Kite) and pattern-narrative-by-planet (all six patterns,
+with Yod-specific apex fields), with 10 primary rows each, plus the three-row
+background-anchor-by-planet table. Everything else reuses existing layers (planet-function, planet-in-sign
 behavior, house-topic, sign core-need).
 
 Canonical planet-in-sign behavior source (CONFIRMED): the V3
@@ -208,7 +223,7 @@ six files (so no older same-named copy can be picked up):
   Must print "GOLD RENDER: PASS".
 Resolver-policy branches (moon_time_uncertainty, contained-pattern precedence,
 missing_derived_point, Chiron-secondary) are asserted present in THIS handoff by the
-validator. FROZEN: once all three pass from the clean directory, table authoring may
+validator. LOCKED AT V3.7: once all three pass from the clean directory, table authoring may
 change only the VALUES supplied to existing tokens - never add, rename, or
 re-contract a token. Re-run all three after any edit. A later issue is either a
 token-value problem (fix the table value) or a renderer bug (fix resolution) - never
@@ -216,7 +231,7 @@ a template redesign, unless a real chart proves the contract cannot express a me
 
 ## 9. Build order + report
 1. Owner-review and lock the two drafted tables (focal-demand-by-planet,
-   apex-pressure-by-planet, 10 rows each). The canonical planet-in-sign source is
+   pattern-narrative-by-planet, 10 rows each). The canonical planet-in-sign source is
    confirmed above.
 2. Implement resolved_clauses; then the six mechanic templates + partial bodies +
    confidence slots + overrides from the templates file.

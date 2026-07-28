@@ -121,6 +121,7 @@ try {
   const { renderToStaticMarkup } = await import("react-dom/server");
   const {
     fetchNatalAspectPatternsWithCopy,
+    natalAspectPatternPillSummary,
     natalAspectPatternReaderItems
   } = await vite.ssrLoadModule("/apps/web/src/services/natalAspectPatterns.ts");
   const {
@@ -176,6 +177,90 @@ try {
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationContexts"), "true");
   assert.equal(activationUrl.searchParams.get("includeAspectPatternActivationCopy"), "true", "Activation copy must come from the governed resolver too.");
   assert.equal(unknownTimeUrl.searchParams.get("timeKnown"), "false", "Unknown birth time must reach the API explicitly.");
+
+  const patternFixture = (id, type, confidence, maximumOrb) => ({
+    id,
+    type,
+    planets: [],
+    sourceAspectIds: [],
+    roles: {},
+    derivedPoints: [],
+    geometry: {
+      orbPolicyId: "test",
+      maximumOrb,
+      averageOrb: maximumOrb,
+      weakestAspectOrb: maximumOrb,
+      isOutOfSign: false,
+      confidence,
+      warnings: []
+    }
+  });
+
+  assert.deepEqual(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [
+          patternFixture("grand-cross", "grand_square", "strong", 1.5),
+          patternFixture("t-square", "t_square", "exact", 0.5),
+          patternFixture("yod", "yod", "exact", 0.8),
+          patternFixture("wide-kite", "kite", "wide", 2)
+        ],
+        relationships: [
+          {
+            parentPatternId: "grand-cross",
+            childPatternId: "t-square",
+            relationship: "contains"
+          }
+        ],
+        ranking: {
+          displayOrder: ["yod", "grand-cross", "t-square", "wide-kite"]
+        }
+      }
+    }),
+    {
+      label: "Yod +1",
+      patternNames: ["Yod", "Grand Cross"]
+    },
+    "the pill should show ranked exact/strong parent patterns and collapse contained children"
+  );
+
+  assert.deepEqual(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [
+          patternFixture("wide-parent", "grand_square", "wide", 2.5),
+          patternFixture("exact-child", "t_square", "exact", 0.5)
+        ],
+        relationships: [
+          {
+            parentPatternId: "wide-parent",
+            childPatternId: "exact-child",
+            relationship: "contains"
+          }
+        ],
+        ranking: {
+          displayOrder: ["wide-parent", "exact-child"]
+        }
+      }
+    }),
+    {
+      label: "T-square",
+      patternNames: ["T-square"]
+    },
+    "a confident child should remain visible when its parent is not confident"
+  );
+
+  assert.equal(
+    natalAspectPatternPillSummary({
+      aspectPatterns: {
+        patterns: [patternFixture("wide-yod", "yod", "wide", 2.5)],
+        relationships: [],
+        ranking: { displayOrder: ["wide-yod"] }
+      }
+    }),
+    null,
+    "wide patterns should not receive a discovery pill"
+  );
 
   const parentId = "grand-square-a";
   const childId = "t-square-a";
@@ -290,20 +375,11 @@ try {
   assert.equal(missingCopyItems.length, 2, "Contexts without governed resolved copy must be skipped, never rendered bare.");
 
   const html = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, { items, status: "ready" }));
-  const [
-    parentNatalPosition,
-    supportingPosition,
-    childNatalPosition
-  ] = renderedTextPositions(html, [
-    "Grand Cross across Sun, Moon, Mars, and Saturn",
-    "Supporting pattern detail",
-    "T-Square with Mars at the action point"
-  ]);
-
-  assert.ok(parentNatalPosition < supportingPosition, "Supporting patterns must remain nested after permanent natal copy.");
-  assert.ok(supportingPosition < childNatalPosition, "Contained natal pattern copy must render inside supporting detail.");
-  assert.match(html, /Reading note/, "Confidence qualifications must render under their reader-facing label.");
-  assert.match(html, /This pattern is wide, so read it as a loose tendency/, "Confidence note bodies must reach the reader.");
+  assert.match(html, /Grand Cross across Sun, Moon, Mars, and Saturn/, "The primary pattern quote must remain visible.");
+  assert.match(html, />Details</, "The compact pattern preview must expose its detail reader.");
+  assert.doesNotMatch(html, /T-Square with Mars at the action point/, "Contained pattern copy must move with its parent into the detail reader.");
+  assert.doesNotMatch(html, /Reading note/, "Long-form pattern sections must not render on the natal overview.");
+  assert.doesNotMatch(html, /This pattern is wide, so read it as a loose tendency/, "Confidence notes must move into the detail reader.");
   assert.doesNotMatch(html, /package 1|package_1|leaked generic/, "Generic package sections must never render, as heading or body.");
   assert.doesNotMatch(html, /Mars is pressing on your T-Square response point|Saturn is contacting one corner of your Grand Cross|Active chart patterns|natal-pattern-card__activation/, "Natal pattern cards must not render temporary activation copy.");
 

@@ -2,6 +2,8 @@ import { Clock, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { ManualChart } from "../../services/manualCharts";
+import type { NatalAspectPatternPillSummary } from "../../services/natalAspectPatterns";
+import { ChartPatternPill } from "./ChartPatternPill";
 
 export type FriendChartListItem = {
   chart: ManualChart;
@@ -11,6 +13,7 @@ export type FriendChartListItem = {
   rising: string;
   needsBirthTime: boolean;
   active: boolean;
+  patternSummary: NatalAspectPatternPillSummary | null;
 };
 
 type FriendChartsListProps = {
@@ -157,7 +160,7 @@ export function FriendChartsList({
           )}
           {charts.length > 0 && (
             <div className="list you-list-card manual-chart-cards" aria-label="Chart list">
-              {charts.map(({ chart, initials, sun, moon, rising, needsBirthTime, active }) => (
+              {charts.map(({ chart, initials, sun, moon, rising, needsBirthTime, active, patternSummary }) => (
                 <div
                   className={`manual-chart-row chart-row${openChartMenuId === chart.id ? " manual-chart-row--menu-open" : ""}`}
                   key={chart.id}
@@ -177,6 +180,7 @@ export function FriendChartsList({
                         <span>☉ {sun}</span>
                         <span>☽ {moon}</span>
                         <span>↑ {rising}</span>
+                        {patternSummary ? <ChartPatternPill summary={patternSummary} /> : null}
                         <span className="manual-chart-sync-status" role="status">
                           {chartSyncStatusLabel(chart)}
                         </span>
@@ -219,11 +223,11 @@ export function FriendChartsList({
             >
               <button type="button" role="menuitem" onClick={() => onEditChart(activeMenuItem.chart)}>
                 <Pencil size={17} aria-hidden="true" />
-                <span>Edit chart</span>
+                <span>Edit</span>
               </button>
               <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => onDeleteChart(activeMenuItem.chart)}>
                 <Trash2 size={17} aria-hidden="true" />
-                <span>Delete chart</span>
+                <span>Delete</span>
               </button>
             </span>,
             document.body

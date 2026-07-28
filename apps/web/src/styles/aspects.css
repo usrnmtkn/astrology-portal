@@ -512,6 +512,13 @@
   text-wrap: pretty;
 }
 
+.transit-card-preview {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
 .updates-aspect-row__detail {
   border-top: 1px solid var(--card-border);
   margin-top: var(--space-2);

@@ -26,9 +26,30 @@ const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
-const sunLeo = renderer.renderSkyPlacement({ planet: "sun", sign: "leo" });
-const sunAries = renderer.renderSkyPlacement({ planet: "sun", sign: "aries" });
-const mercuryCancerIngress = renderer.renderSkyPlacement({ planet: "mercury", sign: "cancer" });
+const sunLeo = renderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "leo",
+  egressDate: "August 22",
+  events: [{
+    type: "aspect",
+    a: "sun",
+    aSign: "leo",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "conjunction",
+    exactDate: "July 29",
+    applying: true
+  }]
+});
+const sunAries = renderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "aries"
+});
+const mercuryCancerIngress = renderer.renderSkyPlacement({
+  planet: "mercury",
+  sign: "cancer",
+  egressDate: "August 9"
+});
 const mercuryCancerRetrograde = renderer.renderTransitRetro({
   planet: "mercury",
   sign: "cancer",
@@ -163,7 +184,11 @@ assert.match(
 );
 
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
-assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing")), false, "Retired sky-writing source folder must not exist.");
+assert.equal(
+  fs.existsSync(path.join(repoRoot, "apps/web/src/content/sky-writing/TLDR-Sky-Article-Spec.md")),
+  true,
+  "The voice-first spec must remain available as the placement contract."
+);
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyContentSnapshot.json")), false, "Retired normalized Sky snapshot must not exist.");
 assert.doesNotMatch(app, /skyWriting|resolveSkyWritingArticle|sky-writing-v1|skyContentSnapshot/u, "App reader surfaces must not reference retired Sky writing paths.");
 assert.doesNotMatch(adminDashboard, /skyWriting|localSkySnapshot|skyContentSnapshot/u, "Admin must not expose retired local Sky snapshot rows.");
@@ -179,22 +204,32 @@ assert.match(
 );
 assert.match(app, /normalizeSkyPlacementSurface/, "Sky placement rendering must flow through the normalized surface path.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
+assert.match(
+  app,
+  /function skyPlacementArticleAspects\([\s\S]*applyingPriority[\s\S]*conjunctionPriority[\s\S]*\.slice\(0, 1\)/u,
+  "The placement article must prefer one applying conjunction, then the nearest applying major aspect."
+);
 
 assert.equal(sunLeo.headline, "The Sun in Leo", "Package Sun-in-Leo headline must remain factual.");
 assert.match(
   sunLeo.body,
-  /The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with/,
-  "Package Sun-in-Leo copy must come from dist/tldr-content.js."
-);
-assert.match(
-  sunLeo.body.trim(),
-  /Chase the clout directly and you'll just watch it land on somebody else\.$/u,
-  "Sun-in-Leo package copy must end on the approved shadow-and-turn paragraph."
+  /^You've been running on autopilot through a version of yourself that needs updating\./u,
+  "Package Sun-in-Leo copy must lead with the memorable voice-first hook."
 );
 assert.doesNotMatch(
   sunLeo.body,
-  /lamplight|The Sun crosses from Cancer into Leo|shell drawn around it/i,
-  "Package Sun-in-Leo copy must not contain the retired rogue Leo passage."
+  /Wishing you|Leo is the fifth sign|The Leo trap|for everyone at once/iu,
+  "Sky placement articles must not restore sign lore, a blessing, a trap label, or the collective wrapper."
+);
+assert.match(
+  sunLeo.body,
+  /Leo measures by applause, and applause is a fickle ruler\./u,
+  "Sun-in-Leo must keep the sharper authored turn instead of a generic confrontation."
+);
+assert.match(
+  sunLeo.body,
+  /Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum\./u,
+  "Sun-in-Leo must append the computed applying/exact aspect fact below the evergreen article."
 );
 assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
 assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
@@ -212,9 +247,11 @@ assert.deepEqual(
   ],
   "Approved Sky placement articles must render hook, lived expression, and turn in order."
 );
-assert.match(app, /approvedFallbackSection[\s\S]*mergedGeneratedSection/u, "Owner-approved package rows must take precedence over generated Sky placement cards.");
-assert.match(app, /sky-detail-tagline/u, "Sky placement taglines must render below the article title.");
-assert.match(app, /sky-placement-moves/u, "Sky placement moves must render as an action list.");
+assert.doesNotMatch(
+  sunLeo.body,
+  /this energy|right now|reveals|heals|[\u2013\u2014]/iu,
+  "Sun-in-Leo must satisfy the placement-article voice bans."
+);
 assert.match(app, /return `\$\{skyDisplayPlanetName\(position\.planet\)\} Rx in \$\{position\.sign\}`;/, "Retrograde Sky ID title must stay factual in the app route.");
 assert.equal(
   mercuryCancerRetrograde.headline,
@@ -228,13 +265,19 @@ assert.doesNotMatch(
 );
 assert.match(
   mercuryCancerIngress.body,
-  /Mercury's move into Cancer changes the voice in the room/iu,
-  "Direct-motion Mercury in Cancer must retain its ingress article."
+  /^You already know the conversation you have been avoiding\./u,
+  "Direct-motion Mercury in Cancer must retain the stronger voice-first hook."
 );
 assert.doesNotMatch(
   `${mercuryCancerIngress.headline}\n${mercuryCancerIngress.body}`,
   /You do not owe every message an instant reply\./u,
   "Direct-motion ingress articles must not contain retrograde-article copy."
+);
+
+assert.equal(
+  sunLeo.templateKey,
+  "fallback-template/sky.placement-article",
+  "Sun-in-Leo must report the governed shared placement template."
 );
 
 console.log(JSON.stringify({

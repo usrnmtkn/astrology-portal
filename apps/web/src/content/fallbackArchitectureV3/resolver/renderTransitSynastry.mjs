@@ -46,7 +46,11 @@ const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, 
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
-export function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant }) {
+const EVENT_QUALITY = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+const EVENT_VERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
+const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
+
+export function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
   const v = voice === "you" ? "you" : "they";
   // Two-layer authored lane (Mars pilot): house intro + house-sign synthesis, dual voice.
   // Requires sign; variant 2+ rotates to the Satori-register rows, falling back to base.
@@ -61,6 +65,33 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
       const headline = v === "you"
         ? `${title(planet)} moving through your ${ordinal(house)} house`
         : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
+      // Retrograde overlay: revise-not-redo framing appended when the engine flags Rx during the crossing.
+      if (isRetrograde) {
+        const ro = hookVoice(`fallback-hook/transit-house-retro-overlay/${planet}`, v);
+        if (ro) parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" }));
+      }
+      // Aspect events layer (sky-register composer, owner-calibrated 2026-07-27):
+      // frame(+window) -> wants-pair sentence -> pair scenes (override row first, else the pair effect line).
+      // Falls back to the legacy frame+aspect-body stitch when composer rows are missing for a planet.
+      for (const e of events ?? []) {
+        try {
+          const quality = EVENT_QUALITY[e.aspect];
+          const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
+          const frameRaw = quality ? hookVoice(`fallback-hook/transit-house-event-frame/${planet}`, v) : null;
+          const windowClause = e.window ? (/^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}`) : "";
+          const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal(house), natalTitle: title(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] }) : null;
+          const wants = sign ? hookVoice(`fallback-hook/transit-house-event-wants/${planet}/${sign}`, v) : null;
+          const holds = hookVoice(`fallback-hook/transit-house-event-natal/${e.natal}`, v);
+          const scenes = hookVoice(`fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`, v)
+            ?? hookVoice(`fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`, v);
+          if (frame && wants && holds && scenes) {
+            parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
+          } else {
+            const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
+            parts.push(frame ? `${frame} ${asp.body}` : asp.body);
+          }
+        } catch { /* SOURCE_GAP on an event never blocks the house card */ }
+      }
       return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
     }
   }
@@ -86,6 +117,12 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const v = voice === "you" ? "you" : "they";
   const otherPoss = v === "they" ? `${voice}'s` : null;
   const g = GROUP[aspect] ?? aspect; // accepts group names directly
+  // Owner rulings 2026-07-27/28: Lilith renders on conjunction/opposition only (Walker canon);
+  // node cards are conjunction-focused. Other contacts raise SOURCE_GAP and the surface hides.
+  if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") throw new SourceGapError(`SOURCE_GAP: lilith renders conjunction/opposition only (got ${aspect})`);
+  // Node cards are conjunction-focused (owner 2026-07-28): authored rows exist only for
+  // conjunctions; other node aspects fall through to the legacy fallback (sky pipeline uses them).
+
   // Batch 3 sharing rule, direction-aware: a conjunction reads as the hard unit when a
   // heavy planet is involved and as the soft unit otherwise. Soft/hard only borrow the
   // conjunction unit when its tone matches (soft for light pairs, hard for heavy pairs).
@@ -106,7 +143,26 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-  if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
+  if (v === "you") for (const k of tryKeys) {
+    const c = card(k);
+    if (c) {
+      // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
+      // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.
+      const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
+      const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
+      let aBody = c.body_you ?? c.body;
+      aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
+      aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+      // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
+      if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
+        const NAT = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","midheaven","ascendant"];
+        const fnIdx = (((NAT.indexOf(natal) + (variant ?? 0)) % 4) + 4) % 4 + 1;
+        const fogNote = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`)?.body_you;
+        if (fogNote) aBody = `${aBody}\n\n${fogNote}`;
+      }
+      return { headline: c.headline || "", body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+    }
+  }
   // fallback template
   const T = tpl("fallback-template/transit.aspect");
   // the natal planet's life areas, so type lines can say WHAT gets easier/harder
@@ -139,7 +195,24 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
     transitTypeLine: typeLineRaw ? fill(typeLineRaw, { natalArea, transitEffect }) : typeLineRaw,
   };
   for (const slot of T.requiredSlots) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
-  let body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+  // Composer register (owner directive 2026-07-28): real aspect verb + wants-pair + pair scenes.
+  // Replaces the "In plain terms" scaffold whenever the composer rows exist; legacy template otherwise.
+  const AVERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
+  const cWants = (sign ? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}/${sign}`, v) : null)
+    ?? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}`, v);
+  const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
+  const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
+    ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
+  const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;
+  let body;
+  if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
+    const opener = v === "you"
+      ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.`
+      : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
+    body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+  } else {
+    body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+  }
   body = body.charAt(0).toUpperCase() + body.slice(1);
   // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
   if (isRetrograde && v === "you") {
@@ -505,12 +578,53 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
+const SKY_PLACEMENT_ASPECT_INTERACTION = {
+  conjunction: "amplify each other",
+  square: "push against each other",
+  opposition: "pull from opposite ends",
+  trine: "work together with less friction",
+  sextile: "open a workable route between them"
+};
+
+function capitalizeSentence(value) {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+}
+
+function skyPlacementAspectParagraph(placementPlanet, ev) {
+  if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
+  const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+  const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
+    ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
+  const aRef = transitRef(ev.a, ev.aSign);
+  const bRef = transitRef(ev.b, ev.bSign);
+  const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction"
+    ? "amplify momentum"
+    : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+  const timing = ev.exactDate
+    ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}`
+    : ev.dateLine ?? "In the current aspect window";
+  const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+  const effect = specific ?? pairEffect(ev);
+  if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
+  return `${fact} ${capitalizeSentence(effect)}`.trim();
+}
+
 // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
 // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
-// Generic rows remain coverage for unapproved pairs such as Lilith. ----
+// Computed aspect facts follow the evergreen article. ----
 export function renderSkyPlacement({ planet, sign, events = [] }) {
+  const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
   const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
-  if (authoredArticle) return result(authoredArticle, "authored/sky-ingress");
+  if (authoredArticle) {
+    const parts = [authoredArticle.body, ...aspectParas].filter(Boolean);
+    return {
+      headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+      body: parts.join("\n\n"),
+      parts,
+      templateKey: "authored/sky-ingress",
+      contentKey: authoredArticle.contentKey
+    };
+  }
   const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
   const pairHook = hooks.get(pairKey)?.body_you;
   const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
@@ -520,16 +634,8 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
     .split(/\r?\n/u)
     .map((move) => move.trim())
     .filter(Boolean);
-  const eventParas = events.map((ev) => {
-    const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect] ?? ev.aspect}` : ev.type;
-    const evFrame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
-    if (!evFrame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-    const body = fill(evFrame, eventCtx(ev));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
-    return body;
-  });
   if (pairHook && pairLived && pairTurn) {
-    const parts = [pairHook, pairLived, pairTurn, ...eventParas];
+    const parts = [pairHook, pairLived, pairTurn, ...aspectParas];
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline,
@@ -540,28 +646,43 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
       contentKey: pairKey
     };
   }
-  const youOpen = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-  const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+  const template = tpl("fallback-template/sky.placement-article");
+  if (!template) throw new SourceGapError("SOURCE_GAP: missing template fallback-template/sky.placement-article");
+  const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
   const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
-  if (!frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+  if (!fallbackHook || !frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
   const ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
-  const paras = [];
-  if (youOpen) paras.push(fill(youOpen, ctx));
-  paras.push(fill(frame, ctx));
-  if (paras.some((p) => /\{\{/.test(p))) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-  const lore = hooks.get(`fallback-hook/sky-season-lore/${sign}`)?.body_you;
-  if (lore) paras.push(lore);
+  const placementRef = capitalizeSentence(transitRef(planet));
+  const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you
+    ?? fill(fallbackHook, ctx);
+  const lived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you
+    ?? fill(frame, ctx);
+  const authoredTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
   const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
-  if (trap) paras.push(`The ${title(sign)} trap to watch while ${transitRef(planet)} is here is ${trap}`);
   const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
-  if (practice) paras.push(practice);
-  paras.push(...eventParas);
-  const elClose = hooks.get(`fallback-hook/sky-element-close/${ELEMENT[sign]}`)?.body_you;
-  if (elClose) paras.push(elClose);
-  const pb = vocab.get(`fallback-vocab/planet-blessing/${planet}`)?.body;
-  const sb = vocab.get(`fallback-vocab/sign-blessing/${sign}`)?.body;
-  if (pb && sb) paras.push(`Wishing you ${pb} and ${sb}.`);
-  return { headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "), body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.placement-article" };
+  const fallbackTurn = trap ? `The catch is ${trap}${practice ? ` ${practice}` : ""}` : practice;
+  const templateCtx = {
+    planetTitle: placementRef,
+    signTitle: title(sign),
+    hook,
+    lived,
+    turn: authoredTurn ?? fallbackTurn
+  };
+  for (const slot of template.requiredSlots ?? []) {
+    if (!templateCtx[slot]) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing ${slot}`);
+  }
+  const baseBody = fillKeep(template.body, templateCtx);
+  if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
+  const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+  return {
+    headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+    body: parts.join("\n\n"),
+    parts,
+    templateKey: template.contentKey,
+    tagline,
+    moves
+  };
 }
 
 // ---- Calendar page (CALENDAR-CONTENT-SPEC.md): lunar phases, void of course, season
@@ -708,8 +829,11 @@ export function renderDailyGlance({ natal, aspect, house }) {
 // seeds. The transit picks which natal planet needs tending; the natal chart writes the
 // list. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
 // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
-export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
+export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }) {
   const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+  const APPROVED = new Set(["approved", "approved_reuse", "reviewed"]);
+  const moonSeed = (k) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status) ? r.body : null; };
+  const day = Number.isFinite(dayKey) ? Math.abs(Math.trunc(dayKey)) : 0;
   const dos = [
     seed(`dodont-do/${planet}/${sign}`),
     house ? seed(`dodont-house/${house}`) : null,
@@ -718,12 +842,25 @@ export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weak
   const donts = [
     seed(`dodont-shadow/${planet}/${sign}`),
     seed(`dodont-friction/${transiting}`),
-    // third slot: aggravated partner's shadow when supplied; otherwise the pressed
-    // planet's own friction habit (skipped automatically by de-dupe if transiting === planet)
     weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : seed(`dodont-friction/${planet}`),
   ].filter(Boolean);
   if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
-  // de-dupe while preserving order (same seed can arrive twice via the weak-point path)
+  // Moon day layer (owner design 2026-07-27): the pressed transit anchors the list, the
+  // sky's Moon rotates a daily seed through it (sign line + the house the Moon is crossing).
+  // The 12 sign rows ship as drafts and only join once owner-approved.
+  const mds = [
+    moonSign ? moonSeed(`dodont-moon-do/${moonSign}`) : null,
+    moonHouse ? seed(`dodont-house/${moonHouse}`) : null,
+  ].filter(Boolean);
+  const mdt = [moonSign ? moonSeed(`dodont-moon-dont/${moonSign}`) : null].filter(Boolean);
   const uniq = (a) => [...new Set(a)];
-  return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
+  const rot = (a, n) => (a.length ? a.slice(n % a.length).concat(a.slice(0, n % a.length)) : a);
+  // the anchor keeps the lead slot; the day decides which companions show
+  const mDo = mds.length ? [mds[day % mds.length]] : [];
+  const mDont = mdt.length ? [mdt[day % mdt.length]] : [];
+  return {
+    do: uniq([dos[0], ...mDo, ...rot(dos.slice(1), day)]).slice(0, 3),
+    dont: uniq([donts[0], ...mDont, ...rot(donts.slice(1), day)]).slice(0, 3),
+    templateKey: "fallback-template/daily.dodont",
+  };
 }

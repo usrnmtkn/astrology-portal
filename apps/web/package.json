@@ -4,16 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "VITE_ENABLE_NATAL_ASPECT_PATTERNS=true vite --host 127.0.0.1",
     "prebuild": "node ../../scripts/test-reader-facing-content-contract.mjs && node ../../scripts/test-calendar-package-boundary.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tldr/astro-knowledge": "0.1.0",
     "@supabase/supabase-js": "^2.106.2",
+    "@tldr/astro-knowledge": "0.1.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "libphonenumber-js": "^1.13.9",
     "lucide-react": "^0.468.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

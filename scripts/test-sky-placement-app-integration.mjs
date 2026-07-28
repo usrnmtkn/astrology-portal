@@ -45,7 +45,8 @@ assert.match(app, /derivation\?\.planet === expected\.derivedFrom\.planet/);
 assert.match(app, /const generatedSection = generatedSkyPlacementWritingSection/);
 assert.match(
   app,
-  /const sections = mergedGeneratedSection \? \[mergedGeneratedSection\] : fallbackSection \? \[fallbackSection\] : \[\]/
+  /const sections = approvedFallbackSection[\s\S]*\? \[approvedFallbackSection\][\s\S]*: mergedGeneratedSection[\s\S]*\? \[mergedGeneratedSection\]/,
+  "Owner-approved package placement rows must precede generated placement cards while generated cards remain available."
 );
 assert.match(app, /const skyPlacementTopperMaxOrb = 1/);
 assert.match(app, /content\.eventType === "collective-placement-topper"/);

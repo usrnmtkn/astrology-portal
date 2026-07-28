@@ -2,11 +2,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { PACKAGE_VERSION } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architecture-v3-dashboard-rows.json");
-const importBatchId = "fallback-architecture-v3-2026-07-23f";
+const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -371,6 +372,36 @@ function countBy(rows, predicate) {
   return rows.filter(predicate).length;
 }
 
+function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
+  const liveCounts = importedCounts(importedRows);
+  const expectedKeys = new Set(expectedRows.map((row) => row.content_key));
+  const importedKeys = new Set(importedRows.map((row) => row.content_key));
+  const missingKeys = [...expectedKeys].filter((key) => !importedKeys.has(key));
+  const staleKeys = [...importedKeys].filter((key) => !expectedKeys.has(key));
+
+  for (const [bucket, expected] of Object.entries(expectedCounts)) {
+    const actual = liveCounts[bucket];
+
+    if (actual !== expected) {
+      throw new Error(`Dashboard mirror count mismatch for ${bucket}: expected ${expected}, received ${actual}.`);
+    }
+  }
+
+  if (missingKeys.length || staleKeys.length) {
+    throw new Error(
+      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale.`
+    );
+  }
+
+  if (importedRows.length !== expectedRows.length) {
+    throw new Error(
+      `Dashboard mirror row mismatch: expected ${expectedRows.length}, received ${importedRows.length}.`
+    );
+  }
+
+  return liveCounts;
+}
+
 loadLocalWebEnv();
 
 const rows = materializeRows();
@@ -395,15 +426,15 @@ console.log(`materialized ${rows.length} V3 dashboard rows -> ${path.relative(re
 console.log(JSON.stringify(counts, null, 2));
 
 if (apply) {
-  const deleted = await deleteStaleRows(rows);
-  console.log(`deleted ${deleted} stale V3 dashboard rows from generated_interpretations`);
   const upserted = await upsertRows(rows);
   console.log(`upserted ${upserted.length} V3 dashboard rows into generated_interpretations`);
+  const deleted = await deleteStaleRows(rows);
+  console.log(`deleted ${deleted} stale V3 dashboard rows from generated_interpretations`);
 }
 
 if (verify) {
   const importedRows = await readImportedRows();
-  const liveCounts = importedCounts(importedRows);
+  const liveCounts = verifyImportedMirror(rows, counts, importedRows);
   console.log(`verified ${importedRows.length} imported V3 dashboard rows in generated_interpretations`);
   console.log(JSON.stringify(liveCounts, null, 2));
 }

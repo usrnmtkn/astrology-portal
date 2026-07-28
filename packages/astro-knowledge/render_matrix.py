@@ -5,7 +5,7 @@ Path-portable; reads the shared contract; prints resolved inputs."""
 import re, json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
-TPL=ROOT/"aspect-pattern-templates-v3.3.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
+TPL=ROOT/"aspect-pattern-templates-v3.7.md"; CONTRACT=ROOT/"aspect-pattern-contract.json"
 print(f"Template: {TPL}\nContract: {CONTRACT}\n")
 C=json.loads(CONTRACT.read_text()); FIELDS=C["fields"]; PATTERNS=C["patterns"]
 SIGN_FIELDS={f for f,fl in FIELDS.items() if fl["sign"]}
@@ -16,19 +16,36 @@ SIGNBEH={"Cancer":"guards-and-withdraws","Capricorn":"takes-charge-and-structure
 HOUSEBEH={4:"around-home-base",10:"around-public-standing"}
 ROLE={"Sun":"identity","Moon":"needs","Mars":"drive","Saturn":"limits","Venus":"values",
  "Mercury":"thinking","Jupiter":"belief","Uranus":"disruption","Neptune":"imagination","Pluto":"power"}
-def val(pre,fld,ch):
+def val(pre,fld,ch,include_houses=True):
     d=ch[pre]; s=d["sign"]; h=d["house"]; p=d["planet"]
+    if fld == "intro":
+      parts=[]
+      for member in d["members"]:
+        role=ch[member]
+        part=f"{role['planet']}-{SIGNBEH[role['sign']]}"
+        if include_houses: part+=f"-{HOUSEBEH[role['house']]}"
+        parts.append(part)
+      return "INTRO-"+"|".join(parts)
+    if fld == "sign_list":
+      return "SIGNS-"+"|".join(ch[member]["sign"] for member in d["members"])
     return {"planet":p,"sign":s,"opposes":d.get("opposes","Saturn"),
       "house_label":f"the {h}th house","house_area":f"HA-{HOUSEBEH[h]}","house_context":f"HC-{HOUSEBEH[h]}",
+      "decision_area":f"DA-{HOUSEBEH[h]}","decision_test":f"DT-{HOUSEBEH[h]}",
       "role_gloss":f"RG-{ROLE.get(p,'x')}",
-      "sign_house_pull":f"{SIGNBEH[s]}-{HOUSEBEH[h]}","sign_house_response":f"{SIGNBEH[s]}-{HOUSEBEH[h]}",
-      "sign_pull":SIGNBEH[s],"sign_behavior":SIGNBEH[s],"response_example":SIGNBEH[s],
-      "pressure_response":SIGNBEH[s],"balancing_move":SIGNBEH[s],"behavior":SIGNBEH[s],
-      "apex_pressure":f"{SIGNBEH[s]}-{HOUSEBEH[h]}-c","repeating_question":f"{SIGNBEH[s]}-{HOUSEBEH[h]}-q",
+      "sign_need":f"SN-{SIGNBEH[s]}",
+      "base_contribution":f"understand-{ROLE.get(p,'x')}",
+      "lived_title":f"The answer keeps leaving {ROLE.get(p,'x')} out",
+      "lived_need":f"a need to include {ROLE.get(p,'x')}",
+      "incomplete_first_answer":f"The first answer leaves {ROLE.get(p,'x')} unresolved",
+      "returning_lived_example":f"The subject returns through {ROLE.get(p,'x')}",
+      "moon_condition":f"MC-{SIGNBEH[s]}",
+      "sign_house_response":f"{SIGNBEH[s]}-{HOUSEBEH[h]}",
+      "sign_behavior":SIGNBEH[s],"response_example":SIGNBEH[s],
+      "balancing_move":SIGNBEH[s],"behavior":SIGNBEH[s],
       "focal_demand":f"{SIGNBEH[s]}-{HOUSEBEH[h]}-d","focal_interruption":f"{SIGNBEH[s]}-{HOUSEBEH[h]}-i",
       "area":f"opparea-{HOUSEBEH[h]}"}.get(fld,f"?{fld}?")
 TOK=re.compile(r"\{([a-zA-Z_0-9]+)\.([a-zA-Z_0-9]+)\}")
-def render(t,ch): return TOK.sub(lambda m: val(m.group(1),m.group(2),ch),t)
+def render(t,ch,include_houses=True): return TOK.sub(lambda m: val(m.group(1),m.group(2),ch,include_houses),t)
 
 # parse sections
 def parse():
@@ -54,7 +71,7 @@ def parse():
             m=re.match(r"^([a-z_]+)(?:\s*\([^)]*\))?:\s*(.*)$",l)
             if m and m.group(1) in ("feel","shows_up","complicated","another_response","how_it_works","planet_roles","watch_for","reference_point"):
                 sec[m.group(1)]=m.group(2); continue
-            m=re.match(r"^(opening) ([a-z/]+):\s*(.*)$",l)
+            m=re.match(r"^(opening) ([a-z_/]+):\s*(.*)$",l)
             if m: sec[f"opening {m.group(2)}"]=m.group(3)
         out[name]=sec
     return out
@@ -66,6 +83,16 @@ def base_chart(roles):
         ch[r]={"planet":list(ROLE)[i%len(ROLE)],"sign":"Cancer","house":4,"opposes":"Saturn"}
     if "oa1" in ch: ch["oppositionA"]=dict(ch["oa1"])
     if "ob1" in ch: ch["oppositionB"]=dict(ch["ob1"])
+    for group,members in {
+      "ends":["oppA","oppB"],
+      "corners":["c1","c2","c3","c4"],
+      "trio":["t1","t2","t3"],
+      "bases":["base1","base2"],
+      "axisA":["oa1","oa2"],
+      "axisB":["ob1","ob2"],
+    }.items():
+      present=[member for member in members if member in ch]
+      if present: ch[group]={"members":present,"planet":"","sign":"Cancer","house":4}
     return ch
 def flip(ch,role,key,newv):
     ch2={k:dict(v) for k,v in ch.items()}; ch2[role][key]=newv
@@ -73,8 +100,14 @@ def flip(ch,role,key,newv):
     if role in("ob1","ob2"): ch2["oppositionB"]=dict(ch2["ob1"])
     return ch2
 def strip_houses(t): return re.sub(r"\d+th house","the house",t)
+def role_has_group_token(text,ch,role,field):
+    return any(
+      role in data.get("members",[]) and f"{{{prefix}.{field}}}" in text
+      for prefix,data in ch.items()
+      if isinstance(data,dict)
+    )
 
-SURF={"known_L1":["feel","shows_up","complicated","another_response"],
+SURF={"known_L1":["opening exact","opening moon_decision","feel","shows_up","complicated","another_response"],
       "known_L2":["how_it_works","planet_roles","watch_for","reference_point"],
       "unknown_L1":["unknown_time L1"],"unknown_L2":["unknown_time L2"]}
 fails=[]; rows=0
@@ -86,14 +119,19 @@ for name,spec in PATTERNS.items():
         for r in roles+["oppositionA","oppositionB"]:
             if r not in ch: continue
             # only audit a role on a surface if a sign token for it appears there
-            has_sign=any(f"{{{r}.{sf}}}" in text for sf in SIGN_FIELDS)
+            has_sign=(
+              any(f"{{{r}.{sf}}}" in text for sf in SIGN_FIELDS)
+              or role_has_group_token(text,ch,r,"intro")
+              or role_has_group_token(text,ch,r,"sign_list")
+            )
             if has_sign:
-                a=render(text,ch); b=render(text,flip(ch,r,"sign","Capricorn"))
+                include_houses=surf.startswith("known")
+                a=render(text,ch,include_houses); b=render(text,flip(ch,r,"sign","Capricorn"),include_houses)
                 rows+=1
                 if a==b: fails.append(f"{name}/{surf}: SIGN change on {r} does not alter body")
             # house audit only on known surfaces
             if surf.startswith("known"):
-                has_house=any(f"{{{r}.{hf}}}" in text for hf in HOUSE_FIELDS)
+                has_house=any(f"{{{r}.{hf}}}" in text for hf in HOUSE_FIELDS) or role_has_group_token(text,ch,r,"intro")
                 if has_house:
                     a=strip_houses(render(text,ch)); b=strip_houses(render(text,flip(ch,r,"house",10)))
                     rows+=1

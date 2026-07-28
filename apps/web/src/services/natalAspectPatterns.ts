@@ -40,6 +40,20 @@ export type NatalAspectPatternReaderItem = {
   childPatternIds: string[];
 };
 
+export type NatalAspectPatternPillSummary = {
+  label: string;
+  patternNames: string[];
+};
+
+const natalAspectPatternNames: Record<string, string> = {
+  t_square: "T-square",
+  grand_square: "Grand Cross",
+  grand_trine: "Grand Trine",
+  kite: "Kite",
+  yod: "Yod",
+  mystic_rectangle: "Mystic Rectangle"
+};
+
 export const natalAspectPatternReaderFlagStorageKey = "tldrastro:natalAspectPatterns";
 export const natalAspectPatternActivationFlagStorageKey = "tldrastro:natalAspectPatternActivation";
 
@@ -124,6 +138,52 @@ export function skyWithNatalAspectPatternCopy(
   };
 }
 
+export function natalAspectPatternPillSummary(
+  snapshot: SkySnapshot | null | undefined
+): NatalAspectPatternPillSummary | null {
+  const detection = snapshot?.aspectPatterns;
+  const confidentPatterns = (detection?.patterns ?? []).filter((pattern) => (
+    pattern.geometry.confidence === "exact" || pattern.geometry.confidence === "strong"
+  ));
+
+  if (confidentPatterns.length === 0) {
+    return null;
+  }
+
+  const confidentIds = new Set(confidentPatterns.map((pattern) => pattern.id));
+  const containedIds = new Set(
+    (detection?.relationships ?? [])
+      .filter((relationship) => (
+        relationship.relationship === "contains"
+        && confidentIds.has(relationship.parentPatternId)
+        && confidentIds.has(relationship.childPatternId)
+      ))
+      .map((relationship) => relationship.childPatternId)
+  );
+  const displayOrder = detection?.ranking?.displayOrder ?? detection?.patterns.map((pattern) => pattern.id) ?? [];
+  const displayIndex = new Map(displayOrder.map((patternId, index) => [patternId, index]));
+  const visiblePatterns = confidentPatterns
+    .filter((pattern) => !containedIds.has(pattern.id))
+    .sort((first, second) => (
+      (displayIndex.get(first.id) ?? Number.MAX_SAFE_INTEGER)
+      - (displayIndex.get(second.id) ?? Number.MAX_SAFE_INTEGER)
+      || first.geometry.maximumOrb - second.geometry.maximumOrb
+      || first.id.localeCompare(second.id)
+    ));
+
+  if (visiblePatterns.length === 0) {
+    return null;
+  }
+
+  const patternNames = visiblePatterns.map((pattern) => natalAspectPatternNames[pattern.type] ?? "Chart pattern");
+  const primaryName = patternNames[0];
+
+  return {
+    label: visiblePatterns.length > 1 ? `${primaryName} +${visiblePatterns.length - 1}` : primaryName,
+    patternNames
+  };
+}
+
 const averageDailyMotion: Record<string, number> = {
   Sun: 0.9856,
   Moon: 13.176,
@@ -200,10 +260,7 @@ function activationTimingWindowFromContext(context: AspectPatternActivationInter
   return activationTimingWindowForTrigger(primaryActivationTrigger(context));
 }
 
-export function natalAspectPatternReaderItems(
-  snapshot: SkySnapshot | null,
-  _voice: "you" | "they" = "you"
-): NatalAspectPatternReaderItem[] {
+export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): NatalAspectPatternReaderItem[] {
   const contexts = snapshot?.aspectPatterns?.interpretationContexts ?? [];
   const resolvedCopies = snapshot?.aspectPatterns?.resolvedCopy ?? [];
   const activation = snapshot?.aspectPatterns?.activation as

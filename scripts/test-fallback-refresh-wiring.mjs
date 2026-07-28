@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  PACKAGE_VERSION,
   createFallbackRenderer,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
@@ -30,6 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
+assert.equal(PACKAGE_VERSION, "v3-2026-07-28b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -47,6 +49,84 @@ assert.equal(needsReviewCards.length, 0, "All authored cards must be reader elig
 assert.equal(needsReviewHooks.length, 0, "All legacy-replacement hooks must be reader eligible.");
 assert.equal(needsReviewRows.length, 0, "The owner-approved package must not retain review-gated rows.");
 
+const friendVoiceRows = [
+  ...transitRows.authoredCards,
+  ...sourceRows.hookRows
+].filter((row) => typeof row.body_they === "string");
+const personalTransitFriendRows = friendVoiceRows.filter((row) => (
+  row.contentKey.startsWith("authored/transit-house-")
+  || row.contentKey.startsWith("fallback-hook/transit-house-")
+));
+const prepositionTheyPattern = /\b(?:to|for|with|at|from|of|about|around|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|without|within)\s+they\b|(?<!early )(?<!later )\bon\s+they\b/iu;
+const objectPositionTheyPattern = /(?<!their )\b(?:expect(?:s)?|lift(?:s)?|embarrass(?:es)?|enjoy(?:s)?|trust(?:s)?|grow(?:s)?|enlarge(?:s)?|pair(?:s|ing)?|erase(?:s)?|rebuild(?:s)?|favor(?:s)?|scatter(?:s)?|fuel(?:s)?|shift(?:s)?|run(?:s)?)\s+they\b/iu;
+const themVerbPattern = /\bthem\s+(?:feel|feels|think|thinks|want|wants|need|needs|expect|expects|carry|carries|navigate|navigates|trust|trusts|enjoy|enjoys|lift|lifts|embarrass|embarrasses)\b/giu;
+const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|around|of|in|with|nearest)\s+$/iu;
+const subjectFormPredicatePattern = /\b(?:is|was)\s+they\b/iu;
+const adjectiveTheyPattern = /\b(?:distinct)\s+they\b/iu;
+const reflexiveObjectPattern = /\b(?:let|make|help|allow)\s+themselves\b/iu;
+
+for (const row of personalTransitFriendRows) {
+  assert.doesNotMatch(
+    row.body_they,
+    /\b(?:you|your|yours|yourself)\b/iu,
+    `${row.contentKey}: second-person leak in personal friend voice`
+  );
+}
+
+for (const row of friendVoiceRows) {
+  assert.doesNotMatch(
+    row.body_they,
+    prepositionTheyPattern,
+    `${row.contentKey}: preposition followed by subject-form they`
+  );
+  assert.doesNotMatch(
+    row.body_they,
+    objectPositionTheyPattern,
+    `${row.contentKey}: object-position pronoun converted to they`
+  );
+  assert.doesNotMatch(
+    row.body_they,
+    subjectFormPredicatePattern,
+    `${row.contentKey}: predicate pronoun converted to they`
+  );
+  assert.doesNotMatch(
+    row.body_they,
+    adjectiveTheyPattern,
+    `${row.contentKey}: adjective followed by subject-form they`
+  );
+  assert.doesNotMatch(
+    row.body_they,
+    reflexiveObjectPattern,
+    `${row.contentKey}: object-position pronoun converted to themselves`
+  );
+
+  for (const match of row.body_they.matchAll(themVerbPattern)) {
+    const prefix = row.body_they.slice(Math.max(0, match.index - 24), match.index);
+
+    assert.match(
+      prefix,
+      legitimateThemVerbGovernor,
+      `${row.contentKey}: possible them-as-subject regression near "${match[0]}"`
+    );
+  }
+
+  const openingSlots = row.body_they.match(/\{\{/gu)?.length ?? 0;
+  const closingSlots = row.body_they.match(/\}\}/gu)?.length ?? 0;
+  assert.equal(
+    openingSlots,
+    closingSlots,
+    `${row.contentKey}: unbalanced template slot braces`
+  );
+
+  for (const slot of row.body_they.matchAll(/\{\{[^{}]*\}\}/gu)) {
+    assert.match(
+      slot[0],
+      /^\{\{[A-Za-z][A-Za-z0-9_.]*\}\}$/u,
+      `${row.contentKey}: malformed template slot`
+    );
+  }
+}
+
 const reversedMercuryCompat = transitRenderer.renderCompat({
   planet: "mercury",
   signA: "scorpio",
@@ -57,14 +137,16 @@ assert.equal(reversedMercuryCompat.contentKey, "authored/compat-pair/mercury/sco
 assert.equal(reversedMercuryCompat.templateKey, "authored/compat-pair");
 
 const friendTransit = transitRenderer.renderTransitAspect({
-  transiting: "saturn",
+  transiting: "moon",
   aspect: "square",
   natal: "venus",
+  sign: "taurus",
   voice: "Sofia",
   window: "Until November 13"
 });
-assert.equal(friendTransit.headline, "Saturn square Sofia's Venus");
-assert.match(friendTransit.body, /^Saturn square Sofia's natal Venus through November 13\./u);
+assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
+assert.match(friendTransit.body, /^Until November 13, the Moon in Taurus is squaring Sofia's natal Venus\./u);
+assert.match(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 
 const friendHouse = transitRenderer.renderTransitHouse({
@@ -76,6 +158,138 @@ const friendHouse = transitRenderer.renderTransitHouse({
 assert.equal(friendHouse.headline, "Saturn moving through Sofia's 7th house");
 assert.match(friendHouse.body, /^Until November 13, Saturn is moving through Sofia's 7th house\./u);
 assert.doesNotMatch(friendHouse.body, /\byou(?:r|rs|self)?\b/iu);
+
+const signedChironAspect = transitRenderer.renderTransitAspect({
+  transiting: "chiron",
+  natal: "jupiter",
+  aspect: "square",
+  sign: "taurus",
+  window: "Until July 30"
+});
+assert.match(
+  signedChironAspect.body,
+  /^Until July 30, Chiron in Taurus is squaring your natal Jupiter\./u
+);
+assert.match(
+  signedChironAspect.body,
+  /Chiron in Taurus presses the old question of worth and enough; your Jupiter keeps betting on the bigger life\./u
+);
+assert.doesNotMatch(signedChironAspect.body, /In plain terms:/u);
+
+const layeredVenusHouse = transitRenderer.renderTransitHouse({
+  planet: "venus",
+  house: 7,
+  sign: "libra",
+  events: [{
+    natal: "saturn",
+    aspect: "square",
+    window: "Until August 2"
+  }]
+});
+assert.equal(layeredVenusHouse.templateKey, "authored/transit-house-layered");
+assert.equal(layeredVenusHouse.contentKey, "authored/transit-house-sign/venus/7/libra");
+assert.equal(layeredVenusHouse.parts.length, 3);
+assert.match(layeredVenusHouse.parts[2], /your natal Saturn/u);
+assert.match(layeredVenusHouse.parts[2], /squaring your natal Saturn/u);
+assert.match(layeredVenusHouse.parts[2], /until August 2\./u);
+assert.doesNotMatch(layeredVenusHouse.body, /\{\{/u);
+
+const layeredSunHouse = transitRenderer.renderTransitHouse({
+  planet: "sun",
+  house: 1,
+  sign: "aries",
+  events: [{
+    natal: "saturn",
+    aspect: "square",
+    window: "Until August 2"
+  }]
+});
+assert.equal(layeredSunHouse.templateKey, "authored/transit-house-layered");
+assert.equal(layeredSunHouse.contentKey, "authored/transit-house-sign/sun/1/aries");
+assert.equal(layeredSunHouse.parts.length, 3);
+assert.match(layeredSunHouse.parts[2], /squaring your natal Saturn/u);
+assert.match(layeredSunHouse.parts[2], /until August 2\./u);
+assert.match(layeredSunHouse.body, /month|weeks/u);
+
+const layeredMercuryHouse = transitRenderer.renderTransitHouse({
+  planet: "mercury",
+  house: 3,
+  sign: "gemini",
+  isRetrograde: true,
+  events: [{
+    natal: "moon",
+    aspect: "trine",
+    window: "August 2, 2026"
+  }]
+});
+assert.equal(layeredMercuryHouse.templateKey, "authored/transit-house-layered");
+assert.equal(layeredMercuryHouse.contentKey, "authored/transit-house-sign/mercury/3/gemini");
+assert.equal(layeredMercuryHouse.parts.length, 4);
+assert.match(layeredMercuryHouse.parts[2], /revise rather than redo/u);
+assert.match(layeredMercuryHouse.parts[3], /trining your natal Moon/u);
+assert.match(layeredMercuryHouse.parts[3], /until August 2, 2026/u);
+assert.match(layeredMercuryHouse.parts[3], /Mercury in Gemini wants all the tabs open; your Moon guards/u);
+assert.doesNotMatch(layeredMercuryHouse.parts[3], /In plain terms|through Until/u);
+assert.match(layeredMercuryHouse.body, /weeks/u);
+
+const layeredJupiterWindow = transitRenderer.renderTransitHouse({
+  planet: "jupiter",
+  house: 1,
+  sign: "sagittarius",
+  events: [{
+    natal: "sun",
+    aspect: "trine",
+    window: "March 2027"
+  }]
+});
+assert.match(
+  layeredJupiterWindow.parts[2],
+  /it is also trining your natal Sun until March 2027\./u
+);
+assert.doesNotMatch(layeredJupiterWindow.parts[2], /\bthrough March 2027\b/u);
+
+const retiredEventMetaphors = /grinding against|tugging at|glaring at|crosstalking|trading notes with|feeding energy to/iu;
+assert.doesNotMatch(
+  [layeredVenusHouse.body, layeredSunHouse.body, layeredMercuryHouse.body].join("\n"),
+  retiredEventMetaphors
+);
+
+const beneficConjunctionHouse = transitRenderer.renderTransitHouse({
+  planet: "venus",
+  house: 4,
+  sign: "virgo",
+  events: [{
+    natal: "north-node",
+    aspect: "conjunction",
+    window: "July 30, 2026"
+  }]
+});
+assert.match(beneficConjunctionHouse.parts[2], /sitting right on your natal North Node/u);
+assert.match(beneficConjunctionHouse.parts[2], /the growth tastes good/u);
+assert.doesNotMatch(beneficConjunctionHouse.parts[2], /Comfort lobbies against growth/u);
+
+const retrogradeHouseCases = [
+  { planet: "mars", house: 1, sign: "aries", overlay: /drive turns inward and doubles back/u },
+  { planet: "venus", house: 7, sign: "libra", overlay: /window reviews instead of previews/u },
+  { planet: "mercury", house: 3, sign: "gemini", overlay: /revise rather than redo/u }
+];
+
+for (const facts of retrogradeHouseCases) {
+  const direct = transitRenderer.renderTransitHouse({
+    planet: facts.planet,
+    house: facts.house,
+    sign: facts.sign
+  });
+  const retrograde = transitRenderer.renderTransitHouse({
+    planet: facts.planet,
+    house: facts.house,
+    sign: facts.sign,
+    isRetrograde: true
+  });
+
+  assert.equal(retrograde.parts.length, direct.parts.length + 1);
+  assert.match(retrograde.parts[2], facts.overlay);
+}
 
 const nodeAspect = natalRenderer.renderNatalAspect({
   planetA: "mars",
@@ -147,6 +361,11 @@ const thirdConnectionVariant = transitRenderer.renderBondTransit({
 assert.notEqual(thirdConnectionVariant.body, baseConnectionVariant.body);
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const aspectStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/aspects.css"), "utf8");
+const dashboardImportSource = fs.readFileSync(
+  path.join(repoRoot, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),
+  "utf8"
+);
 const runtimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
   "utf8"
@@ -156,6 +375,31 @@ assert.match(
   appSource,
   /renderTransitAspect\(\{[\s\S]*?voice[\s\S]*?\}\)/u,
   "Friend transit cards must pass voice through renderTransitAspect."
+);
+assert.match(
+  appSource,
+  /function transitNote\(transitPlanet: string, transitSign: string, aspect: string, natalPoint: string\)[\s\S]*?renderTransitAspect\(\{[\s\S]*?sign:\s*normalizeContentIdPart\(transitSign\)/u,
+  "Daily transit notes must pass the engine's transiting sign into renderTransitAspect."
+);
+assert.match(
+  appSource,
+  /note:\s*transitNote\(transitPosition\.planet,\s*transitPosition\.sign,\s*aspect\.type,\s*natalPosition\.planet\)/u,
+  "Daily transit-note callers must forward the available transiting sign."
+);
+assert.match(
+  appSource,
+  /renderTransitAspect\(\{[\s\S]*?natal:\s*normalizeContentIdPart\(transit\.natalPoint\),[\s\S]*?sign:\s*transit\.transitSign \? normalizeContentIdPart\(transit\.transitSign\) : undefined,[\s\S]*?transiting:\s*normalizeContentIdPart\(transit\.transitPlanet\)/u,
+  "Personal transit package renderers must pass the available transiting sign."
+);
+assert.doesNotMatch(
+  friendTransit.body,
+  /\b(?:you|your|yourself)\b/iu,
+  "Moon/Taurus sign-aware wants line must remain clean in friend voice."
+);
+assert.match(
+  appSource,
+  /month: "long"[\s\S]*?day: "numeric"[\s\S]*?return `Until \$\{endLabel\}`;/u,
+  "Personal transit aspect windows must render as an inline-ready long month and day."
 );
 assert.match(
   appSource,
@@ -169,6 +413,21 @@ assert.match(
 );
 assert.match(
   appSource,
+  /renderTransitHouse\(\{[\s\S]*?events[\s\S]*?\}\)/u,
+  "Transit house cards must pass the engine's qualifying aspect events into layered write-ups."
+);
+assert.match(
+  appSource,
+  /renderTransitHouse\(\{[\s\S]*?isRetrograde:\s*transit\.transitMotion === "retrograde"[\s\S]*?\}\)/u,
+  "Transit house cards must pass the engine's retrograde flag into layered write-ups."
+);
+assert.match(
+  appSource,
+  /window:\s*transitHouseAspectEventWindow\(transit,\s*generatedAt\)/u,
+  "Transit house event windows must pass a bare end date for the package's through-date composer."
+);
+assert.match(
+  appSource,
   /const renderedWindow = typeof rendered\.window === "string"[\s\S]*?window: renderedWindow/u,
   "Transit house cards must carry the resolver-returned window into app chrome."
 );
@@ -176,6 +435,51 @@ assert.match(
   appSource,
   /const openFriendHouseTransitDetail[\s\S]*?sections: card\.normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
   "Friend house-transit details must not repeat the resolver headline below the page title."
+);
+assert.match(
+  appSource,
+  /const transitCardPreviewSentenceLimit = 2;[\s\S]*?const transitCardPreviewCharacterLimit = 280;[\s\S]*?function transitCardPreview/u,
+  "Transit cards must use the shared two-sentence preview with a hard character cap."
+);
+assert.match(
+  appSource,
+  /const rowSummary = transitCardPreview\(normalizedSurfacePreview\(normalizedTransit\)\)/u,
+  "Personal aspect-transit cards must use the truncated preview."
+);
+assert.match(
+  appSource,
+  /const rowSummary = transitCardPreview\(normalizedSurfacePreview\(normalizedHouseTransit\)\)/u,
+  "Personal house-transit cards must use the truncated preview."
+);
+assert.match(
+  appSource,
+  /rowSummary: transitCardPreview\(normalizedSurfacePreview\(normalized\)\)/u,
+  "Friend house-transit cards must use the truncated preview."
+);
+assert.match(
+  appSource,
+  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?transitCardPreview\(card\.body\)/u,
+  "Connection-transit cards must be clickable and display only a preview."
+);
+assert.match(
+  appSource,
+  /const openBondTransitDetail[\s\S]*?body: card\.body\.split\(/u,
+  "Connection-transit detail views must retain the full authored body."
+);
+assert.match(
+  appSource,
+  /onClick=\{\(\) => openFriendTransitDetail\(transit\)\}/u,
+  "Friend personal-transit cards must open a detail view."
+);
+assert.match(
+  appSource,
+  /const openFriendTransitDetail[\s\S]*?sections: normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
+  "Friend personal-transit detail views must retain the full normalized write-up."
+);
+assert.match(
+  aspectStylesSource,
+  /\.transit-card-preview\s*\{[\s\S]*?-webkit-line-clamp:\s*4;/u,
+  "Transit-card previews must retain a visual line-clamp fallback."
 );
 assert.match(
   appSource,
@@ -216,6 +520,27 @@ assert.match(
   runtimeSource,
   /hookRows: \(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
   "Production must filter review-gated hook variants before creating the dist renderer."
+);
+
+assert.match(
+  dashboardImportSource,
+  /import \{ PACKAGE_VERSION \} from "\.\.\/apps\/web\/src\/content\/fallbackArchitectureV3\/dist\/tldr-content\.js";[\s\S]*?const importBatchId = `fallback-architecture-\$\{PACKAGE_VERSION\}`;/u,
+  "Dashboard imports must label each mirror from the installed package version."
+);
+assert.match(
+  dashboardImportSource,
+  /const counts = \{[\s\S]*?authoredCards: countBy\([\s\S]*?fallbackHooks: countBy\([\s\S]*?vocabulary: countBy\([\s\S]*?templates: countBy\([\s\S]*?sourceMaterial: countBy\(/u,
+  "Dashboard counts must be computed from materialized package rows instead of constants."
+);
+assert.match(
+  dashboardImportSource,
+  /function verifyImportedMirror[\s\S]*?Dashboard mirror count mismatch[\s\S]*?Dashboard mirror key mismatch[\s\S]*?Dashboard mirror row mismatch/u,
+  "Dashboard verification must fail on count, key, or total-row drift."
+);
+assert.match(
+  dashboardImportSource,
+  /const upserted = await upsertRows\(rows\);[\s\S]*?const deleted = await deleteStaleRows\(rows\);/u,
+  "Dashboard imports must upsert the new mirror before removing stale provider rows."
 );
 
 console.log("fallback refresh wiring checks passed", counts);

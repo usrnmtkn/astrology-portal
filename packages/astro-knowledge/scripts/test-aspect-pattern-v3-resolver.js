@@ -61,6 +61,31 @@ function withConfidence(context, confidence) {
   };
 }
 
+function replaceContextPlanets(context, replacements) {
+  const replace = (planet) => replacements[planet] ?? planet;
+  return {
+    ...context,
+    members: context.members.map((member) => ({
+      ...member,
+      planet: replace(member.planet)
+    })),
+    roles: {
+      ...context.roles,
+      apex: replace(context.roles.apex),
+      focalPlanet: replace(context.roles.focalPlanet),
+      opposedTrinePlanet: replace(context.roles.opposedTrinePlanet),
+      oppositionAxis: context.roles.oppositionAxis?.map(replace),
+      basePlanets: context.roles.basePlanets?.map(replace),
+      grandTrinePlanets: context.roles.grandTrinePlanets?.map(replace),
+      oppositionAxes: context.roles.oppositionAxes?.map((axis) => axis.map(replace))
+    }
+  };
+}
+
+function sectionBody(copy, sectionId) {
+  return copy.content.sections.find((section) => section.id === sectionId)?.body ?? "";
+}
+
 function allCopyText(copy) {
   return [
     copy.content.eyebrow,
@@ -95,6 +120,11 @@ function assertCleanResolvedCopy(copy, label) {
     text,
     /\b(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto)(?:\s+in\s+the\s+\d+(?:st|nd|rd|th)\s+house(?:\s+of\s+[^.,;]+)?)?\s+can\b[^.!?]*\b(?:yourself|yourselves)\b/i,
     `${label}: hedged placement clause contains a second-person reflexive.`
+  );
+  assert.doesNotMatch(
+    text,
+    /\b(?:Uranus|Neptune|Pluto)\b[^.!?]*\byou need\b/i,
+    `${label}: an outer planet must not receive a personal sign-need claim.`
   );
   for (const sentence of text.split(/(?<=[.!?])\s+/)) {
     if (/\bbetween\b/i.test(sentence)) {
@@ -157,6 +187,20 @@ for (const type of Object.keys(CASES)) {
   );
 }
 
+for (const [type, expected] of Object.entries({
+  t_square: /When those aims pull apart, .+ is where you tend to respond first/,
+  grand_square: /One conflict runs between .+; the other runs between/,
+  grand_trine: /Those instincts tend to support one another/,
+  kite: /The momentum meets its limit when it reaches/,
+  mystic_rectangle: /What you learn from one conflict can help with the other/
+})) {
+  assert.match(
+    allCopyText(resolveAspectPatternCopy(withConfidence(contextFor(type, true), "exact"))),
+    expected,
+    `${type} must render the relationship-level narrative instead of independent placement summaries.`
+  );
+}
+
 assert.match(
   allCopyText(resolveAspectPatternCopy(contextFor("kite", true))),
   /a form that survives being done differently/,
@@ -164,18 +208,166 @@ assert.match(
 );
 assert.match(
   allCopyText(resolveAspectPatternCopy(withConfidence(contextFor("yod", true), "exact"))),
-  /consequences that are harder to smooth over/,
-  "Yod must use the authored apex-pressure table value for its real apex planet."
+  /The agreement keeps becoming more than you can carry/,
+  "Yod must use the authored lived-title value for its real apex planet."
 );
-assert.doesNotMatch(
-  allCopyText(resolveAspectPatternCopy(withConfidence(contextFor("yod", true), "exact"))),
-  /consequences that are harder to smooth over\s+(?:for|around|with room for|involving)\b/i,
-  "Yod table clauses must render verbatim without appended role or house tails."
-);
+{
+  const yodText = allCopyText(resolveAspectPatternCopy(withConfidence(contextFor("yod", true), "exact")));
+  assert.match(
+    yodText,
+    /An agreement can look reasonable and still place too much weight on you over time/,
+    "Yod must use the authored incomplete-answer sentence for its real apex planet."
+  );
+  assert.doesNotMatch(
+    yodText,
+    /keep an easy rhythm|produce a workable first answer|comes back later with the question|together, those instincts can produce a first answer|a yod starts with|marks the part of life where the first answer|reference point falls opposite/i,
+    "Yod must not regress to independent placement clauses joined by abstract response glue."
+  );
+}
+
+{
+  const context = contextFor("t_square", true);
+  const sourcePlanet = context.roles.oppositionAxis[0];
+  const mercury = replaceContextPlanets(context, { [sourcePlanet]: "Mercury" });
+  const mars = replaceContextPlanets(context, { [sourcePlanet]: "Mars" });
+  const mercuryFeel = sectionBody(resolveAspectPatternCopy(mercury), "feel");
+  const marsFeel = sectionBody(resolveAspectPatternCopy(mars), "feel");
+
+  assert.notEqual(
+    mercuryFeel,
+    marsFeel,
+    "The same sign and house in the same member slot must render planet-distinct placement clauses."
+  );
+  assert.match(mercuryFeel, /Your Mercury in /);
+  assert.match(marsFeel, /Your Mars in /);
+}
+
+for (const timeKnown of [true, false]) {
+  const context = contextFor("yod", timeKnown);
+  const [firstBase, secondBase] = context.roles.basePlanets;
+  const outerBaseContext = replaceContextPlanets(context, {
+    [firstBase]: "Pluto",
+    [secondBase]: "Neptune",
+    [context.roles.apex]: "Moon"
+  });
+  const copy = resolveAspectPatternCopy(outerBaseContext);
+  const feel = timeKnown ? sectionBody(copy, "feel") : copy.content.overview;
+
+  assert.match(
+    feel,
+    /(?:Pluto and Neptune|Neptune and Pluto) move slowly/,
+    `Yod/${timeKnown ? "known" : "unknown"}: the two outer bases must share one combined background sentence.`
+  );
+  assert.equal(
+    feel.match(/describe a generation/g)?.length,
+    1,
+    `Yod/${timeKnown ? "known" : "unknown"}: the generation framing must appear exactly once.`
+  );
+  assert.doesNotMatch(
+    feel,
+    /\b(?:Pluto|Neptune)\b[^.!?]*\byou need\b/i,
+    `Yod/${timeKnown ? "known" : "unknown"}: outer bases must not inherit personal sign needs.`
+  );
+  if (timeKnown) {
+    assert.match(feel, /In your chart,/);
+
+    const marieContext = withConfidence({
+      ...outerBaseContext,
+      members: outerBaseContext.members.map((member) => ({
+        ...member,
+        house: member.planet === "Pluto" ? 8 : member.planet === "Neptune" ? 10 : 3,
+        longitude: member.planet === "Pluto" ? 214.4 : member.planet === "Neptune" ? 271.5 : 62.5,
+        sign: member.planet === "Pluto" ? "scorpio" : member.planet === "Neptune" ? "capricorn" : "gemini"
+      }))
+    }, "strong");
+    const moonConditions = new Map([
+      ["aries", "room to act, speak honestly, and make your own choices"],
+      ["taurus", "reliability, predictable daily demands, and enough peace to trust the life the decision creates"],
+      ["gemini", "clear information, open conversation, and room to adjust"],
+      ["cancer", "to know who will show up and what will continue to feel like home"],
+      ["leo", "to be seen, appreciated, and taken seriously by the people closest to you"],
+      ["virgo", "clear responsibilities and a daily routine you can realistically manage"],
+      ["libra", "a fair decision that does not require you to give up your own position"],
+      ["scorpio", "privacy, the full truth, trustworthy people, and no one holding all the power"],
+      ["sagittarius", "freedom, possibility, and a future that still feels worth moving toward"],
+      ["capricorn", "a responsible plan that does not leave you carrying the entire outcome alone"],
+      ["aquarius", "room to think independently, question the plan, and change your mind"],
+      ["pisces", "quiet, emotional breathing room, and a life that still feels meaningful"]
+    ]);
+    const sharedDecisionOpening = "Pluto helps you see when a shared financial arrangement, obligation, or relationship has become unequal, controlling, or too heavy to keep carrying. Neptune pulls you toward work that feels meaningful, not simply the job with the safest paycheck or most impressive title. The risk is solving the money, power, or career problem while building a life that leaves you exhausted, unsupported, or disconnected from yourself.";
+    const sharedDecisionClose = "Until the plan makes room for that need, you may be able to defend the choice without feeling at home in it.";
+    const renderedByMoonSign = new Map();
+
+    for (const [sign, condition] of moonConditions) {
+      const signContext = {
+        ...marieContext,
+        members: marieContext.members.map((member) => (
+          member.planet === "Moon" ? { ...member, sign } : member
+        ))
+      };
+      const resolved = resolveAspectPatternCopy(signContext);
+      const signTitle = sign[0].toUpperCase() + sign.slice(1);
+      const expected = `${sharedDecisionOpening} Your Moon in ${signTitle} needs ${condition}. ${sharedDecisionClose}`;
+
+      assertCleanResolvedCopy(resolved, `yod/moon-decision/${sign}`);
+      assert.equal(
+        resolved.content.headline,
+        "A good plan can still leave you out of it",
+        `${signTitle} Moon must retain the approved synthesis heading.`
+      );
+      assert.equal(
+        resolved.content.overview,
+        expected,
+        `${signTitle} Moon must resolve its governed emotional condition.`
+      );
+      assert.doesNotMatch(
+        resolved.content.overview,
+        /consistency, rest, and dependable care|\[Sign\]|sign-specific emotional condition/i,
+        `${signTitle} Moon must not be overridden by generic or unresolved Moon copy.`
+      );
+      assert.equal(
+        resolved.source.contentLevel,
+        "source_grounded_template",
+        `${signTitle} Moon must resolve through the canonical V3 template, not emergency copy.`
+      );
+      renderedByMoonSign.set(sign, resolved.content.overview);
+    }
+
+    assert.equal(
+      new Set(renderedByMoonSign.values()).size,
+      moonConditions.size,
+      "All 12 Moon signs must produce meaningfully distinct Yod synthesis endings."
+    );
+  } else {
+    assert.doesNotMatch(feel, /\bhouse\b/i);
+    assert.doesNotMatch(
+      feel,
+      /shared financial arrangement|money, power, or career problem|safest paycheck/i,
+      "Unknown-time Yod copy must not invent the house-specific decision synthesis."
+    );
+  }
+}
+
+{
+  const context = contextFor("yod", true);
+  const outerApexContext = replaceContextPlanets(context, {
+    [context.roles.apex]: "Pluto"
+  });
+  const feel = sectionBody(resolveAspectPatternCopy(outerApexContext), "feel");
+
+  assert.match(feel, /Here, Pluto in /, "An outer Yod apex should use its resolved placement behavior.");
+  assert.doesNotMatch(feel, /Pluto[^.!?]*you also need/i, "An outer Yod apex must not receive a personal need sentence.");
+}
 assert.doesNotMatch(
   allCopyText(resolveAspectPatternCopy(contextFor("kite", true))),
   /a form that survives being done differently\s+(?:for|around|with room for|involving)\b/i,
   "Kite table clauses must render verbatim without appended role or house tails."
+);
+assert.equal(
+  allCopyText(resolveAspectPatternCopy(contextFor("kite", true)))
+    .match(/a form that survives being done differently/g)?.length,
+  1,
+  "Kite must not repeat its focal demand across the overview and lived paragraph."
 );
 
 {
@@ -229,4 +421,4 @@ assert.doesNotMatch(
   );
 }
 
-console.log("Aspect-pattern v3.3 resolver tests passed.");
+console.log("Aspect-pattern v3.7 resolver tests passed.");

@@ -11,6 +11,8 @@ import {
 import type { FriendsTopLevelView } from "../../components/FriendsPageShell";
 import { ModalPortal } from "../../components/ModalPortal";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
+import { natalAspectPatternPillSummary } from "../../services/natalAspectPatterns";
+import { ChartPatternPill } from "./ChartPatternPill";
 import {
   blockSocialUser,
   cancelSocialFriendRequest,
@@ -47,6 +49,7 @@ type SocialFriendsPanelProps = {
   onOpenFriend: (friend: ConnectedSocialFriend) => void;
   onPendingRequestCountChange?: (count: number) => void;
   onSelectView: (view: FriendsTopLevelView, historyMode?: "push" | "replace") => void;
+  showPatternPills: boolean;
 };
 
 type PendingRemoval = {
@@ -190,7 +193,8 @@ export function SocialFriendsPanel({
   onFriendsChange,
   onOpenFriend,
   onPendingRequestCountChange,
-  onSelectView
+  onSelectView,
+  showPatternPills
 }: SocialFriendsPanelProps) {
   const [profile, setProfile] = useState<SocialProfile | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -1164,6 +1168,9 @@ export function SocialFriendsPanel({
                 {friends.map((friend) => {
                   const bigThree = friendBigThree(friend);
                   const chartAvailable = Boolean(friend.friendSharesChart && friend.natalChart);
+                  const patternSummary = showPatternPills && chartAvailable
+                    ? natalAspectPatternPillSummary(friend.natalChart)
+                    : null;
 
                   return (
                     <div
@@ -1198,7 +1205,10 @@ export function SocialFriendsPanel({
                           <small>@{friend.handle}</small>
                         </span>
                         <small className="friends-person-third-line">
-                          ☉ {bigThree.sun ?? "pending"} · ☽ {bigThree.moon ?? "pending"} · ↑ {bigThree.rising ?? "pending"}
+                          <span className="friends-person-signatures">
+                            ☉ {bigThree.sun ?? "pending"} · ☽ {bigThree.moon ?? "pending"} · ↑ {bigThree.rising ?? "pending"}
+                          </span>
+                          {patternSummary ? <ChartPatternPill summary={patternSummary} /> : null}
                         </small>
                       </span>
                       <span className="friends-person-actions">
