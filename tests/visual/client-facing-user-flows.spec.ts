@@ -895,6 +895,14 @@ test.describe("client-facing user flow case studies", () => {
       const houseTransitKeywords = houseTransitCard
         .getByLabel("House keywords")
         .locator(".house-transit-keyword");
+      await expect(
+        houseTransitCard.locator(".planet-placement-row__duration"),
+        "House transit timing uses the compact duration format"
+      ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
+      await expect(
+        houseTransitCard.locator(".house-transit-term-tag"),
+        "The term classification moves into the footer tags"
+      ).toHaveText(/^(?:Short-term|Long-term)$/);
       await expect(houseTransitKeywords.first()).toBeVisible();
       await expect(
         houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
@@ -981,6 +989,14 @@ test.describe("client-facing user flow case studies", () => {
       .first();
     await expect(friendHouseTransitCard).toHaveCSS("cursor", "pointer");
     await expect(friendHouseTransitCard).toHaveJSProperty("tagName", "BUTTON");
+    await expect(
+      friendHouseTransitCard.locator(".planet-placement-row__duration"),
+      "Friend house transit timing uses the compact duration format"
+    ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
+    await expect(
+      friendHouseTransitCard.locator(".house-transit-term-tag"),
+      "Friend term classification moves into the footer tags"
+    ).toHaveText(/^(?:Short-term|Long-term)$/);
     await expect(
       friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
       "Friend house transit keyword tags follow the card description"
