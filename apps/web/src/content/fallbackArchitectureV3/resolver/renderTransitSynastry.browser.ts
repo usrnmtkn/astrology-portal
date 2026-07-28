@@ -46,7 +46,16 @@ export interface CircleStoryFacts {
 }
 export interface CircleRenderResult { headline: string; subtitle: string; names: string; body: string; sections: { name: string; body: string }[]; question: string | null; parts: string[]; templateKey: string; contentKey?: string }
 type CircleRow = { contentKey: string; body_you: string; headline?: string; question?: string };
-export interface TransitRenderResult { headline: string; body: string; parts: string[]; templateKey: string; contentKey?: string; window?: string | null }
+export interface TransitRenderResult {
+  headline: string;
+  body: string;
+  parts: string[];
+  templateKey: string;
+  contentKey?: string;
+  window?: string | null;
+  tagline?: string | null;
+  moves?: string[];
+}
 export interface SynastryRenderResult extends TransitRenderResult { tag: string | null }
 export interface TransitLabelResult { label: string; window: string }
 
@@ -566,9 +575,9 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
 
-  // ---- Sky page: voice-first planet-in-sign article. One memorable hook, one
-  // concrete lived paragraph, and one shadow/turn. Authored pair slots win; the
-  // generic planet/sign rows are coverage only. ----
+  // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
+  // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
+  // Computed aspect facts follow the evergreen article. ----
   function renderSkyPlacement({ planet, sign, events = [] }: SkyPlacementFacts): TransitRenderResult {
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
@@ -580,6 +589,27 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
         parts,
         templateKey: "authored/sky-ingress",
         contentKey: authoredArticle.contentKey
+      };
+    }
+    const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
+    const pairHook = hooks.get(pairKey)?.body_you;
+    const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
+    const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+    const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+    const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
+      .split(/\r?\n/u)
+      .map((move) => move.trim())
+      .filter(Boolean);
+    if (pairHook && pairLived && pairTurn) {
+      const parts = [pairHook, pairLived, pairTurn, ...aspectParas];
+      return {
+        headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+        tagline,
+        moves,
+        body: parts.join("\n\n"),
+        parts,
+        templateKey: "fallback-template/sky.placement-article",
+        contentKey: pairKey
       };
     }
     const template = tpl("fallback-template/sky.placement-article");
@@ -614,7 +644,9 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       body: parts.join("\n\n"),
       parts,
-      templateKey: template.contentKey
+      templateKey: template.contentKey,
+      tagline,
+      moves
     };
   }
 

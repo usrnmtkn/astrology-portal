@@ -181,6 +181,18 @@ Core moves:
 - Anchor in the body and in behavior: the held breath, the second-guessing, the coping move and what it costs.
 - Direct "you" throughout. End on a line that is concise and undeniable.
 
+### Name the actual form of self-reduction
+
+Do not use vague shrink or shrinking shorthand when the behavior can be named precisely. Diagnose the move before writing the imperative:
+
+- **Self-negotiation (`self_negotiation`)** means accepting less before anyone has responded. Examples: "Stop negotiating against yourself before you even open your mouth." "Stop pretending a compromise is what you actually asked for." "Stop reducing what you want to seem agreeable." "Stop treating your needs as an inconvenience."
+- **Softened certainty (`softened_conviction`)** means weakening how clearly someone speaks. Examples: "Stop softening your stance to keep the room comfortable." "Stop putting a question mark at the end of a conviction." "Stop waiting for permission to sound sure of yourself." "Stop understating what you know." "Stop backing away from what you already know you want."
+- **Downplayed desire (`downplayed_desire`)** means pretending a desire or need matters less. Use verbs such as downplaying, minimizing, dismissing, pretending not to care, acting as though you do not want, or lowering the volume on what matters. Example: "Stop treating your hunger like a bad habit you're trying to break."
+- **Reduced ambition (`reduced_ambition`)** means disguising power, drive, or aspiration. Examples: "Stop translating your drive into something less threatening." "Stop making your ambition sound smaller than it is."
+- **Avoidance disguised as caution (`avoidance_disguised_as_caution`)** means giving fear a more respectable name. Examples: "Stop using safety as an excuse for standing still." "Stop calling your reluctance patience when it is really avoidance."
+
+These are not synonyms. The editor and judge must identify the correct mechanism rather than collapsing all five into generic self-erasure language.
+
 ### Craft discipline
 - Verbs do the work. Use exposes, tests, clarifies, recalibrates, surfaces, breaks. Avoid soft abstract verbs like heals and reveals.
 - Cut filler. No "this energy," no "right now" as a throat-clear, no "the universe is."
