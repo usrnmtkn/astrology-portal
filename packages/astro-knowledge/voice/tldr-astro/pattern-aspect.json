@@ -1,0 +1,102 @@
+{
+  "id": "tldr-astro.voice.pattern-aspect.v1",
+  "surface": "pattern",
+  "mode": "natal-aspect-pattern-reader",
+  "purpose": "Output-level voice contract for the natal aspect-pattern reader (Yod, T-square, Grand Cross, Grand Trine, Kite, Mystic Rectangle). Applies to RENDERED card copy assembled by engine/aspect-patterns/v3-copy-resolver.js from the locked v3.7 template + contract. The three structural gates (validate_patterns / render_matrix / gold_render) cover tokens, sign/house variation, and grammar; this file covers whether the copy sounds like Marie and holds the two-level shape. Enforced by scripts/lint-pattern-voice.js (mechanical) + scripts/judge-pattern-voice.js (LLM).",
+
+  "voiceDescription": "Direct, grounded, and modern, like the reader's smartest, most honest friend explaining their own chart. Names the felt experience in plain lived terms first, then explains how the geometry works. Two levels, kept apart: the lived paragraph never names the mechanics, the mechanics never crowd the lived paragraph. Concrete and quotable; ends on a plain reading note, not a pep talk.",
+
+  "person": "second-person",
+  "secondPersonRequired": true,
+  "firstPersonPluralAllowed": false,
+  "personNote": "The pattern reader is the reader's OWN natal chart, so it is written in the second person ('you', 'your'). Unlike the collective sky surface, first-person-plural ('we', 'us', 'our') is the WRONG register here and fails. Friends' charts, when shown, use 'they/their', never 'you'.",
+
+  "mechanicsAllowedInBody": true,
+  "mechanicsNote": "Unlike the collective sky cards, this surface is ALLOWED to name geometry and orb in the mechanics level: 'sextile', '150 degrees', 'the apex', 'opposition', 'the widest link is 1.4 degrees'. That naming is the point of Level 2. What is NOT allowed is geometry leaking UP into the lived Level 1 ('feel') paragraph, which must stay felt. The linter enforces geometry only-at-L2 per section.",
+
+  "punctuation": {
+    "emDash": "The em dash is banned. Use a spaced hyphen ' - ' instead.",
+    "example": "not a missing piece or a guaranteed solution - it is the less automatic response"
+  },
+
+  "shape": {
+    "note": "Two levels. Each beat is filled from the locked template + contract; the writing sharpens the beat, it never invents astrology. This is the skeleton the resolver fills; the judge scores whether it reads as one lived paragraph + a tight mechanics pass, not a pile of headers.",
+    "levels": [
+      {"level": "L1 lived", "beats": [
+        {"id": "overview", "does": "name the pattern and its core tension in one or two you-voice sentences", "source": "template opening"},
+        {"id": "feel", "does": "ONE lived paragraph: personal planets use resolved planet-in-sign behavior, outer planets share one generation-level background sentence, houses locate the pattern when known, then the recurring dynamic returns", "source": "template feel (merged)"}
+      ]},
+      {"level": "L2 mechanics", "beats": [
+        {"id": "level_2", "does": "the geometry: what the figure is, applied to these planets", "source": "template L2 opening"},
+        {"id": "how_it_works", "does": "Grand Trine + Kite only: the element/mechanism (carries the out-of-sign override)", "source": "template how_it_works"},
+        {"id": "planet_roles", "does": "who carries the pattern (apex / focal), stated once", "source": "template planet_roles"},
+        {"id": "reference_point", "does": "Yod + T-square only: the balancing direction opposite the apex, stated ONCE", "source": "template reference_point / planet_roles empty leg"},
+        {"id": "confidence_note", "does": "confidence label + widest orb", "source": "computed"}
+      ]}
+    ],
+    "maxLivedSections": 1,
+    "maxLivedSectionsReason": "Level 1 is ONE merged lived paragraph. If the render emits more than one L1 body section (the old feel/shows_up/complicated/another_response sprawl), the pattern is over-sectioned and restating one idea.",
+    "duplicateBeatBans": [
+      {"ids": ["another_response", "reference_point"], "reason": "the balancing point stated twice - keep only reference_point"},
+      {"ids": ["another_response", "planet_roles"], "reason": "T-square balancing point stated twice - keep it in planet_roles"}
+    ]
+  },
+
+  "conditionalBans": [
+    {
+      "term": "steady",
+      "requiresBefore": ["stable", "strong", "solid"],
+      "reason": "'steady' only when 'stable', 'strong', or 'solid' appears before it; otherwise use calm, solid, grounded, or sure."
+    }
+  ],
+
+  "useWords": {
+    "note": "Advisory register only. Never forced - forcing these would push toward keyword stuffing. The linter only flags a card that drew from the register not at all.",
+    "livedPhrases": ["a workable first answer", "the same question returns", "an old answer stops holding", "you adjust again", "handled as an afterthought", "pulls opposite ways", "the loudest problem", "read ease as proof"],
+    "mechanicsPhrases": ["the apex", "the point everything accommodates", "not another planet in your chart", "a less automatic response", "the balancing direction"]
+  },
+
+  "outputBans": {
+    "fail": [
+      {"term": "\\b(we|us|our|ours)\\b", "reason": "first-person-plural is the wrong register for the natal pattern reader; write in the second person"},
+      {"term": "—", "reason": "em dash banned everywhere"},
+      {"term": "reckoning", "reason": "AI tell / owner ban"},
+      {"term": "tapestry", "reason": "AI tell / owner ban"},
+      {"term": "delve", "reason": "AI tell"},
+      {"term": "holistic", "reason": "AI tell"},
+      {"term": "landscape", "reason": "AI tell"},
+      {"term": "weave", "reason": "owner ban"},
+      {"term": "woven", "reason": "owner ban"},
+      {"term": "profound", "reason": "owner ban"},
+      {"term": "whisper", "reason": "owner ban"},
+      {"term": "engine", "reason": "owner ban (no motor metaphors)"},
+      {"term": "nestled", "reason": "owner ban"},
+      {"term": "hold space", "reason": "mystical cliche"},
+      {"term": "step into your power", "reason": "mystical cliche"},
+      {"term": "the lesson is", "reason": "moralizing / life-coaching seam"},
+      {"term": "the gift is", "reason": "template seam - do not label the beat"},
+      {"term": "the shadow is", "reason": "template seam - do not label the beat"}
+    ],
+    "warn": [
+      {"term": "\\b(asks|asking)\\b", "reason": "watch for vague 'ask/asking' agency; already hard-enforced on the template by validate_patterns, so this is a surfacing warn for rendered values"},
+      {"term": "the situation", "reason": "vague; name it"},
+      {"term": "\\bjourney\\b", "reason": "self-help register"},
+      {"term": "\\b(embrace|honor|lean into)\\b", "reason": "coaching verbs; prefer plain description"},
+      {"term": "\\bnot [a-z]+ but\\b", "reason": "'not X but Y' reframe construction; one clean statement instead"},
+      {"term": "(?<!feedback )\\bloops?\\b", "reason": "avoid bare 'loop' as a cycle comparison; use cycle"}
+    ]
+  },
+
+  "geometryTermsForL1Check": ["apex", "empty leg", "quincunx", "sextile", "opposition", "trine by degree", "150 degrees", "120 degrees", "right angles"],
+  "geometryL1Note": "These may appear in Level 2 but must NOT appear in the Level 1 'feel' paragraph. The pattern NAME in the overview ('form a T-square') is not a geometry mechanic and is fine.",
+
+  "humanJudgment": [
+    "Vague 'things'/'thing' as filler is off, but idiomatic use ('throws itself into things', 'get things done') is fine. Not machine-checked; left to the judge.",
+    "Level 1 must read as ONE lived paragraph, not three restatements of the same dynamic.",
+    "One returning-question / catch, not a pile.",
+    "The apex/focal 'who carries this' beat appears once; the balancing point appears once.",
+    "The mechanics stay in Level 2; the lived paragraph stays felt."
+  ],
+
+  "exemplars": "See voice/tldr-astro/pattern-examples.json (canonical: true). Every exemplar must score clean against this file and 3 against the judge."
+}

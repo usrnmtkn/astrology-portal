@@ -8,7 +8,12 @@ import { loadAspectPatternProductionAuthoredRecords } from "./_lib/aspect-patter
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
-  res.setHeader("cache-control", "private, max-age=60, stale-while-revalidate=300");
+  res.setHeader(
+    "cache-control",
+    process.env.NODE_ENV === "production"
+      ? "private, max-age=60, stale-while-revalidate=300"
+      : "no-store"
+  );
   res.end(JSON.stringify(body));
 }
 

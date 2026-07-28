@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import os from "node:os";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,9 +13,9 @@ const verifyOnly = process.argv.includes("--verify-only");
 const prepareCurl = process.argv.includes("--prepare-curl");
 const cleanupCurl = process.argv.includes("--cleanup-curl");
 const now = new Date().toISOString();
-const curlPayloadPath = "/private/tmp/tldrastro-sun-moon-natal-aspects-upsert.json";
-const curlUpsertConfigPath = "/private/tmp/tldrastro-sun-moon-natal-aspects-upsert.curl";
-const curlVerifyConfigPath = "/private/tmp/tldrastro-sun-moon-natal-aspects-verify.curl";
+const curlPayloadPath = `${os.tmpdir()}/tldrastro-sun-moon-natal-aspects-upsert.json`;
+const curlUpsertConfigPath = `${os.tmpdir()}/tldrastro-sun-moon-natal-aspects-upsert.curl`;
+const curlVerifyConfigPath = `${os.tmpdir()}/tldrastro-sun-moon-natal-aspects-verify.curl`;
 
 const aspectIds = [
   "sun-conjunction-moon",

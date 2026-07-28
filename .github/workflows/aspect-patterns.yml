@@ -1,0 +1,51 @@
+name: Aspect patterns
+
+on:
+  pull_request:
+    paths:
+      - "api/**"
+      - "apps/web/src/features/you/**"
+      - "apps/web/src/services/natalAspectPatterns.ts"
+      - "packages/astro-knowledge/aspect-pattern-**"
+      - "packages/astro-knowledge/engine/aspect-patterns/**"
+      - "packages/astro-knowledge/scripts/*pattern*"
+      - "packages/astro-knowledge/voice/tldr-astro/pattern-**"
+      - "scripts/test-*aspect-pattern*"
+      - "package.json"
+      - "packages/astro-knowledge/package.json"
+      - ".github/workflows/aspect-patterns.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+      - "apps/web/src/features/you/**"
+      - "apps/web/src/services/natalAspectPatterns.ts"
+      - "packages/astro-knowledge/aspect-pattern-**"
+      - "packages/astro-knowledge/engine/aspect-patterns/**"
+      - "packages/astro-knowledge/scripts/*pattern*"
+      - "packages/astro-knowledge/voice/tldr-astro/pattern-**"
+      - "scripts/test-*aspect-pattern*"
+      - "package.json"
+      - "packages/astro-knowledge/package.json"
+      - ".github/workflows/aspect-patterns.yml"
+
+jobs:
+  aspect-patterns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CONTENT_GENERATION_PROVIDER: ${{ vars.CONTENT_GENERATION_PROVIDER }}
+      CONTENT_GENERATION_PROVIDER_SKY_ASPECT: ${{ vars.CONTENT_GENERATION_PROVIDER_SKY_ASPECT }}
+      OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+      ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:aspect-patterns

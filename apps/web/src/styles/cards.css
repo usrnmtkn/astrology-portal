@@ -52,30 +52,6 @@
   border-color: color-mix(in srgb, var(--card-border) 70%, var(--card-title-color) 30%);
 }
 
-.natal-pattern-card--collapsed summary,
-.natal-pattern-card__supporting-item summary {
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  gap: var(--space-3);
-  justify-content: space-between;
-  list-style: none;
-  min-height: 58px;
-  padding: var(--space-4) var(--card-padding);
-}
-
-.natal-pattern-card--collapsed summary::-webkit-details-marker,
-.natal-pattern-card__supporting-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.natal-pattern-card--collapsed summary span {
-  display: grid;
-  gap: var(--space-1);
-  min-width: 0;
-}
-
-.natal-pattern-card--collapsed summary em,
 .natal-pattern-card__header span {
   color: var(--card-meta-color);
   font-size: var(--type-xs);
@@ -84,14 +60,6 @@
   letter-spacing: var(--snap-eyebrow-tracking);
   line-height: var(--leading-meta);
   text-transform: uppercase;
-}
-
-.natal-pattern-card--collapsed summary strong {
-  color: var(--card-title-color);
-  font-size: var(--type-md);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-meta);
-  overflow-wrap: anywhere;
 }
 
 .natal-pattern-card__header {
@@ -117,23 +85,37 @@
   margin: 0;
 }
 
-.natal-pattern-card__sections {
+.natal-pattern-card__actions {
   border-top: 1px solid var(--card-border);
-  display: grid;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-3) var(--card-padding);
 }
 
-.natal-pattern-card__section {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--card-padding);
+.natal-pattern-card__details-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--card-title-color);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: var(--type-sm);
+  font-weight: var(--weight-semibold);
+  gap: var(--space-1);
+  line-height: var(--leading-meta);
+  padding: var(--space-1) 0;
 }
 
-.natal-pattern-card__section + .natal-pattern-card__section {
-  border-top: 1px solid var(--card-border);
+.natal-pattern-card__details-button:hover {
+  color: var(--card-body-color);
 }
 
-.natal-pattern-card__section h3,
-.natal-pattern-card__supporting h3,
+.natal-pattern-card__details-button:focus-visible {
+  outline: 2px solid var(--card-title-color);
+  outline-offset: 4px;
+}
+
 .natal-pattern-card__activation-section h4 {
   color: var(--card-meta-color);
   font-size: var(--type-xs);
@@ -141,38 +123,6 @@
   line-height: var(--leading-meta);
   margin: 0;
   text-transform: uppercase;
-}
-
-.natal-pattern-card__supporting {
-  border-top: 1px solid var(--card-border);
-  display: grid;
-  gap: 0;
-  padding-top: var(--space-4);
-}
-
-.natal-pattern-card__supporting > h4 {
-  padding: 0 var(--card-padding) var(--space-3);
-}
-
-.natal-pattern-card__supporting-item {
-  border-top: 1px solid var(--card-border);
-}
-
-.natal-pattern-card__supporting-item summary span {
-  color: var(--card-title-color);
-  font-size: var(--type-md);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-meta);
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.natal-pattern-card__supporting-item .natal-pattern-card__header h3 {
-  font-size: var(--type-lg);
-}
-
-.natal-pattern-card__supporting-item .natal-pattern-card__header {
-  padding-top: var(--space-4);
 }
 
 .natal-pattern-card__activation {

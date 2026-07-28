@@ -70,6 +70,7 @@ const shareLinksMigrationPath = path.join(
 );
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
+const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuth.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
 const youPagePath = path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx");
@@ -103,6 +104,7 @@ const invitationManagementMigration = fs.readFileSync(invitationManagementMigrat
 const shareLinksMigration = fs.readFileSync(shareLinksMigrationPath, "utf8");
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
+const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
@@ -784,9 +786,24 @@ assert.match(
   "Disabled SMS providers must render actionable member-facing copy instead of a backend error."
 );
 assert.match(
+  phoneAuthService,
+  /libphonenumber-js\/max[\s\S]*new AsYouType\("US"\)[\s\S]*parsePhoneNumberFromString[\s\S]*parsedPhone\.isValid\(\)[\s\S]*parsedPhone\.country !== "US"[\s\S]*return parsedPhone\.number/,
+  "Phone input must use established metadata-backed formatting and strict US E.164 validation."
+);
+assert.match(
   authService,
-  /digits\.length === 10[\s\S]*`\+1\$\{digits\}`[\s\S]*signInWithOtp\([\s\S]*normalizePhoneForOtp\(phone\)[\s\S]*verifyOtp\([\s\S]*normalizePhoneForOtp\(phone\)/,
-  "Ten-digit US mobile input must normalize consistently for both OTP delivery and verification."
+  /shouldCreateUser = true[\s\S]*signInWithOtp\(\{[\s\S]*phone: normalizedPhone[\s\S]*options: \{[\s\S]*shouldCreateUser[\s\S]*verifyOtp\(\{[\s\S]*phone: normalizeUsPhoneNumber\(phone\)/,
+  "Phone login must not create a new account, while signup must reuse the same validated E.164 number."
+);
+assert.match(
+  app,
+  /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(60\)[\s\S]*phoneCode\.trim\(\)\.length !== 6[\s\S]*formatPhoneNumberForDisplay\(phoneOtpDestination\)[\s\S]*Resend in 0:/,
+  "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
+);
+assert.doesNotMatch(
+  `${app}\n${phoneAuthService}`,
+  /Australia|\+61/,
+  "Phone signup must not advertise unsupported Australian phone numbers."
 );
 assert.match(
   authService,

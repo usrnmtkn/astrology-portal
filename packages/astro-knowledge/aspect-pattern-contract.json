@@ -1,5 +1,5 @@
 {
-  "_note": "Single machine-readable contract. validate_patterns.py and render_matrix.py and gold_render.py all read THIS. The template's human TOKEN REGISTRY must match fields[]. Frozen: values may change, contracts may not.",
+  "_note": "Single machine-readable v3.7 contract. validate_patterns.py, render_matrix.py, and gold_render.py all read THIS. The template's human TOKEN REGISTRY must match fields[]. Locked after the unknown-time cross-level deduplication amendment: values may change, contracts may not.",
   "allowed_prefixes": [
     "apex",
     "focal",
@@ -21,7 +21,13 @@
     "oa1",
     "oa2",
     "ob1",
-    "ob2"
+    "ob2",
+    "ends",
+    "corners",
+    "trio",
+    "bases",
+    "axisA",
+    "axisB"
   ],
   "banned_aliases": [
     "apex_planet",
@@ -35,9 +41,10 @@
   ],
   "reserved_tokens": [
     "house_context",
-    "sign_behavior"
+    "sign_behavior",
+    "sign_need"
   ],
-  "_reserved_note": "house_context is a source component of sign_house_pull/response (not rendered directly); sign_behavior is the house-free variant reserved for future unknown-time use (sign_pull is used today).",
+  "_reserved_note": "house_context, sign_behavior, and sign_need are resolver source components used to compose group intros and conditional apex/focal responses; they are not rendered directly.",
   "fields": {
     "planet": {
       "sign": false,
@@ -63,31 +70,63 @@
       "sign": false,
       "house": true
     },
+    "decision_area": {
+      "sign": false,
+      "house": true
+    },
+    "decision_test": {
+      "sign": false,
+      "house": true
+    },
     "role_gloss": {
       "sign": false,
       "house": false
     },
-    "sign_house_pull": {
+    "sign_need": {
+      "sign": true,
+      "house": false
+    },
+    "base_contribution": {
+      "sign": false,
+      "house": false
+    },
+    "lived_title": {
+      "sign": false,
+      "house": false
+    },
+    "lived_need": {
+      "sign": false,
+      "house": false
+    },
+    "incomplete_first_answer": {
+      "sign": false,
+      "house": false
+    },
+    "returning_lived_example": {
+      "sign": false,
+      "house": false
+    },
+    "moon_condition": {
+      "sign": true,
+      "house": false
+    },
+    "intro": {
       "sign": true,
       "house": true
+    },
+    "sign_list": {
+      "sign": true,
+      "house": false
     },
     "sign_house_response": {
       "sign": true,
       "house": true
-    },
-    "sign_pull": {
-      "sign": true,
-      "house": false
     },
     "sign_behavior": {
       "sign": true,
       "house": false
     },
     "response_example": {
-      "sign": true,
-      "house": false
-    },
-    "pressure_response": {
       "sign": true,
       "house": false
     },
@@ -98,14 +137,6 @@
     "behavior": {
       "sign": true,
       "house": false
-    },
-    "apex_pressure": {
-      "sign": true,
-      "house": true
-    },
-    "repeating_question": {
-      "sign": true,
-      "house": true
     },
     "focal_demand": {
       "sign": true,
@@ -170,12 +201,17 @@
         ]
       },
       "required_by_section": {
+        "L1:opening exact": [
+          "oppA.base_contribution",
+          "oppB.base_contribution",
+          "oppA.house_area",
+          "oppB.house_area",
+          "apex.house_area"
+        ],
         "feel": [
-          "oppA.sign_house_pull",
-          "oppB.sign_house_pull",
-          "apex.sign_house_response",
+          "ends.intro",
           "apex.response_example",
-          "apex.pressure_response"
+          "apex.house_area"
         ],
         "planet_roles": [
           "empty_leg.balancing_move"
@@ -205,11 +241,22 @@
         ]
       },
       "required_by_section": {
+        "L1:opening exact": [
+          "c1.base_contribution",
+          "c2.base_contribution",
+          "c3.base_contribution",
+          "c4.base_contribution",
+          "c1.house_area",
+          "c2.house_area",
+          "c3.house_area",
+          "c4.house_area"
+        ],
         "feel": [
-          "c1.sign_house_pull",
-          "c2.sign_house_pull",
-          "c3.sign_house_pull",
-          "c4.sign_house_pull"
+          "corners.intro",
+          "c1.house_area",
+          "c2.house_area",
+          "c3.house_area",
+          "c4.house_area"
         ],
         "planet_roles": [
           "c1.role_gloss",
@@ -239,10 +286,16 @@
         ]
       },
       "required_by_section": {
+        "L1:opening exact": [
+          "t1.base_contribution",
+          "t2.base_contribution",
+          "t3.base_contribution",
+          "t1.house_area",
+          "t2.house_area",
+          "t3.house_area"
+        ],
         "feel": [
-          "t1.sign_house_pull",
-          "t2.sign_house_pull",
-          "t3.sign_house_pull"
+          "trio.intro"
         ],
         "planet_roles": [
           "t1.role_gloss"
@@ -275,11 +328,18 @@
         ]
       },
       "required_by_section": {
+        "L1:opening exact": [
+          "t1.base_contribution",
+          "t2.base_contribution",
+          "t3.base_contribution",
+          "t1.house_area",
+          "t2.house_area",
+          "t3.house_area",
+          "focal.house_label"
+        ],
         "feel": [
-          "t1.sign_house_pull",
-          "t2.sign_house_pull",
-          "t3.sign_house_pull",
-          "focal.sign_house_response",
+          "trio.intro",
+          "focal.response_example",
           "focal.focal_demand",
           "focal.focal_interruption"
         ],
@@ -314,13 +374,36 @@
         ]
       },
       "required_by_section": {
+        "L1:title exact/strong": [
+          "apex.lived_title"
+        ],
+        "L1:opening exact": [
+          "base1.planet",
+          "base2.planet",
+          "apex.planet",
+          "base1.base_contribution",
+          "base2.base_contribution",
+          "apex.base_contribution",
+          "base1.decision_area",
+          "base2.decision_area",
+          "base1.decision_test",
+          "base2.decision_test"
+        ],
+        "L1:opening moon_decision": [
+          "apex.planet",
+          "apex.sign",
+          "apex.moon_condition"
+        ],
         "feel": [
-          "base1.sign_house_pull",
-          "base2.sign_house_pull",
-          "apex.sign_house_response",
-          "apex.repeating_question"
+          "bases.intro",
+          "apex.response_example",
+          "apex.lived_need",
+          "apex.incomplete_first_answer",
+          "apex.returning_lived_example"
         ],
         "reference_point": [
+          "apex.house_area",
+          "reference.sign",
           "reference.behavior",
           "reference.area"
         ]
@@ -349,13 +432,15 @@
         ]
       },
       "required_by_section": {
+        "L1:opening exact": [
+          "oa1.base_contribution",
+          "oa2.base_contribution",
+          "ob1.base_contribution",
+          "ob2.base_contribution"
+        ],
         "feel": [
-          "oa1.sign_house_pull",
-          "oa2.sign_house_pull",
-          "ob1.sign_house_pull",
-          "ob2.sign_house_pull",
-          "oa1.role_gloss",
-          "ob1.role_gloss",
+          "axisA.intro",
+          "axisB.intro",
           "oppositionA.area",
           "oppositionB.area"
         ],
