@@ -2,6 +2,8 @@
 
 Date: 2026-07-15
 
+> Update (2026-07-27): the app now calculates the True Node throughout and displays it as North Node. Mean Node observations below describe the build audited on 2026-07-15 and are retained as historical findings.
+
 ## Executive Summary
 
 I checked the current TLDR Astro chart calculation and wheel-rendering paths against the local integrity harness, the NASA/JPL Horizons independent comparison, and the supplied Jose Astro.com reference chart.
@@ -141,7 +143,7 @@ Reference house-cusp comparison:
 Interpretation:
 
 - The app's raw calculation for Jose is accurate against the Astro.com reference.
-- The node mismatch is expected because Astro.com's screenshot displays True Node while the app intentionally uses mean node.
+- At the time of this audit, the node mismatch was expected because Astro.com's screenshot displayed True Node while the app used Mean Node. This has since been resolved by adopting the True Node.
 - The supplied desktop app screenshot showing Aries rising for Jose conflicts with both the Astro.com reference and the current calculation. Investigate saved manual chart data, profile header state, or stale cached `natalChart` JSON for that record.
 
 ## Test Results
@@ -282,12 +284,12 @@ Changes made:
 
 ### P2 Node Method Difference
 
-The app uses mean North Node; the Astro.com reference image displays True Node.
+At the time of this audit, the app used the Mean North Node while the Astro.com reference image displayed the True Node. The app now uses the True Node.
 
 Recommended action:
 
-- Either keep mean node and document it in product/calculation settings, or expose true/mean node as a setting.
-- Do not use Astro.com True Node screenshots as a direct node-position oracle unless the app is configured for True Node.
+- Resolved 2026-07-27: use the True Node as the sole product calculation and display it as North Node.
+- Astro.com True Node screenshots can now be used as a node-position reference when the zodiac, frame, place, and timestamp also match.
 
 ### P2 Verification Coverage Gaps
 

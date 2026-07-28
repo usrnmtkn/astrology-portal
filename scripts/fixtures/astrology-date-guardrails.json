@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "reviewBy": "2027-06-30",
+  "coverageEndsAt": "2028-12-31",
+  "policy": {
+    "nodeType": "true",
+    "readerDateTimeZone": "chart-location",
+    "calculationVersion": "tldrastro-calculation-v2"
+  },
+  "monthlySweepYears": [2026, 2027, 2028],
+  "sources": [
+    {
+      "label": "CHANI — Your guide to the lunar nodes in Aquarius and Leo",
+      "url": "https://www.chani.com/blogs/your-guide-to-the-lunar-nodes-in-aquarius-and-leo",
+      "covers": ["true-node-pisces-2025", "true-node-aquarius-2026"]
+    },
+    {
+      "label": "Astrodienst Astrowiki — Retrograde Motion",
+      "url": "https://www.astro.com/astrowiki/en/Retrograde",
+      "covers": ["pluto-2026", "pluto-2027", "pluto-2028"]
+    }
+  ],
+  "nodeWindows": [
+    {
+      "id": "true-node-pisces-2025",
+      "sampleAt": "2026-07-22T16:00:00Z",
+      "northSign": "Pisces",
+      "southSign": "Virgo",
+      "startUtcDate": "2025-01-11",
+      "endUtcDate": "2026-07-27",
+      "civilRanges": {
+        "UTC": "Jan 11, 2025 - Jul 27, 2026",
+        "America/New_York": "Jan 11, 2025 - Jul 26, 2026",
+        "America/Los_Angeles": "Jan 11, 2025 - Jul 26, 2026"
+      }
+    },
+    {
+      "id": "true-node-aquarius-2026",
+      "sampleAt": "2027-07-15T16:00:00Z",
+      "northSign": "Aquarius",
+      "southSign": "Leo",
+      "startUtcDate": "2026-07-27",
+      "endUtcDate": "2028-03-26",
+      "civilRanges": {
+        "UTC": "Jul 27, 2026 - Mar 26, 2028",
+        "America/New_York": "Jul 26, 2026 - Mar 26, 2028",
+        "America/Los_Angeles": "Jul 26, 2026 - Mar 26, 2028"
+      }
+    }
+  ],
+  "retrogradeWindows": [
+    {
+      "id": "pluto-2026",
+      "planet": "Pluto",
+      "sampleAt": "2026-07-22T16:00:00Z",
+      "startUtcDate": "2026-05-06",
+      "endUtcDate": "2026-10-16",
+      "publishedStartAt": "2026-05-06T15:34:00Z",
+      "publishedEndAt": "2026-10-16T02:39:00Z",
+      "toleranceMinutes": 5,
+      "civilRanges": {
+        "UTC": "May 6, 2026 - Oct 16, 2026",
+        "America/New_York": "May 6, 2026 - Oct 15, 2026",
+        "America/Los_Angeles": "May 6, 2026 - Oct 15, 2026",
+        "Asia/Tokyo": "May 7, 2026 - Oct 16, 2026"
+      }
+    },
+    {
+      "id": "pluto-2027",
+      "planet": "Pluto",
+      "sampleAt": "2027-07-15T16:00:00Z",
+      "startUtcDate": "2027-05-08",
+      "endUtcDate": "2027-10-18",
+      "publishedStartAt": "2027-05-08T12:56:00Z",
+      "publishedEndAt": "2027-10-18T03:50:00Z",
+      "toleranceMinutes": 5,
+      "civilRanges": {
+        "UTC": "May 8, 2027 - Oct 18, 2027",
+        "America/New_York": "May 8, 2027 - Oct 17, 2027",
+        "America/Los_Angeles": "May 8, 2027 - Oct 17, 2027",
+        "Asia/Tokyo": "May 8, 2027 - Oct 18, 2027"
+      }
+    },
+    {
+      "id": "pluto-2028",
+      "planet": "Pluto",
+      "sampleAt": "2028-07-15T16:00:00Z",
+      "startUtcDate": "2028-05-09",
+      "endUtcDate": "2028-10-19",
+      "civilRanges": {
+        "UTC": "May 9, 2028 - Oct 19, 2028",
+        "America/New_York": "May 9, 2028 - Oct 18, 2028",
+        "America/Los_Angeles": "May 9, 2028 - Oct 18, 2028",
+        "Asia/Tokyo": "May 9, 2028 - Oct 19, 2028"
+      }
+    }
+  ]
+}

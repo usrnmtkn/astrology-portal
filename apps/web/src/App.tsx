@@ -80,6 +80,12 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
 import type { ContentBundle } from "./content/types";
+import {
+  astrologyDateRangeLabel,
+  isDisplayRetrograde,
+  isLunarNodePoint,
+  lunarNodeTransitRangeLabel
+} from "./services/astrologyDisplay";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
@@ -1086,11 +1092,13 @@ function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues
   const body = skyDisplayPlanetName(position.planet);
   const planetTopic = planetTopicSlot(position.planet, "sky");
   const signStyle = signStyleSlot(position.sign);
-  const transitTiming = position.transitStart && position.transitEnd
-    ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd))
-    : null;
-  const retrogradeTiming = retrogradeRangeText(position) ?? transitTiming;
-  const compactCollectiveClaim = position.motion === "retrograde"
+  const transitTiming = lunarNodeTransitRangeLabel(position)
+    ?? (position.transitStart && position.transitEnd
+      ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd))
+      : null);
+  const isRetrograde = isDisplayRetrograde(position);
+  const retrogradeTiming = isRetrograde ? retrogradeRangeText(position) ?? transitTiming : transitTiming;
+  const compactCollectiveClaim = isRetrograde
     ? `${body} retrograde in ${position.sign}.`
     : `${body} in ${position.sign}.`;
 
@@ -1098,7 +1106,7 @@ function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues
     body,
     compact_collective_claim: compactCollectiveClaim,
     end_date_display: retrogradeTiming?.split(/\s+[-–]\s+/u)[1] ?? "",
-    is_retrograde: position.motion === "retrograde",
+    is_retrograde: isRetrograde,
     planet: position.planet,
     planetTopic,
     sign: position.sign,
@@ -1139,7 +1147,7 @@ function skyPlacementFallbackChildKey(position: PlanetPosition) {
 }
 
 function skyPlacementTemplateFallbackKey(position: PlanetPosition) {
-  if (position.motion === "retrograde") {
+  if (isDisplayRetrograde(position)) {
     return templateFallbackContentKeys.skyPlanetaryPlacementRetrograde;
   }
 
@@ -3118,7 +3126,7 @@ function natalChartTableRowFromPosition(position: PlanetPosition): NatalChartDat
     glyph: position.glyph,
     house: chartTableHouse(position.planet, position.house),
     label: position.planet,
-    retrograde: position.motion === "retrograde",
+    retrograde: isDisplayRetrograde(position),
     sign: position.sign
   };
 }
@@ -4499,10 +4507,11 @@ function formatDurationLong(startInput: string | Date, endInput: string | Date, 
 
 function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   const speed = averageDailyMotion[position.planet] ?? 1;
-  const entryOffset = position.motion === "retrograde"
+  const isRetrograde = isDisplayRetrograde(position);
+  const entryOffset = isRetrograde
     ? 30 - position.degree
     : position.degree;
-  const exitOffset = position.motion === "retrograde"
+  const exitOffset = isRetrograde
     ? position.degree
     : 30 - position.degree;
 
@@ -4513,6 +4522,12 @@ function placementTransitRange(position: PlanetPosition, generatedAt: string) {
 }
 
 function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
+  const nodeRangeLabel = lunarNodeTransitRangeLabel(position);
+
+  if (nodeRangeLabel) {
+    return nodeRangeLabel;
+  }
+
   if (position.transitStart && position.transitEnd) {
     return formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd));
   }
@@ -6099,7 +6114,7 @@ function currentSkyPlacementDetailArticle({
 }): SkyDetail {
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
   const title = placementDetailTitle(position, activeAspects);
-  const isRetrograde = position.motion === "retrograde";
+  const isRetrograde = isDisplayRetrograde(position);
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
@@ -14671,7 +14686,7 @@ function natalPlacementV3NormalizedSections(
     const rendered = fallbackRendererV3.renderNatalPlacement({
       dignity: placementDignity(position)?.label?.toLowerCase() ?? undefined,
       house: position.house ?? undefined,
-      isRetrograde: position.motion === "retrograde",
+      isRetrograde: isDisplayRetrograde(position),
       planet: normalizeContentIdPart(position.planet),
       sign: normalizeContentIdPart(position.sign),
       voice: ownerContext?.ownerName ?? "you"
@@ -14774,7 +14789,7 @@ function natalPlacementModularSections({
 }
 
 function natalPlacementSignTitle(position: PlanetPosition) {
-  return placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
+  return placementTitleFromParts(position.planet, position.sign, isDisplayRetrograde(position));
 }
 
 function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
@@ -14782,7 +14797,7 @@ function placementTitleFromParts(planet: string, sign: string, retrograde = fals
 }
 
 function natalPlacementFullTitle(position: PlanetPosition) {
-  const baseTitle = placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
+  const baseTitle = placementTitleFromParts(position.planet, position.sign, isDisplayRetrograde(position));
 
   return position.house ? `${baseTitle} in the ${ordinalHouse(position.house)} house` : baseTitle;
 }
@@ -14916,7 +14931,7 @@ function natalPlacementSkyDetail(
     compactHeader: article.compactHeader,
     plainBody: article.plainBody,
     bodyBeforeSections: article.bodyBeforeSections,
-    retrograde: position.motion === "retrograde",
+    retrograde: isDisplayRetrograde(position),
     body: (article.body ?? []).map(ownerAwareCopy),
     sections: article.sections.map((section) => ({
       heading: cleanGeneratedSectionHeading(section.heading),
@@ -15038,10 +15053,6 @@ function formatRetrogradeDate(value: string) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value.slice(0, 10)}T00:00:00Z`));
 }
 
-function formatRetrogradeDateRange(start: string, end: string) {
-  return `${formatRetrogradeDate(start)} - ${formatRetrogradeDate(end)}`;
-}
-
 function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDate?: string) {
   if (!retrogradeStartDate || !retrogradeEndDate) {
     return null;
@@ -15053,8 +15064,6 @@ function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDat
 }
 
 const personalRetrogradePlanets = new Set(["Mercury", "Venus", "Mars"]);
-const retrogradeIndicatorExcludedPoints = new Set(["North Node", "South Node"]);
-
 function isPersonalRetrogradePlanet(planet: string) {
   return personalRetrogradePlanets.has(planet);
 }
@@ -15091,7 +15100,11 @@ function retrogradeRangeText(position: PlanetPosition) {
     return null;
   }
 
-  return formatRetrogradeDateRange(position.retrogradeStart, position.retrogradeEnd);
+  return astrologyDateRangeLabel(
+    position.retrogradeStart,
+    position.retrogradeEnd,
+    position.transitTimeZone || "UTC"
+  );
 }
 
 function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
@@ -15101,7 +15114,7 @@ function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
 function activeRetrogradePositions(positions: PlanetPosition[]) {
   return positions.filter((position) => (
     position.motion === "retrograde"
-    && !retrogradeIndicatorExcludedPoints.has(position.planet)
+    && !isLunarNodePoint(position.planet)
   ));
 }
 
@@ -15112,7 +15125,7 @@ function retrogradeRemainingCountLabel(generatedAt: string, position: PlanetPosi
 }
 
 function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string) {
-  if (position.motion === "retrograde" && position.retrogradeEnd) {
+  if (isDisplayRetrograde(position) && position.retrogradeEnd) {
     return formatCountdown(generatedAt, position.retrogradeEnd);
   }
 
@@ -15685,7 +15698,7 @@ function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnaps
 }
 
 function placementDetailTitle(position: PlanetPosition, _activeAspects: SkySnapshot["aspects"]) {
-  if (position.motion === "retrograde") {
+  if (isDisplayRetrograde(position)) {
     return retrogradePlacementTitle(position);
   }
 
@@ -15813,7 +15826,7 @@ function PlacementTable({
           const dignity = placementDignity(position, "sky");
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
-          const isRetrograde = position.motion === "retrograde";
+          const isRetrograde = isDisplayRetrograde(position);
           const durationLabel = primaryPlacementDurationLabel(position, generatedAt);
           const retrogradeDurationLabel = null;
           const transitRangeLabel = isRetrograde
@@ -17843,7 +17856,7 @@ function ProfileView({
       key={position.planet}
       onClick={() => openPlacementArticle(position)}
       pointName={position.planet}
-      retrograde={position.motion === "retrograde"}
+      retrograde={isDisplayRetrograde(position)}
       sign={position.sign}
       title={natalPlacementSignTitle(position)}
       variant="natal"

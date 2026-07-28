@@ -42,7 +42,7 @@ BODIES: List[Tuple[str, str, str, int]] = [
     ("Uranus", "♅", "change", swe.URANUS),
     ("Neptune", "♆", "imagination", swe.NEPTUNE),
     ("Pluto", "♇", "depth", swe.PLUTO),
-    ("North Node", "☊", "direction", swe.MEAN_NODE),
+    ("North Node", "☊", "direction", swe.TRUE_NODE),
     ("Chiron", "⚷", "integration", swe.CHIRON),
     ("Lilith", "⚸", "shadow", swe.MEAN_APOG),
 ]

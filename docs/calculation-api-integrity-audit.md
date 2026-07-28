@@ -19,7 +19,7 @@ Source registry: `scripts/fixtures/ephemeris-source-registry.json`
   - Current ingestion status: wired through `scripts/providers/nasa-horizons-provider.mjs` and `TLDR_ASTRO_VERIFY_PROVIDER_COMMAND`.
   - Why selected: credential-free, authoritative JPL output, independent of the app's Swiss Ephemeris implementation.
   - Coverage: verifies apparent geocentric ecliptic-of-date longitude/latitude for Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, and Chiron; verifies direct/retrograde by finite difference; verifies aspects among supported bodies.
-  - Gaps: does not verify mean node, Lilith, Ascendant/Descendant/Midheaven/IC, house cusps, station timestamps, retrograde shadow boundaries, or transit exact-hit bisection in the current adapter.
+  - Gaps: does not verify the lunar node, Lilith, Ascendant/Descendant/Midheaven/IC, house cusps, station timestamps, retrograde shadow boundaries, or transit exact-hit bisection in the current adapter.
 - Astro.com Swiss Ephemeris 2026 PDF: `https://www.astro.com/swisseph/ae/2000/ae_2026.pdf`
   - Intended role: authoritative reference candidate.
   - Current ingestion status: blocked in this environment. The URL redirects to `https://www.astro.com/cgi/prep.cgi/swisseph/ae/2000/ae_2026.pdf`, but direct fetch returned Astro.com's browser-check HTML page rather than a PDF.
@@ -35,7 +35,7 @@ Source registry: `scripts/fixtures/ephemeris-source-registry.json`
 - Zodiac: tropical. No sidereal ayanamsa is configured in local calculations.
 - Frame: geocentric. No topocentric flag is currently used.
 - Planet flags: `SEFLG_SWIEPH | SEFLG_SPEED`.
-- Node: mean node via `SE_MEAN_NODE`; true node is declared in typings but not used.
+- Node: True Node via `SE_TRUE_NODE`, displayed to readers as North Node.
 - Lilith: mean Black Moon Lilith constant `12`.
 - Chiron: constant `15`.
 - Houses/angles: `swe.houses(..., "W")` for Ascendant and Midheaven angle data, with Whole Sign house cusps derived from 0 degrees of the rising sign.
