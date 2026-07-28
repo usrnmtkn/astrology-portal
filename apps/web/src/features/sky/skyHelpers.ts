@@ -1,5 +1,6 @@
 import type { PlanetPosition } from "../../types";
 import { houseGlyph, pointGlyph, signGlyph } from "../../components/charts/chartAssets";
+import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 
 const zodiacSigns = [
   "Aries",
@@ -138,7 +139,7 @@ export function solarPhaseStatusFor(position: PlanetPosition, positions: PlanetP
 export function placementStatuses(position: PlanetPosition) {
   const statuses: Array<{ label: string; tone: "muted" | "alert" | "retrograde" }> = [];
 
-  if (position.motion === "retrograde") {
+  if (isDisplayRetrograde(position)) {
     statuses.push({ label: "Retrograde", tone: "retrograde" });
   }
 
@@ -163,17 +164,17 @@ export function formatPlanetDegree(position: PlanetPosition) {
 }
 
 export function formatPlacementPosition(position: PlanetPosition) {
-  return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatPlanetDegree(position)}`;
+  return `${position.sign}${isDisplayRetrograde(position) ? " ℞" : ""} ${formatPlanetDegree(position)}`;
 }
 
 export function natalPlacementTitle(position: PlanetPosition) {
-  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+  return `${position.planet}${isDisplayRetrograde(position) ? " Rx" : ""} in ${position.sign}`;
 }
 
 export function detailGlyphForPlacement(position: PlanetPosition) {
   return [
     pointGlyph(position.planet),
-    position.motion === "retrograde" ? "℞" : "",
+    isDisplayRetrograde(position) ? "℞" : "",
     signGlyph(position.sign),
     houseGlyph(position.house)
   ].filter(Boolean).join(" ");

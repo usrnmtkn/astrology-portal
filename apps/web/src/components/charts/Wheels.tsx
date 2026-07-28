@@ -1,6 +1,7 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
   aspectIconFiles,
@@ -151,7 +152,7 @@ function formatWheelDegree(position: PlanetPosition) {
 }
 
 function formatPlanetPlacementTitle(position: PlanetPosition) {
-  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+  return `${position.planet}${isDisplayRetrograde(position) ? " Rx" : ""} in ${position.sign}`;
 }
 
 function formatPlanetPlacementLine(position: PlanetPosition) {
@@ -297,7 +298,7 @@ function formatInspectorOrb(orb: number) {
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
-  if (position.motion === "retrograde") {
+  if (isDisplayRetrograde(position)) {
     return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
   }
 

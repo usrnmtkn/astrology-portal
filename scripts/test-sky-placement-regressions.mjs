@@ -174,9 +174,11 @@ assert.match(app, /position\.motion === "retrograde"[\s\S]*renderTransitRetro\(\
 assert.match(app, /hasRetrogradeArticle[\s\S]*\["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"\]/u, "Nodes, Sun, and Moon must not request unsupported retrograde articles.");
 assert.match(
   app,
-  /const retrogradeIndicatorExcludedPoints = new Set\(\["North Node", "South Node"\]\);[\s\S]*function activeRetrogradePositions\(positions: PlanetPosition\[\]\) \{[\s\S]*!retrogradeIndicatorExcludedPoints\.has\(position\.planet\)/u,
+  /function activeRetrogradePositions\(positions: PlanetPosition\[\]\) \{[\s\S]*!isLunarNodePoint\(position\.planet\)/u,
   "The planets-retrograde indicator must exclude the North and South Node points."
 );
+assert.match(app, /const isRetrograde = isDisplayRetrograde\(position\);[\s\S]*placementTransitRangeLabel/u, "Sky placement details must suppress node retrograde presentation.");
+assert.match(app, /retrograde=\{isDisplayRetrograde\(position\)\}/u, "Natal placement rows must suppress node retrograde presentation.");
 assert.match(app, /normalizeSkyPlacementSurface/, "Sky placement rendering must flow through the normalized surface path.");
 assert.doesNotMatch(app, /sourceMode:\s*"fallback-only"/, "Sky package renderers must not use the retired fallback-only override flag.");
 
