@@ -260,10 +260,7 @@ function activationTimingWindowFromContext(context: AspectPatternActivationInter
   return activationTimingWindowForTrigger(primaryActivationTrigger(context));
 }
 
-export function natalAspectPatternReaderItems(
-  snapshot: SkySnapshot | null,
-  _voice: "you" | "they" = "you"
-): NatalAspectPatternReaderItem[] {
+export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): NatalAspectPatternReaderItem[] {
   const contexts = snapshot?.aspectPatterns?.interpretationContexts ?? [];
   const resolvedCopies = snapshot?.aspectPatterns?.resolvedCopy ?? [];
   const activation = snapshot?.aspectPatterns?.activation as
