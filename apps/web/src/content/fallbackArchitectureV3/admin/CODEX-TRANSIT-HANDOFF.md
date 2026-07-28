@@ -52,3 +52,30 @@ The package supplies COPY. The app engine supplies SELECTION. Codex implements s
 - Review status: ALL rows in this package are APPROVED (owner sign-off through 2026-07-23 — the final approval covered the reversed compat batches for all five planets, the connection transit variant lines, and the daily At-a-Glance library). Every surface is cleared for reader release. Keep gating render eligibility on `review_status` anyway, so future draft rows stay dark until approved. The `review_status` gate keeps them dark until flipped.
 - Browser/TypeScript port: `resolver/renderTransitSynastry.browser.ts`. Import it with the natal resolver file (it shares `SourceGapError` and types from `renderFallback.browser.ts`): `createTransitSynastryRenderer(transitLibJson, templatesJson, rowsJson)`. Verified output-identical to the Node reference across 4,102 renders (all aspect/house/label/return/compat/synastry combos).
 - Decommission the legacy transit/synastry fallback paths per `DECOMMISSION-OLD-FALLBACKS.md` (section: transit + synastry import). Selection is authored-or-v3-or-SOURCE_GAP, never authored-or-old-helper.
+
+---
+
+## 2026-07-28: transit-aspect library v2 (owner-approved)
+
+The full slow-planet aspect library is now authored: transiting Saturn, Chiron, Jupiter,
+Neptune, Uranus, Pluto x each natal target (soft/hard, incl. Midheaven/Ascendant), Lilith
+(conjunction/opposition only - Walker canon, renderer-guarded), and the Nodes
+(conjunction cards for 11 transiting planets per node). Keys:
+`authored/transit-aspect/{transiting}/{natal}/{soft|hard|conjunction}`.
+
+- Closers carry `{{aspectWord}}` and `{{untilDate}}` slots; `renderTransitAspect` fills
+  them from the live aspect + `window` ("Until <Month> <day>"). No window -> the until
+  clause drops cleanly.
+- Neptune pressure cards append a rotating fog-decision note
+  (`fallback-hook/fog-note/variant-1..4`, reader-only by design).
+- NEW surfaces needing App call sites:
+  - `authored/transit-return/north-node` via `renderTransitReturn({ planet: "north-node" })`
+    - show in the year the transiting node conjoins the natal North Node (~ages 19/37/56/75).
+  - `authored/point-explainer/north-node|south-node` - static explainers for the Nodes
+    (render near node cards or in the placement glossary).
+- ENGINE-SIDE gating still to do: Lilith contacts should only FIRE at conjunction/opposition
+  within a 3-degree orb (renderer already SOURCE_GAPs other aspects; tightening the orb is
+  an engine change). Node cards fire on conjunction only.
+- Saturn house intros (1-12) + Aries sign layers replaced with the owner's 2026-07-28
+  rewrite (body_you only; body_they retains the prior approved friend-voice set pending an
+  owner-reviewed friend conversion).
