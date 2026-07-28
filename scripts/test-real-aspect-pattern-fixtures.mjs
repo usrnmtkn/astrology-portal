@@ -33,6 +33,13 @@ function contextsFor(fixture, output = outputFor(fixture)) {
   return buildAspectPatternInterpretationContexts(output, rankingContextFor(fixture));
 }
 
+function readerVisibleContexts(contexts) {
+  return contexts.filter((context) => (
+    !context.display?.isSuppressed
+    && !context.display?.isWithheldForMoonTimeUncertainty
+  ));
+}
+
 function expectedFrom(output) {
   return {
     patternIds: output.patterns.map((pattern) => pattern.id),
@@ -88,7 +95,7 @@ function assertFixtureStable(id, fixture) {
   assert.equal(contexts.length, projected.rankingRecords.length, `${id} context count changed`);
   assert.deepEqual(contexts.map((context) => context.patternId), projected.displayOrder, `${id} context order changed`);
   assert.equal(JSON.stringify(contextsFor(fixture, output)), JSON.stringify(contexts), `${id} contexts are not deterministic`);
-  assert.equal(copies.length, contexts.length, `${id} copy count changed`);
+  assert.equal(copies.length, readerVisibleContexts(contexts).length, `${id} reader-visible copy count changed`);
   assert.equal(JSON.stringify(resolveAspectPatternCopies(contexts)), JSON.stringify(copies), `${id} copy resolution is not deterministic`);
   assert.ok(copies.every((copy) => copy.content.headline && copy.content.overview), `${id} copy output must be readable`);
 

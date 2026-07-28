@@ -198,6 +198,12 @@ assert.match(app, /personalTransitPackageSection/, "Transit-to-natal rendering m
 assert.match(app, /aspectAdj:\s*transitAspectTechnicalVerb\(transit\.aspect\)/, "Transit-to-natal slots must include the aspect word so card bodies say square/conjunct/etc.");
 const fallbackHookKeys = new Set((fallbackSourceRowsV3.hookRows ?? []).map((row) => row.contentKey));
 assert.ok(fallbackHookKeys.has("fallback-hook/transit-aspect-type/square"), "V3 fallback package must include transit aspect hooks.");
+const conjunctionSunDailyBody = (fallbackSourceRowsV3.hookRows ?? []).find(
+  (row) => row.contentKey === "fallback-hook/daily-body/conjunction/sun"
+);
+const approvedConjunctionSunDailyBody = "Today your own name is loud in your head: your plans, your pride, your unfinished business. Stop downplaying what you want just to seem easygoing. Clear desire is not arrogance. It gives people something honest to respond to. Ask for it directly. Today, it lands.";
+assert.equal(conjunctionSunDailyBody?.body_you, approvedConjunctionSunDailyBody, "You Transit must preserve the approved conjunction-Sun daily body.");
+assert.equal(conjunctionSunDailyBody?.body_they, approvedConjunctionSunDailyBody, "The mirrored conjunction-Sun daily body must preserve the approved copy.");
 assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");
 assert.match(app, /skyPlacementWritingSection/, "Sky placement rendering must fall back to Sky writing atoms when authored rows are absent.");
 assert.match(adminDashboard, /Content System/, "Admin article editor must label authored vs fallback as a content system, not a display override.");

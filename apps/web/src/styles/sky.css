@@ -162,6 +162,11 @@
   text-wrap: pretty;
 }
 
+.sky-detail-tagline {
+  margin-top: var(--sp-2);
+  font-style: italic;
+}
+
 .article-tldr__copy {
   max-width: none;
   font-size: var(--type-meta-size);
@@ -228,6 +233,17 @@
 .article-section p + p,
 .sky-detail-section p + p {
   margin-top: var(--sp-2);
+}
+
+.sky-placement-moves ul {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-body);
 }
 
 .article-section,

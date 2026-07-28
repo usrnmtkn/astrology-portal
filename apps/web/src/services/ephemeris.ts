@@ -1,5 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
-import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts";
+import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts.js";
 import { debugInfoForZonedDateTime } from "./timezones.js";
 
 const signs = [

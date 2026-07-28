@@ -41,6 +41,10 @@ const sunLeo = renderer.renderSkyPlacement({
     applying: true
   }]
 });
+const sunAries = renderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "aries"
+});
 const mercuryCancerIngress = renderer.renderSkyPlacement({
   planet: "mercury",
   sign: "cancer",
@@ -98,6 +102,12 @@ const targetSpecificTransitEffectRows = fallbackSourceRows.hookRows.filter((row)
 const authoredTransitAspectRows = transitSynastryRows.authoredCards.filter((row) =>
   row.contentKey.startsWith("authored/transit-aspect/")
 );
+const approvedSkyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn|moves)\//u.test(row.contentKey)
+);
+const approvedSkyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
+  /^fallback-hook\/sky-placement-(?:hook|lived|turn)\//u.test(row.contentKey)
+);
 const bannedDignityWords = contentRoleContract.styleRules?.bannedWords ?? [];
 const bannedDignityPattern = bannedDignityWords.length > 0
   ? new RegExp(`\\b(?:${bannedDignityWords.join("|")})\\b`, "iu")
@@ -120,6 +130,11 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
+assert.equal(approvedSkyPlacementRows.length, 766, "The package must include 745 newly approved rows plus the 21 existing canonical rows.");
+assert.equal(approvedSkyPlacementCoreRows.length, 468, "Every non-Lilith placement pair must have approved hook, lived, and turn rows.");
+for (const row of approvedSkyPlacementRows) {
+  assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
+}
 for (const row of authoredTransitAspectRows) {
   assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
 }
@@ -215,6 +230,22 @@ assert.match(
   sunLeo.body,
   /Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum\./u,
   "Sun-in-Leo must append the computed applying/exact aspect fact below the evergreen article."
+);
+assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
+assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
+assert.equal(
+  sunAries.contentKey,
+  "fallback-hook/sky-placement-hook/sun/aries",
+  "Approved pair rows must be identifiable so the app can prioritize them over generated drafts."
+);
+assert.deepEqual(
+  sunAries.parts.slice(0, 3),
+  [
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-hook/sun/aries")?.body_you,
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-lived/sun/aries")?.body_you,
+    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-turn/sun/aries")?.body_you
+  ],
+  "Approved Sky placement articles must render hook, lived expression, and turn in order."
 );
 assert.doesNotMatch(
   sunLeo.body,

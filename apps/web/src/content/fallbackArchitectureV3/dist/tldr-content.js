@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -267,7 +267,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -716,6 +716,24 @@ ${fogNote}`;
         contentKey: authoredArticle.contentKey
       };
     }
+    const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
+    const pairHook = hooks.get(pairKey)?.body_you;
+    const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
+    const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+    const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+    const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
+    if (pairHook && pairLived && pairTurn) {
+      const parts2 = [pairHook, pairLived, pairTurn, ...aspectParas];
+      return {
+        headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
+        tagline,
+        moves,
+        body: parts2.join("\n\n"),
+        parts: parts2,
+        templateKey: "fallback-template/sky.placement-article",
+        contentKey: pairKey
+      };
+    }
     const template = tpl("fallback-template/sky.placement-article");
     const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
     const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
@@ -746,7 +764,9 @@ ${fogNote}`;
       headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
       body: parts.join("\n\n"),
       parts,
-      templateKey: template.contentKey
+      templateKey: template.contentKey,
+      tagline,
+      moves
     };
   }
   function formatCircleNames(names = [], includesReader = true) {
@@ -949,7 +969,7 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-07-28e";
 export {
   PACKAGE_VERSION,
