@@ -153,6 +153,13 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
       let aBody = c.body_you ?? c.body;
       aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
       aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+      // Aspect-gated inserts (owner 2026-07-28): exact-aspect-only paragraphs appended to
+      // the matching card (e.g. the solar-return note on the Sun-Sun conjunction).
+      const gatedInsert = card(`authored/transit-aspect-insert/${transiting}/${natal}/${aspect}`);
+      if (gatedInsert) {
+        const insBody = gatedInsert.body_you ?? gatedInsert.body;
+        if (insBody) aBody = `${aBody}\n\n${insBody}`;
+      }
       // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
       if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
         const NAT = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","midheaven","ascendant"];

@@ -1,6 +1,6 @@
 {
  "schema": "tldrastro-transit-synastry-rows-v1",
- "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render.",
+ "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render. | 2026-07-28: fast-planet transit-aspect v2 wired (Sun/Mercury/Venus/Mars, incident-anchored short cards) + aspect-gated insert rows (authored/transit-aspect-insert/{t}/{n}/{aspect}, appended at render on exact aspect match).",
  "authoredCards": [
   {
    "contentKey": "authored/compat-deep/moon/aquarius/aquarius",
@@ -8166,282 +8166,6 @@
    "editorial_notes": "Anchor: Spring/Forrest \"skipped step\" (\"the unfinished business or skipped/resisted/denied thing we need to do to reach our North Node potential\"). Corpus: Retrograde shelf (\"Step back far enough to see the pattern before you take another step forward\")."
   },
   {
-   "contentKey": "authored/transit-aspect/mars/ascendant/conjunction",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You're coming on stronger than you realize.",
-   "body": "Your energy can arrive before your words do today, and people may read it as pressure even when you mean well. Choose the one conversation that matters and let the rest wait. Intensity works better when it has one target.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch2.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/jupiter/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Go ahead and want the bigger life.",
-   "body": "Ambition runs bigger than usual today. There is no need to shrink your goals to a size that cannot disappoint you. Name the version you actually want and take one step toward it. Appetite is not arrogance.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/mars/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Everything feels like a competition because you're scoring it.",
-   "body": "Someone else's pace may feel like a comment on yours today. It is not; they are just moving. If you need a scoreboard, compare yourself to last month's you. Run your own race.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/midheaven/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Aim your effort where people can see it.",
-   "body": "Your best work may be happening where nobody sees it. This week, put some of the effort where it shows: the meeting, the shared doc, the update you actually send. Credit follows evidence, so leave some where it can be found.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/neptune/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your energy is leaking somewhere you can't see.",
-   "body": "You may be tired in a way sleep does not fix today. The day tends to vanish into the vaguest task on the list. Write down where the hours actually went and plug the biggest leak. Effort works better with a target.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/pluto/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You can hold your ground without scorched earth.",
-   "body": "A push may tempt you to end the whole game today. You can hold your position without escalating to prove you can. Draw the line once, in plain words, and hold it. Power you do not have to demonstrate is the kind that lasts.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/saturn/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "The delay is annoying, not fatal.",
-   "body": "Effort can feel blocked today, and the obstacle can look like proof that you are not good enough. It is timing, not talent. Push slower instead of harder. What you build under resistance tends to hold.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch2.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/saturn/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Slow reps build the muscle.",
-   "body": "Discipline comes easier today. The routine that usually takes willpower mostly runs itself. Put the ease into the unglamorous work that adds up: the practice, the workout, the next block of the big project. Today the reps actually pay.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/sun/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Pick a lane and hit the gas.",
-   "body": "Energy is high today, and it works best pointed at one thing. Three half-started projects will eat the whole day between them. Choose the one that matters most and give it the good hours. Focus is the fuel.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mars/uranus/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Break a pattern, not a promise.",
-   "body": "Restlessness may spike today, and flipping the table can look like progress just because it moves. Point the urge at something that needs shaking up: the stale routine, the outdated plan, the thing everyone quietly hates. Make the boldest useful move, not the loudest one.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/ascendant/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "It's a good day to do the talking.",
-   "body": "If a conversation needs starting, you are the one to start it today. Waiting for someone else to bring it up may mean it never comes up. Skip the rehearsal and open with the plain version. The conversation goes where you steer it.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/jupiter/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Don't promise the version you can't deliver.",
-   "body": "Everything sounds doable when you are excited, and today the excitement talks first. Before you commit, picture doing it on a bad week. Promise what would still get done that week, then surprise people with more.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/jupiter/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "People are actually listening right now.",
-   "body": "The idea you have been sitting on has a real audience today. It does not need a better version or a better moment. Share it as it is and let the questions improve it. Conviction is doing half the work right now.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/mars/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You're about to win an argument and lose a person.",
-   "body": "Comebacks may arrive faster than judgment today. Being sharp is easy right now, and that is exactly the risk. If the conversation matters, slow down and say less. A point that is true today will still be true tomorrow.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/mercury/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your mind has too many tabs open.",
-   "body": "Thoughts may pile up faster than you can finish them today, and it can feel productive without anything getting done. Pick one thread and follow it to the end. The rest will wait. One finished thing beats five started ones.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/midheaven/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your name is coming up in conversations you're not in.",
-   "body": "Decisions about you may be happening out of view right now, and quiet does not mean bad news. Put the good idea where the right person can hear it. Word travels today, so give it something good to carry.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/neptune/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Half-understood plans always come back to bite you.",
-   "body": "A plan may sound fine today while staying blurry in the middle. The vague parts do not sort themselves out; they wait. Ask the question that feels too basic, and if it matters, get it in writing. Clear now beats confused later.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/pluto/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Someone is ready to tell you the real story.",
-   "body": "Conversations can go deeper than usual today if you let them. Ask the question under the small talk. People tell the truth to whoever seems able to hold it, and today that is you. Listen more than you react.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/saturn/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Harsh isn't the same as honest.",
-   "body": "The inner critic may sound extra sure of itself today. Negative does not mean accurate; it just sounds serious. Note the real concerns, then get a second opinion, even if it is your own tomorrow. Today's grading is stricter than the work deserves.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/saturn/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Make the plan while your head is clear.",
-   "body": "Details cooperate today. The logistics you have been avoiding take half the usual effort: the list, the booking, the overdue reply. Knock them out while it is easy. Future you finds the plan already made.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/sun/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You can finally say what you meant.",
-   "body": "Explaining yourself comes easier today. A point that would not come out right last week may come out clean on the first try. If something has been misunderstood, this is the day to clear it up. Say the version only you know.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/uranus/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your best idea won't come from trying harder.",
-   "body": "The answer you are forcing may show up the moment you step away. Take the walk, do the dishes, let the problem breathe. Ideas arrive sideways today. Keep something to write with nearby.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/mercury/venus/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Compliments kept private don't count.",
-   "body": "You may notice something nice about someone today and file it away instead of saying it. It is probably less obvious to them than it is to you. Give the compliment in the moment. It costs nothing and it makes their whole day.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
    "contentKey": "authored/transit-aspect/moon/a/soft/variant-D",
    "content_role": "full_copy",
    "surface": "transit-aspect",
@@ -9475,250 +9199,6 @@
    ],
    "note": "em dashes converted to commas per style rule",
    "editorial_notes": "Anchor: Authenticity shelf, closer quoted (\"Your difference isn't a flaw, it's the blueprint\"). Source: Spring, planet conj NN as \"North Node Medicine… something this planet embodies that you need to bring into your life more.\""
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/ascendant/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Walk in like you were invited.",
-   "body": "You've been showing up braced for objections that never come. Stop shrinking during introductions. Take the seat and say your name clearly. First impressions are running in your favor.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/jupiter/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Take the win while it's offered.",
-   "body": "You've been deflecting good news like accepting it might jinx the rest. Stop treating luck as a loan you'll owe back. Some days simply go your way. Say thank you and keep the confidence.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/midheaven/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Raise your hand before you feel ready.",
-   "body": "You've been waiting to feel qualified before volunteering. Qualification arrives after the reps, not before. Take the visible task. Doubt shrinks when it's busy.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/neptune/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Low battery isn't a moral failure.",
-   "body": "You've been dragging and calling yourself lazy for it. Stop moralizing a tired day. Not every dip needs a diagnosis or a comeback plan. Do less, gently.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/pluto/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Being seen fully won't break you.",
-   "body": "You've been managing your image like the truth is a liability. Stop editing yourself down to what feels safe to show. The people who matter can handle the whole story. Tell it once, all the way through.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/saturn/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Today runs on effort, not charm.",
-   "body": "You've been hoping enthusiasm could substitute for follow-through. It can't this week. Stop resenting the boring parts of your own goals. Do the unglamorous step in front of you. It counts double right now.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/saturn/soft",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Structure is a form of self-respect.",
-   "body": "You've been treating routines like cages when the right ones hold you up. Pick the habit that carries the rest. Keep it small and non-negotiable. Consistency is quiet confidence.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/sun/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your new year starts now, not in January.",
-   "body": "You've been postponing the fresh start until the calendar cooperates. Stop waiting for January to make it official. The reset is now. Set one intention you can keep.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ],
-   "note": "solar return"
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/sun/hard",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "This is a checkpoint, not a verdict.",
-   "body": "You've been treating a midpoint like a deadline. Stop grading work in progress like a finished product. Adjust the course, keep the destination. You're closer than the doubt says.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/sun/uranus/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Let the plot twist happen.",
-   "body": "You've been managing every variable so nothing can surprise you, and it's exhausting. Stop confusing control with safety. The interruption is worth a detour. Follow it for an hour.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/ascendant/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You've got the glow today.",
-   "body": "People are warmer to you than usual today, and it is not suspicious. Take the compliment at face value and just say thank you. Wear the thing, make the plans, enjoy it. Let yourself be liked.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/jupiter/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You're allowed to enjoy this without earning it.",
-   "body": "Enjoyment does not need a justification today. The nice dinner does not have to wait for a milestone, and good news does not need a disclaimer. Celebrate on a Tuesday. Let a good day just be a good day.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/mars/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "That spark you keep dismissing is real.",
-   "body": "An attraction may keep coming back no matter how reasonably you explain it away. Wanting something is not a problem to solve. Decide what to do about it: make the move, or let it rest on purpose. Either beats pretending it is not there.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/midheaven/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Share the win without the disclaimer.",
-   "body": "Good news about your work travels well today. You do not have to shrink it so nobody thinks you are bragging. Share the result and skip the apology. The people who matter will be glad they heard it from you.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/neptune/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Romanticize the small stuff today.",
-   "body": "Beauty is easier to find today if you lower the bar for what counts. The coffee, the walk, the song on repeat all qualify. You do not need a special occasion to feel something. Let an ordinary hour feel special.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ],
-   "note": "fast"
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/pluto/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Casual isn't working for you right now.",
-   "body": "Surface-level may feel emptier than usual today. Wanting more depth was never the problem; hiding the want is what wears you down. Ask for the real conversation instead of the recap. The people worth keeping can handle knowing what you actually want.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/saturn/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Quiet care still counts.",
-   "body": "You may not be bubbly on command today, and that is fine. Warmth is not measured in volume. The ride, the reminder, the follow-through say it clearly. Let actions do the talking.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ],
-   "note": "fast: Venus over natal Saturn"
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/sun/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "People like you more than you assume.",
-   "body": "You may be keeping quiet track of your flaws and assuming everyone else sees the same list. They mostly see the good parts. Show up as you are today and let the warmth count. Approval you already have does not need an audition.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/uranus/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Your taste is changing faster than your habits.",
-   "body": "The usual favorites may not be hitting like they used to. That is not a mood; it is your taste moving. Order something different, change the playlist, try the other place. You are allowed to outgrow your favorites.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ]
-  },
-  {
-   "contentKey": "authored/transit-aspect/venus/venus/any",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "You've been on your own back burner for weeks.",
-   "body": "Your own wants may have been sitting at the bottom of the list lately. Today is for moving them up. Pick the restaurant, buy the flowers, take the longer way home. Small pleasures are maintenance, not rewards.",
-   "review_status": "approved",
-   "approved_via": "owner-authored library (final voice)",
-   "source_keys": [
-    "TLDR-Aspect-Samples-Batch4-InnerPlanets.md"
-   ],
-   "note": "annual pass"
   },
   {
    "contentKey": "authored/transit-event/chiron-retrograde",
@@ -33402,6 +32882,1278 @@
     "Spring, North Node Astrology"
    ],
    "body": "Your South Node shows the role you can carry without much preparation. You know the rules, recognize the pressure, and can still do the job when you are tired. Other people may depend on you here because you make difficult work look ordinary.\n\nThat ability is real, but familiarity can become a trap. You may keep accepting the same responsibility, repeating the same response, or choosing the same kind of relationship because you already know how to survive it. The skill can come with you. It does not have to decide every role, relationship, and responsibility you accept."
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/sun/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Cooperation arrives without being asked for: the reply comes back, the meeting runs short, the plan advances a step on its own. A quick check on the year's goals is worth the ten minutes, especially when you use the calm to fix a weak spot rather than admire a strong one. The Sun {{aspectWord}} your Sun until {{untilDate}} is an easy day worth spending on purpose.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/sun/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "A plan you assumed was finished gets handed back with questions. Someone asks for proof, points directly at the line you hoped they'd skip, or asks how you intend to pay for the ambitious version. A decision from months ago may also show its results, ready or not. The pushback lands softer when the preparation was real, and a surfaced failure reads better as information than as a verdict. The Sun {{aspectWord}} your Sun until {{untilDate}} checks in on the year; smugness with a superior is the one expensive move.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/moon/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Feelings and plans point the same way for once. Home runs smoother, family is easier to reach, and the strain you have been avoiding can be talked out while everyone is calm. The conversation may actually resolve, especially when you raise it today instead of waiting for the version that starts itself later. The Sun {{aspectWord}} your Moon until {{untilDate}} is the easiest window of the month for the personal talk.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/moon/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Mood and duty collide. You may snap at home over nothing, react to a boss with feelings that belong somewhere else, or get pulled between the job and someone who needs you at home. The day runs rougher the longer the feelings have been swallowed; said early and plainly, the friction mostly clears. The Sun {{aspectWord}} your Moon until {{untilDate}} puts the personal life and the public one in the same small room.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/mercury/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The mind is clear and the words land. A pitch, a negotiation, a contract, a class, the important call: language does what you mean today. The exchange may go your way, especially when you state it precisely and take real interest in the other side's view. The Sun {{aspectWord}} your Mercury until {{untilDate}} favors saying the important thing today instead of Thursday.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/mercury/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The talking speeds up and so does the pushback. Ideas get tested, someone may change plans on you or walk back an agreement, and the paperwork multiplies. Arguments mostly start where broadcasting replaced listening. A position may survive the day intact when you defend it with facts and let the other person finish. The Sun {{aspectWord}} your Mercury until {{untilDate}} is for reading results, not launching directions.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/venus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The room is slightly warmer today, but the warmth doesn't do the work for you. The invitation still needs to be sent, the apology still needs to be spoken, and the proposal still needs an actual price attached to it. Easy rapport opens the door; the connection holds up when there's actual substance behind the friendly tone. The Sun {{aspectWord}} your Venus until {{untilDate}} is a social day; spending it alone tends to feel lonelier than usual.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/venus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Pleasure leads and drive follows at a distance. The purchase looks better than it is, the night out runs long, and in a couple, a hidden tension may pick today to surface. What drifts to you without effort is mostly not worth much; what surfaces in the relationship is worth looking at. The Sun {{aspectWord}} your Venus until {{untilDate}} favors gracious over touchy, and a one-day pause on the impulse buy.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/mars/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Physical stamina feels more accessible today, making it a good window to tackle the heavy lift, the long workout, or the physical backlog you've been avoiding. Challenges met boldly tend to go your way, and the energy still wants a body to move through; deskbound, it turns into restlessness. The Sun {{aspectWord}} your Mars until {{untilDate}} goes furthest as effort actually spent.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/mars/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The temper is close to the surface, and so is everyone else's. Ego friction with a boss, a quarrel at home, or a belligerent stranger can find you even when you feel calm. Anger said early and plainly stays small, and extra care with tools, traffic, and machinery is worth it today. The Sun {{aspectWord}} your Mars until {{untilDate}} burns cleanest through hard physical work.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/jupiter/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "One of the genuinely lucky days. Optimism does real work: the favor gets granted, the plan comes together, the boss says yes. The classic waste is enjoying the mood and asking for nothing. The ask may land, especially when it is concrete and aimed at someone with the power to grant it. The Sun {{aspectWord}} your Jupiter until {{untilDate}} is the day to make the request you have been sitting on.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/jupiter/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Everything wants to be bigger today: the order, the promise, the portion, the opinion. The purchase runs overpriced, the commitment runs past the calendar, and confidence can read as talking above your position, especially to superiors. Optimism gives you the momentum to start, but the calendar decides what survives; the gain comes from choosing one ambition you can actually finish this week. The Sun {{aspectWord}} your Jupiter until {{untilDate}} makes almost everything look affordable. Give the big decisions two days.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/saturn/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The backlog stops looking like an insult and starts looking like a list. It's a good window for the task nobody applauds: the forms, the corrections, the spreadsheet, and the follow-up email you've been postponing. An older or more experienced person's advice is worth actively seeking, and what gets finished tends to stay finished. The Sun {{aspectWord}} your Saturn until {{untilDate}} clears backlogs.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/saturn/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Energy runs low today and duties run large; someone may cancel or fall short of an agreement, and authority is not in the mood for you. Most of the restriction is closer than it looks: the tasks left undone are usually what is generating the gloom. Effort feels heavy today, but finishing the tedious thing clears a quiet kind of mental space that resting next to an unfinished task never gives you. The Sun {{aspectWord}} your Saturn until {{untilDate}} runs on duty, and early sleep helps.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/uranus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Ordinary encounters turn lively today, an old contact may resurface, and a deliberate change to a stale routine lands well. Discipline is low; novelty is high. A daring move may earn respect, especially when it is chosen rather than reactive. The Sun {{aspectWord}} your Uranus until {{untilDate}} favors shaking the routine on purpose.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/uranus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Schedules flip today, the car or the printer picks its moment, someone does something abrupt, and a partner may be the restless one. The disruption eases when you plan something genuinely different yourself instead of defending the routine; jittery hours are the wrong ones for risky tasks, and a bridge burned in irritation is expensive to rebuild. The Sun {{aspectWord}} your Uranus until {{untilDate}} breaks the pattern one way or another; choosing which part breaks is the available control.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/neptune/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Your tolerance for noise, competition, and packed schedules thins out. The day rewards dropping the effort to appear decisive when you're actually just tired. Helping someone, quiet hours, music, a film that lands: this is where the day goes right. Not the day to launch the colossal effort. The Sun {{aspectWord}} your Neptune until {{untilDate}} restores more than it produces, and that is its job.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/neptune/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Clarity dips today and energy dips with it; and plans presented today may be vaguer than they sound; shortcuts are tempting and rarely land. The workload may simply need lightening. Postpone signatures and confrontations a few days, take claims with salt, and go easy on alcohol; the body runs oversensitive today. The Sun {{aspectWord}} your Neptune until {{untilDate}} is for coasting, not committing.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/pluto/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "An old grievance, a hidden expense, or a quiet piece of resentment stops being vague today: it becomes specific enough to name, sit with, or finally deal with directly. People accept your lead, and the tangled situation - the closet, the account, the feud - can finally be cleaned up. The lead holds when it serves the group and not just you. The Sun {{aspectWord}} your Pluto until {{untilDate}} is the day to fix what has been broken for months.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/pluto/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "An authority may demand you account for yourself today, an arrangement that was limping may break outright, and an ultimatum may appear from either side. Ultimatums issued today tend to backfire; the workable move is airing the grievance without forcing the ending, and not going it alone. A temporary fix reaches its limit today; the arrangement isn't doomed, but the quick patch won't hold the weight anymore. The Sun {{aspectWord}} your Pluto until {{untilDate}} points at the structural fault, and addressing it beats watching the same leak return.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/midheaven/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Quiet competence gets noticed today. The work done thoroughly without an audience is exactly what earns the nod, and a superior may grant the favor that moves your project. Recognition follows real output here; showcase work earns nothing. The Sun {{aspectWord}} your Midheaven until {{untilDate}} notices the people who just do the job.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/midheaven/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Ambition peaks and tact lags. The work gets attention, which cuts both ways with superiors: support if the groundwork was laid, friction if the push reads as steamrolling. Keep the team on side while you drive. The Sun {{aspectWord}} your Midheaven until {{untilDate}} goes best into the work itself, not the credit.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/ascendant/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Confidence reads as charm today rather than ego, group settings go your way, and a little showing off actually lands. Good for starting the trip, the outing, the thing you enjoy doing in company. The Sun {{aspectWord}} your Ascendant until {{untilDate}} favors being openly yourself and letting that do the work.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/sun/ascendant/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Someone pushes today, or you do: a boss, a parent, the difficult coworker who cannot be dodged today. Fights fought for aims you privately doubt go worst; had openly, over something real, the clash mostly clears the air. Stepping away gives you a moment to breathe, but it doesn't resolve the conflict; the conversation will still be waiting when you walk back into the room, so decide whether delay actually buys you clarity or just prolongs the dread. The Sun {{aspectWord}} your Ascendant until {{untilDate}} puts the difficult conversation on today's calendar.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/sun/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The message you have been rewriting may finally say what you mean, with the right words in the right order. A group conversation can finally reach a decision, especially when everyone leaves knowing what they agreed to. Mercury {{aspectWord}} your Sun until {{untilDate}} helps you say where you stand and get a clear answer back.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/sun/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "You make the point once and it lands; the second time, it becomes an argument. Authority gets touchy today and deals rarely close under this tempo. Map each side's position and settle in a day or two, when the moods are calmer. Mercury {{aspectWord}} your Sun until {{untilDate}} is better for stating positions than settling them.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/moon/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "A friend gets to the real subject because you asked one more question than usual. You read the mood before the words arrive, which makes this the day for the family plan, or the conversation about feelings that logic keeps failing. The heart-to-heart may actually land, especially when you lead with feeling and stay honest; people sense the gap when the warmth is technique. Mercury {{aspectWord}} your Moon until {{untilDate}} is built for the conversations that are not about facts.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/moon/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Something comes out of your mouth that sounded exactly like a parent. The family argument re-runs its usual script, and errands scatter across town without adding up. Conclusions reached today tend to need revising tomorrow. Feelings said as feelings land fine; feelings dressed up as logic start the fight. Mercury {{aspectWord}} your Moon until {{untilDate}} speaks from childhood, so check who is talking before you send it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/mercury/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The numbers check out on the first pass and the small print actually gets read, so a deal agreed now tends to hold because nothing important got skipped. The exam, the letter, the day trip: all favored. The only enemy is boredom with the details; discipline decides whether the clarity gets used. Mercury {{aspectWord}} your Mercury until {{untilDate}} rewards a specific task over a talkative day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/mercury/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The basic ideas get challenged, and that's more useful than it feels. Pushback today can correct a plan while it is still cheap to change; papers go missing, arrivals run late, and snap statements want walking back. A decision may hold when you leave room to revise it in two days. Mercury {{aspectWord}} your Mercury until {{untilDate}} tests the thinking; the flexible version passes.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/venus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The note gets written instead of composed in your head, the small quarrel patches, and the compliment lands without ceremony. Keep it light: this is a pleasant-company day, not the setting for the heavy relationship talk. Mercury {{aspectWord}} your Venus until {{untilDate}} says the warm thing well; the hard thing can wait for its own day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/venus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Agreeableness gets expensive. To keep the peace you may concede something that mattered, or a small misunderstanding leaves someone feeling neglected, and the pretty unnecessary purchase makes its case. A compromise may hold when it trades comfort, not standards. Mercury {{aspectWord}} your Venus until {{untilDate}} makes yes the easiest word; check what it is agreeing to.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/mars/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The raise gets asked for out loud instead of rehearsed, the point gets argued on merit, the contract gets signed, and competition sharpens rather than rattles. The push works best on your own initiative and worst as someone else's errand. Mercury {{aspectWord}} your Mars until {{untilDate}} backs the decision made and acted on the same day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/mars/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "A trivial remark starts a fight nobody planned, and suddenly an opinion is territory. Most of today's arguments defend positions with no real stake. Decide which ideas actually need defending, burn the rest off in work or exercise, and leave the difficult email for tomorrow. Mercury {{aspectWord}} your Mars until {{untilDate}} sharpens the tongue faster than the judgment.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/jupiter/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The contract reads clearly and the plan's next three steps are obvious for once. Contracts, sales, legal matters, and long-range plans all benefit from a mind that sees the possibilities and can still read the fine print. The deal may come together, especially when the optimism keeps its discipline; the apparent luck is mostly full information. Mercury {{aspectWord}} your Jupiter until {{untilDate}} is one of the best short business windows the sky offers.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/jupiter/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Everything sounds better than it is. The deal oversells, the promise inflates, the small print goes politely unread, and your own tone can drift toward knowing best. These faults are cheap to fix once watched for: read every word, promise what the calendar can hold, and let people disagree. Mercury {{aspectWord}} your Jupiter until {{untilDate}} is a genuinely useful day once the claims get checked.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/saturn/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The filing actually gets done, and doing it right the first time feels good instead of fussy. Editing, bills, the routine finally analyzed for efficiency: done once, no rechecking. Advice moves well across experience lines in both directions. Not the day for the big vision; the trees are the point. Mercury {{aspectWord}} your Saturn until {{untilDate}} turns the pile into finished work.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/saturn/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The mind runs precise and pessimistic at the same time. Messages land colder than meant, deals stall or disappoint, and a partial gloomy view can look like the whole truth. The goodbye contemplated today is mostly the mood; deciding it can wait for a clearer day. The hours spend best on exacting solo work, with real breaks. Mercury {{aspectWord}} your Saturn until {{untilDate}} is for the desk, not for conclusions about people.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/uranus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The stuck problem cracks. A new angle arrives mid-shower, an old friend surfaces changed, a detour turns out to be the best part, and pending information may soon redraw the picture anyway. Plans held loosely do best. Mercury {{aspectWord}} your Uranus until {{untilDate}} rewards the deliberate break in routine.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/uranus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The thinking outruns the checking. Ideas arrive feeling inspired and land sloppy, sudden news jolts the schedule, nerves run jumpy, and the blurted remark wants to shock. Capture the flashes in writing and verify them tomorrow; today's judgment is not the judge. Mercury {{aspectWord}} your Uranus until {{untilDate}} generates more than it finishes, and tomorrow does the quality control.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/neptune/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "You hear what the person means two sentences before they say it. The vision pitches well, and owning a mistake now clears it fast and earns respect. Exacting detail work is the one bad fit. Mercury {{aspectWord}} your Neptune until {{untilDate}} works through feel and honesty rather than precision.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/neptune/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The text reads wrong, the call goes unreturned, someone reneges, and the deal that sounds perfect is exactly the one to check twice; today is the classic window for being misled, including by yourself. Say everything with extra precision and sign nothing binding for a couple of days. Mercury {{aspectWord}} your Neptune until {{untilDate}} discounts half of what you hear, and you should too.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/pluto/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "You ask the question the others skipped, and the proposal has to answer it. Research gets somewhere real, and a counseling or therapy session reaches material that usually hides. Persuasion beats demands. Mercury {{aspectWord}} your Pluto until {{untilDate}} makes you very hard to fool.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/pluto/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The conversation turns into a contest of wills. Someone works to change your mind harder than the topic deserves, or one idea colonizes your whole day; forced agreement just goes underground into resistance. What cannot be won by pressure can sometimes be reached by introspection: the intensity spends well inward. Mercury {{aspectWord}} your Pluto until {{untilDate}} rules the argument nobody will drop; declining it is allowed.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/midheaven/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The career plan writes itself out. A step-by-step course of action mapped today tends to match what you actually want, including the parts you normally keep quiet, and a frank talk with a manager goes further than usual. Planning day, not action day. Mercury {{aspectWord}} your Midheaven until {{untilDate}} favors the plan written in full before anything moves.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/midheaven/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Work talk runs one-directional. The plan gets announced, the feedback bounces off, and the unheeded input circles back as a dispute; one insignificant detail may absorb an hour it doesn't deserve. Input actually taken in turns the friction into progress. Mercury {{aspectWord}} your Midheaven until {{untilDate}} states the plan well and listens badly; do the listening on purpose.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/ascendant/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The disagreement that has run for months can settle in twenty minutes today. The conference produces, and the serious conversation you keep postponing finds its opening. Reaching out is the multiplier. Mercury {{aspectWord}} your Ascendant until {{untilDate}} goes best to whoever initiates the contact.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mercury/ascendant/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The talk runs ahead of the listening. Enough words and people start disagreeing just to make you pause; analyses of other people, said out loud, cut deeper than intended. A consultation lands well - the lawyer, the doctor, the clear-the-air talk with a partner - when the other side gets half the airtime. Mercury {{aspectWord}} your Ascendant until {{untilDate}} counts listening as communication too.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/sun/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The interview goes better in person than it ever reads on paper. Today favors the ask made face to face: the favor, the funding, the pitch to the person who decides. Groups warm around you, and small differences settle themselves. Venus {{aspectWord}} your Sun until {{untilDate}} helps people say yes to you; it doesn't do the work that comes after the yes.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/sun/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The couch wins arguments today. Discipline drops, the rich meal argues its case, and it's easier to concede a point than defend one - sometimes a point that mattered. A new flirtation may be real, but today's taste in people runs undiscriminating; let it prove itself before it gets promises. Venus {{aspectWord}} your Sun until {{untilDate}} is an ease-off day. Scheduling it nothing demanding is the win.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/moon/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Anger is hard to hold onto today, and that's information about how much of it was habit. Home is the power spot: host rather than go out, call your mother, fix the room that's been bothering you. A small gathering goes better than a big one. Venus {{aspectWord}} your Moon until {{untilDate}} softens the household; the visit or the talk goes easier now than it will Thursday.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/moon/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel mothered instead of loved, and the calm relationship talk you planned dissolves into feeling. Sweets and drink both overshoot. Love without parenting is today's whole assignment. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save the big talk for a cooler day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/mercury/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The words for the feeling arrive. Today suits saying the affectionate thing out loud, clearing a small tension before it compounds, or steering a negotiation with a light hand. A trip begun now tends to be a good one. Venus {{aspectWord}} your Mercury until {{untilDate}} keeps the tone warm and the timing right; the heavy topics can wait for their own day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/mercury/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The peace gets kept at the deal's expense. In a negotiation you concede to stay pleasant, and the problem swept under the carpet today resurfaces later with interest. A careless joke can wound someone who matters; flippancy is the day's real hazard. Venus {{aspectWord}} your Mercury until {{untilDate}} is for light company and easy culture, not for settling anything contentious.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/venus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The quarrel patches itself once someone opens the door. This is the reconciliation day: familiar people, small conflicts, easy repair. A purchase made now tends to hold its worth, and helpful people find you when you're relaxed enough to let them. Venus {{aspectWord}} your Venus until {{untilDate}} works through ease; tension is the only thing that blocks it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/venus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The negotiation succeeds, just not for you. Today you over-concede: the whim purchase, the point given away to keep things pleasant, the budget quietly abandoned. Someone may lean on your good nature. What shouldn't be compromised still shouldn't be, even today. Venus {{aspectWord}} your Venus until {{untilDate}} makes agreeable the default; check what each yes costs before it leaves your mouth.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/mars/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The direct ask lands without offending anyone. Wanting something and staying warm stop being opposites: the first move at a party, the honest request, the first date that actually goes well. A connection begun now tends to start balanced. Venus {{aspectWord}} your Mars until {{untilDate}} favors making the move instead of waiting for it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/mars/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The argument is rarely about what it's about; underneath it is usually a want nobody said out loud. Desire runs demanding today, tenderness runs short, and attraction gets undiscriminating. Saying explicitly what you want, and what you'll give, removes most of the fight's fuel. Venus {{aspectWord}} your Mars until {{untilDate}} turns unspoken wants into friction; the spoken version is a smaller conversation.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/jupiter/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The settlement lands in your favor, the gift arrives, the trip begins well. Generosity flows both directions and roughly balances. Effort-heavy launches don't suit the day; collecting on past work does. Venus {{aspectWord}} your Jupiter until {{untilDate}} is for enjoying what the work already built.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/jupiter/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The dessert menu wins today, and so does the jewelry case. This is the peak overindulgence contact: judgment about money and appetite runs loose, and confidence can shade into showing off at the formal event. Decided with the head instead of the impulse, the same eye for quality makes genuinely good purchases. Venus {{aspectWord}} your Jupiter until {{untilDate}} wants everything nicer than the budget does. Leave the card at home unless the surplus is real.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/saturn/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The expectations talk goes well today: what you each give, what you each owe, said plainly and without drama. Visits to older relatives land warmly, the budget review actually happens, and a bond formed now tends toward loyal and durable, often across an age gap. Venus {{aspectWord}} your Saturn until {{untilDate}} suits the quiet duties of affection; sparkle isn't on offer, but solidity is.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/saturn/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The warmth doesn't reach today. You may feel like a gray presence at a cheerful table, reassess a relationship in the coldest possible light, or hold back affection you actually feel. The bleak verdict reached tonight shouldn't be acted on tonight. Faking feeling helps nobody, and honest solitude beats forced cheer. Venus {{aspectWord}} your Saturn until {{untilDate}} makes affection feel scarcer than it is; wait a day before believing it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/uranus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Someone interesting walks in mid-routine. New people show up magnetic, the unusual outing appeals, and you're wittier company than usual. Connections made today run more exciting than lasting; that's fine when nobody pretends otherwise. Venus {{aspectWord}} your Uranus until {{untilDate}} is for novelty enjoyed as novelty; possessiveness is the one move that spoils it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/uranus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Boredom starts looking for a lever. A fight gets picked for stimulation, an ex resurfaces from nowhere, money leaves impulsively, and an alluring stranger turns out to be exactly as reliable as the suddenness suggests. The itch is real; scratching it on the relationship is the expensive option. Something genuinely new, chosen together, absorbs the same charge. Venus {{aspectWord}} your Uranus until {{untilDate}} disrupts mostly what's gone rigid.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/neptune/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Music does more than usual today. Beauty lands harder, sympathy comes easier, and affection turns genuinely selfless for a stretch. Creative work that has to form in the imagination first gets its best hours. Practical tasks drift, and that's fine for one day. Venus {{aspectWord}} your Neptune until {{untilDate}} runs on imagination and tenderness; spend it there.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/neptune/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The person in your head and the person in the room diverge. Today runs on romantic idealizing: the impossible standard, the promise taken at face value, the martyr act that builds quiet debt. Someone vague may be vague on purpose. Enjoy the romance as a mood, pour the imagination into art, and sign nothing about love or money. Venus {{aspectWord}} your Neptune until {{untilDate}} falls for the picture over the person; commitments can wait for focus.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/pluto/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The heart-to-heart goes deeper than planned, in the good way. Insight arrives into how the relationship actually works, and a new attraction can feel fated - powerfully, and maybe accurately, maybe not. Let intensity prove itself over time. Venus {{aspectWord}} your Pluto until {{untilDate}} opens the deeper conversation; what it shows improves the bond.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/pluto/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "An old resentment finds today's argument. Jealousy, guilt, and control can enter the negotiation between two people who love each other, and a new infatuation may be running on machinery much older than the person it's attached to. Air the tension without weaponizing it; the relationship survives honesty better than silence. Venus {{aspectWord}} your Pluto until {{untilDate}} brings the controlling side of love to the surface; naming it beats acting it out.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/midheaven/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The studio day produces. Creative work runs unusually well, the room you rearrange comes out right, and you can mediate a dispute because everyone can feel the goodwill. Even a hard relationship conversation can land when it's clear you want repair, not victory. Venus {{aspectWord}} your Midheaven until {{untilDate}} does its best work on beauty and peace, in that order.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/midheaven/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The evening wants to stay in. Entertaining at home beats going out, the rich dessert wins, and love takes center stage - warm and open at its best, inflated into jealousy over nothing at its worst. Keeping the relationship its actual size is the day's discipline. Venus {{aspectWord}} your Midheaven until {{untilDate}} runs amorous and slightly overscaled; enjoy the warmth without inflating the stakes.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/ascendant/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The shyness stays home today. First impressions run almost guaranteed favorable, the party goes your way, and children are genuinely good company. A beautifying purchase holds up when your money habits are normally sound. Venus {{aspectWord}} your Ascendant until {{untilDate}} rewards showing up; the room does the rest.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/venus/ascendant/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The complaint gets swallowed to keep things nice. The day runs pleasant and agreeable - genuinely good for reconciliations, first meetings, and one-to-one work - but real grievances go unvoiced and money gets sloppy without a deliberate grip. Difficult people are unusually easy to handle; press nothing aggressive. Venus {{aspectWord}} your Ascendant until {{untilDate}} keeps today's peace by postponing the complaint; note what went unsaid so it doesn't ferment.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/sun/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The bigger responsibility gets said yes to. Vitality and confidence run high enough to bargain hard, hold your own in the debate, and push the started project forward. Knowing exactly what you want before you push is what wins here. Mars {{aspectWord}} your Sun until {{untilDate}} backs the clear ask and the work already in motion.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/sun/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The clash finds you even when you feel calm. A supervisor pushes, an argument clears years of static or starts new static, and a project reaches its make-or-break point. Hold the essential points, yield the small ones, and burn the surplus off physically. Mars {{aspectWord}} your Sun until {{untilDate}} tests the position you took months ago; the essentials are worth the fight, the trivia never is.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/moon/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The house gets the energy today. Repairs, cooking, a project with the kids, the passionate defense of something you care about: personal effort lands, impersonal effort stalls. Judgment runs subjective, so keep far-reaching decisions off today's list. Mars {{aspectWord}} your Moon until {{untilDate}} does its best work close to home.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/moon/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The snap at the family is rarely about the family. Old buried anger surfaces over a trivial last straw, the household runs touchy, and someone at home may be run down and need looking after. Treat the upset as old tension surfacing, not as what it appears to be about, and burn the mood off in vigorous housework. Mars {{aspectWord}} your Moon until {{untilDate}} aims at the nearest people first; knowing that is half the defense.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/mercury/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The plan argues itself well. Sharp for negotiating, teaching, selling the point of view, and the working trip; you can defend a position clearly without making anyone feel cornered. Pressure is the one mistake: it drives people away from a case that was winning on merit. Mars {{aspectWord}} your Mercury until {{untilDate}} favors the firm case made calmly.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/mercury/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The opinion and the ego merge, and suddenly every disagreement is personal. Disputes flare over nothing real, the news disturbs, and both sides of any argument dig in and budge nowhere. The mind's actual capacity is huge today when it works alone on something hard. Don't drive angry, and don't handle the sharp tool mid-argument. Mars {{aspectWord}} your Mercury until {{untilDate}} fights best on paper and worst in person.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/venus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The date goes well because you made the move. Desire and warmth cooperate: the party, the flirtation, the redecorating burst, the creative session with actual energy behind it. Bring your own idea; the transit supplies drive, not inspiration. Mars {{aspectWord}} your Venus until {{untilDate}} favors shared pleasure over solo effort.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/venus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "One of you feels like the giving is lopsided. Desire turns demanding, tenderness runs short, and the disappointing date or absent partner sharpens the edge. The wants that stay unspoken become the fight. Saying what you want, and what you'll give, is most of the repair; dancing, sport, or the honest argument with amends handles the rest. Mars {{aspectWord}} your Venus until {{untilDate}} runs hot and slightly selfish; naming it takes the harm out.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/mars/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "Work stops resisting you. The stalled project restarts, the match goes your way, the chores list actually ends. Nothing forces action today, which is the one trap: idle, the window just closes. Mars {{aspectWord}} your Mars until {{untilDate}} goes straight into whatever you point it at.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/mars/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The energy runs high with nowhere assigned to go. Fights pick themselves, the workout overdoes itself, restlessness absorbs someone else's aggression, and quick reflexes may be asked for at least once. Drain the charge safely - hard labor, sport, a loud movie - and have the real confrontation in the open, over a serious issue or not at all. Mars {{aspectWord}} your Mars until {{untilDate}} needs a job; give it one before it picks its own.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/jupiter/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The venture launches with the whole picture in view. Energy is high, the deal negotiates well, dealings with authorities go smoothly, and the calculated chance is genuinely calculated. What looks like luck is mostly acting with full information. Mars {{aspectWord}} your Jupiter until {{untilDate}} backs growth tied to real skill; the ego-sized version can wait.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/jupiter/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The plan doubles itself while you describe it. Optimism outruns strength, money, and the calendar; the bet feels safer than it is, the sermon sneaks into the conversation, and the overstretch in sport or spending arrives with confidence attached. Counted first, the same energy closes real gains. Mars {{aspectWord}} your Jupiter until {{untilDate}} supplies boldness at wholesale; buy only what your resources retail.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/saturn/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The exacting work gets its patient hours. Energy arrives at a controlled pace built for precision: the craft project, the careful numbers, the overtime push toward something deferred. Thrift and discipline come easily, and careful work done once can earn real credit. Mars {{aspectWord}} your Saturn until {{untilDate}} works for tomorrow at today's pace.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/saturn/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The effort meets the wall. Drive runs low, launches stall, and an authority figure may voice your own worst suspicion about yourself, which is why it stings. Most of the block is fear dressed as circumstance. Stick to routine, work the anger off in hard disciplined labor, and air the grievance instead of storing it. Mars {{aspectWord}} your Saturn until {{untilDate}} grinds; grinding through the necessary part is the whole win available.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/uranus/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The rut breaks on purpose. Courage arrives for the thing you were too inhibited to try, the stimulating old friend resurfaces, and the calculated risk looks genuinely worth it. The move works when it's a deliberate change of scene rather than a random swerve. Mars {{aspectWord}} your Uranus until {{untilDate}} favors chosen novelty over waiting for boredom to choose for you.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/uranus/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The plan detonates on schedule: cancellations, the last-minute change, the car or the electrics picking their moment, the urge to tell an authority figure exactly where to go. Anger runs explosive and planning runs impossible. Keep the peak of the irritation away from traffic, tools, and final words; pour the charge into an innovative project instead. Mars {{aspectWord}} your Uranus until {{untilDate}} rebels first and explains later; choose the rebellion worth having.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/neptune/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The quiet service day. Drive drops, ego demands drop with it, and the hours suit helping someone, the retreat, the imaginative work session with unusual company. Inspired starts need practical follow-through attached or they fade by Friday. Mars {{aspectWord}} your Neptune until {{untilDate}} runs on care and imagination rather than push; schedule accordingly.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/neptune/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The energy quietly isn't there. Efforts feel inadequate, a counted-on arrangement may dissolve, and demoralizing advice arrives exactly when you're least defended against it. Someone may reach for your ideals as a handle. Conserve the output, verify the promises, and change only what is actually wrong rather than everything at once. Mars {{aspectWord}} your Neptune until {{untilDate}} undercuts force and favors patience; the course you doubt today mostly deserves to survive the day.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/pluto/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The long-range move begins quietly. Reform, renovation, the strategic career step: today's push is subtle enough that nobody feels threatened, and team efforts multiply it. Total clarity about the objective practically guarantees the result. Mars {{aspectWord}} your Pluto until {{untilDate}} moves the big ambition best when it moves with the group.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/pluto/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The push meets a power that pushes back. Ambition picks up a ruthless edge, the showdown tempts, and the people above you hold the stronger position today; a direct assault mostly loses. Enlist allies, keep every tactic clean, and make the case that your interests and theirs run together. Mars {{aspectWord}} your Pluto until {{untilDate}} raises the stakes of force; persuasion holds what pressure can't.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/midheaven/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The initiative gets taken and backing shows up. Self-reliance attracts the material and moral support it needs, others look to you for direction, and the professional risk can be run with a full plan behind it. Direct beats devious in everything today. Mars {{aspectWord}} your Midheaven until {{untilDate}} is the energy of authority used early and openly.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/midheaven/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The credit fight arrives. Someone claims your work, limits your scope, or pushes exactly where the ambition lives, and the anger held in at the office tends to explode at home. Aim the energy at tasks rather than people; carefully planned solo work can win the day outright. Mars {{aspectWord}} your Midheaven until {{untilDate}} heats the career and the kitchen at once; deciding where the fight actually belongs is the skill.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/ascendant/soft",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The honest sentence lands without starting a war. You can tell people exactly where you stand, defend your rights, and present the controversial idea with enough force to win the room. Energetic collaborators show up when you lead. Mars {{aspectWord}} your Ascendant until {{untilDate}} backs plain speech and shared effort; unused, the same energy sours into restlessness.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/mars/ascendant/hard",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "",
+   "body_you": "The confrontation is already on the calendar. A partner pushes on who leads, an open rival stiffens, or an unprovoked swipe needs answering, and the day favors having it out immediately over letting it boil. Fight over the real issue, not its stand-in, and let hard exercise carry what the conversation can't. Mars {{aspectWord}} your Ascendant until {{untilDate}} is the most openly combative day the sky deals; spent honestly, it clears the air for weeks.",
+   "review_status": "approved",
+   "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
+   "source_keys": [
+    "Hand, Planets in Transit",
+    "Rodden, Modern Transits"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect-insert/sun/sun/conjunction",
+   "content_role": "full_copy",
+   "surface": "transit-aspect-insert",
+   "headline": "",
+   "body_you": "Occurring near your birthday, this contact marks a personal reset - a moment to look honestly at what you've built over the last year and what you're ready to stop carrying into the next.",
+   "review_status": "approved",
+   "approved_via": "owner-authored, chat 2026-07-28",
+   "source_keys": [
+    "Hand (solar return)"
+   ]
+  },
+  {
+   "contentKey": "authored/transit-aspect-insert/sun/midheaven/opposition",
+   "content_role": "full_copy",
+   "surface": "transit-aspect-insert",
+   "headline": "",
+   "body_you": "The tension pulls directly between public demands and private life. Career momentum slows down because something at home or within your foundation requires your full presence first.",
+   "review_status": "approved",
+   "approved_via": "owner-authored, chat 2026-07-28",
+   "source_keys": [
+    "Hand (Sun opposition Midheaven)"
+   ]
   }
  ]
 }
