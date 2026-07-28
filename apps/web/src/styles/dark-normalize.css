@@ -25,6 +25,7 @@
   select,
   textarea,
   .auth-input,
+  .phone-auth-country-prefix,
   .city-search-control,
   .city-search-control input
 ) {

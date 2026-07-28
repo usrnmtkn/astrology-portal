@@ -91,38 +91,178 @@
   opacity: 0.6;
 }
 
-.phone-auth-fields {
-  display: grid;
-  gap: 14px;
-  padding: 16px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
+.auth-card--phone {
+  max-width: 480px;
+  padding: clamp(28px, 5vw, 40px);
 }
 
-.phone-auth-actions {
-  display: flex;
+.phone-auth-fields {
+  display: grid;
+  gap: 24px;
+}
+
+.phone-auth-back {
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 4px;
+  width: fit-content;
+  min-height: 32px;
+  margin: -8px 0 2px -6px;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--app-muted);
+  font: inherit;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.phone-auth-back:hover {
+  color: var(--app-text);
+}
+
+.phone-auth-back:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.phone-auth-heading {
+  display: grid;
   gap: 10px;
 }
 
-.phone-auth-actions > button {
-  min-height: 42px;
-  padding: 0 16px;
-  border: 1px solid var(--control-border);
-  border-radius: var(--radius-pill);
-  background: var(--card-bg);
-  color: var(--ink);
-  font: inherit;
+.phone-auth-heading .auth-card__title {
+  margin: 0;
 }
 
-.phone-auth-actions > .signup-submit {
-  width: auto;
+.phone-auth-heading > p:not(.auth-card__title) {
   margin: 0;
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--surface);
+  color: var(--app-muted);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-body);
+}
+
+.phone-auth-heading strong {
+  color: var(--app-text);
+  font-weight: var(--weight-medium);
+}
+
+.phone-auth-number-control {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.phone-auth-country-prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 64px;
+  min-height: var(--input-height);
+  border: 1px solid var(--input-border);
+  border-right: 0;
+  border-radius: var(--input-radius) 0 0 var(--input-radius);
+  background: var(--input-bg);
+  color: var(--app-text);
+  font-family: var(--font-ui);
+  font-size: var(--input-font-size);
+  font-weight: var(--weight-medium);
+}
+
+.phone-auth-number-control .auth-input {
+  min-width: 0;
+  border-radius: 0 var(--input-radius) var(--input-radius) 0;
+}
+
+.phone-auth-number-control:focus-within .phone-auth-country-prefix {
+  border-color: var(--input-focus-border, var(--line-strong));
+  background: var(--app-card);
+}
+
+.phone-auth-help,
+.phone-auth-destination {
+  color: var(--app-muted);
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: normal;
+  line-height: var(--leading-body);
+  text-transform: none;
+}
+
+.phone-auth-help {
+  display: block;
+  margin-top: 8px;
+}
+
+.phone-auth-destination {
+  margin: 0;
+}
+
+.phone-auth-destination strong {
+  color: var(--app-text);
+  font-weight: var(--weight-medium);
+}
+
+.phone-auth-code-input {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.24em;
+}
+
+.phone-auth-actions {
+  display: grid;
+  gap: 16px;
+}
+
+.phone-auth-actions > .phone-auth-primary {
+  width: 100%;
+  min-height: 54px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--app-text);
+  color: var(--app-bg);
+  font-family: var(--font-ui);
+  font-size: var(--type-nav-size);
+  font-weight: var(--weight-medium);
+}
+
+.phone-auth-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.phone-auth-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.phone-auth-text-button {
+  min-height: 32px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--app-text);
+  font: inherit;
+  font-size: var(--type-description-size);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@media (max-width: 560px) {
+  .auth-card--phone {
+    padding: 28px 22px;
+  }
+
+  .phone-auth-fields {
+    gap: 22px;
+  }
 }
 
 .google-mark {

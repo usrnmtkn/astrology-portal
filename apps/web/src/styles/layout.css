@@ -155,6 +155,7 @@
 
 :is(.theme-dark, [data-theme="dark"]) :where(
   .auth-input,
+  .phone-auth-country-prefix,
   .auth-page .signup-field input,
   .auth-page .signup-field select,
   .auth-page .signup-city-search .city-search-control,
