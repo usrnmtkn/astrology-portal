@@ -41,6 +41,24 @@ const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you 
   .replaceAll("{{holder2Poss}}", "Alisa's")
   .concat(".");
 
+async function selectFriendDetailTab(
+  page: Page,
+  name: "Compatibility" | "Transits" | "Natal" | "Synastry" | "Composite"
+) {
+  if (name === "Synastry" || name === "Composite") {
+    const option = page.getByRole("menuitemradio", { name: new RegExp(`^${name}`) });
+
+    if (!await option.isVisible().catch(() => false)) {
+      await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    }
+
+    await option.click();
+    return;
+  }
+
+  await page.getByRole("tab", { name, exact: true }).click();
+}
+
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   const requestedNow = options.now ?? fixedNow;
 
@@ -940,6 +958,13 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "More, 2 sections" })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
+    await page.getByRole("button", { name: "More, 2 sections" }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toContainText("Chart-to-chart connections between you.");
+    await expect(page.getByRole("menuitemradio", { name: /^Composite/ })).toContainText("How the relationship acts when you're together.");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
 
     await page.getByRole("tab", { name: "Compatibility" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki compatibility chart wheel");
@@ -1013,7 +1038,7 @@ test.describe("client-facing user flow case studies", () => {
     expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
 
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await expect(
@@ -1024,7 +1049,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
     await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
 
-    await page.getByRole("tab", { name: "Composite" }).click();
+    await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
     await expect(page.getByRole("button", { name: "Edit Nikki" })).toBeVisible();
 
@@ -1034,6 +1059,34 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("menu", { name: "Nikki actions" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Edit" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Delete" })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("friend chart section pills and overflow menu fit a narrow viewport", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+
+    const tablist = page.getByRole("tablist", { name: "Chart profile sections" });
+    await expect(tablist).toBeVisible();
+    const tablistBox = await tablist.boundingBox();
+    expect(tablistBox).not.toBeNull();
+    expect(tablistBox!.x).toBeGreaterThanOrEqual(0);
+    expect(tablistBox!.x + tablistBox!.width).toBeLessThanOrEqual(390);
+
+    await page.getByRole("button", { name: "More, 2 sections" }).click();
+    const menu = page.getByRole("menu", { name: "More chart profile sections" });
+    await expect(menu).toBeVisible();
+    const menuBox = await menu.boundingBox();
+    expect(menuBox).not.toBeNull();
+    expect(menuBox!.x).toBeGreaterThanOrEqual(0);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(390);
+
+    await selectFriendDetailTab(page, "Composite");
+    await expect(page.getByText("What a composite chart is")).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1290,7 +1343,8 @@ test.describe("client-facing user flow case studies", () => {
 
     await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await expect(page.getByRole("tab", { name: "Synastry" })).toHaveAttribute("aria-selected", "true");
+    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveAttribute("aria-checked", "true");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await assertNoClientErrors();
   });
@@ -1367,7 +1421,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Charts" }).click();
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "friends-synastry");
     await expectNoHorizontalOverflow(page, "Desktop Friends Synastry");
@@ -1407,7 +1461,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Charts" }).click();
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "friends-synastry");
     await expectNoHorizontalOverflow(page, "Mobile Friends Synastry");
@@ -1940,7 +1994,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expectClientRouteLoads(page, "/#friends?tab=charts");
     await page.getByRole("button", { name: "Open Alisa" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.getByLabel("Synastry", { exact: true }),
@@ -1997,10 +2051,10 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectReaderFacingCopy(page.getByLabel("Synastry", { exact: true }), "Friend synastry fallback copy");
 
-    await page.getByRole("tab", { name: "Composite" }).click();
+    await selectFriendDetailTab(page, "Composite");
     await expectReaderFacingCopy(page.getByLabel("Composite", { exact: true }), "Friend composite fallback copy");
     await assertNoClientErrors();
   });
@@ -2012,7 +2066,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await page.getByRole("button", { name: "Open Alisa" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
 
     const authoredContact = page.getByRole("button", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i }).first();
     await expect(authoredContact, "seeded synastry fixture exposes Ascendant square Mercury").toBeVisible();

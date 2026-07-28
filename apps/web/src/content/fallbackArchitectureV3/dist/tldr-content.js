@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -267,7 +267,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -289,6 +289,36 @@ var inlineWindow = (w) => {
   if (w.startsWith("For about")) return "for about" + w.slice(9);
   return w.charAt(0).toLowerCase() + w.slice(1);
 };
+var FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
+var FRIEND_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|within|find|finds|found|help|helps|helped|give|gives|gave|pull|pulls|pulled|support|supports|supported|affect|affects|affected|remind|reminds|reminded|ask|asks|asked|tell|tells|told|leave|leaves|left|show|shows|showed|make|makes|made|let|lets|keep|keeps|kept|cost|costs|teach|teaches|taught|push|pushes|pushed|hold|holds|held|stop|stops|stopped)\s+you\b/gi;
+function possessiveDisplayName(name) {
+  return `${name}'s`;
+}
+function friendVoiceFromReaderCopy(body, name) {
+  let named = false;
+  const namePossessive = possessiveDisplayName(name);
+  const nameForPossessive = (source) => {
+    if (named) return /^[A-Z]/.test(source) ? "Their" : "their";
+    named = true;
+    return namePossessive;
+  };
+  const nameForContraction = (verb) => {
+    if (named) return `they${verb}`;
+    named = true;
+    return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
+  };
+  let rendered = body.replace(/\byourself\b/gi, "themselves").replace(/\byourselves\b/gi, "themselves").replace(/\byours\b/gi, "theirs").replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb) => nameForContraction(verb.toLowerCase().replace("\u2019", "'"))).replace(/\byour\b/gi, (source) => nameForPossessive(source)).replace(FRIEND_OBJECT_YOU, (_, governor) => `${governor} them`).replace(/\byou\b/gi, (source) => /^[A-Z]/.test(source) ? "They" : "they");
+  rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix, verb) => {
+    const subject = named ? "They" : name;
+    named = true;
+    const normalizedVerb = verb.toLowerCase();
+    if (normalizedVerb === "don't" || normalizedVerb === "do not") {
+      return `${prefix}${subject} should not`;
+    }
+    return `${prefix}${subject} should ${normalizedVerb}`;
+  });
+  return rendered;
+}
 function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
   const cards = new Map(transitLib.authoredCards.map((c) => [c.contentKey, c]));
   const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
@@ -380,24 +410,33 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
     const push = (a, b) => {
-      if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
-      for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
+      if (variant) {
+        tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
+        if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
+      }
+      tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}`);
+      for (const gg of groupsToTry) {
+        if (gg !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
+      }
       tryKeys.push(`authored/transit-aspect/${a}/${b}/any`);
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-    if (v === "you") for (const k of tryKeys) {
+    for (const k of tryKeys) {
       const c = card(k);
       if (c) {
         const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
         const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
-        let aBody = c.body_you ?? c.body;
+        const readerBody = c.body_you ?? c.body;
+        if (!readerBody) throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
+        let aBody = v === "you" ? readerBody : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
         aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
         aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
         const gatedInsert = card(`authored/transit-aspect-insert/${transiting}/${natal}/${aspect}`);
         if (gatedInsert) {
-          const insBody = gatedInsert.body_you ?? gatedInsert.body;
+          const readerInsert = gatedInsert.body_you ?? gatedInsert.body;
+          const insBody = v === "you" ? readerInsert : gatedInsert.body_they ?? (readerInsert ? friendVoiceFromReaderCopy(readerInsert, voice) : null);
           if (insBody) aBody = `${aBody}
 
 ${insBody}`;
@@ -405,12 +444,14 @@ ${insBody}`;
         if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
           const NAT = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "midheaven", "ascendant"];
           const fnIdx = ((NAT.indexOf(natal) + (variant ?? 0)) % 4 + 4) % 4 + 1;
-          const fogNote = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`)?.body_you;
+          const fogRow = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`);
+          const fogNote = v === "you" ? fogRow?.body_you : fogRow?.body_they ?? (fogRow?.body_you ? friendVoiceFromReaderCopy(fogRow.body_you, voice) : null);
           if (fogNote) aBody = `${aBody}
 
 ${fogNote}`;
         }
-        return { headline: c.headline || "", body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+        const authoredHeadline = v === "you" ? c.headline || "" : `${title2(transiting)} ${aspect} ${voice}'s ${title2(natal)}`;
+        return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
       }
     }
     const T = tpl("fallback-template/transit.aspect");
@@ -418,8 +459,9 @@ ${fogNote}`;
     const typeLineRaw = (ANGLES.has(natal) ? hookVoice(`fallback-hook/transit-aspect-type/${aspect}/angle`, v) : null) ?? hookVoice(`fallback-hook/transit-aspect-type/${aspect}`, v);
     const effectFamily = g === "soft" || g === "conjunction" && !isHeavy ? "soft" : "hard";
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v) ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
-    const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
+    const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
+    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;
     const ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title2(transiting),
@@ -450,6 +492,11 @@ ${fogNote}`;
     if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
       const opener = v === "you" ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.` : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
       body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+    } else if (AVERB[aspect] && ctx.transitEffectLine) {
+      const target = v === "you" ? `your natal ${ctx.natalTitle}` : `${otherPoss} natal ${ctx.natalTitle}`;
+      const timing = ctx.timeInline ? ` ${ctx.timeInline}` : "";
+      const mechanics = `${String(ctx.transitRef).replace(/^./, (char) => char.toUpperCase())} is ${AVERB[aspect]} ${target}${timing}.`;
+      body = `${ctx.transitEffectLine} ${mechanics}`;
     } else {
       body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
     }
@@ -876,20 +923,22 @@ ${fogNote}`;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
     const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null) ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
-    const natalG = natalAspect ? GROUP[natalAspect] ?? natalAspect : null;
-    const bondQuality = natalG ? vocab.get(`fallback-vocab/bond-quality/${natalG}`)?.body : null;
-    const modeA = hooks.get(`fallback-hook/planet-mode/${planetA}`)?.body_you;
-    const modeB = hooks.get(`fallback-hook/planet-mode/${planetB}`)?.body_they;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
-    const paras = [];
-    paras.push(`${timeOpen}, ${transitRef(transiting, sign)} is ${aspectAdj} the line between your ${title2(planetA)} and ${otherName}'s ${title2(planetB)}.`);
-    if (bondQuality && modeA && modeB) paras.push(`That line is ${bondQuality}: ${modeA} meeting ${modeB}.`);
-    paras.push(effect);
+    const paras = [effect];
+    const relation = {
+      conjunction: "meeting",
+      opposition: "opposite",
+      square: "squaring",
+      trine: "in a trine to",
+      sextile: "sextile to"
+    };
+    const timeClose = inlineWindow(timeOpen);
+    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} the connection between your ${title2(planetA)} and ${otherName}'s ${title2(planetB)}${timeClose ? ` ${timeClose}` : ""}.`);
     const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} your ${title2(planetA)}-${title2(planetB)} line with ${otherName}`;
+    const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} the ${title2(planetA)}-${title2(planetB)} connection with ${otherName}`;
     return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
   }
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
@@ -976,8 +1025,8 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-28g";
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-28h";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

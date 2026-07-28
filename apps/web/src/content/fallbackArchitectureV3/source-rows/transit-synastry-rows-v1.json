@@ -1,6 +1,6 @@
 {
  "schema": "tldrastro-transit-synastry-rows-v1",
- "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render. | 2026-07-28: fast-planet transit-aspect v2 wired (Sun/Mercury/Venus/Mars, incident-anchored short cards) + aspect-gated insert rows (authored/transit-aspect-insert/{t}/{n}/{aspect}, appended at render on exact aspect match).",
+ "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render. | 2026-07-28: fast-planet transit-aspect v2 wired (Sun/Mercury/Venus/Mars, incident-anchored short cards) + aspect-gated insert rows (authored/transit-aspect-insert/{t}/{n}/{aspect}, appended at render on exact aspect match). | 2026-07-28: restored 15 owner-approved exact Jupiter/Pluto/Neptune-to-Chiron Phase 1 cards dropped by the V2 merge.",
  "authoredCards": [
   {
    "contentKey": "authored/compat-deep/moon/aquarius/aquarius",
@@ -8137,6 +8137,136 @@
    "source_keys": [
     "VENUS-COMPATIBILITY-CARDS.md"
    ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/neptune/chiron/conjunction",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Neptune conjunct your Chiron lands right on top of your raw edge for years, turning it all the way up in ways that are hard to name. It surfaces as a persistent feeling of not being enough that you can't trace to one event, or a relationship where you idealize someone else's approval to compensate for your own doubt. Neptune blurs the line between the old insecurity and who you actually are today. You don't have to have language for it yet. Write down what you actually feel, plainly, and the blur starts to clear.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.neptune.conjunction.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/neptune/chiron/opposition",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Neptune opposition your Chiron puts someone else's version of you straight across from your raw edge for years. It shows up when a partner or friend idealizes you in a way that doesn't match how you actually feel underneath. Neptune blurs where you've been keeping up a version of yourself to protect their picture of you instead of showing them the real one. You don't have to shatter their image all at once. Tell them one true thing that doesn't fit the picture, and the gap starts closing.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.neptune.opposition.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/neptune/chiron/sextile",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Neptune sextile your Chiron leaves a door open at your sore spot for years, if you take the smaller step of getting honest about what you actually feel instead of the flattering version. It looks like a quiet moment of compassion for yourself that you could either follow or brush past. Neptune offers the option softly: notice the old story without immediately excusing it or condemning it. You don't need full clarity today. Sit with the feeling without describing it away, and the confusion around it thins a little at a time.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.neptune.sextile.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/neptune/chiron/square",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Neptune square your Chiron puts your sore spot through a slow pressure test for years, the kind that's hard to point to directly. It tends to surface as a pattern of choosing partners or jobs that confirm the old story instead of challenging it, without you noticing the pattern in the moment. Neptune blurs where you've been mistaking avoidance for acceptance, calling it peace when it's actually distance. You don't have to see the whole pattern at once. Name one instance of it clearly, and the blur loses a little of its hold.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.neptune.square.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/neptune/chiron/trine",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Neptune trine your Chiron makes your raw edge easier to soften around for years, without you having to force clarity on it. It shows up as compassion for the old version of you that developed the insecurity in the first place, arriving on its own instead of through effort. Neptune blurs the harsh outline of the old story until it stops feeling like an indictment. You don't have to solve it to benefit from the softness. Let yourself off the hook for one old moment, and the sore spot gets easier to hold without flinching.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.neptune.trine.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/pluto/chiron/conjunction",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Pluto conjunct your Chiron parks itself on your sore spot for years, turning it all the way up until you can't manage around it anymore. It surfaces as an obsessive replay of an old memory, or a relationship that keeps circling back to the same core insecurity no matter how the details change. Pluto unearths exactly what's been buried under years of coping, bringing up details you thought you'd forgotten. You don't have to excavate the whole thing alone. Tell someone the piece you've never said out loud, and the grip it has on you starts to loosen.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.pluto.conjunction.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/pluto/chiron/opposition",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Pluto opposition your Chiron lines someone else's intensity up across from your raw edge for years. It shows up when a partner or rival pushes exactly on the place you keep guarded, whether they mean to or not, and the reaction it triggers feels bigger than the moment. Pluto unearths where you've been controlling the relationship to control the exposure, keeping people close enough to need but far enough to manage. You don't have to keep managing the distance. Let one person see the reaction without editing it, and the power struggle loses its charge.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.pluto.opposition.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/pluto/chiron/sextile",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Pluto sextile your Chiron opens a door on your sore spot for years, if you take the smaller step of looking at what you'd normally avoid. It looks like a passing thought about an old memory that you could either sit with or push away like usual. Pluto offers a small excavation, not a full unearthing: one honest look at a single piece of the story. You don't need the whole history today. Follow the thread for one conversation, and the old material starts losing the charge it's held for years.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.pluto.sextile.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/pluto/chiron/square",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Pluto square Chiron puts your oldest sore spot through a slow pressure test. It tends to surface when someone gets too close to the thing you don't discuss: the question that lands wrong at dinner, the offhand comment that stays with you for days. Year by year, this transit exposes where you've been living around the memory rather than through it. You don't have to tell the whole story to everyone who bumps it. But tell it once, properly, to someone who's earned it, and the same trigger gets a smaller response next time.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.pluto.square.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/pluto/chiron/trine",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Pluto trine your Chiron leaves your sore spot easier to excavate on your own terms for years, the old material surfacing without the usual crisis attached. It tends to surface as a therapy session, a long conversation, or a quiet realization that finally makes sense of a pattern you've carried for a long time. Pluto unearths the story gently this time, handing it to you instead of forcing it up. You don't have to brace for the reveal. Look at what surfaces without flinching, and the sore spot gives up more power than it costs you to look.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.pluto.trine.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
   },
   {
    "contentKey": "authored/transit-aspect/any/chiron/conjunction",
@@ -34154,6 +34284,71 @@
    "source_keys": [
     "Hand (Sun opposition Midheaven)"
    ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/jupiter/chiron/conjunction",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Jupiter conjunct your Chiron lands right on top of your raw edge for a couple of months, turning it all the way up right as good things start arriving. It surfaces as a new offer, a bigger stage, or praise that lands louder than you're used to hearing. Jupiter magnifies exactly where you've been trimming your own ambitions to fit what used to feel allowed. You don't have to downsize the offer to make it feel manageable. Take it at full size, and the sore spot gets quieter next to something that big instead of louder.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.jupiter.conjunction.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/jupiter/chiron/opposition",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Jupiter opposition your Chiron sets someone else's growth directly across from your sore spot for a couple of months. It shows up when a peer's success arrives right as your own old insecurity flares, or when someone offers you more faith in yourself than you're ready to accept. Jupiter magnifies where you've been measuring your worth against everyone else's timeline instead of your own. You don't have to catch up to prove anything. Accept that the comparison is happening and act anyway, and their win stops making yours look smaller.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.jupiter.opposition.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/jupiter/chiron/sextile",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Jupiter sextile your Chiron cracks a door open on your raw edge for a couple of months, if you take the smaller step toward the bigger ask. It looks like a chance to apply, pitch, or raise your hand for something you'd normally talk yourself out of. Jupiter magnifies the option sitting right there: say yes to the smaller version now instead of waiting for the perfect moment. You don't need total confidence to take it. One small yes is enough, and it starts loosening the old story about what you're allowed.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.jupiter.sextile.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/jupiter/chiron/square",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Jupiter square Chiron magnifies a sore spot just as an opportunity arrives: the invitation you want to accept and instantly doubt you deserve. For a couple of months, the growth you're chasing runs straight through the thing you'd rather skip. This transit exposes where you've been trimming the dream to fit the old story about what you're allowed. You don't have to be over it to say yes. Say yes with the sore spot still tender; the yes is what shrinks it.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.jupiter.square.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
+  },
+  {
+   "contentKey": "authored/transit-aspect/jupiter/chiron/trine",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": null,
+   "body": "Transiting Jupiter trine your Chiron makes your raw edge easier to work around for a couple of months, growth arriving without the usual doubt attached. It shows up as an offer you can say yes to without over-thinking, or confidence that shows up ahead of the proof. Jupiter magnifies the parts of you that are already expanding, not the parts still bracing for rejection. You don't have to wait for total certainty. Take the opening while it's easy, and the sore spot gets to sit this one out for a change.",
+   "review_status": "approved",
+   "approved_via": "owner-authored aspects-phase1-v1 package (final voice)",
+   "source_keys": [
+    "aspects-phase1-v1/aspect.jupiter.trine.chiron"
+   ],
+   "note": "Phase 1 exact transit-aspect unit, imported verbatim."
   }
  ]
 }

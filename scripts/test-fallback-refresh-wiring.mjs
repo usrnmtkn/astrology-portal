@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-28b");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-28h");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -145,8 +145,9 @@ const friendTransit = transitRenderer.renderTransitAspect({
   window: "Until November 13"
 });
 assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
-assert.match(friendTransit.body, /^Until November 13, the Moon in Taurus is squaring Sofia's natal Venus\./u);
-assert.match(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
+assert.equal(friendTransit.contentKey, "authored/transit-aspect/moon/venus/hard");
+assert.match(friendTransit.body, /^They can say yes to plans and quietly hope they fall through\./u);
+assert.doesNotMatch(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 
 const friendHouse = transitRenderer.renderTransitHouse({
@@ -340,7 +341,9 @@ const connectionTransit = transitRenderer.renderBondTransit({
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^Until November 13, Saturn is square the line between your Venus and Sofia's Pluto\./u);
+assert.match(connectionTransit.body, /^Reliability stops being a promise and starts being something you have to prove/u);
+assert.match(connectionTransit.body, /Saturn is squaring the connection between your Venus and Sofia's Pluto through November 13\./u);
+assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
 assert.match(connectionTransit.body, /Reliability stops being a promise and starts being something you have to prove/u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({

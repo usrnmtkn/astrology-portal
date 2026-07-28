@@ -173,8 +173,8 @@ assert.match(
 );
 assert.equal(
   venusAscendantBondTransit.headline,
-  "Mars square your Venus-Ascendant line with X",
-  "Bond-transit headlines must retain the space after 'your'."
+  "Mars square the Venus-Ascendant connection with X",
+  "Bond-transit headlines must use the reader-facing connection label."
 );
 assert.notEqual(
   marsAscendantTransit.body,
