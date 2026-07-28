@@ -177,6 +177,11 @@ assert.match(
   /function activeRetrogradePositions\(positions: PlanetPosition\[\]\) \{[\s\S]*!isLunarNodePoint\(position\.planet\)/u,
   "The planets-retrograde indicator must exclude the North and South Node points."
 );
+assert.match(
+  app,
+  /function skyAspectsForPlacement\(planet: string, aspects: SkySnapshot\["aspects"\]\) \{[\s\S]*?\.filter\(\(aspect\) => isDisplayableNatalAspect\(aspect\)\)[\s\S]*?\.filter\(\(aspect\) => aspect\.from === planet \|\| aspect\.to === planet\)/u,
+  "North Node and South Node placement write-ups must reuse the shared aspect display filter so their automatic opposition is never repeated as an aspect beat."
+);
 assert.match(app, /const isRetrograde = isDisplayRetrograde\(position\);[\s\S]*placementTransitRangeLabel/u, "Sky placement details must suppress node retrograde presentation.");
 assert.match(app, /retrograde=\{isDisplayRetrograde\(position\)\}/u, "Natal placement rows must suppress node retrograde presentation.");
 assert.match(app, /normalizeSkyPlacementSurface/, "Sky placement rendering must flow through the normalized surface path.");

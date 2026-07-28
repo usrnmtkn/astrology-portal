@@ -5645,6 +5645,7 @@ function currentSkyAspectDetailArticle(
 
 function skyAspectsForPlacement(planet: string, aspects: SkySnapshot["aspects"]) {
   return aspects
+    .filter((aspect) => isDisplayableNatalAspect(aspect))
     .filter((aspect) => aspect.from === planet || aspect.to === planet)
     .slice()
     .sort((first, second) => first.orb - second.orb)
