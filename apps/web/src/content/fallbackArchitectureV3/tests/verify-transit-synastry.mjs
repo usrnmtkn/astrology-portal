@@ -170,10 +170,14 @@ for (const p of signsPl) for (let h = 1; h <= 12; h++) {
 
 // standalone transit-aspect fallback: composer register (owner directive from the Chiron screenshot)
 {
+  // v2 authored library (owner-approved 2026-07-28): slow-planet pairs render the authored card
+  // with the exact aspect + window filled into the closer.
   const ch = renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", sign: "taurus", window: "Until Jul 30, 2026" });
-  if (ch.body.includes("In plain terms")) fail("transit-aspect fallback: old scaffold leaked");
-  if (!ch.body.includes("Chiron in Taurus is squaring your natal Jupiter")) fail("transit-aspect fallback: real aspect verb missing");
-  if (!ch.body.includes("presses the old question of worth and enough; your Jupiter keeps betting on the bigger life")) fail("transit-aspect fallback: wants-pair missing");
+  if (ch.templateKey !== "authored/transit-aspect") fail("chiron/jupiter square: authored v2 card expected");
+  if (!ch.body.includes("Chiron square your Jupiter until Jul 30, 2026")) fail("chiron/jupiter square: exact-aspect closer with filled window missing");
+  if (/\{\{/.test(ch.body)) fail("chiron/jupiter square: unfilled slot");
+  // Reader voice is authored-first across the library; the composer register is exercised
+  // by the friend-voice checks below (authored cards never serve friend view).
   const chf = renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", sign: "taurus", voice: "Sofia" });
   if (/\b(you|your|yourself)\b/i.test(chf.body)) fail("transit-aspect composer friend voice: second-person leak");
   if (!chf.body.includes("Sofia's natal Jupiter")) fail("transit-aspect composer friend voice: possessive missing");
@@ -324,7 +328,12 @@ console.log("Rendered 12 Lilith sky placements.");
   for (const asp of ["conjunction","square","trine","sextile","opposition"]) {
     for (const other of ["sun","moon","venus","saturn"]) {
       try { const a = renderTransitAspect({ transiting: "lilith", natal: other, aspect: asp }); if (/\{\{/.test(a.body)) fail(`lilith transiting ${asp}/${other}`); lt++; } catch (e) { fail(`lilith transiting ${asp}/${other}: ${e.message}`); }
-      try { const b = renderTransitAspect({ transiting: other === "sun" ? "saturn" : other, natal: "lilith", aspect: asp }); if (/\{\{/.test(b.body)) fail(`lilith natal-target ${asp}/${other}`); lt++; } catch (e) { fail(`lilith natal-target ${asp}/${other}: ${e.message}`); }
+      // Walker canon (owner 2026-07-27): natal-Lilith contacts render on conjunction/opposition only.
+      if (asp === "conjunction" || asp === "opposition") {
+        try { const b = renderTransitAspect({ transiting: other === "sun" ? "saturn" : other, natal: "lilith", aspect: asp, window: "Until Oct 16" }); if (/\{\{/.test(b.body)) fail(`lilith natal-target ${asp}/${other}`); lt++; } catch (e) { fail(`lilith natal-target ${asp}/${other}: ${e.message}`); }
+      } else {
+        try { renderTransitAspect({ transiting: other === "sun" ? "saturn" : other, natal: "lilith", aspect: asp }); fail(`lilith natal-target ${asp}/${other}: should SOURCE_GAP (conj/opp only)`); } catch (e) { if (!/SOURCE_GAP/.test(e.message)) fail(`lilith natal-target ${asp}/${other}: wrong error ${e.message}`); lt++; }
+      }
     }
   }
   renderTransitLabel({ transiting: "saturn", natal: "lilith", aspect: "square" });
@@ -343,7 +352,11 @@ console.log("Rendered 12 Lilith sky placements.");
       if (/\b(you|your|yourself)\b/i.test(r.body + " " + r.headline)) fail(`friend transit ${tr}/${asp}/${nat}: second-person leak`);
       if (r.contentKey) fail(`friend transit ${tr}/${asp}/${nat}: authored card leaked into friend view`);
       fv++;
-    } catch (e) { fail(`friend transit ${tr}/${asp}/${nat}: ${e.message}`); }
+    } catch (e) {
+      // Walker canon: natal-Lilith square/trine SOURCE_GAP by design (friend view too)
+      if (nat === "lilith" && asp !== "conjunction" && /SOURCE_GAP/.test(e.message)) { fv++; }
+      else fail(`friend transit ${tr}/${asp}/${nat}: ${e.message}`);
+    }
   }
   for (const pl of ["jupiter","saturn","mars"]) for (let h = 1; h <= 12; h++) {
     const r = renderTransitHouse({ planet: pl, house: h, voice: "Sofia" });

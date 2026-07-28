@@ -40163,6 +40163,50 @@
    ],
    "notes": "Impact & Clarity confrontation-and-catch slot.",
    "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/fog-note/variant-1",
+   "content_role": "fallback_hook",
+   "body_you": "Wait on the decisions that can wait. When one cannot, keep it small, put the terms in writing, leave yourself a way out, and ask someone neutral to look it over.",
+   "review_status": "approved",
+   "approved_via": "owner-approved rotation set, chat 2026-07-28",
+   "source_keys": [
+    "owner-authored (fog-decision note)"
+   ],
+   "notes": "Rotating standing note under Neptune pressure cards; extendable to other fog transits."
+  },
+  {
+   "contentKey": "fallback-hook/fog-note/variant-2",
+   "content_role": "fallback_hook",
+   "body_you": "You do not need to decide everything right now. For the choices that cannot be postponed, lower the risk: make the commitment smaller, keep it reversible, document what was agreed, and get an outside opinion.",
+   "review_status": "approved",
+   "approved_via": "owner-approved rotation set, chat 2026-07-28",
+   "source_keys": [
+    "owner-authored (fog-decision note)"
+   ],
+   "notes": "Rotating standing note under Neptune pressure cards; extendable to other fog transits."
+  },
+  {
+   "contentKey": "fallback-hook/fog-note/variant-3",
+   "content_role": "fallback_hook",
+   "body_you": "Do not make a permanent decision just to end the uncertainty. When action is necessary, take the smallest workable step, keep your options open, and have someone with no stake in the outcome review it.",
+   "review_status": "approved",
+   "approved_via": "owner-approved rotation set, chat 2026-07-28",
+   "source_keys": [
+    "owner-authored (fog-decision note)"
+   ],
+   "notes": "Rotating standing note under Neptune pressure cards; extendable to other fog transits."
+  },
+  {
+   "contentKey": "fallback-hook/fog-note/variant-4",
+   "content_role": "fallback_hook",
+   "body_you": "Delay the choice when you can. When you cannot, do not bet the whole future on one move. Keep the commitment manageable, protect your exit, document the details, and ask someone outside the situation to check your thinking.",
+   "review_status": "approved",
+   "approved_via": "owner-approved rotation set, chat 2026-07-28",
+   "source_keys": [
+    "owner-authored (fog-decision note)"
+   ],
+   "notes": "Rotating standing note under Neptune pressure cards; extendable to other fog transits."
   }
  ]
 }

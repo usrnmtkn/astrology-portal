@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-const bundleFile = "/private/tmp/tldrastro-generated-content-verbatim.bundle.mjs";
+const bundleFile = `${os.tmpdir()}/tldrastro-generated-content-verbatim.bundle.mjs`;
 
 await build({
   bundle: true,
