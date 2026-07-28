@@ -2,6 +2,11 @@ import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
+import {
+  expectRouteLoadsWithin,
+  routeReadyTimeoutMs,
+  watchBrowserErrors
+} from "./qaRuntimeGuards";
 
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
 
@@ -422,20 +427,16 @@ async function seedAdminApi(
 }
 
 async function expectNoBrowserErrors(page: Page) {
-  const errors: string[] = [];
+  return watchBrowserErrors(page);
+}
 
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => {
-    const text = message.text();
-
-    if (message.type() === "error" && !text.includes("Failed to load resource")) {
-      errors.push(text);
-    }
+async function expectAdminRouteLoads(page: Page, route: string) {
+  await expectRouteLoadsWithin(page, route, `admin route ${route}`, async () => {
+    await expect(page.locator("#root")).toBeVisible({ timeout: routeReadyTimeoutMs });
+    await expect(page.locator(".admin-dashboard-header h1")).toBeVisible({
+      timeout: routeReadyTimeoutMs
+    });
   });
-
-  return async () => {
-    expect(errors, "No uncaught browser errors or console errors").toEqual([]);
-  };
 }
 
 async function expectAdminHeader(page: Page, title: string, breadcrumb: string) {
@@ -444,7 +445,7 @@ async function expectAdminHeader(page: Page, title: string, breadcrumb: string) 
 }
 
 async function openAdminHome(page: Page) {
-  await page.goto("/admin/content");
+  await expectAdminRouteLoads(page, "/admin/content");
   await expectAdminHeader(page, "Content Studio", "Admin / Home");
 }
 
@@ -453,7 +454,7 @@ async function openCreateMenu(page: Page) {
 }
 
 async function openAdminCreateMenuHost(page: Page) {
-  await page.goto("/admin/content");
+  await expectAdminRouteLoads(page, "/admin/content");
   await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Slots" }).click();
   await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
 }
@@ -473,7 +474,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("legacy content/admin path opens the admin dashboard instead of the reader app", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/content/admin");
+    await expectAdminRouteLoads(page, "/content/admin");
 
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
@@ -485,7 +486,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content");
+    await expectAdminRouteLoads(page, "/admin/content");
 
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
@@ -504,7 +505,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
     let deepLinkLoadIndex = 0;
     const openAdminDeepLink = async (hash: string) => {
-      await page.goto(`/admin/content?qaDeepLink=${deepLinkLoadIndex++}${hash}`);
+      await expectAdminRouteLoads(page, `/admin/content?qaDeepLink=${deepLinkLoadIndex++}${hash}`);
     };
 
     for (const adminPage of adminPages) {
@@ -535,7 +536,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: /Friends/ })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("group", { name: "Filter surfaces by normalization status" }).getByRole("button", { name: /Partial/ })).toHaveAttribute("aria-pressed", "true");
 
-    await page.goto("/admin/content#home");
+    await expectAdminRouteLoads(page, "/admin/content#home");
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Articles" }).click();
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
@@ -654,7 +655,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         generatedContentWrite = write;
       }
     });
-    await page.goto("/admin/content#exact-content");
+    await expectAdminRouteLoads(page, "/admin/content#exact-content");
 
     await page.getByLabel("Search content").fill("sky.placement.sun.cancer");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
@@ -695,7 +696,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("article filters narrow by point, content system, and text search", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content#articles");
+    await expectAdminRouteLoads(page, "/admin/content#articles");
 
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     const articleFilters = page.locator("section[aria-label='Article filters']");
@@ -727,7 +728,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("compatibility workspace searches, sorts, and groups content support rows", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content#compatibility");
+    await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
     await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
     await expect(page.getByRole("tablist", { name: "Compatibility sections" })).toBeVisible();
@@ -791,7 +792,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("surface map filters keep visible hook rows aligned to the selected surface", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content#surface-map");
+    await expectAdminRouteLoads(page, "/admin/content#surface-map");
 
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
 
@@ -835,7 +836,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
 
-    await page.goto("/admin/content#vocabulary");
+    await expectAdminRouteLoads(page, "/admin/content#vocabulary");
     await page.waitForURL("**/admin/content#vocabulary");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
     const vocabularyTabs = page.getByRole("tablist", { name: "Vocabulary categories" });
@@ -861,13 +862,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
 
-    await page.goto("/admin/content#templates");
+    await expectAdminRouteLoads(page, "/admin/content#templates");
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
     await page.getByLabel("Search templates").fill("compatibility planet card");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("slot-template/compatibility/planet-card");
 
-    await page.goto("/admin/content#slots");
+    await expectAdminRouteLoads(page, "/admin/content#slots");
     await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
     await page.getByLabel("Search slot-backed rows").fill("template slot");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
@@ -879,7 +880,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("content library and publish filters expose writing QA controls", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await page.goto("/admin/content");
+    await expectAdminRouteLoads(page, "/admin/content");
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
@@ -909,7 +910,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
     let deepLinkLoadIndex = 0;
     const openAdminDeepLink = async (hash: string) => {
-      await page.goto(`/admin/content?qaCompositionSurface=${deepLinkLoadIndex++}${hash}`);
+      await expectAdminRouteLoads(page, `/admin/content?qaCompositionSurface=${deepLinkLoadIndex++}${hash}`);
     };
 
     await openAdminDeepLink("#templates");
@@ -943,7 +944,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
 
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.goto("/admin/content");
+    await expectAdminRouteLoads(page, "/admin/content");
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
     await expectNoHorizontalOverflow(page, "Admin desktop home");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-content-studio.png") });
@@ -953,7 +954,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/admin/content");
+    await expectAdminRouteLoads(page, "/admin/content");
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
     await expectNoHorizontalOverflow(page, "Admin mobile home");

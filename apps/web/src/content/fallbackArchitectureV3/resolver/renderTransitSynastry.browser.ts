@@ -23,7 +23,7 @@ export interface AuthoredCard {
 }
 export interface TransitLibFile { authoredCards: AuthoredCard[] }
 
-export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null }
+export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
@@ -102,7 +102,11 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
 
-  function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant }: TransitHouseFacts): TransitRenderResult {
+  const EVENT_QUALITY: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+  const EVENT_VERB: Record<string, string> = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
+  const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
+
+  function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }: TransitHouseFacts): TransitRenderResult {
     const v = voice === "you" ? "you" : "they";
     // Two-layer authored lane (Mars pilot): house intro + house-sign synthesis, dual voice.
     // Requires sign; variant 2+ rotates to the Satori-register rows, falling back to base.
@@ -117,6 +121,29 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
         const headline = v === "you"
           ? `${title(planet)} moving through your ${ordinal(house)} house`
           : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
+        if (isRetrograde) {
+          const ro = hookVoice(`fallback-hook/transit-house-retro-overlay/${planet}`, v);
+          if (ro) parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" } as Ctx));
+        }
+        for (const e of events ?? []) {
+          try {
+            const quality = EVENT_QUALITY[e.aspect];
+            const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
+            const frameRaw = quality ? hookVoice(`fallback-hook/transit-house-event-frame/${planet}`, v) : null;
+            const windowClause = e.window ? (/^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}`) : "";
+            const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal(house), natalTitle: title(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] } as Ctx) : null;
+            const wants = sign ? hookVoice(`fallback-hook/transit-house-event-wants/${planet}/${sign}`, v) : null;
+            const holds = hookVoice(`fallback-hook/transit-house-event-natal/${e.natal}`, v);
+            const scenes = hookVoice(`fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`, v)
+              ?? hookVoice(`fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`, v);
+            if (frame && wants && holds && scenes) {
+              parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
+            } else {
+              const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
+              parts.push(frame ? `${frame} ${asp.body}` : asp.body);
+            }
+          } catch { /* SOURCE_GAP on an event never blocks the house card */ }
+        }
         return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
       }
     }
@@ -191,9 +218,26 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
       transitEffectLine: transitEffect ? `${transitEffect.charAt(0).toUpperCase()}${transitEffect.slice(1).replace(/\.$/, "")}.` : null,
       transitTypeLine: typeLineRaw ? fill(typeLineRaw, { natalArea, transitEffect }) : typeLineRaw,
     };
-    for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
-    let body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
-  body = body.charAt(0).toUpperCase() + body.slice(1);
+        for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
+      // Composer register (owner directive 2026-07-28): real aspect verb + wants-pair + pair scenes.
+    // Replaces the "In plain terms" scaffold whenever the composer rows exist; legacy template otherwise.
+    const AVERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
+    const cWants = (sign ? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}/${sign}`, v) : null)
+      ?? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}`, v);
+    const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
+    const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
+      ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
+    const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;
+    let body;
+    if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
+      const opener = v === "you"
+        ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.`
+        : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
+      body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+    } else {
+      body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+    }
+    body = body.charAt(0).toUpperCase() + body.slice(1);
     // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;

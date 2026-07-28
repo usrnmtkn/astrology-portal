@@ -10,6 +10,16 @@ const rowsFileForTests = JSON.parse(fs.readFileSync(path.join(here, "../source-r
 let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 
+// friend-voice object-position guard: preposition/copula + "they" is always a converter defect
+{
+  const BAD = /\b(?:on|off|is|was|are|were|be|being|been|onto|upon|into|beside|beneath|among|behind|below|above|across|along|about|scatters|fuels|shifts|runs|grows|enlarges|favors?|rebuilds?|pairs?|pairing|erases?|weighs|counts|calling|lifts?|expects?|embarrasses|enjoys?|scares?) they\b/;
+  const BAD2 = /\bLet themselves\b|\btrusts? they with\b|\bcall they the\b/;
+  const OK = /\bearly on they\b/i;
+  const scan = (arr, label) => { for (const r of arr ?? []) { const t = r.body_they; if (t && ((BAD.test(t) && !OK.test(t)) || BAD2.test(t))) fail(`${label} ${r.contentKey}: object-position "they" (${t.match(BAD)[0]})`); } };
+  scan(lib.authoredCards, "card");
+  scan(rowsFileForTests.hookRows, "hook");
+}
+
 // card hygiene
 for (const c of lib.authoredCards) {
   if (/[—–]/.test((c.body ?? "") + (c.headline ?? ""))) fail(`${c.contentKey}: em/en dash`);
@@ -30,19 +40,19 @@ for (const p of signsPl) for (let h = 1; h <= 12; h++) {
   catch (e) { fail(`${p}/${h}: ${e.message}`); }
 }
 
-// mars two-layer house grid: 12 houses x 12 signs, authored intro + synthesis, dual voice
+// two-layer house grid (six planets): 12 houses x 12 signs, authored intro + synthesis, dual voice
 {
   const SIGNS12 = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];
   let marsN = 0;
-  for (let h = 1; h <= 12; h++) for (const sg of SIGNS12) {
-    const r = renderTransitHouse({ planet: "mars", house: h, sign: sg });
-    if (r.templateKey !== "authored/transit-house-layered") fail(`mars/${h}/${sg}: fell through to ${r.templateKey}`);
-    if (r.parts.length !== 2) fail(`mars/${h}/${sg}: expected 2 layers, got ${r.parts.length}`);
-    if (r.body.length < 300) fail(`mars/${h}/${sg}: thin layered card`);
-    if (r.body.includes("{{")) fail(`mars/${h}/${sg}: unfilled slot`);
-    const f = renderTransitHouse({ planet: "mars", house: h, sign: sg, voice: "Sofia" });
-    if (/\b(you|your|yourself)\b/i.test(f.body + " " + f.headline)) fail(`mars/${h}/${sg} friend voice: second-person leak`);
-    if (!f.body.includes("Sofia")) fail(`mars/${h}/${sg} friend voice: name missing`);
+  for (const lp of ["mars", "venus", "sun", "mercury", "jupiter", "saturn"]) for (let h = 1; h <= 12; h++) for (const sg of SIGNS12) {
+    const r = renderTransitHouse({ planet: lp, house: h, sign: sg });
+    if (r.templateKey !== "authored/transit-house-layered") fail(`${lp}/${h}/${sg}: fell through to ${r.templateKey}`);
+    if (r.parts.length !== 2) fail(`${lp}/${h}/${sg}: expected 2 layers, got ${r.parts.length}`);
+    if (r.body.length < 300) fail(`${lp}/${h}/${sg}: thin layered card`);
+    if (r.body.includes("{{")) fail(`${lp}/${h}/${sg}: unfilled slot`);
+    const f = renderTransitHouse({ planet: lp, house: h, sign: sg, voice: "Sofia" });
+    if (/\b(you|your|yourself)\b/i.test(f.body + " " + f.headline)) fail(`${lp}/${h}/${sg} friend voice: second-person leak`);
+    if (!f.body.includes("Sofia")) fail(`${lp}/${h}/${sg} friend voice: name missing`);
     marsN += 2;
   }
   // the sign layer must enter the copy: same house, different signs, different bodies
@@ -50,15 +60,128 @@ for (const p of signsPl) for (let h = 1; h <= 12; h++) {
   const b = renderTransitHouse({ planet: "mars", house: 1, sign: "scorpio" });
   if (a.parts[1] === b.parts[1]) fail("mars 1st house: gemini and scorpio syntheses identical (sign layer not entering copy)");
   if (a.parts[0] !== b.parts[0]) fail("mars 1st house: intros should be shared across signs");
+  const va = renderTransitHouse({ planet: "venus", house: 1, sign: "gemini" });
+  const vb = renderTransitHouse({ planet: "venus", house: 1, sign: "scorpio" });
+  if (va.parts[1] === vb.parts[1]) fail("venus 1st house: gemini and scorpio syntheses identical (sign layer not entering copy)");
+  if (va.parts[0] !== vb.parts[0]) fail("venus 1st house: intros should be shared across signs");
   // variant rotation: houses 1-7 carry a Satori variant-2; house 8+ falls back to base
   const v2 = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", variant: 2 });
   if (v2.body === a.body) fail("mars 1/gemini variant 2: identical to base (variant rows not picked up)");
-  const v2fb = renderTransitHouse({ planet: "mars", house: 9, sign: "gemini", variant: 2 });
-  if (v2fb.body !== renderTransitHouse({ planet: "mars", house: 9, sign: "gemini" }).body) fail("mars 9/gemini variant 2: should fall back to base rows");
+  // mars variant-2 now covers all 12 houses (rotation parity)
+  for (let h = 1; h <= 12; h++) {
+    const vb = renderTransitHouse({ planet: "mars", house: h, sign: "gemini", variant: 2 });
+    if (vb.body === renderTransitHouse({ planet: "mars", house: h, sign: "gemini" }).body) fail(`mars ${h}/gemini variant 2: identical to base (parity gap)`);
+    const vf = renderTransitHouse({ planet: "mars", house: h, sign: "gemini", variant: 2, voice: "Sofia" });
+    if (/\b(you|your|yourself)\b/i.test(vf.body)) fail(`mars ${h} variant 2 friend voice: second-person leak`);
+  }
+  const v2fb = renderTransitHouse({ planet: "venus", house: 9, sign: "gemini", variant: 2 });
+  if (v2fb.body !== renderTransitHouse({ planet: "venus", house: 9, sign: "gemini" }).body) fail("venus 9/gemini variant 2: should fall back to base rows (no venus variants yet)");
+  // aspect events layer: sky-register composer (frame + wants-pair + scenes)
+  const ev = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", events: [ { natal: "saturn", aspect: "square" }, { natal: "venus", aspect: "trine" } ] });
+  if (ev.parts.length !== 4) fail(`events layer: expected 4 parts, got ${ev.parts.length}`);
+  if (!ev.parts[2].includes("squaring your natal Saturn")) fail("events layer: square verb missing");
+  if (!ev.parts[2].includes("Mars in Gemini wants the fresh plot line right now; your Saturn holds the rules")) fail("events layer: wants-pair sentence missing");
+  if (ev.parts[2].includes("In plain terms")) fail("events layer: old scaffold leaked");
+  if (/friction sharpens the same weeks|grinding against|tugging at|glaring at|crosstalking|trading notes with|feeding energy to/.test(ev.body)) fail("events layer: metaphor frame verbs leaked");
+  if (ev.body.includes("{{")) fail("events layer: unfilled slot");
+  // owner-verbatim overrides render
+  const evn = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", events: [ { natal: "neptune", aspect: "opposition", window: "Aug 2" }, { natal: "south-node", aspect: "square" } ] });
+  if (!evn.parts[2].includes("opposing your natal Neptune until Aug 2.")) fail("events layer: opposition verb or window missing");
+  if (/natal \w+ through /.test(evn.body)) fail("events layer: through-date phrasing regressed (owner ruling: until)");
+  const evu = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", events: [ { natal: "neptune", aspect: "opposition", window: "Until August 2" } ] });
+  if (evu.parts[2].includes("through Until")) fail("events layer: doubled window preposition");
+  if (!evu.parts[2].includes("natal Neptune until August 2.")) fail("events layer: preposition-bearing window not normalized");
+  if (!evn.parts[2].includes("moving toward a clear vision beats fighting the mist")) fail("events layer: neptune owner override missing");
+  if (!evn.parts[3].includes("the South Node leans on the muscle memory it's mastered")) fail("events layer: south node holds-clause missing");
+  if (!evn.parts[3].includes("reflex disguised as functioning")) fail("events layer: south node owner override missing");
+  const evf = renderTransitHouse({ planet: "venus", house: 7, sign: "libra", voice: "Sofia", events: [ { natal: "moon", aspect: "conjunction" } ] });
+  if (evf.parts.length !== 3) fail(`friend events layer: expected 3 parts, got ${evf.parts.length}`);
+  if (!evf.parts[2].includes("Venus in Libra wants the balance restored")) fail("friend events layer: wants clause missing");
+  if (/\b(you|your|yourself)\b/i.test(evf.body)) fail("friend events layer: second-person leak");
+  if (!evf.parts[2].includes("Sofia's")) fail("friend events layer: name missing from frame");
+  // conjunction class follows planet nature: benefic conj reads soft, mars conj reads hard
+  const vconj = renderTransitHouse({ planet: "venus", house: 4, sign: "virgo", events: [ { natal: "north-node", aspect: "conjunction", window: "Jul 30, 2026" } ] });
+  if (!vconj.parts[2].includes("sitting right on your natal North Node")) fail("venus conj frame wrong");
+  if (vconj.parts[2].includes("Comfort lobbies against growth")) fail("venus conjunction scored as hard (benefic conj must read soft)");
+  if (!vconj.parts[2].includes("the growth tastes good")) fail("venus conj NN: soft scenes missing");
+  const mconj = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", events: [ { natal: "saturn", aspect: "conjunction" } ] });
+  if (!mconj.parts[2].includes("sitting right on your natal Saturn")) fail("mars conj frame wrong");
+
+  // slow movers: register, conj nature, events, rx
+  const j1 = renderTransitHouse({ planet: "jupiter", house: 1, sign: "sagittarius" });
+  if (!/this year|about a year/.test(j1.body)) fail("jupiter 1: year timescale missing");
+  const s1c = renderTransitHouse({ planet: "saturn", house: 10, sign: "capricorn" });
+  if (!/these years|couple of years|harvest/.test(s1c.body)) fail("saturn 10: slow timescale missing");
+  const jconj = renderTransitHouse({ planet: "jupiter", house: 2, sign: "taurus", events: [ { natal: "venus", aspect: "conjunction" } ] });
+  if (!jconj.parts[2] || !jconj.parts[2].includes("sitting right on your natal Venus")) fail("jupiter conj frame wrong");
+  if (!jconj.parts[2].includes("Jupiter in Taurus wants the growth that compounds")) fail("jupiter wants clause missing");
+  const sev2 = renderTransitHouse({ planet: "saturn", house: 7, sign: "libra", events: [ { natal: "moon", aspect: "square" } ] });
+  if (!sev2.parts[2] || !sev2.parts[2].includes("squaring your natal Moon")) fail("saturn square frame wrong");
+  const jrx = renderTransitHouse({ planet: "jupiter", house: 9, sign: "pisces", isRetrograde: true });
+  if (!jrx.body.includes("expansion resumes on schedule")) fail("jupiter rx overlay missing");
+  const srx = renderTransitHouse({ planet: "saturn", house: 4, sign: "aries", voice: "Sofia", isRetrograde: true });
+  if (!srx.body.includes("inspection ends and the building resumes")) fail("saturn rx overlay missing");
+  if (/\b(you|your)\b/i.test(srx.body)) fail("saturn rx friend voice: second-person leak");
+
+  // a SOURCE_GAP event must never block the card
+  const evgap = renderTransitHouse({ planet: "mars", house: 1, sign: "gemini", events: [ { natal: "nonsense", aspect: "square" } ] });
+  if (evgap.parts.length !== 2) fail("events layer: gap event should be skipped, not rendered or thrown");
+
+  // sun grounding checks: month timescale explicit, sign layer diverges, sun event frame works
+  const s1 = renderTransitHouse({ planet: "sun", house: 1, sign: "aries" });
+  if (!/month|weeks/.test(s1.body)) fail("sun 1/aries: month timescale missing (transit-explicitness directive)");
+  const s2 = renderTransitHouse({ planet: "sun", house: 1, sign: "scorpio" });
+  if (s1.parts[1] === s2.parts[1]) fail("sun 1st house: aries and scorpio syntheses identical");
+  const sev = renderTransitHouse({ planet: "sun", house: 1, sign: "aries", events: [ { natal: "saturn", aspect: "square" } ] });
+  if (!sev.parts[2] || !sev.parts[2].includes("squaring your natal Saturn")) fail("sun events layer: square verb missing");
+  if (!sev.parts[2].includes("The Sun in Aries wants to go first")) fail("sun events layer: wants clause missing");
+  // venus falsifiability regression: fixed claims stay fixed
+  // they-voice subject/object regression (the "love them feel" class of converter bug)
+  const vp12 = renderTransitHouse({ planet: "venus", house: 12, sign: "pisces", voice: "Sofia" });
+  if (vp12.body.includes("the love them feel")) fail("venus 12/pisces friend voice: subject-you converted as object (them feel)");
+  if (!vp12.body.includes("the love they feel")) fail("venus 12/pisces friend voice: expected corrected phrase missing");
+  const v2i = renderTransitHouse({ planet: "venus", house: 2, sign: "aries" });
+  if (v2i.body.includes("The raise gets approved")) fail("venus 2nd: flat event claim regressed");
+  if (!v2i.body.includes("tends to move toward you")) fail("venus 2nd: tendency framing missing");
+
+  // mercury: timescale + divergence + event frame
+  const m1 = renderTransitHouse({ planet: "mercury", house: 3, sign: "gemini" });
+  if (!/weeks/.test(m1.body)) fail("mercury 3/gemini: weeks timescale missing");
+  const m2 = renderTransitHouse({ planet: "mercury", house: 3, sign: "capricorn" });
+  if (m1.parts[1] === m2.parts[1]) fail("mercury 3rd house: gemini and capricorn syntheses identical");
+  const mev = renderTransitHouse({ planet: "mercury", house: 3, sign: "gemini", events: [ { natal: "moon", aspect: "trine" } ] });
+  if (!mev.parts[2] || !mev.parts[2].includes("trining your natal Moon")) fail("mercury events layer: trine verb missing");
+  if (!mev.parts[2].includes("Mercury in Gemini wants all the tabs open; your Moon guards")) fail("mercury events layer: wants-pair missing");
+
+  // retrograde overlay: extra part when flagged, absent when not, silent for planets without a row
+  const rx = renderTransitHouse({ planet: "mercury", house: 3, sign: "gemini", isRetrograde: true });
+  if (!rx.body.includes("revise rather than redo")) fail("mercury rx overlay missing");
+  if (rx.parts.length !== 3) fail(`mercury rx: expected 3 parts, got ${rx.parts.length}`);
+  const rxf = renderTransitHouse({ planet: "venus", house: 5, sign: "leo", voice: "Sofia", isRetrograde: true });
+  if (/\b(you|your)\b/i.test(rxf.body)) fail("venus rx overlay friend voice: second-person leak");
+  const rxsun = renderTransitHouse({ planet: "sun", house: 1, sign: "aries", isRetrograde: true });
+  if (rxsun.parts.length !== 2) fail("sun rx flag should be a no-op (no overlay row by design)");
+
   // no sign passed -> legacy template path still serves mars
   const legacy = renderTransitHouse({ planet: "mars", house: 1 });
   if (legacy.templateKey === "authored/transit-house-layered") fail("mars/1 without sign should use the fallback template");
-  console.log(`Rendered ${marsN} mars two-layer house cards (+ validation, variant, and fallback checks).`);
+  console.log(`Rendered ${marsN} two-layer house cards across six planets (+ validation, variant, events, and fallback checks).`);
+}
+
+// standalone transit-aspect fallback: composer register (owner directive from the Chiron screenshot)
+{
+  const ch = renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", sign: "taurus", window: "Until Jul 30, 2026" });
+  if (ch.body.includes("In plain terms")) fail("transit-aspect fallback: old scaffold leaked");
+  if (!ch.body.includes("Chiron in Taurus is squaring your natal Jupiter")) fail("transit-aspect fallback: real aspect verb missing");
+  if (!ch.body.includes("presses the old question of worth and enough; your Jupiter keeps betting on the bigger life")) fail("transit-aspect fallback: wants-pair missing");
+  const chf = renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", sign: "taurus", voice: "Sofia" });
+  if (/\b(you|your|yourself)\b/i.test(chf.body)) fail("transit-aspect composer friend voice: second-person leak");
+  if (!chf.body.includes("Sofia's natal Jupiter")) fail("transit-aspect composer friend voice: possessive missing");
+  const nosign = renderTransitAspect({ transiting: "pluto", natal: "moon", aspect: "opposition", voice: "Sofia" });
+  if (!nosign.body.includes("Pluto wants it transformed at the root")) fail("transit-aspect fallback: sign-less wants fallback missing (friend voice)");
+  if (/\b(you|your)\b/i.test(nosign.body)) fail("transit-aspect sign-less friend voice: second-person leak");
+  const moonfast = renderTransitAspect({ transiting: "moon", natal: "venus", aspect: "trine", sign: "pisces" });
+  if (moonfast.body.includes("In plain terms")) fail("moon transit-aspect: old scaffold leaked");
 }
 
 // moon daily-driver grid (spec: every Moon-to-natal-point pair)
@@ -168,8 +291,6 @@ for (let i = 0; i < SKY_PL.length; i++) for (let j = i + 1; j < SKY_PL.length; j
   try {
     const r = renderSkyAspectCard({ a: SKY_PL[i], b: SKY_PL[j], aspect: asp });
     if (/\{\{|natal/.test(r.body)) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: bad output`);
-    if (!r.body.includes("and for the collective,")) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: collective wording missing`);
-    if (r.body.includes("for everyone at once")) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: retired collective wording leaked`);
     skyAsp++;
   } catch (e) { fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: ${e.message}`); }
 }
