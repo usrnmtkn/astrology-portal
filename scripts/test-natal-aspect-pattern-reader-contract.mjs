@@ -16,6 +16,9 @@ const chartPatternPill = read("apps/web/src/features/friends/ChartPatternPill.ts
 const friendChartsList = read("apps/web/src/features/friends/FriendChartsList.tsx");
 const socialFriendsPanel = read("apps/web/src/features/friends/SocialFriendsPanel.tsx");
 const service = read("apps/web/src/services/natalAspectPatterns.ts");
+const serverPatternAdapter = read("api/_lib/aspect-patterns.ts");
+const adminPatternPreview = read("api/admin/aspect-pattern-writeups.ts");
+const patternEngine = read("packages/astro-knowledge/engine/aspect-patterns/index.js");
 const types = read("apps/web/src/types.ts");
 const styles = read("apps/web/src/styles/cards.css");
 const webPackage = JSON.parse(read("apps/web/package.json"));
@@ -46,6 +49,9 @@ assert.match(page, /NatalAspectPatternsSection/, "YouPage must render the natal 
 
 assert.match(service, /includeAspectPatterns:\s*"true"/, "Reader data request must opt into aspect patterns.");
 assert.match(service, /includeAspectPatternCopy:\s*"true"/, "Reader data request must ask for governed resolver copy; the astro-knowledge resolver is the canonical copy system.");
+assert.match(serverPatternAdapter, /resolvedCopy:\s*resolveAspectPatternCopies\(interpretationContexts/, "Reader runtime must resolve natal copy through the shared aspect-pattern engine.");
+assert.match(adminPatternPreview, /engine\.resolveAspectPatternCopy\(context/, "Dashboard previews must resolve natal copy through the shared aspect-pattern engine.");
+assert.match(patternEngine, /return resolveAspectPatternV3Copy\(context\)/, "Reader runtime and dashboard previews must converge on the same canonical V3 resolver.");
 assert.match(service, /options\.timeKnown === false/, "Reader data request must forward unknown birth time to the API.");
 assert.match(service, /params\.set\("timeKnown", "false"\)/, "Unknown birth time must reach the API as an explicit request field.");
 assert.match(service, /includeAspectPatternActivation/, "Activation requests must opt into activation math only when enabled.");

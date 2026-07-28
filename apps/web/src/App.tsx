@@ -127,6 +127,11 @@ import {
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
+  formatPhoneNumberForDisplay,
+  formatUsPhoneInput,
+  supportedPhoneCountry
+} from "./services/phoneAuth";
+import {
   generatedContentSections,
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
@@ -1444,20 +1449,6 @@ function transitAspectTechnicalVerb(aspect: string) {
   return verbs[normalized] ?? titleCase(aspect).toLowerCase();
 }
 
-function transitAspectSentenceVerb(aspect: string) {
-  const normalized = normalizeAspectType(aspect);
-  const verbs: Record<string, string> = {
-    conjunction: "conjuncts",
-    opposition: "opposes",
-    square: "squares",
-    trine: "trines",
-    sextile: "sextiles",
-    quincunx: "quincunxes"
-  };
-
-  return verbs[normalized] ?? `forms a ${titleCase(aspect).toLowerCase()} aspect to`;
-}
-
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
   const summary = firstReaderFacingCopy([
     generated?.summary,
@@ -1708,6 +1699,34 @@ const synastryCardPreviewCharacterLimit = 220;
 function textPreview(text: string, characterLimit = synastryCardPreviewCharacterLimit) {
   void characterLimit;
   return text.replace(/\s+/g, " ").trim();
+}
+
+const transitCardPreviewSentenceLimit = 2;
+const transitCardPreviewCharacterLimit = 280;
+
+function transitCardPreview(text: string) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  const sentences = normalized
+    .match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/gu)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) ?? [normalized];
+  const sentencePreview = sentences.slice(0, transitCardPreviewSentenceLimit).join(" ");
+  const characterSlice = sentencePreview.slice(0, transitCardPreviewCharacterLimit + 1);
+  const lastWordBoundary = characterSlice.lastIndexOf(" ");
+  const characterTruncated = sentencePreview.length > transitCardPreviewCharacterLimit;
+  const preview = characterTruncated
+    ? characterSlice.slice(0, lastWordBoundary > 0 ? lastWordBoundary : transitCardPreviewCharacterLimit).trim()
+    : sentencePreview;
+  const hasMore = characterTruncated || sentences.length > transitCardPreviewSentenceLimit;
+
+  return hasMore
+    ? `${preview.replace(/[.!?…]+$/u, "").trim()}…`
+    : preview;
 }
 
 function stripTldrPrefix(value: string) {
@@ -5200,7 +5219,7 @@ function formatOrb(orb: number) {
   return `${degrees}° ${String(minutes).padStart(2, "0")}'`;
 }
 
-function transitNote(transitPlanet: string, aspect: string, natalPoint: string) {
+function transitNote(transitPlanet: string, transitSign: string, aspect: string, natalPoint: string) {
   const normalizedAspect = normalizeFallbackV3Aspect(aspect);
 
   if (!normalizedAspect) {
@@ -5211,6 +5230,7 @@ function transitNote(transitPlanet: string, aspect: string, natalPoint: string) 
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
       natal: normalizeContentIdPart(natalPoint),
+      sign: normalizeContentIdPart(transitSign),
       transiting: normalizeContentIdPart(transitPlanet)
     });
 
@@ -6164,7 +6184,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         natalHouse: natalPosition.house,
         orb: formatOrb(aspect.orbValue),
         arc: [aspect.orbValue + 1.8, aspect.orbValue + 1.1, aspect.orbValue + 0.4, aspect.orbValue, aspect.orbValue + 0.5, aspect.orbValue + 1.2],
-        note: transitNote(transitPosition.planet, aspect.type, natalPosition.planet),
+        note: transitNote(transitPosition.planet, transitPosition.sign, aspect.type, natalPosition.planet),
         isSlowGeneralWeather: slowChapterPlanets.has(transitPosition.planet) && !elevatedSlowTransit
       } satisfies TransitItem;
     })
@@ -7821,7 +7841,7 @@ function friendUpdateSummary(
     return "";
   }
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt));
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt)));
 }
 
 function friendTransitSummary(
@@ -7834,15 +7854,7 @@ function friendTransitSummary(
   void generatedContent;
   void ownerPronouns;
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName));
-}
-
-function friendTransitFactSentence(transit: TransitItem, ownerName: string) {
-  const sentenceAspect = transitAspectSentenceVerb(transit.aspect);
-  const natalSign = transit.natalSign ? ` in ${transit.natalSign}` : "";
-  const angleHouse = isChartAnglePoint(transit.natalPoint) ? "" : transit.natalHouse ? ` in the ${ordinalHouse(transit.natalHouse)} house` : "";
-
-  return `${transit.transitPlanet} in the current sky ${sentenceAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}${natalSign}${angleHouse}.`;
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName)));
 }
 
 function personalTransitDisplayTitle(transit: TransitItem) {
@@ -7854,10 +7866,21 @@ function personalTransitPackageWindow(transit: TransitItem, generatedAt: string)
   const referenceDate = new Date(generatedAt);
 
   if (window.end >= referenceDate) {
-    return `Until ${formatEditorialDate(window.end, true)}`;
+    const endLabel = new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC"
+    }).format(window.end);
+
+    return `Until ${endLabel}`;
   }
 
   return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true).rangeLabel;
+}
+
+function transitHouseAspectEventWindow(transit: TransitItem, generatedAt: string) {
+  const window = transitItemActiveWindow(transit, generatedAt);
+  return formatEditorialDate(window.end, true);
 }
 
 function personalTransitPackageContentKey(transit: TransitItem, generatedAt: string) {
@@ -8009,17 +8032,46 @@ function normalizePersonalTransitSurface(
   };
 }
 
+function transitHouseAspectEvents(
+  transitPlanet: string,
+  transits: TransitItem[],
+  generatedAt: string
+) {
+  const normalizedPlanet = normalizeContentIdPart(transitPlanet);
+
+  return transits
+    .filter((transit) => (
+      normalizeContentIdPart(transit.transitPlanet) === normalizedPlanet
+      && dailyTransitQualifies(transit)
+    ))
+    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second))
+    .flatMap((transit) => {
+      const aspect = normalizeFallbackV3Aspect(transit.aspect);
+
+      return aspect
+        ? [{
+            natal: normalizeContentIdPart(transit.natalPoint),
+            aspect,
+            window: transitHouseAspectEventWindow(transit, generatedAt)
+          }]
+        : [];
+    });
+}
+
 function normalizeTransitHouseSurface(
   transit: Pick<TransitItem, "id" | "transitMotion" | "transitPlanet" | "transitSign">,
   house: number,
   windowLabel: string,
-  voice: "you" | string = "you"
+  voice: "you" | string = "you",
+  events: ReturnType<typeof transitHouseAspectEvents> = []
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
+      events,
       house,
+      isRetrograde: transit.transitMotion === "retrograde",
       planet: normalizeContentIdPart(transit.transitPlanet),
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
       motion: transit.transitMotion,
@@ -8118,6 +8170,7 @@ function activeBondTransitCards(
       return [{
         id: `${contact.id}-${activation.id}`,
         headline: rendered.headline,
+        transitPlanet: activation.transitPlanet,
         body: readerFacingParagraphs(rendered.parts).join("\n\n")
       }];
     } catch (error) {
@@ -10684,7 +10737,7 @@ function relationshipTimingSummary(
   void generatedContent;
   void person;
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt)) || fallback;
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt))) || fallback;
 }
 
 function relationshipTiming(
@@ -15635,7 +15688,8 @@ function PlacementTable({
                 generatedAt,
                 planet: position.planet,
                 positions: displayPositions
-              })
+              }),
+              generatedAt
             )
           );
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
@@ -16123,6 +16177,8 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [phoneCodeSent, setPhoneCodeSent] = useState(false);
+  const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
+  const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
   const isLogin = authMode === "login";
@@ -16130,6 +16186,26 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   useEffect(() => {
     setAuthMode(initialMode);
   }, [initialMode]);
+
+  useEffect(() => {
+    if (phoneResendSeconds <= 0) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPhoneResendSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [phoneResendSeconds]);
+
+  function resetPhoneChallenge() {
+    setPhoneCodeSent(false);
+    setPhoneCode("");
+    setPhoneOtpDestination("");
+    setPhoneResendSeconds(0);
+    setAuthMessage("");
+  }
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
@@ -16221,7 +16297,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     }
   }
 
-  async function sendPhoneCode() {
+  async function sendPhoneCode(isResend = false) {
     if (!phoneNumber.trim()) {
       setAuthMessage("Enter your phone number.");
       return;
@@ -16231,9 +16307,14 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     setAuthMessage("");
 
     try {
-      await sendPhoneSignInCode(phoneNumber);
+      const destination = await sendPhoneSignInCode(phoneNumber, {
+        shouldCreateUser: !isLogin
+      });
+
+      setPhoneOtpDestination(destination);
       setPhoneCodeSent(true);
-      setAuthMessage("We sent a six-digit code to your phone.");
+      setPhoneResendSeconds(60);
+      setAuthMessage(isResend ? "We sent a new six-digit code." : "");
     } catch (error) {
       setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
     } finally {
@@ -16242,7 +16323,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   }
 
   async function verifyPhoneCode() {
-    if (!phoneCode.trim()) {
+    if (phoneCode.trim().length !== 6) {
       setAuthMessage("Enter the six-digit code.");
       return;
     }
@@ -16256,7 +16337,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
     try {
       const account = await verifyPhoneSignInCode({
-        phone: phoneNumber,
+        phone: phoneOtpDestination || phoneNumber,
         code: phoneCode
       });
 
@@ -16277,11 +16358,28 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
         <X size={20} aria-hidden="true" />
       </button>
       <div className="auth-shell">
-        <form className="signup-form auth-card" onSubmit={submitSignup}>
-          <div className="signup-heading">
-            <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
-            {isLogin && <h3>Return to your sky.</h3>}
-          </div>
+        <form
+          className={`signup-form auth-card${phoneAuthOpen ? " auth-card--phone" : ""}`}
+          onSubmit={(event) => {
+            if (!phoneAuthOpen) {
+              submitSignup(event);
+              return;
+            }
+
+            event.preventDefault();
+            if (phoneCodeSent) {
+              void verifyPhoneCode();
+            } else {
+              void sendPhoneCode();
+            }
+          }}
+        >
+          {!phoneAuthOpen && (
+            <div className="signup-heading">
+              <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
+              {isLogin && <h3>Return to your sky.</h3>}
+            </div>
+          )}
 
         {!isAuthConfigured && (
           <p className="auth-message">
@@ -16289,94 +16387,171 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
           </p>
         )}
 
-        <div className="social-signons" aria-label="Social sign on">
-          <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
-            <GoogleIcon />
-            Continue with Google
-          </button>
-          {isPhoneAuthEnabled && (
-            <button
-              className="google-auth-button"
-              type="button"
-              disabled={authStatus === "loading"}
-              onClick={() => {
-                setPhoneAuthOpen((current) => !current);
-                setAuthMessage("");
-              }}
-            >
-              Continue with phone
+        {!phoneAuthOpen && (
+          <div className="social-signons" aria-label="Social sign on">
+            <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
+              <GoogleIcon />
+              Continue with Google
             </button>
-          )}
-        </div>
+            {isPhoneAuthEnabled && (
+              <button
+                className="google-auth-button"
+                type="button"
+                disabled={authStatus === "loading"}
+                onClick={() => {
+                  setPhoneAuthOpen(true);
+                  setAuthMessage("");
+                }}
+              >
+                Continue with phone
+              </button>
+            )}
+          </div>
+        )}
 
         {isPhoneAuthEnabled && phoneAuthOpen && (
           <div className="phone-auth-fields" aria-label="Phone sign in">
-            <label className="signup-field auth-field">
-              <span className="auth-label">Phone number</span>
-              <div>
-                <input
-                  className="auth-input"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="+1 212 555 0100"
-                  value={phoneNumber}
-                  disabled={phoneCodeSent}
-                  onChange={(event) => setPhoneNumber(event.target.value)}
-                />
-              </div>
-            </label>
-            {phoneCodeSent && (
+            <button
+              className="phone-auth-back"
+              type="button"
+              disabled={authStatus === "loading"}
+              onClick={() => {
+                resetPhoneChallenge();
+                setPhoneAuthOpen(false);
+              }}
+            >
+              <ChevronLeft size={18} aria-hidden="true" />
+              Back
+            </button>
+
+            <div className="phone-auth-heading">
+              <p className="auth-card__title">
+                {phoneCodeSent
+                  ? "Check your phone"
+                  : isLogin
+                    ? "Log in with phone"
+                    : "Sign up with phone"}
+              </p>
+              <p>
+                {phoneCodeSent ? (
+                  <>
+                    We sent a six-digit code to{" "}
+                    <strong>{formatPhoneNumberForDisplay(phoneOtpDestination)}</strong>.
+                  </>
+                ) : (
+                  "Enter your mobile number and we’ll text you a verification code."
+                )}
+              </p>
+            </div>
+
+            {!phoneCodeSent && (
               <label className="signup-field auth-field">
-                <span className="auth-label">Six-digit code</span>
-                <div>
+                <span className="auth-label">Mobile number</span>
+                <div className="phone-auth-number-control">
+                  <span className="phone-auth-country-prefix" aria-label={`${supportedPhoneCountry.name} country code`}>
+                    {supportedPhoneCountry.callingCode}
+                  </span>
                   <input
                     className="auth-input"
+                    type="tel"
+                    inputMode="tel"
+                    enterKeyHint="send"
+                    autoComplete="tel-national"
+                    autoFocus
+                    aria-describedby="phone-auth-number-help"
+                    placeholder="(212) 555-0100"
+                    value={phoneNumber}
+                    onChange={(event) => {
+                      setPhoneNumber(formatUsPhoneInput(event.target.value));
+                      setAuthMessage("");
+                    }}
+                  />
+                </div>
+                <small className="phone-auth-help" id="phone-auth-number-help">
+                  United States numbers only. Message and data rates may apply.
+                </small>
+              </label>
+            )}
+            {phoneCodeSent && (
+              <label className="signup-field auth-field">
+                <span className="auth-label">Verification code</span>
+                <div>
+                  <input
+                    className="auth-input phone-auth-code-input"
                     inputMode="numeric"
+                    enterKeyHint="done"
+                    pattern="[0-9]*"
                     autoComplete="one-time-code"
+                    autoFocus
+                    aria-describedby="phone-auth-code-help"
                     maxLength={6}
                     placeholder="123456"
                     value={phoneCode}
-                    onChange={(event) => setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onChange={(event) => {
+                      setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                      setAuthMessage("");
+                    }}
                   />
                 </div>
+                <small className="phone-auth-help" id="phone-auth-code-help">
+                  Codes expire shortly for your security.
+                </small>
               </label>
             )}
+
+            {authMessage && <p className="auth-message">{authMessage}</p>}
+
             <div className="phone-auth-actions">
-              {phoneCodeSent && (
+              {phoneCodeSent ? (
+                <>
+                  <button
+                    className="signup-submit phone-auth-primary"
+                    type="submit"
+                    disabled={authStatus === "loading" || phoneCode.length !== 6}
+                  >
+                    {authStatus === "loading" ? "Verifying…" : "Verify and continue"}
+                  </button>
+                  <div className="phone-auth-secondary-actions">
+                  <button
+                    className="phone-auth-text-button"
+                    type="button"
+                    disabled={authStatus === "loading"}
+                    onClick={resetPhoneChallenge}
+                  >
+                    Change number
+                  </button>
+                  <button
+                    className="phone-auth-text-button"
+                    type="button"
+                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
+                    onClick={() => void sendPhoneCode(true)}
+                  >
+                    {phoneResendSeconds > 0
+                      ? `Resend in 0:${String(phoneResendSeconds).padStart(2, "0")}`
+                      : "Resend code"}
+                  </button>
+                  </div>
+                </>
+              ) : (
                 <button
-                  type="button"
-                  disabled={authStatus === "loading"}
-                  onClick={() => {
-                    setPhoneCodeSent(false);
-                    setPhoneCode("");
-                    setAuthMessage("");
-                  }}
+                  className="signup-submit phone-auth-primary"
+                  type="submit"
+                  disabled={authStatus === "loading" || phoneNumber.replace(/\D/g, "").length !== 10}
                 >
-                  Change number
+                  {authStatus === "loading" ? "Sending…" : "Continue"}
                 </button>
               )}
-              <button
-                className="signup-submit"
-                type="button"
-                disabled={authStatus === "loading"}
-                onClick={() => void (phoneCodeSent ? verifyPhoneCode() : sendPhoneCode())}
-              >
-                {authStatus === "loading"
-                  ? "Working…"
-                  : phoneCodeSent
-                    ? "Verify code"
-                    : "Send code"}
-              </button>
             </div>
           </div>
         )}
 
-        {authMessage && <p className="auth-message">{authMessage}</p>}
+        {!phoneAuthOpen && authMessage && <p className="auth-message">{authMessage}</p>}
 
-        <div className="email-divider auth-divider"><span>or with email</span></div>
+        {!phoneAuthOpen && (
+          <>
+            <div className="email-divider auth-divider"><span>or with email</span></div>
 
-        <div className="signup-fields">
+            <div className="signup-fields">
           {!isLogin && (
             <label className="signup-field auth-field">
               <span className="auth-label">Full name</span>
@@ -16510,23 +16685,27 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
               </label>
             </>
           )}
-        </div>
+            </div>
 
-        <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
-          {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
-        </button>
-        <p className="signin-note">
-          {isLogin ? "New here?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMessage("");
-              setAuthMode(isLogin ? "create" : "login");
-            }}
-          >
-            {isLogin ? "Create an account" : "Login"}
-          </button>
-        </p>
+            <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
+              {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
+            </button>
+            <p className="signin-note">
+              {isLogin ? "New here?" : "Already have an account?"}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  resetPhoneChallenge();
+                  setPhoneAuthOpen(false);
+                  setAuthMessage("");
+                  setAuthMode(isLogin ? "create" : "login");
+                }}
+              >
+                {isLogin ? "Create an account" : "Login"}
+              </button>
+            </p>
+          </>
+        )}
         </form>
       </div>
     </section>
@@ -17708,7 +17887,7 @@ function ProfileView({
   const updateAspectRows = aspectRows.map((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, transitForm.chartDate);
-    const rowSummary = normalizedSurfacePreview(normalizedTransit);
+    const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
@@ -17757,7 +17936,7 @@ function ProfileView({
             </span>
             <span>{timing.rangeLabel}</span>
           </span>
-          {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+          {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -17892,9 +18071,19 @@ function ProfileView({
       };
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
       const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
-      const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, timingRange);
+      const normalizedHouseTransit = normalizeTransitHouseSurface(
+        transit,
+        house,
+        timingRange,
+        "you",
+        transitHouseAspectEvents(
+          transit.transitPlanet,
+          qualifyingDailyTransits,
+          transitForm.chartDate
+        )
+      );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
-      const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
+      const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedHouseTransit));
       const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
       const articleSections = normalizedHouseTransit.sections.map((section) => ({
         heading: section.heading,
@@ -17941,7 +18130,7 @@ function ProfileView({
               </span>
               {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
-            {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+            {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
             <span className="house-transit-keywords" aria-label="House keywords">
               {houseLifeAreaKeywords(house).map((keyword) => (
                 <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
@@ -18420,14 +18609,19 @@ function ManualChartsPanel({
           transit,
           activation.house,
           timingRange,
-          selectedChart.displayName
+          selectedChart.displayName,
+          transitHouseAspectEvents(
+            transit.transitPlanet,
+            selectedFriendTransits,
+            currentSky.generatedAt
+          )
         );
 
         return {
           activation,
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
-          rowSummary: normalizedSurfacePreview(normalized),
+          rowSummary: transitCardPreview(normalizedSurfacePreview(normalized)),
           timingRange: normalized.sections[0]?.window ?? timingRange,
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
@@ -18690,6 +18884,62 @@ function ManualChartsPanel({
       sections: card.normalized.sections.map((section) => ({
         // The page-level title already names this house transit. Repeating the
         // resolver headline here creates a near-identical second title.
+        heading: "",
+        body: section.body,
+        sourceKeys: section.sourceKeys
+      }))
+    });
+  };
+  const openBondTransitDetail = (
+    card: (typeof selectedBondTransitCards)[number]
+  ) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "transits",
+        `connection-transit-${normalizeContentIdPart(card.id)}`
+      ),
+      glyph: pointGlyph(card.transitPlanet),
+      kicker: "Between you two right now",
+      title: card.headline,
+      meta: "",
+      body: card.body.split(/\n{2,}/u).filter(Boolean),
+      sections: []
+    });
+  };
+  const openFriendTransitDetail = (transit: TransitItem) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+    const normalized = normalizePersonalTransitSurface(
+      transit,
+      currentSky.generatedAt,
+      selectedChart.displayName
+    );
+    const title = `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "transits",
+        `transit-${normalizeContentIdPart(transit.id)}`
+      ),
+      glyph: pointGlyph(transit.transitPlanet),
+      kicker: "Transit",
+      title,
+      meta: [
+        timing.rangeLabel,
+        `${wholeDegreeOrb(transitOrbValue(transit))} orb`,
+        transit.natalPoint
+      ].filter(Boolean).join(" · "),
+      body: [],
+      sections: normalized.sections.map((section) => ({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
@@ -19820,12 +20070,18 @@ function ManualChartsPanel({
                     <span className="eyebrow section-label friend-section-label">Between you two right now</span>
                     <div className="updates-aspect-list friend-transit-list">
                       {selectedBondTransitCards.map((card) => (
-                        <article className="updates-aspect-row friend-transit-row" key={card.id}>
+                        <button
+                          aria-label={`Open full entry for ${card.headline}`}
+                          className="updates-aspect-row friend-transit-row"
+                          key={card.id}
+                          onClick={() => openBondTransitDetail(card)}
+                          type="button"
+                        >
                           <span className="updates-aspect-row__content">
                             <h3 className="updates-aspect-row__title">{card.headline}</h3>
-                            <p className="updates-aspect-row__description">{card.body}</p>
+                            <p className="updates-aspect-row__description transit-card-preview">{transitCardPreview(card.body)}</p>
                           </span>
-                        </article>
+                        </button>
                       ))}
                     </div>
                   </section>
@@ -19853,7 +20109,7 @@ function ManualChartsPanel({
                               {card.timingRange ? <span>{card.timingRange}</span> : null}
                             </span>
                             {card.rowSummary ? (
-                              <span className="updates-aspect-row__description">{card.rowSummary}</span>
+                              <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
                             ) : null}
                             <span className="house-transit-keywords" aria-label="House keywords">
                               {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
@@ -19903,11 +20159,16 @@ function ManualChartsPanel({
                             selectedChart.pronouns,
                             currentSky.generatedAt
                           );
-                          const factSentence = friendTransitFactSentence(transit, selectedChart.displayName);
                           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
 
                           return (
-                            <article className="updates-aspect-row friend-transit-row" key={transit.id}>
+                            <button
+                              aria-label={`Open full entry for ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`}
+                              className="updates-aspect-row friend-transit-row"
+                              key={transit.id}
+                              onClick={() => openFriendTransitDetail(transit)}
+                              type="button"
+                            >
                               <span className="updates-aspect-row__content">
                                 <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
                                 <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
@@ -19916,14 +20177,13 @@ function ManualChartsPanel({
                                   </span>
                                   <span>{timing.rangeLabel}</span>
                                 </span>
-                                <p className="updates-aspect-row__description">{summary}</p>
-                                <p className="updates-aspect-row__detail">{factSentence}</p>
+                                <p className="updates-aspect-row__description transit-card-preview">{summary}</p>
                               </span>
                               <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
                                 <span className="updates-aspect-row__dot" aria-hidden="true" />
                                 <span className="updates-aspect-row__orb">{transit.orb}</span>
                               </span>
-                            </article>
+                            </button>
                           );
                         })}
                       </div>

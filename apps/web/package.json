@@ -11,9 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tldr/astro-knowledge": "0.1.0",
     "@supabase/supabase-js": "^2.106.2",
+    "@tldr/astro-knowledge": "0.1.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "libphonenumber-js": "^1.13.9",
     "lucide-react": "^0.468.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

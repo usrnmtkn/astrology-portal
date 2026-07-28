@@ -18135,8 +18135,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"
@@ -18145,8 +18145,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"
@@ -18155,8 +18155,8 @@
    "contentKey": "fallback-hook/sky-event/aspect-conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for the collective, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
    "review_status": "approved",
    "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
    "approved_via": "owner sign-off, chat 2026-07-21"
@@ -23822,8 +23822,8 @@
    "contentKey": "fallback-hook/aspect-pair/south-node/venus/soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Affection may come through gestures, tastes, and relationship patterns you already know well. You may return easily to the people, places, and pleasures that have comforted you before, or have a strong instinct for making a connection feel familiar. That familiarity is a real resource. The tension is that what feels natural can also go unquestioned. An old way of loving may still support you, or it may keep placing you in a role that belonged to an earlier version of your life. The work here isn't to reject your past; it's to make sure your relational muscle memory isn't deciding your future for you.",
-   "body_they": "Affection may come through gestures, tastes, and relationship patterns they already know well. They may return easily to the people, places, and pleasures that have comforted them before, or have a strong instinct for making a connection feel familiar. That familiarity is a real resource. The tension is that what feels natural can also go unquestioned. An old way of loving may still support them, or it may keep placing them in a role that belonged to an earlier version of their life. The work here isn't to reject the past; it's to make sure their relational muscle memory isn't deciding their future for them.",
+   "body_you": "Affection comes easily and past-flavored: you love like you were taught, generously and on rails. The warmth is a gift. Point some of it at futures instead of keepsakes.",
+   "body_they": "Affection comes easily and past-flavored: they love like they were taught, generously and on rails. The warmth is a gift. Some of it belongs on futures instead of keepsakes.",
    "review_status": "approved",
    "notes": "Natal aspect per-pair section (Node extension, chat 2026-07-22). North Node = growth register, South Node = mastered-past register. Dual-voice authored separately.",
    "approved_via": "owner sign-off, chat 2026-07-22"
@@ -37015,6 +37015,2754 @@
    "approved_via": "owner chat approval 2026-07-23 (transit effect library)"
   },
   {
+   "contentKey": "fallback-hook/transit-house-retro-overlay/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mercury runs retrograde during part of this crossing, so the weeks double back on themselves: messages resurface, plans revise, and the same conversation comes around twice. The second pass is the editing pass; revise rather than redo, and reconfirm anything with a date on it.",
+   "body_they": "Mercury runs retrograde during part of this crossing, so their weeks double back: messages resurface, plans revise, and the same conversation comes around twice. The second pass is the editing pass for them, and anything with a date on it deserves a reconfirm.",
+   "review_status": "approved",
+   "source_keys": [
+    "hand/planets-in-transit (retrograde repeat-pass principle)",
+    "TLDR-Register-Conversion-Plan.md"
+   ],
+   "note": "Retrograde overlay for the two-layer house card; renders as an extra part when isRetrograde is passed. Revise-not-redo framing.",
+   "approved_via": "owner roadmap approval (2026-07-26)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-retro-overlay/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Venus runs retrograde during part of this crossing, so the window reviews instead of previews: old names resurface, tastes get second-guessed, and what you valued last year comes up for reappraisal. Let the reviews finish before making the purchases and promises permanent.",
+   "body_they": "Venus runs retrograde during part of this crossing, so the window reviews instead of previews for them: old names resurface, tastes get second-guessed, and what they valued last year comes up for reappraisal. The purchases and promises hold better made after the reviews finish.",
+   "review_status": "approved",
+   "source_keys": [
+    "hand/planets-in-transit (retrograde repeat-pass principle)",
+    "TLDR-Register-Conversion-Plan.md"
+   ],
+   "note": "Retrograde overlay for the two-layer house card; renders as an extra part when isRetrograde is passed. Revise-not-redo framing.",
+   "approved_via": "owner roadmap approval (2026-07-26)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-retro-overlay/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mars runs retrograde during part of this crossing, so the drive turns inward and doubles back: stalled projects resurface, old frustrations ask to be finished properly, and force works better revised than repeated. Aim the energy at completing what is already open.",
+   "body_they": "Mars runs retrograde during part of this crossing, so their drive turns inward and doubles back: stalled projects resurface, old frustrations ask to be finished properly, and force works better revised than repeated. The energy pays best aimed at what is already open.",
+   "review_status": "approved",
+   "source_keys": [
+    "hand/planets-in-transit (retrograde repeat-pass principle)",
+    "TLDR-Register-Conversion-Plan.md"
+   ],
+   "note": "Retrograde overlay for the two-layer house card; renders as an extra part when isRetrograde is passed. Revise-not-redo framing.",
+   "approved_via": "owner roadmap approval (2026-07-26)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Aries wants it decided by lunch, head-on and today",
+   "body_they": "Mars in Aries wants it decided by lunch, head-on and today",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Taurus wants to finish what it started at its own unhurried pace",
+   "body_they": "Mars in Taurus wants to finish what it started at its own unhurried pace",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Gemini wants the fresh plot line right now",
+   "body_they": "Mars in Gemini wants the fresh plot line right now",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Cancer wants the inner circle guarded first",
+   "body_they": "Mars in Cancer wants the inner circle guarded first",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Leo wants the bold move made in front of witnesses",
+   "body_they": "Mars in Leo wants the bold move made in front of witnesses",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Virgo wants the fix applied and the error gone by tonight",
+   "body_they": "Mars in Virgo wants the fix applied and the error gone by tonight",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Libra wants the fair fight and the clean agreement",
+   "body_they": "Mars in Libra wants the fair fight and the clean agreement",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Scorpio wants the whole truth, quietly, on its own timetable",
+   "body_they": "Mars in Scorpio wants the whole truth, quietly, on its own timetable",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Sagittarius wants the bigger arena and the honest answer",
+   "body_they": "Mars in Sagittarius wants the bigger arena and the honest answer",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Capricorn wants the summit on schedule",
+   "body_they": "Mars in Capricorn wants the summit on schedule",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Aquarius wants the rule rewritten today",
+   "body_they": "Mars in Aquarius wants the rule rewritten today",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars in Pisces wants to move on inspiration or not at all",
+   "body_they": "Mars in Pisces wants to move on inspiration or not at all",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Aries wants the spark chased today",
+   "body_they": "Venus in Aries wants the spark chased today",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Taurus wants the comfort that lasts",
+   "body_they": "Venus in Taurus wants the comfort that lasts",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Gemini wants the conversation that sparkles",
+   "body_they": "Venus in Gemini wants the conversation that sparkles",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Cancer wants the closeness that feels like home",
+   "body_they": "Venus in Cancer wants the closeness that feels like home",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Leo wants the grand gesture, given or received",
+   "body_they": "Venus in Leo wants the grand gesture, given or received",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Virgo wants affection shown in useful details",
+   "body_they": "Venus in Virgo wants affection shown in useful details",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Libra wants the balance restored and the evening beautiful",
+   "body_they": "Venus in Libra wants the balance restored and the evening beautiful",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Scorpio wants the bond with everything on the table",
+   "body_they": "Venus in Scorpio wants the bond with everything on the table",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Sagittarius wants the romance with a passport",
+   "body_they": "Venus in Sagittarius wants the romance with a passport",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Capricorn wants the affection that keeps its word",
+   "body_they": "Venus in Capricorn wants the affection that keeps its word",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Aquarius wants the connection with room to breathe",
+   "body_they": "Venus in Aquarius wants the connection with room to breathe",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus in Pisces wants the love that needs no explaining",
+   "body_they": "Venus in Pisces wants the love that needs no explaining",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Aries wants to go first",
+   "body_they": "The Sun in Aries wants to go first",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Taurus wants the solid, unhurried win",
+   "body_they": "The Sun in Taurus wants the solid, unhurried win",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Gemini wants every interesting door open at once",
+   "body_they": "The Sun in Gemini wants every interesting door open at once",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Cancer wants the inner circle safe and close",
+   "body_they": "The Sun in Cancer wants the inner circle safe and close",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Leo wants the spotlight to land and stay",
+   "body_they": "The Sun in Leo wants the spotlight to land and stay",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Virgo wants it done properly or not at all",
+   "body_they": "The Sun in Virgo wants it done properly or not at all",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Libra wants everyone at the table on good terms",
+   "body_they": "The Sun in Libra wants everyone at the table on good terms",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Scorpio wants the real story, not the version for company",
+   "body_they": "The Sun in Scorpio wants the real story, not the version for company",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Sagittarius wants the horizon and the honest take",
+   "body_they": "The Sun in Sagittarius wants the horizon and the honest take",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Capricorn wants the long climb honored",
+   "body_they": "The Sun in Capricorn wants the long climb honored",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Aquarius wants the freedom to be the exception",
+   "body_they": "The Sun in Aquarius wants the freedom to be the exception",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun in Pisces wants the current to carry something meaningful",
+   "body_they": "The Sun in Pisces wants the current to carry something meaningful",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Aries wants the answer now",
+   "body_they": "Mercury in Aries wants the answer now",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Taurus wants the facts that hold still",
+   "body_they": "Mercury in Taurus wants the facts that hold still",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Gemini wants all the tabs open",
+   "body_they": "Mercury in Gemini wants all the tabs open",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Cancer wants the words to land gently",
+   "body_they": "Mercury in Cancer wants the words to land gently",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Leo wants the story told right",
+   "body_they": "Mercury in Leo wants the story told right",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Virgo wants the details reconciled",
+   "body_they": "Mercury in Virgo wants the details reconciled",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Libra wants both sides heard before the verdict",
+   "body_they": "Mercury in Libra wants both sides heard before the verdict",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Scorpio wants the question under the question",
+   "body_they": "Mercury in Scorpio wants the question under the question",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Sagittarius wants the point, loudly, with a map",
+   "body_they": "Mercury in Sagittarius wants the point, loudly, with a map",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Capricorn wants the plan in writing",
+   "body_they": "Mercury in Capricorn wants the plan in writing",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Aquarius wants the assumption tested",
+   "body_they": "Mercury in Aquarius wants the assumption tested",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury in Pisces wants the meaning between the lines",
+   "body_they": "Mercury in Pisces wants the meaning between the lines",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27",
+    "TLDR-Aspect-Blueprint.md"
+   ],
+   "note": "Transiting-planet wants-clause for the events-layer composer (voice-neutral). Gemini Mars line owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/sun",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Sun holds the plot of who you are becoming",
+   "body_they": "their Sun holds the plot of who they are becoming",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/moon",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Moon guards how you actually feel underneath",
+   "body_they": "their Moon guards how they actually feel underneath",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Mercury keeps the words and the reasons",
+   "body_they": "their Mercury keeps the words and the reasons",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Venus protects what you love and how you soften",
+   "body_they": "their Venus protects what they love and how they soften",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Mars carries the temper and the drive",
+   "body_they": "their Mars carries the temper and the drive",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Jupiter keeps betting on the bigger life",
+   "body_they": "their Jupiter keeps betting on the bigger life",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Saturn holds the rules you built to stay safe",
+   "body_they": "their Saturn holds the rules they built to stay safe",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/uranus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Uranus reserves the right to bolt",
+   "body_they": "their Uranus reserves the right to bolt",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/neptune",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Neptune wants to drift, sense, and leave the question open",
+   "body_they": "their Neptune wants to drift, sense, and leave the question open",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/pluto",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Pluto guards the controls under the floorboards",
+   "body_they": "their Pluto guards the controls under the floorboards",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/chiron",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Chiron remembers exactly where it still hurts",
+   "body_they": "their Chiron remembers exactly where it still hurts",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/north-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your North Node points at the unfamiliar door",
+   "body_they": "their North Node points at the unfamiliar door",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/south-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "the South Node leans on the muscle memory it's mastered",
+   "body_they": "the South Node leans on the muscle memory it's mastered",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/lilith",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Lilith keeps the refusals you no longer apologize for",
+   "body_they": "their Lilith keeps the refusals they no longer apologize for",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/ascendant",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Ascendant manages the first impression",
+   "body_they": "their Ascendant manages the first impression",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/midheaven",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Midheaven watches the reputation",
+   "body_they": "their Midheaven watches the reputation",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/descendant",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your Descendant holds the seat across the table",
+   "body_they": "their Descendant holds the seat across the table",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-natal/imum-coeli",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "your IC holds the private foundation everything rests on",
+   "body_they": "their IC holds the private foundation everything rests on",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Natal-point holds-clause for the events-layer composer. Neptune + South Node lines owner-verbatim.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-scenes/mars/south-node/hard",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "So the old habit fights for its life right when you're ready to move on: the relapse text, the familiar shortcut, the reflex disguised as functioning. It starves fastest when nobody makes it dramatic.",
+   "body_they": "So the old habit fights for its life right when they're ready to move on: the relapse text, the familiar shortcut, the reflex disguised as functioning. It starves fastest when nobody makes it dramatic.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Owner-verbatim scene override for the events composer.",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-scenes/mars/neptune/hard",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Caught in the middle, clarity evaporates right at the point of impact: useless arguments, random fatigue, and suspicions that dissolve on contact with reality. Focus on what is concrete; moving toward a clear vision beats fighting the mist.",
+   "body_they": "Caught in the middle, clarity evaporates right at the point of impact: useless arguments, random fatigue, and suspicions that dissolve on contact with reality. Focus on what is concrete; moving toward a clear vision beats fighting the mist.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner calibration 2026-07-27"
+   ],
+   "note": "Owner-verbatim scene override for the events composer (updated mid-build 2026-07-27).",
+   "approved_via": "owner-calibrated events register (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While Mars is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While Mars is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27: use actual aspect language (squaring, trining, opposing)"
+   ],
+   "note": "Per-planet event frame; {{aspectVerb}} = sitting right on / squaring / opposing / trining / sextiling per the actual aspect.",
+   "approved_via": "owner ruling (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While Venus is in your {{houseOrdinal}} house, she is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While Venus is in {{Name}}'s {{houseOrdinal}} house, she is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27: use actual aspect language (squaring, trining, opposing)"
+   ],
+   "note": "Per-planet event frame; {{aspectVerb}} = sitting right on / squaring / opposing / trining / sextiling per the actual aspect. INTENTIONAL: Venus takes 'she' throughout the house voice (owner canon since the V2 Venus library); Sun/Mercury/Mars take 'it'. Not an inconsistency.",
+   "approved_via": "owner ruling (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/sun",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While the Sun is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While the Sun is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27: use actual aspect language (squaring, trining, opposing)"
+   ],
+   "note": "Per-planet event frame; {{aspectVerb}} = sitting right on / squaring / opposing / trining / sextiling per the actual aspect.",
+   "approved_via": "owner ruling (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While Mercury is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While Mercury is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27: use actual aspect language (squaring, trining, opposing)"
+   ],
+   "note": "Per-planet event frame; {{aspectVerb}} = sitting right on / squaring / opposing / trining / sextiling per the actual aspect.",
+   "approved_via": "owner ruling (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While Jupiter is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While Jupiter is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27 (real aspect language)"
+   ],
+   "note": "Per-planet event frame; aspectVerb per actual aspect.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-frame/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "While Saturn is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+   "body_they": "While Saturn is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner ruling 2026-07-27 (real aspect language)"
+   ],
+   "note": "Per-planet event frame; aspectVerb per actual aspect.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Aries wants the bold expansion started today",
+   "body_they": "Jupiter in Aries wants the bold expansion started today",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Taurus wants the growth that compounds",
+   "body_they": "Jupiter in Taurus wants the growth that compounds",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Gemini wants the bigger conversation",
+   "body_they": "Jupiter in Gemini wants the bigger conversation",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Cancer wants the wider family fed",
+   "body_they": "Jupiter in Cancer wants the wider family fed",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Leo wants the generous grand version",
+   "body_they": "Jupiter in Leo wants the generous grand version",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Virgo wants the improvement scaled up",
+   "body_they": "Jupiter in Virgo wants the improvement scaled up",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Libra wants the fairer, larger arrangement",
+   "body_they": "Jupiter in Libra wants the fairer, larger arrangement",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Scorpio wants the deeper stake",
+   "body_they": "Jupiter in Scorpio wants the deeper stake",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Sagittarius wants the whole horizon",
+   "body_they": "Jupiter in Sagittarius wants the whole horizon",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Capricorn wants the expansion with architecture",
+   "body_they": "Jupiter in Capricorn wants the expansion with architecture",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Aquarius wants the future opened early",
+   "body_they": "Jupiter in Aquarius wants the future opened early",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter in Pisces wants the meaning enlarged",
+   "body_they": "Jupiter in Pisces wants the meaning enlarged",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Aries wants the impulse proven",
+   "body_they": "Saturn in Aries wants the impulse proven",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Taurus wants the value verified",
+   "body_they": "Saturn in Taurus wants the value verified",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Gemini wants the words accountable",
+   "body_they": "Saturn in Gemini wants the words accountable",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Cancer wants the care given structure",
+   "body_they": "Saturn in Cancer wants the care given structure",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Leo wants the shine earned",
+   "body_they": "Saturn in Leo wants the shine earned",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Virgo wants the standard kept",
+   "body_they": "Saturn in Virgo wants the standard kept",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Libra wants the agreement in writing",
+   "body_they": "Saturn in Libra wants the agreement in writing",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Scorpio wants the depths governed",
+   "body_they": "Saturn in Scorpio wants the depths governed",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Sagittarius wants the belief load-tested",
+   "body_they": "Saturn in Sagittarius wants the belief load-tested",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Capricorn wants the structure finished properly",
+   "body_they": "Saturn in Capricorn wants the structure finished properly",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Aquarius wants the ideal engineered",
+   "body_they": "Saturn in Aquarius wants the ideal engineered",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn in Pisces wants the softness given a spine",
+   "body_they": "Saturn in Pisces wants the softness given a spine",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Aspect-Blueprint.md (Jupiter magnifies / Saturn exposes)"
+   ],
+   "note": "Transiting-planet wants-clause for the events composer.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-retro-overlay/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Jupiter runs retrograde during part of this crossing, so the growth turns inward for a stretch: gains consolidate rather than multiply, and the opportunity that matters circles back for a second look. Develop what you already hold; the expansion resumes on schedule.",
+   "body_they": "Jupiter runs retrograde during part of this crossing, so their growth turns inward for a stretch: gains consolidate rather than multiply, and the opportunity that matters circles back for a second look. The gains develop best from what they already hold; the expansion resumes on schedule.",
+   "review_status": "approved",
+   "source_keys": [
+    "hand/planets-in-transit (retrograde principle)"
+   ],
+   "note": "Retrograde overlay, revise-not-redo family.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-retro-overlay/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Saturn runs retrograde during part of this crossing, so the structures get tested from the inside: commitments come up for review, and the shortcut taken earlier surfaces for proper repair. Rebuild what wobbles; the inspection ends and the building resumes.",
+   "body_they": "Saturn runs retrograde during part of this crossing, so their structures get tested from the inside: commitments come up for review, and the shortcut taken earlier surfaces for proper repair. What wobbles gets rebuilt; the inspection ends and the building resumes.",
+   "review_status": "approved",
+   "source_keys": [
+    "hand/planets-in-transit (retrograde principle)"
+   ],
+   "note": "Retrograde overlay, revise-not-redo family.",
+   "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Aries wants it felt and acted on now",
+   "body_they": "The Moon in Aries wants it felt and acted on now",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Taurus wants comfort you can touch",
+   "body_they": "The Moon in Taurus wants comfort of the touchable kind",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Gemini wants it talked through",
+   "body_they": "The Moon in Gemini wants it talked through",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Cancer wants home and the people who count",
+   "body_they": "The Moon in Cancer wants home and the people who count",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Leo wants the feeling seen",
+   "body_they": "The Moon in Leo wants the feeling seen",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Virgo wants the day put in order",
+   "body_they": "The Moon in Virgo wants the day put in order",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Libra wants things back in balance",
+   "body_they": "The Moon in Libra wants things back in balance",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Scorpio wants the truth under the mood",
+   "body_they": "The Moon in Scorpio wants the truth under the mood",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Sagittarius wants air and a bigger view",
+   "body_they": "The Moon in Sagittarius wants air and a bigger view",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Capricorn wants composure and a plan",
+   "body_they": "The Moon in Capricorn wants composure and a plan",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Aquarius wants a step back from the feelings",
+   "body_they": "The Moon in Aquarius wants a step back from the feelings",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon in Pisces wants the softness honored",
+   "body_they": "The Moon in Pisces wants the softness honored",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Aries presses the old doubt about being allowed to go first",
+   "body_they": "Chiron in Aries presses the old doubt about being allowed to go first",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Taurus presses the old question of worth and enough",
+   "body_they": "Chiron in Taurus presses the old question of worth and enough",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Gemini presses the old fear of not being heard",
+   "body_they": "Chiron in Gemini presses the old fear of not being heard",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Cancer presses the old ache about belonging",
+   "body_they": "Chiron in Cancer presses the old ache about belonging",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Leo presses the old wound around being seen",
+   "body_they": "Chiron in Leo presses the old wound around being seen",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Virgo presses the old verdict of never quite good enough",
+   "body_they": "Chiron in Virgo presses the old verdict of never quite good enough",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Libra presses the old imbalance in being chosen",
+   "body_they": "Chiron in Libra presses the old imbalance in being chosen",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Scorpio presses the old breach of trust",
+   "body_they": "Chiron in Scorpio presses the old breach of trust",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Sagittarius presses the old crisis of faith",
+   "body_they": "Chiron in Sagittarius presses the old crisis of faith",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Capricorn presses the old weight of having to earn rest",
+   "body_they": "Chiron in Capricorn presses the old weight of having to earn rest",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Aquarius presses the old exile of standing outside the group",
+   "body_they": "Chiron in Aquarius presses the old exile of standing outside the group",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron in Pisces presses the old grief that never got a name",
+   "body_they": "Chiron in Pisces presses the old grief that never got a name",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Aries keeps lighting fuses under stalled starts",
+   "body_they": "Uranus in Aries keeps lighting fuses under stalled starts",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Taurus keeps shaking what looked permanent",
+   "body_they": "Uranus in Taurus keeps shaking what looked permanent",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Gemini keeps rewiring the conversation",
+   "body_they": "Uranus in Gemini keeps rewiring the conversation",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Cancer keeps rattling the idea of home",
+   "body_they": "Uranus in Cancer keeps rattling the idea of home",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Leo keeps interrupting the script",
+   "body_they": "Uranus in Leo keeps interrupting the script",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Virgo keeps upending the routine",
+   "body_they": "Uranus in Virgo keeps upending the routine",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Libra keeps renegotiating the partnerships",
+   "body_they": "Uranus in Libra keeps renegotiating the partnerships",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Scorpio keeps springing the locked doors",
+   "body_they": "Uranus in Scorpio keeps springing the locked doors",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Sagittarius keeps torching the old certainties",
+   "body_they": "Uranus in Sagittarius keeps torching the old certainties",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Capricorn keeps cracking the institutions",
+   "body_they": "Uranus in Capricorn keeps cracking the institutions",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Aquarius keeps accelerating the future",
+   "body_they": "Uranus in Aquarius keeps accelerating the future",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus in Pisces keeps dissolving and re-forming the dream",
+   "body_they": "Uranus in Pisces keeps dissolving and re-forming the dream",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Aries blurs the line between courage and crusade",
+   "body_they": "Neptune in Aries blurs the line between courage and crusade",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Taurus blurs what security actually is",
+   "body_they": "Neptune in Taurus blurs what security actually is",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Gemini blurs facts into stories",
+   "body_they": "Neptune in Gemini blurs facts into stories",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Cancer blurs memory into longing",
+   "body_they": "Neptune in Cancer blurs memory into longing",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Leo blurs identity into image",
+   "body_they": "Neptune in Leo blurs identity into image",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Virgo blurs the fix into the fantasy of fixing",
+   "body_they": "Neptune in Virgo blurs the fix into the fantasy of fixing",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Libra blurs the partner into the ideal",
+   "body_they": "Neptune in Libra blurs the partner into the ideal",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Scorpio blurs depth into undertow",
+   "body_they": "Neptune in Scorpio blurs depth into undertow",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Sagittarius blurs faith into escape",
+   "body_they": "Neptune in Sagittarius blurs faith into escape",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Capricorn blurs the ladder into the mirage",
+   "body_they": "Neptune in Capricorn blurs the ladder into the mirage",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Aquarius blurs the collective dream",
+   "body_they": "Neptune in Aquarius blurs the collective dream",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune in Pisces dissolves the boundaries entirely",
+   "body_they": "Neptune in Pisces dissolves the boundaries entirely",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Aries pressures how force gets used",
+   "body_they": "Pluto in Aries pressures how force gets used",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Taurus pressures what ownership means",
+   "body_they": "Pluto in Taurus pressures what ownership means",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Gemini pressures the information itself",
+   "body_they": "Pluto in Gemini pressures the information itself",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Cancer pressures the roots",
+   "body_they": "Pluto in Cancer pressures the roots",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Leo pressures the stage itself",
+   "body_they": "Pluto in Leo pressures the stage itself",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Virgo pressures the systems",
+   "body_they": "Pluto in Virgo pressures the systems",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Libra pressures the contracts",
+   "body_they": "Pluto in Libra pressures the contracts",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Scorpio pressures everything hidden",
+   "body_they": "Pluto in Scorpio pressures everything hidden",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Sagittarius pressures the beliefs",
+   "body_they": "Pluto in Sagittarius pressures the beliefs",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Capricorn pressures the structures of authority",
+   "body_they": "Pluto in Capricorn pressures the structures of authority",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Aquarius pressures the group and the grid",
+   "body_they": "Pluto in Aquarius pressures the group and the grid",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto in Pisces pressures the myths",
+   "body_they": "Pluto in Pisces pressures the myths",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Aries pulls toward the braver first move",
+   "body_they": "The North Node in Aries pulls toward the braver first move",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Taurus pulls toward simpler, solider ground",
+   "body_they": "The North Node in Taurus pulls toward simpler, solider ground",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Gemini pulls toward the unasked question",
+   "body_they": "The North Node in Gemini pulls toward the unasked question",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Cancer pulls toward the softer home ground",
+   "body_they": "The North Node in Cancer pulls toward the softer home ground",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Leo pulls toward the risk of being seen",
+   "body_they": "The North Node in Leo pulls toward the risk of being seen",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Virgo pulls toward the useful and the daily",
+   "body_they": "The North Node in Virgo pulls toward the useful and the daily",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Libra pulls toward the shared table",
+   "body_they": "The North Node in Libra pulls toward the shared table",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Scorpio pulls toward the deep end",
+   "body_they": "The North Node in Scorpio pulls toward the deep end",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Sagittarius pulls toward the wider map",
+   "body_they": "The North Node in Sagittarius pulls toward the wider map",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Capricorn pulls toward the earned summit",
+   "body_they": "The North Node in Capricorn pulls toward the earned summit",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Aquarius pulls toward the wider we",
+   "body_they": "The North Node in Aquarius pulls toward the wider we",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node in Pisces pulls toward surrender and the open hand",
+   "body_they": "The North Node in Pisces pulls toward surrender and the open hand",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Aries leans back into the old reflex of going it alone",
+   "body_they": "The South Node in Aries leans back into the old reflex of going it alone",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Taurus leans back into the comfort groove",
+   "body_they": "The South Node in Taurus leans back into the comfort groove",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Gemini leans back into gathering more information forever",
+   "body_they": "The South Node in Gemini leans back into gathering more information forever",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Cancer leans back into the familiar nest",
+   "body_they": "The South Node in Cancer leans back into the familiar nest",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Leo leans back into the reliable applause",
+   "body_they": "The South Node in Leo leans back into the reliable applause",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Virgo leans back into busywork that feels like safety",
+   "body_they": "The South Node in Virgo leans back into busywork that feels like safety",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Libra leans back into peace kept at any price",
+   "body_they": "The South Node in Libra leans back into peace kept at any price",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Scorpio leans back into intensity for its own sake",
+   "body_they": "The South Node in Scorpio leans back into intensity for its own sake",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Sagittarius leans back into the escape hatch",
+   "body_they": "The South Node in Sagittarius leans back into the escape hatch",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Capricorn leans back into the grind that proves nothing new",
+   "body_they": "The South Node in Capricorn leans back into the grind that proves nothing new",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Aquarius leans back into the cool distance",
+   "body_they": "The South Node in Aquarius leans back into the cool distance",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node in Pisces leans back into the fog that excuses everything",
+   "body_they": "The South Node in Pisces leans back into the fog that excuses everything",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Transiting-body wants-clause (composer register).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/sun",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Sun wants the day to have a center",
+   "body_they": "The Sun wants the day to have a center",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/moon",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The Moon wants the feeling tended",
+   "body_they": "The Moon wants the feeling tended",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mercury wants it said clearly",
+   "body_they": "Mercury wants it said clearly",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Venus wants the ease and the liking",
+   "body_they": "Venus wants the ease and the liking",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Mars wants it done now",
+   "body_they": "Mars wants it done now",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Jupiter wants it bigger",
+   "body_they": "Jupiter wants it bigger",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Saturn wants it proven",
+   "body_they": "Saturn wants it proven",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/uranus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Uranus wants it freed",
+   "body_they": "Uranus wants it freed",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/neptune",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Neptune wants the dream given room",
+   "body_they": "Neptune wants the dream given room",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/pluto",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Pluto wants it transformed at the root",
+   "body_they": "Pluto wants it transformed at the root",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/chiron",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "Chiron presses where it still hurts",
+   "body_they": "Chiron presses where it still hurts",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/north-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The North Node pulls toward the unfamiliar door",
+   "body_they": "The North Node pulls toward the unfamiliar door",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
+   "contentKey": "fallback-hook/transit-house-event-wants/south-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "The South Node leans back into the known groove",
+   "body_they": "The South Node leans back into the known groove",
+   "review_status": "approved",
+   "source_keys": [
+    "owner directive 2026-07-28 (composer register for standalone transit-aspect cards)",
+    "TLDR-Aspect-Blueprint.md (mechanism verbs)"
+   ],
+   "note": "Sign-less wants-clause fallback (composer register, used when the engine passes no sign).",
+   "approved_via": "owner directive (chiron screenshot review)"
+  },
+  {
    "contentKey": "fallback-hook/sky-placement-hook/sun/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
@@ -37289,6 +40037,132 @@
    ],
    "notes": "Voice-first shadow-and-turn slot.",
    "approved_via": "owner feedback, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-opening/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "the volume goes up on wanting to be seen",
+   "body_they": "the volume goes up on wanting to be seen",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-article-sun-leo-gold.md",
+    "outputs/sky-placement-article-template.md"
+   ],
+   "notes": "Impact & Clarity opening-shift slot. The renderer owns the planet, sign, and computed egress date.",
+   "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. The stereotype is the show-off; the older story is the sovereign whose warmth makes other people braver.",
+   "body_they": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. The stereotype is the show-off; the older story is the sovereign whose warmth makes other people braver.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/leo",
+    "outputs/sky-article-sun-leo-gold.md"
+   ],
+   "notes": "Placement-article lore slot, trimmed only to avoid repeating the meaning beat.",
+   "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-meaning/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "As a heart-centered leader, Leo ignites a fire in us that calls for authentic self-expression and creative courage. It naturally gravitates toward the spotlight, not only from ego, but from the sense that our creative, passionate fire deserves to be seen and celebrated. The Sun is at home in Leo, so this comes easily when it has something generous to point at.",
+   "body_they": "As a heart-centered leader, Leo ignites a fire in us that calls for authentic self-expression and creative courage. It naturally gravitates toward the spotlight, not only from ego, but from the sense that our creative, passionate fire deserves to be seen and celebrated. The Sun is at home in Leo, so this comes easily when it has something generous to point at.",
+   "review_status": "approved",
+   "source_keys": [
+    "packages/astro-knowledge/data/placements/sign/sun-leo.json",
+    "outputs/sky-article-sun-leo-gold.md"
+   ],
+   "notes": "Impact & Clarity placement-meaning slot in the collective Sky voice.",
+   "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-confrontation/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Leo season doesn't chase the spotlight. It asks what story you've been telling to hold onto it, and what part of yourself you created or held back to be liked, approved, adored, or accepted. Being visible matters. But watch the temptation to mistake attention for intimacy.",
+   "body_they": "Leo season doesn't chase the spotlight. It asks what story you've been telling to hold onto it, and what part of yourself you created or held back to be liked, approved, adored, or accepted. Being visible matters. But watch the temptation to mistake attention for intimacy.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-sign-trap/leo",
+    "fallback-hook/sky-season-shadow/leo",
+    "outputs/sky-article-sun-leo-gold.md"
+   ],
+   "notes": "Impact & Clarity confrontation-and-catch slot.",
+   "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Confidence opens doors hesitation kept locked, and the wins land larger. Just don't let enthusiasm write checks your execution can't cash. Confidence gets you into the room; substance is what keeps you in it.",
+   "body_they": "Confidence opens doors hesitation kept locked, and the wins land larger. Just don't let enthusiasm write checks your execution can't cash. Confidence gets you into the room; substance is what keeps you in it.",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-article-sun-leo-gold.md"
+   ],
+   "notes": "Impact & Clarity effect-and-catch slot. The renderer supplies the applying/exact fact sentence.",
+   "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-opening/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "clause",
+   "body_you": "the ground under our shared systems keeps shifting",
+   "body_they": "the ground under our shared systems keeps shifting",
+   "review_status": "approved",
+   "source_keys": [
+    "outputs/sky-article-pluto-aquarius-tier3.md"
+   ],
+   "notes": "Impact & Clarity opening-shift slot. The renderer owns the planet, sign, and computed egress date.",
+   "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the old system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one; the older story is the neighbor who carries what the whole village needs.",
+   "body_they": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the old system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one; the older story is the neighbor who carries what the whole village needs.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/aquarius",
+    "outputs/sky-article-pluto-aquarius-tier3.md"
+   ],
+   "notes": "Placement-article lore slot, trimmed only to avoid repeating the meaning beat.",
+   "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-meaning/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "In Aquarius, power and deep change move through networks, invention, and the crowd rather than a few hands at the top. The institutions built on the old pattern get taken apart and rebuilt, and mostly we feel it at the turning points, not day to day.",
+   "body_they": "In Aquarius, power and deep change move through networks, invention, and the crowd rather than a few hands at the top. The institutions built on the old pattern get taken apart and rebuilt, and mostly we feel it at the turning points, not day to day.",
+   "review_status": "approved",
+   "source_keys": [
+    "packages/astro-knowledge/data/placements/sign/pluto-aquarius.json",
+    "fallback-hook/sky-placement/pluto",
+    "outputs/sky-article-pluto-aquarius-tier3.md"
+   ],
+   "notes": "Impact & Clarity placement-meaning slot in the collective Sky voice.",
+   "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-confrontation/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Some structures do not reform; they compost. You do not have to push the river. You have to stop rebuilding what is already falling.",
+   "body_they": "Some structures do not reform; they compost. You do not have to push the river. You have to stop rebuilding what is already falling.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-you/pluto",
+    "outputs/sky-article-pluto-aquarius-tier3.md"
+   ],
+   "notes": "Impact & Clarity confrontation-and-catch slot.",
+   "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
   }
  ]
 }

@@ -56,6 +56,12 @@ export type TransitLibFile = {
   authoredCards: AuthoredCard[];
 };
 
+export type TransitHouseEventFacts = {
+  natal: string;
+  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile";
+  window?: string | null;
+};
+
 export type HouseTransitFacts = {
   planet: string;
   house: number;
@@ -64,6 +70,8 @@ export type HouseTransitFacts = {
   window?: string | null;
   voice?: "you" | string;
   variant?: 1 | 2 | 3 | null;
+  events?: TransitHouseEventFacts[];
+  isRetrograde?: boolean;
 };
 
 export type RowsFile = {
@@ -255,16 +263,10 @@ export function renderHouseGlossaryV3(house: number, voice: "you" | string = "yo
   return fallbackRendererV3.renderHouseGlossary({ house, voice });
 }
 
-export function renderAspectPatternV3(facts: {
-  type: string;
-  apexTitle?: string;
-  mode?: string;
-  element?: string;
-  activation?: boolean;
-  voice?: "you" | string;
-}) {
-  return fallbackRendererV3.renderAspectPattern(facts);
-}
+// renderAspectPatternV3 was retired when the governed astro-knowledge
+// resolver became the canonical copy system for the aspect-pattern reader
+// (see api/_lib/aspect-patterns.ts). The V3 aspect-pattern source rows are
+// archived in the package and are no longer a serving path.
 
 export function fallbackV3SignStyle(sign: string) {
   return vocabularyBody(`fallback-vocab/sign-style/${contentIdPart(sign)}`);

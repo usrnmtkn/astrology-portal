@@ -1,4 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { normalizeUsPhoneNumber } from "./phoneAuth";
 
 export type AuthProvider = "google";
 
@@ -219,34 +220,26 @@ export async function signInWithEmail({
   return data.user ? authAccountFromUser(data.user) : null;
 }
 
-function normalizePhoneForOtp(phone: string) {
-  const trimmedPhone = phone.trim();
-  const digits = trimmedPhone.replace(/\D/g, "");
-
-  if (trimmedPhone.startsWith("+")) {
-    return `+${digits}`;
-  }
-
-  if (digits.length === 10) {
-    return `+1${digits}`;
-  }
-
-  if (digits.length === 11 && digits.startsWith("1")) {
-    return `+${digits}`;
-  }
-
-  return trimmedPhone;
-}
-
-export async function sendPhoneSignInCode(phone: string) {
+export async function sendPhoneSignInCode(
+  phone: string,
+  {
+    shouldCreateUser = true
+  }: {
+    shouldCreateUser?: boolean;
+  } = {}
+) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
     throw new Error("Supabase auth is not configured.");
   }
 
+  const normalizedPhone = normalizeUsPhoneNumber(phone);
   const { error } = await supabase.auth.signInWithOtp({
-    phone: normalizePhoneForOtp(phone)
+    phone: normalizedPhone,
+    options: {
+      shouldCreateUser
+    }
   });
 
   if (error) {
@@ -256,6 +249,8 @@ export async function sendPhoneSignInCode(phone: string) {
 
     throw error;
   }
+
+  return normalizedPhone;
 }
 
 export async function verifyPhoneSignInCode({
@@ -272,7 +267,7 @@ export async function verifyPhoneSignInCode({
   }
 
   const { data, error } = await supabase.auth.verifyOtp({
-    phone: normalizePhoneForOtp(phone),
+    phone: normalizeUsPhoneNumber(phone),
     token: code.trim(),
     type: "sms"
   });
