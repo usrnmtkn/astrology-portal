@@ -45,6 +45,10 @@ const sunAries = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "aries"
 });
+const lilithAries = renderer.renderSkyPlacement({
+  planet: "lilith",
+  sign: "aries"
+});
 const mercuryCancerIngress = renderer.renderSkyPlacement({
   planet: "mercury",
   sign: "cancer",
@@ -130,8 +134,8 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 766, "The package must include 745 newly approved rows plus the 21 existing canonical rows.");
-assert.equal(approvedSkyPlacementCoreRows.length, 468, "Every non-Lilith placement pair must have approved hook, lived, and turn rows.");
+assert.equal(approvedSkyPlacementRows.length, 826, "The package must include 161 approved five-slot articles plus the seven canonical three-slot articles.");
+assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
 for (const row of approvedSkyPlacementRows) {
   assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
 }
@@ -233,6 +237,13 @@ assert.match(
 );
 assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
 assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
+assert.equal(lilithAries.tagline, "Don’t let disrespect slide", "Owner-approved Lilith placement taglines must be reader-eligible.");
+assert.match(
+  lilithAries.body,
+  /^Someone cuts in line or talks over you and suddenly you’re all fire and no filter\./u,
+  "Owner-approved Lilith placement copy must render from the promoted pair rows."
+);
+assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement articles must expose three practical moves.");
 assert.equal(
   sunAries.contentKey,
   "fallback-hook/sky-placement-hook/sun/aries",

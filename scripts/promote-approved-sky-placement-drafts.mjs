@@ -8,17 +8,20 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const draftDirectory = path.resolve(process.argv[2] ?? "");
 const canonicalRowsPath = path.resolve(process.argv[3] ?? "");
+const planetFilter = String(process.argv[4] ?? "").trim().toLowerCase() || null;
 const sourceRowsPath = path.join(
   repoRoot,
   "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
 );
-const expectedDraftCount = 149;
+const expectedDraftCount = planetFilter ? 12 : 149;
 const expectedSlots = ["tagline", "hook", "lived", "turn", "moves"];
-const approvalLabel = "owner approval in Codex, 2026-07-27";
+const approvalLabel = planetFilter
+  ? "owner approval in Codex, 2026-07-28"
+  : "owner approval in Codex, 2026-07-27";
 
 assert.ok(
   process.argv[2] && process.argv[3],
-  "Usage: node scripts/promote-approved-sky-placement-drafts.mjs <draft-directory> <canonical-source-rows.json>"
+  "Usage: node scripts/promote-approved-sky-placement-drafts.mjs <draft-directory> <canonical-source-rows.json> [planet]"
 );
 assert.ok(fs.statSync(draftDirectory).isDirectory(), `Draft directory does not exist: ${draftDirectory}`);
 assert.ok(fs.statSync(canonicalRowsPath).isFile(), `Canonical source rows do not exist: ${canonicalRowsPath}`);
@@ -26,13 +29,17 @@ assert.ok(fs.statSync(canonicalRowsPath).isFile(), `Canonical source rows do not
 const draftFiles = fs.readdirSync(draftDirectory)
   .filter((fileName) => fileName.endsWith(".json"))
   .filter((fileName) => fileName !== "_summary.json")
-  .filter((fileName) => !fileName.startsWith("lilith-"))
+  .filter((fileName) => (
+    planetFilter
+      ? fileName.startsWith(`${planetFilter}-`)
+      : !fileName.startsWith("lilith-")
+  ))
   .sort();
 
 assert.equal(
   draftFiles.length,
   expectedDraftCount,
-  `Expected ${expectedDraftCount} approved non-Lilith drafts, found ${draftFiles.length}`
+  `Expected ${expectedDraftCount} approved ${planetFilter ?? "non-Lilith"} drafts, found ${draftFiles.length}`
 );
 
 const promotedRows = [];
@@ -107,6 +114,7 @@ fs.writeFileSync(sourceRowsPath, `${JSON.stringify(sourceRows, null, 1)}\n`);
 
 console.log(JSON.stringify({
   approval: approvalLabel,
+  planet: planetFilter,
   canonicalRowsImported: canonicalRows.length,
   draftsPromoted: draftFiles.length,
   rowsPromoted: promotedRows.length,
