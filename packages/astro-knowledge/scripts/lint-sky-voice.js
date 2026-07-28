@@ -30,8 +30,68 @@ function toRegex(term) {
   return new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
 }
 
-function lintCard(text) {
+const PLACEMENT_MODE = "collective-placement-card";
+const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
+const SECOND_PERSON_TERM = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
+const PLACEMENT_LABEL_BANS = [
+  {
+    term: "\\bthe truth\\s*[:?]",
+    pattern: /\bthe truth\s*[:?]/i,
+    reason: "State the closing truth plainly; do not expose the placement template as a label."
+  },
+  {
+    term: "\\bthe catch\\s*[:?]",
+    pattern: /\bthe catch\s*[:?]/i,
+    reason: "State the closing catch plainly; do not expose the placement template as a label."
+  },
+  {
+    term: "\\bthe catch is this\\b",
+    pattern: /\bthe catch is this\b/i,
+    reason: "State the closing catch plainly; do not announce the turn."
+  }
+];
+const PLACEMENT_LABEL_WARNINGS = [
+  {
+    term: "\\bthe challenge is\\b",
+    pattern: /\bthe challenge is\b/i,
+    reason: "Possible placement-template seam; weave the challenge into the observation."
+  },
+  {
+    term: "\\bthe downside is\\b",
+    pattern: /\bthe downside is\b/i,
+    reason: "Possible placement-template seam; state the downside without a label."
+  },
+  {
+    term: "the gift is",
+    pattern: /\bthe gift is\b/i,
+    reason: "Possible placement-template seam; weave the gift into the observation."
+  },
+  {
+    term: "the shadow is",
+    pattern: /\bthe shadow is\b/i,
+    reason: "Possible placement-template seam; weave the shadow into the observation."
+  }
+];
+
+function closerSentenceCount(sentences) {
+  let count = 0;
+
+  for (let index = sentences.length - 1; index >= 0 && count < 2; index -= 1) {
+    const words = sentences[index].trim().split(/\s+/).filter(Boolean).length;
+    if (words <= 13) count += 1;
+    else break;
+  }
+
+  return Math.max(count, 1);
+}
+
+function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   const findings = [];
+  const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
+  const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
+  const placementBody = placementCloserCount
+    ? sentences.slice(0, -placementCloserCount).join(" ")
+    : text;
   const readerBoundaryChecks = [
     {
       term: "degree/orb mechanics",
@@ -63,7 +123,7 @@ function lintCard(text) {
     }
   }
 
-  if (!/\b(?:we|our|us)\b/i.test(text)) {
+  if (mode !== PLACEMENT_TOPPER_MODE && !/\b(?:we|our|us)\b/i.test(text)) {
     findings.push({
       severity: "fail",
       source: "reader-boundary",
@@ -89,12 +149,45 @@ function lintCard(text) {
   }
   // output-level fail + warn from the sky surface config
   for (const b of sky.outputBans.fail) {
-    const m = text.match(toRegex(b.term));
+    const target = mode === PLACEMENT_MODE && b.term === SECOND_PERSON_TERM
+      ? placementBody
+      : text;
+    const m = target.match(toRegex(b.term));
     if (m) findings.push({ severity: "fail", source: "sky-aspect", term: b.term, match: m[0], reason: b.reason });
   }
   for (const b of sky.outputBans.warn) {
     const m = text.match(toRegex(b.term));
     if (m) findings.push({ severity: "warn", source: "sky-aspect", term: b.term, match: m[0], reason: b.reason });
+  }
+  if (mode === PLACEMENT_MODE) {
+    for (const ban of PLACEMENT_LABEL_BANS) {
+      const match = text.match(ban.pattern);
+      if (match) {
+        findings.push({
+          severity: "fail",
+          source: "placement-label",
+          term: ban.term,
+          match: match[0],
+          reason: ban.reason
+        });
+      }
+    }
+    for (const warning of PLACEMENT_LABEL_WARNINGS) {
+      const match = text.match(warning.pattern);
+      const alreadyFlagged = findings.some((finding) => (
+        finding.severity === "warn"
+        && finding.match?.toLowerCase() === match?.[0].toLowerCase()
+      ));
+      if (match && !alreadyFlagged) {
+        findings.push({
+          severity: "warn",
+          source: "placement-label",
+          term: warning.term,
+          match: match[0],
+          reason: warning.reason
+        });
+      }
+    }
   }
   // conditional bans: term is allowed only if one of requiresBefore appears earlier
   for (const c of sky.conditionalBans || []) {
@@ -102,7 +195,17 @@ function lintCard(text) {
     if (m) {
       const before = text.slice(0, m.index).toLowerCase();
       const ok = (c.requiresBefore || []).some((w) => new RegExp(`\\b${w}\\b`, "i").test(before));
-      if (!ok) findings.push({ severity: "fail", source: "sky-aspect", term: c.term, match: m[0], reason: c.reason });
+      if (!ok) {
+        const required = (c.requiresBefore || []).join("/");
+        findings.push({
+          severity: "fail",
+          source: "sky-aspect",
+          term: c.term,
+          match: m[0],
+          reason: c.reason,
+          retryInstruction: `You used '${m[0]}' without ${required} before it - replace it with calm, solid, grounded, consistent, or sure.`
+        });
+      }
     }
   }
 
@@ -117,7 +220,6 @@ function lintCard(text) {
   }
 
   // structural heuristics
-  const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const words = text.split(/\s+/).filter(Boolean);
   const notes = [];
   const avg = words.length / Math.max(sentences.length, 1);
@@ -126,7 +228,16 @@ function lintCard(text) {
   if (last.split(/\s+/).filter(Boolean).length > 22) notes.push("closer is long; end on a shorter true line");
   if (registerDraw === 0) notes.push("drew nothing from the approved phrase bank - check the register");
   const paras = text.split(/\n\s*\n/).filter((p) => p.trim()).length;
-  if (paras !== 2) notes.push(`shape: ${paras} paragraph(s), template is 2`);
+  const expectedParagraphs = mode === PLACEMENT_TOPPER_MODE ? 1 : 2;
+  if (paras !== expectedParagraphs) {
+    findings.push({
+      severity: "fail",
+      source: "shape",
+      term: "paragraph-count",
+      match: `${paras} paragraphs`,
+      reason: `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
+    });
+  }
   // stacked ending: 3+ short sentences piled at the close. The template wants
   // ONE truth + its catch (two short lines). A run of 3+ is a warn, which trips
   // the generator's auto-regenerate loop before the card reaches the judge.
@@ -137,6 +248,34 @@ function lintCard(text) {
   }
   if (closeRun >= 3) {
     findings.push({ severity: "warn", source: "shape", term: "stacked-ending", match: `${closeRun} short closing sentences`, reason: "land one truth and its catch, not a pile of aphorisms" });
+  }
+  // A draft can hide two truth+catch pairs by making one line just long enough
+  // to escape the stacked-ending rule. Catch either four compact tail
+  // sentences, or two distinct short runs split by a longer sentence.
+  const tail = sentences.slice(-4);
+  const tailWordCounts = tail.map((sentence) => sentence.split(/\s+/).filter(Boolean).length);
+  const fourCompactClosers = tail.length === 4 && tailWordCounts.every((count) => count <= 13);
+  const splitTailWordCounts = sentences
+    .slice(-5)
+    .map((sentence) => sentence.split(/\s+/).filter(Boolean).length);
+  const splitShortPairs = splitTailWordCounts.some((count, index) => (
+    index >= 2
+    && index <= splitTailWordCounts.length - 3
+    && count > 11
+    && splitTailWordCounts[index - 1] <= 11
+    && splitTailWordCounts[index - 2] <= 11
+    && splitTailWordCounts[index + 1] <= 11
+    && splitTailWordCounts[index + 2] <= 11
+  ));
+
+  if (fourCompactClosers || splitShortPairs) {
+    findings.push({
+      severity: "warn",
+      source: "shape",
+      term: "double-closing-pair",
+      match: "two compact landing pairs in the final four sentences",
+      reason: "land one truth and its catch, not two separate closing pairs"
+    });
   }
 
   const fails = findings.filter((f) => f.severity === "fail").length;
@@ -149,16 +288,19 @@ function lintCard(text) {
   return { score, fails, warns, registerDraw, findings, notes, sentences: sentences.length };
 }
 
-module.exports = { lintCard };
+module.exports = { closerSentenceCount, lintCard };
 
 if (require.main === module) {
   const arg = process.argv.slice(2).join(" ");
   if (arg === "--examples") {
     const examples = readJson(path.join(voiceRoot, "tldr-astro", "examples.json"));
-    const sky = examples.filter((e) => e.surface === "sky" && e.mode === "collective-aspect-card");
+    const sky = examples.filter((e) => (
+      e.surface === "sky"
+      && ["collective-aspect-card", PLACEMENT_MODE, PLACEMENT_TOPPER_MODE].includes(e.mode)
+    ));
     let bad = 0;
     for (const e of sky) {
-      const r = lintCard(e.body);
+      const r = lintCard(e.body, { mode: e.mode });
       if (r.fails) bad++;
       console.log(`${r.score === 3 ? "OK " : "!! "} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}`);
     }
