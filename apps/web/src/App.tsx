@@ -4436,6 +4436,40 @@ function formatDurationCompact(startInput: string | Date, endInput: string | Dat
     : `${duration.years}Y`;
 }
 
+function formatApproximateDurationCompact(startInput: string | Date, endInput: string | Date) {
+  const start = dateFromDurationInput(startInput);
+  const end = dateFromDurationInput(endInput);
+
+  if (!start || !end || end.getTime() < start.getTime()) {
+    return null;
+  }
+
+  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+
+  if (days < 1) {
+    return "TODAY";
+  }
+
+  if (days < 30) {
+    return `${days}D`;
+  }
+
+  // House-transit windows are broad estimates. Round partial months so a
+  // Feb 14–Apr 13 span reads as 2Y 2M rather than dropping the final 28 days.
+  const months = Math.max(1, Math.round(days / (365.2425 / 12)));
+
+  if (months < 12) {
+    return `${months}M`;
+  }
+
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  return remainingMonths > 0
+    ? `${years}Y ${remainingMonths}M`
+    : `${years}Y`;
+}
+
 function exactDateFromInput(value: string | Date) {
   const date = typeof value === "string" ? new Date(value) : new Date(value);
 
@@ -4543,6 +4577,25 @@ function placementTransitRangeLabel(position: PlanetPosition, generatedAt: strin
   }
 
   return placementTransitRange(position, generatedAt);
+}
+
+function placementTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
+  if (position.transitStart && position.transitEnd) {
+    return formatApproximateDurationCompact(position.transitStart, position.transitEnd);
+  }
+
+  const speed = averageDailyMotion[position.planet] ?? 1;
+  const entryOffset = position.motion === "retrograde"
+    ? 30 - position.degree
+    : position.degree;
+  const exitOffset = position.motion === "retrograde"
+    ? position.degree
+    : 30 - position.degree;
+
+  return formatApproximateDurationCompact(
+    daysFrom(generatedAt, -(entryOffset / speed)),
+    daysFrom(generatedAt, exitOffset / speed)
+  );
 }
 
 function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
@@ -18546,6 +18599,7 @@ function ProfileView({
       };
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
       const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
+      const durationLabel = placementTransitDurationLabel(position, transitForm.chartDate);
       const normalizedHouseTransit = normalizeTransitHouseSurface(
         transit,
         house,
@@ -18600,13 +18654,18 @@ function ProfileView({
           <span className="updates-aspect-row__content">
             <span className="updates-aspect-row__title">{title}</span>
             <span className="updates-aspect-row__meta-line">
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
-              </span>
+              {durationLabel ? (
+                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                  <DurationLabelText label={durationLabel} />
+                </span>
+              ) : null}
               {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
             {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
             <span className="house-transit-keywords" aria-label="House keywords">
+              <span className="ui-pill house-transit-term-tag">
+                {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
+              </span>
               {houseLifeAreaKeywords(house).map((keyword) => (
                 <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
                   {keyword}
@@ -19087,6 +19146,7 @@ function ManualChartsPanel({
           transitSign: activation.position.sign
         };
         const timingRange = placementTransitRangeLabel(activation.position, currentSky.generatedAt);
+        const durationLabel = placementTransitDurationLabel(activation.position, currentSky.generatedAt);
         const normalized = normalizeTransitHouseSurface(
           transit,
           activation.house,
@@ -19104,6 +19164,7 @@ function ManualChartsPanel({
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
           rowSummary: transitCardPreview(normalizedSurfacePreview(normalized)),
+          durationLabel,
           timingRange: normalized.sections[0]?.window ?? timingRange,
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
@@ -20591,15 +20652,20 @@ function ManualChartsPanel({
                           <span className="updates-aspect-row__content">
                             <span className="updates-aspect-row__title">{card.title}</span>
                             <span className="updates-aspect-row__meta-line">
-                              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                                {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
-                              </span>
+                              {card.durationLabel ? (
+                                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                                  <DurationLabelText label={card.durationLabel} />
+                                </span>
+                              ) : null}
                               {card.timingRange ? <span>{card.timingRange}</span> : null}
                             </span>
                             {card.rowSummary ? (
                               <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
                             ) : null}
                             <span className="house-transit-keywords" aria-label="House keywords">
+                              <span className="ui-pill house-transit-term-tag">
+                                {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
+                              </span>
                               {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
                                 <span
                                   className="ui-pill ui-pill--muted house-transit-keyword"
