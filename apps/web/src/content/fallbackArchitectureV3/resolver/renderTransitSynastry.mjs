@@ -806,8 +806,11 @@ export function renderDailyGlance({ natal, aspect, house }) {
 // seeds. The transit picks which natal planet needs tending; the natal chart writes the
 // list. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
 // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
-export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
+export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }) {
   const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+  const APPROVED = new Set(["approved", "approved_reuse", "reviewed"]);
+  const moonSeed = (k) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status) ? r.body : null; };
+  const day = Number.isFinite(dayKey) ? Math.abs(Math.trunc(dayKey)) : 0;
   const dos = [
     seed(`dodont-do/${planet}/${sign}`),
     house ? seed(`dodont-house/${house}`) : null,
@@ -816,12 +819,25 @@ export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weak
   const donts = [
     seed(`dodont-shadow/${planet}/${sign}`),
     seed(`dodont-friction/${transiting}`),
-    // third slot: aggravated partner's shadow when supplied; otherwise the pressed
-    // planet's own friction habit (skipped automatically by de-dupe if transiting === planet)
     weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : seed(`dodont-friction/${planet}`),
   ].filter(Boolean);
   if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
-  // de-dupe while preserving order (same seed can arrive twice via the weak-point path)
+  // Moon day layer (owner design 2026-07-27): the pressed transit anchors the list, the
+  // sky's Moon rotates a daily seed through it (sign line + the house the Moon is crossing).
+  // The 12 sign rows ship as drafts and only join once owner-approved.
+  const mds = [
+    moonSign ? moonSeed(`dodont-moon-do/${moonSign}`) : null,
+    moonHouse ? seed(`dodont-house/${moonHouse}`) : null,
+  ].filter(Boolean);
+  const mdt = [moonSign ? moonSeed(`dodont-moon-dont/${moonSign}`) : null].filter(Boolean);
   const uniq = (a) => [...new Set(a)];
-  return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
+  const rot = (a, n) => (a.length ? a.slice(n % a.length).concat(a.slice(0, n % a.length)) : a);
+  // the anchor keeps the lead slot; the day decides which companions show
+  const mDo = mds.length ? [mds[day % mds.length]] : [];
+  const mDont = mdt.length ? [mdt[day % mdt.length]] : [];
+  return {
+    do: uniq([dos[0], ...mDo, ...rot(dos.slice(1), day)]).slice(0, 3),
+    dont: uniq([donts[0], ...mDont, ...rot(donts.slice(1), day)]).slice(0, 3),
+    templateKey: "fallback-template/daily.dodont",
+  };
 }

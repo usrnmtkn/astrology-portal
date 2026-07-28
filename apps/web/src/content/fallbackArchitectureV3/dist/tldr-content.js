@@ -912,8 +912,14 @@ ${fogNote}`;
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
-  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign }) {
+  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }) {
     const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+    const APPROVED = /* @__PURE__ */ new Set(["approved", "approved_reuse", "reviewed"]);
+    const moonSeed = (k) => {
+      const r = vocab.get(`fallback-vocab/${k}`);
+      return r && APPROVED.has(r.review_status ?? "") ? r.body : null;
+    };
+    const day = Number.isFinite(dayKey ?? NaN) ? Math.abs(Math.trunc(dayKey)) : 0;
     const dos = [
       seed(`dodont-do/${planet}/${sign}`),
       house ? seed(`dodont-house/${house}`) : null,
@@ -922,19 +928,29 @@ ${fogNote}`;
     const donts = [
       seed(`dodont-shadow/${planet}/${sign}`),
       seed(`dodont-friction/${transiting}`),
-      // third slot: aggravated partner's shadow when supplied; otherwise the pressed
-      // planet's own friction habit (skipped automatically by de-dupe if transiting === planet)
       weakPlanet && weakSign ? seed(`dodont-shadow/${weakPlanet}/${weakSign}`) : seed(`dodont-friction/${planet}`)
     ].filter((x) => Boolean(x));
     if (dos.length < 2 || donts.length < 2) throw new SourceGapError(`SOURCE_GAP: do/don't seeds for ${planet}/${sign} under ${transiting}`);
+    const mds = [
+      moonSign ? moonSeed(`dodont-moon-do/${moonSign}`) : null,
+      moonHouse ? seed(`dodont-house/${moonHouse}`) : null
+    ].filter((x) => Boolean(x));
+    const mdt = [moonSign ? moonSeed(`dodont-moon-dont/${moonSign}`) : null].filter((x) => Boolean(x));
     const uniq = (a) => [...new Set(a)];
-    return { do: uniq(dos).slice(0, 3), dont: uniq(donts).slice(0, 3), templateKey: "fallback-template/daily.dodont" };
+    const rot = (a, n) => a.length ? a.slice(n % a.length).concat(a.slice(0, n % a.length)) : a;
+    const mDo = mds.length ? [mds[day % mds.length]] : [];
+    const mDont = mdt.length ? [mdt[day % mdt.length]] : [];
+    return {
+      do: uniq([dos[0], ...mDo, ...rot(dos.slice(1), day)]).slice(0, 3),
+      dont: uniq([donts[0], ...mDont, ...rot(donts.slice(1), day)]).slice(0, 3),
+      templateKey: "fallback-template/daily.dodont"
+    };
   }
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-28c";
+var PACKAGE_VERSION = "v3-2026-07-28d";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

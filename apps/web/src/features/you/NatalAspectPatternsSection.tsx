@@ -53,11 +53,13 @@ function childItems(parent: NatalAspectPatternReaderItem, items: NatalAspectPatt
 export function NatalAspectPatternsSection({
   items,
   onOpenDetail,
-  status
+  status,
+  title = "Patterns in your chart"
 }: {
   items: NatalAspectPatternReaderItem[];
   onOpenDetail?: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   status: NatalAspectPatternsSectionStatus;
+  title?: string;
 }) {
   if (status === "unavailable") {
     return null;
@@ -76,8 +78,8 @@ export function NatalAspectPatternsSection({
   }
 
   return (
-    <section className="natal-patterns-section" aria-label="Patterns in your chart">
-      <span className="eyebrow section-label">Patterns in your chart</span>
+    <section className="natal-patterns-section" aria-label={title}>
+      <span className="eyebrow section-label">{title}</span>
       <div className="natal-patterns-stack">
         <PatternPreviewCard
           item={primary}

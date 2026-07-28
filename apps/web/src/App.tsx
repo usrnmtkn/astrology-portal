@@ -76,6 +76,7 @@ import {
   fallbackV3SignRuler,
   fallbackV3SignStyle,
   renderHouseGlossaryV3,
+  transitV3AuthoredCardForContentKey,
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
@@ -502,7 +503,7 @@ type NormalizedSkyPlacementArticle = {
   sections: NormalizedSkyPlacementSection[];
 };
 
-type PersonalTransitSlot = "meaning";
+type PersonalTransitSlot = "meaning" | "point-explainer";
 type NormalizedPersonalTransitSection = NormalizedSurfaceSection<PersonalTransitSlot> & {
   heading: string;
 };
@@ -6152,6 +6153,13 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   const configuredOrb = transitToNatalOrbLimit(transitPosition.planet);
   const baseOrb = configuredOrb > 0 ? Math.min(definition.orb, configuredOrb) : definition.orb;
 
+  // Walker canon (owner 2026-07-27): natal Black Moon Lilith takes conjunctions and
+  // oppositions only, within a 3-degree orb. Other contacts never fire.
+  if (/lilith/i.test(natalPosition.planet)) {
+    if (!["conjunction", "opposition"].includes(definition.type)) return -1;
+    return Math.min(baseOrb, 3);
+  }
+
   return isSunHorizonContact ? baseOrb + sunriseOrb : baseOrb;
 }
 
@@ -7977,6 +7985,39 @@ function personalTransitPackageSection(
     return null;
   }
 
+  // Nodal return (owner 2026-07-28): the transiting North Node conjunct the natal North
+  // Node renders the authored return card instead of an aspect card.
+  if (
+    normalizedAspect === "conjunction"
+    && normalizeContentIdPart(transit.transitPlanet) === "north-node"
+    && normalizeContentIdPart(transit.natalPoint) === "north-node"
+  ) {
+    try {
+      const nodal = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: "north-node" });
+      const nodalBody = readerFacingParagraphs(nodal.parts).join("\n\n");
+
+      if (nodalBody && isReaderFacingCopy(nodalBody)) {
+        return {
+          slot: "meaning",
+          required: true,
+          layer: "authored",
+          tier: "fallback-architecture-v3-authored",
+          sourceKeys: [
+            "tldrastro-fallback-architecture-v3",
+            nodal.contentKey ?? "",
+            nodal.templateKey
+          ].filter(Boolean),
+          heading: nodal.headline || "Your nodal return",
+          body: nodalBody
+        };
+      }
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) {
+        throw error;
+      }
+    }
+  }
+
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
@@ -8024,6 +8065,26 @@ function normalizePersonalTransitSurface(
 ): NormalizedPersonalTransitArticle {
   const packageSection = personalTransitPackageSection(transit, generatedAt, voice);
   const sections = packageSection ? [packageSection] : [];
+
+  // Node point explainers (owner 2026-07-28): node cards carry the plain-words
+  // explanation of the point beneath the reading (reader view only).
+  const natalPointId = normalizeContentIdPart(transit.natalPoint);
+  if (packageSection && voice === "you" && (natalPointId === "north-node" || natalPointId === "south-node")) {
+    const explainer = transitV3AuthoredCardForContentKey(`authored/point-explainer/${natalPointId}`);
+    const explainerBody = typeof explainer?.body_you === "string" ? explainer.body_you : typeof explainer?.body === "string" ? explainer.body : "";
+
+    if (explainerBody && isReaderFacingCopy(explainerBody)) {
+      sections.push({
+        slot: "point-explainer",
+        required: false,
+        layer: "authored",
+        tier: "fallback-architecture-v3-authored",
+        sourceKeys: ["tldrastro-fallback-architecture-v3", `authored/point-explainer/${natalPointId}`],
+        heading: explainer?.headline || (natalPointId === "north-node" ? "Your North Node" : "Your South Node"),
+        body: explainerBody
+      });
+    }
+  }
 
   return {
     surface: "personal-transit",
@@ -9528,7 +9589,12 @@ function collapseRepeatedOwnerNameMentions(
     .replace(/\bthey does\b/gi, (match) => match.charAt(0) === "T" ? "They do" : "they do");
 }
 
-function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
+function createNatalGeneratedCopyForOwnerConverter(
+  ownerName: string,
+  ownerKind: "person" | "chart" = "person",
+  ownerPronouns?: PronounChoice | null,
+  collapseOwnerNames = true
+) {
   const isChart = ownerKind === "chart";
   const firstSubject = isChart ? "This chart" : ownerName;
   const firstPossessive = isChart ? "This chart's" : possessiveLabel(ownerName);
@@ -9566,6 +9632,11 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
 
     return `${value} ${usesPluralVerb(value) ? "are" : "is"}`;
   };
+  const subjectWithBePast = (capitalized: boolean) => {
+    const value = subject(capitalized);
+
+    return `${value} ${usesPluralVerb(value) ? "were" : "was"}`;
+  };
   const subjectWithHave = (capitalized: boolean) => {
     const value = subject(capitalized);
 
@@ -9586,6 +9657,7 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
   return (text: string) => {
     const converted = text
       .replace(/\bpart of you being activated\b/g, () => `part of ${object(false)} that is being activated`)
+      .replace(/\bparts of you\b/g, () => `parts of ${object(false)}`)
       .replace(/\bpart of you\b/g, () => `part of ${object(false)}`)
       .replace(/\bthe standards you hold yourself to live inside you\b/g, () => `the standards ${subjectWithVerb(false, "carry", "carries")} live inside ${object(false)}`)
       .replace(/\bthe authority (?:you quietly earn|they quietly earned) becomes (?:yours|theirs) to claim\b/g, () => `the authority ${subjectWithAdverbVerb(false, "quietly", "earn", "earns")} becomes ${pronouns.possessivePronoun} to claim`)
@@ -9595,14 +9667,18 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byours\b/g, pronouns.possessivePronoun)
       .replace(/\bYour\b/g, () => possessive(true))
       .replace(/\byour\b/g, () => possessive(false))
-      .replace(/\b(in|for|to|with|without|around|before|after|from|of|at|near|inside|outside|through|toward|towards|beside|behind|within) you\b/gi, (_match, prep: string) => `${prep} ${object(false)}`)
-      .replace(/\b(reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped) you\b/gi, (_match, verb: string) => `${verb} ${object(false)}`)
+      .replace(/\b(in|for|to|with|without|around|before|after|from|of|on|at|near|inside|outside|through|toward|towards|beside|behind|within) you\b/gi, (_match, prep: string) => `${prep} ${object(false)}`)
+      .replace(/\b(reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|describe|describes|described|leave|leaves|left) you\b/gi, (_match, verb: string) => `${verb} ${object(false)}`)
       .replace(/\bYou answer\b/g, () => subjectWithVerb(true, "answer", "answers"))
       .replace(/\byou answer\b/g, () => subjectWithVerb(false, "answer", "answers"))
       .replace(/\bYou are\b/g, () => subjectWithBe(true))
       .replace(/\byou are\b/g, () => subjectWithBe(false))
+      .replace(/\bYou were\b/g, () => subjectWithBePast(true))
+      .replace(/\byou were\b/g, () => subjectWithBePast(false))
       .replace(/\bYou have\b/g, () => subjectWithHave(true))
       .replace(/\byou have\b/g, () => subjectWithHave(false))
+      .replace(/\bYou already have\b/g, () => subjectWithAdverbVerb(true, "already", "have", "has"))
+      .replace(/\byou already have\b/g, () => subjectWithAdverbVerb(false, "already", "have", "has"))
       .replace(/\bYou discover\b/g, () => subjectWithVerb(true, "discover", "discovers"))
       .replace(/\byou discover\b/g, () => subjectWithVerb(false, "discover", "discovers"))
       .replace(/\bYou learn\b/g, () => subjectWithVerb(true, "learn", "learns"))
@@ -9627,6 +9703,8 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou let\b/g, () => subjectWithVerb(false, "let", "lets"))
       .replace(/\bYou need\b/g, () => subjectWithVerb(true, "need", "needs"))
       .replace(/\byou need\b/g, () => subjectWithVerb(false, "need", "needs"))
+      .replace(/\bYou also need\b/g, () => subjectWithAdverbVerb(true, "also", "need", "needs"))
+      .replace(/\byou also need\b/g, () => subjectWithAdverbVerb(false, "also", "need", "needs"))
       .replace(/\bYou know\b/g, () => subjectWithVerb(true, "know", "knows"))
       .replace(/\byou know\b/g, () => subjectWithVerb(false, "know", "knows"))
       .replace(/\bYou commit\b/g, () => subjectWithVerb(true, "commit", "commits"))
@@ -9679,6 +9757,32 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou survive\b/g, () => subjectWithVerb(false, "survive", "survives"))
       .replace(/\bYou provoke\b/g, () => subjectWithVerb(true, "provoke", "provokes"))
       .replace(/\byou provoke\b/g, () => subjectWithVerb(false, "provoke", "provokes"))
+      .replace(/\bYou act\b/g, () => subjectWithVerb(true, "act", "acts"))
+      .replace(/\byou act\b/g, () => subjectWithVerb(false, "act", "acts"))
+      .replace(/\bYou believe\b/g, () => subjectWithVerb(true, "believe", "believes"))
+      .replace(/\byou believe\b/g, () => subjectWithVerb(false, "believe", "believes"))
+      .replace(/\bYou break\b/g, () => subjectWithVerb(true, "break", "breaks"))
+      .replace(/\byou break\b/g, () => subjectWithVerb(false, "break", "breaks"))
+      .replace(/\bYou handle\b/g, () => subjectWithVerb(true, "handle", "handles"))
+      .replace(/\byou handle\b/g, () => subjectWithVerb(false, "handle", "handles"))
+      .replace(/\bYou keep\b/g, () => subjectWithVerb(true, "keep", "keeps"))
+      .replace(/\byou keep\b/g, () => subjectWithVerb(false, "keep", "keeps"))
+      .replace(/\bYou communicate\b/g, () => subjectWithVerb(true, "communicate", "communicates"))
+      .replace(/\byou communicate\b/g, () => subjectWithVerb(false, "communicate", "communicates"))
+      .replace(/\bYou heal\b/g, () => subjectWithVerb(true, "heal", "heals"))
+      .replace(/\byou heal\b/g, () => subjectWithVerb(false, "heal", "heals"))
+      .replace(/\bYou recognize\b/g, () => subjectWithVerb(true, "recognize", "recognizes"))
+      .replace(/\byou recognize\b/g, () => subjectWithVerb(false, "recognize", "recognizes"))
+      .replace(/\bYou push\b/g, () => subjectWithVerb(true, "push", "pushes"))
+      .replace(/\byou push\b/g, () => subjectWithVerb(false, "push", "pushes"))
+      .replace(/\bYou transform\b/g, () => subjectWithVerb(true, "transform", "transforms"))
+      .replace(/\byou transform\b/g, () => subjectWithVerb(false, "transform", "transforms"))
+      .replace(/\bYou understand\b/g, () => subjectWithVerb(true, "understand", "understands"))
+      .replace(/\byou understand\b/g, () => subjectWithVerb(false, "understand", "understands"))
+      .replace(/\bYou usually respond\b/g, () => subjectWithAdverbVerb(true, "usually", "respond", "responds"))
+      .replace(/\byou usually respond\b/g, () => subjectWithAdverbVerb(false, "usually", "respond", "responds"))
+      .replace(/\bYou value\b/g, () => subjectWithVerb(true, "value", "values"))
+      .replace(/\byou value\b/g, () => subjectWithVerb(false, "value", "values"))
       .replace(/\bYou can\b/g, () => subjectWithModal(true, "can"))
       .replace(/\byou can\b/g, () => subjectWithModal(false, "can"))
       .replace(/\bYou will\b/g, () => subjectWithModal(true, "will"))
@@ -9688,12 +9792,75 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\bYou\b/g, () => subject(true))
       .replace(/\byou\b/g, () => subject(false));
 
-    return collapseRepeatedOwnerNameMentions(converted, ownerName, pronouns, !namedMentionUsed);
+    return collapseOwnerNames
+      ? collapseRepeatedOwnerNameMentions(converted, ownerName, pronouns, !namedMentionUsed)
+      : converted;
   };
 }
 
 function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
   return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns)(text);
+}
+
+function natalAspectPatternCopyForOwner(
+  copy: NatalAspectPatternReaderItem["copy"],
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+): NatalAspectPatternReaderItem["copy"] {
+  const convert = createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns, false);
+
+  return {
+    ...copy,
+    content: {
+      ...copy.content,
+      eyebrow: copy.content.eyebrow ? convert(copy.content.eyebrow) : copy.content.eyebrow,
+      headline: convert(copy.content.headline),
+      overview: convert(copy.content.overview),
+      sections: copy.content.sections.map((section) => ({
+        ...section,
+        body: convert(section.body)
+      }))
+    }
+  };
+}
+
+function natalAspectPatternActivationCopyForOwner(
+  copy: NonNullable<NatalAspectPatternReaderItem["activationCopy"]>,
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+): NonNullable<NatalAspectPatternReaderItem["activationCopy"]> {
+  const convert = createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns, false);
+
+  return {
+    ...copy,
+    content: {
+      ...copy.content,
+      eyebrow: copy.content.eyebrow ? convert(copy.content.eyebrow) : copy.content.eyebrow,
+      headline: convert(copy.content.headline),
+      overview: convert(copy.content.overview),
+      sections: copy.content.sections.map((section) => ({
+        ...section,
+        body: convert(section.body)
+      }))
+    }
+  };
+}
+
+function natalAspectPatternReaderItemsForOwner(
+  snapshot: SkySnapshot | null,
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+) {
+  return natalAspectPatternReaderItems(snapshot).map((item) => ({
+    ...item,
+    copy: natalAspectPatternCopyForOwner(item.copy, ownerName, ownerKind, ownerPronouns),
+    activationCopy: item.activationCopy
+      ? natalAspectPatternActivationCopyForOwner(item.activationCopy, ownerName, ownerKind, ownerPronouns)
+      : undefined
+  }));
 }
 
 const chartPronouns: PersonReference = {
@@ -18187,7 +18354,14 @@ function ProfileView({
         planet: selected.natalPoint,
         sign: selected.natalSign,
         house: selected.house,
-        transiting: selected.transiting
+        transiting: selected.transiting,
+        // Moon day layer (owner design 2026-07-27): sign + house of the sky's Moon plus a
+        // day key so the list rotates daily instead of freezing for a whole transit.
+        moonSign: dailyMoon ? normalizeContentIdPart(dailyMoon.sign) : null,
+        moonHouse: dailyMoonHouse ?? null,
+        dayKey: Number.isFinite(Date.parse(`${transitForm.chartDate}T00:00:00Z`))
+          ? Math.floor(Date.parse(`${transitForm.chartDate}T00:00:00Z`) / 86400000)
+          : 0
       });
       return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
     } catch (error) {
@@ -18684,8 +18858,13 @@ function ManualChartsPanel({
     ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
     : [];
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
-  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
-    ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null, "they")
+  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns && selectedChart
+    ? natalAspectPatternReaderItemsForOwner(
+        selectedChart.natalChart ?? null,
+        selectedChart.displayName,
+        selectedChartIsEvent ? "chart" : "person",
+        selectedChart.pronouns
+      )
     : [];
   const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
     selectedFriendNatalAspectPatternItems,
@@ -19929,6 +20108,7 @@ function ManualChartsPanel({
                     items={selectedFriendNatalAspectPatternItems}
                     onOpenDetail={openFriendNatalAspectPatternDetail}
                     status={selectedFriendNatalAspectPatternStatus}
+                    title={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
                   />
                 )}
                 <span className="eyebrow section-label friend-section-label">Big three</span>
