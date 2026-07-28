@@ -76,6 +76,7 @@ import {
   fallbackV3SignRuler,
   fallbackV3SignStyle,
   renderHouseGlossaryV3,
+  transitV3AuthoredCardForContentKey,
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
@@ -85,7 +86,11 @@ import type { RelationshipComparisonOption } from "./features/friends/Relationsh
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
-import { NatalAspectPatternActivationsSection, NatalAspectPatternsSection } from "./features/you/NatalAspectPatternsSection";
+import {
+  NatalAspectPatternActivationsSection,
+  NatalAspectPatternsSection,
+  resolvedNatalAspectPatternSectionLabel
+} from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -122,6 +127,11 @@ import {
   verifyPhoneSignInCode
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
+import {
+  formatPhoneNumberForDisplay,
+  formatUsPhoneInput,
+  supportedPhoneCountry
+} from "./services/phoneAuth";
 import {
   generatedContentSections,
   generatedContentParagraphs,
@@ -199,6 +209,7 @@ import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
   natalAspectPatternActivationEnabled,
+  natalAspectPatternPillSummary,
   natalAspectPatternReaderEnabled,
   natalAspectPatternReaderItems,
   natalAspectPatternReaderStatus,
@@ -496,7 +507,7 @@ type NormalizedSkyPlacementArticle = {
   sections: NormalizedSkyPlacementSection[];
 };
 
-type PersonalTransitSlot = "meaning";
+type PersonalTransitSlot = "meaning" | "point-explainer";
 type NormalizedPersonalTransitSection = NormalizedSurfaceSection<PersonalTransitSlot> & {
   heading: string;
 };
@@ -1445,20 +1456,6 @@ function transitAspectTechnicalVerb(aspect: string) {
   return verbs[normalized] ?? titleCase(aspect).toLowerCase();
 }
 
-function transitAspectSentenceVerb(aspect: string) {
-  const normalized = normalizeAspectType(aspect);
-  const verbs: Record<string, string> = {
-    conjunction: "conjuncts",
-    opposition: "opposes",
-    square: "squares",
-    trine: "trines",
-    sextile: "sextiles",
-    quincunx: "quincunxes"
-  };
-
-  return verbs[normalized] ?? `forms a ${titleCase(aspect).toLowerCase()} aspect to`;
-}
-
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
   const summary = firstReaderFacingCopy([
     generated?.summary,
@@ -1709,6 +1706,34 @@ const synastryCardPreviewCharacterLimit = 220;
 function textPreview(text: string, characterLimit = synastryCardPreviewCharacterLimit) {
   void characterLimit;
   return text.replace(/\s+/g, " ").trim();
+}
+
+const transitCardPreviewSentenceLimit = 2;
+const transitCardPreviewCharacterLimit = 280;
+
+function transitCardPreview(text: string) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  const sentences = normalized
+    .match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/gu)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) ?? [normalized];
+  const sentencePreview = sentences.slice(0, transitCardPreviewSentenceLimit).join(" ");
+  const characterSlice = sentencePreview.slice(0, transitCardPreviewCharacterLimit + 1);
+  const lastWordBoundary = characterSlice.lastIndexOf(" ");
+  const characterTruncated = sentencePreview.length > transitCardPreviewCharacterLimit;
+  const preview = characterTruncated
+    ? characterSlice.slice(0, lastWordBoundary > 0 ? lastWordBoundary : transitCardPreviewCharacterLimit).trim()
+    : sentencePreview;
+  const hasMore = characterTruncated || sentences.length > transitCardPreviewSentenceLimit;
+
+  return hasMore
+    ? `${preview.replace(/[.!?…]+$/u, "").trim()}…`
+    : preview;
 }
 
 function stripTldrPrefix(value: string) {
@@ -5212,7 +5237,7 @@ function formatOrb(orb: number) {
   return `${degrees}° ${String(minutes).padStart(2, "0")}'`;
 }
 
-function transitNote(transitPlanet: string, aspect: string, natalPoint: string) {
+function transitNote(transitPlanet: string, transitSign: string, aspect: string, natalPoint: string) {
   const normalizedAspect = normalizeFallbackV3Aspect(aspect);
 
   if (!normalizedAspect) {
@@ -5223,6 +5248,7 @@ function transitNote(transitPlanet: string, aspect: string, natalPoint: string) 
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
       natal: normalizeContentIdPart(natalPoint),
+      sign: normalizeContentIdPart(transitSign),
       transiting: normalizeContentIdPart(transitPlanet)
     });
 
@@ -5547,9 +5573,13 @@ function generatedSkyAspectWritingSection(
 
 type SkyWritingAspectBeat = {
   aspect: string;
+  applying?: boolean;
   dateLine?: string | null;
+  exactDate?: string | null;
   from: string;
+  fromSign?: string | null;
   to: string;
+  toSign?: string | null;
 };
 
 function normalizeSkyAspectSurface(
@@ -5677,6 +5707,73 @@ function relatedSkyAspectSectionsForPlacement({
     .slice(0, 2);
 }
 
+function skyPlacementAspectExactDate(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  positions?: PlanetPosition[]
+) {
+  const from = skyAspectPosition(aspect.from, positions);
+  const to = skyAspectPosition(aspect.to, positions);
+  const fromSpeed = typeof from?.speed === "number" ? from.speed : averageDailyMotion[aspect.from] ?? 0;
+  const toSpeed = typeof to?.speed === "number" ? to.speed : averageDailyMotion[aspect.to] ?? 0;
+  const relativeSpeed = Math.max(0.05, Math.abs(fromSpeed - toSpeed));
+  const offsetDays = aspect.orb / relativeSpeed;
+  const exactDate = dateFromOffsetDays(
+    generatedAt,
+    aspect.applying === false ? -offsetDays : offsetDays
+  );
+  const generatedDate = new Date(generatedAt);
+  const includeYear = exactDate.getFullYear() !== generatedDate.getFullYear();
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    ...(includeYear ? { year: "numeric" } : {})
+  }).format(exactDate);
+}
+
+function skyPlacementEgressDateLabel(position: PlanetPosition, generatedAt: string) {
+  if (!position.transitEnd) {
+    return null;
+  }
+
+  const egress = new Date(position.transitEnd);
+  const generatedDate = new Date(generatedAt);
+
+  if (Number.isNaN(egress.getTime()) || Number.isNaN(generatedDate.getTime())) {
+    return null;
+  }
+
+  const yearsAway = Math.abs(egress.getTime() - generatedDate.getTime()) / (365.25 * 86_400_000);
+
+  if (yearsAway >= 2) {
+    return new Intl.DateTimeFormat("en-US", { year: "numeric" }).format(egress);
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    ...(egress.getFullYear() !== generatedDate.getFullYear() ? { year: "numeric" } : {})
+  }).format(egress);
+}
+
+function skyPlacementArticleAspects(
+  planet: string,
+  aspects: SkySnapshot["aspects"]
+) {
+  return aspects
+    .filter((aspect) => aspect.from === planet || aspect.to === planet)
+    .filter((aspect) => Boolean(normalizeFallbackV3Aspect(aspect.type)))
+    .slice()
+    .sort((first, second) => {
+      const applyingPriority = Number(second.applying !== false) - Number(first.applying !== false);
+      const conjunctionPriority = Number(second.type === "conjunction") - Number(first.type === "conjunction");
+
+      return applyingPriority || conjunctionPriority || first.orb - second.orb;
+    })
+    .slice(0, 1);
+}
+
 function skyPlacementWritingBeats({
   aspects,
   generatedAt,
@@ -5688,14 +5785,19 @@ function skyPlacementWritingBeats({
   planet: string;
   positions?: PlanetPosition[];
 }): SkyWritingAspectBeat[] {
-  return skyAspectsForPlacement(planet, aspects).map((aspect) => {
-    void positions;
+  return skyPlacementArticleAspects(planet, aspects).map((aspect) => {
+    const fromPosition = skyAspectPosition(aspect.from, positions);
+    const toPosition = skyAspectPosition(aspect.to, positions);
 
     return {
       aspect: titleCase(aspect.type),
+      applying: aspect.applying,
       dateLine: currentSkyAspectTransitRange(aspect, generatedAt),
+      exactDate: skyPlacementAspectExactDate(aspect, generatedAt, positions),
       from: aspect.from,
-      to: aspect.to
+      fromSign: fromPosition?.sign ?? null,
+      to: aspect.to,
+      toSign: toPosition?.sign ?? null
     };
   });
 }
@@ -5976,7 +6078,8 @@ function generatedSkyPlacementWritingSection(
 function skyPlacementWritingSection(
   position: PlanetPosition,
   duration: string | null | undefined,
-  beats: SkyWritingAspectBeat[] = []
+  beats: SkyWritingAspectBeat[] = [],
+  generatedAt = new Date().toISOString()
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
   const sign = normalizeContentIdPart(position.sign);
@@ -5987,9 +6090,13 @@ function skyPlacementWritingSection(
       return aspect ? {
         type: "aspect",
         a: normalizeContentIdPart(beat.from),
+        aSign: beat.fromSign ? normalizeContentIdPart(beat.fromSign) : undefined,
+        applying: beat.applying,
         b: normalizeContentIdPart(beat.to),
+        bSign: beat.toSign ? normalizeContentIdPart(beat.toSign) : undefined,
         aspect,
-        dateLine: beat.dateLine ?? undefined
+        dateLine: beat.dateLine ?? undefined,
+        exactDate: beat.exactDate ?? undefined
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
@@ -6002,7 +6109,12 @@ function skyPlacementWritingSection(
         window: duration ?? undefined,
         format: "article"
       })
-    : transitSynastryFallbackRendererV3.renderSkyPlacement({ planet, sign, events });
+    : transitSynastryFallbackRendererV3.renderSkyPlacement({
+        planet,
+        sign,
+        events,
+        egressDate: skyPlacementEgressDateLabel(position, generatedAt)
+      });
   const renderedParagraphs = hasRetrogradeArticle
     ? [rendered.headline, ...(rendered.parts.length ? rendered.parts : [rendered.body])]
     : (rendered.parts.length ? rendered.parts : [rendered.body]);
@@ -6039,13 +6151,14 @@ function normalizeSkyPlacementSurface(
   duration?: string | null,
   generatedContent?: GeneratedContentMap,
   beats: SkyWritingAspectBeat[] = [],
+  generatedAt = new Date().toISOString(),
   topperContext?: {
     aspects: SkySnapshot["aspects"];
     positions: PlanetPosition[];
   }
 ): NormalizedSkyPlacementArticle {
   const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
-  const fallbackSection = skyPlacementWritingSection(position, duration, beats);
+  const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt);
   const topper = generatedSection && topperContext
     ? generatedSkyPlacementTopper(
         position,
@@ -6114,6 +6227,7 @@ function currentSkyPlacementDetailArticle({
     transitRangeLabel,
     generatedContent,
     placementEvents,
+    generatedAt,
     { aspects, positions }
   );
   const normalizedParagraphs = normalized.sections
@@ -6346,6 +6460,13 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   const configuredOrb = transitToNatalOrbLimit(transitPosition.planet);
   const baseOrb = configuredOrb > 0 ? Math.min(definition.orb, configuredOrb) : definition.orb;
 
+  // Walker canon (owner 2026-07-27): natal Black Moon Lilith takes conjunctions and
+  // oppositions only, within a 3-degree orb. Other contacts never fire.
+  if (/lilith/i.test(natalPosition.planet)) {
+    if (!["conjunction", "opposition"].includes(definition.type)) return -1;
+    return Math.min(baseOrb, 3);
+  }
+
   return isSunHorizonContact ? baseOrb + sunriseOrb : baseOrb;
 }
 
@@ -6378,7 +6499,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         natalHouse: natalPosition.house,
         orb: formatOrb(aspect.orbValue),
         arc: [aspect.orbValue + 1.8, aspect.orbValue + 1.1, aspect.orbValue + 0.4, aspect.orbValue, aspect.orbValue + 0.5, aspect.orbValue + 1.2],
-        note: transitNote(transitPosition.planet, aspect.type, natalPosition.planet),
+        note: transitNote(transitPosition.planet, transitPosition.sign, aspect.type, natalPosition.planet),
         isSlowGeneralWeather: slowChapterPlanets.has(transitPosition.planet) && !elevatedSlowTransit
       } satisfies TransitItem;
     })
@@ -8035,7 +8156,7 @@ function friendUpdateSummary(
     return "";
   }
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt));
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt)));
 }
 
 function friendTransitSummary(
@@ -8048,15 +8169,7 @@ function friendTransitSummary(
   void generatedContent;
   void ownerPronouns;
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName));
-}
-
-function friendTransitFactSentence(transit: TransitItem, ownerName: string) {
-  const sentenceAspect = transitAspectSentenceVerb(transit.aspect);
-  const natalSign = transit.natalSign ? ` in ${transit.natalSign}` : "";
-  const angleHouse = isChartAnglePoint(transit.natalPoint) ? "" : transit.natalHouse ? ` in the ${ordinalHouse(transit.natalHouse)} house` : "";
-
-  return `${transit.transitPlanet} in the current sky ${sentenceAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}${natalSign}${angleHouse}.`;
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName)));
 }
 
 function personalTransitDisplayTitle(transit: TransitItem) {
@@ -8068,10 +8181,21 @@ function personalTransitPackageWindow(transit: TransitItem, generatedAt: string)
   const referenceDate = new Date(generatedAt);
 
   if (window.end >= referenceDate) {
-    return `Until ${formatEditorialDate(window.end, true)}`;
+    const endLabel = new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC"
+    }).format(window.end);
+
+    return `Until ${endLabel}`;
   }
 
   return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true).rangeLabel;
+}
+
+function transitHouseAspectEventWindow(transit: TransitItem, generatedAt: string) {
+  const window = transitItemActiveWindow(transit, generatedAt);
+  return formatEditorialDate(window.end, true);
 }
 
 function personalTransitPackageContentKey(transit: TransitItem, generatedAt: string) {
@@ -8168,6 +8292,39 @@ function personalTransitPackageSection(
     return null;
   }
 
+  // Nodal return (owner 2026-07-28): the transiting North Node conjunct the natal North
+  // Node renders the authored return card instead of an aspect card.
+  if (
+    normalizedAspect === "conjunction"
+    && normalizeContentIdPart(transit.transitPlanet) === "north-node"
+    && normalizeContentIdPart(transit.natalPoint) === "north-node"
+  ) {
+    try {
+      const nodal = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: "north-node" });
+      const nodalBody = readerFacingParagraphs(nodal.parts).join("\n\n");
+
+      if (nodalBody && isReaderFacingCopy(nodalBody)) {
+        return {
+          slot: "meaning",
+          required: true,
+          layer: "authored",
+          tier: "fallback-architecture-v3-authored",
+          sourceKeys: [
+            "tldrastro-fallback-architecture-v3",
+            nodal.contentKey ?? "",
+            nodal.templateKey
+          ].filter(Boolean),
+          heading: nodal.headline || "Your nodal return",
+          body: nodalBody
+        };
+      }
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) {
+        throw error;
+      }
+    }
+  }
+
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
@@ -8216,6 +8373,26 @@ function normalizePersonalTransitSurface(
   const packageSection = personalTransitPackageSection(transit, generatedAt, voice);
   const sections = packageSection ? [packageSection] : [];
 
+  // Node point explainers (owner 2026-07-28): node cards carry the plain-words
+  // explanation of the point beneath the reading (reader view only).
+  const natalPointId = normalizeContentIdPart(transit.natalPoint);
+  if (packageSection && voice === "you" && (natalPointId === "north-node" || natalPointId === "south-node")) {
+    const explainer = transitV3AuthoredCardForContentKey(`authored/point-explainer/${natalPointId}`);
+    const explainerBody = typeof explainer?.body_you === "string" ? explainer.body_you : typeof explainer?.body === "string" ? explainer.body : "";
+
+    if (explainerBody && isReaderFacingCopy(explainerBody)) {
+      sections.push({
+        slot: "point-explainer",
+        required: false,
+        layer: "authored",
+        tier: "fallback-architecture-v3-authored",
+        sourceKeys: ["tldrastro-fallback-architecture-v3", `authored/point-explainer/${natalPointId}`],
+        heading: explainer?.headline || (natalPointId === "north-node" ? "Your North Node" : "Your South Node"),
+        body: explainerBody
+      });
+    }
+  }
+
   return {
     surface: "personal-transit",
     status: packageSection ? (packageSection.layer === "authored" ? "servable" : "partial") : "not-servable",
@@ -8223,17 +8400,46 @@ function normalizePersonalTransitSurface(
   };
 }
 
+function transitHouseAspectEvents(
+  transitPlanet: string,
+  transits: TransitItem[],
+  generatedAt: string
+) {
+  const normalizedPlanet = normalizeContentIdPart(transitPlanet);
+
+  return transits
+    .filter((transit) => (
+      normalizeContentIdPart(transit.transitPlanet) === normalizedPlanet
+      && dailyTransitQualifies(transit)
+    ))
+    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second))
+    .flatMap((transit) => {
+      const aspect = normalizeFallbackV3Aspect(transit.aspect);
+
+      return aspect
+        ? [{
+            natal: normalizeContentIdPart(transit.natalPoint),
+            aspect,
+            window: transitHouseAspectEventWindow(transit, generatedAt)
+          }]
+        : [];
+    });
+}
+
 function normalizeTransitHouseSurface(
   transit: Pick<TransitItem, "id" | "transitMotion" | "transitPlanet" | "transitSign">,
   house: number,
   windowLabel: string,
-  voice: "you" | string = "you"
+  voice: "you" | string = "you",
+  events: ReturnType<typeof transitHouseAspectEvents> = []
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
+      events,
       house,
+      isRetrograde: transit.transitMotion === "retrograde",
       planet: normalizeContentIdPart(transit.transitPlanet),
       sign: normalizeContentIdPart(transit.transitSign ?? ""),
       motion: transit.transitMotion,
@@ -8332,6 +8538,7 @@ function activeBondTransitCards(
       return [{
         id: `${contact.id}-${activation.id}`,
         headline: rendered.headline,
+        transitPlanet: activation.transitPlanet,
         body: readerFacingParagraphs(rendered.parts).join("\n\n")
       }];
     } catch (error) {
@@ -9689,7 +9896,12 @@ function collapseRepeatedOwnerNameMentions(
     .replace(/\bthey does\b/gi, (match) => match.charAt(0) === "T" ? "They do" : "they do");
 }
 
-function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
+function createNatalGeneratedCopyForOwnerConverter(
+  ownerName: string,
+  ownerKind: "person" | "chart" = "person",
+  ownerPronouns?: PronounChoice | null,
+  collapseOwnerNames = true
+) {
   const isChart = ownerKind === "chart";
   const firstSubject = isChart ? "This chart" : ownerName;
   const firstPossessive = isChart ? "This chart's" : possessiveLabel(ownerName);
@@ -9727,6 +9939,11 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
 
     return `${value} ${usesPluralVerb(value) ? "are" : "is"}`;
   };
+  const subjectWithBePast = (capitalized: boolean) => {
+    const value = subject(capitalized);
+
+    return `${value} ${usesPluralVerb(value) ? "were" : "was"}`;
+  };
   const subjectWithHave = (capitalized: boolean) => {
     const value = subject(capitalized);
 
@@ -9747,6 +9964,7 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
   return (text: string) => {
     const converted = text
       .replace(/\bpart of you being activated\b/g, () => `part of ${object(false)} that is being activated`)
+      .replace(/\bparts of you\b/g, () => `parts of ${object(false)}`)
       .replace(/\bpart of you\b/g, () => `part of ${object(false)}`)
       .replace(/\bthe standards you hold yourself to live inside you\b/g, () => `the standards ${subjectWithVerb(false, "carry", "carries")} live inside ${object(false)}`)
       .replace(/\bthe authority (?:you quietly earn|they quietly earned) becomes (?:yours|theirs) to claim\b/g, () => `the authority ${subjectWithAdverbVerb(false, "quietly", "earn", "earns")} becomes ${pronouns.possessivePronoun} to claim`)
@@ -9756,14 +9974,18 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byours\b/g, pronouns.possessivePronoun)
       .replace(/\bYour\b/g, () => possessive(true))
       .replace(/\byour\b/g, () => possessive(false))
-      .replace(/\b(in|for|to|with|without|around|before|after|from|of|at|near|inside|outside|through|toward|towards|beside|behind|within) you\b/gi, (_match, prep: string) => `${prep} ${object(false)}`)
-      .replace(/\b(reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped) you\b/gi, (_match, verb: string) => `${verb} ${object(false)}`)
+      .replace(/\b(in|for|to|with|without|around|before|after|from|of|on|at|near|inside|outside|through|toward|towards|beside|behind|within) you\b/gi, (_match, prep: string) => `${prep} ${object(false)}`)
+      .replace(/\b(reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|describe|describes|described|leave|leaves|left) you\b/gi, (_match, verb: string) => `${verb} ${object(false)}`)
       .replace(/\bYou answer\b/g, () => subjectWithVerb(true, "answer", "answers"))
       .replace(/\byou answer\b/g, () => subjectWithVerb(false, "answer", "answers"))
       .replace(/\bYou are\b/g, () => subjectWithBe(true))
       .replace(/\byou are\b/g, () => subjectWithBe(false))
+      .replace(/\bYou were\b/g, () => subjectWithBePast(true))
+      .replace(/\byou were\b/g, () => subjectWithBePast(false))
       .replace(/\bYou have\b/g, () => subjectWithHave(true))
       .replace(/\byou have\b/g, () => subjectWithHave(false))
+      .replace(/\bYou already have\b/g, () => subjectWithAdverbVerb(true, "already", "have", "has"))
+      .replace(/\byou already have\b/g, () => subjectWithAdverbVerb(false, "already", "have", "has"))
       .replace(/\bYou discover\b/g, () => subjectWithVerb(true, "discover", "discovers"))
       .replace(/\byou discover\b/g, () => subjectWithVerb(false, "discover", "discovers"))
       .replace(/\bYou learn\b/g, () => subjectWithVerb(true, "learn", "learns"))
@@ -9788,6 +10010,8 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou let\b/g, () => subjectWithVerb(false, "let", "lets"))
       .replace(/\bYou need\b/g, () => subjectWithVerb(true, "need", "needs"))
       .replace(/\byou need\b/g, () => subjectWithVerb(false, "need", "needs"))
+      .replace(/\bYou also need\b/g, () => subjectWithAdverbVerb(true, "also", "need", "needs"))
+      .replace(/\byou also need\b/g, () => subjectWithAdverbVerb(false, "also", "need", "needs"))
       .replace(/\bYou know\b/g, () => subjectWithVerb(true, "know", "knows"))
       .replace(/\byou know\b/g, () => subjectWithVerb(false, "know", "knows"))
       .replace(/\bYou commit\b/g, () => subjectWithVerb(true, "commit", "commits"))
@@ -9840,6 +10064,32 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou survive\b/g, () => subjectWithVerb(false, "survive", "survives"))
       .replace(/\bYou provoke\b/g, () => subjectWithVerb(true, "provoke", "provokes"))
       .replace(/\byou provoke\b/g, () => subjectWithVerb(false, "provoke", "provokes"))
+      .replace(/\bYou act\b/g, () => subjectWithVerb(true, "act", "acts"))
+      .replace(/\byou act\b/g, () => subjectWithVerb(false, "act", "acts"))
+      .replace(/\bYou believe\b/g, () => subjectWithVerb(true, "believe", "believes"))
+      .replace(/\byou believe\b/g, () => subjectWithVerb(false, "believe", "believes"))
+      .replace(/\bYou break\b/g, () => subjectWithVerb(true, "break", "breaks"))
+      .replace(/\byou break\b/g, () => subjectWithVerb(false, "break", "breaks"))
+      .replace(/\bYou handle\b/g, () => subjectWithVerb(true, "handle", "handles"))
+      .replace(/\byou handle\b/g, () => subjectWithVerb(false, "handle", "handles"))
+      .replace(/\bYou keep\b/g, () => subjectWithVerb(true, "keep", "keeps"))
+      .replace(/\byou keep\b/g, () => subjectWithVerb(false, "keep", "keeps"))
+      .replace(/\bYou communicate\b/g, () => subjectWithVerb(true, "communicate", "communicates"))
+      .replace(/\byou communicate\b/g, () => subjectWithVerb(false, "communicate", "communicates"))
+      .replace(/\bYou heal\b/g, () => subjectWithVerb(true, "heal", "heals"))
+      .replace(/\byou heal\b/g, () => subjectWithVerb(false, "heal", "heals"))
+      .replace(/\bYou recognize\b/g, () => subjectWithVerb(true, "recognize", "recognizes"))
+      .replace(/\byou recognize\b/g, () => subjectWithVerb(false, "recognize", "recognizes"))
+      .replace(/\bYou push\b/g, () => subjectWithVerb(true, "push", "pushes"))
+      .replace(/\byou push\b/g, () => subjectWithVerb(false, "push", "pushes"))
+      .replace(/\bYou transform\b/g, () => subjectWithVerb(true, "transform", "transforms"))
+      .replace(/\byou transform\b/g, () => subjectWithVerb(false, "transform", "transforms"))
+      .replace(/\bYou understand\b/g, () => subjectWithVerb(true, "understand", "understands"))
+      .replace(/\byou understand\b/g, () => subjectWithVerb(false, "understand", "understands"))
+      .replace(/\bYou usually respond\b/g, () => subjectWithAdverbVerb(true, "usually", "respond", "responds"))
+      .replace(/\byou usually respond\b/g, () => subjectWithAdverbVerb(false, "usually", "respond", "responds"))
+      .replace(/\bYou value\b/g, () => subjectWithVerb(true, "value", "values"))
+      .replace(/\byou value\b/g, () => subjectWithVerb(false, "value", "values"))
       .replace(/\bYou can\b/g, () => subjectWithModal(true, "can"))
       .replace(/\byou can\b/g, () => subjectWithModal(false, "can"))
       .replace(/\bYou will\b/g, () => subjectWithModal(true, "will"))
@@ -9849,12 +10099,75 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\bYou\b/g, () => subject(true))
       .replace(/\byou\b/g, () => subject(false));
 
-    return collapseRepeatedOwnerNameMentions(converted, ownerName, pronouns, !namedMentionUsed);
+    return collapseOwnerNames
+      ? collapseRepeatedOwnerNameMentions(converted, ownerName, pronouns, !namedMentionUsed)
+      : converted;
   };
 }
 
 function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
   return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns)(text);
+}
+
+function natalAspectPatternCopyForOwner(
+  copy: NatalAspectPatternReaderItem["copy"],
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+): NatalAspectPatternReaderItem["copy"] {
+  const convert = createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns, false);
+
+  return {
+    ...copy,
+    content: {
+      ...copy.content,
+      eyebrow: copy.content.eyebrow ? convert(copy.content.eyebrow) : copy.content.eyebrow,
+      headline: convert(copy.content.headline),
+      overview: convert(copy.content.overview),
+      sections: copy.content.sections.map((section) => ({
+        ...section,
+        body: convert(section.body)
+      }))
+    }
+  };
+}
+
+function natalAspectPatternActivationCopyForOwner(
+  copy: NonNullable<NatalAspectPatternReaderItem["activationCopy"]>,
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+): NonNullable<NatalAspectPatternReaderItem["activationCopy"]> {
+  const convert = createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns, false);
+
+  return {
+    ...copy,
+    content: {
+      ...copy.content,
+      eyebrow: copy.content.eyebrow ? convert(copy.content.eyebrow) : copy.content.eyebrow,
+      headline: convert(copy.content.headline),
+      overview: convert(copy.content.overview),
+      sections: copy.content.sections.map((section) => ({
+        ...section,
+        body: convert(section.body)
+      }))
+    }
+  };
+}
+
+function natalAspectPatternReaderItemsForOwner(
+  snapshot: SkySnapshot | null,
+  ownerName: string,
+  ownerKind: "person" | "chart",
+  ownerPronouns?: PronounChoice | null
+) {
+  return natalAspectPatternReaderItems(snapshot).map((item) => ({
+    ...item,
+    copy: natalAspectPatternCopyForOwner(item.copy, ownerName, ownerKind, ownerPronouns),
+    activationCopy: item.activationCopy
+      ? natalAspectPatternActivationCopyForOwner(item.activationCopy, ownerName, ownerKind, ownerPronouns)
+      : undefined
+  }));
 }
 
 const chartPronouns: PersonReference = {
@@ -10898,7 +11211,7 @@ function relationshipTimingSummary(
   void generatedContent;
   void person;
 
-  return normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt)) || fallback;
+  return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt))) || fallback;
 }
 
 function relationshipTiming(
@@ -11444,6 +11757,26 @@ async function getAstrodienstSky(
   const { getAstrodienstSky: calculateSky } = await import("./services/ephemeris");
 
   return calculateSky(...args);
+}
+
+async function natalSkyWithAspectPatternsForStorage(
+  natalSky: SkySnapshot,
+  location: LocationInput,
+  date: Date,
+  timeKnown: boolean,
+  enabled: boolean
+) {
+  if (!enabled) {
+    return natalSky;
+  }
+
+  try {
+    const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
+    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+  } catch (error) {
+    console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
+    return natalSky;
+  }
 }
 
 function FeatureLoadingFallback() {
@@ -15830,6 +16163,7 @@ function PlacementTable({
                 planet: position.planet,
                 positions: displayPositions
               }),
+              generatedAt,
               { aspects, positions: displayPositions }
             )
           );
@@ -16318,6 +16652,8 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [phoneCodeSent, setPhoneCodeSent] = useState(false);
+  const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
+  const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
   const isLogin = authMode === "login";
@@ -16325,6 +16661,26 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   useEffect(() => {
     setAuthMode(initialMode);
   }, [initialMode]);
+
+  useEffect(() => {
+    if (phoneResendSeconds <= 0) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPhoneResendSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [phoneResendSeconds]);
+
+  function resetPhoneChallenge() {
+    setPhoneCodeSent(false);
+    setPhoneCode("");
+    setPhoneOtpDestination("");
+    setPhoneResendSeconds(0);
+    setAuthMessage("");
+  }
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
@@ -16416,7 +16772,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     }
   }
 
-  async function sendPhoneCode() {
+  async function sendPhoneCode(isResend = false) {
     if (!phoneNumber.trim()) {
       setAuthMessage("Enter your phone number.");
       return;
@@ -16426,9 +16782,14 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     setAuthMessage("");
 
     try {
-      await sendPhoneSignInCode(phoneNumber);
+      const destination = await sendPhoneSignInCode(phoneNumber, {
+        shouldCreateUser: !isLogin
+      });
+
+      setPhoneOtpDestination(destination);
       setPhoneCodeSent(true);
-      setAuthMessage("We sent a six-digit code to your phone.");
+      setPhoneResendSeconds(60);
+      setAuthMessage(isResend ? "We sent a new six-digit code." : "");
     } catch (error) {
       setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
     } finally {
@@ -16437,7 +16798,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   }
 
   async function verifyPhoneCode() {
-    if (!phoneCode.trim()) {
+    if (phoneCode.trim().length !== 6) {
       setAuthMessage("Enter the six-digit code.");
       return;
     }
@@ -16451,7 +16812,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
     try {
       const account = await verifyPhoneSignInCode({
-        phone: phoneNumber,
+        phone: phoneOtpDestination || phoneNumber,
         code: phoneCode
       });
 
@@ -16472,11 +16833,28 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
         <X size={20} aria-hidden="true" />
       </button>
       <div className="auth-shell">
-        <form className="signup-form auth-card" onSubmit={submitSignup}>
-          <div className="signup-heading">
-            <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
-            {isLogin && <h3>Return to your sky.</h3>}
-          </div>
+        <form
+          className={`signup-form auth-card${phoneAuthOpen ? " auth-card--phone" : ""}`}
+          onSubmit={(event) => {
+            if (!phoneAuthOpen) {
+              submitSignup(event);
+              return;
+            }
+
+            event.preventDefault();
+            if (phoneCodeSent) {
+              void verifyPhoneCode();
+            } else {
+              void sendPhoneCode();
+            }
+          }}
+        >
+          {!phoneAuthOpen && (
+            <div className="signup-heading">
+              <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
+              {isLogin && <h3>Return to your sky.</h3>}
+            </div>
+          )}
 
         {!isAuthConfigured && (
           <p className="auth-message">
@@ -16484,94 +16862,171 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
           </p>
         )}
 
-        <div className="social-signons" aria-label="Social sign on">
-          <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
-            <GoogleIcon />
-            Continue with Google
-          </button>
-          {isPhoneAuthEnabled && (
-            <button
-              className="google-auth-button"
-              type="button"
-              disabled={authStatus === "loading"}
-              onClick={() => {
-                setPhoneAuthOpen((current) => !current);
-                setAuthMessage("");
-              }}
-            >
-              Continue with phone
+        {!phoneAuthOpen && (
+          <div className="social-signons" aria-label="Social sign on">
+            <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
+              <GoogleIcon />
+              Continue with Google
             </button>
-          )}
-        </div>
+            {isPhoneAuthEnabled && (
+              <button
+                className="google-auth-button"
+                type="button"
+                disabled={authStatus === "loading"}
+                onClick={() => {
+                  setPhoneAuthOpen(true);
+                  setAuthMessage("");
+                }}
+              >
+                Continue with phone
+              </button>
+            )}
+          </div>
+        )}
 
         {isPhoneAuthEnabled && phoneAuthOpen && (
           <div className="phone-auth-fields" aria-label="Phone sign in">
-            <label className="signup-field auth-field">
-              <span className="auth-label">Phone number</span>
-              <div>
-                <input
-                  className="auth-input"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="+1 212 555 0100"
-                  value={phoneNumber}
-                  disabled={phoneCodeSent}
-                  onChange={(event) => setPhoneNumber(event.target.value)}
-                />
-              </div>
-            </label>
-            {phoneCodeSent && (
+            <button
+              className="phone-auth-back"
+              type="button"
+              disabled={authStatus === "loading"}
+              onClick={() => {
+                resetPhoneChallenge();
+                setPhoneAuthOpen(false);
+              }}
+            >
+              <ChevronLeft size={18} aria-hidden="true" />
+              Back
+            </button>
+
+            <div className="phone-auth-heading">
+              <p className="auth-card__title">
+                {phoneCodeSent
+                  ? "Check your phone"
+                  : isLogin
+                    ? "Log in with phone"
+                    : "Sign up with phone"}
+              </p>
+              <p>
+                {phoneCodeSent ? (
+                  <>
+                    We sent a six-digit code to{" "}
+                    <strong>{formatPhoneNumberForDisplay(phoneOtpDestination)}</strong>.
+                  </>
+                ) : (
+                  "Enter your mobile number and we’ll text you a verification code."
+                )}
+              </p>
+            </div>
+
+            {!phoneCodeSent && (
               <label className="signup-field auth-field">
-                <span className="auth-label">Six-digit code</span>
-                <div>
+                <span className="auth-label">Mobile number</span>
+                <div className="phone-auth-number-control">
+                  <span className="phone-auth-country-prefix" aria-label={`${supportedPhoneCountry.name} country code`}>
+                    {supportedPhoneCountry.callingCode}
+                  </span>
                   <input
                     className="auth-input"
+                    type="tel"
+                    inputMode="tel"
+                    enterKeyHint="send"
+                    autoComplete="tel-national"
+                    autoFocus
+                    aria-describedby="phone-auth-number-help"
+                    placeholder="(212) 555-0100"
+                    value={phoneNumber}
+                    onChange={(event) => {
+                      setPhoneNumber(formatUsPhoneInput(event.target.value));
+                      setAuthMessage("");
+                    }}
+                  />
+                </div>
+                <small className="phone-auth-help" id="phone-auth-number-help">
+                  United States numbers only. Message and data rates may apply.
+                </small>
+              </label>
+            )}
+            {phoneCodeSent && (
+              <label className="signup-field auth-field">
+                <span className="auth-label">Verification code</span>
+                <div>
+                  <input
+                    className="auth-input phone-auth-code-input"
                     inputMode="numeric"
+                    enterKeyHint="done"
+                    pattern="[0-9]*"
                     autoComplete="one-time-code"
+                    autoFocus
+                    aria-describedby="phone-auth-code-help"
                     maxLength={6}
                     placeholder="123456"
                     value={phoneCode}
-                    onChange={(event) => setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onChange={(event) => {
+                      setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                      setAuthMessage("");
+                    }}
                   />
                 </div>
+                <small className="phone-auth-help" id="phone-auth-code-help">
+                  Codes expire shortly for your security.
+                </small>
               </label>
             )}
+
+            {authMessage && <p className="auth-message">{authMessage}</p>}
+
             <div className="phone-auth-actions">
-              {phoneCodeSent && (
+              {phoneCodeSent ? (
+                <>
+                  <button
+                    className="signup-submit phone-auth-primary"
+                    type="submit"
+                    disabled={authStatus === "loading" || phoneCode.length !== 6}
+                  >
+                    {authStatus === "loading" ? "Verifying…" : "Verify and continue"}
+                  </button>
+                  <div className="phone-auth-secondary-actions">
+                  <button
+                    className="phone-auth-text-button"
+                    type="button"
+                    disabled={authStatus === "loading"}
+                    onClick={resetPhoneChallenge}
+                  >
+                    Change number
+                  </button>
+                  <button
+                    className="phone-auth-text-button"
+                    type="button"
+                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
+                    onClick={() => void sendPhoneCode(true)}
+                  >
+                    {phoneResendSeconds > 0
+                      ? `Resend in 0:${String(phoneResendSeconds).padStart(2, "0")}`
+                      : "Resend code"}
+                  </button>
+                  </div>
+                </>
+              ) : (
                 <button
-                  type="button"
-                  disabled={authStatus === "loading"}
-                  onClick={() => {
-                    setPhoneCodeSent(false);
-                    setPhoneCode("");
-                    setAuthMessage("");
-                  }}
+                  className="signup-submit phone-auth-primary"
+                  type="submit"
+                  disabled={authStatus === "loading" || phoneNumber.replace(/\D/g, "").length !== 10}
                 >
-                  Change number
+                  {authStatus === "loading" ? "Sending…" : "Continue"}
                 </button>
               )}
-              <button
-                className="signup-submit"
-                type="button"
-                disabled={authStatus === "loading"}
-                onClick={() => void (phoneCodeSent ? verifyPhoneCode() : sendPhoneCode())}
-              >
-                {authStatus === "loading"
-                  ? "Working…"
-                  : phoneCodeSent
-                    ? "Verify code"
-                    : "Send code"}
-              </button>
             </div>
           </div>
         )}
 
-        {authMessage && <p className="auth-message">{authMessage}</p>}
+        {!phoneAuthOpen && authMessage && <p className="auth-message">{authMessage}</p>}
 
-        <div className="email-divider auth-divider"><span>or with email</span></div>
+        {!phoneAuthOpen && (
+          <>
+            <div className="email-divider auth-divider"><span>or with email</span></div>
 
-        <div className="signup-fields">
+            <div className="signup-fields">
           {!isLogin && (
             <label className="signup-field auth-field">
               <span className="auth-label">Full name</span>
@@ -16705,23 +17160,27 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
               </label>
             </>
           )}
-        </div>
+            </div>
 
-        <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
-          {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
-        </button>
-        <p className="signin-note">
-          {isLogin ? "New here?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMessage("");
-              setAuthMode(isLogin ? "create" : "login");
-            }}
-          >
-            {isLogin ? "Create an account" : "Login"}
-          </button>
-        </p>
+            <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
+              {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
+            </button>
+            <p className="signin-note">
+              {isLogin ? "New here?" : "Already have an account?"}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  resetPhoneChallenge();
+                  setPhoneAuthOpen(false);
+                  setAuthMessage("");
+                  setAuthMode(isLogin ? "create" : "login");
+                }}
+              >
+                {isLogin ? "Create an account" : "Login"}
+              </button>
+            </p>
+          </>
+        )}
         </form>
       </div>
     </section>
@@ -17903,7 +18362,7 @@ function ProfileView({
   const updateAspectRows = aspectRows.map((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, transitForm.chartDate);
-    const rowSummary = normalizedSurfacePreview(normalizedTransit);
+    const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
@@ -17952,7 +18411,7 @@ function ProfileView({
             </span>
             <span>{timing.rangeLabel}</span>
           </span>
-          {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+          {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -18087,9 +18546,19 @@ function ProfileView({
       };
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
       const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
-      const normalizedHouseTransit = normalizeTransitHouseSurface(transit, house, timingRange);
+      const normalizedHouseTransit = normalizeTransitHouseSurface(
+        transit,
+        house,
+        timingRange,
+        "you",
+        transitHouseAspectEvents(
+          transit.transitPlanet,
+          qualifyingDailyTransits,
+          transitForm.chartDate
+        )
+      );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
-      const rowSummary = normalizedSurfacePreview(normalizedHouseTransit);
+      const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedHouseTransit));
       const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
       const articleSections = normalizedHouseTransit.sections.map((section) => ({
         heading: section.heading,
@@ -18136,7 +18605,7 @@ function ProfileView({
               </span>
               {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
-            {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+            {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
             <span className="house-transit-keywords" aria-label="House keywords">
               {houseLifeAreaKeywords(house).map((keyword) => (
                 <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
@@ -18193,7 +18662,14 @@ function ProfileView({
         planet: selected.natalPoint,
         sign: selected.natalSign,
         house: selected.house,
-        transiting: selected.transiting
+        transiting: selected.transiting,
+        // Moon day layer (owner design 2026-07-27): sign + house of the sky's Moon plus a
+        // day key so the list rotates daily instead of freezing for a whole transit.
+        moonSign: dailyMoon ? normalizeContentIdPart(dailyMoon.sign) : null,
+        moonHouse: dailyMoonHouse ?? null,
+        dayKey: Number.isFinite(Date.parse(`${transitForm.chartDate}T00:00:00Z`))
+          ? Math.floor(Date.parse(`${transitForm.chartDate}T00:00:00Z`) / 86400000)
+          : 0
       });
       return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
     } catch (error) {
@@ -18615,14 +19091,19 @@ function ManualChartsPanel({
           transit,
           activation.house,
           timingRange,
-          selectedChart.displayName
+          selectedChart.displayName,
+          transitHouseAspectEvents(
+            transit.transitPlanet,
+            selectedFriendTransits,
+            currentSky.generatedAt
+          )
         );
 
         return {
           activation,
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
-          rowSummary: normalizedSurfacePreview(normalized),
+          rowSummary: transitCardPreview(normalizedSurfacePreview(normalized)),
           timingRange: normalized.sections[0]?.window ?? timingRange,
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
@@ -18685,8 +19166,13 @@ function ManualChartsPanel({
     ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
     : [];
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
-  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns
-    ? natalAspectPatternReaderItems(selectedChart?.natalChart ?? null, "they")
+  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns && selectedChart
+    ? natalAspectPatternReaderItemsForOwner(
+        selectedChart.natalChart ?? null,
+        selectedChart.displayName,
+        selectedChartIsEvent ? "chart" : "person",
+        selectedChart.pronouns
+      )
     : [];
   const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
     selectedFriendNatalAspectPatternItems,
@@ -18757,6 +19243,48 @@ function ManualChartsPanel({
         body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
       })),
       relatedAspects: article.relatedAspects
+    });
+  };
+  const openFriendNatalAspectPatternDetail = (
+    item: NatalAspectPatternReaderItem,
+    nestedItems: NatalAspectPatternReaderItem[]
+  ) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    const copy = item.copy.content;
+    const detailSections = [item, ...nestedItems].flatMap((patternItem, patternIndex) => {
+      const patternCopy = patternItem.copy.content;
+      const prefix = patternIndex === 0 ? "" : `${patternCopy.headline}: `;
+
+      return patternCopy.sections
+        .map((section) => ({
+          heading: resolvedNatalAspectPatternSectionLabel(section),
+          body: section.body.trim()
+        }))
+        .filter((section): section is { heading: string; body: string } => Boolean(section.heading && section.body))
+        .map((section) => ({
+          heading: `${prefix}${section.heading}`,
+          body: section.body
+        }));
+    });
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "natal",
+        `natal-pattern-${normalizeContentIdPart(item.patternId)}`
+      ),
+      glyph: "",
+      kicker: copy.eyebrow || "Chart pattern",
+      title: copy.headline,
+      meta: copy.eyebrow || "Chart pattern",
+      suppressTldr: true,
+      bodyBeforeSections: true,
+      plainBody: true,
+      body: [copy.overview],
+      sections: detailSections
     });
   };
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
@@ -18843,6 +19371,62 @@ function ManualChartsPanel({
       sections: card.normalized.sections.map((section) => ({
         // The page-level title already names this house transit. Repeating the
         // resolver headline here creates a near-identical second title.
+        heading: "",
+        body: section.body,
+        sourceKeys: section.sourceKeys
+      }))
+    });
+  };
+  const openBondTransitDetail = (
+    card: (typeof selectedBondTransitCards)[number]
+  ) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "transits",
+        `connection-transit-${normalizeContentIdPart(card.id)}`
+      ),
+      glyph: pointGlyph(card.transitPlanet),
+      kicker: "Between you two right now",
+      title: card.headline,
+      meta: "",
+      body: card.body.split(/\n{2,}/u).filter(Boolean),
+      sections: []
+    });
+  };
+  const openFriendTransitDetail = (transit: TransitItem) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+    const normalized = normalizePersonalTransitSurface(
+      transit,
+      currentSky.generatedAt,
+      selectedChart.displayName
+    );
+    const title = `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(
+        selectedChart.id,
+        "transits",
+        `transit-${normalizeContentIdPart(transit.id)}`
+      ),
+      glyph: pointGlyph(transit.transitPlanet),
+      kicker: "Transit",
+      title,
+      meta: [
+        timing.rangeLabel,
+        `${wholeDegreeOrb(transitOrbValue(transit))} orb`,
+        transit.natalPoint
+      ].filter(Boolean).join(" · "),
+      body: [],
+      sections: normalized.sections.map((section) => ({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
@@ -19017,10 +19601,13 @@ function ManualChartsPanel({
         moon: bigThree.moon,
         rising: bigThree.rising,
         needsBirthTime: manualChartNeedsBirthTime(chart),
-        active: selectedChart?.id === chart.id
+        active: selectedChart?.id === chart.id,
+        patternSummary: showFriendNatalAspectPatterns && chart.chartType === "person"
+          ? natalAspectPatternPillSummary(chart.natalChart)
+          : null
       };
     }),
-    [charts, selectedChart?.id]
+    [charts, selectedChart?.id, showFriendNatalAspectPatterns]
   );
   useEffect(() => {
     let cancelled = false;
@@ -19127,9 +19714,17 @@ function ManualChartsPanel({
       }
 
       const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-      const natalChart = await getAstrodienstSky(
+      const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
+      const calculatedNatalChart = await getAstrodienstSky(
         birthLocation,
-        zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone)
+        birthDateTime
+      );
+      const natalChart = await natalSkyWithAspectPatternsForStorage(
+        calculatedNatalChart,
+        birthLocation,
+        birthDateTime,
+        !chart.birthTimeUnknown,
+        showFriendNatalAspectPatterns
       );
       const input: ManualChartInput = {
         chartType: chart.chartType,
@@ -19352,9 +19947,17 @@ function ManualChartsPanel({
       const birthTimeForChart = form.birthTimeUnknown
         ? "12:00 PM"
         : twentyFourHourTimeToDisplay(form.birthTime);
-      const natalChart = await getAstrodienstSky(
+      const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
+      const calculatedNatalChart = await getAstrodienstSky(
         birthLocation,
-        zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone)
+        birthDateTime
+      );
+      const natalChart = await natalSkyWithAspectPatternsForStorage(
+        calculatedNatalChart,
+        birthLocation,
+        birthDateTime,
+        !form.birthTimeUnknown,
+        showFriendNatalAspectPatterns
       );
       const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
       const input: ManualChartInput = {
@@ -19465,6 +20068,7 @@ function ManualChartsPanel({
             onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
             onPendingRequestCountChange={onPendingRequestCountChange}
             onSelectView={(view, historyMode) => selectFriendsTab(view, historyMode)}
+            showPatternPills={showFriendNatalAspectPatterns}
           />
         )}
         detailVariant={friendProfileTab}
@@ -19810,7 +20414,9 @@ function ManualChartsPanel({
                 {selectedFriendNatalAspectPatternStatus && (
                   <NatalAspectPatternsSection
                     items={selectedFriendNatalAspectPatternItems}
+                    onOpenDetail={openFriendNatalAspectPatternDetail}
                     status={selectedFriendNatalAspectPatternStatus}
+                    title={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
                   />
                 )}
                 <span className="eyebrow section-label friend-section-label">Big three</span>
@@ -19952,12 +20558,18 @@ function ManualChartsPanel({
                     <span className="eyebrow section-label friend-section-label">Between you two right now</span>
                     <div className="updates-aspect-list friend-transit-list">
                       {selectedBondTransitCards.map((card) => (
-                        <article className="updates-aspect-row friend-transit-row" key={card.id}>
+                        <button
+                          aria-label={`Open full entry for ${card.headline}`}
+                          className="updates-aspect-row friend-transit-row"
+                          key={card.id}
+                          onClick={() => openBondTransitDetail(card)}
+                          type="button"
+                        >
                           <span className="updates-aspect-row__content">
                             <h3 className="updates-aspect-row__title">{card.headline}</h3>
-                            <p className="updates-aspect-row__description">{card.body}</p>
+                            <p className="updates-aspect-row__description transit-card-preview">{transitCardPreview(card.body)}</p>
                           </span>
-                        </article>
+                        </button>
                       ))}
                     </div>
                   </section>
@@ -19985,7 +20597,7 @@ function ManualChartsPanel({
                               {card.timingRange ? <span>{card.timingRange}</span> : null}
                             </span>
                             {card.rowSummary ? (
-                              <span className="updates-aspect-row__description">{card.rowSummary}</span>
+                              <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
                             ) : null}
                             <span className="house-transit-keywords" aria-label="House keywords">
                               {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
@@ -20035,11 +20647,16 @@ function ManualChartsPanel({
                             selectedChart.pronouns,
                             currentSky.generatedAt
                           );
-                          const factSentence = friendTransitFactSentence(transit, selectedChart.displayName);
                           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
 
                           return (
-                            <article className="updates-aspect-row friend-transit-row" key={transit.id}>
+                            <button
+                              aria-label={`Open full entry for ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`}
+                              className="updates-aspect-row friend-transit-row"
+                              key={transit.id}
+                              onClick={() => openFriendTransitDetail(transit)}
+                              type="button"
+                            >
                               <span className="updates-aspect-row__content">
                                 <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
                                 <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
@@ -20048,14 +20665,13 @@ function ManualChartsPanel({
                                   </span>
                                   <span>{timing.rangeLabel}</span>
                                 </span>
-                                <p className="updates-aspect-row__description">{summary}</p>
-                                <p className="updates-aspect-row__detail">{factSentence}</p>
+                                <p className="updates-aspect-row__description transit-card-preview">{summary}</p>
                               </span>
                               <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
                                 <span className="updates-aspect-row__dot" aria-hidden="true" />
                                 <span className="updates-aspect-row__orb">{transit.orb}</span>
                               </span>
-                            </article>
+                            </button>
                           );
                         })}
                       </div>

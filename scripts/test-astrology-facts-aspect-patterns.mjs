@@ -120,11 +120,12 @@ try {
 
   const presentWithCopy = buildAstrologyFactsApiResponse(snapshotFromFixture(fixtures.grand_square), true, true).body;
   assert.ok(presentWithCopy.sky.aspectPatterns.resolvedCopy);
-  const readerVisibleContexts = presentWithCopy.sky.aspectPatterns.interpretationContexts.filter((context) => (
-    !context.display?.isSuppressed
-    && !context.display?.isWithheldForMoonTimeUncertainty
-  ));
-  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy.length, readerVisibleContexts.length);
+  assert.equal(
+    presentWithCopy.sky.aspectPatterns.resolvedCopy.length,
+    1,
+    "A Grand Cross must serve one top-level copy record rather than duplicate its four contained T-squares."
+  );
+  assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy[0].patternType, "grand_square");
   assert.equal(presentWithCopy.sky.aspectPatterns.resolvedCopy[0].source.resolverVersion, "v3");
 
   const result = present.sky.aspectPatterns;

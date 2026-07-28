@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 import crypto from "node:crypto";
+import os from "node:os";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-const defaultInput = "/private/tmp/tldrastro-handoff-v17/tldr-astro-records.json";
+const defaultInput = `${os.tmpdir()}/tldrastro-handoff-v17/tldr-astro-records.json`;
 const defaultOutDir = path.join(repoRoot, "scripts", "generated");
 const defaultPhrasebankDir = path.join(repoRoot, "tldr-astro-phrasebank");
 
