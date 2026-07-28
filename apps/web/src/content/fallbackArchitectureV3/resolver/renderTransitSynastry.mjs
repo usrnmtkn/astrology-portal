@@ -117,6 +117,12 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const v = voice === "you" ? "you" : "they";
   const otherPoss = v === "they" ? `${voice}'s` : null;
   const g = GROUP[aspect] ?? aspect; // accepts group names directly
+  // Owner rulings 2026-07-27/28: Lilith renders on conjunction/opposition only (Walker canon);
+  // node cards are conjunction-focused. Other contacts raise SOURCE_GAP and the surface hides.
+  if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") throw new SourceGapError(`SOURCE_GAP: lilith renders conjunction/opposition only (got ${aspect})`);
+  // Node cards are conjunction-focused (owner 2026-07-28): authored rows exist only for
+  // conjunctions; other node aspects fall through to the legacy fallback (sky pipeline uses them).
+
   // Batch 3 sharing rule, direction-aware: a conjunction reads as the hard unit when a
   // heavy planet is involved and as the soft unit otherwise. Soft/hard only borrow the
   // conjunction unit when its tone matches (soft for light pairs, hard for heavy pairs).
@@ -137,7 +143,26 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-  if (v === "you") for (const k of tryKeys) { const c = card(k); if (c) return result(c, "authored/transit-aspect"); }
+  if (v === "you") for (const k of tryKeys) {
+    const c = card(k);
+    if (c) {
+      // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
+      // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.
+      const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
+      const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
+      let aBody = c.body_you ?? c.body;
+      aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
+      aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+      // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
+      if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
+        const NAT = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","midheaven","ascendant"];
+        const fnIdx = (((NAT.indexOf(natal) + (variant ?? 0)) % 4) + 4) % 4 + 1;
+        const fogNote = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`)?.body_you;
+        if (fogNote) aBody = `${aBody}\n\n${fogNote}`;
+      }
+      return { headline: c.headline || "", body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+    }
+  }
   // fallback template
   const T = tpl("fallback-template/transit.aspect");
   // the natal planet's life areas, so type lines can say WHAT gets easier/harder

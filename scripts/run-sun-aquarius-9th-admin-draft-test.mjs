@@ -1,9 +1,10 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const repo = "/Users/mprez/Code/tldrastro";
-const outputPath = "/private/tmp/sun-aquarius-9th-admin-draft-generation-test.json";
+const outputPath = `${os.tmpdir()}/sun-aquarius-9th-admin-draft-generation-test.json`;
 const envPath = path.join(repo, "apps/web/.env.local");
 
 function loadEnv(filePath) {

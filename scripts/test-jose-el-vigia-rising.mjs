@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import os from "node:os";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -45,7 +46,7 @@ print(response.model_dump_json())
   const env = {
     ...process.env,
     PYTHONPATH: process.env.PYTHONPATH ? `${apiSrc}:${process.env.PYTHONPATH}` : apiSrc,
-    PYTHONPYCACHEPREFIX: process.env.PYTHONPYCACHEPREFIX ?? "/private/tmp/tldrastro-pycache"
+    PYTHONPYCACHEPREFIX: process.env.PYTHONPYCACHEPREFIX ?? `${os.tmpdir()}/tldrastro-pycache`
   };
 
   for (const executable of pythonCandidates) {
