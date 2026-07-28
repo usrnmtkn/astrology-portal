@@ -950,7 +950,7 @@ ${fogNote}`;
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-28d";
+var PACKAGE_VERSION = "v3-2026-07-28e";
 export {
   PACKAGE_VERSION,
   RoleViolationError,
