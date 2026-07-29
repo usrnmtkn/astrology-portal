@@ -1,5 +1,14 @@
 # TLDR Astro agent instructions
 
+## Content changes
+
+Before changing reader-facing astrology content, review state, resolver
+selection, or content-package distribution, read
+[`docs/content-management/README.md`](docs/content-management/README.md) and
+[`docs/content-management/ARCHITECTURE.md`](docs/content-management/ARCHITECTURE.md).
+Keep computed facts in the calculation layer, approved prose in content rows,
+and presentation in React/CSS.
+
 ## Production deployments
 
 Vercel production has one source of truth: the `main` branch.
