@@ -1811,6 +1811,60 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("mobile Friends chart directory uses the readable type scale", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+
+    const directory = page.getByRole("region", { name: "Social friends" });
+    await expect(directory).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open Nikki" })).toBeVisible();
+    const typography = await directory.evaluate((element) => {
+      const size = (selector: string) => {
+        const node = element.querySelector(selector);
+        return node ? Number.parseFloat(getComputedStyle(node).fontSize) : 0;
+      };
+      const probe = document.createElement("label");
+      probe.className = "friends-unified-search-row";
+      const probeInput = document.createElement("input");
+      probe.append(probeInput);
+      document.body.append(probe);
+      const searchSize = Number.parseFloat(getComputedStyle(probeInput).fontSize);
+      probe.remove();
+
+      return {
+        search: searchSize,
+        tab: size(".friends-unified-tabs > button"),
+        action: size(".friends-add-chart-action"),
+        title: size(".manual-chart-row .crt"),
+        metadata: size(".manual-chart-row .manual-chart-signatures"),
+        avatar: size(".manual-chart-row .manual-chart-avatar")
+      };
+    });
+
+    expect(typography.search, "Mobile search input avoids small-text zoom and remains readable").toBeGreaterThanOrEqual(16);
+    expect(typography.tab, "Mobile Friends tabs use readable control text").toBeGreaterThanOrEqual(14);
+    expect(typography.action, "Mobile add-chart action uses readable control text").toBeGreaterThanOrEqual(14);
+    expect(typography.title, "Mobile chart names retain title hierarchy").toBeGreaterThanOrEqual(18);
+    expect(typography.metadata, "Mobile chart signatures remain readable").toBeGreaterThanOrEqual(14);
+    expect(typography.avatar, "Mobile avatar initials remain readable").toBeGreaterThanOrEqual(13);
+
+    const chartRowsFit = await page.locator(".friends-unified-panel .manual-chart-row").evaluateAll((rows) =>
+      rows.every((row) => {
+        const rowRect = row.getBoundingClientRect();
+        return Array.from(row.children).every((child) => {
+          const childRect = child.getBoundingClientRect();
+          return childRect.left >= rowRect.left - 1 && childRect.right <= rowRect.right + 1;
+        });
+      })
+    );
+    expect(chartRowsFit, "Larger Friends chart text stays inside each mobile row").toBe(true);
+    await expectNoHorizontalOverflow(page, "Mobile Friends chart directory");
+    await assertNoClientErrors();
+  });
+
   test("signed-in user can open friend add chart modal and see validation", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
