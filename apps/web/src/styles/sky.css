@@ -793,7 +793,7 @@
   gap: var(--sp-1) 14px;
   font-family: var(--font-display);
   font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-title);
 }
 
@@ -881,7 +881,7 @@
   margin: 0;
   color: var(--card-title-color);
   font-size: var(--text-row-title-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-title);
 }

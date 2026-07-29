@@ -8,6 +8,7 @@ var OPPOSITE_SIGN = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", 
 var ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 var ANGLE_TITLE = { ascendant: "Ascendant", midheaven: "Midheaven", descendant: "Descendant", "imum-coeli": "IC" };
 var ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
+var EMPTY_HOUSE_RULER_VARIANT = { 2: "a", 3: "b", 4: "c", 5: "d", 0: "e", 1: "f" };
 var title = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 var ordinal = (n) => ORD[n] ?? `${n}th`;
 var fixArticles = (t) => t.replace(/\b(a|A) (?!(?:one|once|uni|use|usu|eu))([aeiouAEIOU])/g, (_, art, ch) => `${art === "A" ? "An" : "an"} ${ch}`);
@@ -211,19 +212,22 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const v = voice === "you" ? "you" : "they";
     const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts2);
-    const rulerHouseJurisdiction = rulerHouse ? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts2) : null;
+    const rulerHouseJurisdiction = rulerHouse ? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts2) : null) ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts2) : null;
+    const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts2) : null;
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts2);
-    const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts2);
+    const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
+    const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts2) ?? getHook("fallback-hook/empty-house-ruler", v, opts2);
     const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts2);
     const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts2);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts2);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts2);
     const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts2) : null;
-    if (!houseTopic || !rulerHouseJurisdiction || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+    if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
     const REF = { sun: "the Sun", moon: "the Moon" };
     const rulerRef = REF[ruler] ?? title(ruler);
+    const rulerPossessive = rulerRef.endsWith("s") ? `${rulerRef}'` : `${rulerRef}'s`;
     const ctx = {
       houseOrdinal: ordinal(house),
       houseTopic,
@@ -231,15 +235,18 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       rulerRef,
       rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()),
       rulerTitle: title(ruler),
+      rulerPossessive,
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
+      rulerHouseJurisdiction,
+      rulerHouseTopic,
       placementLine
     };
     const paras = [
       mustache(cusp, ctx),
       mustache(rulerFrame, ctx),
       mustache(placementFrame, ctx),
-      `${bridgeLead} through ${rulerHouseJurisdiction}.`,
+      `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopic}.`,
       mustache(closeFrame, ctx)
     ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
@@ -1139,12 +1146,56 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29o";
+var PACKAGE_VERSION = "v3-2026-07-29r";
+function stablePackageValue(value) {
+  if (Array.isArray(value)) {
+    return value.map(stablePackageValue);
+  }
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+  return Object.fromEntries(
+    Object.keys(value).filter((key) => key !== "review_status" && key !== "reviewStatus").sort().map((key) => [key, stablePackageValue(value[key])])
+  );
+}
+function packageRowsByKey(rows) {
+  return [...new Map(rows.map((row) => [row.contentKey, row])).values()].sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+}
+function packageHash(value) {
+  const input = JSON.stringify(stablePackageValue(value));
+  const seeds = [2166136261, 2654435769, 2246822507, 3266489909];
+  const hashes = seeds.map((seed) => {
+    let hash = seed >>> 0;
+    for (let index = 0; index < input.length; index += 1) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  });
+  return hashes.join("");
+}
+function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
+  const records = [
+    ...packageRowsByKey(bundle.transitLib.authoredCards).map((row) => ({ bucket: "authored", row })),
+    ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
+    ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
+    ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
+  ];
+  const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
+  return {
+    packageVersion,
+    contentHash: packageHash(records),
+    keyManifestHash: packageHash(keys),
+    keyCount: keys.length,
+    keys
+  };
+}
 export {
   PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
   createFallbackRenderer,
+  createPackageManifest,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
   normalizeAspect
