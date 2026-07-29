@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   PACKAGE_VERSION,
   createFallbackRenderer,
+  createPackageManifest,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
@@ -19,6 +22,7 @@ function readPackageJson(relativePath) {
 const sourceRows = readPackageJson("source-rows/fallback-source-rows-v3.json");
 const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json");
 const templates = readPackageJson("templates/fallback-templates-v3.json");
+const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
@@ -30,7 +34,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29o");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29r");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -44,9 +48,20 @@ const packageRows = [
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
+const expectedNeedsReviewHooks = new Set(
+  ["a", "b", "c", "d", "e", "f"].map((variant) => `fallback-hook/empty-house-ruler-v3/${variant}`)
+);
 assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, 0, "All owner-approved fallback hooks must be reader eligible.");
-assert.equal(needsReviewRows.length, 0, "The package must not retain stale needs_review rows after owner approval.");
+assert.deepEqual(
+  new Set(needsReviewHooks.map((row) => row.contentKey)),
+  expectedNeedsReviewHooks,
+  "Only the six owner-routed V3 M2 drafts may remain needs_review."
+);
+assert.deepEqual(
+  new Set(needsReviewRows.map((row) => row.contentKey)),
+  expectedNeedsReviewHooks,
+  "The package must not retain stale needs_review rows outside the V3 M2 review batch."
+);
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,
@@ -393,6 +408,10 @@ const runtimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
   "utf8"
 );
+const generatedContentSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
+  "utf8"
+);
 
 assert.match(
   appSource,
@@ -551,18 +570,48 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /authoredCards: bundle\.transitLib\.authoredCards\.filter\(isReaderEligible\)/u,
-  "Production must filter review-gated authored cards before creating the dist renderer."
+  /authoredCards: packageRowsWithLatestOverride\(bundle\.transitLib\.authoredCards\)\.filter\(isReaderEligible\)/u,
+  "Production must resolve latest overrides before filtering review-gated authored cards."
 );
 assert.match(
   runtimeSource,
-  /hookRows: \(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
-  "Production must filter review-gated hook variants before creating the dist renderer."
+  /hookRows: packageRowsWithLatestOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
+  "Production must resolve latest overrides before filtering review-gated hook variants."
+);
+assert.match(
+  runtimeSource,
+  /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
+  "Runtime must expose the bundled key manifest and content hash."
+);
+assert.match(
+  generatedContentSource,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  "Dashboard cache payloads must carry an invalidatable schema."
+);
+assert.match(
+  generatedContentSource,
+  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifest\.contentHash/u,
+  "Dashboard cache payloads must be rejected when the bundled content hash changes."
+);
+assert.match(
+  generatedContentSource,
+  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
+);
+assert.match(
+  generatedContentSource,
+  /\.order\("updated_at", \{ ascending: false \}\)[\s\S]*?\.order\("id", \{ ascending: false \}\)/u,
+  "Dashboard hydration pagination must have a stable unique-ID tiebreaker."
+);
+assert.match(
+  generatedContentSource,
+  /package metadata is missing or inconsistent[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
+  "An unversioned or inconsistent dashboard package must clear cache and fail closed to the bundled package."
 );
 
 assert.match(
   dashboardImportSource,
-  /import \{ PACKAGE_VERSION \} from "\.\.\/apps\/web\/src\/content\/fallbackArchitectureV3\/dist\/tldr-content\.js";[\s\S]*?const importBatchId = `fallback-architecture-\$\{PACKAGE_VERSION\}`;/u,
+  /createPackageManifest,[\s\S]*?PACKAGE_VERSION[\s\S]*?const importBatchId = `fallback-architecture-\$\{PACKAGE_VERSION\}`;/u,
   "Dashboard imports must label each mirror from the installed package version."
 );
 assert.match(
@@ -580,5 +629,75 @@ assert.match(
   /const upserted = await upsertRows\(rows\);[\s\S]*?const deleted = await deleteStaleRows\(rows\);/u,
   "Dashboard imports must upsert the new mirror before removing stale provider rows."
 );
+assert.match(
+  dashboardImportSource,
+  /order=content_key\.asc,id\.asc/u,
+  "Dashboard verification pagination must have a unique ID tiebreaker."
+);
+assert.match(
+  dashboardImportSource,
+  /on_conflict=content_key,target_date,mode/u,
+  "Dashboard imports must target the deployed composite identity."
+);
+assert.match(
+  dashboardImportSource,
+  /Dashboard mirror content mismatch/u,
+  "Dashboard verification must compare row content, not counts and keys alone."
+);
+
+const materializerTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-fallback-materializer-"));
+const materializerOutput = path.join(materializerTempDir, "rows.json");
+
+try {
+  execFileSync(process.execPath, [
+    path.join(repoRoot, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),
+    `--out=${materializerOutput}`
+  ]);
+  const materialized = JSON.parse(fs.readFileSync(materializerOutput, "utf8"));
+  const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
+  const isMaterializedReaderRow = (row) => (
+    ["approved", "approved_reuse", "reviewed"].includes(row.source_snapshot.review_status)
+  );
+  const localManifest = createPackageManifest({
+    transitLib: { authoredCards: materialized.rows
+      .filter((row) => row.source_snapshot.contentType === "authored-content" && isMaterializedReaderRow(row))
+      .map((row) => row.sections.packageRecord) },
+    rowsFile: {
+      hookRows: materialized.rows
+        .filter((row) => row.source_snapshot.content_role === "fallback_hook" && isMaterializedReaderRow(row))
+        .map((row) => row.sections.packageRecord),
+      vocabularyRows: materialized.rows
+        .filter((row) => row.source_snapshot.content_role === "vocabulary" && isMaterializedReaderRow(row))
+        .map((row) => row.sections.packageRecord)
+    },
+    templatesFile: {
+      templates: materialized.rows
+        .filter((row) => row.source_snapshot.content_role === "template" && isMaterializedReaderRow(row))
+        .map((row) => row.sections.packageRecord)
+    }
+  }, PACKAGE_VERSION);
+
+  assert.equal(
+    materialized.rows.length,
+    materializedByKey.size,
+    "Dashboard materialization must emit one deterministic row per content key."
+  );
+  assert.deepEqual(
+    materialized.packageManifest,
+    localManifest,
+    "Dashboard materialization must stamp the exact reader package version, key manifest, and content hash."
+  );
+
+  for (const row of placementInterimRows.vocabularyRows) {
+    if (!sourceRows.vocabularyRows.some((sourceRow) => sourceRow.contentKey === row.contentKey)) continue;
+    assert.equal(
+      materializedByKey.get(row.contentKey)?.body,
+      row.body,
+      `${row.contentKey} must retain placement-interim precedence in the dashboard mirror.`
+    );
+  }
+} finally {
+  fs.rmSync(materializerTempDir, { recursive: true, force: true });
+}
 
 console.log("fallback refresh wiring checks passed", counts);

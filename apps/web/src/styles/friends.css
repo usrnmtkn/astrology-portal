@@ -2623,6 +2623,7 @@
 :is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
   border-color: var(--friend-add-chart-modal-dark-border);
   background: var(--friend-add-chart-modal-dark-bg);
+  color-scheme: dark;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
@@ -2679,16 +2680,55 @@
 }
 
 .add-chart-pronoun-option input {
-  accent-color: var(--text);
+  appearance: none;
+  display: grid;
+  place-items: center;
   height: 18px;
   margin: 0;
   width: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-circle);
+  background: var(--control-bg);
+}
+
+.add-chart-pronoun-option input::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-circle);
+  background: var(--ink);
+  transform: scale(0);
+  transition: transform 120ms ease;
+}
+
+.add-chart-pronoun-option input:checked {
+  border-color: var(--ink);
+}
+
+.add-chart-pronoun-option input:checked::before {
+  transform: scale(1);
+}
+
+.add-chart-pronoun-option input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) grayscale(1) brightness(1.55);
+  filter: none;
   opacity: 0.9;
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .add-chart-field > span,
+  .add-chart-field > label > span,
+  .add-chart-city-search label > span,
+  .add-chart-pronouns legend,
+  .add-chart-form .checkbox-row,
+  .add-chart-form .checkbox-row span
+) {
+  color: var(--ink-2);
 }
 
 .add-chart-field select {
@@ -3110,8 +3150,10 @@
   }
 
   .app-shell.mode-friends .friend-view-more-menu {
-    right: auto;
-    left: 0;
+    right: 0;
+    left: auto;
+    width: min(360px, calc(100vw - var(--mobile-page-gutter) * 2));
+    max-width: calc(100vw - var(--mobile-page-gutter) * 2);
   }
 }
 
@@ -3640,7 +3682,7 @@
   min-height: 62px;
   padding: 0 clamp(18px, 2.6vw, 28px);
   border-bottom: 1px solid var(--card-border);
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
 }
 
 .friends-unified-panel > .friends-unified-search-row:first-child {
@@ -3661,13 +3703,13 @@
 }
 
 .friends-unified-search-row input::placeholder {
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
   opacity: 1;
 }
 
 .friends-searching-label {
   flex: 0 0 auto;
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
   font-size: 0.78rem;
   white-space: nowrap;
 }
@@ -3683,7 +3725,7 @@
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
-  color: #5f6670;
+  color: var(--friend-directory-secondary-text);
 }
 
 .friends-search-clear:hover,
@@ -3722,7 +3764,7 @@
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
-  color: #4f5660;
+  color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: var(--weight-medium);
@@ -3744,7 +3786,7 @@
 }
 
 .friends-unified-tab-row.is-searching .friends-unified-tabs > button {
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
 }
 
 .friends-unified-tabs > button.friends-requests-tab {
@@ -3822,7 +3864,7 @@
 .friends-request-group > h2 {
   margin: 0;
   padding: 0 20px;
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: var(--weight-medium);
@@ -3870,7 +3912,7 @@
   width: 30px;
   height: 30px;
   place-items: center;
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
 }
 
 .friends-person-row > .profile-avatar {
@@ -3923,7 +3965,7 @@
 .friends-person-identity small,
 .friends-remove-identity small {
   overflow: hidden;
-  color: #6c737d;
+  color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   text-overflow: ellipsis;
@@ -3941,7 +3983,7 @@
   display: flex;
   gap: 8px;
   overflow: hidden;
-  color: #6c737d;
+  color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.7rem;
   line-height: 1.35;
@@ -4002,7 +4044,7 @@
 
 .friends-unified-panel .social-secondary-button:disabled {
   border-color: #a8adb4;
-  color: #6c737d;
+  color: var(--friend-directory-secondary-text);
 }
 
 .friends-row-text-action {
@@ -4029,7 +4071,7 @@
   padding: 0 12px;
   border: 1px solid var(--control-border);
   border-radius: 999px;
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
   font-size: 0.75rem;
 }
 
@@ -4108,7 +4150,7 @@
 
 .friends-unified-empty p {
   max-width: 540px;
-  color: #656c76;
+  color: var(--friend-directory-subtle-text);
   font-size: 0.85rem;
   line-height: 1.5;
 }
@@ -4214,7 +4256,7 @@
 
 .friends-unified-panel .manual-chart-signatures {
   gap: 5px 10px;
-  color: #6c737d;
+  color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.68rem;
 }

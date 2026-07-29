@@ -84,6 +84,43 @@
   color: var(--muted);
 }
 
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .aspect-row-glyphs,
+  .aspect-row-glyphs .inline-glyph-icon
+) {
+  color: var(--card-title-color);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .aspect-row-glyphs .inline-glyph-icon img {
+  filter: var(--filter-glyph-current);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .aspect-row-copy strong,
+  .aspect-row-copy h3
+) {
+  color: var(--card-title-color);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .aspect-row-copy p,
+  .aspect-row-copy > span:not(.ui-pill)
+) {
+  color: var(--card-body-color);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .aspect-row-meta,
+  .aspect-row-timing
+) {
+  color: var(--card-meta-color);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .aspect-row-dot {
+  background: var(--card-meta-color);
+  opacity: 0.72;
+}
+
 .site-menu,
 .menu-popover,
 .dropdown-popover,

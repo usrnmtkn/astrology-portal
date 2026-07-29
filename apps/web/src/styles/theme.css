@@ -663,6 +663,8 @@
   --friend-avatar-secondary-bg: #e9eefb;
   --friend-avatar-secondary-fg: #171a22;
   --friend-avatar-highlight: rgba(255, 255, 255, 0.16);
+  --friend-directory-secondary-text: var(--ink-2);
+  --friend-directory-subtle-text: color-mix(in srgb, var(--ink-2) 76%, var(--muted));
   --friend-add-chart-modal-dark-border: rgba(255, 255, 255, 0.12);
   --friend-add-chart-modal-dark-bg: color-mix(in srgb, var(--surface) 94%, var(--color-white) 6%);
   --friend-add-chart-close-dark-border: rgba(255, 255, 255, 0.14);

@@ -68,6 +68,9 @@ const OPPOSITE_SIGN: Record<string, string> = { aries: "libra", taurus: "scorpio
 const ASPECT_GROUP: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 const ANGLE_TITLE: Record<string, string> = { ascendant: "Ascendant", midheaven: "Midheaven", descendant: "Descendant", "imum-coeli": "IC" };
 const ORD: Record<number, string> = { 1: "1st", 2: "2nd", 3: "3rd" };
+// V3 M2 mapping: house 2 must use A. The remaining modulo buckets continue
+// alphabetically from there so selection stays stable without randomness.
+const EMPTY_HOUSE_RULER_VARIANT: Record<number, string> = { 2: "a", 3: "b", 4: "c", 5: "d", 0: "e", 1: "f" };
 
 const title = (s: string) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 const ordinal = (n: number) => ORD[n] ?? `${n}th`;
@@ -303,30 +306,41 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const v = voice === "you" ? "you" : "they";
     const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
-    const rulerHouseJurisdiction = rulerHouse ? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts) : null;
+    const rulerHouseJurisdiction = rulerHouse
+      ? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts) : null)
+        ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts)
+      : null;
+    const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null;
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
-    const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts);
+    const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
+    const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts)
+      ?? getHook("fallback-hook/empty-house-ruler", v, opts);
     const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
     const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts);
     const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts) : null;
-    if (!houseTopic || !rulerHouseJurisdiction || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+    if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
     const REF: Record<string, string> = { sun: "the Sun", moon: "the Moon" };
     const rulerRef = REF[ruler] ?? title(ruler);
+    const rulerPossessive = rulerRef.endsWith("s") ? `${rulerRef}'` : `${rulerRef}'s`;
     const ctx: Record<string, string | null> = {
       houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
       rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
+      rulerPossessive,
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
-      rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, placementLine,
+      rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
+      rulerHouseJurisdiction,
+      rulerHouseTopic,
+      placementLine,
     };
     const paras = [
       mustache(cusp, ctx),
       mustache(rulerFrame, ctx),
       mustache(placementFrame, ctx),
-      `${bridgeLead} through ${rulerHouseJurisdiction}.`,
+      `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopic}.`,
       mustache(closeFrame, ctx)
     ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());

@@ -668,6 +668,51 @@
    "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
   },
   {
+   "contentKey": "fallback-vocab/house-jurisdiction-they/1",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "their body, their look, and how they come across",
+   "review_status": "approved",
+   "notes": "Friend-voice empty-house ruler jurisdiction.",
+   "approved_via": "owner blueprint, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-vocab/house-jurisdiction-they/3",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "conversations, errands, and their daily circles",
+   "review_status": "approved",
+   "notes": "Friend-voice empty-house ruler jurisdiction.",
+   "approved_via": "owner blueprint, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-vocab/house-jurisdiction-they/7",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "relationships and the people who match them",
+   "review_status": "approved",
+   "notes": "Friend-voice empty-house ruler jurisdiction.",
+   "approved_via": "owner blueprint, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-vocab/house-jurisdiction-they/11",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "friends, community, and the roles they have outgrown",
+   "review_status": "approved",
+   "notes": "Friend-voice empty-house ruler jurisdiction.",
+   "approved_via": "owner blueprint, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-vocab/house-jurisdiction-they/12",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "rest, privacy, and what they keep to themselves",
+   "review_status": "approved",
+   "notes": "Friend-voice empty-house ruler jurisdiction.",
+   "approved_via": "owner blueprint, chat 2026-07-29"
+  },
+  {
    "contentKey": "fallback-vocab/aspect-adj/conjunction",
    "content_role": "vocabulary",
    "grammar_frame": "adverbial_phrase",
@@ -21681,18 +21726,78 @@
    "contentKey": "fallback-hook/empty-house-ruler",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{rulerRefCap}} rules {{signTitle}}, so what happens in this house is connected to where {{rulerRef}} sits in your chart.",
-   "body_they": "{{rulerRefCap}} rules {{signTitle}}, so what happens in this house is connected to where {{rulerRef}} sits in their chart.",
+   "body_you": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where your {{rulerTitle}} sits: in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where their {{rulerTitle}} sits: in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
    "review_status": "approved",
    "notes": "Empty-house V2 M2: single traditional-ruler handoff. The renderer supplies primaryRuler only.",
    "approved_via": "owner-final empty-house V2, 2026-07-29"
   },
   {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/a",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where your {{rulerTitle}} sits: in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where their {{rulerTitle}} sits: in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant A. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/b",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "{{signTitle}} is ruled by {{rulerRef}}, so this house follows {{rulerPossessive}} lead from {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "{{signTitle}} is ruled by {{rulerRef}}, so this house follows {{rulerPossessive}} lead from {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant B. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/c",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The planet in charge here is {{rulerRef}}, {{signTitle}}'s ruler, and yours sits in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "The planet in charge here is {{rulerRef}}, {{signTitle}}'s ruler, and theirs sits in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant C. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/d",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "{{rulerRefCap}} rules {{signTitle}}, which connects this house to your {{rulerTitle}} in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "{{rulerRefCap}} rules {{signTitle}}, which connects this house to their {{rulerTitle}} in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant D. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/e",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "To read this house, look to {{rulerRef}}, {{signTitle}}'s ruler; yours is in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "To read this house, look to {{rulerRef}}, {{signTitle}}'s ruler; theirs is in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant E. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-ruler-v3/f",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "{{rulerRefCap}} rules {{signTitle}}, so the real activity for this house runs through your {{rulerTitle}} in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "body_they": "{{rulerRefCap}} rules {{signTitle}}, so the real activity for this house runs through their {{rulerTitle}} in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
+   "review_status": "needs_review",
+   "notes": "Empty-house V3 M2 variant F. Deterministically selected from the empty-house number.",
+   "approved_via": ""
+  },
+  {
    "contentKey": "fallback-hook/empty-house-placement",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Your {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}}",
-   "body_they": "Their {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}}",
+   "body_you": "{{placementLine}}",
+   "body_they": "{{placementLine}}",
    "review_status": "approved",
    "notes": "Empty-house M3: ruler placement. The existing dual-voice {{placementLine}} remains untouched.",
    "approved_via": "owner-approved empty-house refinement, 2026-07-29"
@@ -21821,8 +21926,8 @@
    "contentKey": "fallback-hook/empty-house-close",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Timing: You may notice more activity here when a transit reaches {{rulerRef}} or when a current planet moves through your {{houseOrdinal}} house.",
-   "body_they": "Timing: They may notice more activity here when a transit reaches {{rulerRef}} or when a current planet moves through their {{houseOrdinal}} house.",
+   "body_you": "Timing: You may notice more activity here when a transit reaches your {{rulerTitle}} or when a current planet moves through your {{houseOrdinal}} house.",
+   "body_they": "Timing: They may notice more activity here when a transit reaches their {{rulerTitle}} or when a current planet moves through their {{houseOrdinal}} house.",
    "review_status": "approved",
    "notes": "Empty-house V2 M5: labeled timing line without activation drama or a repeated jurisdiction list.",
    "approved_via": "owner-final empty-house V2, 2026-07-29"
