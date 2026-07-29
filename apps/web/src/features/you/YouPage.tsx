@@ -15,6 +15,7 @@ import {
   type NatalAspectPatternsSectionStatus
 } from "./NatalAspectPatternsSection";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
+import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
@@ -85,6 +86,7 @@ export type YouPageProps = {
   bigThreeRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
+  weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
   displayMoon: string;
   displayRising: string;
   displaySun: string;
@@ -102,6 +104,7 @@ export type YouPageProps = {
   natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
+  onRequestWeeklyHoroscope?: () => void;
   onCloseTransitArticle?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
@@ -454,28 +457,135 @@ function YouUpdatesTab({
   aspectRows,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
+  weeklyHoroscopeAssembly,
   hasSavedCurrentCity,
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   onCreateChart,
+  onRequestWeeklyHoroscope,
   standaloneTransitRows = []
 }: {
   aspectRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
+  weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
   hasSavedCurrentCity: boolean;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   onCreateChart: () => void;
+  onRequestWeeklyHoroscope?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
 }) {
+  const [timingView, setTimingView] = useState<"daily" | "weekly">("daily");
+  const changeTimingView = (value: "daily" | "weekly") => {
+    setTimingView(value);
+    if (value === "weekly") onRequestWeeklyHoroscope?.();
+  };
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
   const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
 
+  if (timingView === "weekly") {
+    return (
+      <div className="subpane updates-section weekly-horoscope" id="sub-transits">
+        <SegmentedControl
+          id="you-timing-view"
+          value={timingView}
+          options={[
+            { value: "daily", label: "Daily" },
+            { value: "weekly", label: "Weekly" }
+          ]}
+          onChange={changeTimingView}
+          ariaLabel="Transit timing"
+          className="app-tabs profile-tabs you-timing-tabs"
+        />
+        {!hasSavedCurrentCity ? (
+          <section className="you-empty-card" aria-label="Current city needed">
+            <span>Weekly</span>
+            <h3>Add your current city.</h3>
+            <p>We need your current city to publish your week in local time.</p>
+            <button type="button" onClick={onCreateChart}>Add current city →</button>
+          </section>
+        ) : weeklyHoroscopeAssembly?.status === "error" ? (
+          <section className="you-empty-card" aria-label="Weekly horoscope unavailable">
+            <span>Weekly</span>
+            <h3>Your week is not available yet.</h3>
+            <p>We could not calculate this week. Try again in a moment.</p>
+          </section>
+        ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
+          <section className="weekly-horoscope__loading" aria-label="Loading weekly horoscope">
+            <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
+          </section>
+        ) : (
+          <>
+            <header className="weekly-horoscope__header">
+              <div>
+                <span className="eyebrow section-label">Your week</span>
+                <h2>
+                  {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekStart}T12:00:00Z`))}
+                  {" – "}
+                  {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekEnd}T12:00:00Z`))}
+                </h2>
+              </div>
+              <span className="weekly-horoscope__chip ui-pill ui-pill--neutral">{weeklyHoroscopeAssembly.chip}</span>
+            </header>
+            {weeklyHoroscopeAssembly.opener ? (
+              <article className="weekly-horoscope__opener daily-horoscope-summary">
+                <h3>{weeklyHoroscopeAssembly.opener.headline}</h3>
+                {weeklyHoroscopeAssembly.opener.body
+                  .split(/\n{2,}/)
+                  .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </article>
+            ) : null}
+            {weeklyHoroscopeAssembly.sections.map((section) => (
+              <article
+                className={`weekly-horoscope__event daily-horoscope-summary${section.accented ? " is-accented" : ""}`}
+                key={section.unit}
+              >
+                <div className="weekly-horoscope__event-meta">
+                  <span className="eyebrow section-label">{section.dayLabel}</span>
+                  {section.tag ? <span className="ui-pill ui-pill--neutral">{section.tag}</span> : null}
+                </div>
+                {section.macro ? (
+                  <div className="weekly-horoscope__macro">
+                    <h3>{section.macro.headline}</h3>
+                    {section.macro.body
+                      .split(/\n{2,}/)
+                      .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  </div>
+                ) : null}
+                <h3>{section.headline}</h3>
+                {section.body
+                  .split(/\n{2,}/)
+                  .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </article>
+            ))}
+            {weeklyHoroscopeAssembly.background ? (
+              <article className="weekly-horoscope__background daily-horoscope-summary">
+                <span className="eyebrow section-label">In the background</span>
+                <p>{weeklyHoroscopeAssembly.background}</p>
+              </article>
+            ) : null}
+          </>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="subpane updates-section" id="sub-transits">
+      <SegmentedControl
+        id="you-timing-view"
+        value={timingView}
+        options={[
+          { value: "daily", label: "Daily" },
+          { value: "weekly", label: "Weekly" }
+        ]}
+        onChange={changeTimingView}
+        ariaLabel="Transit timing"
+        className="app-tabs profile-tabs you-timing-tabs"
+      />
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -945,6 +1055,7 @@ export function YouPage({
   bigThreeRows,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
+  weeklyHoroscopeAssembly,
   displayMoon,
   displayRising,
   displaySun,
@@ -962,6 +1073,7 @@ export function YouPage({
   natalChartPending,
   updatesChart,
   onCreateChart,
+  onRequestWeeklyHoroscope,
   onCloseTransitArticle,
   personalTimingSummary,
   planetRows,
@@ -1065,10 +1177,12 @@ export function YouPage({
               aspectRows={aspectRows}
               dailyHoroscopeAssembly={dailyHoroscopeAssembly}
               dailyUpdateSummary={dailyUpdateSummary}
+              weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
               hasSavedCurrentCity={hasSavedCurrentCity}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
               onCreateChart={onCreateChart}
+              onRequestWeeklyHoroscope={onRequestWeeklyHoroscope}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
             />
