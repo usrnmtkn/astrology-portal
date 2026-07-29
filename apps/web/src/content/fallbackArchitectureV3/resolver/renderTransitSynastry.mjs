@@ -682,12 +682,12 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
-const SKY_PLACEMENT_ASPECT_INTERACTION = {
-  conjunction: "amplify each other",
-  square: "push against each other",
-  opposition: "pull from opposite ends",
-  trine: "work together with less friction",
-  sextile: "open a workable route between them"
+const SKY_PLACEMENT_ASPECT_FRAME = {
+  conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
+  square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
+  opposition: (aRef, bRef, timing) => `${aRef} and ${bRef} pull from opposite ends${timing.exact ? `, strongest on ${timing.label}` : ` ${timing.label}`}.`,
+  trine: (aRef, bRef, timing) => `${aRef} and ${bRef} work together with less friction${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`,
+  sextile: (aRef, bRef, timing) => `${aRef} and ${bRef} open a workable route between them${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`
 };
 
 function capitalizeSentence(value) {
@@ -697,17 +697,35 @@ function capitalizeSentence(value) {
 function skyPlacementAspectParagraph(placementPlanet, ev) {
   if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
   const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+  const isFullMoon = ev.aspect === "opposition" && new Set([ev.a, ev.b]).size === 2
+    && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
+  const moonSign = ev.a === "moon" ? ev.aSign : ev.b === "moon" ? ev.bSign : null;
+  const sunSign = ev.a === "sun" ? ev.aSign : ev.b === "sun" ? ev.bSign : null;
+  const fullMoonSpecific = isFullMoon && moonSign
+    ? hooks.get(`fallback-hook/sky-placement-aspect/sun/moon/opposition/${moonSign}`)?.body_you
+    : null;
+  if (fullMoonSpecific) {
+    if (!sunSign || !ev.exactDate) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon facts");
+    const fullMoonBody = fillKeep(fullMoonSpecific, {
+      moonSignTitle: title(moonSign),
+      sunSignTitle: title(sunSign),
+      exactDate: ev.exactDate
+    });
+    if (/\{\{/.test(fullMoonBody)) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon slots");
+    return fullMoonBody;
+  }
   const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
     ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
-  const aRef = transitRef(ev.a, ev.aSign);
+  const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
   const bRef = transitRef(ev.b, ev.bSign);
-  const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction"
-    ? "amplify momentum"
-    : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+  const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
   const timing = ev.exactDate
-    ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}`
-    : ev.dateLine ?? "In the current aspect window";
-  const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+    ? { exact: true, label: ev.exactDate }
+    : ev.dateLine
+      ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) }
+      : null;
+  if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
+  const fact = frame(aRef, bRef, timing);
   const effect = specific ?? pairEffect(ev);
   if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
   return `${fact} ${capitalizeSentence(effect)}`.trim();
@@ -716,11 +734,17 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
 // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
 // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
 // Computed aspect facts follow the evergreen article. ----
-export function renderSkyPlacement({ planet, sign, events = [] }) {
+export function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }) {
   const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
+  const retrogradeGuidance = isRetrograde
+    ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
+    : null;
+  if (isRetrograde && !retrogradeGuidance) {
+    throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
+  }
   const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
   if (authoredArticle) {
-    const parts = [authoredArticle.body, ...aspectParas].filter(Boolean);
+    const parts = [authoredArticle.body, retrogradeGuidance, ...aspectParas].filter(Boolean);
     return {
       headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
       body: parts.join("\n\n"),
@@ -739,7 +763,7 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
     .map((move) => move.trim())
     .filter(Boolean);
   if (pairHook && pairLived && pairTurn) {
-    const parts = [pairHook, pairLived, pairTurn, ...aspectParas];
+    const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline,
@@ -778,7 +802,10 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
   }
   const baseBody = fillKeep(template.body, templateCtx);
   if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-  const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+  const baseParts = baseBody.split(/\n{2,}/u).filter(Boolean);
+  const parts = retrogradeGuidance
+    ? [...baseParts.slice(0, -1), retrogradeGuidance, ...baseParts.slice(-1), ...aspectParas]
+    : [...baseParts, ...aspectParas];
   return {
     headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
     body: parts.join("\n\n"),

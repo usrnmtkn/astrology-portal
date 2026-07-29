@@ -57,7 +57,13 @@ export interface SynastryAspectFacts { planetA: string; planetB: string; aspect:
 export interface SkyEvent { type: string; a?: string; b?: string; aspect?: string; sign?: string; aSign?: string; bSign?: string; houseA?: number; houseB?: number; dateLine?: string; exactDate?: string; applying?: boolean }
 export interface SkySeasonFacts { sign: string; events?: SkyEvent[] }
 export interface SkyHoroscopeFacts { risingSign: string; events?: SkyEvent[] }
-export interface SkyPlacementFacts { planet: string; sign: string; events?: SkyEvent[]; egressDate?: string | null }
+export interface SkyPlacementFacts {
+  planet: string;
+  sign: string;
+  events?: SkyEvent[];
+  egressDate?: string | null;
+  isRetrograde?: boolean;
+}
 export interface CircleMember { name?: string | null; body?: string; isReader?: boolean }
 export interface CircleStoryFacts {
   trigger: "profection" | "lunation" | "retro" | "return" | "synastry";
@@ -669,12 +675,13 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     return { headline: `${title(risingSign)} & ${title(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
   }
 
-  const SKY_PLACEMENT_ASPECT_INTERACTION: Record<string, string> = {
-    conjunction: "amplify each other",
-    square: "push against each other",
-    opposition: "pull from opposite ends",
-    trine: "work together with less friction",
-    sextile: "open a workable route between them"
+  type SkyPlacementAspectTiming = { exact: boolean; label: string };
+  const SKY_PLACEMENT_ASPECT_FRAME: Record<string, (aRef: string, bRef: string, timing: SkyPlacementAspectTiming) => string> = {
+    conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
+    square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
+    opposition: (aRef, bRef, timing) => `${aRef} and ${bRef} pull from opposite ends${timing.exact ? `, strongest on ${timing.label}` : ` ${timing.label}`}.`,
+    trine: (aRef, bRef, timing) => `${aRef} and ${bRef} work together with less friction${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`,
+    sextile: (aRef, bRef, timing) => `${aRef} and ${bRef} open a workable route between them${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`
   };
 
   function capitalizeSentence(value: string | null | undefined): string {
@@ -684,17 +691,35 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   function skyPlacementAspectParagraph(placementPlanet: string, ev: SkyEvent): string {
     if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
     const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+    const isFullMoon = ev.aspect === "opposition" && new Set([ev.a, ev.b]).size === 2
+      && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
+    const moonSign = ev.a === "moon" ? ev.aSign : ev.b === "moon" ? ev.bSign : null;
+    const sunSign = ev.a === "sun" ? ev.aSign : ev.b === "sun" ? ev.bSign : null;
+    const fullMoonSpecific = isFullMoon && moonSign
+      ? hooks.get(`fallback-hook/sky-placement-aspect/sun/moon/opposition/${moonSign}`)?.body_you
+      : null;
+    if (fullMoonSpecific) {
+      if (!sunSign || !ev.exactDate) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon facts");
+      const fullMoonBody = fillKeep(fullMoonSpecific, {
+        moonSignTitle: title(moonSign),
+        sunSignTitle: title(sunSign),
+        exactDate: ev.exactDate
+      });
+      if (/\{\{/.test(fullMoonBody)) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon slots");
+      return fullMoonBody;
+    }
     const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
       ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
-    const aRef = transitRef(ev.a, ev.aSign);
+    const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
     const bRef = transitRef(ev.b, ev.bSign);
-    const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction"
-      ? "amplify momentum"
-      : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+    const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
     const timing = ev.exactDate
-      ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}`
-      : ev.dateLine ?? "In the current aspect window";
-    const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+      ? { exact: true, label: ev.exactDate }
+      : ev.dateLine
+        ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) }
+        : null;
+    if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
+    const fact = frame(aRef, bRef, timing);
     const effect = specific ?? pairEffectOf(ev);
     if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
@@ -703,11 +728,18 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
   // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
   // Computed aspect facts follow the evergreen article. ----
-  function renderSkyPlacement({ planet, sign, events = [] }: SkyPlacementFacts): TransitRenderResult {
+  function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }: SkyPlacementFacts): TransitRenderResult {
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
+    const retrogradeGuidance = isRetrograde
+      ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
+      : null;
+    if (isRetrograde && !retrogradeGuidance) {
+      throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
+    }
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) {
-      const parts = [authoredArticle.body, ...aspectParas].filter((part): part is string => Boolean(part));
+      const parts = [authoredArticle.body, retrogradeGuidance, ...aspectParas]
+        .filter((part): part is string => Boolean(part));
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
         body: parts.join("\n\n"),
@@ -726,7 +758,8 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
       .map((move) => move.trim())
       .filter(Boolean);
     if (pairHook && pairLived && pairTurn) {
-      const parts = [pairHook, pairLived, pairTurn, ...aspectParas];
+      const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas]
+        .filter((part): part is string => Boolean(part));
       return {
         headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
         tagline,
@@ -764,7 +797,10 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     }
     const baseBody = fillKeep(template.body, templateCtx);
     if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-    const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+    const baseParts = baseBody.split(/\n{2,}/u).filter(Boolean);
+    const parts = retrogradeGuidance
+      ? [...baseParts.slice(0, -1), retrogradeGuidance, ...baseParts.slice(-1), ...aspectParas]
+      : [...baseParts, ...aspectParas];
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       body: parts.join("\n\n"),

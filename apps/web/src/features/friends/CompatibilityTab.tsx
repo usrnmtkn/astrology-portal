@@ -273,8 +273,10 @@ export function CompatibilityTab({
                         <span className="aspect-row-copy">
                           <h4>{dynamic.title}</h4>
                           <p>{dynamic.summary}</p>
+                          <span className="aspect-row-subtitle ui-pill ui-pill--muted compatibility-dynamic-row__tag">
+                            {dynamic.meta}
+                          </span>
                         </span>
-                        <span className="aspect-row-meta">{dynamic.meta}</span>
                       </article>
                     ))}
                   </div>

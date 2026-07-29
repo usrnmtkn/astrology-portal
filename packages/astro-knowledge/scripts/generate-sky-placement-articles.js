@@ -133,8 +133,8 @@ const renderTrio = (e) => {
   return lines.join("\n");
 };
 
-// The approved trios predate the tagline/moves slots, so the shape of those two
-// is taught from the spec's marked shape illustrations instead.
+// Canonical exemplars now teach complete five-slot articles. These marked shape
+// illustrations remain supplemental reminders, not substitutes for gold copy.
 function extendedShapeExamples() {
   const byBeat = Object.fromEntries((spec.shape.extendedSlots || []).map((s) => [s.beat, s.shapeExamples || []]));
   return [
