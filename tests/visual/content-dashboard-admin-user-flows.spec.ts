@@ -608,11 +608,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     const writes: { method: string; payload: Record<string, unknown> }[] = [];
 
     const createCases = [
-      { action: "Create article", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
-      { action: "Create content row", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
-      { action: "Create reusable phrase", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
-      { action: "Create template", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-      { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
+      { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
+      { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
+      { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
+      { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
+      { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
     ];
 
     for (const createCase of createCases) {
@@ -623,13 +623,11 @@ test.describe("content dashboard admin user flow case studies", () => {
           writes.push(write);
         }
       });
-      await openAdminCreateMenuHost(page);
+      await expectAdminRouteLoads(page, `/admin/content#${createCase.hash}`);
       await openCreateMenu(page);
       const createAction = page.getByRole("menuitem", { name: createCase.action });
       await expect(createAction).toBeVisible();
-      await createAction.evaluate((element) => {
-        (element as HTMLButtonElement).click();
-      });
+      await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
