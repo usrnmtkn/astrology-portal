@@ -1,0 +1,249 @@
+{
+  "id": "tldr-astro.voice.sky-placement.v1",
+  "surface": "sky",
+  "mode": "placement-article",
+  "purpose": "Output-level voice contract for the sky placement (planet-in-sign) articles on /#sky/placement. Implements apps/web/src/content/sky-writing/TLDR-Sky-Article-Spec.md as machine-usable rules. Applies to RENDERED article copy in the three slots (hook / lived / turn), not to source meaning in data/. Enforced by scripts/lint-placement-voice.js; taste enforced by scripts/judge-placement-voice.js.",
+
+  "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. It is allowed to sound written: a strange, exact phrase beats a complete but forgettable explanation.",
+
+  "person": "mixed-collective-and-direct",
+  "secondPersonAllowed": true,
+  "firstPersonPluralAllowed": true,
+  "personNote": "This surface mixes collective 'we' with a direct 'you' when the line earns it (unlike the collective aspect cards, where 'you' is banned). The hook often addresses 'you' directly; the lived beat usually widens to 'we'; the turn may do either. Never a floating two-person vignette.",
+
+  "punctuation": {
+    "emDash": "The em dash is banned. Use a spaced hyphen ' - ' or restructure.",
+    "example": "Build from the inside out and people notice."
+  },
+
+  "articleStructure": {
+    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - a 2-5 word imperative under the title ('the sendable sticky note'); (2) WHEN - the computed date range from ephemeris, never generated; (3) TAKEAWAY - the hook beat doubles as CHANI's Takeaway block; (4) LIVED - the body with pace; (5) TURN - the confrontation; (6) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence (CHANI's 'ways to work with' list, cut from 7 to the best 2-3); (7) COMPUTED EVENTS - dated aspects/lunations during the transit render in their own blocks BELOW the article, from ephemeris only. CHANI's 'last time this happened' history section is EXCLUDED: it requires sourced historical claims we do not have, and the falsifiability rule forbids generating them.",
+    "generatedSlots": ["tagline", "hook", "lived", "turn", "moves"],
+    "computedSlots": ["date range", "current aspects", "lunations/eclipses during transit"],
+    "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
+    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test."
+  },
+
+  "shape": {
+    "note": "The three authored beats at the article's core, rendered into three content slots. An authored planet-sign trio always wins over the per-planet fallback. Optional current-aspect line is COMPUTED at runtime and appended below the article; it is never generated here and never carries invented dates.",
+    "beats": [
+      {
+        "n": 1,
+        "slot": "sky-placement-hook/{planet}/{sign}",
+        "beat": "hook",
+        "does": "The line someone would remember or send to a friend. 1-3 short sentences. Start on tension, recognition, or a sharp claim. Name the transit only after the human situation is clear when possible.",
+        "example": "You've been running on autopilot through a version of yourself that needs updating."
+      },
+      {
+        "n": 2,
+        "slot": "sky-placement-lived/{planet}/{sign}",
+        "beat": "lived expression",
+        "does": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list.",
+        "example": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem."
+      },
+      {
+        "n": 3,
+        "slot": "sky-placement-turn/{planet}/{sign}",
+        "beat": "turn",
+        "does": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. A directive is allowed when it is specific. End on the line with the most bite; no blessing or soft summary after it.",
+        "example": "Try to be needed instead of loved and you'll end up neither."
+      }
+    ],
+    "extendedSlots": [
+      {
+        "slot": "sky-placement-tagline/{planet}/{sign}",
+        "beat": "tagline",
+        "does": "2-5 word imperative or sharp claim rendered under the article title. No terminal period. Structural model: CHANI's handwritten tagline; voice is OURS.",
+        "shapeExamples": ["Get seen on purpose", "Feelings become a to-do list", "Say the tender thing"],
+        "shapeExamplesNote": "Shape illustrations only, NOT owner-approved copy. Do not ship without review."
+      },
+      {
+        "slot": "sky-placement-moves/{planet}/{sign}",
+        "beat": "moves",
+        "does": "2-3 concrete ways to work with the transit, one sentence each, rendered as a short list after the turn. Each move must be specific enough to fail on the wrong placement.",
+        "shapeExamples": ["Put one unfinished thing you are proud of where somebody can see it this week.", "Give credit out loud to the person who has been waiting for it."],
+        "shapeExamplesNote": "Shape illustrations only, NOT owner-approved copy. Do not ship without review."
+      }
+    ]
+  },
+
+  "pace": {
+    "note": "Approximate sign-transit duration per planet, phrased the way the exemplars phrase it. The article must land the pace somewhere (usually the lived beat); the linter checks article-wide and only advises.",
+    "labels": {
+      "moon": "about two and a half days",
+      "sun": "about a month",
+      "mercury": "a few weeks",
+      "venus": "about four weeks",
+      "mars": "about six or seven weeks",
+      "jupiter": "about a year",
+      "saturn": "about two and a half years",
+      "uranus": "about seven years",
+      "neptune": "about fourteen years",
+      "pluto": "about twenty years",
+      "chiron": "years in a sign, four to nine depending on the stretch",
+      "north-node": "about eighteen months",
+      "south-node": "about eighteen months",
+      "lilith": "about nine months"
+    }
+  },
+
+  "planetTierRegister": {
+    "note": "Register scales with planet speed. Fast placements read like a passing mood; slow ones read like an era. A generational placement is legitimately more sweeping; a Moon placement that sounds like an era is overreach.",
+    "tiers": {
+      "luminary": ["sun", "moon"],
+      "personal": ["mercury", "venus", "mars"],
+      "social": ["jupiter", "saturn", "north-node", "south-node", "lilith"],
+      "generational": ["uranus", "neptune", "pluto", "chiron"]
+    },
+    "hints": {
+      "luminary": "felt, immediate, day-to-month scale; concrete micro-moments",
+      "personal": "the mind, worth, and drive over weeks; still concrete and personal",
+      "social": "commitments, structures, and story arcs over a year or two; may address groups and institutions",
+      "generational": "a shared era; a whole generation carries it together. World-scale claims are allowed; daily micro-moments still ground it."
+    }
+  },
+
+  "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
+
+  "conditionalBans": [
+    {
+      "term": "steady",
+      "requiresBefore": ["stable", "strong", "solid"],
+      "reason": "'steady' is only allowed when 'stable', 'strong', or 'solid' appears before it; otherwise use calm, solid, grounded, or sure."
+    }
+  ],
+
+  "outputBans": {
+    "fail": [
+      {"term": "—", "reason": "em dash banned everywhere"},
+      {"term": "for everyone at once", "reason": "retired sky-event frame; never on this surface"},
+      {"term": "wishing you", "reason": "retired kumbaya sign-off"},
+      {"term": "this energy", "reason": "owner ban; name the actual behavior"},
+      {"term": "right now", "reason": "owner ban on this surface; the pace line carries the timing"},
+      {"term": "\\b(ruled by|rules the sign|rulership|its ruler|traditional ruler|modern ruler|ruling planet)\\b", "reason": "sign lore stays out of the article body ('a fickle ruler' as metaphor is fine; rulership talk is not)"},
+      {"term": "\\b(cardinal|mutable|fixed) (sign|energy|mode)\\b", "reason": "modality is lore, not article body"},
+      {"term": "\\b(fire|earth|air|water) sign\\b", "reason": "element as label is lore; element may only be felt in imagery"},
+      {"term": "\\bzodiac\\b", "reason": "encyclopedia register"},
+      {"term": "\\b(equinox|solstice)\\b", "reason": "season history is lore, not article body"},
+      {"term": "hold space", "reason": "mystical cliche"},
+      {"term": "step into your power", "reason": "mystical cliche"},
+      {"term": "delve", "reason": "AI tell"},
+      {"term": "holistic", "reason": "AI tell"},
+      {"term": "landscape", "reason": "AI tell"},
+      {"term": "leverage", "reason": "owner ban; use hold, pull, advantage"},
+      {"term": "facilitat", "reason": "owner ban; use make the most of, help along"},
+      {"term": "engine", "reason": "owner ban (no motor metaphors)"},
+      {"term": "alignment", "reason": "owner ban"},
+      {"term": "unsettle", "reason": "owner ban; use upsets"},
+      {"term": "roam", "reason": "owner ban"},
+      {"term": "\\bviral\\b", "reason": "generic tic"},
+      {"term": "cosmic", "reason": "mystical filler on this surface"},
+      {"term": "the universe", "reason": "mystical filler on this surface"},
+      {"term": "trust the process", "reason": "generic coaching; a move must be doable and placement-specific"},
+      {"term": "coffee order", "reason": "spec illustration leaked into 18/35 first-batch drafts; invent fresh evidence"},
+      {"term": "\\bunsent\\b", "reason": "spec illustration leaked into 9/35 first-batch drafts; invent fresh evidence"},
+      {"term": "overfilled calendar", "reason": "spec illustration; invent fresh evidence"},
+      {"term": "you catch yourself", "reason": "crutch hook opener (14/35 first-batch drafts); vary the hook form"},
+      {"term": "you find yourself", "reason": "crutch hook opener; vary the hook form"},
+      {"term": "group chat", "reason": "overused modern object (also removed from the aspect phrase bank)"},
+      {"term": "embrace the", "reason": "generic coaching verb; name the actual action"},
+      {"term": "\\bmanifest(s|ing|ation)?\\b", "reason": "manifestation register banned on this surface"}
+    ],
+    "warn": [
+      {"term": "\\bsettl(e|es|ing)\\b(?! for)", "reason": "'settle' as advice/state is on the old-surface watch list; idiomatic 'settle for' is fine"},
+      {"term": "\\bnot [a-z]+ but\\b", "reason": "the not-X-but-Y reframe formula"},
+      {"term": "\\breveals?\\b", "reason": "old-surface watch word; prefer shows, exposes"},
+      {"term": "the situation", "reason": "vague; name it"},
+      {"term": "stakeholders|rollout|deliverable", "reason": "corporate register; only for genuinely structural placements (2nd/8th-house style money-and-power material)"},
+      {"term": "journey", "reason": "coaching register"},
+      {"term": "invit(es|ation|ing) (you|us)", "reason": "horoscope filler ('invites you to')"}
+    ]
+  },
+
+  "humanJudgment": [
+    "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
+    "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
+    "One close with bite. A directive is allowed when specific; motivational recap never.",
+    "Vague 'things' as filler is off; idiomatic use ('handle the thing', 'get things done') is fine.",
+    "'heal' language is earned only where the placement is literally about a wound (Chiron); elsewhere it is coaching register. Judge concern, not regex.",
+    "A labeled 'The gift is X; the shadow is Y' seam reads as template and should be woven into behavior instead. A single 'The shadow is...' opener on a generational turn is allowed (see the Pluto exemplar). Judge concern, not regex."
+  ],
+
+  "exemplars": [
+    {
+      "sourceId": "sky-placement-sun-leo",
+      "planet": "sun",
+      "sign": "leo",
+      "tier": "luminary",
+      "canonical": true,
+      "hook": "Nobody claps for the thing you never show them. The Sun's move into Leo turns the lights on: a month of wanting to be seen doing it, not just having done it.",
+      "hookVariants": [
+        "You've gotten good at being in the background of your own life. The Sun's month in Leo argues with that.",
+        "There's a difference between being humble and hiding. The Sun in Leo spends a month pressing on it."
+      ],
+      "hookNote": "Hook + variants owner-approved 2026-07-27, replacing the earlier 'running on autopilot' hook. Variants are approved alternates for rotation or future use.",
+      "lived": "For about a month, warmth, nerve, and the urge to make something with our name on it run hotter. We want to be looked at doing the thing we are proud of, not just to have done it. Confidence comes cleanest when it has something generous to point at: a project, a person, or a cause worth making visible.",
+      "turn": "The catch is that Leo measures by applause, and applause is a fickle ruler. The same heat that makes us bold can make us touchy about credit, quick to put on a show, and slow to stay when somebody else has the spotlight. Build from the inside out and people notice. Chase the clout directly and you'll just watch it land on somebody else."
+    },
+    {
+      "sourceId": "sky-placement-moon-capricorn",
+      "planet": "moon",
+      "sign": "capricorn",
+      "tier": "luminary",
+      "canonical": true,
+      "hook": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
+      "lived": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
+      "turn": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is yours to do, then let yourself be human off the clock."
+    },
+    {
+      "sourceId": "sky-placement-mercury-cancer",
+      "planet": "mercury",
+      "sign": "cancer",
+      "tier": "personal",
+      "canonical": true,
+      "hook": "You already know the conversation you have been avoiding. Mercury's move into Cancer changes the voice in the room: thinking and talking turn protective, intuitive, and feeling-led, and words that would not come before may come easier now. Say the thing while the channel is open.",
+      "lived": "For the next few weeks, memory sits in on every conversation. We hear the tone behind the words, remember how the last version went, and decide what feels true before we can explain why. The right sentence can reach somebody here because it sounds like a person, not a press release.",
+      "turn": "The catch is speaking in hints and resenting people for missing them. Sensitivity can make the message kinder, or it can make the message impossible to find. Say what happened, say what you need, and leave the scavenger hunt out of it."
+    },
+    {
+      "sourceId": "sky-placement-venus-virgo",
+      "planet": "venus",
+      "sign": "virgo",
+      "tier": "personal",
+      "canonical": true,
+      "hook": "You've been calling it picky, but it is really your taste getting clearer. Venus in Virgo turns attraction practical. Let yourself want what you actually want, not what photographs well.",
+      "lived": "For about four weeks, affection, taste, and money all bend toward the useful: the gesture that actually helps over the grand one, the person who remembers how we take our coffee over the one who performs romance. Venus here reads love as attention, clocking what someone needs before they ask and quietly handling it.",
+      "turn": "Push practical love too far and it curdles: help hardens into control, and care shows up as a list of corrections. We start loving people by fixing them, or earning our keep by staying useful until there is nothing left over. Care lands best with no invoice attached. Try to be needed instead of loved and you'll end up neither."
+    },
+    {
+      "sourceId": "sky-placement-moon-scorpio",
+      "planet": "moon",
+      "sign": "scorpio",
+      "tier": "luminary",
+      "canonical": true,
+      "hook": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
+      "lived": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
+      "turn": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest."
+    },
+    {
+      "sourceId": "sky-placement-chiron-aries",
+      "planet": "chiron",
+      "sign": "aries",
+      "tier": "generational",
+      "canonical": true,
+      "hook": "The old doubt about being allowed to go first gets loud again. Chiron in Aries presses on the right to want things, take up space, and act without attaching a written apology.",
+      "lived": "Chiron sits in a sign for years, so a whole generation carries this tender spot together. We see it in whose anger is allowed, who gets called selfish, and what happens when somebody finally stops asking permission.",
+      "turn": "The wound shows up two ways: freezing when it is time to assert, or overcorrecting into aggression to cover the freeze. Both are the same bruise. You don't heal the fear of being too much by staying small. You heal it by taking up room and surviving the discomfort."
+    },
+    {
+      "sourceId": "sky-placement-pluto-aquarius",
+      "planet": "pluto",
+      "sign": "aquarius",
+      "tier": "generational",
+      "canonical": true,
+      "hook": "Some structures do not reform; they compost. Pluto in Aquarius is taking apart the arrangements that stopped serving anyone and growing something stranger in their place.",
+      "lived": "Pluto takes about twenty years to cross a sign, so this is an era, not a mood. In Aquarius it goes to work on power itself: who holds it, who it runs through, and how much of it now lives in networks, machines, and crowds instead of a few hands at the top. The systems we treat as permanent are exactly the ones being quietly rebuilt.",
+      "turn": "The shadow is the group that swallows the person: control dressed up as progress, the crowd deciding it speaks for everyone. Pluto keeps exposing which shared structures serve the many and which only claim to. You do not get to opt out of an era this size. You only get to decide what you are helping to build inside it."
+    }
+  ]
+}

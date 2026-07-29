@@ -41,6 +41,31 @@ const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you 
   .replaceAll("{{holder2Poss}}", "Alisa's")
   .concat(".");
 
+async function selectFriendDetailTab(
+  page: Page,
+  name: "Compatibility" | "Transits" | "Natal" | "Synastry" | "Composite"
+) {
+  if (name === "Synastry" || name === "Composite") {
+    const option = page.getByRole("menuitemradio", { name: new RegExp(`^${name}`) });
+
+    if (!await option.isVisible().catch(() => false)) {
+      await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    }
+
+    await option.click();
+    return;
+  }
+
+  await page.getByRole("tab", { name, exact: true }).click();
+}
+
+async function selectYouNatalTab(page: Page) {
+  const natalTab = page.getByRole("tab", { name: "Natal Chart" });
+
+  await natalTab.click();
+  await expect(natalTab).toHaveAttribute("aria-selected", "true");
+}
+
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   const requestedNow = options.now ?? fixedNow;
 
@@ -240,7 +265,7 @@ async function expectNoClientErrors(page: Page) {
 async function expectClientRouteLoads(page: Page, route: string) {
   await expectRouteLoadsWithin(page, route, `client route ${route}`, async () => {
     await expect(page.locator("#root")).toBeVisible({ timeout: routeReadyTimeoutMs });
-    await expect(page.getByText("TLDR Astro").first()).toBeVisible({
+    await expect(page.locator("main.app-shell")).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
   });
@@ -804,6 +829,42 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
 
+async function expectAspectInspector(
+  wheel: ReturnType<Page["locator"]>,
+  label: string,
+  pointId?: string
+) {
+  await expect(wheel, `${label} is visible`).toBeVisible();
+
+  let resolvedPointId = pointId;
+
+  if (!resolvedPointId) {
+    const configuredLine = wheel.locator("[data-from-point-id][data-to-point-id]").first();
+    const configuredLineCount = await configuredLine.count();
+
+    if (configuredLineCount > 0) {
+      resolvedPointId = await configuredLine.getAttribute("data-from-point-id") ?? undefined;
+    } else {
+      const configuredPoint = wheel.locator('.aspect-inspector-point[data-inspector-point-id][aria-label*=" orb)"]').first();
+
+      await expect(configuredPoint, `${label} has a configured aspect to inspect`).toBeAttached();
+      resolvedPointId = await configuredPoint.getAttribute("data-inspector-point-id") ?? undefined;
+    }
+  }
+
+  expect(resolvedPointId, `${label} exposes an inspector point id`).toBeTruthy();
+  const point = wheel.locator(`[data-inspector-point-id="${resolvedPointId}"]`);
+
+  await expect(point, `${label} exposes the selected aspect point`).toHaveCount(1);
+  await point.click();
+  await expect(point, `${label} marks the selected point`).toHaveClass(/aspect-inspector-point--selected/);
+  await expect(wheel.locator(".aspect-inspector-summary"), `${label} opens an inspector summary`).toBeVisible();
+  await expect(wheel.locator(".aspect-inspector-line"), `${label} highlights at least one configured aspect`).not.toHaveCount(0);
+
+  await point.press("Enter");
+  await expect(wheel.locator(".aspect-inspector-summary"), `${label} closes from the keyboard`).toHaveCount(0);
+}
+
 test.describe("client-facing user flow case studies", () => {
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
@@ -815,6 +876,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
     await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible();
+    await expectAspectInspector(
+      page.getByRole("region", { name: "Current sky" }),
+      "Current sky wheel"
+    );
 
     const firstPlacement = page.locator(".sky-pl-item button").first();
     await expect(firstPlacement).toBeVisible();
@@ -877,13 +942,12 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(page.getByLabel("Profile summary")).toBeVisible();
     await expect(page.getByText("Marie Satori")).toBeVisible();
-    await expect(page.getByLabel(/Natal placements|Bodies in signs and houses/)).toBeVisible();
     await expect(
       page.locator(".soul-roadmap-card, .career-archetype-card"),
       "Soul's Path and Career Directions stay hidden from the personal chart"
     ).toHaveCount(0);
 
-    const updatesTab = page.getByRole("tab", { name: /updates/i });
+    const updatesTab = page.getByRole("tab", { name: /updates|transits/i });
     if (await updatesTab.isVisible()) {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
@@ -895,20 +959,42 @@ test.describe("client-facing user flow case studies", () => {
       const houseTransitKeywords = houseTransitCard
         .getByLabel("House keywords")
         .locator(".house-transit-keyword");
+      await expect(
+        houseTransitCard.locator(".planet-placement-row__duration"),
+        "House transit timing uses the compact duration format"
+      ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
+      await expect(
+        houseTransitCard.locator(".house-transit-term-tag"),
+        "The term classification moves into the footer tags"
+      ).toHaveText(/^(?:Short-term|Long-term)$/);
+      await expect(
+        houseTransitCard.locator(".house-transit-term-tag"),
+        "The term classification tag has no outline"
+      ).toHaveCSS("border-top-width", "0px");
       await expect(houseTransitKeywords.first()).toBeVisible();
       await expect(
         houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
         "House transit keyword tags follow the card description"
       ).toBeVisible();
+      const houseTransitRange = (
+        await houseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
+      ).trim();
+      const houseTransitDescription = (
+        await houseTransitCard.locator(".updates-aspect-row__description").innerText()
+      ).trim();
+      expect(
+        houseTransitDescription.startsWith(`${houseTransitRange},`),
+        "House transit body does not repeat its visible date range"
+      ).toBe(false);
       expect(await houseTransitKeywords.count(), "House transit keywords render as separate tags").toBeGreaterThan(1);
       for (const keyword of await houseTransitKeywords.allTextContents()) {
         expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
       }
 
       await houseTransitCard.click();
-      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await expect(page.getByRole("heading", { name: /through your \d+(?:st|nd|rd|th) house/i })).toBeVisible();
       await expectNoDuplicateArticleHeadings(page, "You house-transit detail");
-      await page.getByRole("button", { name: "Back to updates" }).click();
+      await page.getByRole("button", { name: "Back" }).click();
       await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     }
 
@@ -916,7 +1002,48 @@ test.describe("client-facing user flow case studies", () => {
     if (await chartTab.isVisible()) {
       await chartTab.click();
       await expect(chartTab).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByLabel(/Natal placements|Bodies in signs and houses/).first()).toBeVisible();
     }
+
+    await assertNoClientErrors();
+  });
+
+  test("aspect inspector works across every saved-chart wheel", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+
+    await page.getByRole("tab", { name: "Compatibility" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki compatibility chart wheel"),
+      "Nikki compatibility wheel"
+    );
+
+    await page.getByRole("tab", { name: "Natal" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki natal chart wheel"),
+      "Nikki natal wheel"
+    );
+
+    await page.getByRole("tab", { name: "Transits" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki transit chart wheel"),
+      "Nikki transit wheel"
+    );
+
+    await selectFriendDetailTab(page, "Synastry");
+    await expectAspectInspector(
+      page.getByLabel("Nikki synastry chart wheel"),
+      "Nikki synastry wheel"
+    );
+
+    await selectFriendDetailTab(page, "Composite");
+    await expectAspectInspector(
+      page.getByLabel(/Nikki and you composite chart wheel/i),
+      "Nikki composite wheel"
+    );
 
     await assertNoClientErrors();
   });
@@ -932,6 +1059,13 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "More, 2 sections" })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
+    await page.getByRole("button", { name: "More, 2 sections" }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toContainText("Chart-to-chart connections between you.");
+    await expect(page.getByRole("menuitemradio", { name: /^Composite/ })).toContainText("How the relationship acts when you're together.");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
 
     await page.getByRole("tab", { name: "Compatibility" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki compatibility chart wheel");
@@ -954,26 +1088,11 @@ test.describe("client-facing user flow case studies", () => {
 
     const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(transitCard).toBeVisible();
-    const readOnlyTransitCards = page.locator("article.updates-aspect-row.friend-transit-row");
-    expect(await readOnlyTransitCards.count(), "Friend transits include read-only cards").toBeGreaterThan(0);
-    for (const readOnlyTransitCard of await readOnlyTransitCards.all()) {
-      const interactionState = await readOnlyTransitCard.evaluate((element) => ({
-        cursor: window.getComputedStyle(element).cursor,
-        role: element.getAttribute("role"),
-        tabIndex: (element as HTMLElement).tabIndex,
-        tagName: element.tagName
-      }));
-      expect(interactionState, "Read-only transit cards do not advertise click interaction").toEqual({
-        cursor: "default",
-        role: null,
-        tabIndex: -1,
-        tagName: "ARTICLE"
-      });
-    }
-    const transitDetail = transitCard.locator(".updates-aspect-row__detail");
-    await expect(transitDetail).toHaveCount(1);
-    await expect(transitDetail).toHaveText(/^[A-Z].+ in the current sky .+ natal .+\.$/);
-    await expect(transitDetail).not.toContainText(/Duration:|\borb\b/i);
+    await expect(transitCard, "Friend transit cards open their full entries").toHaveJSProperty("tagName", "BUTTON");
+    await expect(transitCard).toHaveCSS("cursor", "pointer");
+    const transitDescription = transitCard.locator(".updates-aspect-row__description");
+    await expect(transitDescription).toBeVisible();
+    await expect(transitDescription).not.toContainText(/Duration:|\borb\b/i);
 
     const friendHouseTransitCard = page
       .getByLabel("House transits")
@@ -982,9 +1101,31 @@ test.describe("client-facing user flow case studies", () => {
     await expect(friendHouseTransitCard).toHaveCSS("cursor", "pointer");
     await expect(friendHouseTransitCard).toHaveJSProperty("tagName", "BUTTON");
     await expect(
+      friendHouseTransitCard.locator(".planet-placement-row__duration"),
+      "Friend house transit timing uses the compact duration format"
+    ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
+    await expect(
+      friendHouseTransitCard.locator(".house-transit-term-tag"),
+      "Friend term classification moves into the footer tags"
+    ).toHaveText(/^(?:Short-term|Long-term)$/);
+    await expect(
+      friendHouseTransitCard.locator(".house-transit-term-tag"),
+      "Friend term classification tag has no outline"
+    ).toHaveCSS("border-top-width", "0px");
+    await expect(
       friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
       "Friend house transit keyword tags follow the card description"
     ).toBeVisible();
+    const friendHouseTransitRange = (
+      await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
+    ).trim();
+    const friendHouseTransitDescription = (
+      await friendHouseTransitCard.locator(".updates-aspect-row__description").innerText()
+    ).trim();
+    expect(
+      friendHouseTransitDescription.startsWith(`${friendHouseTransitRange},`),
+      "Friend house transit body does not repeat its visible date range"
+    ).toBe(false);
     await friendHouseTransitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
@@ -997,7 +1138,7 @@ test.describe("client-facing user flow case studies", () => {
     expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
 
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await expect(
@@ -1008,7 +1149,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
     await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
 
-    await page.getByRole("tab", { name: "Composite" }).click();
+    await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
     await expect(page.getByRole("button", { name: "Edit Nikki" })).toBeVisible();
 
@@ -1018,6 +1159,34 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("menu", { name: "Nikki actions" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Edit" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Delete" })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("friend chart section pills and overflow menu fit a narrow viewport", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+
+    const tablist = page.getByRole("tablist", { name: "Chart profile sections" });
+    await expect(tablist).toBeVisible();
+    const tablistBox = await tablist.boundingBox();
+    expect(tablistBox).not.toBeNull();
+    expect(tablistBox!.x).toBeGreaterThanOrEqual(0);
+    expect(tablistBox!.x + tablistBox!.width).toBeLessThanOrEqual(390);
+
+    await page.getByRole("button", { name: "More, 2 sections" }).click();
+    const menu = page.getByRole("menu", { name: "More chart profile sections" });
+    await expect(menu).toBeVisible();
+    const menuBox = await menu.boundingBox();
+    expect(menuBox).not.toBeNull();
+    expect(menuBox!.x).toBeGreaterThanOrEqual(0);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(390);
+
+    await selectFriendDetailTab(page, "Composite");
+    await expect(page.getByText("What a composite chart is")).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1075,6 +1244,23 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     }
 
+    await assertNoClientErrors();
+  });
+
+  test("calendar reserves the Full Moon title for the exact lunation day", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-29T03:30:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const selectedDay = page.getByLabel("Selected lunar day");
+    await expect(selectedDay).toBeVisible({ timeout: 15_000 });
+    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Capricorn");
+    await expect(page.getByRole("button", { name: /Full Moon in Aquarius Jul 29 tomorrow/ })).toBeVisible();
+
+    await page.getByLabel("Selected week").getByRole("button", { name: /^Full Moon\. Moon in Aquarius/ }).click();
+    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
+    await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1274,7 +1460,8 @@ test.describe("client-facing user flow case studies", () => {
 
     await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await expect(page.getByRole("tab", { name: "Synastry" })).toHaveAttribute("aria-selected", "true");
+    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveAttribute("aria-checked", "true");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await assertNoClientErrors();
   });
@@ -1351,7 +1538,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Charts" }).click();
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "friends-synastry");
     await expectNoHorizontalOverflow(page, "Desktop Friends Synastry");
@@ -1391,7 +1578,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Charts" }).click();
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "friends-synastry");
     await expectNoHorizontalOverflow(page, "Mobile Friends Synastry");
@@ -1491,7 +1678,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("signed-in user can inspect profile chart setup steps", async ({ page }) => {
+  test("signed-in user can edit prefilled profile chart details", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
@@ -1501,9 +1688,6 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Profile options" }).click();
     await page.getByRole("menuitem", { name: "Edit details" }).click();
 
-    await expect(page.getByRole("heading", { name: "Create your chart" })).toBeVisible();
-    await expect(page.getByLabel("Create your chart steps")).toBeVisible();
-    await page.getByRole("button", { name: /Add birth information/ }).click();
     await expect(page.getByRole("heading", { name: "Your birth information" })).toBeVisible();
     await expect(page.getByLabel("Birth month")).toBeVisible();
     await expect(page.getByPlaceholder("Your name")).toBeVisible();
@@ -1523,7 +1707,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await expect(page.getByText("friends.")).toBeVisible();
-    await page.getByRole("button", { name: "Add chart" }).click();
+    await page.getByRole("button", { name: /Add (?:a )?chart/ }).click();
     await expect(page.getByRole("heading", { name: "Add chart" })).toBeVisible();
     const addChartDialog = page.getByRole("dialog", { name: "Add chart" });
     await expect(page.getByLabel("Chart type")).toBeVisible();
@@ -1583,7 +1767,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
-    await page.getByRole("button", { name: "Add chart" }).click();
+    await page.getByRole("button", { name: /Add (?:a )?chart/ }).click();
     await page.getByLabel("Chart type").selectOption("event");
 
     const eventDialog = page.getByRole("dialog", { name: "Add event chart" });
@@ -1751,7 +1935,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     await expectPopoverTextNotBold(page, ".site-menu", "Mobile site menu");
     await page.getByRole("menuitem", { name: "Friends" }).click();
-    await expect(page.getByText("friends.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
     await page.getByRole("tab", { name: "Charts" }).click();
     await expect(page.getByRole("button", { name: "Open River" })).toBeVisible();
 
@@ -1784,45 +1968,12 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("signed-in user can open and close You mission statement detail", async ({ page }) => {
-    const assertNoClientErrors = await expectNoClientErrors(page);
-
-    await seedClientState(page, { profile: true });
-    await expectClientRouteLoads(page, "/#you");
-
-    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Read Your mission statement" }).click();
-    await expect(page.getByRole("region", { name: "Your mission statement" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Your mission statement" })).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "You mission statement detail");
-
-    await page.getByRole("button", { name: "Back to updates" }).click();
-    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
-    await assertNoClientErrors();
-  });
-
-  test("signed-in user can open and close You career detail", async ({ page }) => {
-    const assertNoClientErrors = await expectNoClientErrors(page);
-
-    await seedClientState(page, { profile: true });
-    await expectClientRouteLoads(page, "/#you");
-
-    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Read Your career pattern" }).click();
-    await expect(page.getByRole("region", { name: "Your career pattern" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Your career pattern" })).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "You career detail");
-
-    await page.getByRole("button", { name: "Back to updates" }).click();
-    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
-    await assertNoClientErrors();
-  });
-
   test("signed-in user can open and close You natal placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
 
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
@@ -1866,9 +2017,9 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByText("friends.")).toBeVisible();
     await expect(page.getByLabel("Friend charts")).toBeVisible();
-    await expect(page.getByRole("region", { name: "No manual charts" })).toBeVisible();
-    await expect(page.getByText("No saved charts yet.")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Add chart" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "No charts" })).toBeVisible();
+    await expect(page.getByText("No charts yet.")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Add (?:a )?chart/ }).first()).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1905,6 +2056,7 @@ test.describe("client-facing user flow case studies", () => {
     );
 
     await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expectNoDuplicateArticleHeadings(page, "Hydrated You placement detail");
     await expectHydrationKeepsReaderCopyStable(
@@ -1924,7 +2076,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expectClientRouteLoads(page, "/#friends?tab=charts");
     await page.getByRole("button", { name: "Open Alisa" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.getByLabel("Synastry", { exact: true }),
@@ -1935,26 +2087,12 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("content fallback copy is reader-facing in You profile detail articles", async ({ page }) => {
-    const assertNoClientErrors = await expectNoClientErrors(page);
-
-    await seedClientState(page, { profile: true });
-    await expectClientRouteLoads(page, "/#you");
-
-    await page.getByRole("button", { name: "Read Your mission statement" }).click();
-    await expectReaderFacingCopy(page.getByRole("region", { name: "Your mission statement" }), "You mission statement fallback detail");
-    await page.getByRole("button", { name: "Back to updates" }).click();
-
-    await page.getByRole("button", { name: "Read Your career pattern" }).click();
-    await expectReaderFacingCopy(page.getByRole("region", { name: "Your career pattern" }), "You career fallback detail");
-    await assertNoClientErrors();
-  });
-
   test("content fallback copy is reader-facing in You natal placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
 
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expectReaderFacingCopy(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }), "You natal placement fallback detail");
@@ -1966,6 +2104,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
 
     await page.getByRole("button", { name: /Ascendant in/ }).click();
     await expect(page.getByRole("button", { name: "Back to updates" })).toBeVisible();
@@ -1981,10 +2120,10 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
     await expectReaderFacingCopy(page.getByLabel("Synastry", { exact: true }), "Friend synastry fallback copy");
 
-    await page.getByRole("tab", { name: "Composite" }).click();
+    await selectFriendDetailTab(page, "Composite");
     await expectReaderFacingCopy(page.getByLabel("Composite", { exact: true }), "Friend composite fallback copy");
     await assertNoClientErrors();
   });
@@ -1996,7 +2135,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await page.getByRole("button", { name: "Open Alisa" }).click();
-    await page.getByRole("tab", { name: "Synastry" }).click();
+    await selectFriendDetailTab(page, "Synastry");
 
     const authoredContact = page.getByRole("button", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i }).first();
     await expect(authoredContact, "seeded synastry fixture exposes Ascendant square Mercury").toBeVisible();

@@ -52,10 +52,101 @@ for (const r of rowsFile.fallbackSourceRows) {
   if (r.content_role !== "fallback_source") fail(`${r.contentKey}: source row missing fallback_source role`);
 }
 {
+  const hooks = new Map((rowsFile.hookRows ?? []).map((row) => [row.contentKey, row]));
+  for (const quality of ["hard", "soft", "conjunction"]) {
+    const row = hooks.get(`fallback-hook/sky-event/aspect-${quality}`);
+    if (!row) {
+      fail(`fallback-hook/sky-event/aspect-${quality}: missing global Sky event frame`);
+      continue;
+    }
+    for (const field of ["body_you", "body_they"]) {
+      if (!/\bfor the collective\b/u.test(row[field] ?? "")) {
+        fail(`${row.contentKey}: ${field} must use the approved "for the collective" wording`);
+      }
+      if (/\bfor everyone at once\b/u.test(row[field] ?? "")) {
+        fail(`${row.contentKey}: ${field} restored the retired "for everyone at once" wording`);
+      }
+    }
+  }
+}
+{
   const templatesFile = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
   for (const t of templatesFile.templates) {
     if (/[\u2014\u2013]/.test((t.body ?? "") + (t.body_you ?? "") + (t.body_they ?? ""))) fail(`${t.contentKey}: em/en dash prohibited in template bodies`);
   }
+}
+
+// Sky-placement cross-slot contract. The Moon is the first approved migration
+// to exclusive slot ownership. Extend this list only when another planet's
+// hook/lived/practice rows complete owner review as a set.
+{
+  const SLOT_OWNERSHIP_PLANETS = ["moon"];
+  const hooks = new Map((rowsFile.hookRows ?? []).map((row) => [row.contentKey, row]));
+  const vocab = new Map((rowsFile.vocabularyRows ?? []).map((row) => [row.contentKey, row]));
+  const DURATION_RE = /\b(?:about\s+|around\s+|for\s+about\s+|for\s+around\s+|next\s+)?(?:two and a half days|couple of days|\d+\s+(?:days|weeks|months|years))\b/gi;
+  const CLOSING_BEAT_RE = /\b(?:moves? on|passing tone|travel light|sky changes again|let(?:ting)? (?:it|feelings?) (?:move through|pass)|pass(?:es|ing)? without a verdict)\b/gi;
+  const fillSlots = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/gu, (_, key) => ctx[key] ?? `{{${key}}}`);
+  const normalizeWords = (body) => body
+    .toLowerCase()
+    .replace(/[^a-z' ]+/gu, " ")
+    .split(/\s+/u)
+    .filter(Boolean);
+  const sentenceTrigrams = (body) => {
+    const phrases = new Set();
+    for (const sentence of body.split(/[.!?]+/u)) {
+      const words = normalizeWords(sentence);
+      for (let index = 0; index + 2 < words.length; index++) {
+        phrases.add(`${words[index]} ${words[index + 1]} ${words[index + 2]}`);
+      }
+    }
+    return phrases;
+  };
+
+  for (const planet of SLOT_OWNERSHIP_PLANETS) {
+    for (const sign of rowsFile.coverage.signs) {
+      const signTitle = sign.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
+      const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+      const signDoes = vocab.get(`fallback-vocab/sign-does/${sign}`)?.body;
+      const hookRow = hooks.get(`fallback-hook/sky-placement-you/${planet}`);
+      const livedRow = hooks.get(`fallback-hook/sky-placement/${planet}`);
+      const practiceRow = hooks.get(`fallback-hook/sky-placement-practice/${planet}`);
+      const trapRow = hooks.get(`fallback-hook/sky-sign-trap/${sign}`);
+      const id = `sky-placement ${planet}/${sign}`;
+
+      if (!signStyle || !hookRow || !livedRow || !practiceRow || !trapRow) {
+        fail(`${id}: missing generic fallback atom`);
+        continue;
+      }
+      for (const row of [hookRow, livedRow, practiceRow]) {
+        if (row.review_status !== "approved") fail(`${id}: ${row.contentKey} is not approved`);
+      }
+
+      const ctx = { signTitle, signStyle, signDoes };
+      const parts = [
+        fillSlots(hookRow.body_you, ctx),
+        fillSlots(livedRow.body_you, ctx),
+        `The catch is ${trapRow.body_you} ${fillSlots(practiceRow.body_you, ctx)}`
+      ];
+      const body = parts.join("\n\n");
+      const styleCount = body.split(signStyle).length - 1;
+      if (styleCount !== 1) fail(`${id}: signStyle rendered ${styleCount}x`);
+
+      const durations = body.match(DURATION_RE) ?? [];
+      if (durations.length !== 1) fail(`${id}: expected one duration statement, found ${durations.length} (${durations.join(" | ")})`);
+
+      const closers = body.match(CLOSING_BEAT_RE) ?? [];
+      if (closers.length !== 1) fail(`${id}: expected one closing beat, found ${closers.length} (${closers.join(" | ")})`);
+
+      const phraseSets = parts.map(sentenceTrigrams);
+      for (let left = 0; left < phraseSets.length; left++) {
+        for (let right = left + 1; right < phraseSets.length; right++) {
+          const shared = [...phraseSets[left]].find((phrase) => phraseSets[right].has(phrase));
+          if (shared) fail(`${id}: slots ${left}/${right} share phrase "${shared}"`);
+        }
+      }
+    }
+  }
+  console.log(`Verified ${SLOT_OWNERSHIP_PLANETS.length * rowsFile.coverage.signs.length} sky-placement fallback slot contracts.`);
 }
 
 // 3 + 4: full-coverage dry run (allowUnreviewed so needs_review drafts render for QA)

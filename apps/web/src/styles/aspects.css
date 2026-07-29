@@ -502,6 +502,12 @@
   max-width: 100%;
 }
 
+.house-transit-term-tag {
+  border: 0;
+  background: transparent;
+  color: var(--retrograde-accent);
+}
+
 .updates-aspect-row__description {
   display: block;
   color: var(--card-body-color);

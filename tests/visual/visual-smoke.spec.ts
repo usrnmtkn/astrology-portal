@@ -178,12 +178,14 @@ test.describe("visual smoke screens", () => {
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
     await capture(page, "friends-natal-light");
 
-    const synastryTab = page.getByRole("tab", { name: "Synastry" });
+    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    const synastryTab = page.getByRole("menuitemradio", { name: /^Synastry/ });
     await synastryTab.click();
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await capture(page, "friends-synastry-light");
 
-    const compositeTab = page.getByRole("tab", { name: "Composite" });
+    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
+    const compositeTab = page.getByRole("menuitemradio", { name: /^Composite/ });
     await compositeTab.click();
     await expect(page.getByText("What a composite chart is")).toBeVisible();
     await capture(page, "friends-composite-light");

@@ -6,6 +6,7 @@ export type AuthProvider = "google";
 export type AuthAccount = {
   id: string;
   email: string;
+  phone?: string;
   name: string;
   provider: string;
   avatarUrl?: string;
@@ -54,6 +55,7 @@ function authAccountFromUser(user: User): AuthAccount {
   return {
     id: user.id,
     email: user.email ?? "",
+    phone: user.phone || undefined,
     name: typeof metadataName === "string" && metadataName.trim()
       ? metadataName
       : user.email?.split("@")[0] ?? "New stargazer",
@@ -270,6 +272,72 @@ export async function verifyPhoneSignInCode({
     phone: normalizeUsPhoneNumber(phone),
     token: code.trim(),
     type: "sms"
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.user ? authAccountFromUser(data.user) : null;
+}
+
+export async function startPhoneNumberChange(phone: string) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const { error } = await supabase.auth.updateUser({
+    phone: normalizedPhone
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return normalizedPhone;
+}
+
+export async function resendPhoneNumberChangeCode(phone: string) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const { error } = await supabase.auth.resend({
+    type: "phone_change",
+    phone: normalizedPhone
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return normalizedPhone;
+}
+
+export async function verifyPhoneNumberChange({
+  phone,
+  code
+}: {
+  phone: string;
+  code: string;
+}) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: normalizedPhone,
+    token: code.trim(),
+    type: "phone_change"
   });
 
   if (error) {
