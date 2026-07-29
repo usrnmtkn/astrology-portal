@@ -20946,11 +20946,11 @@
    "contentKey": "fallback-hook/sky-placement/moon",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "The Moon is in {{signTitle}} for about two and a half days, and it colors the emotional background: the collective mood turns {{signStyle}}. This is the fastest cycle in the sky, less a chapter than a passing tone. Notice what it pulls to the surface and let it move through.",
-   "body_they": "The Moon is in {{signTitle}} for about two and a half days, and it colors the emotional background: the collective mood turns {{signStyle}}. This is the fastest cycle in the sky, less a chapter than a passing tone. Notice what it pulls to the surface and let it move through.",
+   "body_you": "The Moon is in {{signTitle}} for about two and a half days, and the emotional background turns {{signStyle}}. Notice where it shows up first: what you reach for, who you answer, what suddenly feels urgent.",
+   "body_they": "The Moon is in {{signTitle}} for about two and a half days, and the emotional background turns {{signStyle}}. Notice where it shows up first: what you reach for, who you answer, what suddenly feels urgent.",
    "review_status": "approved",
-   "notes": "Sky page planet-in-sign article write-up (collective voice, everyone's sky). Slots: {{signTitle}}, {{signStyle}} (adjective triplet from fallback-vocab/sign-style). Pace is stated per planet so readers know if this is a mood or a chapter. Replaces the legacy 'active in a ... way / treat it as weather' helper.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Sky placement lived slot. Owns the Moon card's only duration statement and only {{signStyle}} render.",
+   "approved_via": "owner sign-off, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement/mercury",
@@ -21116,11 +21116,11 @@
    "contentKey": "fallback-hook/sky-placement-you/moon",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Whatever mood moves through the next couple of days, you do not have to solve it. The Moon in {{signTitle}} colors everything {{signStyle}} for a moment, then moves on. Feel it fully and travel light.",
-   "body_they": "Whatever mood moves through the next couple of days, you do not have to solve it. The Moon in {{signTitle}} colors everything {{signStyle}} for a moment, then moves on. Feel it fully and travel light.",
+   "body_you": "The mood in the air has changed again, and you can feel it before you can name it.",
+   "body_they": "The mood in the air has changed again, and you can feel it before you can name it.",
    "review_status": "approved",
-   "notes": "Sky placement article P1: you-voice opener (owner's Saturn-ingress sample register). Slots {{signTitle}}, {{signStyle}}.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Sky placement hook slot. One present-tense observation; no duration and no sign-style token.",
+   "approved_via": "owner sign-off, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-you/mercury",
@@ -21246,11 +21246,11 @@
    "contentKey": "fallback-hook/sky-placement-practice/moon",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Work with this Moon by keeping the schedule light where you can and letting feelings pass without a verdict. Two days from now the sky changes again.",
-   "body_they": "Work with this Moon by keeping the schedule light where you can and letting feelings pass without a verdict. Two days from now the sky changes again.",
+   "body_you": "Work with this Moon by keeping your plans light where you can. Feel the mood fully and let it pass without a verdict.",
+   "body_they": "Work with this Moon by keeping your plans light where you can. Feel the mood fully and let it pass without a verdict.",
    "review_status": "approved",
-   "notes": "Sky placement article practice paragraph (per planet, 'work with this' register).",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Sky placement turn slot. One response and one closing beat; no duration and no sign-style token.",
+   "approved_via": "owner sign-off, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-practice/mercury",

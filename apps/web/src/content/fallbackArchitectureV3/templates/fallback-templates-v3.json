@@ -345,7 +345,7 @@
     "currentAspects"
    ],
    "body": "{{hook}}\n\n{{lived}}\n\n{{turn}}",
-   "note": "Voice-first placement frame: memorable hook, concrete lived expression with pace, then shadow/turn. One exact-dated current aspect may be appended. Sign lore, blessings, adjective-triplet openers, and the 'for everyone at once' wrapper do not render in the article."
+   "note": "Voice-first placement frame with exclusive slot ownership: hook is one present-tense observation with no timing; lived owns the single duration and single sign-style render; turn owns one shadow, response, and closing beat. Exact-dated current aspects may be appended separately."
   },
   {
    "contentKey": "fallback-template/transit.aspect",
