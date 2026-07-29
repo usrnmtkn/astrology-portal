@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: "./tests/visual",
   outputDir: "./test-results/playwright",
   timeout: 30_000,
+  retries: process.env.CI ? 1 : 0,
   fullyParallel: false,
   reporter: [["list"]],
   use: {
