@@ -10,15 +10,29 @@ import url from "node:url";
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
 
-const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
+templates.templates.push(...placementInterim.templates);
+rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
+const rowsByKey = (rows) => {
+  const indexed = new Map();
+  for (const row of rows) {
+    const candidates = indexed.get(row.contentKey) ?? [];
+    candidates.push(row);
+    indexed.set(row.contentKey, candidates);
+  }
+  return indexed;
+};
+const vocab = rowsByKey(rowsFile.vocabularyRows);
 
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
 
 function getVocab(key, { allowUnreviewed = false } = {}) {
-  const row = vocab.get(key);
+  const row = [...(vocab.get(key) ?? [])]
+    .reverse()
+    .find((candidate) => allowUnreviewed || READER_ELIGIBLE_STATUS.has(candidate.review_status));
   if (!row) return null;
   if (row.content_role === "fallback_source") {
     throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
@@ -98,11 +112,17 @@ function renderTemplate(template, ctx, gapLabel, voice = "you") {
   return body;
 }
 
-const getTemplate = (key) => {
+const findTemplate = (key, { allowUnreviewed = false } = {}) => {
   const t = templates.templates.find((x) => x.contentKey === key);
-  if (!t) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
+  if (!t) return null;
   if (t.content_role !== "template") throw new RoleViolationError(`${key} is not a template row`);
+  if (t.review_status && !allowUnreviewed && !READER_ELIGIBLE_STATUS.has(t.review_status)) return null;
   return t;
+};
+const getTemplate = (key, opts = {}) => {
+  const template = findTemplate(key, opts);
+  if (!template) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
+  return template;
 };
 
 export function renderNatalPlacement(facts, opts = {}) {
@@ -162,7 +182,8 @@ export function renderNatalPlacement(facts, opts = {}) {
     const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, { allowUnreviewed });
     ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
   }
-  const signTemplate = getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
+  const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
+    ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
   const voice = facts.voice === "you" ? "you" : "they";
   parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
 
@@ -271,7 +292,11 @@ export function renderAspectPattern({ type, apexTitle, mode, element, activation
     if (apex) paras.push(apex.replace(/\{\{apexTitle\}\}/g, apexTitle));
   }
   if (!activation) {
-    const qual = mode ? vocab.get(`fallback-vocab/pattern-mode/${mode}`)?.body : (element ? vocab.get(`fallback-vocab/pattern-element/${element}`)?.body : null);
+    const qual = mode
+      ? getVocab(`fallback-vocab/pattern-mode/${mode}`, { allowUnreviewed })
+      : element
+        ? getVocab(`fallback-vocab/pattern-element/${element}`, { allowUnreviewed })
+        : null;
     if (qual) paras.push(`It runs as ${qual}.`);
   }
   return { headline: PATTERN_NAMES[type] ?? type, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/natal.aspect-pattern" };
