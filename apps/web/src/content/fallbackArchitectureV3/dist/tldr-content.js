@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -267,7 +267,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -290,7 +290,9 @@ var inlineWindow = (w) => {
   return w.charAt(0).toLowerCase() + w.slice(1);
 };
 var FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
-var FRIEND_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|within|find|finds|found|help|helps|helped|give|gives|gave|pull|pulls|pulled|support|supports|supported|affect|affects|affected|remind|reminds|reminded|ask|asks|asked|tell|tells|told|leave|leaves|left|show|shows|showed|make|makes|made|let|lets|keep|keeps|kept|cost|costs|teach|teaches|taught|push|pushes|pushed|hold|holds|held|stop|stops|stopped)\s+you\b/gi;
+var FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
+var FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
+var FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
 function possessiveDisplayName(name) {
   return `${name}'s`;
 }
@@ -307,7 +309,15 @@ function friendVoiceFromReaderCopy(body, name) {
     named = true;
     return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
   };
-  let rendered = body.replace(/\byourself\b/gi, "themselves").replace(/\byourselves\b/gi, "themselves").replace(/\byours\b/gi, "theirs").replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb) => nameForContraction(verb.toLowerCase().replace("\u2019", "'"))).replace(/\byour\b/gi, (source) => nameForPossessive(source)).replace(FRIEND_OBJECT_YOU, (_, governor) => `${governor} them`).replace(/\byou\b/gi, (source) => /^[A-Z]/.test(source) ? "They" : "they");
+  const nameForObject = () => {
+    const objectReference = named ? "them" : name;
+    named = true;
+    return objectReference;
+  };
+  let rendered = body.replace(/\byourself\b/gi, "themselves").replace(/\byourselves\b/gi, "themselves").replace(/\byours\b/gi, "theirs").replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb) => nameForContraction(verb.toLowerCase().replace("\u2019", "'"))).replace(/\byour\b/gi, (source) => nameForPossessive(source)).replace(
+    FRIEND_REPORTED_SUBJECT_YOU,
+    (_, governor, auxiliary) => `${governor} they ${auxiliary}`
+  ).replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor) => `${governor} ${nameForObject()}`).replace(FRIEND_VERB_OBJECT_YOU, (_, governor) => `${governor} ${nameForObject()}`).replace(/\byou\b/gi, (source) => /^[A-Z]/.test(source) ? "They" : "they");
   rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix, verb) => {
     const subject = named ? "They" : name;
     named = true;
@@ -1025,13 +1035,14 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-28h";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-28i";
 export {
   PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
   createFallbackRenderer,
   createTransitSynastryRenderer,
+  friendVoiceFromReaderCopy,
   normalizeAspect
 };
