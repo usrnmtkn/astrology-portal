@@ -13354,7 +13354,7 @@ export function App() {
             continue;
           }
 
-          const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+          const timing = transitItemTimingDisplay(transit, skyDate);
           let generated: LiveGeneratedContent | null = null;
 
           try {
@@ -13442,7 +13442,6 @@ export function App() {
     remoteAccountId,
     isProfileMode,
     skyDate,
-    transitForm.chartDate,
     transitsDrawn,
     userProfile?.id,
     userProfile?.name,
@@ -14473,6 +14472,7 @@ export function App() {
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
                       onUpdateProfile={setUserProfile}
+                      targetDate={skyDate}
                       transitForm={transitForm}
                       transitItems={activeTransits}
                       currentSky={sky}
@@ -18631,6 +18631,7 @@ function AccountView({
 function ProfileView({
   profile,
   profileHandle,
+  targetDate,
   transitForm,
   transitItems,
   currentSky,
@@ -18651,6 +18652,7 @@ function ProfileView({
   profile: UserProfile;
   profileHandle?: string | null;
   onUpdateProfile: (profile: UserProfile) => void;
+  targetDate: string;
   transitForm: TransitForm;
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
@@ -18719,7 +18721,7 @@ function ProfileView({
     const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky) : null;
     const dailyServedUnitsByDate = dailyDriver
       ? {
-          [transitForm.chartDate]: [
+          [targetDate]: [
             dailyDriver.kind === "aspect"
               ? `${dailyDriver.aspect}:${normalizeContentIdPart(dailyDriver.natal)}`
               : `house:${dailyDriver.house}`
@@ -18759,7 +18761,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
-    transitForm.chartDate,
+    targetDate,
     weeklyHoroscopeRequested
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
@@ -18826,13 +18828,13 @@ function ProfileView({
     : undefined;
   const qualifyingDailyTransits = dedupeSameBeatPersonalTransits(
     rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
-    transitForm.chartDate
+    targetDate
   )
     .filter(dailyTransitQualifies)
     .sort((first, second) => transitOrbValue(first) - transitOrbValue(second));
   const dailyIsHeadliner = qualifyingDailyTransits.some(dailyHeadlinerTransit);
   const aspectRows = qualifyingDailyTransits.slice(0, dailyIsHeadliner ? 3 : 4);
-  const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, transitForm.chartDate);
+  const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, targetDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
     : [];
@@ -19000,11 +19002,11 @@ function ProfileView({
     })
   }));
   const updateAspectRows = aspectRows.map((transit) => {
-    const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
-    const normalizedTransit = normalizePersonalTransitSurface(transit, transitForm.chartDate);
+    const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
+    const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
     const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
-    const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+    const timing = transitItemTimingDisplay(transit, targetDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
     const articleSections = normalizedTransit.sections.map((section) => ({
       heading: section.heading || title,
@@ -19073,7 +19075,7 @@ function ProfileView({
     if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
 
     const end = dateFromOffsetDays(
-      transitForm.chartDate,
+      targetDate,
       Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
     );
     const window = `Until ${formatEditorialDate(end, true)}`;
@@ -19102,7 +19104,7 @@ function ProfileView({
   })();
   const behindForecastRows = [
     ...qualifyingDailyTransits.map((transit) => ({
-      end: transitItemActiveWindow(transit, transitForm.chartDate).end,
+      end: transitItemActiveWindow(transit, targetDate).end,
       transit
     })),
     ...(dailyMoonLabel ? [{ end: dailyMoonLabel.end, moonLabel: dailyMoonLabel }] : [])
@@ -19132,7 +19134,7 @@ function ProfileView({
           transiting: normalizeContentIdPart(transit.transitPlanet),
           natal: normalizeContentIdPart(transit.natalPoint),
           aspect,
-          window: personalTransitPackageWindow(transit, transitForm.chartDate)
+          window: personalTransitPackageWindow(transit, targetDate)
         });
 
         return [(
@@ -19140,11 +19142,11 @@ function ProfileView({
             className="daily-forecast-label"
             key={`daily-label-${transit.id}`}
             onClick={() => {
-              const normalized = normalizePersonalTransitSurface(transit, transitForm.chartDate);
+              const normalized = normalizePersonalTransitSurface(transit, targetDate);
               setSelectedTransitId(transit.id);
               setActivePlacementRouteId(null);
               setTransitArticle({
-                id: personalTransitGeneratedContentKey(transit, transitForm.chartDate),
+                id: personalTransitGeneratedContentKey(transit, targetDate),
                 title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
                 glyph: pointGlyph(transit.transitPlanet),
                 subtitle: "",
@@ -19155,7 +19157,7 @@ function ProfileView({
                   body: taggedSectionBody(section)
                 })),
                 meta: [
-                  { label: "Duration", value: transitItemTimingDisplay(transit, transitForm.chartDate).rangeLabel },
+                  { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
                   { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
                 ]
               });
@@ -19185,8 +19187,8 @@ function ProfileView({
         transitSign: position.sign
       };
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
-      const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
-      const durationLabel = placementTransitDurationLabel(position, transitForm.chartDate);
+      const timingRange = placementTransitRangeLabel(position, targetDate);
+      const durationLabel = placementTransitDurationLabel(position, targetDate);
       const normalizedHouseTransit = normalizeTransitHouseSurface(
         transit,
         house,
@@ -19195,7 +19197,7 @@ function ProfileView({
         transitHouseAspectEvents(
           transit.transitPlanet,
           qualifyingDailyTransits,
-          transitForm.chartDate
+          targetDate
         )
       );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
@@ -19315,8 +19317,8 @@ function ProfileView({
         // day key so the list rotates daily instead of freezing for a whole transit.
         moonSign: dailyMoon ? normalizeContentIdPart(dailyMoon.sign) : null,
         moonHouse: dailyMoonHouse ?? null,
-        dayKey: Number.isFinite(Date.parse(`${transitForm.chartDate}T00:00:00Z`))
-          ? Math.floor(Date.parse(`${transitForm.chartDate}T00:00:00Z`) / 86400000)
+        dayKey: Number.isFinite(Date.parse(`${targetDate}T00:00:00Z`))
+          ? Math.floor(Date.parse(`${targetDate}T00:00:00Z`) / 86400000)
           : 0
       });
       return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
@@ -19355,7 +19357,7 @@ function ProfileView({
     specialSections: dailySpecialSections.slice(0, 2),
     behindForecastRows,
     derivation: {
-      targetDate: transitForm.chartDate,
+      targetDate,
       localNoon: true,
       headliner: dailyIsHeadliner,
       areaCap: dailyIsHeadliner ? 3 : 4,
@@ -19367,7 +19369,7 @@ function ProfileView({
         orb: transitOrbValue(transit),
         house: transit.natalHouse ?? null,
         direction: transit.direction ?? null,
-        window: personalTransitPackageWindow(transit, transitForm.chartDate)
+        window: personalTransitPackageWindow(transit, targetDate)
       })),
       moonDriver: dailyMoon
         ? {
