@@ -9542,17 +9542,21 @@ function synastryWheelAspectLines(profileNatalSky: SkySnapshot | null, chart: Ma
         toLongitude: yourPoint.longitude,
         type: aspect.type,
         orb: aspect.orbValue,
+        fromPointId: `outer:${friendPoint.name}`,
+        toPointId: `inner:${yourPoint.name}`,
         score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue)
       }];
     }))
     .sort((first, second) => second.score - first.score || first.orb - second.orb)
     .slice(0, 18)
-    .map(({ id, fromLongitude, toLongitude, type, orb }) => ({
+    .map(({ id, fromLongitude, toLongitude, type, orb, fromPointId, toPointId }) => ({
       id,
       fromLongitude,
       toLongitude,
       type,
-      orb
+      orb,
+      fromPointId,
+      toPointId
     }));
 }
 
@@ -20276,7 +20280,11 @@ function ManualChartsPanel({
               midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
               innerAscendant={relationshipComparisonSky.ascendant}
               innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
+              innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
               houseSignLabelStyle={houseSignLabelStyle}
+              aspectInspector
+              outerLabel={selectedChart.displayName}
+              innerLabel={relationshipComparisonName}
             />
           </RelationshipChartFullscreen>
         ) : relationshipChartFullscreenMode === "composite" && selectedCompositeSky ? (
@@ -20388,7 +20396,11 @@ function ManualChartsPanel({
                         midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
                         innerAscendant={relationshipComparisonSky.ascendant}
                         innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
+                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
                         houseSignLabelStyle={houseSignLabelStyle}
+                        aspectInspector
+                        outerLabel={selectedChart.displayName}
+                        innerLabel={relationshipComparisonName}
                       />
                     </div>
                   </div>
@@ -20407,7 +20419,11 @@ function ManualChartsPanel({
                         midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
                         innerAscendant={relationshipComparisonSky.ascendant}
                         innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
+                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
                         houseSignLabelStyle={houseSignLabelStyle}
+                        aspectInspector
+                        outerLabel={selectedChart.displayName}
+                        innerLabel={relationshipComparisonName}
                       />
                     </div>
                   </div>

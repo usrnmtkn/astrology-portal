@@ -518,6 +518,13 @@
   overflow: visible;
 }
 
+.chart-shell:has(> .chart-frame > .sky-wheel-shell--aspect-inspector.is-inspecting-aspects),
+.chart-frame:has(> .sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
+  height: auto;
+  aspect-ratio: auto;
+  overflow: visible;
+}
+
 .chart-frame > svg,
 .chart-frame > .sky-wheel-shell,
 .chart-frame > .sky-wheel,
