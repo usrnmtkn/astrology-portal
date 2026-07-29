@@ -18,6 +18,7 @@ export interface TemplateRow {
   body_they?: string;
   requiredSlots?: string[];
   optionalSlots?: string[];
+  review_status?: string;
 }
 export interface VocabRow {
   contentKey: string;
@@ -76,15 +77,23 @@ function mustache(body: string, ctx: Ctx): string {
     return !v || (Array.isArray(v) && v.length === 0) ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{{${key}}}`);
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{${key}}`);
   return body;
 }
 
 export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {
-  const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
+  const vocab = new Map<string, VocabRow[]>();
+  for (const row of rowsFile.vocabularyRows) {
+    const candidates = vocab.get(row.contentKey) ?? [];
+    candidates.push(row);
+    vocab.set(row.contentKey, candidates);
+  }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
 
   const getVocab = (key: string, opts: RenderOpts = {}): string | null => {
-    const row = vocab.get(key);
+    const row = [...(vocab.get(key) ?? [])]
+      .reverse()
+      .find((candidate) => opts.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
     if (!row) return null;
     if (row.content_role === "fallback_source") throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
@@ -106,11 +115,17 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
     return (voice === "you" ? row.body_you : row.body_they) ?? null;
   };
-  const getTemplate = (key: string): TemplateRow => {
+  const findTemplate = (key: string, opts: RenderOpts = {}): TemplateRow | null => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
-    if (!t) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
+    if (!t) return null;
     if (t.content_role !== "template") throw new RoleViolationError(`${key} is not a template row`);
+    if (t.review_status && !opts.allowUnreviewed && !READER_ELIGIBLE.has(t.review_status)) return null;
     return t;
+  };
+  const getTemplate = (key: string, opts: RenderOpts = {}): TemplateRow => {
+    const template = findTemplate(key, opts);
+    if (!template) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
+    return template;
   };
   const renderTemplate = (template: TemplateRow, ctx: Ctx, gapLabel: string, voice: "you" | "they"): string => {
     for (const slot of template.requiredSlots ?? []) {
@@ -174,7 +189,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, opts);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
-    const signTemplate = getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
+    const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
+      ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
 
     let headlineTemplate = signTemplate;
@@ -252,7 +268,11 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       if (apex) paras.push(apex.replace(/\{\{apexTitle\}\}/g, apexTitle));
     }
     if (!activation) {
-      const qual = mode ? vocab.get(`fallback-vocab/pattern-mode/${mode}`)?.body : (element ? vocab.get(`fallback-vocab/pattern-element/${element}`)?.body : null);
+      const qual = mode
+        ? getVocab(`fallback-vocab/pattern-mode/${mode}`, opts)
+        : element
+          ? getVocab(`fallback-vocab/pattern-element/${element}`, opts)
+          : null;
       if (qual) paras.push(`It runs as ${qual}.`);
     }
     return { headline: PATTERN_NAMES[type] ?? type, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/natal.aspect-pattern" } as RenderResult;
