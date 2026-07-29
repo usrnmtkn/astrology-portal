@@ -436,6 +436,9 @@ async function expectAdminRouteLoads(page: Page, route: string) {
     await expect(page.locator(".admin-dashboard-header h1")).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("8 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
   });
 }
 
