@@ -77,6 +77,7 @@ function mustache(body: string, ctx: Ctx): string {
     return !v || (Array.isArray(v) && v.length === 0) ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{{${key}}}`);
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{${key}}`);
   return body;
 }
 

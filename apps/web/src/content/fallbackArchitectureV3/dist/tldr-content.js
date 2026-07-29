@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -23,6 +23,7 @@ function mustache(body, ctx) {
     return !v || Array.isArray(v) && v.length === 0 ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => ctx[key] ?? `{{${key}}}`);
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => ctx[key] ?? `{${key}}`);
   return body;
 }
 function createFallbackRenderer(templatesFile, rowsFile) {
@@ -278,7 +279,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -1106,13 +1107,57 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29f";
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-29p";
+function stablePackageValue(value) {
+  if (Array.isArray(value)) {
+    return value.map(stablePackageValue);
+  }
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+  return Object.fromEntries(
+    Object.keys(value).filter((key) => key !== "review_status" && key !== "reviewStatus").sort().map((key) => [key, stablePackageValue(value[key])])
+  );
+}
+function packageRowsByKey(rows) {
+  return [...new Map(rows.map((row) => [row.contentKey, row])).values()].sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+}
+function packageHash(value) {
+  const input = JSON.stringify(stablePackageValue(value));
+  const seeds = [2166136261, 2654435769, 2246822507, 3266489909];
+  const hashes = seeds.map((seed) => {
+    let hash = seed >>> 0;
+    for (let index = 0; index < input.length; index += 1) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  });
+  return hashes.join("");
+}
+function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
+  const records = [
+    ...packageRowsByKey(bundle.transitLib.authoredCards).map((row) => ({ bucket: "authored", row })),
+    ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
+    ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
+    ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
+  ];
+  const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
+  return {
+    packageVersion,
+    contentHash: packageHash(records),
+    keyManifestHash: packageHash(keys),
+    keyCount: keys.length,
+    keys
+  };
+}
 export {
   PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
   createFallbackRenderer,
+  createPackageManifest,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
   normalizeAspect

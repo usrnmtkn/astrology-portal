@@ -2,12 +2,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { PACKAGE_VERSION } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import {
+  createPackageManifest,
+  PACKAGE_VERSION
+} from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architecture-v3-dashboard-rows.json");
 const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
+const placementSentencePositiveTest = "passed-jul29-criteria";
+let packageManifest;
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -126,7 +131,7 @@ function surfaceForKey(key, explicitSurface) {
   }
 
   if (key.includes("/compat-") || key.startsWith("fallback-hook/compat")) return "relationship";
-  if (key.startsWith("fallback-hook/lunation-ruler-house/")) return "you";
+  if (key.startsWith("fallback-hook/lunation-")) return "you";
   if (key.includes("synastry")) return "synastry";
   if (key.includes("/transit-") || key.startsWith("fallback-hook/transit") || key.includes("/empty-house")) return "you";
   if (key.startsWith("fallback-vocab/") || key.startsWith("fallback-template/")) return "modifier";
@@ -165,6 +170,15 @@ function rowSummary(record) {
   return String(record.summary ?? record.intention ?? record.energy ?? record.note ?? record.notes ?? "").trim();
 }
 
+function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
+  return contentKey.startsWith("fallback-hook/placement-sentence/")
+    && (
+      reviewStatus === "needs_review"
+      || record.positive_test != null
+      || String(record.note ?? record.notes ?? "").includes("TLDR-Placement-Copy-Audit-Batch1.md")
+    );
+}
+
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
   if (contentRole === "fallback_hook" || contentKey.startsWith("fallback-hook/")) return "fallback_hook";
@@ -179,10 +193,23 @@ function mapPackageRecord(record, bucket) {
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
-  const reviewStatus = String(record.review_status ?? "").trim();
+  const sourceReviewStatus = String(record.review_status ?? "").trim();
+  // Package templates without an explicit editorial status are already
+  // reader-eligible in the bundled resolver. Normalize only the mirror
+  // metadata so Supabase RLS exposes the same complete package.
+  const reviewStatus = contentRole === "template" && !sourceReviewStatus
+    ? "approved_reuse"
+    : sourceReviewStatus;
   const serving = statusForReview(contentRole, reviewStatus, contentKey);
   const surface = surfaceForKey(contentKey, record.surface);
   const body = rowBody(record);
+
+  if (
+    requiresPlacementPositiveTest(record, contentKey, reviewStatus)
+    && record.positive_test !== placementSentencePositiveTest
+  ) {
+    throw new Error(`${contentKey} must carry positive_test="${placementSentencePositiveTest}" before dashboard import.`);
+  }
 
   return {
     content_key: contentKey,
@@ -198,6 +225,7 @@ function mapPackageRecord(record, bucket) {
       packageRecord: record,
       body_you: record.body_you ?? null,
       body_they: record.body_they ?? null,
+      positive_test: record.positive_test ?? null,
       intention: record.intention ?? null,
       ritual: record.ritual ?? null,
       energy: record.energy ?? null
@@ -210,9 +238,14 @@ function mapPackageRecord(record, bucket) {
     evergreen_by: importBatchId,
     facts: {
       fallbackArchitectureV3: true,
+      packageVersion: packageManifest.packageVersion,
+      packageContentHash: packageManifest.contentHash,
+      packageKeyManifestHash: packageManifest.keyManifestHash,
+      packageKeyCount: packageManifest.keyCount,
       packageBucket: bucket,
       content_role: contentRole,
       review_status: reviewStatus,
+      positive_test: record.positive_test ?? null,
       readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState
     },
     knowledge_ids: [],
@@ -220,11 +253,16 @@ function mapPackageRecord(record, bucket) {
       contentType: bucket,
       content_role: contentRole,
       review_status: reviewStatus,
+      positive_test: record.positive_test ?? null,
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
       sourcePackage: "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
+      packageVersion: packageManifest.packageVersion,
+      packageContentHash: packageManifest.contentHash,
+      packageKeyManifestHash: packageManifest.keyManifestHash,
+      packageKeyCount: packageManifest.keyCount,
       note: "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
     },
     reviewer_notes: String(record.note ?? record.notes ?? "").trim(),
@@ -235,7 +273,7 @@ function mapPackageRecord(record, bucket) {
   };
 }
 
-function materializeRows() {
+function readPackageSources() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
@@ -243,18 +281,72 @@ function materializeRows() {
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
 
-  return [
-    ...authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
-    ...lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
-    ...weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
-    ...sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material"))
+  return {
+    sourceRows,
+    authoredRows,
+    lunationBlendRows,
+    placementInterimRows,
+    weeklyRows,
+    templateRows
+  };
+}
+
+function readerEligibleReviewStatus(row, allowBlank = false) {
+  const reviewStatus = String(row.review_status ?? "").trim().toLowerCase();
+
+  return ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
+    || (allowBlank && !reviewStatus);
+}
+
+function packageRowsWithLatestOverride(rows) {
+  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+}
+
+function readerPackageBundle(sources) {
+  return {
+    transitLib: {
+      authoredCards: packageRowsWithLatestOverride([
+        ...sources.authoredRows.authoredCards,
+        ...sources.lunationBlendRows.authoredCards,
+        ...sources.weeklyRows
+      ]).filter((row) => readerEligibleReviewStatus(row))
+    },
+    rowsFile: {
+      hookRows: packageRowsWithLatestOverride([
+        ...sources.sourceRows.hookRows,
+        ...sources.lunationBlendRows.hookRows
+      ]).filter((row) => readerEligibleReviewStatus(row)),
+      vocabularyRows: packageRowsWithLatestOverride([
+        ...sources.sourceRows.vocabularyRows,
+        ...sources.placementInterimRows.vocabularyRows
+      ]).filter((row) => readerEligibleReviewStatus(row))
+    },
+    templatesFile: {
+      templates: packageRowsWithLatestOverride([
+        ...sources.templateRows.templates,
+        ...sources.placementInterimRows.templates
+      ]).filter((row) => readerEligibleReviewStatus(row, true))
+    }
+  };
+}
+
+function materializeRows(sources) {
+  const rows = [
+    ...sources.authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material"))
   ];
+
+  // Runtime maps use later rows as intentional overrides. Mirror that exact
+  // precedence while emitting one deterministic dashboard row per content key.
+  return [...new Map(rows.map((row) => [row.content_key, row])).values()];
 }
 
 async function upsertRows(rows) {
@@ -295,7 +387,7 @@ async function deleteStaleRows(currentRows) {
 
   for (let offset = 0; ; offset += 1000) {
     const response = await fetch(
-      `${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key&provider=eq.tldrastro-fallback-architecture-v3&limit=1000&offset=${offset}`,
+      `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key&provider=eq.tldrastro-fallback-architecture-v3&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
       {
         method: "GET",
         headers: adminHeaders()
@@ -342,7 +434,7 @@ async function readImportedRows() {
 
   for (let offset = 0; ; offset += 1000) {
     const response = await fetch(
-      `${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key,status,lane,review_state,facts,source_snapshot&provider=eq.tldrastro-fallback-architecture-v3&limit=1000&offset=${offset}`,
+      `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key,surface,mode,status,lane,review_state,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,prompt_version,provider,model&provider=eq.tldrastro-fallback-architecture-v3&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
       {
         method: "GET",
         headers: adminHeaders()
@@ -387,12 +479,63 @@ function countBy(rows, predicate) {
   return rows.filter(predicate).length;
 }
 
+function stableValue(value) {
+  if (Array.isArray(value)) {
+    return value.map(stableValue);
+  }
+
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  return Object.fromEntries(
+    Object.keys(value)
+      .sort()
+      .map((key) => [key, stableValue(value[key])])
+  );
+}
+
+function mirrorComparable(row) {
+  return stableValue({
+    content_key: row.content_key,
+    surface: row.surface,
+    mode: row.mode,
+    status: row.status,
+    lane: row.lane,
+    review_state: row.review_state,
+    event_type: row.event_type,
+    target_date: row.target_date,
+    headline: row.headline,
+    summary: row.summary,
+    body: row.body,
+    sections: row.sections,
+    block_type: row.block_type,
+    facts: row.facts,
+    source_snapshot: row.source_snapshot,
+    prompt_version: row.prompt_version,
+    provider: row.provider,
+    model: row.model
+  });
+}
+
 function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
   const liveCounts = importedCounts(importedRows);
   const expectedKeys = new Set(expectedRows.map((row) => row.content_key));
   const importedKeys = new Set(importedRows.map((row) => row.content_key));
+  const duplicateKeys = [...importedRows.reduce((counts, row) => {
+    counts.set(row.content_key, (counts.get(row.content_key) ?? 0) + 1);
+    return counts;
+  }, new Map())]
+    .filter(([, count]) => count > 1)
+    .map(([key]) => key);
   const missingKeys = [...expectedKeys].filter((key) => !importedKeys.has(key));
   const staleKeys = [...importedKeys].filter((key) => !expectedKeys.has(key));
+  const expectedByKey = new Map(expectedRows.map((row) => [row.content_key, row]));
+  const importedByKey = new Map(importedRows.map((row) => [row.content_key, row]));
+  const changedKeys = [...expectedKeys].filter((key) => (
+    importedByKey.has(key)
+    && JSON.stringify(mirrorComparable(expectedByKey.get(key))) !== JSON.stringify(mirrorComparable(importedByKey.get(key)))
+  ));
 
   for (const [bucket, expected] of Object.entries(expectedCounts)) {
     const actual = liveCounts[bucket];
@@ -402,9 +545,9 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
     }
   }
 
-  if (missingKeys.length || staleKeys.length) {
+  if (missingKeys.length || staleKeys.length || duplicateKeys.length) {
     throw new Error(
-      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale.`
+      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale, ${duplicateKeys.length} duplicate.`
     );
   }
 
@@ -414,12 +557,28 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
     );
   }
 
-  return liveCounts;
+  if (changedKeys.length) {
+    throw new Error(
+      `Dashboard mirror content mismatch: ${changedKeys.length} rows differ (${changedKeys.slice(0, 10).join(", ")}).`
+    );
+  }
+
+  return {
+    ...liveCounts,
+    parity: {
+      missing: 0,
+      stale: 0,
+      duplicate: 0,
+      changed: 0,
+    },
+  };
 }
 
 loadLocalWebEnv();
 
-const rows = materializeRows();
+const packageSources = readPackageSources();
+packageManifest = createPackageManifest(readerPackageBundle(packageSources), PACKAGE_VERSION);
+const rows = materializeRows(packageSources);
 const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
   fallbackHooks: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "fallback_hook"),
@@ -433,11 +592,26 @@ fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, `${JSON.stringify({
   schema: "tldrastro-fallback-architecture-v3-dashboard-rows",
   generatedAt: new Date().toISOString(),
+  packageManifest,
   counts,
   rows
 }, null, 2)}\n`);
 
 console.log(`materialized ${rows.length} V3 dashboard rows -> ${path.relative(repoRoot, outPath)}`);
+console.log(
+  JSON.stringify(
+    {
+      packageManifest: {
+        packageVersion: packageManifest.packageVersion,
+        contentHash: packageManifest.contentHash,
+        keyManifestHash: packageManifest.keyManifestHash,
+        keyCount: packageManifest.keyCount,
+      },
+    },
+    null,
+    2,
+  ),
+);
 console.log(JSON.stringify(counts, null, 2));
 
 if (apply) {
