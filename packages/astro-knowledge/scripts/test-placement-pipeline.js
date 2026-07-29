@@ -3,13 +3,14 @@
 // Offline contract test for the sky-placement generation pipeline. No API key:
 // the model seam is injected. Proves, before any real run:
 //   1. every embedded calibration exemplar lints 3 with 0 fails / 0 warns
-//   2. generateArticle accepts a clean injected draft and materializes the
-//      three V3 hook rows with the right contentKeys
-//   3. a draft that trips the linter is retried with feedback, then accepted
-//   4. em dashes in model output are normalized, never burn a retry
-//   5. source gaps (lilith, bad tokens) are skipped, not thrown
-//   6. the grid report accounts for all 168 cells: 7 authored, lilith unsourced
-//   7. the judge prompt builds for every tier, including the thin social tier
+//   2. every canonical exemplar carries and passes all five article slots
+//   3. generateArticle accepts a clean injected draft and materializes the
+//      five V3 hook rows with the right contentKeys
+//   4. a draft that trips the linter is retried with feedback, then accepted
+//   5. em dashes in model output are normalized, never burn a retry
+//   6. source gaps (lilith, bad tokens) are skipped, not thrown
+//   7. the grid report accounts for all 168 cells: 7 authored, lilith unsourced
+//   8. the judge prompt builds for every tier, including the thin social tier
 //
 //   node scripts/test-placement-pipeline.js
 
@@ -36,7 +37,16 @@ const good = {
 async function main() {
   // 1. exemplars all lint clean
   for (const e of spec.exemplars) {
-    const r = lintArticle({ hook: e.hook, lived: e.lived, turn: e.turn, planet: e.planet });
+    assert.ok(e.tagline, `${e.sourceId} must include its approved tagline`);
+    assert.strictEqual(e.moves?.length, 3, `${e.sourceId} must include three approved moves`);
+    const r = lintArticle({
+      tagline: e.tagline,
+      hook: e.hook,
+      lived: e.lived,
+      turn: e.turn,
+      moves: e.moves,
+      planet: e.planet
+    });
     assert.strictEqual(r.score, 3, `${e.sourceId} should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
     assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} should have no findings`);
   }
