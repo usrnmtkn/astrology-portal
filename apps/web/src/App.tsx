@@ -7648,6 +7648,24 @@ function emptyHouseContext(
   return { sign, ruler, rulerPosition };
 }
 
+function emptyHouseRulerOccurrence(
+  house: number,
+  natalSky: SkySnapshot | null,
+  emptyHouses: number[] = [house]
+) {
+  const currentRuler = emptyHouseContext(house, natalSky).ruler;
+
+  if (!currentRuler) {
+    return 1;
+  }
+
+  return emptyHouses
+    .filter((candidate) => candidate <= house)
+    .sort((first, second) => first - second)
+    .filter((candidate) => emptyHouseContext(candidate, natalSky).ruler === currentRuler)
+    .length || 1;
+}
+
 type EmptyHouseSlot = "card-summary" | "house-sign" | "ruler-guide" | "ruler-placement" | "activation" | "hint";
 type NormalizedEmptyHouseSection = NormalizedSurfaceSection<EmptyHouseSlot> & {
   heading: string;
@@ -7688,7 +7706,8 @@ function normalizeEmptyHouseCardSurface(
   natalSky: SkySnapshot | null,
   context: "self" | "friend" = "self",
   ownerName?: string,
-  ownerPronouns?: PronounChoice | null
+  ownerPronouns?: PronounChoice | null,
+  emptyHouses?: number[]
 ): NormalizedEmptyHouseArticle {
   void ownerName;
   void ownerPronouns;
@@ -7700,6 +7719,7 @@ function normalizeEmptyHouseCardSurface(
       house,
       primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
+      rulerOccurrence: emptyHouseRulerOccurrence(house, natalSky, emptyHouses),
       rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
       sign: normalizeContentIdPart(sign),
       voice: context === "self" ? "you" : "they"
@@ -7746,9 +7766,10 @@ function emptyHouseCardDescription(
   natalSky: SkySnapshot | null,
   context: "self" | "friend" = "self",
   ownerName?: string,
-  ownerPronouns?: PronounChoice | null
+  ownerPronouns?: PronounChoice | null,
+  emptyHouses?: number[]
 ): string {
-  return normalizeEmptyHouseCardSurface(house, natalSky, context, ownerName, ownerPronouns).sections[0]?.body ?? "";
+  return normalizeEmptyHouseCardSurface(house, natalSky, context, ownerName, ownerPronouns, emptyHouses).sections[0]?.body ?? "";
 }
 
 function normalizeEmptyHouseDetailSurface({
@@ -7758,6 +7779,7 @@ function normalizeEmptyHouseDetailSurface({
   natalSky,
   ownerAwareParagraph,
   ruler,
+  rulerOccurrence,
   rulerPosition,
   sign
 }: {
@@ -7767,6 +7789,7 @@ function normalizeEmptyHouseDetailSurface({
   natalSky: SkySnapshot | null;
   ownerAwareParagraph: (value: string) => string;
   ruler: string;
+  rulerOccurrence: number;
   rulerPosition: PlanetPosition | null;
   sign: string;
 }): NormalizedEmptyHouseArticle {
@@ -7786,6 +7809,7 @@ function normalizeEmptyHouseDetailSurface({
       house,
       primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
+      rulerOccurrence,
       rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
       sign: normalizeContentIdPart(sign),
       voice: context === "self" ? "you" : "they"
@@ -7828,7 +7852,8 @@ function emptyHouseDetailArticle(
   natalSky: SkySnapshot | null,
   context: "self" | "friend" = "self",
   ownerName?: string,
-  ownerPronouns?: PronounChoice | null
+  ownerPronouns?: PronounChoice | null,
+  emptyHouses?: number[]
 ): YouTransitArticle {
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
   const title = emptyHouseTitle(house, natalSky);
@@ -7844,6 +7869,7 @@ function emptyHouseDetailArticle(
     natalSky,
     ownerAwareParagraph,
     ruler,
+    rulerOccurrence: emptyHouseRulerOccurrence(house, natalSky, emptyHouses),
     rulerPosition,
     sign
   });
@@ -13457,6 +13483,24 @@ export function App() {
     const pendingForm = readPendingSignupForm();
     const cachedLocalProfile = getInitialUserProfile();
     let persistedProfileId: string | null = null;
+    const hydrateBootstrapSocialProfile = async (profile: UserProfile) => {
+      try {
+        const existingSocialProfile = await loadOwnSocialProfile();
+        const socialProfile = existingSocialProfile ?? await syncOwnSocialProfile({
+          displayName: profile.name,
+          avatarUrl: profile.avatarUrl,
+          natalChart: null
+        });
+
+        if (!isCancelled()) {
+          setOwnSocialProfile(socialProfile);
+        }
+      } catch (socialProfileError) {
+        if (!isCancelled()) {
+          console.warn("Social profile bootstrap failed; the profile header will continue without a handle.", socialProfileError);
+        }
+      }
+    };
 
     try {
       const persistedProfile = await loadPersistedProfile(account.id);
@@ -13475,6 +13519,10 @@ export function App() {
         const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
 
         setUserProfile(accountProfile);
+        await hydrateBootstrapSocialProfile(accountProfile);
+        if (isCancelled()) {
+          return;
+        }
         if (remoteTheme === "light" || remoteTheme === "dark") {
           setTheme(remoteTheme);
         }
@@ -13495,7 +13543,13 @@ export function App() {
           setHasLocationPreference(true);
         }
       } else {
-        setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
+        const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+
+        setUserProfile(accountProfile);
+        await hydrateBootstrapSocialProfile(accountProfile);
+        if (isCancelled()) {
+          return;
+        }
       }
 
       try {
@@ -13519,7 +13573,13 @@ export function App() {
       }
 
       console.warn("Supabase profile load failed; using local profile cache.", error);
-      setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
+      const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+
+      setUserProfile(accountProfile);
+      await hydrateBootstrapSocialProfile(accountProfile);
+      if (isCancelled()) {
+        return;
+      }
       try {
         await migrateLocalManualChartsToRemote(account.id, [
           cachedLocalProfile?.id,
@@ -14436,7 +14496,9 @@ export function App() {
               )}
               {mode === "profile" && (
                 <YouRoute>
-                  {userProfile ? (
+                  {isAuthConfigured && !authAccountChecked ? (
+                    <FeatureLoadingFallback />
+                  ) : userProfile ? (
                     <ProfileView
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
@@ -18919,13 +18981,13 @@ function ProfileView({
       <PlacementTableRow
         ariaLabel={`Read more about ${emptyHouseTitle(house, natalSky)}`}
         asButton
-        description={emptyHouseCardDescription(house, natalSky)}
+        description={emptyHouseCardDescription(house, natalSky, "self", undefined, undefined, emptyNatalHouses)}
         glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
         house={house}
         key={`empty-house-${house}`}
         onClick={() => {
           setActivePlacementRouteId(null);
-          setTransitArticle(emptyHouseDetailArticle(house, natalSky));
+          setTransitArticle(emptyHouseDetailArticle(house, natalSky, "self", undefined, undefined, emptyNatalHouses));
           updatePortalModeUrl("profile", "push");
         }}
         title={emptyHouseTitle(house, natalSky)}
@@ -19950,7 +20012,8 @@ function ManualChartsPanel({
       selectedChart.natalChart,
       "friend",
       selectedChart.displayName,
-      selectedChart.pronouns
+      selectedChart.pronouns,
+      selectedFriendEmptyHouses
     );
 
     onOpenDetail({
@@ -21119,7 +21182,8 @@ function ManualChartsPanel({
                                   friendNatalChart,
                                   "friend",
                                   selectedChart.displayName,
-                                  selectedChart.pronouns
+                                  selectedChart.pronouns,
+                                  selectedFriendEmptyHouses
                                 )}
                                 glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
                                 house={house}
