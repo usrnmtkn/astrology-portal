@@ -8547,6 +8547,20 @@ function normalizeTransitHouseSurface(
   };
 }
 
+// Bond-effect copy is keyed by transiting planet + soft/hard family, so cards that share
+// both must never share a variant or adjacent cards read identically (owner report 2026-07-28).
+const bondEffectHeavyPlanets = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
+
+function bondEffectFamily(transiting: string, aspect: string) {
+  if (aspect === "trine" || aspect === "sextile") {
+    return "soft";
+  }
+  if (aspect === "conjunction") {
+    return bondEffectHeavyPlanets.has(transiting) ? "hard" : "soft";
+  }
+  return "hard";
+}
+
 function activeBondTransitCards(
   contacts: SynastryContact[],
   friendTransits: TransitItem[],
@@ -8554,7 +8568,7 @@ function activeBondTransitCards(
   friendName: string,
   generatedAt: string
 ) {
-  return contacts.flatMap((contact) => {
+  const eligible = contacts.flatMap((contact) => {
     const activations = [
       ...readerTransits.map((transit) => ({ transit, endpoint: contact.yourPoint.name })),
       ...friendTransits.map((transit) => ({ transit, endpoint: contact.friendPoint.name }))
@@ -8575,16 +8589,37 @@ function activeBondTransitCards(
       return [];
     }
 
+    const transiting = normalizeContentIdPart(activation.transitPlanet);
+
+    // Walker canon: Lilith contacts render on conjunction and opposition only.
+    if (transiting === "lilith" && activationAspect !== "conjunction" && activationAspect !== "opposition") {
+      return [];
+    }
+
+    return [{ contact, activation, activationAspect, contactAspect, transiting }];
+  });
+
+  // Deterministic per-friend starting point, then rotate within each planet+family group
+  // so cards drawing on the same effect row always land on different variants.
+  const groupCounts = new Map<string, number>();
+
+  return eligible.flatMap(({ contact, activation, activationAspect, contactAspect, transiting }) => {
+    const groupKey = `${transiting}:${bondEffectFamily(transiting, activationAspect)}`;
+    const indexInGroup = groupCounts.get(groupKey) ?? 0;
+    groupCounts.set(groupKey, indexInGroup + 1);
+    const baseVariant = (stableTransitCopyVariant(friendName, activation.id, contact.id) ?? 1) - 1;
+    const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
+
     try {
       const rendered = transitSynastryFallbackRendererV3.renderBondTransit({
-        transiting: normalizeContentIdPart(activation.transitPlanet),
+        transiting,
         aspect: activationAspect,
         planetA: normalizeContentIdPart(contact.yourPoint.name),
         planetB: normalizeContentIdPart(contact.friendPoint.name),
         natalAspect: contactAspect,
         otherName: friendName,
         sign: activation.transitSign ? normalizeContentIdPart(activation.transitSign) : undefined,
-        variant: stableTransitCopyVariant(friendName, activation.id, contact.id),
+        variant: variantSlot === 1 ? undefined : variantSlot,
         window: personalTransitPackageWindow(activation, generatedAt)
       });
 
