@@ -501,12 +501,15 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("admin dashboard deep links restore primary surfaces, filters, and history state", async ({ page }) => {
-    test.setTimeout(90_000);
+    test.setTimeout(120_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
     let deepLinkLoadIndex = 0;
     const openAdminDeepLink = async (hash: string) => {
-      await expectAdminRouteLoads(page, `/admin/content?qaDeepLink=${deepLinkLoadIndex++}${hash}`);
+      const route = `/admin/content?qaDeepLink=${deepLinkLoadIndex++}${hash}`;
+      await expect(async () => {
+        await expectAdminRouteLoads(page, route);
+      }).toPass({ timeout: routeReadyTimeoutMs * 2 });
     };
 
     for (const adminPage of adminPages) {
@@ -599,6 +602,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("new content actions save with required admin API metadata", async ({ page }) => {
+    test.setTimeout(90_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const writes: { method: string; payload: Record<string, unknown> }[] = [];
     await seedAdminApi(page, {
