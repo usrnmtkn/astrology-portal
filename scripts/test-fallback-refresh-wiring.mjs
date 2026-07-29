@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-28b");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -60,7 +60,7 @@ const personalTransitFriendRows = friendVoiceRows.filter((row) => (
 const prepositionTheyPattern = /\b(?:to|for|with|at|from|of|about|around|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|without|within)\s+they\b|(?<!early )(?<!later )\bon\s+they\b/iu;
 const objectPositionTheyPattern = /(?<!their )\b(?:expect(?:s)?|lift(?:s)?|embarrass(?:es)?|enjoy(?:s)?|trust(?:s)?|grow(?:s)?|enlarge(?:s)?|pair(?:s|ing)?|erase(?:s)?|rebuild(?:s)?|favor(?:s)?|scatter(?:s)?|fuel(?:s)?|shift(?:s)?|run(?:s)?)\s+they\b/iu;
 const themVerbPattern = /\bthem\s+(?:feel|feels|think|thinks|want|wants|need|needs|expect|expects|carry|carries|navigate|navigates|trust|trusts|enjoy|enjoys|lift|lifts|embarrass|embarrasses)\b/giu;
-const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|around|of|in|with|nearest)\s+$/iu;
+const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|around|of|in|with|nearest)\s+$/iu;
 const subjectFormPredicatePattern = /\b(?:is|was)\s+they\b/iu;
 const adjectiveTheyPattern = /\b(?:distinct)\s+they\b/iu;
 const reflexiveObjectPattern = /\b(?:let|make|help|allow)\s+themselves\b/iu;
@@ -145,8 +145,9 @@ const friendTransit = transitRenderer.renderTransitAspect({
   window: "Until November 13"
 });
 assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
-assert.match(friendTransit.body, /^Until November 13, the Moon in Taurus is squaring Sofia's natal Venus\./u);
-assert.match(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
+assert.equal(friendTransit.contentKey, "authored/transit-aspect/moon/venus/hard");
+assert.match(friendTransit.body, /^They can say yes to plans and quietly hope they fall through\./u);
+assert.doesNotMatch(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 
 const friendHouse = transitRenderer.renderTransitHouse({
@@ -168,11 +169,11 @@ const signedChironAspect = transitRenderer.renderTransitAspect({
 });
 assert.match(
   signedChironAspect.body,
-  /^Until July 30, Chiron in Taurus is squaring your natal Jupiter\./u
+  /^The question of what it all means gets loud:/u
 );
 assert.match(
   signedChironAspect.body,
-  /Chiron in Taurus presses the old question of worth and enough; your Jupiter keeps betting on the bigger life\./u
+  /Chiron square your Jupiter until July 30 can make it hard to tell hope from avoidance for a while\./u
 );
 assert.doesNotMatch(signedChironAspect.body, /In plain terms:/u);
 
@@ -340,7 +341,9 @@ const connectionTransit = transitRenderer.renderBondTransit({
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^Until November 13, Saturn is square the line between your Venus and Sofia's Pluto\./u);
+assert.match(connectionTransit.body, /^This connection will face pressure over the next few months\./u);
+assert.match(connectionTransit.body, /Saturn is squaring the connection between your Venus and Sofia's Pluto through November 13\./u);
+assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
 assert.match(connectionTransit.body, /Reliability stops being a promise and starts being something you have to prove/u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({
@@ -448,13 +451,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const rowSummary = transitCardPreview\(normalizedSurfacePreview\(normalizedHouseTransit\)\)/u,
-  "Personal house-transit cards must use the truncated preview."
+  /const rowSummary = transitCardPreview\(\s*transitBodyWithoutRepeatedWindow\(normalizedSurfacePreview\(normalizedHouseTransit\), renderedWindow\)\s*\)/u,
+  "Personal house-transit cards must remove a repeated visible window before truncating the preview."
 );
 assert.match(
   appSource,
-  /rowSummary: transitCardPreview\(normalizedSurfacePreview\(normalized\)\)/u,
-  "Friend house-transit cards must use the truncated preview."
+  /rowSummary: transitCardPreview\(\s*transitBodyWithoutRepeatedWindow\(normalizedSurfacePreview\(normalized\), renderedWindow\)\s*\)/u,
+  "Friend house-transit cards must remove a repeated visible window before truncating the preview."
 );
 assert.match(
   appSource,
@@ -508,8 +511,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /renderBondTransit\(\{[\s\S]*?variant: stableTransitCopyVariant\(/u,
-  "Connection transits must receive a stable repeat-viewer variant."
+  /renderBondTransit\(\{[\s\S]*?variant: variantSlot === 1 \? undefined : variantSlot/u,
+  "Connection transits must receive their rotated stable variant slot."
+);
+assert.match(
+  appSource,
+  /const groupKey = `\$\{transiting\}:\$\{bondEffectFamily\(transiting, activationAspect\)\}`;[\s\S]*?stableTransitCopyVariant\(friendName, groupKey\)[\s\S]*?\(baseVariant \+ indexInGroup\) % 3/u,
+  "Adjacent connection transits in the same planet/family group must rotate from one shared base so their three previews stay distinct."
 );
 assert.match(
   runtimeSource,

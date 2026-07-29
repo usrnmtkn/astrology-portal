@@ -31,7 +31,29 @@ export function formatPhoneNumberForDisplay(value: string) {
   return parsePhoneNumberFromString(value)?.formatInternational() ?? value;
 }
 
+export function phoneNumberLastFour(value: string) {
+  const digits = value.replace(/\D/g, "");
+
+  return digits.slice(-4);
+}
+
+export function maskPhoneNumber(value: string) {
+  const lastFour = phoneNumberLastFour(value);
+
+  return lastFour ? `••• ••• ${lastFour}` : "••• ••• ••••";
+}
+
+export function isValidUsPhoneNumber(value: string) {
+  try {
+    normalizeUsPhoneNumber(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export const supportedPhoneCountry = {
+  code: "US",
   name: "United States",
   callingCode: usCountryCallingCode
 } as const;
