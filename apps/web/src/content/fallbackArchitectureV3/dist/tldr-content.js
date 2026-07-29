@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -303,7 +303,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -842,7 +842,13 @@ ${fogNote}`;
     if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
-  function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }) {
+  function renderSkyPlacement({
+    planet,
+    sign,
+    events = [],
+    isRetrograde = false,
+    isShadowPhase = false
+  }) {
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const retrogradeGuidance = isRetrograde ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you : null;
     if (isRetrograde && !retrogradeGuidance) {
@@ -850,9 +856,41 @@ ${fogNote}`;
     }
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) {
+      const tagline2 = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+      const moves2 = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
+      const structuredParts = [
+        authoredArticle.core_theme,
+        authoredArticle.sign_jurisdiction,
+        authoredArticle.lived_experience,
+        authoredArticle.rulership_twist
+      ];
+      const isStructured = structuredParts.every((part) => typeof part === "string" && part.trim());
+      if (isStructured) {
+        const reviewNote = isRetrograde || isShadowPhase ? authoredArticle.preview_note ?? retrogradeGuidance : null;
+        const closingCharge = authoredArticle.closing_charge?.trim() || null;
+        const parts3 = [
+          reviewNote,
+          ...structuredParts,
+          authoredArticle.history_echo,
+          ...aspectParas,
+          closingCharge
+        ].filter((part) => Boolean(part));
+        return {
+          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
+          tagline: tagline2,
+          moves: moves2,
+          closingCharge,
+          body: parts3.join("\n\n"),
+          parts: parts3,
+          templateKey: "authored/sky-ingress/sky-article-v1",
+          contentKey: authoredArticle.contentKey
+        };
+      }
       const parts2 = [authoredArticle.body, retrogradeGuidance, ...aspectParas].filter((part) => Boolean(part));
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
+        tagline: tagline2,
+        moves: moves2,
         body: parts2.join("\n\n"),
         parts: parts2,
         templateKey: "authored/sky-ingress",
@@ -1117,6 +1155,22 @@ ${fogNote}`;
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
     return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
+  function renderLunationEventCard({
+    eventDate,
+    blendFallbackEnabled = false,
+    ...blendFacts
+  }) {
+    const normalizedEventDate = eventDate.trim().slice(0, 10);
+    const risingKey = `${blendFacts.risingSign}-rising`;
+    const satori = card(
+      `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
+    );
+    if (satori) return result(satori, "authored/satori-lunation-v1");
+    if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+    throw new SourceGapError(
+      `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
+    );
+  }
   const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
   function renderDailyGlance({ natal, aspect, house }) {
     if (natal && aspect) {
@@ -1166,11 +1220,11 @@ ${fogNote}`;
       templateKey: "fallback-template/daily.dodont"
     };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29v";
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-29ab";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

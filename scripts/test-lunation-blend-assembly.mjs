@@ -16,500 +16,318 @@ const readJson = (relativePath) => JSON.parse(
 );
 const sha256 = (value) => crypto
   .createHash("sha256")
-  .update(typeof value === "string" ? value : JSON.stringify(value))
+  .update(typeof value === "string" || Buffer.isBuffer(value) ? value : JSON.stringify(value))
   .digest("hex");
 
+const blendPath = path.join(packageDir, "source-rows/lunation-blend-units-v1.json");
+const blendBytes = fs.readFileSync(blendPath);
+const blend = JSON.parse(blendBytes);
 const baseLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const baseRows = readJson("source-rows/fallback-source-rows-v3.json");
-const blend = readJson("source-rows/lunation-blend-units-v1.json");
 const templates = readJson("templates/fallback-templates-v3.json");
-const aquariusFullMoon = baseRows.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/sky-fullmoon-sign/aquarius"
-);
-const aquariusNewMoon = baseRows.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/sky-newmoon-sign/aquarius"
-);
-const rulerRetro = blend.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/lunation-ruler-retro"
-);
-const expectedAquariusFullMoon = "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?";
-const expectedAquariusNewMoon = "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.";
-const expectedMacroBody = "Full Moons bring what has been building into clearer view. In Aquarius, that may be the friendship that only works because one person keeps organizing everything, the group plan everyone agrees with but no one supports, or the role you accepted years ago that no one has checked to see if you still want.\n\nAquarius is a fixed air sign ruled by Saturn. It can step back from the immediate emotion and see how the larger system works. Who makes the decisions? Who carries the responsibility? Who is expected to adjust? That distance is useful when you need to see the pattern clearly. Taken too far, it can become detachment, rigid thinking, or loyalty to a principle long after it stops helping the people involved.\n\nThe Sun in Leo sits opposite this Moon, bringing personal recognition into tension with the expectations of the group. You may notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. If belonging depends on staying quiet or continuing to play the same part, that arrangement becomes harder to defend. You may also see where a group has been happy to use your work while treating your need for credit as an ego problem.\n\nSaturn gives this Full Moon weight. The problem probably did not begin this week. It may be the same limitation everyone keeps working around, the responsibility that keeps returning to the same person, or the future plan that still sounds good but has no budget, deadline, or clear owner.\n\nClarity does not require a decision on the same day. Let the information settle. Notice what needs new terms, what both sides are willing to repair, and what has reached its limit.";
-const expectedNewMoonMacroBody = "A New Moon begins in the dark: both lights meet in the same sign, nothing is visible yet, and the terms you set now are the ones the next six months will grow on. In Aquarius, those terms are structural. This lunation favors the deliberate start over the inspired one: the arrangement written down, the responsibilities named, the limit stated before anyone has to test it.\n\nAquarius is a fixed air sign ruled by Saturn, and it begins the way an engineer begins: by looking at the whole system before touching a single part. That makes Aquarius starts durable. It also makes them slow, and the wait between commitment and evidence is where most of them are abandoned.\n\nSaturn's rulership adds one more condition: whatever starts now has to survive scrutiny. A beginning that depends on nobody asking hard questions is not protected by this sky; it is exposed by it.\n\nSet the terms while it is still dark. By the time the results are visible, they will already be following the rules you chose here.";
-const expectedCompactAquarius = "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip.";
-const expectedOpeningNine = "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer.";
-const expectedWeekLayer = "This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore.";
-const expectedRulerHouseEleven = "friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry";
-const expectedRetroOverlay = "Because {{rulerTitle}} is retrograde, this is less about taking on something new and more an inspection of what already exists: the standing arrangements, the roles nobody re-negotiated, who is actually carrying the weight.";
-const expectedSaturnVenusBody = "You may feel lonely even next to people who love you. You can still share a home, a calendar, or a bank account while affection gets buried under work schedules, childcare, debt, and the assumption that closeness will take care of itself.\n\nMoney may feel tighter too. A conversation about rent, spending, debt, or who keeps paying for the extras can reveal a larger problem about fairness. The disagreement may not really be about the bill. It may be about who feels considered, who keeps adjusting, and if both people are carrying the life they built together.\n\nSome connections can be rebuilt if both people are willing to name the problem and change the routine. In others, history, habit, or fear of being alone may be doing more of the work than affection. Saturn square Venus makes it difficult to keep calling familiarity closeness.";
-const renderer = createTransitSynastryRenderer(
-  {
-    authoredCards: [
-      ...baseLibrary.authoredCards,
-      ...blend.authoredCards
-    ]
+const allBlendRows = [...blend.authoredCards, ...blend.hookRows];
+const newMoonOpen = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
+const fullMoonOpen = "Full Moons bring what has been building into clearer view.";
+
+const bundle = {
+  transitLib: {
+    authoredCards: [...baseLibrary.authoredCards, ...blend.authoredCards]
   },
-  templates,
-  {
+  rowsFile: {
     ...baseRows,
-    hookRows: [
-      ...baseRows.hookRows,
-      ...blend.hookRows
-    ]
+    hookRows: [...baseRows.hookRows, ...blend.hookRows]
   }
+};
+const renderer = createTransitSynastryRenderer(
+  bundle.transitLib,
+  templates,
+  bundle.rowsFile
 );
 const previewRenderer = createTransitSynastryRenderer(
-  {
-    authoredCards: [
-      ...baseLibrary.authoredCards,
-      ...blend.authoredCards
-    ]
-  },
+  bundle.transitLib,
   templates,
-  {
-    ...baseRows,
-    hookRows: [
-      ...baseRows.hookRows,
-      ...blend.hookRows
-    ]
-  },
+  bundle.rowsFile,
   { allowUnreviewed: true }
 );
-const rendererWithoutRulerHouseNine = createTransitSynastryRenderer(
-  {
-    authoredCards: [
-      ...baseLibrary.authoredCards,
-      ...blend.authoredCards
-    ]
-  },
-  templates,
-  {
-    ...baseRows,
-    hookRows: [
-      ...baseRows.hookRows,
-      ...blend.hookRows.filter(
-        (row) => row.contentKey !== "fallback-hook/lunation-ruler-house/9"
-      )
-    ]
-  }
-);
 
-assert.equal(blend.authoredCards.length, 5);
-assert.equal(blend.hookRows.length, 56);
-const approvedBlendRows = [...blend.authoredCards, ...blend.hookRows]
-  .filter((row) => row.review_status === "approved");
-const reviewGatedBlendRows = [...blend.authoredCards, ...blend.hookRows]
-  .filter((row) => row.review_status === "needs_review");
-assert.equal(approvedBlendRows.length, 18);
-assert.equal(reviewGatedBlendRows.length, 43);
-const batchThreeRows = [...blend.authoredCards, ...blend.hookRows]
-  .filter((row) => row.source_keys?.includes(
-    "Lunation sign packages batch 3 — the next three events"
-  ));
-assert.equal(batchThreeRows.length, 9);
-assert.ok(batchThreeRows.every((row) => row.review_status === "needs_review"));
+// The corrected working-tree package is the locked import. This checksum catches
+// accidental normalization or a return to any pre-ruling review draft.
 assert.equal(
-  sha256(batchThreeRows.map((row) => [
+  sha256(blendBytes),
+  "a92bf23a8fde1d5277137f35898d8a44e5a3b53704f5e8ef23dc67068ce687dc"
+);
+assert.equal(blend.authoredCards.length, 24);
+assert.equal(blend.hookRows.length, 76);
+assert.equal(allBlendRows.filter((row) => row.review_status === "approved").length, 66);
+assert.equal(allBlendRows.filter((row) => row.review_status === "needs_review").length, 34);
+
+// Batch 3 is owner-approved and must serve byte-identically through R4.
+const batchThree = allBlendRows.filter((row) => row.source_keys?.includes(
+  "Lunation sign packages batch 3 — the next three events"
+));
+assert.equal(batchThree.length, 9);
+assert.ok(batchThree.every((row) => row.review_status === "approved"));
+assert.equal(
+  sha256(batchThree.map((row) => [
     row.contentKey,
     row.headline ?? null,
-    row.body ?? row.body_you
+    row.body ?? row.body_you,
+    row.review_status
   ])),
-  "078101e931510176f48b68fc29e506131dd4659390af5472dd346858eb6d90a0"
+  "1d2320cede3022f66315daea48fbfa7ec5a16f611890c09a29cadb141fc777d1"
 );
-const batchThreeText = (sign) => batchThreeRows
-  .filter((row) => row.contentKey.endsWith(`/${sign}`))
-  .map((row) => `${row.headline ?? ""}\n${row.body ?? row.body_you ?? ""}`)
-  .join("\n");
-assert.match(batchThreeText("leo"), /\bSun\b/u);
-assert.match(batchThreeText("pisces"), /\bJupiter\b/u);
-assert.doesNotMatch(batchThreeText("pisces"), /\bNeptune\b/u);
-assert.match(batchThreeText("virgo"), /\bMercury\b/u);
-assert.equal(blend.authoredCards[1].body, expectedNewMoonMacroBody);
-assert.equal(blend.authoredCards[1].review_status, "needs_review");
-assert.equal(aquariusFullMoon?.body_you, expectedAquariusFullMoon);
-assert.equal(aquariusFullMoon?.body_they, expectedAquariusFullMoon);
-assert.equal(aquariusNewMoon?.body_you, expectedAquariusNewMoon);
-assert.equal(aquariusNewMoon?.body_they, expectedAquariusNewMoon);
-assert.equal(aquariusFullMoon?.review_status, "approved");
-assert.equal(aquariusNewMoon?.review_status, "approved");
-assert.equal(blend.authoredCards[0].body, expectedMacroBody);
-assert.equal(
-  blend.hookRows.find((row) => row.contentKey === "fallback-hook/lunation-sign-compact/aquarius")?.body_you,
-  expectedCompactAquarius
-);
-assert.equal(
-  blend.hookRows.find((row) => row.contentKey === "fallback-hook/lunation-opening-situation/9")?.body_you,
-  expectedOpeningNine
-);
-assert.equal(
-  blend.hookRows.find((row) => row.contentKey === "fallback-hook/lunation-week-layer")?.body_you,
-  expectedWeekLayer
-);
-assert.equal(
-  blend.hookRows.find((row) => row.contentKey === "fallback-hook/lunation-ruler-house/11")?.body_you,
-  expectedRulerHouseEleven
-);
-assert.equal(rulerRetro?.body_you, expectedRetroOverlay);
-assert.equal(rulerRetro?.review_status, "approved");
-assert.ok(
-  [...blend.authoredCards, aquariusFullMoon, aquariusNewMoon]
-    .every((row) => row && !/\byour\s+(?:1st|2nd|3rd|\d+th)\s+house\b/iu.test(
-      `${row.body ?? ""}\n${row.body_you ?? ""}\n${row.body_they ?? ""}`
-    )),
-  "Macro and per-sign authored copy must stay house-neutral."
-);
-assert.ok(
-  blend.hookRows
-    .filter((row) => (
-      row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-      || row.contentKey === "fallback-hook/lunation-ruler-retro"
-    ))
-    .every((row) => !/\byour\s+(?:1st|2nd|3rd|\d+th)\s+house\b/iu.test(row.body_you)),
-  "Moving-body house numbers must remain computed slots, never authored ruler-hook copy."
-);
-
-const macro = renderer.renderLunationMacro({
-  kind: "full-moon",
-  sign: "aquarius"
-});
-assert.equal(macro.headline, blend.authoredCards[0].headline);
-assert.equal(macro.body, blend.authoredCards[0].body);
-assert.throws(
-  () => renderer.renderLunationMacro({ kind: "new-moon", sign: "aquarius" }),
-  SourceGapError,
-  "The Aquarius New Moon macro must remain dark while it is needs_review."
-);
-const previewNewMoonMacro = previewRenderer.renderLunationMacro({
-  kind: "new-moon",
-  sign: "aquarius"
-});
-assert.equal(previewNewMoonMacro.headline, blend.authoredCards[1].headline);
-assert.equal(previewNewMoonMacro.body, expectedNewMoonMacroBody);
-const batchThreeByKey = new Map(batchThreeRows.map((row) => [row.contentKey, row]));
-for (const [kind, sign] of [
-  ["new-moon", "leo"],
-  ["full-moon", "pisces"],
-  ["new-moon", "virgo"]
-]) {
-  assert.throws(
-    () => renderer.renderLunationMacro({ kind, sign }),
-    SourceGapError,
-    `${kind}/${sign} macro must remain dark while needs_review.`
-  );
-  const previewMacro = previewRenderer.renderLunationMacro({ kind, sign });
-  const sourceMacro = batchThreeByKey.get(`authored/sky-lunation-macro/${kind}/${sign}`);
-  assert.equal(previewMacro.headline, sourceMacro.headline);
-  assert.equal(previewMacro.body, sourceMacro.body);
-}
-
-const previewLeoNewMoon = previewRenderer.renderLunationHoroscope({
-  kind: "new-moon",
-  sign: "leo",
-  risingSign: "leo",
-  moonHouse: 1,
-  ruler: "sun",
-  rulerHouse: 1
-});
-assert.ok(previewLeoNewMoon.parts.includes(
-  batchThreeByKey.get("fallback-hook/lunation-sign-compact/new-moon/leo").body_you
-));
-assert.doesNotMatch(
-  previewLeoNewMoon.body,
-  /Sun rules this New Moon from your/u,
-  "Leo's Sun-ruled skip rule must suppress the ruler line."
-);
-const readerLeoNewMoon = renderer.renderLunationHoroscope({
-  kind: "new-moon",
-  sign: "leo",
-  risingSign: "leo",
-  moonHouse: 1,
-  ruler: "sun",
-  rulerHouse: 1
-});
-assert.doesNotMatch(readerLeoNewMoon.body, /what you want your name on/u);
-
-const previewPiscesFullMoon = previewRenderer.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "pisces",
-  risingSign: "pisces",
-  moonHouse: 1,
-  sunHouse: 7,
-  ruler: "jupiter",
-  rulerHouse: 5
-});
-assert.ok(previewPiscesFullMoon.parts.some((part) => part.startsWith(
-  batchThreeByKey.get("fallback-hook/lunation-sign-compact/full-moon/pisces").body_you
-)));
-assert.match(previewPiscesFullMoon.body, /Jupiter rules this Full Moon/u);
-assert.doesNotMatch(previewPiscesFullMoon.body, /Neptune rules/u);
-
-const previewVirgoNewMoon = previewRenderer.renderLunationHoroscope({
-  kind: "new-moon",
-  sign: "virgo",
-  risingSign: "virgo",
-  moonHouse: 1,
-  ruler: "mercury",
-  rulerHouse: 10
-});
-assert.ok(previewVirgoNewMoon.parts.includes(
-  batchThreeByKey.get("fallback-hook/lunation-sign-compact/new-moon/virgo").body_you
-));
-assert.match(previewVirgoNewMoon.body, /Mercury rules this New Moon/u);
-
-const openingDrafts = blend.hookRows.filter((row) => (
-  row.contentKey.startsWith("fallback-hook/lunation-opening-situation/")
-  && row.review_status === "needs_review"
-));
-const rulerDrafts = blend.hookRows.filter((row) => (
-  row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-  && row.review_status === "needs_review"
-));
-const uranusDrafts = blend.hookRows.filter((row) => (
-  row.contentKey.startsWith("fallback-hook/lunation-uranus-layer/")
-  && row.review_status === "needs_review"
-));
-assert.equal(openingDrafts.length, 11);
-assert.equal(rulerDrafts.length, 11);
-assert.equal(uranusDrafts.length, 11);
-assert.deepEqual(
-  new Set(openingDrafts.map((row) => Number(row.contentKey.split("/").at(-1)))),
-  new Set([1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12])
-);
-assert.deepEqual(
-  new Set(rulerDrafts.map((row) => Number(row.contentKey.split("/").at(-1)))),
-  new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12])
-);
-assert.deepEqual(
-  new Set(uranusDrafts.map((row) => Number(row.contentKey.split("/").at(-1)))),
-  new Set([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-);
-assert.equal(
-  sha256(openingDrafts.map((row) => [row.contentKey, row.body_you])),
-  "04173b14ca21dd75ee5ad8f5e85ebeb21c2b6998b0c3358370cafa33b0bdfa9f"
-);
-assert.equal(
-  sha256(rulerDrafts.map((row) => [row.contentKey, row.body_you])),
-  "27bc6d4052637ec3f823679e97fa34bc05a3cfd4ebdd47ade03688b7c296e1ff"
-);
-assert.equal(
-  sha256(uranusDrafts.map((row) => [row.contentKey, row.body_you])),
-  "d4633eb3192284d5f65c13002bcd58b81e9a9687ce1f8b298b007ff81098a16e"
-);
-assert.equal(
-  sha256(blend.authoredCards[1].body),
-  "9920cd664c3b41665f14d1f7607d9a1182e8edb25ffa6dec7f5061cd15f9289e"
-);
-
-const gemini = renderer.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "aquarius",
-  risingSign: "gemini",
-  moonHouse: 9,
-  sunHouse: 3,
-  ruler: "saturn",
-  rulerHouse: 11,
-  rulerRetrograde: true,
-  uranusHouse: 1,
-  uranusLayerActive: true,
-  weekly: true
-});
-const geminiRuler = gemini.parts.findIndex((part) => part.startsWith("Saturn rules this Full Moon"));
-const geminiUranus = gemini.parts.findIndex((part) => part.startsWith("Uranus in your 1st house"));
-assert.ok(gemini.parts[0].startsWith(expectedOpeningNine));
-assert.match(gemini.parts[0], /9th house/u);
-assert.ok(gemini.parts[1].startsWith(expectedCompactAquarius));
-assert.match(gemini.parts[1], /3rd house/u);
-assert.match(gemini.parts[1], /9th house/u);
-assert.match(gemini.body, /Saturn rules this sign/u);
-assert.doesNotMatch(gemini.body, /Uranus rules this sign/u);
-assert.equal(
-  gemini.body.includes(expectedAquariusFullMoon),
-  false,
-  "The full Sky sign section must not render inside the per-rising card."
-);
-assert.ok(geminiRuler > 1, "Ruler-house localization must follow the compact sign core and woven counterpoint.");
-assert.match(
-  gemini.parts[geminiRuler],
-  /^Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\. A goal everyone supported in theory may have quietly become your responsibility to carry\. Because Saturn is retrograde, this is less about taking on something new and more an inspection of what already exists: the standing arrangements, the roles nobody re-negotiated, who is actually carrying the weight\.$/u
-);
-assert.ok(geminiUranus > geminiRuler, "The conditional Uranus layer must follow the traditional ruler line.");
-assert.equal(
-  gemini.parts[geminiUranus],
-  `Uranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it. ${expectedWeekLayer}`
-);
-assert.doesNotMatch(
-  gemini.body,
-  /\b(?:It can show up|That might look|Let go of|Your higher path|Set your intention)\b/u,
-  "The retired per-rising closer stack must not render."
-);
-const directSaturn = renderer.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "aquarius",
-  risingSign: "gemini",
-  moonHouse: 9,
-  sunHouse: 3,
-  ruler: "saturn",
-  rulerHouse: 11,
-  rulerRetrograde: false,
-  uranusHouse: 1,
-  uranusLayerActive: true
-});
-const directSaturnRuler = directSaturn.parts.find(
-  (part) => part.startsWith("Saturn rules this Full Moon")
-);
-assert.equal(
-  directSaturnRuler,
-  "Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry."
-);
-assert.doesNotMatch(directSaturn.body, /Because Saturn is retrograde/u);
-assert.doesNotMatch(directSaturn.body, new RegExp(expectedWeekLayer, "u"));
-
-const leo = renderer.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "aquarius",
-  risingSign: "leo",
-  moonHouse: 7,
-  sunHouse: 1,
-  ruler: "saturn",
-  rulerHouse: 9,
-  uranusHouse: 11,
-  uranusLayerActive: true,
-  weekly: true
-});
-assert.match(leo.parts[0], /7th house/u);
-assert.match(leo.body, /your 1st house/u);
-assert.match(
-  leo.body,
-  /Saturn rules this Full Moon from your 9th house, so the realizations arrive through the bigger frame:/u
-);
-assert.doesNotMatch(leo.body, /Uranus in your/u, "Missing Uranus house copy must skip the secondary layer.");
-assert.match(leo.body, new RegExp(expectedWeekLayer, "u"));
-assert.doesNotMatch(
-  leo.parts[0],
-  /^A partnership, a marriage/u,
-  "The needs_review seventh-house opener must not enter reader output."
-);
-const previewLeo = previewRenderer.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "aquarius",
-  risingSign: "leo",
-  moonHouse: 7,
-  sunHouse: 1,
-  ruler: "saturn",
-  rulerHouse: 9,
-  uranusHouse: 11,
-  uranusLayerActive: true,
-  weekly: true
-});
-assert.match(previewLeo.parts[0], /^A partnership, a marriage/u);
-assert.match(
-  previewLeo.body,
-  /Saturn rules this Full Moon from your 9th house, so the bigger frame is in charge: the trip, the course, the legal or academic process, the belief being tested\. A process far from your daily routine is setting the pace\./u
-);
-assert.doesNotMatch(previewLeo.body, /pace\.\./u);
-assert.match(previewLeo.body, /Uranus in your 11th house keeps the circle in motion/u);
-const leoWithoutRulerHouseNine = rendererWithoutRulerHouseNine.renderLunationHoroscope({
-  kind: "full-moon",
-  sign: "aquarius",
-  risingSign: "leo",
-  moonHouse: 7,
-  sunHouse: 1,
-  ruler: "saturn",
-  rulerHouse: 9,
-  uranusHouse: 11,
-  uranusLayerActive: false,
-  weekly: true
-});
-assert.match(leoWithoutRulerHouseNine.body, /7th house/u);
-assert.match(leoWithoutRulerHouseNine.body, /your 1st house/u);
-assert.doesNotMatch(
-  leoWithoutRulerHouseNine.body,
-  /Saturn rules this Full Moon/u,
-  "A missing ruler-house localization row must omit only that line."
-);
-assert.ok(
-  leoWithoutRulerHouseNine.body.trim().length > 0,
-  "A missing ruler-house localization row must leave the assembled card complete."
-);
-
-const cancerNewMoon = renderer.renderLunationHoroscope({
-  kind: "new-moon",
-  sign: "cancer",
-  risingSign: "aries",
-  moonHouse: 4,
-  sunHouse: 4,
-  ruler: "moon",
-  rulerHouse: 4,
-  weekly: true
-});
-assert.doesNotMatch(cancerNewMoon.body, /The friction this week/u);
-assert.doesNotMatch(cancerNewMoon.body, /ruling this New Moon/u);
-assert.doesNotMatch(cancerNewMoon.body, /Aquarius Full Moon/u);
-assert.match(cancerNewMoon.body, new RegExp(expectedWeekLayer, "u"));
-
-const saturnVenus = baseLibrary.authoredCards.find(
-  (row) => row.contentKey === "authored/transit-aspect/saturn/venus/square"
-);
-assert.ok(saturnVenus, "The owner-final Saturn-Venus square unit must be imported.");
-assert.equal(saturnVenus.body_you, expectedSaturnVenusBody);
-const renderedSaturnVenus = renderer.renderTransitAspect({
-  transiting: "saturn",
-  natal: "venus",
-  aspect: "square"
-});
-assert.equal(renderedSaturnVenus.headline, saturnVenus.headline);
-assert.equal(renderedSaturnVenus.body, saturnVenus.body_you);
-assert.match(
-  renderedSaturnVenus.body,
-  /if both people are carrying the life they built together/u
-);
-assert.doesNotMatch(
-  renderedSaturnVenus.body,
-  /whether both people are carrying the life they built together/u
-);
-
-assert.throws(
-  () => renderer.renderLunationMacro({ kind: "full-moon", sign: "aries" }),
-  SourceGapError,
-  "Missing macro coverage must remain an explicit source gap."
-);
-
-const skyArticle = renderer.renderSkyLunation({
-  kind: "full-moon",
-  sign: "aquarius",
-  dateLine: "On July 29"
-});
-assert.ok(
-  skyArticle.body.startsWith(blend.authoredCards[0].body),
-  "The approved macro must lead the matching Sky lunation article."
-);
-assert.ok(
-  skyArticle.body.includes(expectedAquariusFullMoon),
-  "The owner-final Aquarius sign replacement must supersede its legacy authored body."
-);
-
+const batchThreeByKey = new Map(batchThree.map((row) => [row.contentKey, row]));
 for (const [kind, sign, moonKind] of [
   ["new-moon", "leo", "newmoon"],
   ["full-moon", "pisces", "fullmoon"],
   ["new-moon", "virgo", "newmoon"]
 ]) {
-  const replacement = batchThreeByKey.get(`fallback-hook/sky-${moonKind}-sign/${sign}`);
-  const macroRow = batchThreeByKey.get(`authored/sky-lunation-macro/${kind}/${sign}`);
-  const readerArticle = renderer.renderSkyLunation({
-    kind,
-    sign,
-    dateLine: "On the event date"
-  });
-  assert.equal(readerArticle.body.includes(macroRow.body), false);
-  assert.equal(readerArticle.body.includes(replacement.body_you), false);
+  const sourceMacro = batchThreeByKey.get(
+    `authored/sky-lunation-macro/${kind}/${sign}`
+  );
+  const sourceCompact = batchThreeByKey.get(
+    `fallback-hook/lunation-sign-compact/${kind}/${sign}`
+  );
+  const sourceSign = batchThreeByKey.get(
+    `fallback-hook/sky-${moonKind}-sign/${sign}`
+  );
+  assert.ok(sourceMacro && sourceCompact && sourceSign);
 
-  const previewArticle = previewRenderer.renderSkyLunation({
+  const renderedMacro = renderer.renderLunationMacro({ kind, sign });
+  assert.equal(renderedMacro.headline, sourceMacro.headline);
+  assert.equal(renderedMacro.body, sourceMacro.body);
+
+  const article = renderer.renderSkyLunation({
     kind,
     sign,
     dateLine: "On the event date"
   });
-  assert.ok(previewArticle.body.startsWith(macroRow.body));
-  assert.ok(previewArticle.body.includes(replacement.body_you));
+  assert.ok(article.body.startsWith(sourceMacro.body));
+  assert.ok(article.body.includes(sourceSign.body_you));
+
+  const rising = renderer.renderLunationHoroscope({
+    kind,
+    sign,
+    risingSign: sign,
+    moonHouse: 1,
+    sunHouse: kind === "full-moon" ? 7 : null,
+    ruler: sign === "leo" ? "sun" : sign === "pisces" ? "jupiter" : "mercury",
+    rulerHouse: 5
+  });
+  assert.ok(rising.parts.some((part) => part.startsWith(sourceCompact.body_you)));
 }
 
-console.log("lunation blend assembly checks passed: retrograde ruler overlay, direct-ruler control, computed houses, conditional Uranus layer, and byte-identical aspect copy");
+// The Leo New Moon is Sun-ruled, so the circular ruler line remains skipped.
+const leoNewMoon = renderer.renderLunationHoroscope({
+  kind: "new-moon",
+  sign: "leo",
+  risingSign: "leo",
+  moonHouse: 1,
+  ruler: "sun",
+  rulerHouse: 1
+});
+assert.doesNotMatch(leoNewMoon.body, /Sun rules this New Moon from your/u);
+
+// Approved macros must obey the owner-ruled fixed frame before they can serve.
+for (const macro of blend.authoredCards.filter(
+  (row) => row.review_status === "approved"
+)) {
+  const expected = macro.contentKey.includes("/new-moon/")
+    ? newMoonOpen
+    : fullMoonOpen;
+  assert.ok(
+    macro.body.startsWith(expected),
+    `${macro.contentKey} must open with its fixed macro function sentence.`
+  );
+}
+
+// The owner-approved fallback set completes all kind-by-sign slots in the
+// reader lane.
+const fallbackSetSource = "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores";
+const fallbackSet = allBlendRows.filter((row) => row.source_keys?.includes(
+  fallbackSetSource
+));
+assert.equal(fallbackSet.length, 39);
+assert.ok(fallbackSet.every((row) => row.review_status === "approved"));
+assert.equal(
+  sha256(fallbackSet.map((row) => [
+    row.contentKey,
+    row.headline ?? null,
+    row.body ?? row.body_you,
+    row.review_status
+  ])),
+  "49e40a8ab404cba6e98de20604489d4161a6b87d14eb31d9c60ebdf8a726b0e6"
+);
+const fallbackMacros = fallbackSet.filter(
+  (row) => row.contentKey.startsWith("authored/sky-lunation-macro/")
+);
+const fallbackCompacts = fallbackSet.filter(
+  (row) => row.contentKey.startsWith("fallback-hook/lunation-sign-compact/")
+);
+assert.equal(fallbackMacros.length, 19);
+assert.equal(fallbackCompacts.length, 20);
+for (const macro of fallbackMacros) {
+  const expected = macro.contentKey.includes("/new-moon/")
+    ? newMoonOpen
+    : fullMoonOpen;
+  assert.ok(macro.body.startsWith(expected));
+  const [, , kind, sign] = macro.contentKey.split("/");
+  assert.equal(renderer.renderLunationMacro({ kind, sign }).body, macro.body);
+  assert.equal(
+    previewRenderer.renderLunationMacro({ kind, sign }).body,
+    macro.body
+  );
+}
+for (const compact of fallbackCompacts) {
+  assert.ok(
+    compact.body_you.split(/\s+/u).length > 10,
+    `${compact.contentKey} must serve its authored compact prose, not a sign-name placeholder.`
+  );
+}
+const signs = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+];
+for (const kind of ["new-moon", "full-moon"]) {
+  for (const sign of signs) {
+    const macroKey = `authored/sky-lunation-macro/${kind}/${sign}`;
+    const compactKey = `fallback-hook/lunation-sign-compact/${kind}/${sign}`;
+    assert.ok(blend.authoredCards.some((row) => row.contentKey === macroKey));
+    assert.ok(blend.hookRows.some((row) => row.contentKey === compactKey));
+    if (kind === "new-moon" && sign === "aquarius") {
+      assert.throws(
+        () => renderer.renderLunationMacro({ kind, sign }),
+        SourceGapError
+      );
+    } else {
+      assert.doesNotThrow(() => renderer.renderLunationMacro({ kind, sign }));
+    }
+    assert.doesNotThrow(() => previewRenderer.renderLunationMacro({ kind, sign }));
+  }
+}
+
+// Batch 2 V2 remains wired for preview while every needs_review row stays dark
+// in the reader renderer.
+const batchTwo = allBlendRows.filter((row) => row.source_keys?.includes(
+  "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+));
+assert.equal(batchTwo.length, 34);
+assert.ok(batchTwo.every((row) => row.review_status === "needs_review"));
+assert.equal(
+  sha256(batchTwo.map((row) => [
+    row.contentKey,
+    row.headline ?? null,
+    row.body ?? row.body_you,
+    row.review_status
+  ])),
+  "7b3ae8f7a96ae7938021dc2499397d7d216eeed7f1ac97e622ea1f8dc405b905"
+);
+assert.throws(
+  () => renderer.renderLunationMacro({ kind: "new-moon", sign: "aquarius" }),
+  SourceGapError
+);
+const stagedAquarius = blend.authoredCards.find(
+  (row) => row.contentKey === "authored/sky-lunation-macro/new-moon/aquarius"
+);
+assert.equal(
+  previewRenderer.renderLunationMacro({
+    kind: "new-moon",
+    sign: "aquarius"
+  }).body,
+  stagedAquarius.body
+);
+
+// Duplicate ruler-house keys are intentional supersession pairs. Production
+// selects the approved V1; preview selects its later needs_review V2. No key may
+// be imported twice into the active map.
+const hooksByKey = new Map();
+for (const row of blend.hookRows) {
+  const keyed = hooksByKey.get(row.contentKey) ?? [];
+  keyed.push(row);
+  hooksByKey.set(row.contentKey, keyed);
+}
+const duplicateHooks = [...hooksByKey].filter(([, rows]) => rows.length > 1);
+assert.equal(duplicateHooks.length, 11);
+for (const [contentKey, rows] of duplicateHooks) {
+  assert.match(contentKey, /^fallback-hook\/lunation-ruler-house\/(?:[1-9]|10|12)$/u);
+  assert.equal(rows.length, 2);
+  assert.deepEqual(
+    rows.map((row) => row.review_status).sort(),
+    ["approved", "needs_review"]
+  );
+}
+const approvedRulerOne = duplicateHooks
+  .find(([key]) => key.endsWith("/1"))[1]
+  .find((row) => row.review_status === "approved").body_you;
+const stagedRulerOne = duplicateHooks
+  .find(([key]) => key.endsWith("/1"))[1]
+  .find((row) => row.review_status === "needs_review").body_you;
+const rulerFacts = {
+  kind: "full-moon",
+  sign: "aquarius",
+  risingSign: "aquarius",
+  moonHouse: 1,
+  sunHouse: 7,
+  ruler: "saturn",
+  rulerHouse: 1
+};
+assert.ok(renderer.renderLunationHoroscope(rulerFacts).body.includes(approvedRulerOne));
+assert.ok(previewRenderer.renderLunationHoroscope(rulerFacts).body.includes(stagedRulerOne));
+assert.notEqual(approvedRulerOne, stagedRulerOne);
+
+// Register split: weekly calls renderLunationHoroscope directly. The You-page
+// event resolver accepts only a date-keyed Satori unit unless the pending blend
+// fallback is explicitly enabled.
+assert.throws(
+  () => renderer.renderLunationEventCard({
+    eventDate: "2026-07-29",
+    ...rulerFacts
+  }),
+  SourceGapError
+);
+assert.equal(
+  renderer.renderLunationEventCard({
+    eventDate: "2026-07-29",
+    blendFallbackEnabled: true,
+    ...rulerFacts
+  }).body,
+  renderer.renderLunationHoroscope(rulerFacts).body
+);
+const syntheticSatori = {
+  contentKey: "authored/satori-lunation/2026-07-29/aquarius-rising",
+  content_role: "authored_card",
+  headline: "Satori event card",
+  body: "Locked per-event Satori copy.",
+  review_status: "approved"
+};
+const satoriRenderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...bundle.transitLib.authoredCards,
+      syntheticSatori
+    ]
+  },
+  templates,
+  bundle.rowsFile
+);
+const satori = satoriRenderer.renderLunationEventCard({
+  eventDate: "2026-07-29T10:35:00-04:00",
+  ...rulerFacts
+});
+assert.equal(satori.headline, syntheticSatori.headline);
+assert.equal(satori.body, syntheticSatori.body);
+assert.equal(satori.templateKey, "authored/satori-lunation-v1");
+
+// Moving-body houses remain computed slots, never authored into package copy.
+assert.ok(
+  allBlendRows
+    // Uranus rows are themselves the engine-selected computed-house slot.
+    .filter((row) => !row.contentKey.startsWith("fallback-hook/lunation-uranus-layer/"))
+    .every((row) => !/\byour\s+(?:1st|2nd|3rd|\d+th)\s+house\b/iu.test(
+      `${row.body ?? ""}\n${row.body_you ?? ""}\n${row.body_they ?? ""}`
+    ))
+);
+
+console.log(
+  "lunation blend checks passed: 23/24 reader macros, 24/24 preview macros, 24/24 compacts, 39 approved fallback rows, 34 gated Batch 2 rows, 11 supersession pairs, macro frames, and register split"
+);

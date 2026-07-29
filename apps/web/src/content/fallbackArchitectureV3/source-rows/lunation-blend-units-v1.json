@@ -1,652 +1,1120 @@
 {
-  "authoredCards": [
-    {
-      "contentKey": "authored/sky-lunation-macro/full-moon/aquarius",
-      "content_role": "authored_card",
-      "headline": "The Macro View: What the Aquarius Full Moon Represents",
-      "body": "Full Moons bring what has been building into clearer view. In Aquarius, that may be the friendship that only works because one person keeps organizing everything, the group plan everyone agrees with but no one supports, or the role you accepted years ago that no one has checked to see if you still want.\n\nAquarius is a fixed air sign ruled by Saturn. It can step back from the immediate emotion and see how the larger system works. Who makes the decisions? Who carries the responsibility? Who is expected to adjust? That distance is useful when you need to see the pattern clearly. Taken too far, it can become detachment, rigid thinking, or loyalty to a principle long after it stops helping the people involved.\n\nThe Sun in Leo sits opposite this Moon, bringing personal recognition into tension with the expectations of the group. You may notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. If belonging depends on staying quiet or continuing to play the same part, that arrangement becomes harder to defend. You may also see where a group has been happy to use your work while treating your need for credit as an ego problem.\n\nSaturn gives this Full Moon weight. The problem probably did not begin this week. It may be the same limitation everyone keeps working around, the responsibility that keeps returning to the same person, or the future plan that still sounds good but has no budget, deadline, or clear owner.\n\nClarity does not require a decision on the same day. Let the information settle. Notice what needs new terms, what both sides are willing to repair, and what has reached its limit.",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final house-neutral macro, imported verbatim."
-    },
-    {
-      "contentKey": "authored/sky-lunation-macro/new-moon/aquarius",
-      "content_role": "authored_card",
-      "headline": "The Macro View: What the Aquarius New Moon Represents",
-      "body": "A New Moon begins in the dark: both lights meet in the same sign, nothing is visible yet, and the terms you set now are the ones the next six months will grow on. In Aquarius, those terms are structural. This lunation favors the deliberate start over the inspired one: the arrangement written down, the responsibilities named, the limit stated before anyone has to test it.\n\nAquarius is a fixed air sign ruled by Saturn, and it begins the way an engineer begins: by looking at the whole system before touching a single part. That makes Aquarius starts durable. It also makes them slow, and the wait between commitment and evidence is where most of them are abandoned.\n\nSaturn's rulership adds one more condition: whatever starts now has to survive scrutiny. A beginning that depends on nobody asking hard questions is not protected by this sky; it is exposed by it.\n\nSet the terms while it is still dark. By the time the results are visible, they will already be following the rules you chose here.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Claude draft for owner review. House-neutral Aquarius New Moon macro; not reader-eligible."
-    },
-    {
-      "contentKey": "authored/sky-lunation-macro/new-moon/leo",
-      "content_role": "authored_card",
-      "headline": "The Macro View: What the Leo New Moon Represents",
-      "body": "A New Moon begins in the dark: both lights meet in one sign, and what starts now runs on the terms you give it. In Leo, the terms are personal. This beginning does not work as a committee decision or a favor to anyone else; it has to be signed, owned, and visibly yours.\n\nLeo is a fixed fire sign ruled by the Sun, which is at home here: the beginning it favors is the one you would still want if nobody applauded, and the one you will not abandon when attention moves elsewhere. That is the test worth running before you commit. Strip the audience away. If the plan still feels warm, it is yours; if it goes cold, it was for their approval.\n\nThe caution is pride. A Leo start defends itself early, sometimes before there is a result to defend. Praise is welcome here; it is a poor foundation.\n\nBegin the project that carries your name comfortably; it will not need defending if it is really yours.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Claude draft for owner review. House-neutral Leo New Moon macro; not reader-eligible."
-    },
-    {
-      "contentKey": "authored/sky-lunation-macro/full-moon/pisces",
-      "content_role": "authored_card",
-      "headline": "The Macro View: What the Pisces Full Moon Represents",
-      "body": "Full Moons bring what has been building into clearer view. In Pisces, what comes into view is usually what you have been absorbing without measuring: the help that became an expectation, the compassion that became a workload, the loose arrangement that drifted for months because naming it felt unkind.\n\nPisces is a mutable water sign ruled by Jupiter, the planet of meaning and generosity. That rulership matters: this sign gives, forgives, and finds the larger story in what other signs would call a loss. At full strength that is faith working as designed. Taken too far, it becomes the refusal to see what is actually happening because the dream version is kinder.\n\nThe Sun in Virgo sits opposite this Moon, holding the other end: facts, details, the actual schedule, the actual cost. The tension is not between hope and cynicism. It is between what you believe about a situation and what you can verify.\n\nCheck the details without calling it a betrayal of the dream. What survives verification deserves your faith; what depended on vagueness was already gone.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Claude draft for owner review. House-neutral Pisces Full Moon macro; not reader-eligible."
-    },
-    {
-      "contentKey": "authored/sky-lunation-macro/new-moon/virgo",
-      "content_role": "authored_card",
-      "headline": "The Macro View: What the Virgo New Moon Represents",
-      "body": "A New Moon begins in the dark, and Virgo starts with a list. This is the sky for the unglamorous start: the health routine entered into the calendar, the backlog finally sorted, the workflow rebuilt so the same problem stops arriving every Thursday. Nothing here announces itself. It just works better within a month.\n\nVirgo is a mutable earth sign ruled by Mercury, which runs here on precision rather than speed: measure, adjust, then check again. The Virgo beginning is small on purpose. It knows a system changes through its details, and it distrusts any plan too large to test this week.\n\nThe caution is scope. Improvement can become its own project, and a standard set too high functions the same as no start at all. Perfect is not on the menu; better, repeated, is the entire method.\n\nChoose one process you touch every day and improve it by one concrete step. Small is not the compromise here. Small is the design.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Claude draft for owner review. House-neutral Virgo New Moon macro; not reader-eligible."
-    }
-  ],
-  "hookRows": [
-    {
-      "contentKey": "fallback-hook/lunation-sign-compact/aquarius",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip.",
-      "review_status": "approved",
-      "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final compact sign core for the per-rising Aquarius Full Moon card. The full sign section remains on the Sky article only."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/9",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer.",
-      "review_status": "approved",
-      "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-derived recognizable-problem opener for a ninth-house lunation."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-week-layer",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore.",
-      "review_status": "approved",
-      "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-derived present-tense layer for the per-rising weekly lunation card."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/1",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive personally: in your body, your reactions, the version of you other people can see changing in real time",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final ruler-house localization row."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/2",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through money and what you own: the bank balance, the purchase, the paycheck that suddenly reads differently",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/3",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through words close to home: the message, the conversation, the small fact that rearranges the story",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/4",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through home and family: the household scene, the relative's comment, the feeling that surfaces in your own kitchen",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/5",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through what you make and love: the project, the romance, the play that suddenly tells the truth",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/6",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through the daily routine: the schedule, the body's signals, the workload that shows its real cost",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/7",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through the people closest to you: the partner's sentence, the friend's reaction, the mirror another person holds up",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/8",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through what is shared and hidden: the joint account, the secret, the promise that finally surfaces",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/9",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through the bigger frame: the news from far away, the idea in the book, the belief tested in public",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/10",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through your public life: the meeting, the announcement, the moment your work gets seen",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/11",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry",
-      "review_status": "approved",
-      "approved_via": "owner-final, TLDR-Lunation-Blend-Units-V1.md V2",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final causal-register ruler-house localization row."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/12",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the realizations arrive through the quiet channels: the dream, the mood without a name, the truth that lands when nothing is scheduled",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-retro",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Because {{rulerTitle}} is retrograde, this is less about taking on something new and more an inspection of what already exists: the standing arrangements, the roles nobody re-negotiated, who is actually carrying the weight.",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final retrograde ruler overlay; append to the computed ruler-house paragraph only when the event-time ruler is retrograde."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/1",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it.",
-      "review_status": "approved",
-      "source_keys": [
-        "TLDR-Lunation-Blend-Units-V1.md"
-      ],
-      "notes": "Owner-final conditional modern secondary layer; render only from computed event-time qualification."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/1",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "The question of what you want, apart from what everyone around you expects, may be getting harder to postpone.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/2",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A paycheck, a bill, a purchase, or the question of what your time is worth may be settling into numbers you can no longer read two ways.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/3",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A message, a form, a sibling, or a conversation you keep rescheduling may be about to stop waiting.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/4",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A lease, a repair, a parent, or the question of where home actually is may be moving from background to decision.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/5",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A romance, a child, a creative project, or the question of what you actually enjoy may deserve more than the time left over at the end of the day.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/6",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A workload, a symptom, a schedule, or a coworker situation may be showing you the real cost of how your days are set up.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/7",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A partnership, a marriage, a business arrangement, or one specific person may be bringing terms you agreed to years ago back to the table.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/8",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A shared account, a debt, an inheritance, or a promise made in private may be coming due in a way that involves someone else's decisions.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/10",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A role, a title, a boss, or your own ambition may be lining up a step you can no longer take quietly.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/11",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A friendship, a group project, a community role, or a plan that depends on other people may be showing you whose effort actually keeps it alive.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-opening-situation/12",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A sleep pattern, an old grief, a private habit, or work nobody sees may be taking more of your energy than anything visible on your calendar.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/1",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the outcome runs through you personally: your choices, your body, the version of you people deal with directly. Changes you make now are visible with or without an announcement.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/2",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "money and resources set the terms: what this costs, what it pays, what you are no longer willing to fund. The budget may be the honest version of the conversation.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/3",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the movement comes through words and errands: the message, the meeting, the sibling or neighbor who plays a part. What is said this week does more work than what was planned.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/4",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "home and family are in the mechanism: the household, a parent, the place you return to at night. Private arrangements are shaping the public question.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/5",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "what you love has a vote: the romance, the child, the project you would do unpaid. Joy is information here, not a distraction.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/6",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the schedule tells the truth: the workload, the health routine, the tasks that eat the hours. How a normal Tuesday feels is the evidence that matters.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/7",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "one other person is central: a partner, a close friend, the counterpart whose reaction decides the next move. Their terms are part of yours now.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/8",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "shared resources and private agreements are doing the steering: the joint account, the debt, what was promised behind closed doors. What surfaces now was already true.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/9",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the bigger frame is in charge: the trip, the course, the legal or academic process, the belief being tested. A process far from your daily routine is setting the pace.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/10",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "your public standing is involved: the job, the title, the reputation that precedes you into the meeting. What you decide privately will need a public version soon.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-ruler-house/12",
-      "content_role": "fallback_hook",
-      "grammar_frame": "sentence_fragment",
-      "body_you": "the quiet layer is in play: rest, recovery, the private pattern nobody else monitors. What has been running unexamined in the background is due for daylight.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ],
-      "notes": "Causal-register upgrade. Supersedes the approved V1 row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/2",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 2nd house adds volatility to the material side: income, prices, or possessions may shift suddenly, and a source of security you assumed was fixed can prove otherwise.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/3",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 3rd house speeds up the information: news may arrive abruptly, plans reroute mid-week, and a conversation can change direction without warning.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/4",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 4th house shakes the home base: living arrangements, family roles, or the sense of where you belong may be in open revision.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/5",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 5th house makes desire unpredictable: attractions, creative impulses, and what entertains you may arrive suddenly and leave the same way.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/6",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 6th house keeps the schedule from settling: routines, health habits, and workloads may need rebuilding more than once.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/7",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 7th house adds independence to close relationships: a partner may act out of character, or a commitment may need new terms on short notice.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/8",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 8th house makes the shared and hidden layer jumpy: joint finances, debts, or private agreements may change terms abruptly.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/9",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 9th house changes the itinerary mid-trip: travel, study, and belief are all subject to sudden revision, and that is not a malfunction.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/10",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 10th house makes the career lane unpredictable: roles, titles, and public perception may shift faster than the org chart admits. Reinvention reads better than resistance here.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/11",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 11th house keeps the circle in motion: friendships, groups, and alliances may reshuffle suddenly, and the people arriving now come from unexpected directions.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-uranus-layer/12",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Uranus in your 12th house sends the change through the quiet channels: dreams, moods, and private realizations may arrive abruptly, and an old pattern can end without a farewell.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
-      ]
-    },
-    {
-      "contentKey": "fallback-hook/lunation-sign-compact/new-moon/leo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Leo New Moon begins with what you want your name on. The Sun rules this sign, so the start needs genuine desire behind it, not borrowed approval. The fixed signs are involved, so what begins now tends to stay.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Kind-qualified compact sign core for owner review; not reader-eligible."
-    },
-    {
-      "contentKey": "fallback-hook/sky-newmoon-sign/leo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Leo New Moon is useful for starting what you actually want, not what you have talked yourself into. The Sun rules Leo, so the beginning needs real desire behind it: the project you would choose again in private, the role you want when nobody is watching, the plan that does not depend on applause.\n\nThis may be the creative work that finally gets scheduled hours, the leadership you stop waiting to be offered, or the pleasure you restore to a life that has become all maintenance. Leo commits from the heart, and a fixed sign keeps what it starts. That is the strength and the warning in one: choose carefully, because this one will stick.\n\nThe caution is the audience. If you cannot name what you want without checking who approves, the beginning is not ready. What would you start if nobody ever saw the middle?",
-      "supersedes_authored_body": true,
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Per-sign replacement draft. Supersedes the legacy row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-sign-compact/full-moon/pisces",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Pisces Full Moon shows you what you have been absorbing without measuring. Jupiter rules this sign, so generosity and faith are the subject: where they have fed you, and where they have covered for what you did not want to verify.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Kind-qualified compact sign core for owner review; not reader-eligible."
-    },
-    {
-      "contentKey": "fallback-hook/sky-fullmoon-sign/pisces",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Pisces Full Moon shows you where the dream and the reality have quietly separated. Jupiter rules Pisces, so the focus falls on faith, generosity, and the stories that keep a situation bearable: the potential you keep extending credit to, the person you describe by who they could become, the sacrifice that has started running on habit instead of love.\n\nYou may notice that you have been the one absorbing the cost: covering the difference, softening the reports, translating silence into reassurance. Compassion is real work, and Pisces does it without a timesheet. That is exactly why the total surprises you when it finally comes into view.\n\nMutable water does not force endings; it stops feeding what no longer feeds back. So the question is not how to fight for the dream. Which parts of it hold up when you describe them in plain facts? Keep those. What you can only defend in soft focus has already begun to thin.",
-      "supersedes_authored_body": true,
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Per-sign replacement draft. Supersedes the legacy Neptune-framed row only after owner approval."
-    },
-    {
-      "contentKey": "fallback-hook/lunation-sign-compact/new-moon/virgo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Virgo New Moon starts small and specific on purpose. Mercury rules this sign, so the beginning is a process, not a proclamation: one routine, one fix, one measurable change. What improves quietly this month holds longer than what gets announced.",
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Kind-qualified compact sign core for owner review; not reader-eligible."
-    },
-    {
-      "contentKey": "fallback-hook/sky-newmoon-sign/virgo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "A Virgo New Moon is useful for fixing what you have been working around. Mercury rules Virgo, so the beginning is practical and specific: the routine that gets rebuilt, the appointment that finally gets made, the small repeated problem that gets solved at the source instead of managed every week.\n\nThis may be the health habit that starts at a size you can actually keep, the desk cleared so the work stops fighting the clutter, or the plain comparison of where your time goes against where you say it goes.\n\nThe caution is criticism. Virgo sees what is wrong first, and pointed at yourself without limits, that skill turns a fresh start into an inventory of failures. You are not a problem to solve. Pick one process, make it five percent better, and let the result argue for the next one. What is the one small fix you keep postponing because it is not impressive enough? Start there.",
-      "supersedes_authored_body": true,
-      "review_status": "needs_review",
-      "source_keys": [
-        "Lunation sign packages batch 3 — the next three events"
-      ],
-      "notes": "Per-sign replacement draft. Supersedes the legacy row only after owner approval."
-    }
-  ]
+ "authoredCards": [
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/aquarius",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Aquarius Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Aquarius, that may be the friendship that only works because one person keeps organizing everything, the group plan everyone agrees with but no one supports, or the role you accepted years ago that no one has checked to see if you still want.\n\nAquarius is a fixed air sign ruled by Saturn. It can step back from the immediate emotion and see how the larger system works. Who makes the decisions? Who carries the responsibility? Who is expected to adjust? That distance is useful when you need to see the pattern clearly. Taken too far, it can become detachment, rigid thinking, or loyalty to a principle long after it stops helping the people involved.\n\nThe Sun in Leo sits opposite this Moon, bringing personal recognition into tension with the expectations of the group. You may notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. If belonging depends on staying quiet or continuing to play the same part, that arrangement becomes harder to defend. You may also see where a group has been happy to use your work while treating your need for credit as an ego problem.\n\nSaturn gives this Full Moon weight. The problem probably did not begin this week. It may be the same limitation everyone keeps working around, the responsibility that keeps returning to the same person, or the future plan that still sounds good but has no budget, deadline, or clear owner.\n\nClarity does not require a decision on the same day. Let the information settle. Notice what needs new terms, what both sides are willing to repair, and what has reached its limit.",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final house-neutral macro, imported verbatim."
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/aquarius",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Aquarius New Moon Represents",
+   "body": "An Aquarius New Moon tends to arrive when everyone already agrees the old arrangement is broken, and nobody wants the uncomfortable work of writing down what changes. The group announces a fresh start, the project gets a new title, the relationship claims new rules, and the actual labor stays exactly where it was.\n\nAquarius is a fixed air sign ruled by Saturn, so this beginning is not the rush of an exciting idea; it is the structure required to sustain one. If the plan only works while one person quietly absorbs everyone else's inconvenience, it is not collaboration. It is the old deal wearing a new name.\n\nSaturn gives this start a long clock. Progress looks quiet at first because the foundation has to hold real weight, and a plan that survives only while nobody asks a hard question is already failing. The Aquarius shadow is distance: it is possible to analyze the system brilliantly and miss the people being worn down inside it.\n\nWrite the terms down while the start is still small. Six months from now, the results will not remember anyone's intentions. They will show which agreements were actually kept.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Batch 2 V2 (owner voice pass reconciled with ban list); serves the Feb 2027 event."
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/leo",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Leo New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Leo, those terms are personal. This beginning will not function as a committee decision, an audience poll, or a favor to keep someone else comfortable. It has to be owned, signed, and visibly yours.\n\nLeo is fixed fire ruled by the Sun. The Sun is at home here, which means the only start it honors is the one driven by genuine, unmanufactured desire. Ask yourself what you would still build if nobody was watching, and what you would refuse to abandon the moment public attention moves elsewhere. That is the test to run before you commit. Strip the audience away: if the work still feels vital, it is yours; if it goes cold, you were doing it for applause.\n\nThe shadow here is defensive pride. Leo energy wants to protect a plan early, sometimes long before there is an actual result to show for it. Validation feels good, but it makes a hollow foundation.\n\nStart the project that carries your name comfortably. When the work is genuinely yours, you never have to spend your energy defending its right to exist.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied)."
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/pisces",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Pisces Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Pisces, what surfaces is usually whatever you have been absorbing without keeping score: the temporary help that turned into a permanent obligation, the empathy that became unpaid emotional labor, or the vague arrangement that drifted for months because naming the boundary felt unkind.\n\nPisces is a mutable water sign ruled by Jupiter, the planet of scale, belief, and generosity. That traditional rulership matters: this sign gives, forgives, and insists on finding a deeper meaning where other signs would just see a loss. At its best, that is faith working as designed. Taken too far, it is a refusal to look at plain facts because the fantasy version feels safer.\n\nThe Sun in Virgo sits directly opposite this Moon, holding the practical line: the budget, the physical body, the actual calendar, the real cost. The tension here is not between hope and cynicism; it is between what you want to believe about a situation and what you can actually verify.\n\nCheck the details without treating reality as a betrayal of the dream. What survives an honest look deserves your faith; what depended on vagueness to survive was already gone.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied)."
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/virgo",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Virgo New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. A Virgo New Moon begins with the checklist. This is the sky for unglamorous progress: the health requirement entered into the calendar, the backlog finally cleared, or the daily workflow rebuilt so the same crisis stops arriving every Thursday. Nothing here needs a public announcement. It just works better inside of a month.\n\nVirgo is a mutable earth sign ruled by Mercury, operating here on precision over speed: test, adjust, and evaluate. A Virgo start is intentionally small. It knows a system shifts through its micro-details, and it distrusts any grand plan too large to test this week.\n\nThe trap is perfectionism as an avoidance tactic. Optimization can become its own endless project, and a standard set impossibly high functions identically to never starting at all. Flawlessness is not on the menu; small, repeated corrections are the entire method.\n\nPick one daily process and improve it by one concrete step. Small is not a compromise here; small is the actual design.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied)."
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/aries",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Aries New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Aries, the terms are speed and ownership: this beginning belongs to whoever moves first, and it loses power every day it waits for a better moment. The right start here is closer to a first step than a plan.\n\nAries is cardinal fire ruled by Mars. The beginning it favors is direct: ask the person, send the application, sign up, start training. Mars does not negotiate with hesitation; it converts it into frustration, and frustration into either action or resentment.\n\nThe risk is the false start. Aries opens strong and delegates the follow-through to a future self who never agreed to it. Do not confuse the rush of deciding with the work of doing.\n\nStart one concrete effort this week and give it a move you can finish before the weekend. Momentum is easier to keep than to restart.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/taurus",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Taurus New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Taurus, the terms are material: what this costs, what it pays, and if the pace can be kept for months without breaking what already works. The beginning it favors is slow, physical, and built to last.\n\nTaurus is fixed earth ruled by Venus, so the start has to feel good to survive: the routine you would keep even on a bad week, the purchase that still makes sense in a year, the work your body does not dread. Pleasure here is not indulgence; it is the maintenance plan.\n\nThe risk is refusing to start at all because the current arrangement is comfortable enough. Comfort can preserve a life that has quietly stopped fitting.\n\nBegin the slow build: one asset, one habit, one commitment with a long horizon. Choose what you are willing to repeat, because repetition is the whole method.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/gemini",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Gemini New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Gemini, the terms are curiosity and contact: the question you finally ask, the course you sample, the conversation that changes what you know.\n\nGemini is mutable air ruled by Mercury. This beginning does not need certainty; it needs correspondence: send the message, book the call, read the first chapter, talk to the person who has already done it. Information moves first here and commitment follows.\n\nThe risk is scattering: five beginnings, each two days deep, none with a second week.\n\nPick two threads at most and give both a next step. In Gemini the follow-up question is worth more than the brilliant first one.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/cancer",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Cancer New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Cancer, the terms are belonging: who is inside the wall, what home is supposed to provide, and which people get your protection without applying for it. (Engine note: the Moon rules its own lunation here; skip rule active, no ruler line.)\n\nCancer is cardinal water ruled by the Moon, and the beginning it favors is close to home: the household change, the family conversation, the decision about where and with whom you actually live. Feelings are the evidence this start runs on, and they are admissible.\n\nThe risk is the shell: protecting so carefully that nothing new is allowed in, including the good. Safety that cannot be updated becomes a smaller life than the one you were protecting.\n\nBegin where you live: the home repair, the standing dinner, the boundary that makes your place feel like yours again.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/libra",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Libra New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Libra, the terms are mutual: this beginning involves another person, and it works only if the deal is stated instead of assumed.\n\nLibra is cardinal air ruled by Venus. The start it favors is relational and explicit: the partnership formalized, the collaboration proposed, the conflict opened politely on purpose. Fair terms at the start save the renegotiation later.\n\nThe risk is agreeableness: beginning what the other person wants and calling the relief of their approval a decision. A partnership begun on unstated terms is an argument on a delay timer.\n\nOpen the conversation you have been balancing in your head. Say the terms first; adjust them together second.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/scorpio",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Scorpio New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Scorpio, the terms are total: this beginning is private, deliberate, and it requires telling yourself the truth before anyone else hears the plan.\n\nScorpio is fixed water ruled by Mars, the planet of pursuit: beneath the stillness, this sign hunts. The start it favors runs deep and quiet: the debt payoff mapped, the therapy begun, the merger of money or lives negotiated for real, the decision made once and not reopened.\n\nThe risk is control: waiting for guaranteed terms that never arrive, or starting a hidden version of the plan so no one can watch it fail.\n\nCommit fully in private first. What begins with your whole agreement does not need witnesses to hold.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/sagittarius",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Sagittarius New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Sagittarius, the terms are size: this beginning has to be worth the story you will tell about it. Small maintenance starts do not hold here; a direction does.\n\nSagittarius is mutable fire ruled by Jupiter. The start it favors points at a horizon: the trip booked, the course of study entered, the belief tested in the world instead of defended at home. Optimism is legitimate fuel here.\n\nThe risk is the launch with no landing gear: enthusiasm that signs up for everything and completes the first tenth. A vision without a first concrete leg is a mood.\n\nChoose the destination, then buy the first ticket only. The rest of the route can adapt; the departure cannot keep moving.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/capricorn",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Capricorn New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Capricorn, the terms are structural: what is being built, who is responsible, and what it costs per month in effort you can actually supply.\n\nCapricorn is cardinal earth ruled by Saturn, at home and unsentimental. The beginning it favors has a foundation poured before the announcement: the business registered, the certification begun, the savings plan automated. Ambition here is a schedule, not a feeling.\n\nThe risk is postponement disguised as preparation, and its twin: building the impressive structure on top of a life with no rest in it.\n\nLay one foundation stone this month, on a timeline you would show a skeptic. What is built properly here tends to still be standing years later.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/new-moon/pisces",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Pisces New Moon Represents",
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Pisces, the terms are quiet: this beginning starts as a pull rather than a plan, and it needs protecting from ridicule while it is still soft.\n\nPisces is mutable water ruled by Jupiter, which gives even this gentle sign a size: the creative practice, the spiritual commitment, the act of service that grows past its container. Begin before you can explain it; explanation arrives later here.\n\nThe risk is drift: a beginning that stays a feeling, comforted instead of started. Vagueness can protect a dream and starve it with the same gesture.\n\nGive the pull one scheduled hour a week and a place where nobody grades it. What is real will use the hour.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/aries",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Aries Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Aries, what surfaces is anger with a history: the accommodation that went one direction for months, the independence traded away in small, reasonable-sounding pieces, the self that got manageable to keep a peace nobody else was keeping.\n\nAries is cardinal fire ruled by Mars, so what comes up now does not arrive politely. The heat is data: it points at the exact place a limit was crossed and nobody said so.\n\nThe Sun in Libra holds the other end: the relationship, the agreement, the appearance of harmony. The tension is not selfishness against love. It is if the current terms require one person to disappear in installments.\n\nSay the direct sentence. Anger that gets a clear channel becomes a boundary; anger that does not becomes an ambush later.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/taurus",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Taurus Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Taurus, what surfaces is the physical truth: what the body has been carrying, what the money has actually been doing, which comforts calm you and which ones just sedate the question.\n\nTaurus is fixed earth ruled by Venus. What comes into view is the difference between owning your possessions and being owned by their maintenance, between stability and the fear of moving.\n\nThe Sun in Scorpio holds the other end: the shared, the merged, the emotionally expensive. The tension runs between keeping what is yours and the intimacy that requires risking some of it.\n\nKeep what your hands actually use and your body actually rests in. What you keep out of fear owns you back.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/gemini",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Gemini Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Gemini, what surfaces is the unsaid backlog: the conversation postponed into a private monologue, the facts collected but never assembled, the two versions of the story you tell depending on the listener.\n\nGemini is mutable air ruled by Mercury: the pressure here is verbal, and it breaks as words: the message finally sent, the question finally asked in plain terms, the sentence you have rehearsed for a month said in fifteen seconds.\n\nThe Sun in Sagittarius holds the other end: the big claim, the belief, the meaning of it all. The tension is between the details you know and the story you have been telling over them.\n\nSay the specific sentence, not the speech. One accurate detail moves more than the whole defended narrative.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/cancer",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Cancer Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Cancer, what surfaces is what home has actually been costing: the care that runs one direction, the family role assigned before you could object, the difference between the place you live and a place that restores you. (Engine note: the Moon rules its own lunation here; skip rule active, no ruler line.)\n\nCancer is cardinal water ruled by the Moon, at full strength in its own sign: feelings arrive at high tide, and they are accurate about what they concern even when loud about how.\n\nThe Sun in Capricorn holds the other end: the job, the obligations, the version of you that functions in public. The tension is the oldest one: the life you maintain against the people and comfort it was supposed to be for.\n\nFeed the actual home: the person, the ritual, the reconciliation. Duty that never comes home is just employment.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/leo",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Leo Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Leo, what surfaces is the need to be seen specifically, not generally: the credit that went to the group, the effort mistaken for ego the moment it asked for acknowledgment, the warmth you stopped showing because it was mistaken for neediness. (Engine note: the Sun rules Leo and participates in every lunation; skip rule active, no ruler line.)\n\nLeo is fixed fire ruled by the Sun. What rises now is personal pride, and pride is not the flaw here; the hiding is. A heart that performs modesty long enough starts believing the diminished version.\n\nThe Sun in Aquarius holds the other end: the group, the cause, the collective schedule. The tension is between mattering as a person and functioning as a member.\n\nTake the credit that has your name on it, and give the specific praise you have been rationing. Recognition is not a scarce resource; treating it like one is the actual problem.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/virgo",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Virgo Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Virgo, what surfaces is the invisible workload: the corrections nobody sees, the standards nobody else maintains, the sense that keeping everything working has quietly become your unpaid second job.\n\nVirgo is mutable earth ruled by Mercury: the details rise now, itemized. The question they document is not if you are useful. It is what the usefulness is costing, and who looks after the person who checks on everything.\n\nThe Sun in Pisces holds the other end: rest, faith, the unmeasured life. The tension is between the fixable and the acceptable, between service and dissolving into other people's needs.\n\nRetire two obligations that exist only because you never said no to them. Precision about your own limits is also a skill.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/libra",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Libra Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Libra, what surfaces is the price of balance: the opinions traded for approval, the conflict avoided so long it matured into distance, the relationship maintained by exactly one person's flexibility.\n\nLibra is cardinal air ruled by Venus. What becomes visible is the difference between peace and quiet: peace has been negotiated; quiet has just been enforced by whoever minds least.\n\nThe Sun in Aries holds the other end: the self, the want, the direct move. The tension is between being fair and being present, because a partner who has vanished into accommodation is not actually in the relationship.\n\nReopen one negotiation honestly. A relationship that cannot survive your actual preferences is not being protected; it is being postponed.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/scorpio",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Scorpio Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Scorpio, what surfaces is what the arrangement really runs on: who holds the power, who holds the information, and which loyalty is love and which is collateral.\n\nScorpio is fixed water ruled by Mars: what rises now was pursued and buried on purpose, and it comes back with receipts: the resentment with a start date, the secret with a shelf life, the desire that did not dissolve just because it was inconvenient.\n\nThe Sun in Taurus holds the other end: the simple, the ownable, the calm. The tension is between the depth that makes intimacy real and the peace that makes daily life possible.\n\nName one buried term of the arrangement to the other person in it. What is spoken can be renegotiated; what stays buried collects interest.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/sagittarius",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Sagittarius Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Sagittarius, what surfaces is the gap between the philosophy and the itinerary: the freedom talked about and not scheduled, the belief announced and not lived, the promise that the real life starts after this next stretch.\n\nSagittarius is mutable fire ruled by Jupiter: what rises is appetite for meaning, and it will indict a comfortable routine without hesitation.\n\nThe Sun in Gemini holds the other end: the daily facts, the small commitments, the calendar as it actually looks. The tension is between the story of your life and its schedule, and only one of them is currently true.\n\nBook the concrete version of one belief: the trip, the course, the conversation with the mentor. A philosophy with no departure date is a decoration.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "authored/sky-lunation-macro/full-moon/capricorn",
+   "content_role": "authored_card",
+   "headline": "The Macro View: What the Capricorn Full Moon Represents",
+   "body": "Full Moons bring what has been building into clearer view. In Capricorn, what surfaces is the bill for the climb: the title that costs the evenings, the responsibility that was temporary two years ago, the reputation maintained at the expense of the person maintaining it.\n\nCapricorn is cardinal earth ruled by Saturn, and what rises now is structural: which ambitions are load-bearing and which are just heavy.\n\nThe Sun in Cancer holds the other end: home, family, the life the work was supposed to fund. The tension is between the mountain and the reason you started climbing it.\n\nRenegotiate one standing obligation before it renews by default. The career that costs the whole life is not success; it is an unexamined contract.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  }
+ ],
+ "hookRows": [
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip.",
+   "review_status": "approved",
+   "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final compact sign core for the per-rising Aquarius Full Moon card. The full sign section remains on the Sky article only. Rekeyed to include kind segment, matching the family scheme."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/9",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer.",
+   "review_status": "approved",
+   "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-derived recognizable-problem opener for a ninth-house lunation."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-week-layer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore.",
+   "review_status": "approved",
+   "approved_via": "owner-directed implementation, TLDR-Lunation-Blend-Units-V1.md V2",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-derived present-tense layer for the per-rising weekly lunation card."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/1",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive personally: in your body, your reactions, the version of you other people can see changing in real time",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final ruler-house localization row."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/2",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through money and what you own: the bank balance, the purchase, the paycheck that suddenly reads differently",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/3",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through words close to home: the message, the conversation, the small fact that rearranges the story",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/4",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through home and family: the household scene, the relative's comment, the feeling that surfaces in your own kitchen",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/5",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through what you make and love: the project, the romance, the play that suddenly tells the truth",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/6",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through the daily routine: the schedule, the body's signals, the workload that shows its real cost",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/7",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through the people closest to you: the partner's sentence, the friend's reaction, the mirror another person holds up",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/8",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through what is shared and hidden: the joint account, the secret, the promise that finally surfaces",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/9",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through the bigger frame: the news from far away, the idea in the book, the belief tested in public",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/10",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through your public life: the meeting, the announcement, the moment your work gets seen",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/11",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry",
+   "review_status": "approved",
+   "approved_via": "owner-final, TLDR-Lunation-Blend-Units-V1.md V2",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final causal-register ruler-house localization row."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/12",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the realizations arrive through the quiet channels: the dream, the mood without a name, the truth that lands when nothing is scheduled",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-retro",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Because {{rulerTitle}} is retrograde, this is less about taking on something new and more an inspection of what already exists: the standing arrangements, the roles nobody re-negotiated, who is actually carrying the weight.",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final retrograde ruler overlay; append to the computed ruler-house paragraph only when the event-time ruler is retrograde."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/1",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it.",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "notes": "Owner-final conditional modern secondary layer; render only from computed event-time qualification."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/1",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A decision about your body, your name, or the mask you keep on for other people's comfort is getting harder to postpone.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/2",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A paycheck, a bill, an invoice, or the question of what your time actually costs lands in cold numbers you can no longer explain away.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/3",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A message you keep editing, a form you keep moving to tomorrow, or a conversation you have rescheduled three times is about to stop waiting.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/4",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A lease, a repair, a parent's expectation, or the question of where you actually feel at home needs more than another temporary fix.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/5",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A romance, a child, a creative project, or the question of what you actually enjoy deserves more than the scraps of energy left at the end of the day.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/6",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A workload, a symptom, a schedule, or a workplace dynamic is showing you the exact price your body pays for how the days are set up.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/7",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A partnership, a marriage, a business arrangement, or one specific person brings terms you agreed to years ago back into the light.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/8",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A joint account, a debt, an inheritance, or a promise made behind closed doors is coming due, and someone else holds equal power over what happens next.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/10",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A role, a title, a boss, or an ambition you have been keeping quiet reaches the point where you either name what you want or watch the opening go to someone who asked.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/11",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A friendship, a group project, a community role, or a plan built on shared effort is revealing who actually shows up and whose name is only on the list.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-opening-situation/12",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A sleep pattern, an old grief, a private habit, or the invisible work nobody sees is taking more out of you than anything on your calendar.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/1",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the line gets drawn at you personally: your body, your limits, the version of you people deal with directly. Others register that you have stopped asking permission before you have finished explaining the change.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/2",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "money and self-worth set the limit: what this costs, what it pays, what you refuse to keep subsidizing. The budget is about to be the most honest voice in the conversation.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/3",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the truth arrives through a text, an errand, a neighbor, a sibling. A casual exchange exposes the real dynamic under the pleasantries.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/4",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "home and family set the terms: the household, a parent, the place you return to when the day is over. The private arrangement is deciding the public question.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/5",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "what feeds you gets the vote: the romance, the child, the creative risk, the pleasure you keep postponing for work. Joy stops being negotiable here.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/6",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the body and the schedule tell the truth: the daily tasks, the symptoms, the hours given away for free. That is all the evidence this decision needs.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/7",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "one other person holds the mirror: a partner, a client, an ex, a counterpart. Their reaction shows how much space this dynamic leaves for who you actually are.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/8",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "merged money and unspoken power shape the outcome: the joint account, the debt, the terms negotiated in private. Those terms are up for review in the open.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/9",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "the bigger frame is in charge: the course, the legal matter, the travel plan, the belief being tested. The hardest part is retiring a position you built your name on.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/10",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "your public standing is on the line: the job, the reputation, the title that enters the meeting before you do. A decision made in private now needs a public version.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-ruler-house/12",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "rest, recovery, and the patterns running under your awareness take over. What has been working quietly in the background is due for daylight.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "notes": "Causal-register upgrade V2 (batch 2 V2); supersedes the approved V1 row at flip time. Importer must treat same-key pairs as supersede-on-approve, never double-import."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/2",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 2nd house makes the money floor move: income, prices, or a resource you relied on shifts fast, and holding on out of fear proves different from security.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/3",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 3rd house reroutes the information: news arrives without warning, plans change mid-errand, and one honest conversation sends the situation down a new track.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/4",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 4th house shakes the home base: living arrangements, family roles, or old ideas of where you belong are up for a real redesign.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/5",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 5th house changes what pulls you: a sudden attraction, a strange inspiration, or an appetite for pleasure that interrupts the tidy routine.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/6",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 6th house makes rigid discipline impossible: the body or the workload pushes back against the current system, and flexibility starts outperforming control.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/7",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 7th house brings the freedom question into close bonds: a partnership either makes space for the real versions of both people or strains under the fake harmony.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/8",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 8th house speeds up the shared layer: a financial or emotional agreement with another person moves faster than either of you planned.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/9",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 9th house retires an old certainty: new information lands, and a belief or long-term plan you kept defending stops holding its shape.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/10",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 10th house moves the career ground: a role, a path, or a public identity shifts before the announcement is written.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/11",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 11th house reorganizes the circle: alliances shift overnight, group dynamics show their fault lines, and the people arriving now point to where you actually belong.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-uranus-layer/12",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus in your 12th house works in the dark: a private truth or long-running pattern breaks open before your conscious mind can talk you out of it.",
+   "review_status": "needs_review",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Leo New Moon begins with what you want your name on. The Sun rules this sign, so the start needs real desire, not borrowed approval. Fixed energy is involved, so what you commit to now stays.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/sky-newmoon-sign/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Leo New Moon is for starting what you actually want, not the diluted version you present to look reasonable. The Sun rules Leo, so this beginning runs on honest desire: the project you choose in private, the authority you stop waiting for someone to hand you, or the creative pleasure you restore to a life that has turned into pure maintenance.\n\nThis is where you give concrete hours to work that carries your imprint, claim space without apologizing for it, and stop hiding your ambition behind humility. Fixed fire commits from the heart, and it holds its ground. That is the strength and the warning: choose carefully, because what you start here will stick.\n\nThe trap is performing for an audience. If you cannot name what you want without checking who is watching, you are not ready to begin. What would you build if nobody ever saw the middle?",
+   "supersedes_authored_body": true,
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Pisces Full Moon shows you what you have been absorbing without keeping score. Jupiter rules this sign, placing the focus on generosity and faith: where they nourish you, and where they cover for what you refuse to verify.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/sky-fullmoon-sign/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Pisces Full Moon shows you exactly where the story you tell yourself and the reality on the ground have split apart. Jupiter rules Pisces, so the spotlight hits faith, generosity, and the excuses that keep an unsustainable situation running: the potential you keep extending credit to, the person you describe by who they could be instead of who they are, or the sacrifice that runs on habit rather than love.\n\nYou may realize you have been quietly paying the entire bill: covering the difference, softening the impact, and translating someone else's silence into reassurance. Compassion takes real energy, and Pisces gives it away without a timesheet. That is why the total cost shocks you when it finally lands.\n\nMutable water does not force a dramatic fight; it simply stops feeding what gives nothing back. Which parts of the dream hold up when you state them in plain facts? Keep those. Whatever you can only defend in soft focus is already over.",
+   "supersedes_authored_body": true,
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Virgo New Moon starts small and practical on purpose. Mercury rules this sign, making the beginning a routine, not a speech: one fix, one boundary, one measurable change. What gets quietly repaired this month lasts.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/sky-newmoon-sign/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Virgo New Moon is for fixing what you have been working around. Mercury rules Virgo, so the starting line is concrete and specific: the daily routine you rebuild, the appointment you stop rescheduling, or the recurring problem you solve at the source instead of managing every afternoon.\n\nThis is the health habit started at a scale your body can actually sustain, the workspace cleared so your daily labor stops fighting clutter, or the cold comparison of where your time actually goes versus where you claim it goes.\n\nThe shadow is relentless self-criticism. Virgo spots the flaw immediately, and turned inward without boundaries, that skill turns a fresh start into an inventory of personal failures. You are not a project to be debugged. Pick one practical process, make it five percent better, and let the result speak for itself. What is the one small fix you keep postponing because it is not impressive enough to post about? Start there.",
+   "supersedes_authored_body": true,
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "notes": "Owner-final production import, batch 3 V2 locked."
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "An Aries New Moon starts with the first move. Mars rules this sign, so the beginning needs action within days, not a better plan. The first step is the signature.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Taurus New Moon starts what is meant to last. Venus rules this sign, so the beginning must be sustainable, not heroic. Slow is the strategy, not the delay.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Gemini New Moon starts with a question. Mercury rules this sign, so the beginning is a message, a call, a first conversation. Contact comes before certainty.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Cancer New Moon begins with your own people and place. The Moon is in its own sign, so the start protects before it expands. Build the base; the reach comes later.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Libra New Moon starts as a two-person decision. Venus rules this sign, so the beginning is a stated deal, adjusted together. State the terms while everyone still likes each other.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Scorpio New Moon starts in private. Mars rules this sign, so the beginning is a pursuit: chosen completely, kept quiet, followed through.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Sagittarius New Moon starts with a destination. Jupiter rules this sign, so the beginning needs a horizon, not a chore list. Aim far and date the first move.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Capricorn New Moon starts with the load plan. Saturn rules this sign, so the beginning is a structure: a schedule, a responsibility, a cost accepted in advance.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "An Aquarius New Moon redesigns the system on purpose. Saturn rules this sign, so the beginning is structural: name who carries what, and where the limits are, before the new version hardens.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/new-moon/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Pisces New Moon begins as an inclination, not a plan. Jupiter rules this sign, so even a quiet start carries size. Give it privacy and a rhythm, and let the meaning arrive on its own schedule.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "An Aries Full Moon shows you where the line got crossed months ago. Mars rules this sign, so the surfacing runs hot, and the temperature marks the spot. Cardinal fire moves fast; say it before it collects.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Taurus Full Moon shows you what you are actually holding. Venus rules this sign, so the body and the bank account give their reports. Fixed earth grips; notice where holding became bracing.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Gemini Full Moon empties the drafts folder. Mercury rules this sign, so the release is verbal. Mutable air clears when it speaks; pick the one exchange that matters.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Cancer Full Moon presents the bill for the caretaking. The Moon is home here, so the tide runs high and pointed. Follow the feeling to its subject and tend to that.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Leo Full Moon shows you where being seen went missing. The Sun rules this sign, so the subject is credit, warmth, and visibility. Fixed fire holds; let the effort be visible again.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Virgo Full Moon totals the upkeep. Mercury rules this sign, so the evidence arrives small and specific. The standards you maintain alone are the subject; decide which ones still earn it.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Libra Full Moon shows you what the harmony costs. Venus rules this sign, so the deal underneath is the subject: who adjusts, who benefits, who went silent.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Scorpio Full Moon opens the sealed file. Mars rules this sign, so what surfaces was buried deliberately and kept its charge. Fixed water grips; loosen it enough to look.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Sagittarius Full Moon measures the distance between the belief and the calendar. Jupiter rules this sign, so the hunger for meaning rises. Mutable fire moves; pick the conviction that gets a date.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/lunation-sign-compact/full-moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "A Capricorn Full Moon delivers the invoice for the ambition. Saturn rules this sign, so the review is structural: what the role costs against what it returns. Cardinal earth endures; check what the endurance is for.",
+   "review_status": "approved",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "notes": "Owner-approved full-coverage compact core.",
+   "approved_via": "owner approval in chat, 2026-07-29"
+  }
+ ]
 }
