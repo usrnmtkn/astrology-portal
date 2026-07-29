@@ -127,10 +127,7 @@ function surfaceForKey(key, explicitSurface) {
   }
 
   if (key.includes("/compat-") || key.startsWith("fallback-hook/compat")) return "relationship";
-  if (
-    key.startsWith("fallback-hook/lunation-ruler-house/")
-    || key === "fallback-hook/lunation-ruler-retro"
-  ) return "you";
+  if (key.startsWith("fallback-hook/lunation-")) return "you";
   if (key.includes("synastry")) return "synastry";
   if (key.includes("/transit-") || key.startsWith("fallback-hook/transit") || key.includes("/empty-house")) return "you";
   if (key.startsWith("fallback-vocab/") || key.startsWith("fallback-template/")) return "modifier";

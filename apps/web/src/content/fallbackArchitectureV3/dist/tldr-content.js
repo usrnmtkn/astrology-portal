@@ -211,15 +211,15 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const v = voice === "you" ? "you" : "they";
     const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts2);
-    const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts2) : null;
+    const rulerHouseJurisdiction = rulerHouse ? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts2) : null;
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts2);
     const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts2);
     const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts2);
-    const bridgeFrame = getHook("fallback-hook/empty-house-bridge", v, opts2);
+    const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts2);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts2);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts2);
     const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts2) : null;
-    if (!houseTopic || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeFrame || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+    if (!houseTopic || !rulerHouseJurisdiction || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
     const REF = { sun: "the Sun", moon: "the Moon" };
@@ -233,14 +233,13 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       rulerTitle: title(ruler),
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
-      rulerHouseTopic,
       placementLine
     };
     const paras = [
       mustache(cusp, ctx),
       mustache(rulerFrame, ctx),
       mustache(placementFrame, ctx),
-      mustache(bridgeFrame, ctx),
+      `${bridgeLead} through ${rulerHouseJurisdiction}.`,
       mustache(closeFrame, ctx)
     ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
@@ -1037,22 +1036,25 @@ ${fogNote}`;
     rulerHouse,
     rulerRetrograde,
     uranusHouse,
-    uranusLayerActive
+    uranusLayerActive,
+    weekly = false
   }) {
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
     const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
     const h = moonHouse ?? house ?? (SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12 + 1;
     const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
-    const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
-    if (!frame || !jurisdiction || !higher) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
-    const paras = [fill(frame, { houseOrdinal: ordinal2(h), jurisdiction })];
-    const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
-    if (signSection) paras.push(signSection);
+    if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+    const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
+    const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
+    const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
+    const signCompact = which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null;
+    if (signCompact) paras.push(signCompact);
     if (which === "full" && sunHouse && sunHouse !== h) {
       const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
       if (sunJurisdiction) {
-        paras.push(`The friction this week runs between your ${ordinal2(sunHouse)} house of ${sunJurisdiction} and your ${ordinal2(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`);
+        const counterpoint = `The friction this week runs between your ${ordinal2(sunHouse)} house of ${sunJurisdiction} and your ${ordinal2(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
+        paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
       }
     }
     if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
@@ -1060,7 +1062,7 @@ ${fogNote}`;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
         const rulerTitle = title2(ruler);
-        let rulerParagraph = `With ${rulerTitle} ruling this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, ${rulerHouseBody}.`;
+        let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, so ${rulerHouseBody}.`;
         if (rulerRetrograde) {
           const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
           if (!retroOverlay) {
@@ -1071,27 +1073,16 @@ ${fogNote}`;
         paras.push(rulerParagraph);
       }
     }
+    const weekLayer = weekly ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
+    let weekLayerRendered = false;
     if (uranusLayerActive && uranusHouse) {
       const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
-      if (uranusLayer) paras.push(uranusLayer);
+      if (uranusLayer) {
+        paras.push(weekLayer ? `${uranusLayer} ${weekLayer}` : uranusLayer);
+        weekLayerRendered = Boolean(weekLayer);
+      }
     }
-    const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
-    if (shows) paras.push(shows);
-    const moment = hooks.get(`fallback-hook/lunation-moment/${which}/${h}`)?.body_you;
-    if (moment) paras.push(moment);
-    if (!isEclipse) {
-      const release = hooks.get(`fallback-hook/lunation-release/${h}`)?.body_you;
-      if (release) paras.push(release);
-    }
-    paras.push(higher);
-    if (which === "new" && !isEclipse) {
-      const intent = hooks.get(`fallback-hook/lunation-intention/${h}`)?.body_you;
-      if (intent) paras.push(`Set your intention: "${intent}"`);
-    }
-    if (isEclipse) {
-      const note = hooks.get("fallback-hook/lunation-horoscope/eclipse-note")?.body_you;
-      if (note) paras.push(note);
-    }
+    if (weekLayer && !weekLayerRendered) paras.push(weekLayer);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
     return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
@@ -1148,7 +1139,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29m";
+var PACKAGE_VERSION = "v3-2026-07-29o";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

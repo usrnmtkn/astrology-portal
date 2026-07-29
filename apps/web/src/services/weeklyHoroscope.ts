@@ -411,7 +411,8 @@ function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky:
     kind,
     sign: normalizeId(event.sign ?? ""),
     risingSign: normalizeId(risingSign),
-    ...blendFacts
+    ...blendFacts,
+    weekly: true
   });
   assertLunationBodyMatchesEventSky(rendered.body, eventSky);
 
