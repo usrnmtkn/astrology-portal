@@ -921,6 +921,10 @@ test.describe("client-facing user flow case studies", () => {
         houseTransitCard.locator(".house-transit-term-tag"),
         "The term classification moves into the footer tags"
       ).toHaveText(/^(?:Short-term|Long-term)$/);
+      await expect(
+        houseTransitCard.locator(".house-transit-term-tag"),
+        "The term classification tag has no outline"
+      ).toHaveCSS("border-top-width", "0px");
       await expect(houseTransitKeywords.first()).toBeVisible();
       await expect(
         houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
@@ -1022,6 +1026,10 @@ test.describe("client-facing user flow case studies", () => {
       friendHouseTransitCard.locator(".house-transit-term-tag"),
       "Friend term classification moves into the footer tags"
     ).toHaveText(/^(?:Short-term|Long-term)$/);
+    await expect(
+      friendHouseTransitCard.locator(".house-transit-term-tag"),
+      "Friend term classification tag has no outline"
+    ).toHaveCSS("border-top-width", "0px");
     await expect(
       friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
       "Friend house transit keyword tags follow the card description"

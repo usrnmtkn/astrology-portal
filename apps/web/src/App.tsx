@@ -8607,7 +8607,7 @@ function activeBondTransitCards(
     const groupKey = `${transiting}:${bondEffectFamily(transiting, activationAspect)}`;
     const indexInGroup = groupCounts.get(groupKey) ?? 0;
     groupCounts.set(groupKey, indexInGroup + 1);
-    const baseVariant = (stableTransitCopyVariant(friendName, activation.id, contact.id) ?? 1) - 1;
+    const baseVariant = (stableTransitCopyVariant(friendName, groupKey) ?? 1) - 1;
     const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
 
     try {
