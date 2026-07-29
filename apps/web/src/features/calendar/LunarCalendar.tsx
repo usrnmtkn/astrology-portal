@@ -1121,7 +1121,9 @@ const signGlyphs: Record<string, string> = {
   Pisces: "\u{2653}"
 };
 
-const milestoneSignGlyphs = signGlyphs;
+const milestoneSignGlyphs: Record<string, string> = Object.fromEntries(
+  Object.entries(signGlyphs).map(([sign, glyph]) => [sign, `${glyph}\uFE0E`])
+);
 
 const unicodeGlyphs = {
   conjunction: "\u{260C}",
