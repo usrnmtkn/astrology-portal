@@ -154,24 +154,27 @@ assert.notEqual(
 const friendBond = transitSynastryFallbackRendererV3.renderBondTransit({
   transiting: "lilith",
   aspect: "trine",
-  planetA: "ascendant",
-  planetB: "ascendant",
-  natalAspect: "trine",
+  endpointPlanet: "ascendant",
+  endpointOwner: "friend",
+  activatedPlanets: ["ascendant"],
   otherName: "Chris",
   sign: "sagittarius",
   window: "Until August 1"
 });
 assert.match(renderedParts(friendBond), /^The unfiltered versions of you two get along right now/u);
-assert.match(renderedParts(friendBond), /Lilith in Sagittarius is in a trine to the connection between your Ascendant and Chris's Ascendant through August 1\.$/u);
+assert.match(
+  renderedParts(friendBond),
+  /Lilith in Sagittarius is trine Chris's Ascendant through August 1, activating the connection it makes with your Ascendant\.$/u
+);
 assert.doesNotMatch(renderedParts(friendBond), /That line is one of|How you come across meets/u);
 
 const friendBondVariantBodies = [undefined, 2, 3].map((variant) => renderedParts(
   transitSynastryFallbackRendererV3.renderBondTransit({
     transiting: "lilith",
     aspect: "trine",
-    planetA: "ascendant",
-    planetB: "ascendant",
-    natalAspect: "trine",
+    endpointPlanet: "ascendant",
+    endpointOwner: "friend",
+    activatedPlanets: ["ascendant"],
     otherName: "Chris",
     sign: "sagittarius",
     variant,

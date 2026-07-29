@@ -208,36 +208,43 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalEmptyHouse(facts, opts2 = {}) {
     const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
     const v = voice === "you" ? "you" : "they";
-    const ruler = facts.ruler ?? SIGN_RULER[sign];
+    const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts2);
     const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts2) : null;
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts2);
     const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts2);
     const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts2);
+    const bridgeFrame = getHook("fallback-hook/empty-house-bridge", v, opts2);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts2);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts2);
-    const rulerMode = getHook(`fallback-hook/planet-mode/${ruler}`, v, opts2);
     const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts2) : null;
-    if (!houseTopic || !cusp || !rulerFrame || !closeFrame || !rulerMode) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+    if (!houseTopic || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeFrame || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+      throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+    }
     const REF = { sun: "the Sun", moon: "the Moon" };
     const ctx = {
       houseOrdinal: ordinal(house),
       houseTopic,
       signTitle: title(sign),
       rulerRef: REF[ruler] ?? title(ruler),
-      rulerMode,
       rulerTitle: title(ruler),
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
       rulerHouseTopic,
       placementLine
     };
-    const paras = [mustache(cusp, ctx), mustache(rulerFrame, ctx)];
-    if (placementFrame && placementLine && rulerHouse && rulerHouseTopic) paras.push(mustache(placementFrame, ctx));
-    paras.push(mustache(closeFrame, ctx));
+    const paras = [
+      mustache(cusp, ctx),
+      mustache(rulerFrame, ctx),
+      mustache(placementFrame, ctx),
+      mustache(bridgeFrame, ctx),
+      mustache(closeFrame, ctx)
+    ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
     for (const p of cleaned) if (/\{\{/.test(p)) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} unresolved slot`);
-    return { headline: `${ordinal(house)} House`, note, body: cleaned.join("\n\n"), parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
+    const body = cleaned.join(" ");
+    if (/[—]|--/u.test(body)) throw new RoleViolationError(`Empty-house punctuation gate failed for ${house}/${sign}.`);
+    return { headline: `${ordinal(house)} House`, note, body, parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
   }
   function renderProfectionYear(facts, opts2 = {}) {
     const { house, sign, voice = "you" } = facts;
@@ -299,6 +306,11 @@ var inlineWindow = (w) => {
   if (w.startsWith("For the next")) return "over the next" + w.slice(12);
   if (w.startsWith("For about")) return "for about" + w.slice(9);
   return w.charAt(0).toLowerCase() + w.slice(1);
+};
+var serialList = (items) => {
+  if (items.length < 2) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 };
 var FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
 var FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
@@ -943,28 +955,46 @@ ${fogNote}`;
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
     return { headline: `${title2(a)} ${title2(aspect)} ${title2(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
   }
-  function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }) {
+  function renderBondTransit({
+    transiting,
+    aspect,
+    endpointPlanet,
+    endpointOwner,
+    activatedPlanets,
+    otherName,
+    friendPossessivePronoun,
+    sign,
+    variant,
+    window: win
+  }) {
+    if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
+      throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
+    }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
     const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null) ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
-    const paras = [effect];
     const relation = {
-      conjunction: "meeting",
+      conjunction: "conjunct",
       opposition: "opposite",
-      square: "squaring",
-      trine: "in a trine to",
-      sextile: "sextile to"
+      square: "square",
+      trine: "trine",
+      sextile: "sextile"
     };
     const timeClose = inlineWindow(timeOpen);
-    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} the connection between your ${title2(planetA)} and ${otherName}'s ${title2(planetB)}${timeClose ? ` ${timeClose}` : ""}.`);
-    const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
+    const endpoint = endpointOwner === "reader" ? `your ${title2(endpointPlanet)}` : `${otherName}'s ${title2(endpointPlanet)}`;
+    const activatedList = endpointOwner === "reader" ? `${otherName}'s ${serialList(activatedPlanets.map(title2))}` : serialList(activatedPlanets.map((planet) => `your ${title2(planet)}`));
+    const plural = activatedPlanets.length !== 1;
+    const endpointReference = plural && endpointOwner === "friend" ? `${friendPossessivePronoun || "their"} ${title2(endpointPlanet)}` : "it";
+    const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
+    const paras = [effect, closing];
+    const body = paras.join("\n\n").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} the ${title2(planetA)}-${title2(planetB)} connection with ${otherName}`;
-    return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
+    const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
+    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
   }
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
   function renderLunationMacro({ kind, sign }) {
@@ -1085,7 +1115,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29f";
+var PACKAGE_VERSION = "v3-2026-07-29i";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

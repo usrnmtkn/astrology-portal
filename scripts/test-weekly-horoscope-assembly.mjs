@@ -87,6 +87,10 @@ try {
 
   const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
   const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+  const weeklySource = fs.readFileSync(
+    path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
+    "utf8"
+  );
   assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
   assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
@@ -100,6 +104,38 @@ try {
   assert.match(youPage, />Your horoscope</u);
   assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
+  assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
+  assert.match(weeklySource, /weeklyEphemerisCache/u);
+  assert.doesNotMatch(
+    weeklySource,
+    /getLunarCalendarMonth/u,
+    "Weekly assembly must not calculate the 42-day visual calendar."
+  );
+  assert.doesNotMatch(
+    weeklySource,
+    /includeTransitWindows/u,
+    "Weekly snapshots must not search unused sign and retrograde transit windows."
+  );
+  assert.match(
+    weeklySource,
+    /aquarius:\s*"saturn"/u,
+    "Aquarius lunations must use Saturn as the default ruler."
+  );
+  assert.match(
+    weeklySource,
+    /scorpio:\s*"mars"/u,
+    "Scorpio lunations must use Mars as the default ruler."
+  );
+  assert.match(
+    weeklySource,
+    /pisces:\s*"jupiter"/u,
+    "Pisces lunations must use Jupiter as the default ruler."
+  );
+  assert.doesNotMatch(
+    weeklySource,
+    /(?:aquarius:\s*"uranus"|scorpio:\s*"pluto"|pisces:\s*"neptune")/u,
+    "Modern planets must never enter the default lunation ruler canon."
+  );
 
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
   const location = {
@@ -135,6 +171,10 @@ try {
   assert.match(
     realWeek.horoscope.body,
     /Uranus in your 1st house adds a more personal element of change/u
+  );
+  assert.match(
+    realWeek.horoscope.body,
+    /An Aquarius Full Moon shows you how the arrangement actually works/u
   );
   assert.ok(Array.isArray(realWeek.aspects));
   const readerText = [

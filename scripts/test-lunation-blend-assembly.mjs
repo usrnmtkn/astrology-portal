@@ -18,6 +18,14 @@ const baseLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const baseRows = readJson("source-rows/fallback-source-rows-v3.json");
 const blend = readJson("source-rows/lunation-blend-units-v1.json");
 const templates = readJson("templates/fallback-templates-v3.json");
+const aquariusFullMoon = baseRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/sky-fullmoon-sign/aquarius"
+);
+const aquariusNewMoon = baseRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/sky-newmoon-sign/aquarius"
+);
+const expectedAquariusFullMoon = "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?";
+const expectedAquariusNewMoon = "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.";
 const renderer = createTransitSynastryRenderer(
   {
     authoredCards: [
@@ -34,6 +42,24 @@ const renderer = createTransitSynastryRenderer(
     ]
   }
 );
+const rendererWithoutRulerHouseNine = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...baseLibrary.authoredCards,
+      ...blend.authoredCards
+    ]
+  },
+  templates,
+  {
+    ...baseRows,
+    hookRows: [
+      ...baseRows.hookRows,
+      ...blend.hookRows.filter(
+        (row) => row.contentKey !== "fallback-hook/lunation-ruler-house/9"
+      )
+    ]
+  }
+);
 
 assert.equal(blend.authoredCards.length, 1);
 assert.equal(blend.hookRows.length, 13);
@@ -41,6 +67,19 @@ assert.ok(
   [...blend.authoredCards, ...blend.hookRows]
     .every((row) => row.review_status === "approved"),
   "Owner approval must make every delivered lunation blend unit reader-eligible."
+);
+assert.equal(aquariusFullMoon?.body_you, expectedAquariusFullMoon);
+assert.equal(aquariusFullMoon?.body_they, expectedAquariusFullMoon);
+assert.equal(aquariusNewMoon?.body_you, expectedAquariusNewMoon);
+assert.equal(aquariusNewMoon?.body_they, expectedAquariusNewMoon);
+assert.equal(aquariusFullMoon?.review_status, "approved");
+assert.equal(aquariusNewMoon?.review_status, "approved");
+assert.ok(
+  [blend.authoredCards[0], aquariusFullMoon, aquariusNewMoon]
+    .every((row) => row && !/\byour\s+(?:1st|2nd|3rd|\d+th)\s+house\b/iu.test(
+      `${row.body ?? ""}\n${row.body_you ?? ""}\n${row.body_they ?? ""}`
+    )),
+  "Macro and per-sign authored copy must stay house-neutral."
 );
 assert.ok(
   blend.hookRows
@@ -71,7 +110,8 @@ const geminiCounterpoint = gemini.parts.findIndex((part) => part.startsWith("The
 const geminiRuler = gemini.parts.findIndex((part) => part.startsWith("With Saturn ruling this Full Moon"));
 const geminiUranus = gemini.parts.findIndex((part) => part.startsWith("Uranus in your 1st house"));
 assert.match(gemini.parts[0], /9th house/u);
-assert.match(gemini.body, /Saturn rules this sign/u);
+assert.equal(gemini.parts[1], expectedAquariusFullMoon);
+assert.match(gemini.body, /Saturn rules Aquarius/u);
 assert.doesNotMatch(gemini.body, /Uranus rules this sign/u);
 assert.ok(geminiCounterpoint > 1, "Counterpoint must follow the house frame and sign core.");
 assert.ok(geminiRuler > geminiCounterpoint, "Ruler-house localization must follow the counterpoint.");
@@ -104,6 +144,28 @@ assert.match(
   /With Saturn ruling this Full Moon from your 9th house, the realizations arrive through the bigger frame:/u
 );
 assert.doesNotMatch(leo.body, /Uranus in your/u, "Missing Uranus house copy must skip the secondary layer.");
+const leoWithoutRulerHouseNine = rendererWithoutRulerHouseNine.renderLunationHoroscope({
+  kind: "full-moon",
+  sign: "aquarius",
+  risingSign: "leo",
+  moonHouse: 7,
+  sunHouse: 1,
+  ruler: "saturn",
+  rulerHouse: 9,
+  uranusHouse: 11,
+  uranusLayerActive: false
+});
+assert.match(leoWithoutRulerHouseNine.body, /7th house/u);
+assert.match(leoWithoutRulerHouseNine.body, /your 1st house/u);
+assert.doesNotMatch(
+  leoWithoutRulerHouseNine.body,
+  /With Saturn ruling this Full Moon/u,
+  "A missing ruler-house localization row must omit only that line."
+);
+assert.ok(
+  leoWithoutRulerHouseNine.body.trim().length > 0,
+  "A missing ruler-house localization row must leave the assembled card complete."
+);
 
 const cancerNewMoon = renderer.renderLunationHoroscope({
   kind: "new-moon",
@@ -128,6 +190,14 @@ const renderedSaturnVenus = renderer.renderTransitAspect({
 });
 assert.equal(renderedSaturnVenus.headline, saturnVenus.headline);
 assert.equal(renderedSaturnVenus.body, saturnVenus.body_you);
+assert.match(
+  renderedSaturnVenus.body,
+  /if both people are carrying the life they built together/u
+);
+assert.doesNotMatch(
+  renderedSaturnVenus.body,
+  /whether both people are carrying the life they built together/u
+);
 
 assert.throws(
   () => renderer.renderLunationMacro({ kind: "full-moon", sign: "aries" }),
