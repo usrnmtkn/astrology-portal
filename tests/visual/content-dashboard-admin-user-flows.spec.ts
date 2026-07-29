@@ -454,8 +454,7 @@ async function openCreateMenu(page: Page) {
 }
 
 async function openAdminCreateMenuHost(page: Page) {
-  await expectAdminRouteLoads(page, "/admin/content");
-  await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Slots" }).click();
+  await expectAdminRouteLoads(page, "/admin/content#slots");
   await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
 }
 
@@ -601,15 +600,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("new content actions save with required admin API metadata", async ({ page }) => {
+  test("new content actions save with required admin API metadata", async ({ context }) => {
     test.setTimeout(90_000);
-    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const writes: { method: string; payload: Record<string, unknown> }[] = [];
-    await seedAdminApi(page, {
-      onGeneratedContentWrite: (write) => {
-        writes.push(write);
-      }
-    });
 
     const createCases = [
       { action: "Create article", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
@@ -619,9 +612,15 @@ test.describe("content dashboard admin user flow case studies", () => {
       { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
     ];
 
-    await openAdminCreateMenuHost(page);
-
     for (const createCase of createCases) {
+      const page = await context.newPage();
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      await seedAdminApi(page, {
+        onGeneratedContentWrite: (write) => {
+          writes.push(write);
+        }
+      });
+      await openAdminCreateMenuHost(page);
       await openCreateMenu(page);
       const createAction = page.getByRole("menuitem", { name: createCase.action });
       await expect(createAction).toBeVisible();
@@ -648,10 +647,9 @@ test.describe("content dashboard admin user flow case studies", () => {
           blockType: createCase.blockType
         }
       });
-      await openAdminCreateMenuHost(page);
+      await assertNoBrowserErrors();
+      await page.close();
     }
-
-    await assertNoBrowserErrors();
   });
 
   test("content editor saves row changes through the admin API", async ({ page }) => {
