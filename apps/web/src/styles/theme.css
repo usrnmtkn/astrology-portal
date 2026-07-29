@@ -378,6 +378,11 @@
   --friend-row-meta-size: var(--type-meta-size);
   --friend-feed-chevron-size: 34px;
   --friend-feed-chevron-size-compact: 28px;
+  --friends-mobile-search-size: 16px;
+  --friends-mobile-control-size: var(--type-description-size);
+  --friends-mobile-chart-title-size: var(--type-title-size);
+  --friends-mobile-chart-meta-size: var(--type-description-size);
+  --friends-mobile-avatar-size: var(--type-meta-size);
   --compatibility-card-glyph-size: 23px;
   --compatibility-card-glyph-size-compact: 20px;
   --text-placement-degree: var(--type-degree-size);

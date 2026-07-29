@@ -4481,6 +4481,33 @@
 }
 
 @media (max-width: 700px) {
+  .friends-unified-search-row input {
+    font-size: var(--friends-mobile-search-size);
+  }
+
+  .friends-searching-label,
+  .friends-unified-tabs > button,
+  .friends-add-chart-action {
+    font-size: var(--friends-mobile-control-size);
+  }
+
+  .friends-tab-count {
+    font-size: var(--type-caption-size);
+  }
+
+  .friends-unified-panel .manual-chart-avatar {
+    font-size: var(--friends-mobile-avatar-size);
+  }
+
+  .friends-unified-panel .crt {
+    font-size: var(--friends-mobile-chart-title-size);
+  }
+
+  .friends-unified-panel .manual-chart-signatures {
+    font-size: var(--friends-mobile-chart-meta-size);
+    line-height: var(--leading-description);
+  }
+
   .friends-unified-tab-row {
     align-items: flex-start;
     flex-wrap: wrap;
