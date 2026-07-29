@@ -18375,31 +18375,31 @@
    "contentKey": "fallback-hook/sky-event/aspect-hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
    "review_status": "approved",
-   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
-   "approved_via": "owner sign-off, chat 2026-07-21"
+   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab. Collective wording is package-owned and regression-gated.",
+   "approved_via": "owner global wording approval, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-event/aspect-soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} is {{aspectAdj}} {{bRef}}, and for the collective, {{pairEffect}}",
    "review_status": "approved",
-   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
-   "approved_via": "owner sign-off, chat 2026-07-21"
+   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab. Collective wording is package-owned and regression-gated.",
+   "approved_via": "owner global wording approval, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-event/aspect-conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
-   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for everyone at once, {{pairEffect}}",
+   "body_you": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for the collective, {{pairEffect}}",
+   "body_they": "{{dateLine}}, {{aRef}} meets {{bRef}}, and for the collective, {{pairEffect}}",
    "review_status": "approved",
-   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab.",
-   "approved_via": "owner sign-off, chat 2026-07-21"
+   "notes": "Sky-event frame for season articles. Engine supplies dateLine and facts; slots fill from approved vocab. Collective wording is package-owned and regression-gated.",
+   "approved_via": "owner global wording approval, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-horoscope/aspect-hard",

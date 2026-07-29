@@ -52,6 +52,24 @@ for (const r of rowsFile.fallbackSourceRows) {
   if (r.content_role !== "fallback_source") fail(`${r.contentKey}: source row missing fallback_source role`);
 }
 {
+  const hooks = new Map((rowsFile.hookRows ?? []).map((row) => [row.contentKey, row]));
+  for (const quality of ["hard", "soft", "conjunction"]) {
+    const row = hooks.get(`fallback-hook/sky-event/aspect-${quality}`);
+    if (!row) {
+      fail(`fallback-hook/sky-event/aspect-${quality}: missing global Sky event frame`);
+      continue;
+    }
+    for (const field of ["body_you", "body_they"]) {
+      if (!/\bfor the collective\b/u.test(row[field] ?? "")) {
+        fail(`${row.contentKey}: ${field} must use the approved "for the collective" wording`);
+      }
+      if (/\bfor everyone at once\b/u.test(row[field] ?? "")) {
+        fail(`${row.contentKey}: ${field} restored the retired "for everyone at once" wording`);
+      }
+    }
+  }
+}
+{
   const templatesFile = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
   for (const t of templatesFile.templates) {
     if (/[\u2014\u2013]/.test((t.body ?? "") + (t.body_you ?? "") + (t.body_they ?? ""))) fail(`${t.contentKey}: em/en dash prohibited in template bodies`);
