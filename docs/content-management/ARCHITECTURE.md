@@ -281,20 +281,23 @@ sequenceDiagram
   Snapshot->>Runtime: rows + templates + authored cards
   Runtime->>Resolver: create reader-eligible renderers
   App->>Dashboard: load approved V3 bundle
-  Dashboard-->>App: complete bundle or null
-  App->>Runtime: install complete approved bundle
-  Runtime->>Resolver: replace renderers and lookup maps
+  Dashboard-->>App: current-package approved rows or null
+  App->>Runtime: install approved row overrides
+  Runtime->>Resolver: merge overrides onto the local snapshot
 ```
 
 Important consequences:
 
 - The app can render from the local package before network hydration finishes.
-- An incomplete or failed dashboard load leaves the local snapshot active.
+- Missing dashboard rows remain supplied by the current local snapshot.
 - Only approved package review states survive dashboard loading.
-- Local browser cache is versioned from the dashboard's latest update time.
-- A stale dashboard mirror can replace a newer local row if the mirror has not
-  been synchronized. Diagnose this when copy appears correct briefly and then
-  reverts after page load.
+- Dashboard rows must carry the import batch for the installed package version.
+  A mixed or older batch is rejected in full.
+- Local browser cache is versioned by both the installed package version and
+  the dashboard's latest update time. Older cache schemas fail closed to the
+  local snapshot.
+- Pagination is ordered by update time and unique row ID so tied import
+  timestamps cannot repeat or skip rows between pages.
 - Dashboard synchronization is a deployment action, not an ordinary file edit.
 
 ## 9. Generated interpretations versus V3 package copy

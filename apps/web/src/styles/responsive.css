@@ -607,11 +607,11 @@
   }
 
   html[data-scrolled] .topbar {
-    border-bottom: 1px solid var(--line);
-    background: var(--nav-scrolled-bg);
-    box-shadow: var(--shadow-topbar-scrolled);
-    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    border-bottom-color: transparent;
+    background: transparent;
+    box-shadow: var(--shadow-flat);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   }
 
@@ -626,11 +626,11 @@
 
   html[data-scrolled] .mode-guest .topbar,
   html[data-scrolled] .mode-member .topbar {
-    border-bottom: 1px solid var(--line);
-    background: var(--nav-scrolled-bg);
-    box-shadow: var(--shadow-topbar-scrolled);
-    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    border-bottom-color: transparent;
+    background: transparent;
+    box-shadow: var(--shadow-flat);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   }
 
@@ -647,6 +647,16 @@
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
     padding: 0 var(--space-5);
     font-size: var(--type-body-size);
+  }
+
+  .friend-detail-page .friend-detail-back-row {
+    display: block;
+    width: 100%;
+    margin-bottom: var(--space-5);
+  }
+
+  .friend-detail-page .friends-back-button {
+    position: static;
   }
 
   .app-shell {
@@ -1149,6 +1159,43 @@
     display: block;
   }
 
+  .mode-guest .sky-today-ledger__row,
+  .mode-member .sky-today-ledger__row {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-areas:
+      "badge label"
+      "badge value";
+    align-items: start;
+    column-gap: var(--space-3);
+    row-gap: var(--space-1);
+  }
+
+  .mode-guest .sky-today-ledger__badge,
+  .mode-member .sky-today-ledger__badge {
+    grid-area: badge;
+  }
+
+  .mode-guest .sky-today-ledger__label,
+  .mode-member .sky-today-ledger__label {
+    grid-area: label;
+    width: auto;
+  }
+
+  .mode-guest .sky-today-ledger__value,
+  .mode-member .sky-today-ledger__value {
+    grid-area: value;
+    width: 100%;
+  }
+
+  .mode-guest .sky-today-ledger__value :where(strong, span),
+  .mode-member .sky-today-ledger__value :where(strong, span) {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   html[data-scrolled] .mode-guest .today-summary-cards .sky-today-ledger__foot,
   html[data-scrolled] .mode-member .today-summary-cards .sky-today-ledger__foot {
     position: fixed;
@@ -1313,33 +1360,34 @@
   }
 
   .synastry-placement-row {
-    grid-template-columns: 62px minmax(0, 1fr) auto;
-    grid-template-areas:
-      "glyph sign degree"
-      "glyph house house";
-    gap: var(--inline-gap) var(--card-row-gap);
+    grid-template-columns: 62px 34px minmax(104px, 1fr);
+    grid-template-areas: "glyph sign meta";
+    align-items: center;
+    column-gap: var(--card-row-gap);
+    row-gap: var(--inline-gap);
     padding: var(--card-row-padding-compact);
   }
 
   .synastry-placement-lead {
     grid-area: glyph;
+    align-self: center;
+    padding-bottom: 0;
   }
 
   .synastry-placement-sign {
     grid-area: sign;
+    align-self: center;
   }
 
   .synastry-placement-copy {
     grid-area: sign;
   }
 
-  .synastry-placement-degree {
-    grid-area: degree;
-  }
-
-  .synastry-placement-house {
-    grid-area: house;
-    text-align: left;
+  .synastry-placement-meta {
+    grid-area: meta;
+    align-self: center;
+    width: min(100%, var(--synastry-placement-meta-width));
+    justify-self: end;
   }
 
   .retro {
@@ -1400,8 +1448,8 @@
     --aspect-row-padding: var(--card-row-padding-compact);
     grid-template-columns: var(--aspect-row-template);
     grid-template-areas:
-      "glyphs glyphs"
-      "copy meta";
+      "glyphs meta"
+      "copy copy";
     align-items: start;
     min-height: var(--card-row-min-height);
   }
