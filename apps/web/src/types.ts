@@ -24,6 +24,7 @@ export type PlanetPosition = {
   theme?: string;
   transitStart?: string | null;
   transitEnd?: string | null;
+  transitTimeZone?: string | null;
   transitRemainingLabel?: string | null;
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;

@@ -1656,22 +1656,6 @@ function activeRetrogradeWindowFor(
   };
 }
 
-function nodeRetrogradeTransitWindowFor(
-  planet: string,
-  motion: PlanetPosition["motion"],
-  transitWindow: Pick<PlanetPosition, "transitStart" | "transitEnd">
-): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource"> {
-  if (planet !== "North Node" || motion !== "retrograde" || !transitWindow.transitStart || !transitWindow.transitEnd) {
-    return {};
-  }
-
-  return {
-    retrogradeStart: transitWindow.transitStart,
-    retrogradeEnd: transitWindow.transitEnd,
-    retrogradeWindowSource: "sign-transit"
-  };
-}
-
 function planetLongitudeAt(swe: SwissEphInstance, planetId: number, date: Date) {
   return exactPlanetLongitude(swe, planetId, date);
 }
@@ -2188,7 +2172,7 @@ export async function getAstrodienstSky(
     swe.SE_PLUTO,
     SE_CHIRON,
     SE_MEAN_BLACK_MOON_LILITH,
-    swe.SE_MEAN_NODE
+    swe.SE_TRUE_NODE
   ];
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
     const result = swe.calc_ut(jd, planetIds[index], flags);
@@ -2200,10 +2184,7 @@ export async function getAstrodienstSky(
       ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
     const retrogradeWindow = options.includeTransitWindows
-      ? {
-          ...nodeRetrogradeTransitWindowFor(planet, motion, transitWindow),
-          ...retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
-        }
+      ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
       : {};
 
     return {
@@ -2219,6 +2200,7 @@ export async function getAstrodienstSky(
       houseSystem: "whole_sign",
       motion,
       theme: themeForPoint(planet),
+      transitTimeZone: options.includeTransitWindows ? location.timeZone ?? "UTC" : undefined,
       ...transitWindow,
       ...retrogradeWindow
     };

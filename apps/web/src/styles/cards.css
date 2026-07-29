@@ -158,9 +158,10 @@
 .natal-pattern-card__activation summary em,
 .natal-pattern-card__activation-eyebrow {
   color: var(--card-meta-color);
-  font-size: var(--type-xs);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
   font-style: normal;
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: 0;
   line-height: var(--leading-meta);
   text-transform: uppercase;
