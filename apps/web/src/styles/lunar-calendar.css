@@ -1402,8 +1402,8 @@ a.tx-card.has-article:hover .tx-more {
   display: inline-block;
   margin-left: calc(var(--space-1) + var(--space-1) / 2);
   color: inherit;
-  font-family: inherit;
-  font-size: inherit;
+  font-family: var(--font-glyph);
+  font-size: var(--lunar-milestone-sign-size);
   font-weight: var(--lunar-glyph-emphasis-weight);
   line-height: var(--leading-label);
   opacity: 1;

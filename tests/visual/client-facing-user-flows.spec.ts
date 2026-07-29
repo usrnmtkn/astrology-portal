@@ -1496,6 +1496,35 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("mobile Full Moon milestone uses the dedicated text glyph size", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const fullMoonGlyph = page
+      .locator(".lunar-milestones button")
+      .filter({ hasText: "Full Moon" })
+      .locator(".lunar-milestones__sign");
+    await expect(fullMoonGlyph).toBeVisible();
+    const fullMoonGlyphSizing = await fullMoonGlyph.evaluate((element) => {
+      const probe = document.createElement("span");
+      probe.style.fontSize = "var(--lunar-milestone-sign-size)";
+      document.body.append(probe);
+      const sizing = {
+        actual: getComputedStyle(element).fontSize,
+        token: getComputedStyle(probe).fontSize,
+        usesTextPresentation: element.textContent?.includes("\uFE0E") ?? false
+      };
+      probe.remove();
+      return sizing;
+    });
+    expect(fullMoonGlyphSizing.actual).toBe(fullMoonGlyphSizing.token);
+    expect(fullMoonGlyphSizing.usesTextPresentation, "Full Moon sign renders as a text glyph, not an emoji").toBe(true);
+    await assertNoClientErrors();
+  });
+
   test("direct links restore sky and friend detail state", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
