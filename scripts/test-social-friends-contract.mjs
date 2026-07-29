@@ -326,6 +326,21 @@ assert.match(
   "The profile page must receive the member's current social handle."
 );
 assert.match(
+  app,
+  /const hydrateBootstrapSocialProfile = async \(profile: UserProfile\)[\s\S]*?loadOwnSocialProfile\(\)[\s\S]*?existingSocialProfile \?\? await syncOwnSocialProfile[\s\S]*?setOwnSocialProfile\(socialProfile\)/,
+  "Authentication bootstrap must load or create the member's social profile before exposing the completed header."
+);
+assert.match(
+  app,
+  /await hydrateBootstrapSocialProfile\(accountProfile\)[\s\S]*?setAuthAccountChecked\(true\)/,
+  "Authentication must not report readiness until social-profile hydration has completed."
+);
+assert.match(
+  app,
+  /isAuthConfigured && !authAccountChecked \? \(\s*<FeatureLoadingFallback \/>[\s\S]*?: userProfile \? \(\s*<ProfileView/,
+  "The You page must not render a partial profile header while authentication data is still hydrating."
+);
+assert.match(
   youPage,
   /className="you-profile-handle">@\{profileHandle\}/,
   "The profile summary must display the current handle."

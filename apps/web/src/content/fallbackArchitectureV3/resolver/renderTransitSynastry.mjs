@@ -16,9 +16,26 @@ const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallb
 lib.authoredCards.push(...lunationBlend.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
-const cards = new Map(lib.authoredCards.map((c) => [c.contentKey, c]));
-const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
-const hooks = new Map(rowsFile.hookRows.map((r) => [r.contentKey, r]));
+const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
+const eligibleRowsByKey = (rows) => {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return new Map(
+    [...candidates]
+      .map(([key, keyed]) => [
+        key,
+        [...keyed].reverse().find((candidate) => READER_ELIGIBLE_STATUS.has(candidate.review_status))
+      ])
+      .filter(([, row]) => Boolean(row))
+  );
+};
+const cards = eligibleRowsByKey(lib.authoredCards);
+const vocab = eligibleRowsByKey(rowsFile.vocabularyRows);
+const hooks = eligibleRowsByKey(rowsFile.hookRows);
 const FAST = new Set(["moon", "mercury", "venus", "mars"]);
 const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
@@ -472,21 +489,22 @@ export function renderSkyLunation({ kind, sign, dateLine, mechanics, events = []
   const authored = (variant ? card(`authored/sky-${moonKind}/${sign}-${variant}`) : null)
     ?? (isEclipse ? card(`authored/sky-eclipse/${which === "new" ? "solar" : "lunar"}-${sign}`) : null)
     ?? card(`authored/sky-${moonKind}/${sign}`);
+  const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`);
   // All lunations: the authored axis/intention/ritual/completion block moves BELOW the aspect
   // events and replaces the generic close (owner edit, chat 2026-07-21). Eclipses never get
   // ritual sections and keep the observe-and-integrate canon close as the ending.
   const tail = [];
+  const signBody = signMoon?.supersedes_authored_body
+    ? signMoon.body_you
+    : (authored?.body ?? signMoon?.body_you);
+  if (signBody) paras.push(signBody);
   if (authored) {
-    paras.push(authored.body);
     if (!isEclipse) {
       if (authored.axis) tail.push(authored.axis);
       if (authored.intention) tail.push(`Set your intention: ${authored.intention}`);
       if (authored.ritual) tail.push(`Ritual: ${authored.ritual}`);
       if (authored.completion) tail.push(`To close the cycle, ask: ${authored.completion}`);
     }
-  } else {
-    const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`)?.body_you;
-    if (signMoon) paras.push(signMoon);
   }
   if (isEclipse && northSign && southSign) {
     const nodeRow = hooks.get("fallback-hook/sky-eclipse-node")?.body_you;
@@ -938,11 +956,11 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
   const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
   // Per-rising cards use a compact, reviewed sign core. The full per-sign
   // section belongs to the Sky article and must never be copied into this card.
-  // The delivered Aquarius row is Full-Moon-specific, so do not reuse it for
-  // New Moons or solar eclipses.
-  const signCompact = which === "full"
-    ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you
-    : null;
+  // Sign packages use kind-qualified compact cores. The approved Aquarius
+  // Full Moon calibration predates that namespace, so retain it as a
+  // Full-Moon-only fallback until its kind-qualified replacement arrives.
+  const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you
+    ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
   if (signCompact) paras.push(signCompact);
   if (which === "full" && sunHouse && sunHouse !== h) {
     const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
@@ -958,7 +976,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
         ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse")
         : (which === "new" ? "New Moon" : "Full Moon");
       const rulerTitle = title(ruler);
-      let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal(rulerHouse)} house, so ${rulerHouseBody}.`;
+      let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal(rulerHouse)} house, so ${rulerHouseBody.replace(/\.+$/u, "")}.`;
       if (rulerRetrograde) {
         const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
         if (!retroOverlay) {

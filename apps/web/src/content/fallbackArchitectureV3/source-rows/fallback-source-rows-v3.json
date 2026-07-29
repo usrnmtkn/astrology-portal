@@ -713,6 +713,30 @@
    "approved_via": "owner blueprint, chat 2026-07-29"
   },
   {
+   "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/6",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "daily work, routines, and health",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Empty-House-Refinement-CODEX.md"
+   ],
+   "notes": "Empty-house-only full ruler-house jurisdiction from the owner-final V3 worked example.",
+   "approved_via": "owner-final empty-house V3, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-vocab/empty-house-ruler-topic/6",
+   "content_role": "vocabulary",
+   "grammar_frame": "noun_phrase",
+   "body": "work and routines",
+   "review_status": "approved",
+   "source_keys": [
+    "TLDR-Empty-House-Refinement-CODEX.md"
+   ],
+   "notes": "Empty-house-only compact ruler-house topic from the owner-final V3 worked example.",
+   "approved_via": "owner-final empty-house V3, 2026-07-29"
+  },
+  {
    "contentKey": "fallback-vocab/aspect-adj/conjunction",
    "content_role": "vocabulary",
    "grammar_frame": "adverbial_phrase",
@@ -19100,6 +19124,7 @@
    "grammar_frame": "complete_sentence",
    "body_you": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?",
    "body_they": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?",
+   "supersedes_authored_body": true,
    "review_status": "approved",
    "source_keys": [
     "TLDR-Lunation-Sign-Sections-Fix-Batch1.md"
@@ -19373,6 +19398,7 @@
    "grammar_frame": "complete_sentence",
    "body_you": "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.",
    "body_they": "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.",
+   "supersedes_authored_body": true,
    "review_status": "approved",
    "source_keys": [
     "TLDR-Lunation-Sign-Sections-Fix-Batch1.md"
@@ -51914,6 +51940,1266 @@
    "review_status": "approved",
    "notes": "Bond transit: aspect-specific effect for the connection between the reader and a named friend. Per-aspect rows take precedence over the legacy soft/hard fallback lane.",
    "approved_via": "owner-approved Bond Transit Effects Batch 14 rev 2, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your vitality depends on initiative: you are strongest at a beginning, acting on your own call. Waiting for permission drains you more than a wrong turn ever has.",
+   "body_they": "Their vitality depends on initiative: they are strongest at a beginning, acting on their own call. Waiting for permission drains them more than a wrong turn ever has.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You commit your energy slowly and stay with what you start. Comfort is not laziness for you; it is the base that makes long effort possible.",
+   "body_they": "They commit their energy slowly and stay with what they start. Comfort is not laziness for them; it is the base that makes long effort possible.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your direction stays alive through variety: two interests at once, questions asked early, plans that can change. Boredom is the warning that matters.",
+   "body_they": "Their direction stays alive through variety: two interests at once, questions asked early, plans that can change. Boredom is the warning that matters.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You lead from attachment: your effort follows the people and places you have decided are yours. Protecting what you love is the most reliable motive you have.",
+   "body_they": "They lead from attachment: their effort follows the people and places they have decided are theirs. Protecting what they love is the most reliable motive they have.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your energy rises when your work carries your name and someone sees it. Effort that stays invisible quietly stalls, no matter how good it is.",
+   "body_they": "Their energy rises when their work carries their name and someone sees it. Effort that stays invisible quietly stalls, no matter how good it is.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You direct yourself through usefulness: improving what is in front of you, keeping the standard high. The risk is treating every flaw you find as yours to fix.",
+   "body_they": "They direct themselves through usefulness: improving what is in front of them, keeping the standard high. The risk is treating every flaw they find as theirs to fix.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your sense of purpose sharpens in partnership: you weigh, compare, and decide better with a counterpart in the picture. Left alone too long, you postpone the call.",
+   "body_they": "Their sense of purpose sharpens in partnership: they weigh, compare, and decide better with a counterpart in the picture. Left alone too long, they postpone the call.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You commit your will fully or not at all, and you prefer depth to display. Once a goal matters, you pursue it privately and completely.",
+   "body_they": "They commit their will fully or not at all, and they prefer depth to display. Once a goal matters, they pursue it privately and completely.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your effort needs a reason bigger than the task: a belief, a journey, a future worth the work. Routine holds only when it leads somewhere.",
+   "body_they": "Their effort needs a reason bigger than the task: a belief, a journey, a future worth the work. Routine holds only when it leads somewhere.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You aim long and climb in order: each step has to earn the next. Respect matters more to you than applause, and you trust results over praise.",
+   "body_they": "They aim long and climb in order: each step has to earn the next. Respect matters more to them than applause, and they trust results over praise.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You steer by principle: the fair system, the long view, the improvement everyone benefits from. You do your best work at a slight distance from the crowd it serves.",
+   "body_they": "They steer by principle: the fair system, the long view, the improvement everyone benefits from. They do their best work at a slight distance from the crowd it serves.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/sun/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your direction arrives as a pull rather than a plan, and it strengthens when the work helps someone beyond you. Structure serves you; it just cannot lead.",
+   "body_they": "Their direction arrives as a pull rather than a plan, and it strengthens when the work helps someone beyond them. Structure serves them; it just cannot lead.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/sun-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/sun-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You settle by acting: a fast reaction, a direct answer, and the mood clears as quickly as it came. What throws you most is having to wait.",
+   "body_they": "They settle by acting: a fast reaction, a direct answer, and the mood clears as quickly as it came. What throws them most is having to wait.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You settle through comfort and repetition: the same meal, the familiar chair, the plan that does not change. You shift slowly, and being rushed reads to you as a threat.",
+   "body_they": "They settle through comfort and repetition: the same meal, the familiar chair, the plan that does not change. They shift slowly, and being rushed reads to them as a threat.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You process feeling by talking it through, and a good conversation calms you faster than quiet does. Restlessness usually means a mood has not been put into words yet.",
+   "body_they": "They process feeling by talking it through, and a good conversation calms them faster than quiet does. Restlessness usually means a mood has not been put into words yet.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You protect what matters by keeping it close: familiar people, a known place, a door you can shut. When overwhelmed you withdraw first and explain later.",
+   "body_they": "They protect what matters by keeping it close: familiar people, a known place, a door they can shut. When overwhelmed they withdraw first and explain later.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You recover through warmth and being taken seriously: affection, attention, a little celebration. A private wobble often hides behind a confident face.",
+   "body_they": "They recover through warmth and being taken seriously: affection, attention, a little celebration. A private wobble often hides behind a confident face.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You calm yourself by fixing: sorting the list, clearing the desk, solving the small problem in reach. The risk is turning every feeling into a fault to correct.",
+   "body_they": "They calm themselves by fixing: sorting the list, clearing the desk, solving the small problem in reach. The risk is turning every feeling into a fault to correct.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You come back to yourself in company: talking with a partner or friend restores your balance faster than solitude. The cost is smoothing over a conflict that needed a direct answer.",
+   "body_they": "They come back to themselves in company: talking with a partner or friend restores their balance faster than solitude. The cost is smoothing over a conflict that needed a direct answer.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Your sense of security depends on certainty: you commit slowly, read what is not being said, and hold back until a person or plan has proven itself. Once it has, the loyalty is total.",
+   "body_they": "Their sense of security depends on certainty: they commit slowly, read what is not being said, and hold back until a person or plan has proven itself. Once it has, the loyalty is total.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You need the exit to exist even if you never use it: the trip you could take, the backup plan, the bigger meaning behind a hard week. Pinned down, your mood flattens quietly before it ever turns loud.",
+   "body_they": "They need the exit to exist even if they never use it: the trip they could take, the backup plan, the bigger meaning behind a hard week. Pinned down, their mood flattens quietly before it ever turns loud.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You contain feeling by taking care of business: solve the practical problem first and the emotion follows. The cost of postponed rest still arrives eventually.",
+   "body_they": "They contain feeling by taking care of business: solve the practical problem first and the emotion follows. The cost of postponed rest still arrives eventually.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You process feeling at a distance: name it, think it over, come back when it is sorted. Space is not coldness for you; it is how the sorting gets done.",
+   "body_they": "They process feeling at a distance: name it, think it over, come back when it is sorted. Space is not coldness for them; it is how the sorting gets done.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/moon/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You absorb the mood around you before you know it is not yours, so your state depends on the company you keep. Retreat is maintenance for you, not avoidance.",
+   "body_they": "They absorb the mood around them before they know it is not theirs, so their state depends on the company they keep. Retreat is maintenance for them, not avoidance.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/moon-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You decide fast and sharpen your position by defending it. Your first take is often right about direction and rough on detail.",
+   "body_they": "They decide fast and sharpen their position by defending it. Their first take is often right about direction and rough on detail.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You think slowly and hold conclusions: you would rather be sure than be first. Once your mind is made, new arguments need real evidence to move it.",
+   "body_they": "They think slowly and hold conclusions: they would rather be sure than be first. Once their mind is made, new arguments need real evidence to move it.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You think by connecting: two sources, three conversations, and the answer assembles itself mid-sentence. The risk is collecting options instead of choosing one.",
+   "body_they": "They think by connecting: two sources, three conversations, and the answer assembles itself mid-sentence. The risk is collecting options instead of choosing one.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You decide by feel first and check the logic after, and you read tone more accurately than content. How a message is delivered can matter to you more than its facts.",
+   "body_they": "They decide by feel first and check the logic after, and they read tone more accurately than content. How a message is delivered can matter to them more than its facts.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You think in conclusions and deliver them with confidence, and you argue best for what you personally believe. Being ignored bothers you more than a challenge does.",
+   "body_they": "They think in conclusions and deliver them with confidence, and they argue best for what they personally believe. Being ignored bothers them more than a challenge does.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You decide by narrowing: gather, sort, cut what fails, keep what works. It is precise and reliable, and it can stall at the last five percent.",
+   "body_they": "They decide by narrowing: gather, sort, cut what fails, keep what works. It is precise and reliable, and it can stall at the last five percent.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You think in comparisons and rarely commit before hearing the other side. That keeps you fair, and it can turn a simple yes into a week of weighing.",
+   "body_they": "They think in comparisons and rarely commit before hearing the other side. That keeps them fair, and it can turn a simple yes into a week of weighing.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You investigate more than you converse: you say little, watch closely, and draw conclusions you rarely announce. When you finally speak, the case is already built.",
+   "body_they": "They investigate more than they converse: they say little, watch closely, and draw conclusions they rarely announce. When they finally speak, the case is already built.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You think big first and check the details later, and you are more interested in what it means than how it works. Your best decisions have a direction, not a spreadsheet.",
+   "body_they": "They think big first and check the details later, and they are more interested in what it means than how it works. Their best decisions have a direction, not a spreadsheet.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You decide on evidence and consequence: what it costs, what it builds, how it looks in a year. Slow to answer, hard to reverse.",
+   "body_they": "They decide on evidence and consequence: what it costs, what it builds, how it looks in a year. Slow to answer, hard to reverse.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You reason from the principle, question what everyone else assumed, and land on positions years early. Consensus arrives later; you rarely wait for it.",
+   "body_they": "They reason from the principle, question what everyone else assumed, and land on positions years early. Consensus arrives later; they rarely wait for it.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mercury/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You follow a hunch to the answer and build the reasoning on the way back. Exact figures and firm dates hold badly when the mood around you is heavy.",
+   "body_they": "They follow a hunch to the answer and build the reasoning on the way back. Exact figures and firm dates hold badly when the mood around them is heavy.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mercury-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You know what you want immediately, and the chase is half the value. Desire here is honest and impatient; it fades fastest when everything is already settled.",
+   "body_they": "They know what they want immediately, and the chase is half the value. Desire here is honest and impatient; it fades fastest when everything is already settled.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You choose what lasts: quality over novelty, the proven pleasure instead of the interesting risk. Once you value it, letting go is the hard part.",
+   "body_they": "They choose what lasts: quality over novelty, the proven pleasure instead of the interesting risk. Once they value it, letting go is the hard part.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what keeps you interested: banter, variety, the option to change your mind. Charm comes easily; staying past the novelty is the practice.",
+   "body_they": "They value what keeps them interested: banter, variety, the option to change their mind. Charm comes easily; staying past the novelty is the practice.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what has history and care in it, and you bond through feeding, hosting, and remembering. What you love, you keep; the risk is keeping it past its season.",
+   "body_they": "They value what has history and care in it, and they bond through feeding, hosting, and remembering. What they love, they keep; the risk is keeping it past its season.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what you can be proud of: generous gestures, loyal people, a love that is not embarrassed of itself. Being taken for granted kills your interest faster than conflict ever will.",
+   "body_they": "They value what they can be proud of: generous gestures, loyal people, a love that is not embarrassed of itself. Being taken for granted kills their interest faster than conflict ever will.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You show care in practical form: the ride, the fixed hem, the appointment made. You value what proves itself in service, and you can miss the gesture that is only words.",
+   "body_they": "They show care in practical form: the ride, the fixed hem, the appointment made. They value what proves itself in service, and they can miss the gesture that is only words.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You choose by balance: what suits, what fits, what keeps matters even between the people involved. Your taste is exact; your no arrives late.",
+   "body_they": "They choose by balance: what suits, what fits, what keeps matters even between the people involved. Their taste is exact; their no arrives late.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what gets under the surface: full attention, real stakes, nothing halfhearted. Mild interest reads to you as none at all.",
+   "body_they": "They value what gets under the surface: full attention, real stakes, nothing halfhearted. Mild interest reads to them as none at all.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what expands you: the trip, the philosophy, the person who shows you a bigger map. Possessiveness, in any direction, is where your interest ends.",
+   "body_they": "They value what expands them: the trip, the philosophy, the person who shows them a bigger map. Possessiveness, in any direction, is where their interest ends.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You invest rather than spend: in people, pleasures, and commitments that hold their worth over years. You show devotion through reliability and expect it back.",
+   "body_they": "They invest rather than spend: in people, pleasures, and commitments that hold their worth over years. They show devotion through reliability and expect it back.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value the unconventional fit: the friendship that ignores categories, the arrangement designed by its own participants. What everyone else wants has never been a reason.",
+   "body_they": "They value the unconventional fit: the friendship that ignores categories, the arrangement designed by its own participants. What everyone else wants has never been a reason.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/venus/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You value what softens the border a little: art, empathy, a connection that does not need explaining. Generosity comes first; the limit usually has to be learned.",
+   "body_they": "They value what softens the border a little: art, empathy, a connection that does not need explaining. Generosity comes first; the limit usually has to be learned.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/venus-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/venus-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You act immediately or not at all, and momentum is your best tool. Anger comes fast, burns clean, and is gone before most people finish reacting.",
+   "body_they": "They act immediately or not at all, and momentum is their best tool. Anger comes fast, burns clean, and is gone before most people finish reacting.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You move late and heavy: slow to start, nearly impossible to stop once rolling. Pushed before you are ready, you do not fight; you simply do not move.",
+   "body_they": "They move late and heavy: slow to start, nearly impossible to stop once rolling. Pushed before they are ready, they do not fight; they simply do not move.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You act on several fronts at once, and words are your first move. The risk is winning the exchange and abandoning the follow-through.",
+   "body_they": "They act on several fronts at once, and words are their first move. The risk is winning the exchange and abandoning the follow-through.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You act for and around: protecting your own directly, pursuing your goals sideways. Your force shows up strongest when someone you love is on the line.",
+   "body_they": "They act for and around: protecting their own directly, pursuing their goals sideways. Their force shows up strongest when someone they love is on the line.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You act in full view and put your name on the swing. Effort feels pointless without an audience or a cause worth the display.",
+   "body_they": "They act in full view and put their name on the swing. Effort feels pointless without an audience or a cause worth the display.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You work through the list: precise, prepared, effective in the details others skip. The trap is polishing the plan instead of executing it.",
+   "body_they": "They work through the list: precise, prepared, effective in the details others skip. The trap is polishing the plan instead of executing it.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You push through position and alliance: the well-timed proposal, the united front, the fight framed as fairness. Open aggression is your last resort, not your first.",
+   "body_they": "They push through position and alliance: the well-timed proposal, the united front, the fight framed as fairness. Open aggression is their last resort, not their first.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You move under the surface: strategy first, patience second, the decisive act only when it counts. You hold your cards close and rarely show effort before results.",
+   "body_they": "They move under the surface: strategy first, patience second, the decisive act only when it counts. They hold their cards close and rarely show effort before results.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You charge at the big target and skip the small ones, and subtlety has never been your instrument. Conviction moves you; maintenance stalls you.",
+   "body_they": "They charge at the big target and skip the small ones, and subtlety has never been their instrument. Conviction moves them; maintenance stalls them.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You work in campaigns: staged effort, conserved force, the goal chosen before the first step. You almost never act on impulse, and you rarely quit.",
+   "body_they": "They work in campaigns: staged effort, conserved force, the goal chosen before the first step. They almost never act on impulse, and they rarely quit.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You act on the principle and the plan, most freely when nobody is standing over you. Direct orders slow you down; a reason speeds you up.",
+   "body_they": "They act on the principle and the plan, most freely when nobody is standing over them. Direct orders slow them down; a reason speeds them up.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/mars/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You advance by current rather than collision: rhythm, atmosphere, the opening instead of the obstacle. Your effort doubles when the goal helps someone beyond you.",
+   "body_they": "They advance by current rather than collision: rhythm, atmosphere, the opening instead of the obstacle. Their effort doubles when the goal helps someone beyond them.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/mars-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by starting: the bold first move creates chances that planning never finds. Your luck follows initiative and thins out in waiting.",
+   "body_they": "They grow by starting: the bold first move creates chances that planning never finds. Their luck follows initiative and thins out in waiting.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by accumulation: resources, skills, and comforts built patiently until they hold on their own. Opportunity here is rarely a windfall; it is slow, layered gains.",
+   "body_they": "They grow by accumulation: resources, skills, and comforts built patiently until they hold on their own. Opportunity here is rarely a windfall; it is slow, layered gains.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow through curiosity: the extra question, the second source, the acquaintance who knows the right person. Your best chances arrive mid-conversation.",
+   "body_they": "They grow through curiosity: the extra question, the second source, the acquaintance who knows the right person. Their best chances arrive mid-conversation.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by making people feel at home, and generosity toward your own circle comes back multiplied. Your instinct for who belongs is the asset.",
+   "body_they": "They grow by making people feel at home, and generosity toward their own circle comes back multiplied. Their instinct for who belongs is the asset.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by showing your work: visibility multiplies whatever you bring. The more openly you enjoy what you do, the more chances find you.",
+   "body_they": "They grow by showing their work: visibility multiplies whatever they bring. The more openly they enjoy what they do, the more chances find they.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by improving what already exists: refine it, test it, make it useful, and the payoff follows. The ceiling is expanding the fine print instead of the point.",
+   "body_they": "They grow by improving what already exists: refine it, test it, make it useful, and the payoff follows. The ceiling is expanding the fine print instead of the point.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow through other people: introductions, partnerships, the fair deal that leads to three more. Your chances multiply when both sides win.",
+   "body_they": "They grow through other people: introductions, partnerships, the fair deal that leads to three more. Their chances multiply when both sides win.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow through depth: shared resources, real intimacy, the opportunity hidden where others will not look. Suspicion of the catch is the brake worth watching.",
+   "body_they": "They grow through depth: shared resources, real intimacy, the opportunity hidden where others will not look. Suspicion of the catch is the brake worth watching.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by range: travel, study, belief tested against the world, and the bet on meaning over comfort. Faith in the destination is your fuel and your risk.",
+   "body_they": "They grow by range: travel, study, belief tested against the world, and the bet on meaning over comfort. Faith in the destination is their fuel and their risk.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by earning it: patient work, kept commitments, ambition with a schedule. The rewards are real and late; the mistake is postponing all joy until they arrive.",
+   "body_they": "They grow by earning it: patient work, kept commitments, ambition with a schedule. The rewards are real and late; the mistake is postponing all joy until they arrive.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow through the network and the new idea: communities, causes, and experiments that outrun convention. The stretch is committing to one vision instead of orbiting ten.",
+   "body_they": "They grow through the network and the new idea: communities, causes, and experiments that outrun convention. The stretch is committing to one vision instead of orbiting ten.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/jupiter/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You grow by giving the intangible its space: imagination, compassion, faith that does not need proof. The gains are real but rarely arrive on schedule or in cash.",
+   "body_they": "They grow by giving the intangible its space: imagination, compassion, faith that does not need proof. The gains are real but rarely arrive on schedule or in cash.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/jupiter-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/jupiter-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build discipline directly onto impulse: the training plan, the cold start, initiative with a structure around it. Patience is not natural here; it is earned through repetition.",
+   "body_they": "They build discipline directly onto impulse: the training plan, the cold start, initiative with a structure around it. Patience is not natural here; it is earned through repetition.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-aries",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/aries"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build security in material layers: savings, skills, a body and a base you maintain. The lesson runs against rigidity: holding on is not the same as being safe.",
+   "body_they": "They build security in material layers: savings, skills, a body and a base they maintain. The lesson runs against rigidity: holding on is not the same as being safe.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-taurus",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/taurus"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You structure your attention or lose it: notes, systems, one channel at a time. The fear of not being understood pushes you to over-explain before it teaches you precision.",
+   "body_they": "They structure their attention or lose it: notes, systems, one channel at a time. The fear of not being understood pushes them to over-explain before it teaches them precision.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-gemini",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/gemini"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build safety by hand: the reliable home, the dependable presence, the care you supply on schedule. The work is learning to give that same protection to yourself.",
+   "body_they": "They build safety by hand: the reliable home, the dependable presence, the care they supply on schedule. The work is learning to give that same protection to themselves.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-cancer",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/cancer"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You earn confidence rather than assume it: skill built in private before the public claim. The fear of being unseen eases with each result that speaks for itself.",
+   "body_they": "They earn confidence rather than assume it: skill built in private before the public claim. The fear of being unseen eases with each result that speaks for itself.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-leo",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/leo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build through exacting standards: tested routines, clean work, health treated as a discipline. Learning to accept good enough is the harder half of mastery.",
+   "body_they": "They build through exacting standards: tested routines, clean work, health treated as a discipline. Learning to accept good enough is the harder half of mastery.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-virgo",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/virgo"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build commitments that hold: clear terms, fair shares, promises with structure under them. The real work of partnership matters more to you than the comfort of keeping the peace.",
+   "body_they": "They build commitments that hold: clear terms, fair shares, promises with structure under them. The real work of partnership matters more to them than the comfort of keeping the peace.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-libra",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/libra"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build trust slowly and structurally: control examined, power made explicit, loyalty tested before it is granted. Facing what you fear losing is the actual curriculum.",
+   "body_they": "They build trust slowly and structurally: control examined, power made explicit, loyalty tested before it is granted. Facing what they fear losing is the actual curriculum.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-scorpio",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/scorpio"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You put structure under belief: the studied conviction, the planned journey, freedom with a foundation. Discipline is what turns your vision from private daydream into itinerary.",
+   "body_they": "They put structure under belief: the studied conviction, the planned journey, freedom with a foundation. Discipline is what turns their vision from private daydream into itinerary.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-sagittarius",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/sagittarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You are built for the long game and you know it: responsibility early, mastery late, every step load-bearing. Rest has to be scheduled or it does not happen.",
+   "body_they": "They are built for the long game and they know it: responsibility early, mastery late, every step load-bearing. Rest has to be scheduled or it does not happen.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-capricorn",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/capricorn"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You build the better system: rules rewritten deliberately, communities structured to last, discipline in service of the future. Detachment is the risk that comes with the blueprint.",
+   "body_they": "They build the better system: rules rewritten deliberately, communities structured to last, discipline in service of the future. Detachment is the risk that comes with the blueprint.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-aquarius",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/aquarius"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/ruler-method/saturn/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "You give form to the formless: the practiced craft, the scheduled retreat, the dream with a deadline. No shortcuts survive here; the intangible only becomes real through repetition.",
+   "body_they": "They give form to the formless: the practiced craft, the scheduled retreat, the dream with a deadline. No shortcuts survive here; the intangible only becomes real through repetition.",
+   "review_status": "approved",
+   "source_keys": [
+    "cc/planet-in-sign/saturn-in-pisces",
+    "book/201419935-a-spiritual-approach-to-astrology/saturn-in-the-signs/pisces"
+   ],
+   "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
+   "import_batch": "ruler-method-full-family-2026-07-29",
+   "approved_via": "owner approval, chat 2026-07-29"
   }
  ]
 }
