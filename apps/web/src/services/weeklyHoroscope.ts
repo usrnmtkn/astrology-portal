@@ -125,6 +125,10 @@ const signRulers: Record<string, string> = {
   pisces: "jupiter"
 };
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const skyBodyClaimPattern = new RegExp(
+  `\\b(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node)\\s+(?:(?:is\\s+)?(?:currently\\s+)?(?:retrograde|direct|Rx)\\s+|is\\s+)?in\\s+(${signs.join("|")})\\b`,
+  "giu"
+);
 const weeklyEphemerisCache = new Map<string, Promise<WeeklyEphemerisData>>();
 const maxWeeklyEphemerisCacheEntries = 12;
 
@@ -142,6 +146,27 @@ function isReaderEligible(row: WeeklySourceRow) {
 
 function normalizeId(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+export function assertLunationBodyMatchesEventSky(body: string, snapshot: SkySnapshot) {
+  const eventPositions = new Map(
+    snapshot.positions.map((position) => [normalizeId(position.planet), position])
+  );
+
+  for (const match of body.matchAll(skyBodyClaimPattern)) {
+    const planet = normalizeId(match[1] ?? "");
+    const claimedSign = normalizeId(match[2] ?? "");
+    const eventPosition = eventPositions.get(planet);
+    if (!eventPosition) {
+      throw new SourceGapError(`SOURCE_GAP: event-time position missing for ${planet}`);
+    }
+    const eventSign = normalizeId(eventPosition.sign);
+    if (claimedSign !== eventSign) {
+      throw new SourceGapError(
+        `SOURCE_GAP: stale-sky lunation claim says ${planet} in ${claimedSign}; event-time ephemeris says ${eventSign}`
+      );
+    }
+  }
 }
 
 function title(value: string) {
@@ -292,6 +317,7 @@ export function lunationBlendFacts(
     sunHouse,
     ruler,
     rulerHouse,
+    rulerRetrograde: rulerPosition?.motion === "retrograde",
     uranusHouse,
     uranusLayerActive
   };
@@ -387,6 +413,7 @@ function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky:
     risingSign: normalizeId(risingSign),
     ...blendFacts
   });
+  assertLunationBodyMatchesEventSky(rendered.body, eventSky);
 
   return {
     headline: rendered.headline,

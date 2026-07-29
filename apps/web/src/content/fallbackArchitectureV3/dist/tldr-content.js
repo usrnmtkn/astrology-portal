@@ -1012,6 +1012,7 @@ ${fogNote}`;
     sunHouse,
     ruler,
     rulerHouse,
+    rulerRetrograde,
     uranusHouse,
     uranusLayerActive
   }) {
@@ -1035,7 +1036,16 @@ ${fogNote}`;
       const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-        paras.push(`With ${title2(ruler)} ruling this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, ${rulerHouseBody}.`);
+        const rulerTitle = title2(ruler);
+        let rulerParagraph = `With ${rulerTitle} ruling this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, ${rulerHouseBody}.`;
+        if (rulerRetrograde) {
+          const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
+          if (!retroOverlay) {
+            throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+          }
+          rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
+        }
+        paras.push(rulerParagraph);
       }
     }
     if (uranusLayerActive && uranusHouse) {
@@ -1115,7 +1125,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29i";
+var PACKAGE_VERSION = "v3-2026-07-29j";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

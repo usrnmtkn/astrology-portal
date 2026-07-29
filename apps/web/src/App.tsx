@@ -99,6 +99,7 @@ import {
 } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import {
+  assertLunationBodyMatchesEventSky,
   buildWeeklyHoroscope,
   lunationBlendFacts,
   type WeeklyHoroscopeAssembly
@@ -19308,6 +19309,7 @@ function ProfileView({
           kind
         )
       });
+      assertLunationBodyMatchesEventSky(rendered.body, currentSky);
       return [{ headline: rendered.headline, body: rendered.body }];
     } catch (error) {
       if (!(error instanceof FallbackV3SourceGapError)) throw error;
