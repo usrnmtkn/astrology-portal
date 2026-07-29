@@ -19,6 +19,13 @@ export interface AuthoredCard {
   body?: string;
   body_you?: string;
   body_they?: string;
+  preview_note?: string;
+  core_theme?: string;
+  sign_jurisdiction?: string;
+  lived_experience?: string;
+  rulership_twist?: string;
+  history_echo?: string;
+  closing_charge?: string;
   review_status?: string;
 }
 export interface TransitLibFile { authoredCards: AuthoredCard[] }
@@ -54,6 +61,10 @@ export interface LunationHoroscopeFacts {
   uranusLayerActive?: boolean;
   weekly?: boolean;
 }
+export interface LunationEventCardFacts extends LunationHoroscopeFacts {
+  eventDate: string;
+  blendFallbackEnabled?: boolean;
+}
 export interface CompatFacts { planet: string; signA: string; signB: string; otherName: string }
 export interface SynastryAspectFacts { planetA: string; planetB: string; aspect: string; otherName: string }
 export interface SkyEvent { type: string; a?: string; b?: string; aspect?: string; sign?: string; aSign?: string; bSign?: string; houseA?: number; houseB?: number; dateLine?: string; exactDate?: string; applying?: boolean }
@@ -65,6 +76,7 @@ export interface SkyPlacementFacts {
   events?: SkyEvent[];
   egressDate?: string | null;
   isRetrograde?: boolean;
+  isShadowPhase?: boolean;
 }
 export interface CircleMember { name?: string | null; body?: string; isReader?: boolean }
 export interface CircleStoryFacts {
@@ -88,6 +100,7 @@ export interface TransitRenderResult {
   window?: string | null;
   tagline?: string | null;
   moves?: string[];
+  closingCharge?: string | null;
 }
 export interface SynastryRenderResult extends TransitRenderResult { tag: string | null }
 export interface TransitLabelResult { label: string; window: string }
@@ -764,7 +777,13 @@ export function createTransitSynastryRenderer(
   // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
   // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
   // Computed aspect facts follow the evergreen article. ----
-  function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }: SkyPlacementFacts): TransitRenderResult {
+  function renderSkyPlacement({
+    planet,
+    sign,
+    events = [],
+    isRetrograde = false,
+    isShadowPhase = false
+  }: SkyPlacementFacts): TransitRenderResult {
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const retrogradeGuidance = isRetrograde
       ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
@@ -774,10 +793,50 @@ export function createTransitSynastryRenderer(
     }
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) {
+      const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+      const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
+        .split(/\r?\n/u)
+        .map((move) => move.trim())
+        .filter(Boolean);
+      const structuredParts = [
+        authoredArticle.core_theme,
+        authoredArticle.sign_jurisdiction,
+        authoredArticle.lived_experience,
+        authoredArticle.rulership_twist
+      ];
+      const isStructured = structuredParts.every((part) => typeof part === "string" && part.trim());
+
+      if (isStructured) {
+        const reviewNote = isRetrograde || isShadowPhase
+          ? authoredArticle.preview_note ?? retrogradeGuidance
+          : null;
+        const closingCharge = authoredArticle.closing_charge?.trim() || null;
+        const parts = [
+          reviewNote,
+          ...structuredParts,
+          authoredArticle.history_echo,
+          ...aspectParas,
+          closingCharge
+        ].filter((part): part is string => Boolean(part));
+
+        return {
+          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+          tagline,
+          moves,
+          closingCharge,
+          body: parts.join("\n\n"),
+          parts,
+          templateKey: "authored/sky-ingress/sky-article-v1",
+          contentKey: authoredArticle.contentKey
+        };
+      }
+
       const parts = [authoredArticle.body, retrogradeGuidance, ...aspectParas]
         .filter((part): part is string => Boolean(part));
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline,
+        moves,
         body: parts.join("\n\n"),
         parts,
         templateKey: "authored/sky-ingress",
@@ -1113,6 +1172,28 @@ export function createTransitSynastryRenderer(
     return { headline: `${label} for ${title(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
 
+  // The You-page and weekly horoscope intentionally use different registers.
+  // You-page event cards are date-keyed, per-rising Satori authored units:
+  //   authored/satori-lunation/{YYYY-MM-DD}/{sign}-rising
+  // The assembled blend remains the weekly product. Its use as a You-page
+  // fallback is owner-pending, so callers must opt in explicitly.
+  function renderLunationEventCard({
+    eventDate,
+    blendFallbackEnabled = false,
+    ...blendFacts
+  }: LunationEventCardFacts): TransitRenderResult {
+    const normalizedEventDate = eventDate.trim().slice(0, 10);
+    const risingKey = `${blendFacts.risingSign}-rising`;
+    const satori = card(
+      `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
+    );
+    if (satori) return result(satori, "authored/satori-lunation-v1");
+    if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+    throw new SourceGapError(
+      `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
+    );
+  }
+
   // ---- Daily At-a-Glance (Copy Batch A): engine-hidden headline + body driven by the
   // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
   // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
@@ -1169,5 +1250,5 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }

@@ -246,6 +246,41 @@
   line-height: var(--leading-body);
 }
 
+.sky-placement-key-dates dl {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.sky-placement-key-dates dl > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.sky-placement-key-dates dt,
+.sky-placement-key-dates dd {
+  margin: 0;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-body);
+}
+
+.sky-placement-key-dates dt {
+  font-weight: var(--weight-semibold);
+}
+
+.sky-placement-key-dates dd {
+  font-weight: var(--weight-regular);
+}
+
+.sky-placement-closing-charge p {
+  color: var(--card-title-color);
+  font-weight: var(--weight-medium);
+}
+
 .article-section,
 .sky-detail-section {
   max-width: none;
@@ -511,6 +546,11 @@
   .sky-detail-section h2 {
     font-size: var(--type-label-size);
     line-height: var(--leading-label);
+  }
+
+  .sky-placement-key-dates dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
   }
 
   .article-related-aspects {

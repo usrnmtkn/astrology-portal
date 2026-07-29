@@ -67,3 +67,18 @@ export function groupBondTransitActivations<TActivation>(
 
   return Array.from(groups.values());
 }
+
+export function contactsForBondTransitGroup<
+  TActivation,
+  TContact extends { id: string }
+>(
+  group: BondTransitActivationGroup<TActivation>,
+  contacts: TContact[]
+) {
+  const contactsById = new Map(contacts.map((contact) => [contact.id, contact]));
+
+  return group.contactIds.flatMap((contactId) => {
+    const contact = contactsById.get(contactId);
+    return contact ? [contact] : [];
+  });
+}

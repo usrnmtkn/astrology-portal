@@ -245,7 +245,10 @@ import {
   type PersonReference,
   type PronounChoice
 } from "./services/personReferences";
-import { groupBondTransitActivations } from "./services/bondTransitGrouping";
+import {
+  contactsForBondTransitGroup,
+  groupBondTransitActivations
+} from "./services/bondTransitGrouping";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
@@ -519,6 +522,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   heading: string;
   tagline?: string | null;
   moves?: string[];
+  closingCharge?: string | null;
 };
 type NormalizedSkyPlacementArticle = {
   surface: "sky-placement";
@@ -609,6 +613,10 @@ type SkyDetailSection = {
   aspectType?: string;
   group?: AspectToneBucket;
 };
+type SkyDetailKeyDate = {
+  date: string;
+  label: string;
+};
 type SkyDetail = {
   routePath?: string;
   glyph: string;
@@ -618,6 +626,8 @@ type SkyDetail = {
   duration?: string;
   tagline?: string;
   moves?: string[];
+  keyDates?: SkyDetailKeyDate[];
+  closingCharge?: string | null;
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;
@@ -5085,6 +5095,24 @@ function SkyDetailArticle({
                   ) : null}
                 </>
               )}
+              {detail.keyDates?.length ? (
+                <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
+                  <h3>Key dates</h3>
+                  <dl>
+                    {detail.keyDates.map((keyDate) => (
+                      <div key={`${keyDate.date}-${keyDate.label}`}>
+                        <dt>{keyDate.date}</dt>
+                        <dd>{keyDate.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              ) : null}
+              {detail.closingCharge ? (
+                <section className="article-section sky-detail-section sky-placement-closing-charge">
+                  <p>{detail.closingCharge}</p>
+                </section>
+              ) : null}
               {detail.moves?.length ? (
                 <section className="article-section sky-detail-section sky-placement-moves" aria-label="Try this">
                   <h3>Try this</h3>
@@ -5865,6 +5893,66 @@ function skyPlacementEgressDateLabel(position: PlanetPosition, generatedAt: stri
   }).format(egress);
 }
 
+function skyPlacementShadowPhaseActive(position: PlanetPosition, generatedAt: string) {
+  if (isDisplayRetrograde(position) || !position.retrogradeShadowStart || !position.retrogradeShadowEnd) {
+    return false;
+  }
+
+  const generatedTime = new Date(generatedAt).getTime();
+  const shadowStart = new Date(position.retrogradeShadowStart).getTime();
+  const shadowEnd = new Date(position.retrogradeShadowEnd).getTime();
+
+  return Number.isFinite(generatedTime)
+    && Number.isFinite(shadowStart)
+    && Number.isFinite(shadowEnd)
+    && generatedTime >= shadowStart
+    && generatedTime <= shadowEnd;
+}
+
+function skyPlacementKeyDates(position: PlanetPosition): SkyDetailKeyDate[] {
+  const planet = skyDisplayPlanetName(position.planet);
+  const sign = position.sign;
+  const candidates = [
+    { value: position.transitStart, label: `${planet} enters ${sign}` },
+    { value: position.retrogradeShadowStart, label: `${planet} enters the pre-retrograde shadow` },
+    { value: position.retrogradeStart, label: `${planet} stations Retrograde` },
+    { value: position.retrogradeEnd, label: `${planet} stations Direct` },
+    { value: position.retrogradeShadowEnd, label: `${planet} leaves the post-retrograde shadow` },
+    { value: position.transitEnd, label: `${planet} completes its passage through ${sign}` }
+  ];
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+  const seen = new Set<string>();
+
+  return candidates
+    .flatMap(({ value, label }) => {
+      if (!value) {
+        return [];
+      }
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return [];
+      }
+
+      const key = `${date.toISOString()}|${label}`;
+
+      if (seen.has(key)) {
+        return [];
+      }
+
+      seen.add(key);
+      return [{ date: formatter.format(date), label, time: date.getTime() }];
+    })
+    .sort((first, second) => first.time - second.time)
+    .map(({ date, label }) => ({ date, label }));
+}
+
 function skyPlacementArticleAspects(
   planet: string,
   aspects: SkySnapshot["aspects"]
@@ -6215,9 +6303,14 @@ function skyPlacementWritingSection(
     sign,
     events,
     egressDate: skyPlacementEgressDateLabel(position, generatedAt),
-    isRetrograde: hasRetrogradeGuidance
+    isRetrograde: hasRetrogradeGuidance,
+    isShadowPhase: skyPlacementShadowPhaseActive(position, generatedAt)
   });
-  const renderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
+  const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
+  const renderedParagraphs = rendered.closingCharge
+    && allRenderedParagraphs.at(-1) === rendered.closingCharge
+    ? allRenderedParagraphs.slice(0, -1)
+    : allRenderedParagraphs;
   const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
 
   if (!body || !isReaderFacingCopy(body)) {
@@ -6242,6 +6335,7 @@ function skyPlacementWritingSection(
     heading: skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     moves: rendered.moves,
+    closingCharge: rendered.closingCharge,
     body
   };
 }
@@ -6359,6 +6453,8 @@ function currentSkyPlacementDetailArticle({
     duration: transitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     moves: placementSection?.moves,
+    keyDates: skyPlacementKeyDates(position),
+    closingCharge: placementSection?.closingCharge,
     retrograde: isRetrograde,
     plainBody: normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
@@ -8705,6 +8801,7 @@ function activeBondTransitCards(
     groupCounts.set(familyKey, indexInGroup + 1);
     const baseVariant = (stableTransitCopyVariant(friendName, familyKey) ?? 1) - 1;
     const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
+    const timingRange = personalTransitPackageWindow(group.activation, generatedAt);
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderBondTransit({
@@ -8719,15 +8816,19 @@ function activeBondTransitCards(
           ? normalizeContentIdPart(group.activation.transitSign)
           : undefined,
         variant: variantSlot === 1 ? undefined : variantSlot,
-        window: personalTransitPackageWindow(group.activation, generatedAt)
+        window: timingRange
       });
 
       return [{
+        activatedContacts: contactsForBondTransitGroup(group, contacts),
         id: `${group.key}-${group.activationId}`,
         headline: rendered.headline,
         transitPlanet: group.activation.transitPlanet,
+        transitSign: group.activation.transitSign ?? "",
+        timingRange,
         body: readerFacingParagraphs(rendered.parts).join("\n\n"),
-        effectBody: rendered.parts[0] ?? ""
+        effectBody: rendered.parts[0] ?? "",
+        activationBody: readerFacingParagraphs(rendered.parts.slice(1)).join("\n\n")
       }];
     } catch (error) {
       if (error instanceof FallbackV3SourceGapError) {
@@ -19357,7 +19458,11 @@ function ProfileView({
 
     try {
       const kind = currentSky.moonEvent.name === "New Moon" ? "new-moon" : "full-moon";
-      const rendered = transitSynastryFallbackRendererV3.renderLunationHoroscope({
+      const rendered = transitSynastryFallbackRendererV3.renderLunationEventCard({
+        eventDate: currentSky.moonEvent.occursAt,
+        blendFallbackEnabled: String(
+          import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "false"
+        ).toLowerCase() === "true",
         kind,
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
         risingSign: normalizeContentIdPart(displayRising),
@@ -20073,6 +20178,15 @@ function ManualChartsPanel({
       return;
     }
 
+    const activatedConnectionSections = card.activatedContacts.flatMap((contact) => {
+      const rendered = renderReaderDirectedSynastryContact(
+        contact,
+        selectedChart.displayName
+      );
+
+      return rendered ? [rendered] : [];
+    });
+
     onOpenDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
@@ -20082,9 +20196,14 @@ function ManualChartsPanel({
       glyph: pointGlyph(card.transitPlanet),
       kicker: "Between you two right now",
       title: card.headline,
-      meta: "",
-      body: card.body.split(/\n{2,}/u).filter(Boolean),
-      sections: []
+      meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
+      bodyBeforeSections: activatedConnectionSections.length > 0,
+      body: card.effectBody ? [card.effectBody] : [],
+      sections: activatedConnectionSections.map((connection, index) => ({
+        heading: index === 0 ? "What this activates" : "",
+        sourceTag: connection.headline,
+        body: connection.body
+      }))
     });
   };
   const openFriendTransitDetail = (transit: TransitItem) => {
@@ -21268,7 +21387,12 @@ function ManualChartsPanel({
                         >
                           <span className="updates-aspect-row__content">
                             <h3 className="updates-aspect-row__title">{card.headline}</h3>
-                            <p className="updates-aspect-row__description transit-card-preview">{transitCardPreview(card.body)}</p>
+                            <p className="updates-aspect-row__description">{card.effectBody}</p>
+                            {card.activationBody ? (
+                              <p className="updates-aspect-row__description friend-bond-transit-activation">
+                                {card.activationBody}
+                              </p>
+                            ) : null}
                           </span>
                         </button>
                       ))}

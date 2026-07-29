@@ -4,6 +4,7 @@ import {
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import {
+  contactsForBondTransitGroup,
   groupBondTransitActivations
 } from "../apps/web/src/services/bondTransitGrouping.ts";
 import fs from "node:fs";
@@ -110,6 +111,16 @@ const chrisGroups = groupBondTransitActivations([
 ]);
 assert.equal(chrisGroups.length, 1);
 assert.deepEqual(chrisGroups[0].activatedPlanets, ["Mercury", "Saturn", "Midheaven"]);
+assert.deepEqual(
+  contactsForBondTransitGroup(chrisGroups[0], [
+    { id: "venus-midheaven", label: "third" },
+    { id: "venus-mercury", label: "first" },
+    { id: "unrelated", label: "ignored" },
+    { id: "venus-saturn", label: "second" }
+  ]).map((contact) => contact.label),
+  ["first", "second", "third"],
+  "The detail view must preserve the activated-contact order and omit unrelated contacts."
+);
 const chrisCard = renderer.renderBondTransit({
   transiting: chrisGroups[0].transiting,
   aspect: chrisGroups[0].aspect,
