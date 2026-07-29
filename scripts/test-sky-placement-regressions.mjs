@@ -11,6 +11,7 @@ import {
   createTransitSynastryRenderer,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { splitSkyPlacementHookQuote } from "../apps/web/src/content/skyPlacementHookQuote.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -24,6 +25,21 @@ const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts
 const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts");
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
+
+assert.deepEqual(
+  splitSkyPlacementHookQuote([
+    "You’re in three conversations at once but can’t finish any. Mars in Gemini splits your focus three ways before you even finish your morning routine.",
+    "Over the next six weeks, the pace stays quick."
+  ]),
+  {
+    hookQuote: "You’re in three conversations at once but can’t finish any.",
+    bodyParagraphs: [
+      "Mars in Gemini splits your focus three ways before you even finish your morning routine.",
+      "Over the next six weeks, the pace stays quick."
+    ]
+  },
+  "Sky placement hooks must promote their first sentence to a standalone quote without repeating it in the article body."
+);
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
 const sunLeo = renderer.renderSkyPlacement({

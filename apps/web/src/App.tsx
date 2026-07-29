@@ -80,6 +80,7 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
+import { splitSkyPlacementHookQuote } from "./content/skyPlacementHookQuote";
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
@@ -504,6 +505,7 @@ type NormalizedSkyAspectArticle = {
 type SkyPlacementSlot = "meaning";
 type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> & {
   heading: string;
+  hookQuote?: string | null;
   tagline?: string | null;
   moves?: string[];
 };
@@ -603,6 +605,7 @@ type SkyDetail = {
   title: string;
   meta: string;
   duration?: string;
+  hookQuote?: string;
   tagline?: string;
   moves?: string[];
   subtitle?: string;
@@ -5005,6 +5008,11 @@ function SkyDetailArticle({
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {detail.hookQuote ? (
+                <blockquote className="sky-placement-hook-quote">
+                  <p>{detail.hookQuote}</p>
+                </blockquote>
+              ) : null}
               {detail.lensHint ? (
                 <aside className="article-lens-hint" aria-label="Placement lens">
                   {typeof detail.lensHint === "string" ? <p>{detail.lensHint}</p> : detail.lensHint}
@@ -6149,6 +6157,10 @@ function generatedSkyPlacementWritingSection(
     return null;
   }
 
+  const { hookQuote, bodyParagraphs } = splitSkyPlacementHookQuote(
+    generatedContentParagraphs(content)
+  );
+
   return {
     slot: "meaning",
     required: true,
@@ -6156,7 +6168,8 @@ function generatedSkyPlacementWritingSection(
     tier: "generated-sky-placement-lint-v1",
     sourceKeys: [content.contentKey, expected.placementSource],
     heading: content.headline || skyPlacementDisplayTitle(position),
-    body: generatedContentParagraphs(content).join("\n\n").trim()
+    hookQuote,
+    body: bodyParagraphs.join("\n\n").trim()
   };
 }
 
@@ -6203,7 +6216,11 @@ function skyPlacementWritingSection(
   const renderedParagraphs = hasRetrogradeArticle
     ? [rendered.headline, ...(rendered.parts.length ? rendered.parts : [rendered.body])]
     : (rendered.parts.length ? rendered.parts : [rendered.body]);
-  const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
+  const readerParagraphs = readerFacingParagraphs(renderedParagraphs);
+  const placementCopy = hasRetrogradeArticle
+    ? { hookQuote: null, bodyParagraphs: readerParagraphs }
+    : splitSkyPlacementHookQuote(readerParagraphs);
+  const body = placementCopy.bodyParagraphs.join("\n\n");
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
@@ -6225,6 +6242,7 @@ function skyPlacementWritingSection(
       rendered.contentKey ?? ""
     ].filter(Boolean),
     heading: skyPlacementDisplayTitle(position),
+    hookQuote: placementCopy.hookQuote,
     tagline: rendered.tagline,
     moves: rendered.moves,
     body
@@ -6342,6 +6360,7 @@ function currentSkyPlacementDetailArticle({
     title,
     meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
     duration: transitRangeLabel ?? undefined,
+    hookQuote: placementSection?.hookQuote ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     moves: placementSection?.moves,
     retrograde: isRetrograde,
