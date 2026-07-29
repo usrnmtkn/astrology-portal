@@ -11,6 +11,7 @@ import {
   createTransitSynastryRenderer,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { splitSkyPlacementHookQuote } from "../apps/web/src/content/skyPlacementHookQuote.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -24,6 +25,21 @@ const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts
 const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts");
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
+
+assert.deepEqual(
+  splitSkyPlacementHookQuote([
+    "You’re in three conversations at once but can’t finish any. Mars in Gemini splits your focus three ways before you even finish your morning routine.",
+    "Over the next six weeks, the pace stays quick."
+  ]),
+  {
+    hookQuote: "You’re in three conversations at once but can’t finish any.",
+    bodyParagraphs: [
+      "Mars in Gemini splits your focus three ways before you even finish your morning routine.",
+      "Over the next six weeks, the pace stays quick."
+    ]
+  },
+  "Sky placement hooks must promote their first sentence to a standalone quote without repeating it in the article body."
+);
 
 const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
 const sunLeo = renderer.renderSkyPlacement({
@@ -45,9 +61,37 @@ const sunAries = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "aries"
 });
+const jupiterLeo = renderer.renderSkyPlacement({
+  planet: "jupiter",
+  sign: "leo",
+  events: [{
+    type: "aspect",
+    a: "sun",
+    aSign: "leo",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "conjunction",
+    exactDate: "July 29",
+    applying: true
+  }]
+});
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
+});
+const lilithSagittarius = renderer.renderSkyPlacement({
+  planet: "lilith",
+  sign: "sagittarius",
+  events: [{
+    type: "aspect",
+    a: "venus",
+    aSign: "virgo",
+    b: "lilith",
+    bSign: "sagittarius",
+    aspect: "square",
+    exactDate: "August 1",
+    applying: true
+  }]
 });
 const mercuryCancerIngress = renderer.renderSkyPlacement({
   planet: "mercury",
@@ -235,6 +279,21 @@ assert.match(
   /Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum\./u,
   "Sun-in-Leo must append the computed applying/exact aspect fact below the evergreen article."
 );
+assert.match(
+  sunLeo.body,
+  /That confidence becomes concrete action\. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished\./u,
+  "The computed Sun-conjunction-Jupiter layer must use the approved concrete action copy."
+);
+assert.deepEqual(
+  jupiterLeo.parts,
+  [
+    "Jupiter in Leo makes it easier to admit that we want more. Ambition, creativity, and the desire to be recognized step forward instead of staying in the background.",
+    "For about a year, we take up more space in the work and choices that carry our name. Creative projects grow, leadership becomes more visible, and recognition matters more openly. Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
+    "Ambition is not the problem. Needing an audience to prove the work matters is. When every win needs applause and every response gets measured by enthusiasm, confidence starts promising more than reality can carry. Recognition can confirm the work. It cannot give the work its substance.",
+    "Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum. That confidence becomes concrete action. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished. Say the ambitious part out loud, then check the budget, timeline, and actual capacity before promising delivery."
+  ],
+  "Jupiter-in-Leo must preserve the approved three-beat hybrid and append only the computed Sun-conjunction-Jupiter layer."
+);
 assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
 assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
 assert.equal(lilithAries.tagline, "Don’t let disrespect slide", "Owner-approved Lilith placement taglines must be reader-eligible.");
@@ -244,6 +303,25 @@ assert.match(
   "Owner-approved Lilith placement copy must render from the promoted pair rows."
 );
 assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement articles must expose three practical moves.");
+assert.deepEqual(
+  lilithSagittarius.parts,
+  [
+    "Someone keeps making the same point, louder each time, as though volume can turn belief into proof. Lilith in Sagittarius can bring old shame around belief and being taken seriously into public view. What was once kept quiet may now come out as a speech, a long post, a lecture, or an argument nobody else wanted to have.",
+    "For about nine months, beliefs may become harder to separate from identity. The same opinion keeps returning in meetings, family dinners, classrooms, and public debates. Some people make expensive or risky decisions because they are certain they are right, even when the facts do not support the choice.",
+    "Belief can give someone the courage to speak after years of silence. It can also make them stop listening. Once every question feels disrespectful and every disagreement feels personal, certainty replaces evidence. The more someone needs to be right, the harder it becomes to notice what is happening directly in front of them.",
+    "Building toward an exact square on August 1, Venus in Virgo and Lilith in Sagittarius push against each other. A preference, purchase, or agreement may get pulled into someone else’s moral argument. You may spend too much to make a point, take on more than you can manage, or say yes because saying no feels like choosing a side. Check the price, the timing, and whether you actually want it before agreeing."
+  ],
+  "Lilith-in-Sagittarius must preserve the approved three-beat hybrid and append only the computed Venus-square-Lilith layer."
+);
+assert.deepEqual(
+  lilithSagittarius.moves,
+  [
+    "Ask someone what changed their mind most recently.",
+    "Write down one belief you defend strongly, then list the evidence that would make you reconsider it.",
+    "When a confident claim gets repeated as fact, ask: “How do you know?”"
+  ],
+  "Lilith-in-Sagittarius must expose the approved practical moves."
+);
 assert.equal(
   sunAries.contentKey,
   "fallback-hook/sky-placement-hook/sun/aries",
