@@ -51,6 +51,7 @@ const planetTopicVocabulary = read("apps/web/src/services/planetTopicVocabulary.
 const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
 const materializeCompatibilityRows = read("scripts/materialize-compatibility-dashboard-rows.mjs");
+const materializeFallbackArchitectureRows = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const apiContentGeneration = read("api/_lib/content-generation.ts");
 const fallbackRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const careerArchetype = read("apps/web/src/services/careerArchetype.ts");
@@ -58,6 +59,7 @@ const soulRoadmap = read("apps/web/src/components/charts/SoulRoadmapCard.tsx");
 const natalAspectPatterns = read("apps/web/src/services/natalAspectPatterns.ts");
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const lunarDayResolver = read("apps/web/src/features/calendar/lunarDayResolver.ts");
+const fallbackHookRows = fallbackSourceRowsV3.hookRows ?? [];
 
 const readerServingFiles = {
   "apps/web/src/App.tsx": app,
@@ -154,7 +156,11 @@ assert.match(generatedContent, /generatedRowSectionCopyValues/, "Generated conte
 assert.doesNotMatch(generatedContent, /row\.headline,\s*\n\s*row\.summary,\s*\n\s*row\.body/, "Generated content row safety must not reject valid reader rows because their headline is a short title.");
 assert.doesNotMatch(generatedContent, /unsafeMetadataMarkers[\s\S]*["']source[-_]grounded["']/, "Generated content row safety must not reject the authored content-level label.");
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement detail/list rendering must use the fallbackArchitectureV3 sky placement renderer.");
-assert.match(app, /transitSynastryFallbackRendererV3\.renderTransitRetro\(\{[\s\S]*format: "article"/u, "Retrograde Sky placement pages must use the fallbackArchitectureV3 retrograde article renderer.");
+assert.match(
+  app,
+  /hasRetrogradeGuidance = isDisplayRetrograde\(position\)[\s\S]*renderSkyPlacement\(\{[\s\S]*isRetrograde: hasRetrogradeGuidance/u,
+  "Retrograde Sky placement pages must compose approved retrograde guidance into the hybrid placement article."
+);
 assert.doesNotMatch(app, /resolveSkyWritingArticle\(\{/, "Sky placement detail/list rendering must not use the retired Sky writing package resolver.");
 assert.equal(fs.existsSync(path.join(repoRoot, "apps/web/src/content/skyWriting.ts")), false, "Retired skyWriting.ts must not exist.");
 assert.equal(
@@ -252,6 +258,157 @@ assert.doesNotMatch(soulRoadmap, /const signRoadmaps\b/, "Soul Roadmap must not 
 assert.doesNotMatch(placementRows, /const (?:chartPlacementDescriptions|compositePlacementDescriptions)\b/, "PlacementRows must not restore local reader prose.");
 assert.doesNotMatch(lunarDayResolver, /const (?:moonSignModes|seasonThemes|twoWeekArcConnections|sixMonthArcConnections)\b/, "Lunar resolver must not restore local prose tables.");
 assert.match(fallbackRuntime, /\.filter\(isReaderEligible\)/, "All directly accessed V3 rows must pass the review-status gate.");
+
+const jul29PlacementPositiveTest = "passed-jul29-criteria";
+const jul29PlacementSentenceKeys = [
+  "fallback-hook/placement-sentence/moon/scorpio",
+  "fallback-hook/placement-sentence/mars/aquarius",
+  "fallback-hook/placement-sentence/mercury/pisces"
+];
+const jul29HouseCuspKeys = [
+  "fallback-hook/house-cusp/taurus",
+  "fallback-hook/house-cusp/cancer",
+  "fallback-hook/house-cusp/leo",
+  "fallback-hook/house-cusp/virgo",
+  "fallback-hook/house-cusp/libra",
+  "fallback-hook/house-cusp/scorpio",
+  "fallback-hook/house-cusp/sagittarius",
+  "fallback-hook/house-cusp/capricorn",
+  "fallback-hook/house-cusp/aquarius",
+  "fallback-hook/house-cusp/pisces"
+];
+const allHouseCuspKeys = [
+  "fallback-hook/house-cusp/aries",
+  "fallback-hook/house-cusp/taurus",
+  "fallback-hook/house-cusp/gemini",
+  "fallback-hook/house-cusp/cancer",
+  "fallback-hook/house-cusp/leo",
+  "fallback-hook/house-cusp/virgo",
+  "fallback-hook/house-cusp/libra",
+  "fallback-hook/house-cusp/scorpio",
+  "fallback-hook/house-cusp/sagittarius",
+  "fallback-hook/house-cusp/capricorn",
+  "fallback-hook/house-cusp/aquarius",
+  "fallback-hook/house-cusp/pisces"
+];
+const fallbackHooksByKey = new Map(fallbackHookRows.map((row) => [row.contentKey, row]));
+const jul29NeedsReviewKeys = new Set([...jul29PlacementSentenceKeys, ...jul29HouseCuspKeys]);
+
+for (const contentKey of jul29NeedsReviewKeys) {
+  assert.equal(
+    fallbackHooksByKey.get(contentKey)?.review_status,
+    "needs_review",
+    `${contentKey} must remain review gated until owner approval.`
+  );
+}
+
+for (const contentKey of jul29PlacementSentenceKeys) {
+  assert.equal(
+    fallbackHooksByKey.get(contentKey)?.positive_test,
+    jul29PlacementPositiveTest,
+    `${contentKey} must carry the Jul 29 positive-test marker.`
+  );
+}
+
+assert.match(
+  materializeFallbackArchitectureRows,
+  /placementSentencePositiveTest = "passed-jul29-criteria"/u,
+  "Dashboard import must name the Jul 29 placement-sentence positive test."
+);
+assert.match(
+  materializeFallbackArchitectureRows,
+  /requiresPlacementPositiveTest/u,
+  "Dashboard import must gate new placement-sentence rows on the positive test."
+);
+assert.match(
+  materializeFallbackArchitectureRows,
+  /positive_test: record\.positive_test \?\? null/u,
+  "Dashboard mirrors must preserve positive_test metadata."
+);
+
+function rowTextFields(row) {
+  return ["body", "body_you", "body_they", "text", "summary"]
+    .map((field) => row[field])
+    .filter((value) => typeof value === "string");
+}
+
+function rowContainsWord(row, word) {
+  const pattern = new RegExp(`\\b${escapeRegExp(word)}\\b`, "iu");
+  return rowTextFields(row).some((value) => pattern.test(value));
+}
+
+const placementAndEmptyHouseRows = fallbackHookRows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/placement-sentence/")
+  || row.contentKey.startsWith("fallback-hook/house-cusp/")
+  || row.contentKey.startsWith("fallback-hook/empty-house-")
+));
+const hurtFlags = placementAndEmptyHouseRows
+  .filter((row) => rowContainsWord(row, "hurt"))
+  .map((row) => ({
+    contentKey: row.contentKey,
+    review_status: row.review_status,
+    fields: ["body", "body_you", "body_they", "text", "summary"].filter((field) => (
+      typeof row[field] === "string" && /\bhurt\b/iu.test(row[field])
+    ))
+  }))
+  .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
+
+for (const contentKey of jul29NeedsReviewKeys) {
+  const row = fallbackHooksByKey.get(contentKey);
+  assert.ok(row, `${contentKey} must exist in fallback hook rows.`);
+  assert.equal(rowContainsWord(row, "hurt"), false, `${contentKey} must not contain hurt.`);
+}
+
+function collisionWords(value) {
+  return value
+    .toLowerCase()
+    .replace(/\{+[^}]+\}+/gu, " ")
+    .replace(/[^a-z0-9]+/gu, " ")
+    .trim()
+    .split(/\s+/u)
+    .filter(Boolean);
+}
+
+const houseCuspRows = allHouseCuspKeys.map((contentKey) => fallbackHooksByKey.get(contentKey)).filter(Boolean);
+const houseCuspStemMap = new Map();
+for (const row of houseCuspRows) {
+  const words = collisionWords(row.body_you ?? "");
+  for (let index = 0; index <= words.length - 3; index += 1) {
+    const stem = words.slice(index, index + 3).join(" ");
+    const owners = houseCuspStemMap.get(stem) ?? new Set();
+    owners.add(row.contentKey);
+    houseCuspStemMap.set(stem, owners);
+  }
+}
+const sharedHouseCuspStems = [...houseCuspStemMap.entries()]
+  .filter(([, owners]) => owners.size > 1)
+  .map(([stem, owners]) => ({ stem, rows: [...owners].sort() }))
+  .sort((a, b) => b.rows.length - a.rows.length || a.stem.localeCompare(b.stem));
+
+const jul29Report = {
+  files: {
+    "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json": {
+      jul29NeedsReviewRows: jul29NeedsReviewKeys.size,
+      jul29PlacementPositiveTests: jul29PlacementSentenceKeys.filter((contentKey) => (
+        fallbackHooksByKey.get(contentKey)?.positive_test === jul29PlacementPositiveTest
+      )).length,
+      hurtFlags,
+      houseCuspCollisionCount: sharedHouseCuspStems.length,
+      houseCuspCollisions: sharedHouseCuspStems
+    },
+    "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs": {
+      placementPositiveTestGate: true,
+      positiveTestMirrorFields: 3
+    },
+    "scripts/test-reader-facing-content-contract.mjs": {
+      bannedWordsReportedNotAutoEdited: ["hurt"],
+      collisionReportScope: "all 12 house-cusp rows"
+    }
+  }
+};
+const jul29ReportPath = path.join(repoRoot, "scripts/generated/m1-m3-jul29-contract-report.json");
+fs.mkdirSync(path.dirname(jul29ReportPath), { recursive: true });
+fs.writeFileSync(jul29ReportPath, `${JSON.stringify(jul29Report, null, 2)}\n`);
 
 const licensedCareerContactsPhrase = "Shortcuts, contacts, been-there calm";
 const synastryReaderRows = [
