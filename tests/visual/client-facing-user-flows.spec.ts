@@ -1534,6 +1534,40 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
     await expect(page.locator("#sky-detail-title")).toContainText(/Sun/i);
+    const moves = page.locator(".sky-placement-moves");
+    await expect(moves).toBeVisible();
+    const idPagePracticeTypography = await moves.evaluate((element) => {
+      const heading = element.querySelector("h3");
+      const item = element.querySelector("li");
+      const bodyParagraph = Array.from(document.querySelectorAll(".sky-detail-body .article-section p"))
+        .find((paragraph) => !paragraph.closest(".sky-placement-moves"));
+      const probe = document.createElement("span");
+      probe.style.fontFamily = "var(--article-body-font)";
+      probe.style.fontSize = "var(--article-practice-size)";
+      document.body.append(probe);
+      const tokenStyle = getComputedStyle(probe);
+      const headingStyle = getComputedStyle(heading as Element);
+      const itemStyle = getComputedStyle(item as Element);
+      const bodyStyle = getComputedStyle(bodyParagraph as Element);
+      const typography = {
+        tokenFamily: tokenStyle.fontFamily,
+        tokenSize: tokenStyle.fontSize,
+        headingFamily: headingStyle.fontFamily,
+        headingSize: headingStyle.fontSize,
+        itemFamily: itemStyle.fontFamily,
+        itemSize: itemStyle.fontSize,
+        bodyFamily: bodyStyle.fontFamily,
+        bodySize: bodyStyle.fontSize
+      };
+      probe.remove();
+      return typography;
+    });
+    expect(idPagePracticeTypography.headingFamily).toBe(idPagePracticeTypography.tokenFamily);
+    expect(idPagePracticeTypography.itemFamily).toBe(idPagePracticeTypography.tokenFamily);
+    expect(idPagePracticeTypography.bodyFamily).toBe(idPagePracticeTypography.tokenFamily);
+    expect(idPagePracticeTypography.headingSize).toBe(idPagePracticeTypography.tokenSize);
+    expect(idPagePracticeTypography.itemSize).toBe(idPagePracticeTypography.tokenSize);
+    expect(idPagePracticeTypography.bodySize).toBe(idPagePracticeTypography.tokenSize);
 
     await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();

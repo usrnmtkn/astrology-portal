@@ -384,7 +384,9 @@
   --text-placement-meta: var(--type-meta-size);
   --article-title-size: var(--article-h2-size);
   --article-h2-size: clamp(20px, 2.4vw, 24px);
+  --article-body-font: var(--font-body);
   --article-body-size: var(--type-body-size);
+  --article-practice-size: var(--article-body-size);
   --article-meta-size: var(--type-meta-size);
   --article-label-size: var(--type-label-size);
   --text-body: var(--type-body-size);

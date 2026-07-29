@@ -241,8 +241,8 @@
 .sky-detail-drilldown-body p {
   margin: 0;
   color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--type-body-size);
+  font-family: var(--article-body-font);
+  font-size: var(--article-body-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
@@ -259,9 +259,13 @@
   margin: 0;
   padding-left: 1.25rem;
   color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--type-body-size);
+  font-family: var(--article-body-font);
+  font-size: var(--article-practice-size);
   line-height: var(--leading-body);
+}
+
+.sky-placement-moves li {
+  font: inherit;
 }
 
 .article-section,
@@ -339,6 +343,13 @@
   font-size: var(--text-section-heading-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
+}
+
+.sky-placement-moves h3 {
+  font-family: var(--article-body-font);
+  font-size: var(--article-practice-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-body);
 }
 
 .article-section a,
@@ -512,7 +523,7 @@
   .sky-detail-lede,
     .sky-detail-section p,
     .sky-detail-drilldown-body p {
-    font-size: var(--type-meta-size);
+    font-size: var(--article-body-size);
   }
 
   .article-rule {
