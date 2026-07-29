@@ -1409,6 +1409,8 @@ test.describe("client-facing user flow case studies", () => {
 
     const layout = await page.evaluate(() => {
       const tolerance = 1;
+      const topbar = document.querySelector(".topbar");
+      const topbarStyle = topbar ? getComputedStyle(topbar) : null;
       const nav = document.querySelector(".nav-pill")?.getBoundingClientRect();
       const actions = document.querySelector(".topbar-actions")?.getBoundingClientRect();
       const overflowingCardChildren = Array.from(
@@ -1435,15 +1437,33 @@ test.describe("client-facing user flow case studies", () => {
       const locationLineHeight = locationStyle ? Number.parseFloat(locationStyle.lineHeight) : 0;
 
       return {
+        headerHasOpaqueSurface: Boolean(
+          topbarStyle
+          && topbarStyle.backgroundColor !== "transparent"
+          && topbarStyle.backgroundColor !== "rgba(0, 0, 0, 0)"
+        ),
         headerControlsOverlap: Boolean(nav && actions && nav.right > actions.left + tolerance),
         overflowingCardChildren,
         locationWraps: Boolean(locationRect && locationLineHeight && locationRect.height > locationLineHeight * 1.5)
       };
     });
 
+    expect(layout.headerHasOpaqueSurface, "Mobile Sky header blocks cards scrolling underneath").toBe(true);
     expect(layout.headerControlsOverlap, "Narrow Sky header controls do not overlap").toBe(false);
     expect(layout.overflowingCardChildren, "Narrow Sky card contents stay inside their cards").toEqual([]);
     expect(layout.locationWraps, "Narrow Sky location stays on one line").toBe(false);
+
+    await page.evaluate(() => window.scrollTo(0, 300));
+    await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
+    const scrolledHeaderBackground = await page.locator(".topbar").evaluate(
+      (element) => getComputedStyle(element).backgroundColor
+    );
+    expect(
+      scrolledHeaderBackground !== "transparent"
+      && scrolledHeaderBackground !== "rgba(0, 0, 0, 0)",
+      "Scrolled mobile Sky header keeps its opaque surface"
+    ).toBe(true);
+
     await expectNoHorizontalOverflow(page, "Narrow mobile Sky");
     await assertNoClientErrors();
   });
