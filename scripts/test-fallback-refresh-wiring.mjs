@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29f");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29p");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -46,8 +46,8 @@ const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_st
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
 assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, 0, "All legacy-replacement hooks must be reader eligible.");
-assert.equal(needsReviewRows.length, 0, "The owner-approved package must not retain review-gated rows.");
+assert.equal(needsReviewHooks.length, 13, "Only the explicitly staged Jul 29 M1/M3 hooks may remain review-gated.");
+assert.equal(needsReviewRows.length, 13, "The package must retain exactly 13 explicitly staged M1/M3 review rows.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,
@@ -526,18 +526,18 @@ assert.match(appSource, /const activatedPlanets = \[\.\.\.new Set\(group\.map/u)
 assert.match(appSource, /endpointOwner,[\s\S]*?endpointPlanet,[\s\S]*?endpointPossessive:[\s\S]*?activatedPlanets/u);
 assert.match(
   runtimeSource,
-  /authoredCards: bundle\.transitLib\.authoredCards\.filter\(isReaderEligible\)/u,
-  "Production must filter review-gated authored cards before creating the dist renderer."
+  /authoredCards: packageRowsWithLatestOverride\(bundle\.transitLib\.authoredCards\)\.filter\(isReaderEligible\)/u,
+  "Production must resolve latest overrides before filtering review-gated authored cards."
 );
 assert.match(
   runtimeSource,
-  /hookRows: \(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
-  "Production must filter review-gated hook variants before creating the dist renderer."
+  /hookRows: packageRowsWithLatestOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
+  "Production must resolve latest overrides before filtering review-gated hook variants."
 );
 
 assert.match(
   dashboardImportSource,
-  /import \{ PACKAGE_VERSION \} from "\.\.\/apps\/web\/src\/content\/fallbackArchitectureV3\/dist\/tldr-content\.js";[\s\S]*?const importBatchId = `fallback-architecture-\$\{PACKAGE_VERSION\}`;/u,
+  /createPackageManifest,[\s\S]*?PACKAGE_VERSION[\s\S]*?const importBatchId = `fallback-architecture-\$\{PACKAGE_VERSION\}`;/u,
   "Dashboard imports must label each mirror from the installed package version."
 );
 assert.match(
