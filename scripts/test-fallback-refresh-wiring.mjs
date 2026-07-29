@@ -22,22 +22,6 @@ const templates = readPackageJson("templates/fallback-templates-v3.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
-const jul29M1M3NeedsReviewKeys = new Set([
-  "fallback-hook/placement-sentence/moon/scorpio",
-  "fallback-hook/placement-sentence/mars/aquarius",
-  "fallback-hook/placement-sentence/mercury/pisces",
-  "fallback-hook/house-cusp/taurus",
-  "fallback-hook/house-cusp/cancer",
-  "fallback-hook/house-cusp/leo",
-  "fallback-hook/house-cusp/virgo",
-  "fallback-hook/house-cusp/libra",
-  "fallback-hook/house-cusp/scorpio",
-  "fallback-hook/house-cusp/sagittarius",
-  "fallback-hook/house-cusp/capricorn",
-  "fallback-hook/house-cusp/aquarius",
-  "fallback-hook/house-cusp/pisces"
-]);
-
 const counts = {
   authoredCards: transitRows.authoredCards.length,
   fallbackHooks: sourceRows.hookRows.length,
@@ -46,7 +30,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29m");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29o");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -60,17 +44,9 @@ const packageRows = [
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
-const unexpectedNeedsReviewRows = needsReviewRows
-  .map((row) => row.contentKey)
-  .filter((contentKey) => !jul29M1M3NeedsReviewKeys.has(contentKey))
-  .sort();
-const missingJul29NeedsReviewRows = [...jul29M1M3NeedsReviewKeys]
-  .filter((contentKey) => !needsReviewRows.some((row) => row.contentKey === contentKey))
-  .sort();
 assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, jul29M1M3NeedsReviewKeys.size, "Only the Jul 29 M1/M3 batch may remain review gated.");
-assert.deepEqual(unexpectedNeedsReviewRows, [], "No rows outside the Jul 29 M1/M3 batch may remain review gated.");
-assert.deepEqual(missingJul29NeedsReviewRows, [], "The Jul 29 M1/M3 batch must remain review gated until owner approval.");
+assert.equal(needsReviewHooks.length, 0, "All owner-approved fallback hooks must be reader eligible.");
+assert.equal(needsReviewRows.length, 0, "The package must not retain stale needs_review rows after owner approval.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,

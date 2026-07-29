@@ -9064,14 +9064,14 @@
    "grammar_frame": "complete_sentence",
    "body_you": "You keep your guard up until you know where you stand with someone, and you notice quickly when the story does not add up. You may keep the strongest reaction private, but that does not mean it passes quickly. You would rather hear a hard truth than spend another week guessing.",
    "body_they": "They keep their guard up until they know where they stand with someone, and they notice quickly when the story does not add up. They may keep the strongest reaction private, but that does not mean it passes quickly. They would rather hear a hard truth than spend another week guessing.",
-   "review_status": "needs_review",
+   "review_status": "approved",
    "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/moon-in-scorpio",
     "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio"
    ],
-   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
-   "approved_via": "owner chat review 2026-07-21"
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); approved to serve in the empty-house refinement.",
+   "approved_via": "owner approval of needs_review rows and empty-house serving, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/dignity-line/fall/moon",
@@ -10070,14 +10070,14 @@
    "grammar_frame": "complete_sentence",
    "body_you": "You act once the plan makes sense to you, and you are usually more motivated by the principle than by competition. You can stay with a difficult goal for a long time, especially when you have room to choose your own method. Pressure without a clear reason tends to make you resist rather than move faster.",
    "body_they": "They act once the plan makes sense to them, and they are usually more motivated by the principle than by competition. They can stay with a difficult goal for a long time, especially when they have room to choose their own method. Pressure without a clear reason tends to make them resist rather than move faster.",
-   "review_status": "needs_review",
+   "review_status": "approved",
    "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/mars-in-aquarius",
     "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/aquarius"
    ],
-   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
-   "approved_via": "owner chat review 2026-07-21"
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); approved to serve in the empty-house refinement.",
+   "approved_via": "owner approval of needs_review rows and empty-house serving, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/placement-sentence/mars/pisces",
@@ -10421,14 +10421,14 @@
    "grammar_frame": "complete_sentence",
    "body_you": "Your mind works through images, impressions, and what you pick up between the lines. You may understand the mood of a conversation before anyone says what is wrong, while exact details can be harder to hold when you are overwhelmed. You often arrive at the point by following an impression first and explaining the logic afterward.",
    "body_they": "Their mind works through images, impressions, and what they pick up between the lines. They may understand the mood of a conversation before anyone says what is wrong, while exact details can be harder to hold when they are overwhelmed. They often arrive at the point by following an impression first and explaining the logic afterward.",
-   "review_status": "needs_review",
+   "review_status": "approved",
    "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/mercury-in-pisces",
     "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/pisces"
    ],
-   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
-   "approved_via": "owner chat review 2026-07-21"
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); approved to serve in the empty-house refinement.",
+   "approved_via": "owner approval of needs_review rows and empty-house serving, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/placement-house-sentence/mercury/1",
@@ -21551,8 +21551,8 @@
    "contentKey": "fallback-hook/empty-house-explainer",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Everyone has all 12 houses, and an empty one is normal: no planet sat there when you were born, not that the area is missing from your life. An empty house takes its instructions from its ruling planet, wherever that planet sits. A birth chart can name a pattern before it feels obvious.",
-   "body_they": "Everyone has all 12 houses, and an empty one is normal: no planet sat there when they were born, not that the area is missing from their life. An empty house takes its instructions from its ruling planet, wherever that planet sits. A birth chart can name a pattern before it feels obvious.",
+   "body_you": "Everyone has all 12 houses, and an empty house is normal. It means no planet was there when you were born, not that this area is missing from your life. To understand it, look to the planet that rules the sign on the house and where that planet sits in your chart. A birth chart can name a pattern before it feels obvious.",
+   "body_they": "Everyone has all 12 houses, and an empty house is normal. It means no planet was there when they were born, not that this area is missing from their life. To understand it, look to the planet that rules the sign on the house and where that planet sits in their chart. A birth chart can name a pattern before it feels obvious.",
    "review_status": "approved",
    "notes": "Empty-house page: gray explainer box. Replaces legacy app explainer.",
    "approved_via": "owner-approved empty-house refinement, 2026-07-29"
@@ -21561,131 +21561,131 @@
    "contentKey": "fallback-hook/house-cusp/aries",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Aries on the {{houseOrdinal}} house, {{houseTopic}} respond best to speed and directness. You lose little by deciding fast here; the mistakes correct themselves quicker than the waiting does.",
-   "body_they": "With Aries on the {{houseOrdinal}} house, {{houseTopic}} respond best to speed and directness. They lose little by deciding fast here; the mistakes correct themselves quicker than the waiting does.",
+   "body_you": "With Aries on the {{houseOrdinal}} house, {{houseTopic}} respond best to speed and directness. You may know quickly who you want around you and which future plans you are ready to pursue. Waiting too long can create more frustration than giving a direct answer.",
+   "body_they": "With Aries on the {{houseOrdinal}} house, {{houseTopic}} respond best to speed and directness. They may know quickly who they want around them and which future plans they are ready to pursue. Waiting too long can create more frustration than giving a direct answer.",
    "review_status": "approved",
    "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/taurus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Taurus on the {houseOrdinal} house, {houseTopic} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
-   "body_they": "With Taurus on the {houseOrdinal} house, {houseTopic} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Taurus on the {{houseOrdinal}} house, {{houseTopic}} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
+   "body_they": "With Taurus on the {{houseOrdinal}} house, {{houseTopic}} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/gemini",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Gemini on the {{houseOrdinal}} house, {{houseTopic}} stay healthy by staying in motion. Talking it through, trying both options, and changing your mind are all part of how this area works.",
-   "body_they": "With Gemini on the {{houseOrdinal}} house, {{houseTopic}} stay healthy by staying in motion. Talking it through, trying both options, and changing their mind are all part of how this area works.",
+   "body_you": "With Gemini on the {{houseOrdinal}} house, {{houseTopic}} develop through movement, conversation, and trying more than one option. Talking it through, trying both options, and changing your mind are all part of how this area works.",
+   "body_they": "With Gemini on the {{houseOrdinal}} house, {{houseTopic}} develop through movement, conversation, and trying more than one option. Talking it through, trying both options, and changing their mind are all part of how this area works.",
    "review_status": "approved",
    "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/cancer",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Cancer on the {houseOrdinal} house, {houseTopic} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
-   "body_they": "With Cancer on the {houseOrdinal} house, {houseTopic} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Cancer on the {{houseOrdinal}} house, {{houseTopic}} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
+   "body_they": "With Cancer on the {{houseOrdinal}} house, {{houseTopic}} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Leo on the {houseOrdinal} house, {houseTopic} want recognition and a visible role. This area works best when you can put your name on what you contribute instead of managing it from the side.",
-   "body_they": "With Leo on the {houseOrdinal} house, {houseTopic} want recognition and a visible role. This area works best when they can put their name on what they contribute instead of managing it from the side.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Leo on the {{houseOrdinal}} house, {{houseTopic}} want recognition and a visible role. This area works best when you can put your name on what you contribute instead of managing it from the side.",
+   "body_they": "With Leo on the {{houseOrdinal}} house, {{houseTopic}} want recognition and a visible role. This area works best when they can put their name on what they contribute instead of managing it from the side.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/virgo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Virgo on the {houseOrdinal} house, {houseTopic} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
-   "body_they": "With Virgo on the {houseOrdinal} house, {houseTopic} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Virgo on the {{houseOrdinal}} house, {{houseTopic}} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
+   "body_they": "With Virgo on the {{houseOrdinal}} house, {{houseTopic}} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/libra",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Libra on the {houseOrdinal} house, {houseTopic} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
-   "body_they": "With Libra on the {houseOrdinal} house, {houseTopic} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Libra on the {{houseOrdinal}} house, {{houseTopic}} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
+   "body_they": "With Libra on the {{houseOrdinal}} house, {{houseTopic}} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/scorpio",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Scorpio on the {houseOrdinal} house, {houseTopic} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once you commit, you do not do it halfway.",
-   "body_they": "With Scorpio on the {houseOrdinal} house, {houseTopic} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once they commit, they do not do it halfway.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Scorpio on the {{houseOrdinal}} house, {{houseTopic}} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once you commit, you do not do it halfway.",
+   "body_they": "With Scorpio on the {{houseOrdinal}} house, {{houseTopic}} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once they commit, they do not do it halfway.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/sagittarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Sagittarius on the {houseOrdinal} house, {houseTopic} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
-   "body_they": "With Sagittarius on the {houseOrdinal} house, {houseTopic} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Sagittarius on the {{houseOrdinal}} house, {{houseTopic}} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
+   "body_they": "With Sagittarius on the {{houseOrdinal}} house, {{houseTopic}} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/capricorn",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Capricorn on the {houseOrdinal} house, {houseTopic} are built for the long term. Patience matters here, and what you build tends to last when the structure is sound.",
-   "body_they": "With Capricorn on the {houseOrdinal} house, {houseTopic} are built for the long term. Patience matters here, and what they build tends to last when the structure is sound.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Capricorn on the {{houseOrdinal}} house, {{houseTopic}} are built for the long term. Patience matters here, and what you build tends to last when the structure is sound.",
+   "body_they": "With Capricorn on the {{houseOrdinal}} house, {{houseTopic}} are built for the long term. Patience matters here, and what they build tends to last when the structure is sound.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Aquarius on the {houseOrdinal} house, {houseTopic} follow a logic of their own. This area works best when you can question the usual arrangement and build one that still holds up over time.",
-   "body_they": "With Aquarius on the {houseOrdinal} house, {houseTopic} follow a logic of their own. This area works best when they can question the usual arrangement and build one that still holds up over time.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Aquarius on the {{houseOrdinal}} house, {{houseTopic}} follow a logic of their own. This area works best when you can question the usual arrangement and build one that still holds up over time.",
+   "body_they": "With Aquarius on the {{houseOrdinal}} house, {{houseTopic}} follow a logic of their own. This area works best when they can question the usual arrangement and build one that still holds up over time.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/pisces",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Pisces on the {houseOrdinal} house, {houseTopic} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before you decide what comes next.",
-   "body_they": "With Pisces on the {houseOrdinal} house, {houseTopic} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before they decide what comes next.",
-   "review_status": "needs_review",
-   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "body_you": "With Pisces on the {{houseOrdinal}} house, {{houseTopic}} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before you decide what comes next.",
+   "body_they": "With Pisces on the {{houseOrdinal}} house, {{houseTopic}} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before they decide what comes next.",
+   "review_status": "approved",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md).",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/empty-house-ruler",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{rulerRefCap}} rules {{signTitle}}, so this house takes its cues from wherever {{rulerRef}} sits in your chart.",
-   "body_they": "{{rulerRefCap}} rules {{signTitle}}, so this house takes its cues from wherever {{rulerRef}} sits in their chart.",
+   "body_you": "{{rulerRefCap}} rules {{signTitle}}, so what happens in this house is connected to where {{rulerRef}} sits in your chart.",
+   "body_they": "{{rulerRefCap}} rules {{signTitle}}, so what happens in this house is connected to where {{rulerRef}} sits in their chart.",
    "review_status": "approved",
-   "notes": "Empty-house M2: single traditional-ruler handoff. The renderer supplies primaryRuler only.",
-   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
+   "notes": "Empty-house V2 M2: single traditional-ruler handoff. The renderer supplies primaryRuler only.",
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/empty-house-placement",
@@ -21698,24 +21698,134 @@
    "approved_via": "owner-approved empty-house refinement, 2026-07-29"
   },
   {
-   "contentKey": "fallback-hook/empty-house-bridge",
+   "contentKey": "fallback-hook/empty-house-bridge/1",
    "content_role": "fallback_hook",
-   "grammar_frame": "complete_sentence",
-   "body_you": "So the story of this house tends to surface there: through {{rulerHouseTopic}}.",
-   "body_they": "So the story of this house tends to surface there: through {{rulerHouseTopic}}.",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Your identity may become clearer",
+   "body_they": "Their identity may become clearer",
    "review_status": "approved",
-   "notes": "Empty-house M4: bridge from the house to the traditional ruler's placement.",
-   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/2",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Money and questions of worth may come together",
+   "body_they": "Money and questions of worth may come together",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/3",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Conversations and daily plans may pick up",
+   "body_they": "Conversations and daily plans may pick up",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/4",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Home and family life may settle",
+   "body_they": "Home and family life may settle",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/5",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Romance and creative work may open up",
+   "body_they": "Romance and creative work may open up",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/6",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Routines and health habits may take shape",
+   "body_they": "Routines and health habits may take shape",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/7",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Close relationships may deepen",
+   "body_they": "Close relationships may deepen",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/8",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Shared finances and deeper trust may work themselves out",
+   "body_they": "Shared finances and deeper trust may work themselves out",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/9",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Beliefs and long-term plans may grow",
+   "body_they": "Beliefs and long-term plans may grow",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/10",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Your career and public role may build",
+   "body_they": "Their career and public role may build",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/11",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Friends and future plans may develop",
+   "body_they": "Friends and future plans may develop",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge/12",
+   "content_role": "fallback_hook",
+   "grammar_frame": "sentence_fragment",
+   "body_you": "Private patterns and rest may show up",
+   "body_they": "Private patterns and rest may show up",
+   "review_status": "approved",
+   "notes": "Empty-house V2 M4 source-house bridge lead. Completed with the computed ruler-house jurisdiction.",
+   "approved_via": "owner approval of needs_review rows, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/empty-house-close",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Timing: Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses your {{houseOrdinal}} house, this side of your life steps forward and asks for real decisions.",
-   "body_they": "Timing: Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses their {{houseOrdinal}} house, this side of their life steps forward and asks for real decisions.",
+   "body_you": "Timing: You may notice more activity here when a transit reaches {{rulerRef}} or when a current planet moves through your {{houseOrdinal}} house.",
+   "body_they": "Timing: They may notice more activity here when a transit reaches {{rulerRef}} or when a current planet moves through their {{houseOrdinal}} house.",
    "review_status": "approved",
-   "notes": "Empty-house M5: activation close without repeating the jurisdiction list.",
-   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
+   "notes": "Empty-house V2 M5: labeled timing line without activation drama or a repeated jurisdiction list.",
+   "approved_via": "owner-final empty-house V2, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/profection-year/1",
