@@ -21,6 +21,7 @@ const {
 } = require("./generate-sky-placement-articles.js");
 const { buildJudgePrompt, TIER_OF } = require("./judge-placement-voice.js");
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
+const pointSignColors = require(path.join("..", "voice", "tldr-astro", "sign-colors-v2-points.json"));
 
 const good = {
   tagline: "Play the long game",
@@ -34,6 +35,9 @@ const good = {
 };
 
 async function main() {
+  assert.strictEqual(pointSignColors.status, "approved", "owner-reviewed point/sign colors must be marked approved");
+  assert.strictEqual(Object.keys(pointSignColors.entries).length, 48, "point/sign colors must complete all 48 Chiron/Node/Lilith pairs");
+
   // 1. exemplars all lint clean
   for (const e of spec.exemplars) {
     const r = lintArticle({ hook: e.hook, lived: e.lived, turn: e.turn, planet: e.planet });
@@ -81,7 +85,12 @@ async function main() {
   assert.ok(badMoves.findings.some((f) => f.term === "moves-count"), "single move must fail");
   const genericMoves = lintArticle({ ...good, moves: ["Trust the process and see.", "Embrace the change fully."], planet: "mars" });
   assert.ok(genericMoves.fails >= 1, "generic coaching moves must trip the ban list");
-  console.log("OK  tagline and moves rules enforced");
+  const quoteWithoutMeaning = lintArticle({ ...good, hook: "You are already answering the next question.", planet: "mars" });
+  assert.ok(
+    quoteWithoutMeaning.findings.some((finding) => finding.term === "missing-meaning-after-quote"),
+    "a standalone quote without a remaining meaning paragraph must fail"
+  );
+  console.log("OK  tagline, hook-quote, meaning-paragraph, and moves rules enforced");
 
   // 3. failing draft retried with lint feedback, then accepted
   const bad = { ...good, turn: good.turn + " Wishing you a powerful and transformative transit." };
@@ -134,7 +143,26 @@ async function main() {
     const prompt = buildPrompt({ planet, sign: "aries" });
     assert.ok(prompt.includes("SWAP TEST"), "prompt must carry the swap test");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
+    assert.ok(prompt.includes("PLANET + SIGN MEANING LAYER"), `${planet} prompt must carry the approved authoring layer`);
   }
+  const marsGeminiPrompt = buildPrompt({ planet: "mars", sign: "gemini" });
+  assert.ok(
+    marsGeminiPrompt.includes("what Mars does: drive, assertion, and the will to act"),
+    "Mars/Gemini prompt must carry the approved Mars function"
+  );
+  assert.ok(
+    marsGeminiPrompt.includes("how Gemini moves: curious, restless, talkative"),
+    "Mars/Gemini prompt must carry the approved Gemini method"
+  );
+  assert.ok(
+    marsGeminiPrompt.includes("HOOK SENTENCE 1 is a standalone recognition quote"),
+    "placement prompt must teach the reader's quote/body split"
+  );
+  const chironAriesPrompt = buildPrompt({ planet: "chiron", sign: "aries" });
+  assert.ok(
+    chironAriesPrompt.includes("reviewed pair color: The sore spot is about going first"),
+    "approved point/sign colors must reach the authoring prompt without the legacy Right now wrapper"
+  );
   for (const tier of Object.keys(spec.planetTierRegister.hints)) {
     const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
     assert.ok(jp.includes("GOLD STANDARD"), `judge prompt must include gold standard for tier ${tier}`);

@@ -17,7 +17,7 @@
   },
 
   "articleStructure": {
-    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - a 2-5 word imperative under the title ('the sendable sticky note'); (2) WHEN - the computed date range from ephemeris, never generated; (3) TAKEAWAY - the hook beat doubles as CHANI's Takeaway block; (4) LIVED - the body with pace; (5) TURN - the confrontation; (6) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence (CHANI's 'ways to work with' list, cut from 7 to the best 2-3); (7) COMPUTED EVENTS - dated aspects/lunations during the transit render in their own blocks BELOW the article, from ephemeris only. CHANI's 'last time this happened' history section is EXCLUDED: it requires sourced historical claims we do not have, and the falsifiability rule forbids generating them.",
+    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - a 2-5 word imperative under the title ('the sendable sticky note'); (2) WHEN - the computed date range from ephemeris, never generated; (3) QUOTE - the first sentence of the hook, promoted by the reader into its own bold callout and removed from the body; (4) MEANING - the rest of the hook explains what the planet governs and how the sign changes its method, pace, or priorities; (5) LIVED - the body with pace and useful expression; (6) TURN - the observable distortion or confrontation; (7) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence (CHANI's 'ways to work with' list, cut from 7 to the best 2-3); (8) COMPUTED EVENTS - dated aspects/lunations during the transit render in their own blocks BELOW the article, from ephemeris only. CHANI's 'last time this happened' history section is EXCLUDED: it requires sourced historical claims we do not have, and the falsifiability rule forbids generating them.",
     "generatedSlots": ["tagline", "hook", "lived", "turn", "moves"],
     "computedSlots": ["date range", "current aspects", "lunations/eclipses during transit"],
     "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
@@ -31,8 +31,8 @@
         "n": 1,
         "slot": "sky-placement-hook/{planet}/{sign}",
         "beat": "hook",
-        "does": "The line someone would remember or send to a friend. 1-3 short sentences. Start on tension, recognition, or a sharp claim. Name the transit only after the human situation is clear when possible.",
-        "example": "You've been running on autopilot through a version of yourself that needs updating."
+        "does": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible.",
+        "example": "You've been running on autopilot through a version of yourself that needs updating. The Sun describes identity, vitality, and the need to be fully seen; in Leo, that attention becomes warmer, more expressive, and harder to keep in the background."
       },
       {
         "n": 2,
