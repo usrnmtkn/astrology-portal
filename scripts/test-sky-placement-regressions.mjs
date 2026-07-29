@@ -49,6 +49,20 @@ const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
 });
+const lilithSagittarius = renderer.renderSkyPlacement({
+  planet: "lilith",
+  sign: "sagittarius",
+  events: [{
+    type: "aspect",
+    a: "venus",
+    aSign: "virgo",
+    b: "lilith",
+    bSign: "sagittarius",
+    aspect: "square",
+    exactDate: "August 1",
+    applying: true
+  }]
+});
 const mercuryCancerIngress = renderer.renderSkyPlacement({
   planet: "mercury",
   sign: "cancer",
@@ -244,6 +258,25 @@ assert.match(
   "Owner-approved Lilith placement copy must render from the promoted pair rows."
 );
 assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement articles must expose three practical moves.");
+assert.deepEqual(
+  lilithSagittarius.parts,
+  [
+    "Someone keeps making the same point, louder each time, as though volume can turn belief into proof. Lilith in Sagittarius can bring old shame around belief and being taken seriously into public view. What was once kept quiet may now come out as a speech, a long post, a lecture, or an argument nobody else wanted to have.",
+    "For about nine months, beliefs may become harder to separate from identity. The same opinion keeps returning in meetings, family dinners, classrooms, and public debates. Some people make expensive or risky decisions because they are certain they are right, even when the facts do not support the choice.",
+    "Belief can give someone the courage to speak after years of silence. It can also make them stop listening. Once every question feels disrespectful and every disagreement feels personal, certainty replaces evidence. The more someone needs to be right, the harder it becomes to notice what is happening directly in front of them.",
+    "Building toward an exact square on August 1, Venus in Virgo and Lilith in Sagittarius push against each other. A preference, purchase, or agreement may get pulled into someone else’s moral argument. You may spend too much to make a point, take on more than you can manage, or say yes because saying no feels like choosing a side. Check the price, the timing, and whether you actually want it before agreeing."
+  ],
+  "Lilith-in-Sagittarius must preserve the approved three-beat hybrid and append only the computed Venus-square-Lilith layer."
+);
+assert.deepEqual(
+  lilithSagittarius.moves,
+  [
+    "Ask someone what changed their mind most recently.",
+    "Write down one belief you defend strongly, then list the evidence that would make you reconsider it.",
+    "When a confident claim gets repeated as fact, ask: “How do you know?”"
+  ],
+  "Lilith-in-Sagittarius must expose the approved practical moves."
+);
 assert.equal(
   sunAries.contentKey,
   "fallback-hook/sky-placement-hook/sun/aries",
