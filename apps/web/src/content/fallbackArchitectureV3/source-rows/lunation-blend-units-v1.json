@@ -1,0 +1,149 @@
+{
+  "authoredCards": [
+    {
+      "contentKey": "authored/sky-lunation-macro/full-moon/aquarius",
+      "content_role": "authored_card",
+      "headline": "The Macro View: What the Aquarius Full Moon Represents",
+      "body": "Full Moons bring what has been building into clearer view. In Aquarius, that may be the friendship that only works because one person keeps organizing everything, the group plan everyone agrees with but no one supports, or the role you accepted years ago that no one has checked to see if you still want.\n\nAquarius is a fixed air sign ruled by Saturn. It can step back from the immediate emotion and see how the larger system works. Who makes the decisions? Who carries the responsibility? Who is expected to adjust? That distance is useful when you need to see the pattern clearly. Taken too far, it can become detachment, rigid thinking, or loyalty to a principle long after it stops helping the people involved.\n\nThe Sun in Leo sits opposite this Moon, bringing personal recognition into tension with the expectations of the group. You may notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. If belonging depends on staying quiet or continuing to play the same part, that arrangement becomes harder to defend.\n\nSaturn gives this Full Moon weight. The problem probably did not begin this week. It may be the same limitation everyone keeps working around, the responsibility that keeps returning to the same person, or the future plan that still sounds good but has no budget, deadline, or clear owner.\n\nClarity does not require a decision on the same day. Let the information settle. Notice what needs new terms, what both sides are willing to repair, and what has reached its limit.",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ],
+      "notes": "Owner-final house-neutral macro, imported verbatim."
+    }
+  ],
+  "hookRows": [
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/1",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive personally: in your body, your reactions, the version of you other people can see changing in real time",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ],
+      "notes": "Owner-final ruler-house localization row."
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through money and what you own: the bank balance, the purchase, the paycheck that suddenly reads differently",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/3",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through words close to home: the message, the conversation, the small fact that rearranges the story",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/4",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through home and family: the household scene, the relative's comment, the feeling that surfaces in your own kitchen",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/5",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through what you make and love: the project, the romance, the play that suddenly tells the truth",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/6",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through the daily routine: the schedule, the body's signals, the workload that shows its real cost",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/7",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through the people closest to you: the partner's sentence, the friend's reaction, the mirror another person holds up",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/8",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through what is shared and hidden: the joint account, the secret, the promise that finally surfaces",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/9",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through the bigger frame: the news from far away, the idea in the book, the belief tested in public",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/10",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through your public life: the meeting, the announcement, the moment your work gets seen",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/11",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through your circles: the group chat, the friend's news, the cause that suddenly needs your answer",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-ruler-house/12",
+      "content_role": "fallback_hook",
+      "grammar_frame": "sentence_fragment",
+      "body_you": "the realizations arrive through the quiet channels: the dream, the mood without a name, the truth that lands when nothing is scheduled",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/lunation-uranus-layer/1",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Uranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it.",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ],
+      "notes": "Owner-final conditional modern secondary layer; render only from computed event-time qualification."
+    }
+  ]
+}
