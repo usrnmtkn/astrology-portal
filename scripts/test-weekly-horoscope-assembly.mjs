@@ -221,7 +221,7 @@ try {
   assert.match(realWeek.horoscope.body, /3rd house/u);
   assert.match(
     realWeek.horoscope.body,
-    /With Saturn ruling this Full Moon from your 11th house, the realizations arrive through your circles:/u
+    /Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u
   );
   assert.match(
     realWeek.horoscope.body,
@@ -234,6 +234,15 @@ try {
   assert.match(
     realWeek.horoscope.body,
     /An Aquarius Full Moon shows you how the arrangement actually works/u
+  );
+  assert.match(
+    realWeek.horoscope.body,
+    /This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore\./u
+  );
+  assert.doesNotMatch(
+    realWeek.horoscope.body,
+    /\b(?:It can show up|That might look|Let go of|Your higher path|Set your intention)\b/u,
+    "The retired per-rising closer stack must not render in the weekly centerpiece."
   );
   assert.ok(Array.isArray(realWeek.aspects));
   const readerText = [

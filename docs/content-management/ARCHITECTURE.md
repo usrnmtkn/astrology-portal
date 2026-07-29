@@ -415,16 +415,19 @@ Quiet weeks fall back to `renderWeeklyMoon`.
 
 | Output movement | Content source | Computed fact |
 |---|---|---|
+| Recognizable ninth-house situation | `lunation-opening-situation/9` | Aquarius counted from Gemini rising |
 | Moon lights up the ninth house | Moon-house frame + house vocabulary | Aquarius counted from Gemini rising |
-| Aquarius Full Moon meaning | approved house-neutral Aquarius row | kind and sign |
-| Third-versus-ninth counterpoint | counterpoint frame + house vocabulary | Sun in Leo counted from Gemini rising |
+| Compact Aquarius Full Moon meaning | `lunation-sign-compact/aquarius` | kind and sign |
+| Third-versus-ninth counterpoint | counterpoint frame + house vocabulary, woven into the compact core | Sun in Leo counted from Gemini rising |
 | Saturn rules from the eleventh | `lunation-ruler-house/11` | Saturn rules Aquarius; Saturn in Aries; Aries is eleventh |
 | Retrograde overlay | `lunation-ruler-retro` | Saturn retrograde at event time |
 | Uranus layer | `lunation-uranus-layer/1` | Uranus in Gemini and close to the lunation |
-| Release and higher path | ninth-house rows | computed Moon house |
+| Present-tense ending | `lunation-week-layer` | weekly rendering context |
 
 If Saturn occupies a different sign on a future event date, the same content
 families assemble a different ruler-house paragraph without editing prose.
+The full Sky sign section and the former manifestations, moment, Release/Shift,
+and Higher Path stack do not render in the per-rising card.
 
 ## 12. Worked example: empty second house
 
@@ -439,10 +442,12 @@ The empty-house renderer assembles:
 1. Cancer-on-house frame plus the second-house jurisdiction list;
 2. one ruler handoff to the Moon;
 3. the existing Moon-in-Scorpio placement sentence;
-4. a bridge from second-house concerns to the ruler's sixth-house placement;
-5. a labeled activation/timing close.
+4. the second-house bridge lead completed with the compact sixth-house
+   jurisdiction;
+5. a labeled timing line naming the traditional ruler and the source house.
 
-The jurisdiction list appears once. The primary ruler appears once. Modern
+The full jurisdiction list appears once. The ruler handoff reads only the
+primary traditional ruler. Modern
 co-rulers are not read by this path.
 
 ## 13. Authoring and release pipeline

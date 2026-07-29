@@ -292,13 +292,13 @@ const allHouseCuspKeys = [
   "fallback-hook/house-cusp/pisces"
 ];
 const fallbackHooksByKey = new Map(fallbackHookRows.map((row) => [row.contentKey, row]));
-const jul29NeedsReviewKeys = new Set([...jul29PlacementSentenceKeys, ...jul29HouseCuspKeys]);
+const jul29OwnerApprovedKeys = new Set([...jul29PlacementSentenceKeys, ...jul29HouseCuspKeys]);
 
-for (const contentKey of jul29NeedsReviewKeys) {
+for (const contentKey of jul29OwnerApprovedKeys) {
   assert.equal(
     fallbackHooksByKey.get(contentKey)?.review_status,
-    "needs_review",
-    `${contentKey} must remain review gated until owner approval.`
+    "approved",
+    `${contentKey} must remain reader-serving after owner approval.`
   );
 }
 
@@ -353,7 +353,7 @@ const hurtFlags = placementAndEmptyHouseRows
   }))
   .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
 
-for (const contentKey of jul29NeedsReviewKeys) {
+for (const contentKey of jul29OwnerApprovedKeys) {
   const row = fallbackHooksByKey.get(contentKey);
   assert.ok(row, `${contentKey} must exist in fallback hook rows.`);
   assert.equal(rowContainsWord(row, "hurt"), false, `${contentKey} must not contain hurt.`);
@@ -388,7 +388,7 @@ const sharedHouseCuspStems = [...houseCuspStemMap.entries()]
 const jul29Report = {
   files: {
     "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json": {
-      jul29NeedsReviewRows: jul29NeedsReviewKeys.size,
+      jul29OwnerApprovedRows: jul29OwnerApprovedKeys.size,
       jul29PlacementPositiveTests: jul29PlacementSentenceKeys.filter((contentKey) => (
         fallbackHooksByKey.get(contentKey)?.positive_test === jul29PlacementPositiveTest
       )).length,

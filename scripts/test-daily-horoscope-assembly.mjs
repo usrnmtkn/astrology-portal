@@ -37,6 +37,29 @@ const moonDoDont = renderer.renderDoDont({
 });
 assert.equal(moonDoDont.do.length, 3);
 assert.equal(moonDoDont.dont.length, 3);
+const moonDoDontNextDay = renderer.renderDoDont({
+  planet: "mars",
+  sign: "aquarius",
+  house: 9,
+  transiting: "moon",
+  moonSign: "aries",
+  moonHouse: 1,
+  dayKey: 1
+});
+const moonDoDontFollowingDay = renderer.renderDoDont({
+  planet: "mars",
+  sign: "aquarius",
+  house: 9,
+  transiting: "moon",
+  moonSign: "taurus",
+  moonHouse: 2,
+  dayKey: 2
+});
+assert.notDeepEqual(
+  moonDoDontNextDay,
+  moonDoDontFollowingDay,
+  "Do/Don't recommendations must change when the active sky date and Moon layer change."
+);
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const dailyStart = appSource.indexOf("function dailyGlanceGeneratedContent(");
@@ -67,6 +90,21 @@ assert.match(appSource, /dailyIsHeadliner \? 3 : 4/u);
 assert.match(appSource, /renderDoDont\(\{/u);
 assert.match(appSource, /const moonCandidate = dailyMoonDriver/u);
 assert.match(appSource, /transiting: "moon"/u);
+assert.match(
+  appSource,
+  /<ProfileView[\s\S]*targetDate=\{skyDate\}/u,
+  "You transit assembly must receive the active sky date."
+);
+assert.match(
+  appSource,
+  /dayKey: Number\.isFinite\(Date\.parse\(`\$\{targetDate\}T00:00:00Z`\)\)/u,
+  "Do/Don't rotation must key off the active sky date instead of the stale chart form date."
+);
+assert.doesNotMatch(
+  appSource,
+  /transitForm\.chartDate/u,
+  "You transit timing must not read the chart setup form's one-time date."
+);
 assert.match(appSource, /renderTransitLabel\(\{/u);
 assert.match(appSource, /renderLunationHoroscope\(\{/u);
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);

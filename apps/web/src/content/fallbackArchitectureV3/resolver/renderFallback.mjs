@@ -319,15 +319,15 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
   const v = voice === "you" ? "you" : "they";
   const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
   const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
-  const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null;
+  const rulerHouseJurisdiction = rulerHouse ? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts) : null;
   const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
   const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts);
   const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
-  const bridgeFrame = getHook("fallback-hook/empty-house-bridge", v, opts);
+  const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts);
   const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
   const note = getHook("fallback-hook/empty-house-explainer", v, opts);
   const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts) : null;
-  if (!houseTopic || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeFrame || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+  if (!houseTopic || !rulerHouseJurisdiction || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
     throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
   }
   const REF = { sun: "the Sun", moon: "the Moon" };
@@ -336,13 +336,13 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
     houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
     rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
     rulerSignTitle: rulerSign ? title(rulerSign) : null,
-    rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, rulerHouseTopic, placementLine,
+    rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, placementLine,
   };
   const paras = [
     mustache(cusp, ctx),
     mustache(rulerFrame, ctx),
     mustache(placementFrame, ctx),
-    mustache(bridgeFrame, ctx),
+    `${bridgeLead} through ${rulerHouseJurisdiction}.`,
     mustache(closeFrame, ctx)
   ];
   const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());

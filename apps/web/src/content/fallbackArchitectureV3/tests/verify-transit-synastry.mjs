@@ -389,14 +389,19 @@ console.log("Rendered 12 Lilith sky placements.");
 }
 
 
-// Per-rising lunation horoscopes: all 12 risings x 4 kinds, correct house math, eclipse canon
+// Per-rising lunation horoscopes: all 12 risings x 4 kinds, correct house math,
+// compact sign core only where approved, and no retired closer stack.
 {
   let lh = 0;
   for (const rs of SIGNS) for (const kd of ["new-moon", "full-moon", "eclipse-solar", "eclipse-lunar"]) {
     const r = renderLunationHoroscope({ kind: kd, sign: "aquarius", risingSign: rs });
     if (/\{\{/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: slot leak`);
-    if (kd.startsWith("eclipse") && /Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release leaked into eclipse`);
-    if (!kd.startsWith("eclipse") && !/Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release missing`);
+    if (/\b(?:It can show up|That might look|Let go of|Your higher path|Set your intention)\b/.test(r.body)) {
+      fail(`lunation horoscope ${kd}/${rs}: retired closer stack leaked`);
+    }
+    if ((kd === "new-moon" || kd === "eclipse-solar") && /An Aquarius Full Moon/.test(r.body)) {
+      fail(`lunation horoscope ${kd}/${rs}: Full Moon compact row leaked`);
+    }
     lh++;
   }
   const aq = renderLunationHoroscope({ kind: "full-moon", sign: "aquarius", risingSign: "aquarius" });
