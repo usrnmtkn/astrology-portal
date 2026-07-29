@@ -91,6 +91,65 @@ const inlineWindow = (w: string | null | undefined): string | null => {
   return w.charAt(0).toLowerCase() + w.slice(1);
 };
 
+const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
+const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
+const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
+const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
+
+function possessiveDisplayName(name: string) {
+  return `${name}'s`;
+}
+
+export function friendVoiceFromReaderCopy(body: string, name: string) {
+  let named = false;
+  const namePossessive = possessiveDisplayName(name);
+  const nameForPossessive = (source: string) => {
+    if (named) return /^[A-Z]/.test(source) ? "Their" : "their";
+    named = true;
+    return namePossessive;
+  };
+  const nameForContraction = (verb: string) => {
+    if (named) return `they${verb}`;
+    named = true;
+    return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
+  };
+  const nameForObject = () => {
+    const objectReference = named ? "them" : name;
+    named = true;
+    return objectReference;
+  };
+
+  let rendered = body
+    .replace(/\byourself\b/gi, "themselves")
+    .replace(/\byourselves\b/gi, "themselves")
+    .replace(/\byours\b/gi, "theirs")
+    .replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb: string) => (
+      nameForContraction(verb.toLowerCase().replace("’", "'"))
+    ))
+    .replace(/\byour\b/gi, (source: string) => nameForPossessive(source))
+    .replace(
+      FRIEND_REPORTED_SUBJECT_YOU,
+      (_, governor: string, auxiliary: string) => `${governor} they ${auxiliary}`
+    )
+    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
+    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
+    .replace(/\byou\b/gi, (source: string) => (/^[A-Z]/.test(source) ? "They" : "they"));
+
+  rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix: string, verb: string) => {
+    const subject = named ? "They" : name;
+    named = true;
+    const normalizedVerb = verb.toLowerCase();
+
+    if (normalizedVerb === "don't" || normalizedVerb === "do not") {
+      return `${prefix}${subject} should not`;
+    }
+
+    return `${prefix}${subject} should ${normalizedVerb}`;
+  });
+
+  return rendered;
+}
+
 export function createTransitSynastryRenderer(transitLib: TransitLibFile, templatesFile: TemplatesFile, rowsFile: RowsFile) {
   const cards = new Map(transitLib.authoredCards.map((c) => [c.contentKey, c]));
   const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
@@ -173,8 +232,8 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   }
 
   function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
-    // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
-    // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
+    // voice: "you" (reader) or a friend's display name. Friend views use the same approved
+    // authored unit, adapted deterministically to third person when no authored friend body exists.
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? `${voice}'s` : null;
     const g = GROUP[aspect] ?? aspect; // accepts group names directly
@@ -196,31 +255,57 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const groupsToTry = [g, ...(SHARE[g] ?? [])];
     const tryKeys: string[] = [];
     const push = (a: string, b: string) => {
-      if (variant) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
-      for (const gg of groupsToTry) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
+      if (variant) {
+        tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
+        if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
+      }
+      tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}`);
+      for (const gg of groupsToTry) {
+        if (gg !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${gg}`);
+      }
       tryKeys.push(`authored/transit-aspect/${a}/${b}/any`);
     };
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-    if (v === "you") for (const k of tryKeys) {
+    for (const k of tryKeys) {
     const c = card(k);
     if (c) {
       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
       // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.
       const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
       const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
-      let aBody = c.body_you ?? c.body;
+      const readerBody = c.body_you ?? c.body;
+      if (!readerBody) throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
+      let aBody = v === "you"
+        ? readerBody
+        : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
       aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
       aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+      // Aspect-gated inserts (owner 2026-07-28): exact-aspect-only paragraphs appended to
+      // the matching card (e.g. the solar-return note on the Sun-Sun conjunction).
+      const gatedInsert = card(`authored/transit-aspect-insert/${transiting}/${natal}/${aspect}`);
+      if (gatedInsert) {
+        const readerInsert = gatedInsert.body_you ?? gatedInsert.body;
+        const insBody = v === "you"
+          ? readerInsert
+          : gatedInsert.body_they ?? (readerInsert ? friendVoiceFromReaderCopy(readerInsert, voice) : null);
+        if (insBody) aBody = `${aBody}\n\n${insBody}`;
+      }
       // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
       if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
         const NAT = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","midheaven","ascendant"];
         const fnIdx = (((NAT.indexOf(natal) + (variant ?? 0)) % 4) + 4) % 4 + 1;
-        const fogNote = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`)?.body_you;
+        const fogRow = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`);
+        const fogNote = v === "you"
+          ? fogRow?.body_you
+          : fogRow?.body_they ?? (fogRow?.body_you ? friendVoiceFromReaderCopy(fogRow.body_you, voice) : null);
         if (fogNote) aBody = `${aBody}\n\n${fogNote}`;
       }
-      return { headline: c.headline || "", body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+      const authoredHeadline = v === "you"
+        ? (c.headline || "")
+        : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
+      return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
     }
   }
     // fallback template
@@ -237,8 +322,9 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v)
       ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null)
       ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
-    const transitEffect = effectRaw && natalArea ? fill(effectRaw, { natalArea }) : null;
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
+    const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
+    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;
     const ctx: Ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
@@ -268,6 +354,11 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
         ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.`
         : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
       body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+    } else if (AVERB[aspect] && ctx.transitEffectLine) {
+      const target = v === "you" ? `your natal ${ctx.natalTitle}` : `${otherPoss} natal ${ctx.natalTitle}`;
+      const timing = ctx.timeInline ? ` ${ctx.timeInline}` : "";
+      const mechanics = `${String(ctx.transitRef).replace(/^./, (char) => char.toUpperCase())} is ${AVERB[aspect]} ${target}${timing}.`;
+      body = `${ctx.transitEffectLine} ${mechanics}`;
     } else {
       body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
     }
@@ -784,20 +875,22 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
       ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
-    const natalG = natalAspect ? (GROUP[natalAspect] ?? natalAspect) : null;
-    const bondQuality = natalG ? vocab.get(`fallback-vocab/bond-quality/${natalG}`)?.body : null;
-    const modeA = hooks.get(`fallback-hook/planet-mode/${planetA}`)?.body_you;
-    const modeB = hooks.get(`fallback-hook/planet-mode/${planetB}`)?.body_they;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
-    const paras: string[] = [];
-    paras.push(`${timeOpen}, ${transitRef(transiting, sign)} is ${aspectAdj} the line between your ${title(planetA)} and ${otherName}'s ${title(planetB)}.`);
-    if (bondQuality && modeA && modeB) paras.push(`That line is ${bondQuality}: ${modeA} meeting ${modeB}.`);
-    paras.push(effect);
+    const paras: string[] = [effect];
+    const relation: Record<string, string> = {
+      conjunction: "meeting",
+      opposition: "opposite",
+      square: "squaring",
+      trine: "in a trine to",
+      sextile: "sextile to",
+    };
+    const timeClose = inlineWindow(timeOpen);
+    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} the connection between your ${title(planetA)} and ${otherName}'s ${title(planetB)}${timeClose ? ` ${timeClose}` : ""}.`);
     const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL: Record<string, string> = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} your ${title(planetA)}-${title(planetB)} line with ${otherName}`;
+    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} the ${title(planetA)}-${title(planetB)} connection with ${otherName}`;
     return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
   }
 

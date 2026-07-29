@@ -1003,19 +1003,51 @@ export function SocialFriendsPanel({
   }
 
   if (!available || !profile?.handle) {
-    if (activeView === "charts" && chartContent) {
-      return (
-        <section className="friends-unified-panel" aria-label="Social friends">
-          {chartContent}
-        </section>
-      );
-    }
-
     return (
       <section className="friends-unified-panel" aria-label="Social friends">
-        <div className="friends-unified-empty">
-          <h2>Friends are unavailable.</h2>
-          <p>Sign in and finish setting up your profile to use social friends.</p>
+        <div className="friends-unified-tab-row">
+          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
+            <button
+              className={activeView === "circle" ? "active" : ""}
+              type="button"
+              role="tab"
+              aria-selected={activeView === "circle"}
+              aria-controls="friends-circle-panel"
+              id="friends-circle-tab"
+              onClick={() => onSelectView("circle")}
+            >
+              Circle · 0
+            </button>
+            <button
+              className={activeView === "charts" ? "active" : ""}
+              type="button"
+              role="tab"
+              aria-selected={activeView === "charts"}
+              aria-controls="friends-charts-panel"
+              id="friends-charts-tab"
+              onClick={() => onSelectView("charts")}
+            >
+              Charts · {chartCount}
+            </button>
+          </span>
+          {activeView === "charts" && chartContent && (
+            <button className="friends-add-chart-action" type="button" onClick={onAddChart}>
+              Add a chart
+            </button>
+          )}
+        </div>
+        <div
+          className="friends-unified-content"
+          id={`friends-${activeView}-panel`}
+          role="tabpanel"
+          aria-labelledby={`friends-${activeView}-tab`}
+        >
+          {activeView === "charts" && chartContent ? chartContent : (
+            <div className="friends-unified-empty">
+              <h2>Friends are unavailable.</h2>
+              <p>Sign in and finish setting up your profile to use social friends.</p>
+            </div>
+          )}
         </div>
       </section>
     );

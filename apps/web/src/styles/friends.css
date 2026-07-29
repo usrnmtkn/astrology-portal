@@ -2947,42 +2947,161 @@
 }
 
 .app-shell.mode-friends .friend-view-tabs {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.72fr) minmax(0, 0.98fr) minmax(0, 1.08fr);
-  justify-content: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   min-height: 0;
-  gap: var(--space-1);
-  padding: var(--segmented-padding);
-  overflow: hidden;
+  gap: var(--space-2);
+  padding: 0;
+  overflow: visible;
 }
 
-.app-shell.mode-friends .friend-view-tabs .segmented-control__item {
+.app-shell.mode-friends .friend-view-tab {
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
-  height: var(--segmented-item-height);
-  padding-inline: clamp(6px, 1vw, var(--segmented-item-px));
-  border-radius: var(--segmented-item-radius);
+  min-height: var(--button-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
+  line-height: 1;
   white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
-.app-shell.mode-friends .friend-view-tabs .segmented-control__item.segmented-control__item--active {
+.app-shell.mode-friends .friend-view-tab:hover {
+  border-color: var(--ink);
+}
+
+.app-shell.mode-friends .friend-view-tab:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.app-shell.mode-friends .friend-view-tab.friend-view-tab--active {
+  border-color: var(--pill-bg);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
   font-weight: var(--weight-medium);
 }
 
-@media (max-width: 1180px) {
-  .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
-    height: var(--segmented-item-height);
-    font-size: var(--text-meta-size);
-    padding-inline: var(--segmented-gap);
-  }
+.app-shell.mode-friends .friend-view-more {
+  position: relative;
+}
+
+.app-shell.mode-friends .friend-view-more-trigger {
+  gap: var(--space-2);
+}
+
+.app-shell.mode-friends .friend-view-more-count {
+  color: var(--text-muted);
+  font-size: var(--text-compact-meta);
+}
+
+.app-shell.mode-friends .friend-view-tab--active .friend-view-more-count {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.app-shell.mode-friends .friend-view-more-chevron {
+  transition: transform 160ms ease;
+}
+
+.app-shell.mode-friends .friend-view-more-chevron--open {
+  transform: rotate(180deg);
+}
+
+.app-shell.mode-friends .friend-view-more-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  display: grid;
+  width: min(360px, calc(100vw - var(--space-6)));
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.app-shell.mode-friends .friend-view-more-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: 0;
+  border-radius: calc(var(--card-radius) - var(--space-2));
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-shell.mode-friends .friend-view-more-option:hover,
+.app-shell.mode-friends .friend-view-more-option:focus-visible {
+  background: var(--surface-2);
+}
+
+.app-shell.mode-friends .friend-view-more-option:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy strong {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy small {
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
 }
 
 @media (max-width: 520px) {
-  .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
+  .app-shell.mode-friends .friend-view-tabs {
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .app-shell.mode-friends .friend-view-tab {
+    min-height: var(--segmented-item-height);
+    padding-inline: var(--space-3);
     font-size: var(--text-compact-meta);
+  }
+
+  .app-shell.mode-friends .friend-view-more-trigger {
+    gap: var(--space-1);
+  }
+
+  .app-shell.mode-friends .friend-view-more-menu {
+    right: auto;
+    left: 0;
   }
 }
 

@@ -63,7 +63,9 @@ const angleIconSize = 34;
 const signIconSize = 27;
 const longSignIconSize = 29;
 const relationshipClusterTangentSpacing = 23;
+const synastryClusterTangentSpacing = 30;
 const relationshipClusterTangentLimit = 40;
+const synastryPlanetHitAreaRadius = 14;
 const relationshipOuterClusterRadialOffsets = [0, 16, -12, 30, -24, 42, -34];
 const relationshipInnerClusterRadialOffsets = [0, -14, 14, -28, 28, -40, 40];
 
@@ -81,7 +83,7 @@ type InspectorPoint = {
   longitude: number;
   sign: number;
   position?: PlanetPosition;
-  kind: "position" | "transit-position" | "angle";
+  kind: "position" | "transit-position" | "angle" | "outer-position" | "inner-position" | "outer-angle" | "inner-angle";
 };
 
 type InspectorAspect = {
@@ -123,6 +125,10 @@ const wholeSignInspectorAspectTypes: WholeSignInspectorAspectType[] = ["conjunct
 
 function transitInspectorPointId(planet: string) {
   return `transit:${planet}`;
+}
+
+function synastryInspectorPointId(ring: "outer" | "inner", point: string) {
+  return `${ring}:${point}`;
 }
 
 function zodiacLongitude(position?: PlanetPosition) {
@@ -837,6 +843,8 @@ export const SkyWheel = memo(function SkyWheel({
                   key={`${focusedInspectorPoint.id}-${targetPoint.id}`}
                   className={`${aspectLineClass(type)} ${normalizeAspectType(type)} aspect-inspector-line`}
                   style={selectedInspectorLineStyle(type, orb, inspectorMode)}
+                  data-from-point-id={focusedInspectorPoint.id}
+                  data-to-point-id={targetPoint.id}
                 >
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
@@ -849,7 +857,13 @@ export const SkyWheel = memo(function SkyWheel({
               const b = point(planetAngle(to), radius.aspect);
 
               return (
-                <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+                <g
+                  key={`${from.planet}-${to.planet}`}
+                  className={`${className} ${normalizeAspectType(type)}`}
+                  style={lineStyle}
+                  data-from-point-id={from.planet}
+                  data-to-point-id={to.planet}
+                >
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                 </g>
               );
@@ -858,12 +872,18 @@ export const SkyWheel = memo(function SkyWheel({
         </g>
         {transitAspectPairs.length > 0 && !focusedInspectorPoint && (
           <g className="aspect-lines transit-to-natal-aspect-lines" aria-label="Transit to natal aspects">
-            {transitAspectPairs.map(({ id, fromLongitude, toLongitude, type, className, lineStyle }) => {
+            {transitAspectPairs.map(({ id, fromLongitude, toLongitude, type, fromPointId, toPointId, className, lineStyle }) => {
               const a = point(angleForLongitude(fromLongitude), radius.aspect);
               const b = point(angleForLongitude(toLongitude), radius.aspect);
 
               return (
-                <g key={id} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+                <g
+                  key={id}
+                  className={`${className} ${normalizeAspectType(type)}`}
+                  style={lineStyle}
+                  data-from-point-id={fromPointId}
+                  data-to-point-id={toPointId}
+                >
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                 </g>
               );
@@ -953,11 +973,19 @@ export const SkyWheel = memo(function SkyWheel({
                   height={iconSize}
                   className={angleClassName}
                   aria-label={label}
+                  data-inspector-point-id={anglePointId}
                   preserveAspectRatio="xMidYMid meet"
                   {...angleProps}
                 />
               ) : (
-                <text key={label} x={x} y={y} className={`aspect-inspector-point aspect-inspector-point--${angleInspectorState}`} {...angleProps}>
+                <text
+                  key={label}
+                  x={x}
+                  y={y}
+                  className={`aspect-inspector-point aspect-inspector-point--${angleInspectorState}`}
+                  data-inspector-point-id={anglePointId}
+                  {...angleProps}
+                >
                   {label}
                 </text>
               );
@@ -992,6 +1020,7 @@ export const SkyWheel = memo(function SkyWheel({
                 tabIndex={0}
                 role={inspectorEnabled ? "button" : "img"}
                 aria-label={inspectorActiveLines.join(". ")}
+                data-inspector-point-id={position.planet}
                 onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
                 onFocus={() => setActiveTooltipPlanet(position.planet)}
                 onClick={inspectorEnabled ? (event) => {
@@ -1058,6 +1087,7 @@ export const SkyWheel = memo(function SkyWheel({
                   role={inspectorEnabled ? "button" : "img"}
                   tabIndex={inspectorEnabled ? 0 : undefined}
                   aria-label={inspectorActiveLines.join(". ")}
+                  data-inspector-point-id={transitPointId}
                   onClick={inspectorEnabled ? (event) => {
                     event.stopPropagation();
                     event.currentTarget.blur();
@@ -1191,7 +1221,11 @@ type SynastryWheelProps = {
   midheavenLongitude?: number;
   innerAscendant?: string;
   innerAscendantLongitude?: number;
+  innerMidheavenLongitude?: number;
   houseSignLabelStyle?: HouseSignLabelStyle;
+  aspectInspector?: boolean;
+  outerLabel?: string;
+  innerLabel?: string;
 };
 
 export const SynastryWheel = memo(function SynastryWheel({
@@ -1203,7 +1237,11 @@ export const SynastryWheel = memo(function SynastryWheel({
   midheavenLongitude,
   innerAscendant,
   innerAscendantLongitude,
-  houseSignLabelStyle = "text"
+  innerMidheavenLongitude,
+  houseSignLabelStyle = "text",
+  aspectInspector = false,
+  outerLabel = "Outer chart",
+  innerLabel = "Inner chart"
 }: SynastryWheelProps) {
   const center = 300;
   const radius = {
@@ -1290,6 +1328,203 @@ export const SynastryWheel = memo(function SynastryWheel({
     className: aspectLineClass(aspect.type),
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
   })), [interAspects]);
+  const inspectorEnabled = aspectInspector;
+  const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
+  const wheelShellRef = useRef<HTMLElement | null>(null);
+  const inspectorPoints = useMemo(() => {
+    if (!inspectorEnabled) {
+      return [];
+    }
+
+    const points: InspectorPoint[] = [
+      ...outerPositions.map((position): InspectorPoint => {
+        const longitude = normalizedLongitude(zodiacLongitude(position));
+
+        return {
+          id: synastryInspectorPointId("outer", position.planet),
+          label: `${outerLabel} ${position.planet}`,
+          glyph: position.glyph,
+          longitude,
+          sign: Math.floor(longitude / 30),
+          position,
+          kind: "outer-position"
+        };
+      }),
+      ...innerPositions.map((position): InspectorPoint => {
+        const longitude = normalizedLongitude(zodiacLongitude(position));
+
+        return {
+          id: synastryInspectorPointId("inner", position.planet),
+          label: `${innerLabel} ${position.planet}`,
+          glyph: position.glyph,
+          longitude,
+          sign: Math.floor(longitude / 30),
+          position,
+          kind: "inner-position"
+        };
+      })
+    ];
+
+    function addAngle(
+      ring: "outer" | "inner",
+      pointName: "Ascendant" | "Descendant" | "Midheaven" | "Imum Coeli",
+      longitude: number | undefined,
+      glyph: string
+    ) {
+      if (typeof longitude !== "number") {
+        return;
+      }
+
+      const normalized = normalizedLongitude(longitude);
+      const label = ring === "outer" ? outerLabel : innerLabel;
+      points.push({
+        id: synastryInspectorPointId(ring, pointName),
+        label: `${label} ${pointName}`,
+        glyph,
+        longitude: normalized,
+        sign: Math.floor(normalized / 30),
+        kind: ring === "outer" ? "outer-angle" : "inner-angle"
+      });
+    }
+
+    addAngle("outer", "Ascendant", ascendantLongitude, "ASC");
+    addAngle("outer", "Descendant", typeof ascendantLongitude === "number" ? ascendantLongitude + 180 : undefined, "DSC");
+    addAngle("outer", "Midheaven", midheavenLongitude, "MC");
+    addAngle("outer", "Imum Coeli", typeof midheavenLongitude === "number" ? midheavenLongitude + 180 : undefined, "IC");
+    addAngle("inner", "Ascendant", innerAscendantLongitude, "ASC");
+    addAngle("inner", "Descendant", typeof innerAscendantLongitude === "number" ? innerAscendantLongitude + 180 : undefined, "DSC");
+    addAngle("inner", "Midheaven", innerMidheavenLongitude, "MC");
+    addAngle("inner", "Imum Coeli", typeof innerMidheavenLongitude === "number" ? innerMidheavenLongitude + 180 : undefined, "IC");
+
+    return points;
+  }, [
+    inspectorEnabled,
+    outerPositions,
+    innerPositions,
+    ascendantLongitude,
+    midheavenLongitude,
+    innerAscendantLongitude,
+    innerMidheavenLongitude,
+    outerLabel,
+    innerLabel
+  ]);
+  const focusedInspectorPoint = focusedInspectorPointId
+    ? inspectorPoints.find((candidate) => candidate.id === focusedInspectorPointId) ?? null
+    : null;
+  const exactInspectorAspectSources = useMemo((): InspectorAspectSource[] => (
+    inspectorEnabled
+      ? interAspectPairs.flatMap((aspect) => (
+        aspect.fromPointId && aspect.toPointId
+          ? [{
+              fromId: aspect.fromPointId,
+              toId: aspect.toPointId,
+              type: aspect.type,
+              orb: aspect.orb
+            }]
+          : []
+      ))
+      : []
+  ), [inspectorEnabled, interAspectPairs]);
+  const inspectorAspects = useMemo(() => {
+    if (!focusedInspectorPoint) {
+      return [];
+    }
+
+    const exactAspectsByTargetId = new Map<string, InspectorAspectSource>();
+
+    exactInspectorAspectSources.forEach((aspect) => {
+      if (aspect.fromId === focusedInspectorPoint.id) {
+        exactAspectsByTargetId.set(aspect.toId, aspect);
+      } else if (aspect.toId === focusedInspectorPoint.id) {
+        exactAspectsByTargetId.set(aspect.fromId, aspect);
+      }
+    });
+
+    return inspectorPoints
+      .filter((candidate) => candidate.id !== focusedInspectorPoint.id)
+      .map((candidate): InspectorAspect => {
+        const exactAspect = exactAspectsByTargetId.get(candidate.id);
+
+        return {
+          point: candidate,
+          type: exactAspect?.type ?? null,
+          orb: exactAspect?.orb ?? null
+        };
+      });
+  }, [exactInspectorAspectSources, focusedInspectorPoint, inspectorPoints]);
+  const inspectorConfiguredPointIds = useMemo(() => new Set(
+    inspectorAspects
+      .filter((aspect) => aspect.type)
+      .map((aspect) => aspect.point.id)
+  ), [inspectorAspects]);
+  const inspectorAversePointIds = useMemo(() => new Set(
+    inspectorAspects
+      .filter((aspect) => !aspect.type)
+      .map((aspect) => aspect.point.id)
+  ), [inspectorAspects]);
+  const inspectorAspectRows = useMemo(() => {
+    if (!focusedInspectorPoint) {
+      return [];
+    }
+
+    return inspectorAspects
+      .filter((aspect): aspect is InspectorAspect & { type: string; orb: number } => Boolean(aspect.type) && typeof aspect.orb === "number")
+      .sort((first, second) => {
+        const aspectSort = aspectLegendSortValue(first.type) - aspectLegendSortValue(second.type);
+
+        if (aspectSort !== 0) {
+          return aspectSort;
+        }
+
+        return first.point.label.localeCompare(second.point.label);
+      })
+      .map((aspect) => ({
+        ...aspect,
+        label: aspectLegendLabel(aspect.type),
+        lineStyle: inspectorLineStyle(aspect.type, aspect.orb, "exact")
+      }));
+  }, [focusedInspectorPoint, inspectorAspects]);
+  useEffect(() => {
+    if (!inspectorEnabled || !focusedInspectorPointId) {
+      return;
+    }
+
+    function clearInspectorOnOutsidePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (!(target instanceof Node) || wheelShellRef.current?.contains(target)) {
+        return;
+      }
+
+      setFocusedInspectorPointId(null);
+    }
+
+    document.addEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+    };
+  }, [inspectorEnabled, focusedInspectorPointId]);
+
+  function inspectorPointState(pointId: string) {
+    if (!focusedInspectorPoint) {
+      return "idle";
+    }
+
+    if (pointId === focusedInspectorPoint.id) {
+      return "selected";
+    }
+
+    if (inspectorConfiguredPointIds.has(pointId)) {
+      return "participant";
+    }
+
+    if (inspectorAversePointIds.has(pointId)) {
+      return "averse";
+    }
+
+    return "idle";
+  }
   const interAspectRadius = radius.aspect + 8;
   const outerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
     outerPositions,
@@ -1300,7 +1535,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       center,
       clusterThreshold: 6,
       maxClusterSpan: 22,
-      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      clusterTangentSpacing: synastryClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
       useClusterLane: true,
       radialOffsets: relationshipOuterClusterRadialOffsets,
@@ -1317,7 +1552,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       center,
       clusterThreshold: 6,
       maxClusterSpan: 22,
-      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      clusterTangentSpacing: synastryClusterTangentSpacing,
       maxClusterTangentOffset: relationshipClusterTangentLimit,
       useClusterLane: true,
       radialOffsets: relationshipInnerClusterRadialOffsets,
@@ -1453,14 +1688,40 @@ export const SynastryWheel = memo(function SynastryWheel({
     const degreeOffset = inwardMarkerOffset(center, marker, ring === "outer" ? 19 : 18);
     const markerDelta = Math.hypot(marker.x - truePoint.x, marker.y - truePoint.y);
     const hasDisplacement = Boolean(layout && (layout.clusterSize > 1 || markerDelta > 0.5));
+    const inspectorPointId = synastryInspectorPointId(ring, position.planet);
+    const inspectorState = inspectorPointState(inspectorPointId);
+    const chartLabel = ring === "outer" ? outerLabel : innerLabel;
 
     return (
       <g
         key={`${ring}-${position.planet}`}
-        className={`planet-marker ${ring === "inner" ? "planet-marker-inner" : "planet-marker-outer"}`}
-        role="img"
-        aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${formatPlanetPlacementLine(position)}`}
+        className={`planet-marker ${ring === "inner" ? "planet-marker-inner" : "planet-marker-outer"} aspect-inspector-point aspect-inspector-point--${inspectorState}`}
+        role={inspectorEnabled ? "button" : "img"}
+        tabIndex={inspectorEnabled ? 0 : undefined}
+        aria-label={`${chartLabel} ${formatPlanetPlacementLine(position)}`}
+        data-inspector-point-id={inspectorPointId}
+        onClick={inspectorEnabled ? (event) => {
+          event.stopPropagation();
+          event.currentTarget.blur();
+          setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+        } : undefined}
+        onKeyDown={inspectorEnabled ? (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.stopPropagation();
+            setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+          }
+        } : undefined}
       >
+        {inspectorState === "selected" ? (
+          <circle
+            cx={point(angle, interAspectRadius).x}
+            cy={point(angle, interAspectRadius).y}
+            r={7}
+            className="aspect-inspector-focus-ring"
+            aria-hidden="true"
+          />
+        ) : null}
         <line
           x1={tickInner.x}
           y1={tickInner.y}
@@ -1471,7 +1732,7 @@ export const SynastryWheel = memo(function SynastryWheel({
           data-planet={position.planet}
         />
         <g className={`planet-label-group wheel-placement${hasDisplacement ? " planet-label-group--displaced" : ""}`} transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-          <circle cx={0} cy={0} r={ring === "outer" ? planetHitAreaRadius + 3 : planetHitAreaRadius + 2} className="planet-hit-area" />
+          <circle cx={0} cy={0} r={synastryPlanetHitAreaRadius} className="planet-hit-area" />
           <WheelPlanetGlyph position={position} yOffset={-4} />
           <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
@@ -1482,7 +1743,17 @@ export const SynastryWheel = memo(function SynastryWheel({
   }
 
   return (
-    <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox={wheelViewBox} role="img" aria-label="Synastry chart with two rings">
+    <figure
+      ref={wheelShellRef}
+      className={`sky-wheel-shell sky-wheel-shell-synastry${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+    >
+    <svg
+      className={`sky-wheel synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+      viewBox={wheelViewBox}
+      role="img"
+      aria-label="Synastry chart with two rings"
+      onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
+    >
       <defs>
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
@@ -1542,12 +1813,30 @@ export const SynastryWheel = memo(function SynastryWheel({
       </g>
       {interAspectPairs.length > 0 && (
         <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
-          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className, lineStyle }) => {
+          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, orb, fromPointId, toPointId, className, lineStyle }) => {
+            if (
+              focusedInspectorPoint
+              && fromPointId !== focusedInspectorPoint.id
+              && toPointId !== focusedInspectorPoint.id
+            ) {
+              return null;
+            }
+
             const a = point(angleForLongitude(fromLongitude), interAspectRadius);
             const b = point(angleForLongitude(toLongitude), interAspectRadius);
+            const isSelectedAspect = Boolean(focusedInspectorPoint);
 
             return (
-              <g key={id} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+              <g
+                key={id}
+                className={`${className} ${normalizeAspectType(type)}${isSelectedAspect ? " aspect-inspector-line" : ""}`}
+                style={isSelectedAspect ? selectedInspectorLineStyle(type, orb, "exact") : lineStyle}
+                data-from-point-id={fromPointId}
+                data-to-point-id={toPointId}
+              >
+                {isSelectedAspect ? (
+                  <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                ) : null}
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
               </g>
             );
@@ -1610,6 +1899,33 @@ export const SynastryWheel = memo(function SynastryWheel({
           {angularLabels.map(({ label, x, y }) => {
             const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
             const iconSize = angleIconSize;
+            const pointName = label === "ASC"
+              ? "Ascendant"
+              : label === "DSC"
+                ? "Descendant"
+                : label === "MC"
+                  ? "Midheaven"
+                  : "Imum Coeli";
+            const inspectorPointId = synastryInspectorPointId("outer", pointName);
+            const inspectorState = inspectorPointState(inspectorPointId);
+            const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${inspectorState}`;
+            const angleProps = inspectorEnabled ? {
+              role: "button",
+              tabIndex: 0,
+              "data-inspector-point-id": inspectorPointId,
+              onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
+                event.stopPropagation();
+                event.currentTarget.blur();
+                setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+              },
+              onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+                }
+              }
+            } : {};
 
             return iconHref ? (
               <image
@@ -1619,12 +1935,20 @@ export const SynastryWheel = memo(function SynastryWheel({
                 y={y - iconSize / 2}
                 width={iconSize}
                 height={iconSize}
-                className="zodiac-wheel__angle-icon"
-                aria-label={label}
+                className={angleClassName}
+                aria-label={`${outerLabel} ${pointName}`}
                 preserveAspectRatio="xMidYMid meet"
+                {...angleProps}
               />
             ) : (
-              <text key={label} x={x} y={y}>
+              <text
+                key={label}
+                x={x}
+                y={y}
+                className={`aspect-inspector-point aspect-inspector-point--${inspectorState}`}
+                aria-label={`${outerLabel} ${pointName}`}
+                {...angleProps}
+              >
                 {label}
               </text>
             );
@@ -1662,5 +1986,38 @@ export const SynastryWheel = memo(function SynastryWheel({
         Whole-sign houses · angles exact
       </text>
     </svg>
+    {focusedInspectorPoint ? (
+      <div className="aspect-inspector-summary" role="status" aria-live="polite">
+        <div className="aspect-inspector-summary__head">
+          <strong>{focusedInspectorPoint.label}</strong>
+          <span>Inter-chart aspects</span>
+        </div>
+        {inspectorAspectRows.length > 0 ? (
+          <ul className="aspect-inspector-summary__list">
+            {inspectorAspectRows.map(({ point: targetPoint, type, label, orb, lineStyle }) => (
+              <li key={`${focusedInspectorPoint.id}-${targetPoint.id}-${type}`} className="aspect-inspector-summary__item">
+                <svg className="aspect-wheel-legend__swatch" viewBox="0 0 38 8" aria-hidden="true" focusable="false">
+                  <line
+                    className={`${aspectLineClass(type)} ${normalizeAspectType(type)}`}
+                    style={lineStyle}
+                    x1="2"
+                    y1="4"
+                    x2="36"
+                    y2="4"
+                  />
+                </svg>
+                <span className="aspect-inspector-summary__copy">
+                  <strong>{label}</strong> {targetPoint.label}
+                </span>
+                <span className="aspect-inspector-summary__orb">{formatInspectorOrb(orb)}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="aspect-inspector-summary__empty">No configured inter-chart aspects from this point.</p>
+        )}
+      </div>
+    ) : null}
+    </figure>
   );
 });

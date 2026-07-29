@@ -797,7 +797,7 @@ assert.match(
 );
 assert.match(
   app,
-  /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(60\)[\s\S]*phoneCode\.trim\(\)\.length !== 6[\s\S]*formatPhoneNumberForDisplay\(phoneOtpDestination\)[\s\S]*Resend in 0:/,
+  /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(30\)[\s\S]*verificationCode\.length !== 6[\s\S]*maskPhoneNumber\(phoneOtpDestination\)[\s\S]*Send a new code in 0:/,
   "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
 );
 assert.doesNotMatch(
