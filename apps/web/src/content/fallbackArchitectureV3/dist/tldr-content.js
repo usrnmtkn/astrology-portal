@@ -760,7 +760,7 @@ ${fogNote}`;
     const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
     const aRef = transitRef(ev.a, ev.aSign);
     const bRef = transitRef(ev.b, ev.bSign);
-    const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction" ? "amplify momentum" : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+    const interaction = ev.aspect === "conjunction" && (ev.a === "sun" && ev.b === "jupiter" || ev.a === "jupiter" && ev.b === "sun") ? "amplify momentum" : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
     const timing = ev.exactDate ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}` : ev.dateLine ?? "In the current aspect window";
     const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
     const effect = specific ?? pairEffectOf(ev);

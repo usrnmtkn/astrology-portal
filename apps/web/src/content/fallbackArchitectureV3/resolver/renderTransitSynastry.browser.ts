@@ -654,7 +654,8 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
       ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
     const aRef = transitRef(ev.a, ev.aSign);
     const bRef = transitRef(ev.b, ev.bSign);
-    const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction"
+    const interaction = ev.aspect === "conjunction"
+      && ((ev.a === "sun" && ev.b === "jupiter") || (ev.a === "jupiter" && ev.b === "sun"))
       ? "amplify momentum"
       : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
     const timing = ev.exactDate
