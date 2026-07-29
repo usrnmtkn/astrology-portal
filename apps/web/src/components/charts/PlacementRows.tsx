@@ -1,5 +1,6 @@
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
+import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import { natalCardTagline } from "../../services/natalPlacementTaglines";
 import {
@@ -278,7 +279,7 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
       sign: position.sign,
       degree: position.degree,
       house: position.house || null,
-      retrograde: position.motion === "retrograde"
+      retrograde: isDisplayRetrograde(position)
     }];
   });
 }
@@ -975,10 +976,12 @@ function SynastryPlacementCard({
     return <div className={`synastry-placement-row synastry-placement-row-empty synastry-placement-row-${variant}`} aria-hidden="true" />;
   }
 
+  const isRetrograde = isDisplayRetrograde(position);
+
   return (
     <div
-      className={`synastry-placement-row synastry-placement-row-${variant}${position.motion === "retrograde" ? " is-retrograde" : ""}`}
-      aria-label={`${position.planet}${position.motion === "retrograde" ? " retrograde" : ""} in ${position.sign}, ${formatPlacementDegree(position)}${typeof position.house === "number" ? `, house ${position.house}` : ""}`}
+      className={`synastry-placement-row synastry-placement-row-${variant}${isRetrograde ? " is-retrograde" : ""}`}
+      aria-label={`${position.planet}${isRetrograde ? " retrograde" : ""} in ${position.sign}, ${formatPlacementDegree(position)}${typeof position.house === "number" ? `, house ${position.house}` : ""}`}
     >
       <SynastryPlacementLead position={position} />
       <SynastryPlacementSign sign={position.sign} />
@@ -1007,7 +1010,7 @@ function SynastryPlacementSign({ sign }: { sign: string }) {
 }
 
 function SynastryPlacementLead({ position }: { position: PlanetPosition }) {
-  const isRetrograde = position.motion === "retrograde" && position.planet !== "Ascendant";
+  const isRetrograde = isDisplayRetrograde(position) && position.planet !== "Ascendant";
   const iconHref = zodiacAssetHref(isRetrograde ? pointRetrogradeIconFiles[position.planet] ?? pointIconFiles[position.planet] : pointIconFiles[position.planet]);
 
   return (

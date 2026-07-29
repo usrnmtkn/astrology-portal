@@ -10,7 +10,9 @@ const reportDir = path.join(root, "test-results/css-audit");
 const reportPath = path.join(reportDir, "latest.md");
 
 const expectedEyebrow = {
-  fontSize: "var(--text-section-label-size)",
+  fontFamily: "var(--label-eyebrow-font-family)",
+  fontSize: "var(--label-eyebrow-font-size)",
+  fontWeight: "var(--label-eyebrow-font-weight)",
   lineHeight: "var(--leading-label)",
   letterSpacing: "var(--tracking-label)",
   margin: "0",
@@ -28,14 +30,32 @@ const canonicalEyebrowSelectors = [
   ".article-eyebrow",
   ".article-section__eyebrow",
   ".admin-eyebrow",
-  ".admin-nav-section-label"
+  ".admin-nav-section-label",
+  ".phone-auth-eyebrow",
+  ".natal-pattern-card__activation-eyebrow",
+  ".nl-eyebrow",
+  ".sky-lunar-pill-copy em"
 ];
 
+const typographyOnlyEyebrowSelectors = new Set([
+  ".phone-auth-eyebrow",
+  ".natal-pattern-card__activation-eyebrow",
+  ".nl-eyebrow",
+  ".sky-lunar-pill-copy em"
+]);
+
 const validEyebrowValues = {
+  fontFamily: new Set([
+    expectedEyebrow.fontFamily,
+    "var(--label-eyebrow-font-family, var(--google-sans))"
+  ]),
   fontSize: new Set([
     expectedEyebrow.fontSize,
-    "var(--label-eyebrow-font-size)",
     "var(--label-eyebrow-font-size, var(--text-section-label-size))"
+  ]),
+  fontWeight: new Set([
+    expectedEyebrow.fontWeight,
+    "var(--label-eyebrow-font-weight, var(--weight-semibold))"
   ]),
   lineHeight: new Set([
     expectedEyebrow.lineHeight,
@@ -68,7 +88,7 @@ const shadowDeclarationPattern = /\bbox-shadow\s*:\s*([^;]+)/g;
 const trackingDeclarationPattern = /\bletter-spacing\s*:\s*([^;]+)/g;
 const surfaceDeclarationPattern = /\b(?:background|background-color)\s*:\s*([^;]+)/g;
 const containerDeclarationPattern = /(?:^|;)\s*(?:width|max-width)\s*:\s*([^;]+)/g;
-const eyebrowSelectorPattern = /(?:^|,\s*)([^{}]*(?:\.eyebrow|\.section-label|eyebrow|section-label)[^{]*)/i;
+const eyebrowSelectorPattern = /(?:^|,\s*)([^{}]*(?:\.eyebrow|\.section-label|eyebrow|section-label|\.sky-lunar-pill-copy\s+em)[^{]*)/i;
 const containerSelectorPattern = /(?:page|shell|layout|container|view|panel|column|modal|popover|picker)/i;
 
 async function collectCssFiles(dir) {
@@ -290,7 +310,9 @@ for (const filePath of files) {
         file: relative,
         line: lineNumberFor(source, block.index),
         selector: block.selector.replace(/\s+/g, " "),
+        fontFamily: declarationValue(block.body, "font-family"),
         fontSize: declarationValue(block.body, "font-size"),
+        fontWeight: declarationValue(block.body, "font-weight"),
         lineHeight: declarationValue(block.body, "line-height"),
         letterSpacing: declarationValue(block.body, "letter-spacing"),
         margin: declarationValue(block.body, "margin"),
@@ -338,7 +360,14 @@ for (const target of canonicalEyebrowSelectors) {
     continue;
   }
 
-  for (const [property, expectedValue] of Object.entries(expectedEyebrow)) {
+  const expectedProperties = Object.entries(expectedEyebrow).filter(([property]) => (
+    !typographyOnlyEyebrowSelectors.has(target)
+    || property === "fontFamily"
+    || property === "fontSize"
+    || property === "fontWeight"
+  ));
+
+  for (const [property, expectedValue] of expectedProperties) {
     const value = rule[property];
     if (validValue(property, value)) continue;
 
@@ -389,14 +418,15 @@ const lines = [
   "",
   "## Expected Eyebrow Contract",
   "",
+  `- Font family: \`${expectedEyebrow.fontFamily}\``,
   `- Font size: \`${expectedEyebrow.fontSize}\``,
+  `- Font weight: \`${expectedEyebrow.fontWeight}\``,
   `- Line height: \`${expectedEyebrow.lineHeight}\``,
   `- Letter spacing: \`${expectedEyebrow.letterSpacing}\``,
   `- Margin: \`${expectedEyebrow.margin}\``,
   `- Padding: \`${expectedEyebrow.padding}\``,
   "- Text transform: uppercase",
-  "- Font family: `var(--font-label)`",
-  "- Font weight: `var(--weight-semibold)`",
+  "- Compact/auth variants share the family, size, and weight tokens while retaining their component-specific rhythm.",
   "",
   "## Eyebrow Findings",
   ""

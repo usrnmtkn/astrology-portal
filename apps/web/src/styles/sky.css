@@ -1460,13 +1460,13 @@
 }
 
 .sky-lunar-pill-copy em,
-.nl-copy em {
+.nl-eyebrow {
   display: block;
   color: var(--card-meta-color);
-  font-family: var(--font-ui);
-  font-size: var(--snap-eyebrow-size);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
   font-style: normal;
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: var(--snap-eyebrow-tracking);
   line-height: var(--leading-label);
   text-transform: uppercase;
