@@ -951,6 +951,12 @@ test.describe("client-facing user flow case studies", () => {
     if (await updatesTab.isVisible()) {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+      const transitWheel = page.getByLabel("Transit chart wheel");
+      await expect(transitWheel).toBeVisible();
+      await expect(
+        transitWheel.locator(".sky-wheel--aspect-inspector"),
+        "Personal transit wheel omits the aspect inspector"
+      ).toHaveCount(0);
 
       const houseTransitCard = page
         .getByLabel("House transits")
@@ -1008,7 +1014,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("aspect inspector works across every saved-chart wheel", async ({ page }) => {
+  test("aspect inspector works across eligible saved-chart wheels and stays off transit wheels", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true, friends: true });
@@ -1028,16 +1034,34 @@ test.describe("client-facing user flow case studies", () => {
     );
 
     await page.getByRole("tab", { name: "Transits" }).click();
-    await expectAspectInspector(
-      page.getByLabel("Nikki transit chart wheel"),
-      "Nikki transit wheel"
-    );
+    const transitWheel = page.getByLabel("Nikki transit chart wheel");
+    await expect(transitWheel).toBeVisible();
+    await expect(
+      transitWheel.locator(".sky-wheel--aspect-inspector"),
+      "Friend transit wheel omits the aspect inspector"
+    ).toHaveCount(0);
+    const transitOuterBand = transitWheel.locator(".transit-planet-band");
+    const transitOuterBandBackground = await transitOuterBand.evaluate((element) => ({
+      opacity: getComputedStyle(element).opacity,
+      stroke: getComputedStyle(element).stroke
+    }));
 
     await selectFriendDetailTab(page, "Synastry");
+    const synastryWheel = page.getByLabel("Nikki synastry chart wheel");
     await expectAspectInspector(
-      page.getByLabel("Nikki synastry chart wheel"),
+      synastryWheel,
       "Nikki synastry wheel"
     );
+    const synastryInnerBand = synastryWheel.locator(".synastry-inner-planet-band");
+    await expect(synastryInnerBand, "Synastry inner wheel has a distinct background band").toBeVisible();
+    const synastryInnerBandBackground = await synastryInnerBand.evaluate((element) => ({
+      opacity: getComputedStyle(element).opacity,
+      stroke: getComputedStyle(element).stroke
+    }));
+    await expect(
+      synastryInnerBandBackground,
+      "Synastry inner wheel matches the transit outer-wheel background"
+    ).toEqual(transitOuterBandBackground);
 
     await selectFriendDetailTab(page, "Composite");
     await expectAspectInspector(
@@ -1148,6 +1172,25 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
     await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
     await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
+    const synastryPlacementHeaders = page.locator(".synastry-placement-column-header");
+    await expect(synastryPlacementHeaders, "Synastry shows both placement-column headings").toHaveCount(2);
+    await expect(
+      synastryPlacementHeaders.first(),
+      "Synastry placement headings omit the horizontal rule"
+    ).toHaveCSS("border-bottom-width", "0px");
+    const synastryContactCard = page.locator(".friend-aspect-row").first();
+    const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
+    const synastryContactTag = synastryContactCard.locator(".aspect-row-subtitle");
+    await expect(synastryContactDescription).toBeVisible();
+    await expect(synastryContactTag).toBeVisible();
+    const descriptionBox = await synastryContactDescription.boundingBox();
+    const tagBox = await synastryContactTag.boundingBox();
+    expect(descriptionBox, "Synastry contact description has layout geometry").not.toBeNull();
+    expect(tagBox, "Synastry contact tag has layout geometry").not.toBeNull();
+    expect(
+      tagBox!.y,
+      "Synastry contact tags render underneath the description"
+    ).toBeGreaterThanOrEqual(descriptionBox!.y + descriptionBox!.height);
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();

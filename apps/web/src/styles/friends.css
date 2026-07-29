@@ -1953,6 +1953,10 @@
   margin: 0;
 }
 
+.synastry-placement-column-header {
+  border-bottom: 0;
+}
+
 .synastry-placement-panel-title {
   color: var(--muted);
   font-weight: var(--weight-semibold);

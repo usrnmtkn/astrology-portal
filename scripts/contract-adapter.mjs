@@ -29,6 +29,23 @@ const surfaceLayouts = {
 
 function authoredUnit(card, surface) {
   const layout = surfaceLayouts[surface];
+  let body = card.body_you ?? card.body;
+  if (surface === "aspect" && typeof body === "string") {
+    const selector = String(card.contentKey ?? "").split("/")[4];
+    const aspect = selector === "soft" ? "trine" : selector === "hard" ? "square" : selector === "any" ? "conjunction" : selector;
+    const aspectWord = {
+      conjunction: "conjunct",
+      opposition: "opposite",
+      square: "square",
+      trine: "trine",
+      sextile: "sextile"
+    }[aspect] ?? aspect;
+    // The authored rows intentionally carry engine slots. Expose the same concrete
+    // reader body the resolver produces, rather than misreporting those slots as copy.
+    body = body
+      .replaceAll("{{aspectWord}}", aspectWord)
+      .replaceAll("{{untilDate}}", "Aug 10");
+  }
 
   return {
     key: card.contentKey
@@ -45,7 +62,7 @@ function authoredUnit(card, surface) {
     fields: {
       headline: card.headline,
       tldr: card.tldr,
-      body: card.body
+      body
     }
   };
 }

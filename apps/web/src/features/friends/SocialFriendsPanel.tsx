@@ -864,7 +864,7 @@ export function SocialFriendsPanel({
       connectedFriend?.friendSharesChart && connectedFriend.natalChart
     );
     const thirdLine = result.relationshipStatus === "request_sent"
-      ? `Request sent ${outgoingRequest ? relativeSocialTime(outgoingRequest.createdAt) : ""} · they will see it next visit`
+      ? `Request sent${outgoingRequest ? ` ${relativeSocialTime(outgoingRequest.createdAt)}` : ""}`
       : result.relationshipStatus === "request_received" && incomingRequest
         ? `${publicSunLine(result.sunSign)} · requested ${relativeSocialTime(incomingRequest.createdAt)}`
       : bigThree

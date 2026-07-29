@@ -7928,6 +7928,12 @@ body,
   text-transform: uppercase;
 }
 
+.admin-dashboard .admin-eyebrow {
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+}
+
 .admin-dashboard :where(.admin-nav button, .admin-public-link) {
   background: transparent;
   border: 1px solid transparent;

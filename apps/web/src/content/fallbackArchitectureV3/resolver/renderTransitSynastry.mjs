@@ -835,8 +835,10 @@ export function renderBondTransit({ transiting, aspect, planetA, planetB, natalA
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  // variant rotation for repeat viewers (2 or 3; absent = base line)
-  const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
+  // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
+  // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
+  const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
+    ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
     ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);

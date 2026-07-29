@@ -1201,7 +1201,7 @@
   .mode-member .sky-lunar-pill-copy em,
   .mode-guest .ro-sum-label,
   .mode-member .ro-sum-label {
-    font-size: var(--sky-mobile-label);
+    font-size: var(--label-eyebrow-font-size);
   }
 
   .mode-guest :where(.sky-pl-title, .ro-screen .sky-pl-title, .planet-placement-row__title, .retro-top strong),

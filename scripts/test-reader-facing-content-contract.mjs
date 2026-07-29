@@ -46,6 +46,7 @@ const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts"
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
 const servedFieldsContract = read("apps/web/src/content/servedFieldsContract.ts");
 const fallbackSourceRowsV3 = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"));
+const transitSynastryRowsV1 = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json"));
 const planetTopicVocabulary = read("apps/web/src/services/planetTopicVocabulary.ts");
 const lunarCalendar = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const readerSafety = read("apps/web/src/content/readerSafety.ts");
@@ -251,5 +252,31 @@ assert.doesNotMatch(soulRoadmap, /const signRoadmaps\b/, "Soul Roadmap must not 
 assert.doesNotMatch(placementRows, /const (?:chartPlacementDescriptions|compositePlacementDescriptions)\b/, "PlacementRows must not restore local reader prose.");
 assert.doesNotMatch(lunarDayResolver, /const (?:moonSignModes|seasonThemes|twoWeekArcConnections|sixMonthArcConnections)\b/, "Lunar resolver must not restore local prose tables.");
 assert.match(fallbackRuntime, /\.filter\(isReaderEligible\)/, "All directly accessed V3 rows must pass the review-status gate.");
+
+const licensedCareerContactsPhrase = "Shortcuts, contacts, been-there calm";
+const synastryReaderRows = [
+  ...(transitSynastryRowsV1.authoredCards ?? []),
+  ...(fallbackSourceRowsV3.fallbackSourceRows ?? []),
+  ...(fallbackSourceRowsV3.hookRows ?? []),
+  ...(fallbackSourceRowsV3.vocabularyRows ?? [])
+].filter((row) => /(synastry|compat|bond|circle)/iu.test(`${row.contentKey ?? ""} ${row.surface ?? ""}`));
+let licensedCareerContactsCount = 0;
+for (const row of synastryReaderRows) {
+  for (const field of ["body", "body_you", "body_they"]) {
+    if (typeof row[field] !== "string") continue;
+    licensedCareerContactsCount += row[field].split(licensedCareerContactsPhrase).length - 1;
+    assert.doesNotMatch(
+      row[field].replaceAll(licensedCareerContactsPhrase, ""),
+      /\bcontacts?\b/iu,
+      `${row.contentKey} ${field} must say connection, not contact.`
+    );
+  }
+}
+assert.equal(licensedCareerContactsCount, 2, "Only the two licensed career-network uses of contacts may remain.");
+assert.match(
+  app,
+  /transiting === "lilith" && activationAspect !== "conjunction" && activationAspect !== "opposition"/u,
+  "Friends bond transit selection must keep the Lilith conjunction/opposition-only gate."
+);
 
 console.log("Reader-facing content contract passed.");
