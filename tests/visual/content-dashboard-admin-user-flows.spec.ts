@@ -496,6 +496,23 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
 }
 
 test.describe("content dashboard admin user flow case studies", () => {
+  test("admin route is excluded from reader blank-shell recovery", async ({ page }) => {
+    let mainFrameNavigations = 0;
+    page.on("framenavigated", (frame) => {
+      if (frame === page.mainFrame()) {
+        mainFrameNavigations += 1;
+      }
+    });
+
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content");
+    const navigationsAfterInitialLoad = mainFrameNavigations;
+    await page.waitForTimeout(1_500);
+
+    expect(mainFrameNavigations).toBe(navigationsAfterInitialLoad);
+    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+  });
+
   test("legacy content/admin path opens the admin dashboard instead of the reader app", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);

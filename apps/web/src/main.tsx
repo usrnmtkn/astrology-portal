@@ -68,6 +68,10 @@ async function startApp() {
 }
 
 function setupBlankRestoreRecovery() {
+  if (isAdminContentPath()) {
+    return;
+  }
+
   const shouldReload = () => {
     const root = document.getElementById("root");
     const appShell = root?.querySelector(".app-shell");
