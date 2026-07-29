@@ -500,55 +500,69 @@ button.settings-signout-row {
 }
 
 .account-editable-row {
-  cursor: text;
+  cursor: default;
 }
 
 .account-editable-row .settings-row__field {
   width: min(var(--container-picker), 48vw);
 }
 
+.account-editable-row:focus-within {
+  background: color-mix(in srgb, var(--card-bg) 94%, var(--ink) 3%);
+}
+
 .account-row-input {
   width: 100%;
   min-width: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
+  min-height: var(--account-table-control-height);
+  border: 1px solid var(--input-border);
+  border-radius: var(--input-radius);
+  background: var(--input-bg);
+  padding: 0 var(--input-padding-x);
   color: var(--ink);
-  box-shadow: var(--shadow-flat);
+  box-shadow: none;
   font-family: var(--font-body);
-  font-size: var(--text-row-value);
+  font-size: max(16px, var(--input-font-size));
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
-  text-align: right;
+  line-height: normal;
+  text-align: left;
   text-transform: none;
   font-variant-numeric: tabular-nums;
 }
 
-.account-row-input[type="date"] {
-  appearance: textfield;
-  -webkit-appearance: none;
-}
-
-.account-row-input[type="date"]::-webkit-calendar-picker-indicator,
-.account-row-input[type="date"]::-webkit-inner-spin-button {
-  display: none;
-  -webkit-appearance: none;
+.account-row-input:is([type="date"], [type="time"]) {
+  color-scheme: light;
 }
 
 .account-row-input:focus {
-  outline: none;
+  border-color: var(--ink);
+  outline: 2px solid color-mix(in srgb, var(--ink) 32%, transparent);
+  outline-offset: 1px;
 }
 
 .account-row-input:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 6px;
-  border-radius: var(--radius-sm);
+  outline: 2px solid color-mix(in srgb, var(--ink) 44%, transparent);
+  outline-offset: 1px;
 }
 
 .account-row-input::placeholder {
   color: var(--muted);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .account-row-input:is([type="date"], [type="time"]) {
+  color-scheme: dark;
+}
+
+.account-birth-save-button {
+  justify-self: end;
+  min-height: var(--account-table-control-height);
+  padding: 0 var(--space-5);
+}
+
+.account-birth-save-button:disabled {
+  cursor: default;
+  opacity: 0.42;
 }
 
 .account-handle-row:disabled {

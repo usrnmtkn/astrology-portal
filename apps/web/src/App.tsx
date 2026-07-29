@@ -3594,6 +3594,49 @@ function formatSignupBirthTime({ hour, minute, meridiem }: SignupTimeParts) {
   return `${cleanHour}:${cleanMinute} ${meridiem}`;
 }
 
+function birthTimeControlValue(value: string) {
+  const { hour, minute, meridiem } = splitSignupBirthTime(value);
+  const parsedHour = Number.parseInt(hour, 10);
+  const parsedMinute = Number.parseInt(minute, 10);
+
+  if (
+    !Number.isInteger(parsedHour)
+    || parsedHour < 1
+    || parsedHour > 12
+    || !Number.isInteger(parsedMinute)
+    || parsedMinute < 0
+    || parsedMinute > 59
+  ) {
+    return "";
+  }
+
+  const hour24 = (parsedHour % 12) + (meridiem === "PM" ? 12 : 0);
+
+  return `${String(hour24).padStart(2, "0")}:${String(parsedMinute).padStart(2, "0")}`;
+}
+
+function birthTimeFromControlValue(value: string) {
+  const [, hour = "", minute = ""] = value.match(/^(\d{2}):(\d{2})$/) ?? [];
+  const parsedHour = Number.parseInt(hour, 10);
+  const parsedMinute = Number.parseInt(minute, 10);
+
+  if (
+    !Number.isInteger(parsedHour)
+    || parsedHour < 0
+    || parsedHour > 23
+    || !Number.isInteger(parsedMinute)
+    || parsedMinute < 0
+    || parsedMinute > 59
+  ) {
+    return "";
+  }
+
+  const meridiem = parsedHour >= 12 ? "PM" : "AM";
+  const hour12 = parsedHour % 12 || 12;
+
+  return `${hour12}:${String(parsedMinute).padStart(2, "0")} ${meridiem}`;
+}
+
 function splitSignupBirthDate(value: string): SignupDateParts {
   const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
 
@@ -18320,7 +18363,14 @@ function AccountView({
       <section className="settings-group account-chart-group" aria-label="Birth chart">
         <span className="settings-group-label">Birth chart</span>
         <div className="settings-card">
-          <div className="settings-list">
+          <form
+            className="settings-list account-birth-form"
+            aria-label="Birth chart details"
+            onSubmit={(event) => {
+              event.preventDefault();
+              saveBirthChartDetails();
+            }}
+          >
             <label className="settings-row account-editable-row">
               <span className="settings-row__label">Date</span>
               <span className="settings-row__field">
@@ -18331,7 +18381,6 @@ function AccountView({
                   onChange={(event) => setDraftBirthDate(event.target.value)}
                   aria-label="Birth date"
                 />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
               </span>
             </label>
             <label className="settings-row account-editable-row">
@@ -18339,14 +18388,12 @@ function AccountView({
               <span className="settings-row__field">
                 <input
                   className="account-row-input"
-                  type="text"
-                  inputMode="text"
-                  value={draftBirthTime}
-                  onChange={(event) => setDraftBirthTime(event.target.value)}
+                  type="time"
+                  value={birthTimeControlValue(draftBirthTime)}
+                  onChange={(event) => setDraftBirthTime(birthTimeFromControlValue(event.target.value))}
                   placeholder="Not set"
                   aria-label="Birth time"
                 />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
               </span>
             </label>
             <label className="settings-row account-editable-row">
@@ -18360,26 +18407,23 @@ function AccountView({
                   placeholder="Not set"
                   aria-label="Birth place"
                 />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
               </span>
             </label>
             <div className="settings-row">
               <span className="settings-row__label">House system</span>
               <span className="settings-row__value">Whole Sign</span>
             </div>
-            {birthDraftDirty && (
-              <div className="settings-row account-birth-save-row">
-                <span>Birth details</span>
-                <button
-                  className="account-birth-save-button"
-                  type="button"
-                  onClick={saveBirthChartDetails}
-                >
-                  Save changes
-                </button>
-              </div>
-            )}
-          </div>
+            <div className="settings-row account-birth-save-row">
+              <span className="settings-row__label">Birth details</span>
+              <button
+                className="account-birth-save-button"
+                type="submit"
+                disabled={!birthDraftDirty}
+              >
+                Save changes
+              </button>
+            </div>
+          </form>
         </div>
       </section>
 

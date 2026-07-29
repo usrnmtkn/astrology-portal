@@ -1968,6 +1968,43 @@ test.describe("client-facing user flow case studies", () => {
     expect(layout.keyValueRows.every((row) => row.contentInsideRow), "Account values stay inside their rows").toBe(true);
     expect(layout.profileIsHorizontal, "Account identity uses an avatar-and-copy row").toBe(true);
     expect(layout.signoutIsHorizontal, "Sign out uses the same trailing-control row pattern").toBe(true);
+
+    const birthChartForm = page.getByRole("form", { name: "Birth chart details" });
+    await expect(birthChartForm).toBeVisible();
+    await expect(page.getByLabel("Birth date")).toHaveAttribute("type", "date");
+    await expect(page.getByLabel("Birth time")).toHaveAttribute("type", "time");
+    await expect(page.getByLabel("Birth place")).toHaveAttribute("type", "text");
+    await expect(birthChartForm.locator(".settings-row__chevron")).toHaveCount(0);
+    const formLayout = await birthChartForm.evaluate((form) => {
+      const fields = Array.from(form.querySelectorAll(".account-editable-row")).map((row) => {
+        const rowRect = row.getBoundingClientRect();
+        const labelRect = row.querySelector(".settings-row__label")?.getBoundingClientRect();
+        const input = row.querySelector("input");
+        const inputRect = input?.getBoundingClientRect();
+        const inputStyle = input ? getComputedStyle(input) : null;
+
+        return {
+          labelBeforeInput: Boolean(labelRect && inputRect && labelRect.right <= inputRect.left),
+          inputInsideRow: Boolean(inputRect && inputRect.right <= rowRect.right + 1),
+          minimumTouchTarget: Boolean(inputRect && inputRect.height >= 44),
+          visibleBoundary: Boolean(inputStyle && inputStyle.borderTopWidth !== "0px")
+        };
+      });
+
+      return { fields };
+    });
+    expect(formLayout.fields.length).toBe(3);
+    expect(formLayout.fields.every((field) => field.labelBeforeInput), "Form labels precede their controls").toBe(true);
+    expect(formLayout.fields.every((field) => field.inputInsideRow), "Form controls remain inside table rows").toBe(true);
+    expect(formLayout.fields.every((field) => field.minimumTouchTarget), "Form controls meet the 44px touch target").toBe(true);
+    expect(formLayout.fields.every((field) => field.visibleBoundary), "Form controls have visible boundaries").toBe(true);
+
+    const saveBirthDetails = birthChartForm.getByRole("button", { name: "Save changes" });
+    await expect(saveBirthDetails).toBeDisabled();
+    await page.getByLabel("Birth time").fill("13:25");
+    await expect(saveBirthDetails).toBeEnabled();
+    await saveBirthDetails.click();
+    await expect(saveBirthDetails).toBeDisabled();
     await expectNoHorizontalOverflow(page, "Mobile account");
     await assertNoClientErrors();
   });
