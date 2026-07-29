@@ -779,7 +779,7 @@
     gap: 16px;
     border: 1px solid var(--overlay-border);
     border-radius: var(--radius);
-    background: var(--surface);
+    background: var(--picker-panel-bg);
     box-shadow: var(--shadow-mobile-panel);
     padding: var(--space-4);
   }
@@ -858,7 +858,7 @@
     min-height: 54px;
     border: 1px solid var(--input-border);
     border-radius: var(--radius-sm);
-    background: var(--surface-2);
+    background: var(--picker-control-bg);
     color: var(--ink);
     padding: 0 var(--space-4);
     text-align: left;

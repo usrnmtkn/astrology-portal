@@ -1345,6 +1345,20 @@ test.describe("client-facing user flow case studies", () => {
     const cityInput = page.getByRole("textbox", { name: "City" });
     await expect(cityInput).toBeVisible();
     await expect(cityInput).toBeFocused();
+    const cityPanelColors = await page.locator("#city-picker").evaluate((element) => {
+      const probe = document.createElement("span");
+      probe.style.backgroundColor = "var(--picker-panel-bg)";
+      document.body.append(probe);
+      const colors = {
+        app: getComputedStyle(document.body).backgroundColor,
+        panel: getComputedStyle(element).backgroundColor,
+        token: getComputedStyle(probe).backgroundColor
+      };
+      probe.remove();
+      return colors;
+    });
+    expect(cityPanelColors.panel).toBe(cityPanelColors.token);
+    expect(cityPanelColors.panel).not.toBe(cityPanelColors.app);
     await page.getByRole("button", { name: "Cancel" }).click();
     await expect(cityInput).toBeHidden();
     await expect(dateControl).toBeFocused();
@@ -1354,6 +1368,20 @@ test.describe("client-facing user flow case studies", () => {
     await skyControls.getByRole("button", { name: "Date" }).click();
     const datePicker = page.getByRole("region", { name: "Select sky date" });
     await expect(datePicker).toBeVisible();
+    const datePanelColors = await datePicker.evaluate((element) => {
+      const probe = document.createElement("span");
+      probe.style.backgroundColor = "var(--picker-panel-bg)";
+      document.body.append(probe);
+      const colors = {
+        app: getComputedStyle(document.body).backgroundColor,
+        panel: getComputedStyle(element).backgroundColor,
+        token: getComputedStyle(probe).backgroundColor
+      };
+      probe.remove();
+      return colors;
+    });
+    expect(datePanelColors.panel).toBe(datePanelColors.token);
+    expect(datePanelColors.panel).not.toBe(datePanelColors.app);
     await page.getByRole("button", { name: "Close date picker" }).click();
     await expect(datePicker).toBeHidden();
     await expect(dateControl).toBeFocused();
