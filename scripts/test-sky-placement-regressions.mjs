@@ -45,6 +45,20 @@ const sunAries = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "aries"
 });
+const jupiterLeo = renderer.renderSkyPlacement({
+  planet: "jupiter",
+  sign: "leo",
+  events: [{
+    type: "aspect",
+    a: "sun",
+    aSign: "leo",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "conjunction",
+    exactDate: "July 29",
+    applying: true
+  }]
+});
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
@@ -248,6 +262,21 @@ assert.match(
   sunLeo.body,
   /Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum\./u,
   "Sun-in-Leo must append the computed applying/exact aspect fact below the evergreen article."
+);
+assert.match(
+  sunLeo.body,
+  /That confidence becomes concrete action\. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished\./u,
+  "The computed Sun-conjunction-Jupiter layer must use the approved concrete action copy."
+);
+assert.deepEqual(
+  jupiterLeo.parts,
+  [
+    "Jupiter in Leo makes it easier to admit that we want more. Ambition, creativity, and the desire to be recognized step forward instead of staying in the background.",
+    "For about a year, we take up more space in the work and choices that carry our name. Creative projects grow, leadership becomes more visible, and recognition matters more openly. Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
+    "Ambition is not the problem. Needing an audience to prove the work matters is. When every win needs applause and every response gets measured by enthusiasm, confidence starts promising more than reality can carry. Recognition can confirm the work. It cannot give the work its substance.",
+    "Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum. That confidence becomes concrete action. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished. Say the ambitious part out loud, then check the budget, timeline, and actual capacity before promising delivery."
+  ],
+  "Jupiter-in-Leo must preserve the approved three-beat hybrid and append only the computed Sun-conjunction-Jupiter layer."
 );
 assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
 assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
