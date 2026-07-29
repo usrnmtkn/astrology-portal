@@ -159,6 +159,7 @@ Path:
 |---|---|
 | `source-rows/fallback-source-rows-v3.json` | Main hook, vocabulary, and source-material banks |
 | `source-rows/transit-synastry-rows-v1.json` | Authored transits, compatibility, and relationship units |
+| `source-rows/bond-language-pass-2.json` | Review-gated, same-key bond-effect supersessions |
 | `source-rows/lunation-blend-units-v1.json` | Lunation macro and per-rising blend rows |
 | `source-rows/placement-interim-fixes-v1.json` | Placement frames and targeted vocabulary corrections |
 | `source-rows/station-cards-week-openers-v1.json` | Weekly openers and station units |

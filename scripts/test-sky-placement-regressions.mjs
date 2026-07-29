@@ -11,6 +11,9 @@ import {
   createTransitSynastryRenderer,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import {
+  renderSkyPlacement as renderSkyPlacementReference
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -73,6 +76,20 @@ const mercuryCancerRetrograde = renderer.renderSkyPlacement({
   sign: "cancer",
   egressDate: "August 9",
   isRetrograde: true
+});
+const saturnPiscesDirect = renderer.renderSkyPlacement({
+  planet: "saturn",
+  sign: "pisces"
+});
+const saturnPiscesRetrograde = renderer.renderSkyPlacement({
+  planet: "saturn",
+  sign: "pisces",
+  isRetrograde: true
+});
+const saturnPiscesShadow = renderer.renderSkyPlacement({
+  planet: "saturn",
+  sign: "pisces",
+  isShadowPhase: true
 });
 const ascendantSaturnSquare = renderer.renderSynastryAspect({
   planetA: "ascendant",
@@ -176,6 +193,9 @@ for (const planet of retrogradePlacementPlanets) {
   )?.body_you;
   assert.ok(retrogradeGuidance, `${planet} must have approved retrograde guidance.`);
   for (const sign of zodiacSigns) {
+    if (planet === "saturn" && sign === "pisces") {
+      continue;
+    }
     const rendered = renderer.renderSkyPlacement({ planet, sign, isRetrograde: true });
     assert.equal(rendered.parts.length, 4, `${planet} retrograde in ${sign} must preserve the complete hybrid base.`);
     assert.equal(rendered.parts[2], retrogradeGuidance, `${planet} retrograde in ${sign} must place its guidance before the turn.`);
@@ -375,6 +395,66 @@ assert.doesNotMatch(
   `${mercuryCancerIngress.headline}\n${mercuryCancerIngress.body}`,
   /Plans, messages, and tech get glitchy, and old conversations come back around\./u,
   "Direct-motion ingress articles must not contain retrograde guidance."
+);
+
+assert.equal(
+  saturnPiscesDirect.templateKey,
+  "authored/sky-ingress/sky-article-v1",
+  "The owner-final Saturn-in-Pisces exemplar must use the structured sky-article-v1 lane."
+);
+assert.equal(
+  saturnPiscesDirect.contentKey,
+  "authored/sky-ingress/saturn/pisces",
+  "The structured article must retain its exact authored content key."
+);
+assert.doesNotMatch(
+  saturnPiscesDirect.body,
+  /^The pre-retrograde shadow phase/u,
+  "A direct placement outside the computed shadow must omit the conditional preview note."
+);
+assert.match(
+  saturnPiscesDirect.body,
+  /^The core theme of this transit is bringing structural discipline to your inner life/u,
+  "The structured article must open on its owner-final core theme when no review phase is active."
+);
+assert.equal(
+  saturnPiscesDirect.closingCharge,
+  "Stop treating your sensitivity like a flaw and stop using it to avoid your life. Set the boundary, lay the first brick, and let the rest pass without holding a summit over it.",
+  "The closing charge must remain a separately addressable final module."
+);
+assert.equal(
+  saturnPiscesDirect.parts.at(-1),
+  saturnPiscesDirect.closingCharge,
+  "The complete resolver body must preserve the closing charge as its last paragraph."
+);
+for (const rendered of [saturnPiscesRetrograde, saturnPiscesShadow]) {
+  assert.match(
+    rendered.parts[0],
+    /^The pre-retrograde shadow phase and retrograde station periods/u,
+    "Retrograde and shadow facts must activate the approved preview note."
+  );
+}
+const saturnPiscesReference = renderSkyPlacementReference({
+  planet: "saturn",
+  sign: "pisces",
+  isShadowPhase: true
+});
+assert.deepEqual(
+  {
+    body: saturnPiscesShadow.body,
+    closingCharge: saturnPiscesShadow.closingCharge,
+    contentKey: saturnPiscesShadow.contentKey,
+    parts: saturnPiscesShadow.parts,
+    templateKey: saturnPiscesShadow.templateKey
+  },
+  {
+    body: saturnPiscesReference.body,
+    closingCharge: saturnPiscesReference.closingCharge,
+    contentKey: saturnPiscesReference.contentKey,
+    parts: saturnPiscesReference.parts,
+    templateKey: saturnPiscesReference.templateKey
+  },
+  "Browser and Node structured Sky placement assembly must remain byte-identical."
 );
 
 assert.equal(

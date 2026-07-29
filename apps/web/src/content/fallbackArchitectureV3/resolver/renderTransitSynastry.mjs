@@ -9,12 +9,14 @@ import { SourceGapError } from "./renderFallback.mjs";
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
 lib.authoredCards.push(...lunationBlend.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
+rowsFile.hookRows.push(...bondLanguagePass2.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
 const eligibleRowsByKey = (rows) => {
@@ -752,7 +754,13 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
 // ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
 // hook -> lived expression -> shadow/turn, with a short tagline and three moves.
 // Computed aspect facts follow the evergreen article. ----
-export function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }) {
+export function renderSkyPlacement({
+  planet,
+  sign,
+  events = [],
+  isRetrograde = false,
+  isShadowPhase = false
+}) {
   const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
   const retrogradeGuidance = isRetrograde
     ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
@@ -762,9 +770,49 @@ export function renderSkyPlacement({ planet, sign, events = [], isRetrograde = f
   }
   const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
   if (authoredArticle) {
+    const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
+    const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
+      .split(/\r?\n/u)
+      .map((move) => move.trim())
+      .filter(Boolean);
+    const structuredParts = [
+      authoredArticle.core_theme,
+      authoredArticle.sign_jurisdiction,
+      authoredArticle.lived_experience,
+      authoredArticle.rulership_twist
+    ];
+    const isStructured = structuredParts.every((part) => typeof part === "string" && part.trim());
+
+    if (isStructured) {
+      const reviewNote = isRetrograde || isShadowPhase
+        ? authoredArticle.preview_note ?? retrogradeGuidance
+        : null;
+      const closingCharge = authoredArticle.closing_charge?.trim() || null;
+      const parts = [
+        reviewNote,
+        ...structuredParts,
+        authoredArticle.history_echo,
+        ...aspectParas,
+        closingCharge
+      ].filter(Boolean);
+
+      return {
+        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline,
+        moves,
+        closingCharge,
+        body: parts.join("\n\n"),
+        parts,
+        templateKey: "authored/sky-ingress/sky-article-v1",
+        contentKey: authoredArticle.contentKey
+      };
+    }
+
     const parts = [authoredArticle.body, retrogradeGuidance, ...aspectParas].filter(Boolean);
     return {
       headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+      tagline,
+      moves,
       body: parts.join("\n\n"),
       parts,
       templateKey: "authored/sky-ingress",
@@ -1004,6 +1052,19 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
   // dedicated reviewed closer may be added later; never synthesize one here.
   const label = isEclipse ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse") : (which === "new" ? "New Moon" : "Full Moon");
   return { headline: `${label} for ${title(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+}
+
+export function renderLunationEventCard({ eventDate, blendFallbackEnabled = false, ...blendFacts }) {
+  const normalizedEventDate = eventDate.trim().slice(0, 10);
+  const risingKey = `${blendFacts.risingSign}-rising`;
+  const satori = card(
+    `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
+  );
+  if (satori) return result(satori, "authored/satori-lunation-v1");
+  if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+  throw new SourceGapError(
+    `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
+  );
 }
 
 // ---- Daily At-a-Glance (Copy Batch A): engine-hidden headline + body driven by the

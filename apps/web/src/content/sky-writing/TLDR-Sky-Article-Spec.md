@@ -1,94 +1,120 @@
-# Sky Placement Articles — Voice-First Template (reworked Jul 27 2026)
+# Sky Placement Articles — `sky-article-v1`
 
-Applies to direct-motion planet-in-sign pages on `/#sky/placement`.
+Updated: 2026-07-29
 
-The placement article is not a sign encyclopedia. Its job is to give the reader
-one memorable way to recognize the transit in real life.
+Sky placement pages are deterministic assemblies. The resolver selects approved
+Content Book rows and combines them with dates, degrees, motion, station windows,
+and aspects supplied by the ephemeris. It does not invent prose.
 
-## The three-beat article
+## Serving order
 
-### 1. Hook
+1. Exact approved `authored/sky-ingress/{planet}/{sign}` article.
+2. Complete approved Content Book placement assembly.
+3. `SOURCE_GAP`.
 
-Open with the line someone would remember or send to a friend.
+The legacy three-beat pair rows remain the coverage fallback while the structured
+authored family is populated. They must not be rewritten or expanded in the
+resolver.
 
-- 1–3 short sentences.
-- Start on tension, recognition, or a sharp claim.
-- Name the transit only after the human situation is clear when possible.
-- It is allowed to sound written. A strange, exact phrase is better than a
-  complete but forgettable explanation.
+## Article order
 
-Examples:
+1. Window block: computed transit dates and current degree.
+2. Preview or shadow note: conditional on a computed retrograde or shadow phase.
+3. Core theme.
+4. Sign jurisdiction paragraph.
+5. Lived experience.
+6. Traditional-rulership twist.
+7. Historical echo: optional, authored only.
+8. Key dates: computed ingress, shadow, station, and exit facts.
+9. Closing charge.
 
-- "You've been running on autopilot through a version of yourself that needs
-  updating."
-- "Pressure rises and we tighten up."
-- "You already know the conversation you have been avoiding."
-- "Some structures do not reform; they compost."
+Closely applying sky aspects may appear after the article's authored context and
+before the computed key-date block.
 
-### 2. Lived expression
+## Structured authored fields
 
-Show what the planet-sign combination does in ordinary life.
+An `authored/sky-ingress/{planet}/{sign}` row may expose:
 
-- 2–4 sentences.
-- Include the transit's pace: days, weeks, years, or decades.
-- Use concrete evidence: the unsent message, the corrected coffee order, the
-  overfilled calendar, the person waiting for credit.
-- Explain the planet through behavior, not through a list of keywords.
-- Sign lore, rulership, modality, symbols, and season history belong in an
-  optional "About [Sign]" block, never in the article body.
+- `preview_note`
+- `core_theme`
+- `sign_jurisdiction`
+- `lived_experience`
+- `rulership_twist`
+- `history_echo`
+- `closing_charge`
 
-### 3. Turn
+The first five fields other than `preview_note` are required for a structured
+article. `preview_note` renders only during a computed retrograde or shadow
+phase. `history_echo` is optional. `closing_charge` renders after the key dates.
 
-Name where the gift becomes the problem and end with a clean truth.
+## Traditional rulers
 
-- 2–4 sentences.
-- The shadow must be observable behavior, not an abstract warning.
-- A directive is allowed when it is specific.
-- End on the line with the most bite. Do not add a blessing or a soft summary
-  after it.
+| Sign | Ruler |
+|---|---|
+| Aries | Mars |
+| Taurus | Venus |
+| Gemini | Mercury |
+| Cancer | Moon |
+| Leo | Sun |
+| Virgo | Mercury |
+| Libra | Venus |
+| Scorpio | Mars |
+| Sagittarius | Jupiter |
+| Capricorn | Saturn |
+| Aquarius | Saturn |
+| Pisces | Jupiter |
 
-## Optional live aspect
+Uranus, Neptune, and Pluto may be computed placements or aspect layers. They are
+never default sign rulers.
 
-At most one tightly applying major aspect may be appended. It must add a new
-pressure or opportunity to the article, not restate the placement.
+## Existing phrase inventory
 
-Format:
+Coverage assemblies continue to read these approved families:
 
-`[Applying/separating fact and exact date]. [Concrete effect]. [Catch or move].`
+- `sky-placement-tagline/{planet}/{sign}`
+- `sky-placement-hook/{planet}/{sign}`
+- `sky-placement-lived/{planet}/{sign}`
+- `sky-placement-turn/{planet}/{sign}`
+- `sky-placement-moves/{planet}/{sign}`
+- `sky-placement-you/{planet}`
+- `sky-placement/{planet}`
+- `sky-placement-practice/{planet}`
+- `fallback-vocab/sign-style/{sign}`
+- `fallback-vocab/sign-does/{sign}`
+- `fallback-vocab/planet-function/{planet}`
+- `fallback-vocab/planet-topic/{planet}`
+- `fallback-vocab/planet-verb/{planet}`
+- `fallback-vocab/sign-adverb/{sign}`
+- `fallback-vocab/sign-need/{sign}`
 
-## Voice rules
+## Motion
 
-- Interesting before comprehensive.
-- Direct, modern, and emotionally exact.
-- Mix collective "we" with a direct "you" when the line earns it.
-- Prefer verbs and scenes over adjective triplets.
-- No generic sign lore in the body.
-- No "for everyone at once," sign-off blessing, kumbaya closer, or motivational
-  recap.
-- No compulsory "opening / lore / meaning / confrontation" checklist. If a
-  sentence exists only to satisfy coverage, cut it.
+- Direct motion emphasizes visible execution and outward decisions.
+- Retrograde and shadow phases emphasize review, unlearning, stopping leaks, and
+  auditing earlier choices.
 
-## Content architecture
+Motion language must come from an approved authored note or
+`fallback-hook/transit-retro/{planet}`. The UI must not synthesize an
+interpretation from the motion flag.
 
-The renderer uses three slots:
+## Fact boundary
 
-1. `sky-placement-hook/{planet}/{sign}`
-2. `sky-placement-lived/{planet}/{sign}`
-3. `sky-placement-turn/{planet}/{sign}`
+The following values are always engine-computed:
 
-An authored planet-sign slot always wins. Until a pair is authored, the fallback
-uses the existing vivid per-planet hook, the planet's pace/mechanics paragraph,
-and the sign trap plus planet practice. Fallback is coverage, not editorial gold.
+- entry and exit dates;
+- current degree;
+- retrograde and shadow state;
+- station and shadow dates;
+- live aspect dates.
 
-Calibration pairs:
+They may appear only in declared fact fields or computed UI blocks. Literal
+dates in an editorial exemplar are calibration references, not reusable prose.
 
-- Sun in Leo
-- Moon in Capricorn
-- Mercury in Cancer
-- Venus in Virgo
-- Moon in Scorpio
-- Chiron in Aries
-- Pluto in Aquarius
+## Voice
 
-These seven must remain distinct when read without their headings. If two could
-swap bodies without sounding wrong, the writing is not specific enough.
+- Direct, diagnostic, pragmatic, and boundary-aware.
+- Concrete behavior before textbook jargon.
+- No spiritual bypassing or generic motivational filler.
+- Contractions are allowed on this published-article surface when they are part
+  of approved copy.
+- Approved authored prose is immutable.

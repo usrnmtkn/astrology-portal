@@ -3488,6 +3488,13 @@
   grid-area: meta;
 }
 
+.friend-bond-transit-activation {
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--card-border);
+  color: var(--card-meta-color);
+}
+
 @media (max-width: 560px) {
   .compatibility-card__header {
     gap: var(--space-3);

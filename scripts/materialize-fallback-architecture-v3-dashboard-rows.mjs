@@ -276,6 +276,7 @@ function mapPackageRecord(record, bucket) {
 function readPackageSources() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
+  const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
@@ -284,6 +285,7 @@ function readPackageSources() {
   return {
     sourceRows,
     authoredRows,
+    bondLanguagePass2,
     lunationBlendRows,
     placementInterimRows,
     weeklyRows,
@@ -325,7 +327,8 @@ function readerPackageBundle(sources) {
     rowsFile: {
       hookRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.hookRows,
-        ...sources.lunationBlendRows.hookRows
+        ...sources.lunationBlendRows.hookRows,
+        ...sources.bondLanguagePass2.rows
       ]),
       vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
@@ -348,6 +351,7 @@ function materializeRows(sources) {
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
@@ -365,7 +369,7 @@ async function upsertRows(rows) {
 
   for (let index = 0; index < rows.length; index += 100) {
     const batch = rows.slice(index, index + 100);
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key`, {
       method: "POST",
       headers: adminHeaders({
         prefer: "resolution=merge-duplicates,return=representation"

@@ -20,6 +20,7 @@ function readPackageJson(relativePath) {
 }
 
 const sourceRows = readPackageJson("source-rows/fallback-source-rows-v3.json");
+const bondLanguagePass2 = readPackageJson("source-rows/bond-language-pass-2.json");
 const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json");
 const templates = readPackageJson("templates/fallback-templates-v3.json");
 const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
@@ -36,7 +37,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29v");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29ab");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -502,13 +503,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?transitCardPreview\(card\.body\)/u,
-  "Connection-transit cards must be clickable and display only a preview."
+  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?\{card\.effectBody\}[\s\S]*?card\.activationBody/u,
+  "Connection-transit cards must be clickable and show the complete effect plus activation context."
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: card\.body\.split\(/u,
-  "Connection-transit detail views must retain the full authored body."
+  /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
+  "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.match(
   appSource,
@@ -643,7 +644,7 @@ assert.match(
 );
 assert.match(
   dashboardImportSource,
-  /on_conflict=content_key,target_date,mode/u,
+  /on_conflict=content_key/u,
   "Dashboard imports must target the deployed composite identity."
 );
 assert.match(
@@ -673,7 +674,8 @@ try {
     rowsFile: {
       hookRows: [
         ...sourceRows.hookRows,
-        ...lunationBlendRows.hookRows
+        ...lunationBlendRows.hookRows,
+        ...bondLanguagePass2.rows
       ],
       vocabularyRows: [
         ...sourceRows.vocabularyRows,
@@ -705,6 +707,21 @@ try {
       materializedByKey.get(row.contentKey)?.body,
       row.body,
       `${row.contentKey} must retain placement-interim precedence in the dashboard mirror.`
+    );
+  }
+
+  for (const row of bondLanguagePass2.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize exactly once.`);
+    assert.equal(
+      materializedRow.body,
+      row.body_you,
+      `${row.contentKey} must expose the staged pass-2 candidate for review.`
+    );
+    assert.equal(
+      materializedRow.source_snapshot.review_status,
+      "reviewed",
+      `${row.contentKey} must carry its reviewed state into the dashboard mirror.`
     );
   }
 } finally {
