@@ -48,6 +48,7 @@ export interface LunationHoroscopeFacts {
   sunHouse?: number | null;
   ruler?: string | null;
   rulerHouse?: number | null;
+  rulerRetrograde?: boolean;
   uranusHouse?: number | null;
   uranusLayerActive?: boolean;
 }
@@ -974,6 +975,7 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     sunHouse,
     ruler,
     rulerHouse,
+    rulerRetrograde,
     uranusHouse,
     uranusLayerActive
   }: LunationHoroscopeFacts): TransitRenderResult {
@@ -1000,7 +1002,16 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
         const lunationLabel = isEclipse
           ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse")
           : (which === "new" ? "New Moon" : "Full Moon");
-        paras.push(`With ${title(ruler)} ruling this ${lunationLabel} from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`);
+        const rulerTitle = title(ruler);
+        let rulerParagraph = `With ${rulerTitle} ruling this ${lunationLabel} from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`;
+        if (rulerRetrograde) {
+          const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
+          if (!retroOverlay) {
+            throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+          }
+          rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
+        }
+        paras.push(rulerParagraph);
       }
     }
     if (uranusLayerActive && uranusHouse) {

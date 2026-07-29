@@ -144,6 +144,61 @@ try {
     longitude: -74.006,
     timeZone: "America/New_York"
   };
+  const jul29Events = await ephemeris.getLunarCalendarRangeEvents(
+    location,
+    new Date("2026-07-29T00:00:00Z"),
+    new Date("2026-07-30T00:00:00Z")
+  );
+  const aquariusFullMoonEvent = jul29Events.find((event) => (
+    event.type === "lunation"
+    && event.title.includes("Full Moon")
+    && event.sign === "Aquarius"
+  ));
+  assert.ok(aquariusFullMoonEvent, "The Jul 29 Aquarius Full Moon event must resolve.");
+  const eventSky = await ephemeris.getAstrodienstSky(
+    location,
+    new Date(aquariusFullMoonEvent.startsAt)
+  );
+  const eventPosition = (planet) => eventSky.positions.find(
+    (position) => position.planet.toLowerCase() === planet
+  );
+  const eventSun = eventPosition("sun");
+  const eventJupiter = eventPosition("jupiter");
+  const eventSaturn = eventPosition("saturn");
+  const eventUranus = eventPosition("uranus");
+  assert.equal(eventSaturn?.sign, "Aries");
+  assert.equal(eventSaturn?.motion, "retrograde");
+  assert.equal(eventUranus?.sign, "Gemini");
+  assert.equal(eventJupiter?.sign, "Leo");
+  assert.equal(eventSun?.sign, "Leo");
+  assert.ok(
+    typeof eventSun?.longitude === "number"
+    && typeof eventJupiter?.longitude === "number"
+    && Math.min(
+      Math.abs(eventSun.longitude - eventJupiter.longitude),
+      360 - Math.abs(eventSun.longitude - eventJupiter.longitude)
+    ) <= 3,
+    "The event-time sky must preserve the Sun-Jupiter conjunction in Leo."
+  );
+  const geminiBlendFacts = weekly.lunationBlendFacts(
+    eventSky,
+    "Aquarius",
+    "gemini",
+    "full-moon"
+  );
+  assert.equal(geminiBlendFacts.ruler, "saturn");
+  assert.equal(geminiBlendFacts.rulerHouse, 11);
+  assert.equal(geminiBlendFacts.rulerRetrograde, true);
+  assert.equal(geminiBlendFacts.uranusHouse, 1);
+  assert.doesNotThrow(() => weekly.assertLunationBodyMatchesEventSky(
+    "Saturn is currently retrograde in Aries, Uranus is in Gemini, and Jupiter conjunct the Sun in Leo.",
+    eventSky
+  ));
+  assert.throws(
+    () => weekly.assertLunationBodyMatchesEventSky("Saturn Rx in Pisces.", eventSky),
+    /SOURCE_GAP: stale-sky lunation claim/u
+  );
+
   const natalSky = await ephemeris.getAstrodienstSky(location, new Date("1990-01-01T12:00:00Z"));
   const realWeek = await weekly.buildWeeklyHoroscope({
     userId: "weekly-acceptance-fixture",
@@ -170,6 +225,10 @@ try {
   );
   assert.match(
     realWeek.horoscope.body,
+    /Because Saturn is retrograde, this is less about taking on something new and more an inspection of what already exists:/u
+  );
+  assert.match(
+    realWeek.horoscope.body,
     /Uranus in your 1st house adds a more personal element of change/u
   );
   assert.match(
@@ -189,6 +248,15 @@ try {
     "An ongoing retrograde passage must not be treated as a station-day override."
   );
   assert.doesNotMatch(readerText, /remains retrograde/u);
+  assert.doesNotThrow(
+    () => weekly.assertLunationBodyMatchesEventSky(realWeek.horoscope.body, eventSky),
+    "Every explicit planet-sign claim in the per-rising lunation must match the event-time ephemeris."
+  );
+  assert.doesNotMatch(
+    readerText,
+    /\b(?:Saturn(?: Rx)? in Pisces|Uranus in Taurus|Jupiter in Cancer)\b/u,
+    "Retired sky positions must never leak into the Jul 29 per-rising card."
+  );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
     location,
@@ -226,7 +294,7 @@ try {
     "Aspect copy must render in its own standalone card."
   );
 
-  console.log("weekly horoscope assembly checks passed: event-time blend facts, macro, and standalone aspect cards");
+  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, macro, and standalone aspect cards");
 } finally {
   await vite.close();
 }

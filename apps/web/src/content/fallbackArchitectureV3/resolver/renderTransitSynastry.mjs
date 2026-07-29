@@ -898,7 +898,7 @@ export function renderLunationMacro({ kind, sign }) {
   return result(macro, "authored/sky-lunation-macro");
 }
 
-export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHouse, sunHouse, ruler, rulerHouse, uranusHouse, uranusLayerActive }) {
+export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, uranusHouse, uranusLayerActive }) {
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
   const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
@@ -922,7 +922,16 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
       const lunationLabel = isEclipse
         ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse")
         : (which === "new" ? "New Moon" : "Full Moon");
-      paras.push(`With ${title(ruler)} ruling this ${lunationLabel} from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`);
+      const rulerTitle = title(ruler);
+      let rulerParagraph = `With ${rulerTitle} ruling this ${lunationLabel} from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`;
+      if (rulerRetrograde) {
+        const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
+        if (!retroOverlay) {
+          throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+        }
+        rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
+      }
+      paras.push(rulerParagraph);
     }
   }
   if (uranusLayerActive && uranusHouse) {

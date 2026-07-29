@@ -135,6 +135,17 @@
       ]
     },
     {
+      "contentKey": "fallback-hook/lunation-ruler-retro",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Because {{rulerTitle}} is retrograde, this is less about taking on something new and more an inspection of what already exists: the standing arrangements, the roles nobody re-negotiated, who is actually carrying the weight.",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Lunation-Blend-Units-V1.md"
+      ],
+      "notes": "Owner-final retrograde ruler overlay; append to the computed ruler-house paragraph only when the event-time ruler is retrograde."
+    },
+    {
       "contentKey": "fallback-hook/lunation-uranus-layer/1",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
