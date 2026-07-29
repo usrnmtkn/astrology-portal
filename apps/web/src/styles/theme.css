@@ -621,6 +621,8 @@
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
   --overlay-shadow: var(--shadow-overlay);
+  --picker-panel-bg: var(--surface-2);
+  --picker-control-bg: var(--surface);
   --modal-shadow: var(--overlay-shadow);
   --tooltip-bg: #1a1a1a;
   --tooltip-fg: #f2f2f1;

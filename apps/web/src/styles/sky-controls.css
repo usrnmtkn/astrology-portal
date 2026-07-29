@@ -136,7 +136,7 @@ html[data-scrolled] .sky-header-date-button {
   width: min(480px, calc(100vw - 64px));
   border: 1px solid var(--overlay-border);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--picker-panel-bg);
   box-shadow: var(--shadow-mobile-panel);
   padding: var(--space-4);
 }
@@ -195,7 +195,7 @@ html[data-scrolled] .sky-header-date-button {
   min-height: 54px;
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  background: var(--picker-control-bg);
   color: var(--ink);
   padding: 0 var(--space-4);
   text-align: left;
@@ -249,7 +249,7 @@ html[data-scrolled] .sky-header-date-button {
   margin-top: 0;
   border: 1px solid var(--overlay-border);
   border-radius: var(--overlay-radius);
-  background: var(--overlay-bg);
+  background: var(--picker-panel-bg);
   box-shadow: var(--overlay-shadow);
   padding: calc(var(--space-4) + var(--space-1) / 2);
 }
@@ -271,7 +271,7 @@ html[data-scrolled] .sky-header-date-button {
   width: 100%;
   border: 1px solid var(--control-border);
   border-radius: var(--control-radius);
-  background: var(--control-bg);
+  background: var(--picker-control-bg);
   color: var(--ink);
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
 }
@@ -298,7 +298,7 @@ html[data-scrolled] .sky-header-date-button {
 }
 
 .city-suggestions button:hover {
-  background: var(--surface-2);
+  background: var(--picker-control-bg);
 }
 
 .city-suggestions strong,
@@ -343,7 +343,7 @@ html[data-scrolled] .sky-header-date-button {
 }
 
 .city-picker-actions button:first-child {
-  background: var(--surface-2);
+  background: var(--picker-control-bg);
   color: var(--ink);
 }
 
@@ -363,7 +363,7 @@ html[data-scrolled] .sky-header-date-button {
   margin-top: 0;
   border: 1px solid var(--overlay-border);
   border-radius: var(--overlay-radius);
-  background: var(--overlay-bg);
+  background: var(--picker-panel-bg);
   box-shadow: var(--overlay-shadow);
   padding: var(--space-4);
 }
@@ -393,7 +393,7 @@ html[data-scrolled] .sky-header-date-button {
 .date-picker-cancel {
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface-2);
+  background: var(--picker-control-bg);
   color: var(--ink);
   font-weight: var(--weight-medium);
 }
@@ -434,7 +434,7 @@ html[data-scrolled] .sky-header-date-button {
 }
 
 .date-picker-grid button:hover {
-  background: var(--surface-2);
+  background: var(--picker-control-bg);
 }
 
 .date-picker-grid button.outside-month {
