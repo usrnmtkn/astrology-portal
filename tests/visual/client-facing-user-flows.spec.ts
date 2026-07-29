@@ -1914,6 +1914,64 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("mobile account groups use compact key-value table rows", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { profile: true });
+    await expectClientRouteLoads(page, "/#account");
+
+    const accountDetails = page.getByRole("region", { name: "Account details" });
+    await expect(accountDetails).toBeVisible();
+    const layout = await accountDetails.evaluate((element) => {
+      const midpoint = (rect: DOMRect) => rect.top + rect.height / 2;
+      const keyValueRows = Array.from(element.querySelectorAll(".settings-row"))
+        .flatMap((row) => {
+          const label = row.querySelector(".settings-row__label");
+          const value = row.querySelector(".settings-row__field, .settings-row__value");
+
+          if (!label || !value) return [];
+
+          const rowRect = row.getBoundingClientRect();
+          const labelRect = label.getBoundingClientRect();
+          const valueRect = value.getBoundingClientRect();
+
+          return [{
+            label: label.textContent?.trim() ?? "",
+            labelBeforeValue: labelRect.right <= valueRect.left,
+            verticallyAligned: Math.abs(midpoint(labelRect) - midpoint(valueRect)) <= 2,
+            contentInsideRow: valueRect.right <= rowRect.right + 1
+          }];
+        });
+      const profile = element.querySelector(".settings-profile-row");
+      const avatar = profile?.firstElementChild?.getBoundingClientRect();
+      const profileCopy = profile?.lastElementChild?.getBoundingClientRect();
+      const signout = element.querySelector(".settings-signout-row");
+      const signoutAction = signout?.querySelector(".settings-row__action")?.getBoundingClientRect();
+      const signoutChevron = signout?.querySelector("svg")?.getBoundingClientRect();
+
+      return {
+        keyValueRows,
+        profileIsHorizontal: Boolean(avatar && profileCopy && avatar.right <= profileCopy.left),
+        signoutIsHorizontal: Boolean(
+          signoutAction
+          && signoutChevron
+          && signoutAction.right <= signoutChevron.left
+          && Math.abs(midpoint(signoutAction) - midpoint(signoutChevron)) <= 2
+        )
+      };
+    });
+
+    expect(layout.keyValueRows.length).toBeGreaterThanOrEqual(4);
+    expect(layout.keyValueRows.every((row) => row.labelBeforeValue), "Account labels precede values").toBe(true);
+    expect(layout.keyValueRows.every((row) => row.verticallyAligned), "Account labels and values share one row").toBe(true);
+    expect(layout.keyValueRows.every((row) => row.contentInsideRow), "Account values stay inside their rows").toBe(true);
+    expect(layout.profileIsHorizontal, "Account identity uses an avatar-and-copy row").toBe(true);
+    expect(layout.signoutIsHorizontal, "Sign out uses the same trailing-control row pattern").toBe(true);
+    await expectNoHorizontalOverflow(page, "Mobile account");
+    await assertNoClientErrors();
+  });
+
   test("mobile sky date picker can open, navigate months, and close", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
