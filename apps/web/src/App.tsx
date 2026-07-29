@@ -118,18 +118,23 @@ import {
   isPhoneAuthEnabled,
   loadPersistedProfile,
   onAuthAccountChange,
+  resendPhoneNumberChangeCode,
   signInWithEmail,
   signInWithProvider,
   sendPhoneSignInCode,
   signOutAuth,
   signUpWithEmail,
+  startPhoneNumberChange,
   upsertPersistedProfile,
+  verifyPhoneNumberChange,
   verifyPhoneSignInCode
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
-  formatPhoneNumberForDisplay,
   formatUsPhoneInput,
+  isValidUsPhoneNumber,
+  maskPhoneNumber,
+  phoneNumberLastFour,
   supportedPhoneCountry
 } from "./services/phoneAuth";
 import {
@@ -300,6 +305,7 @@ type UserProfile = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   provider: SignupProvider;
   avatarUrl?: string;
   sun: string;
@@ -3470,12 +3476,16 @@ function getInitialUserProfile(): UserProfile | null {
 }
 
 function profileForAuthAccount(profile: UserProfile, account: AuthAccount): UserProfile {
+  const provider = normalizeSignupProvider(account.provider, profile.provider);
+  const legacyPlaceholderEmail = /@(tldrastro\.local)$/i.test(profile.email);
+
   return {
     ...profile,
     id: account.id,
-    email: account.email || profile.email,
+    email: account.email || (provider === "phone" && legacyPlaceholderEmail ? "" : profile.email),
+    phone: account.phone || profile.phone,
     name: profile.name || account.name,
-    provider: normalizeSignupProvider(account.provider, profile.provider),
+    provider,
     avatarUrl: account.avatarUrl ?? profile.avatarUrl
   };
 }
@@ -3812,7 +3822,7 @@ function birthdayDateLabel(date: Date) {
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
   const name = form.fullName.trim() || account?.name || (provider === "email" ? "New stargazer" : `${providerLabel(provider)} account`);
-  const email = account?.email || form.email.trim() || `${provider}@tldrastro.local`;
+  const email = account?.email || form.email.trim();
   const resolvedProvider = normalizeSignupProvider(account?.provider, provider);
   const sun = zodiacFromBirthDate(form.birthDate);
   const chart: UserChart = {
@@ -3829,6 +3839,7 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
     id: account?.id ?? `user-${Date.now()}`,
     name,
     email,
+    phone: account?.phone,
     provider: resolvedProvider,
     avatarUrl: account?.avatarUrl,
     sun,
@@ -12022,6 +12033,8 @@ export function App() {
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
+  const pendingInvitationCapturedRef = useRef(false);
+  const [launchChartSetupAfterAuth, setLaunchChartSetupAfterAuth] = useState(false);
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
   const [chartModalSaving, setChartModalSaving] = useState(false);
@@ -12072,6 +12085,7 @@ export function App() {
   useEffect(() => {
     const capturedInvitation = captureSocialInvitationFromUrl();
 
+    pendingInvitationCapturedRef.current = Boolean(capturedInvitation);
     if (capturedInvitation && !userProfile) {
       setAccountIntent("create");
       navigateToPortalMode("profile");
@@ -13694,6 +13708,18 @@ export function App() {
     setChartModalOpen(true);
   }
 
+  useEffect(() => {
+    if (!launchChartSetupAfterAuth || !userProfile) {
+      return;
+    }
+
+    setLaunchChartSetupAfterAuth(false);
+    openCreateChartModal({
+      prefill: true,
+      step: "birth"
+    });
+  }, [launchChartSetupAfterAuth, userProfile]);
+
   async function drawTransitChart({
     closeModal = true,
     nextStep
@@ -13850,13 +13876,15 @@ export function App() {
       }
 
       setTransitsDrawn(true);
-      setChartModalOpen(!closeModal);
-      setChartModalMessage(chartCalculationFailed
-        ? "Birth details saved. Chart calculations will retry automatically."
-        : "Birth details saved.");
       if (nextStep) {
         setChartModalStep(nextStep);
       }
+      setChartModalOpen(!closeModal);
+      setChartModalMessage(nextStep
+        ? ""
+        : chartCalculationFailed
+          ? "Birth details saved. Chart calculations will retry automatically."
+          : "Birth details saved.");
       navigateToPortalMode(userProfile ? "profile" : "guest");
     } finally {
       setChartModalSaving(false);
@@ -14390,7 +14418,10 @@ export function App() {
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
                       skyGeneratedAt={sky?.generatedAt ?? ""}
-                      onCreateChart={() => openCreateChartModal()}
+                      onCreateChart={() => openCreateChartModal({
+                        prefill: true,
+                        step: "birth"
+                      })}
                       generatedContent={natalGeneratedContent}
                     />
                   ) : (
@@ -14400,8 +14431,15 @@ export function App() {
                         setAccountIntent("create");
                         navigateToPortalMode(userProfile ? "profile" : "guest");
                       }}
-                      onCreateProfile={(nextProfile) => {
+                      onCreateProfile={(nextProfile, context) => {
                         setUserProfile(nextProfile);
+                        if (
+                          context?.isNewAccount
+                          && context.provider === "phone"
+                          && !pendingInvitationCapturedRef.current
+                        ) {
+                          setLaunchChartSetupAfterAuth(true);
+                        }
                         navigateToPortalMode("profile");
                       }}
                     />
@@ -16394,7 +16432,7 @@ function CreateChartFlow({
 
   function submitBirthForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void onSave({ closeModal: false, nextStep: "overview" });
+    void onSave({ closeModal: false, nextStep: "city" });
   }
 
   function submitCityForm(event: FormEvent<HTMLFormElement>) {
@@ -16479,7 +16517,7 @@ function CreateChartFlow({
           onSelect={(suggestion) => {
             setForm({ ...form, currentLocation: suggestion.label, currentLocationData: suggestion });
           }}
-          placeholder="New York City, NY"
+          placeholder="Current City, State"
           className="signup-city-search create-chart-city-search"
         />
 
@@ -16600,7 +16638,7 @@ function CreateChartFlow({
           onSelect={(suggestion) => {
             setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
           }}
-          placeholder="Manhattan, NY"
+          placeholder="City, State"
           className="signup-city-search create-chart-city-search"
         />
       </div>
@@ -16755,7 +16793,15 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
   );
 }
 
-function SignupView({ initialMode = "create", onClose, onCreateProfile }: { initialMode?: AuthMode; onClose: () => void; onCreateProfile: (profile: UserProfile) => void }) {
+function SignupView({
+  initialMode = "create",
+  onClose,
+  onCreateProfile
+}: {
+  initialMode?: AuthMode;
+  onClose: () => void;
+  onCreateProfile: (profile: UserProfile, context?: { isNewAccount: boolean; provider: SignupProvider }) => void;
+}) {
   const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
   const [form, setForm] = useState<SignupForm>(defaultSignupForm);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16767,6 +16813,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
   const [phoneCodeSent, setPhoneCodeSent] = useState(false);
   const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
   const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
+  const phoneVerificationCodeRef = useRef("");
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
   const isLogin = authMode === "login";
@@ -16851,7 +16898,10 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
           });
 
       if (account) {
-        onCreateProfile(createUserProfile(form, "email", account));
+        onCreateProfile(createUserProfile(form, "email", account), {
+          isNewAccount: !isLogin,
+          provider: "email"
+        });
         clearPendingSignupForm();
       } else {
         setAuthMessage("Check your email to confirm your account.");
@@ -16901,8 +16951,8 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
       setPhoneOtpDestination(destination);
       setPhoneCodeSent(true);
-      setPhoneResendSeconds(60);
-      setAuthMessage(isResend ? "We sent a new six-digit code." : "");
+      setPhoneResendSeconds(30);
+      setAuthMessage(isResend ? "A new code is on its way." : "");
     } catch (error) {
       setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
     } finally {
@@ -16910,12 +16960,19 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     }
   }
 
-  async function verifyPhoneCode() {
-    if (phoneCode.trim().length !== 6) {
+  async function verifyPhoneCode(code = phoneCode) {
+    const verificationCode = code.trim();
+
+    if (verificationCode.length !== 6) {
       setAuthMessage("Enter the six-digit code.");
       return;
     }
 
+    if (phoneVerificationCodeRef.current === verificationCode) {
+      return;
+    }
+
+    phoneVerificationCodeRef.current = verificationCode;
     setAuthStatus("loading");
     setAuthMessage("");
 
@@ -16926,16 +16983,20 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
     try {
       const account = await verifyPhoneSignInCode({
         phone: phoneOtpDestination || phoneNumber,
-        code: phoneCode
+        code: verificationCode
       });
 
       if (account) {
-        onCreateProfile(createUserProfile(form, "phone", account));
+        onCreateProfile(createUserProfile(form, "phone", account), {
+          isNewAccount: !isLogin,
+          provider: "phone"
+        });
         clearPendingSignupForm();
       }
     } catch (error) {
       setAuthMessage(error instanceof Error ? error.message : "The phone code could not be verified.");
     } finally {
+      phoneVerificationCodeRef.current = "";
       setAuthStatus("idle");
     }
   }
@@ -16999,46 +17060,42 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
         {isPhoneAuthEnabled && phoneAuthOpen && (
           <div className="phone-auth-fields" aria-label="Phone sign in">
-            <button
-              className="phone-auth-back"
-              type="button"
-              disabled={authStatus === "loading"}
-              onClick={() => {
-                resetPhoneChallenge();
-                setPhoneAuthOpen(false);
-              }}
-            >
-              <ChevronLeft size={18} aria-hidden="true" />
-              Back
-            </button>
-
             <div className="phone-auth-heading">
-              <p className="auth-card__title">
-                {phoneCodeSent
-                  ? "Check your phone"
-                  : isLogin
-                    ? "Log in with phone"
-                    : "Sign up with phone"}
-              </p>
-              <p>
-                {phoneCodeSent ? (
-                  <>
-                    We sent a six-digit code to{" "}
-                    <strong>{formatPhoneNumberForDisplay(phoneOtpDestination)}</strong>.
-                  </>
-                ) : (
-                  "Enter your mobile number and we’ll text you a verification code."
-                )}
-              </p>
+              <span className="phone-auth-eyebrow">{phoneCodeSent ? "Check your phone" : "Sign in"}</span>
+              <h2 className="phone-auth-title">{phoneCodeSent ? "Enter the code" : "Sign in with your phone"}</h2>
+              {phoneCodeSent ? (
+                <div className="phone-auth-destination-row">
+                  <p>
+                    We sent a code to <strong>{maskPhoneNumber(phoneOtpDestination)}</strong>.
+                  </p>
+                  <button
+                    className="phone-auth-inline-action"
+                    type="button"
+                    disabled={authStatus === "loading"}
+                    onClick={resetPhoneChallenge}
+                  >
+                    Edit number
+                  </button>
+                </div>
+              ) : (
+                <p>We’ll text you a six-digit code to confirm your number.</p>
+              )}
             </div>
 
             {!phoneCodeSent && (
               <label className="signup-field auth-field">
                 <span className="auth-label">Mobile number</span>
                 <div className="phone-auth-number-control">
-                  <span className="phone-auth-country-prefix" aria-label={`${supportedPhoneCountry.name} country code`}>
-                    {supportedPhoneCountry.callingCode}
-                  </span>
+                  <select
+                    className="phone-auth-country-select"
+                    aria-label="Country code"
+                    value={supportedPhoneCountry.code}
+                    onChange={() => undefined}
+                  >
+                    <option value={supportedPhoneCountry.code}>
+                      US {supportedPhoneCountry.callingCode}
+                    </option>
+                  </select>
                   <input
                     className="auth-input"
                     type="tel"
@@ -17056,33 +17113,45 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                   />
                 </div>
                 <small className="phone-auth-help" id="phone-auth-number-help">
-                  United States numbers only. Message and data rates may apply.
+                  Message and data rates may apply.
                 </small>
               </label>
             )}
             {phoneCodeSent && (
               <label className="signup-field auth-field">
-                <span className="auth-label">Verification code</span>
-                <div>
+                <span className="auth-label">Six-digit code</span>
+                <div className="phone-auth-code-control">
                   <input
-                    className="auth-input phone-auth-code-input"
+                    className="phone-auth-code-input"
                     inputMode="numeric"
                     enterKeyHint="done"
                     pattern="[0-9]*"
                     autoComplete="one-time-code"
                     autoFocus
                     aria-describedby="phone-auth-code-help"
+                    aria-label="Six-digit verification code"
                     maxLength={6}
-                    placeholder="123456"
                     value={phoneCode}
                     onChange={(event) => {
-                      setPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                      const nextCode = event.target.value.replace(/\D/g, "").slice(0, 6);
+
+                      setPhoneCode(nextCode);
                       setAuthMessage("");
+                      if (nextCode.length === 6) {
+                        window.setTimeout(() => void verifyPhoneCode(nextCode), 0);
+                      }
                     }}
                   />
+                  <span className="phone-auth-code-slots" aria-hidden="true">
+                    {Array.from({ length: 6 }, (_, index) => (
+                      <span className={phoneCode[index] ? "filled" : ""} key={index}>
+                        {phoneCode[index] ?? ""}
+                      </span>
+                    ))}
+                  </span>
                 </div>
                 <small className="phone-auth-help" id="phone-auth-code-help">
-                  Codes expire shortly for your security.
+                  The code may fill automatically from your messages.
                 </small>
               </label>
             )}
@@ -17097,39 +17166,49 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                     type="submit"
                     disabled={authStatus === "loading" || phoneCode.length !== 6}
                   >
-                    {authStatus === "loading" ? "Verifying…" : "Verify and continue"}
+                    {authStatus === "loading" ? "Confirming…" : "Confirm code"}
                   </button>
-                  <div className="phone-auth-secondary-actions">
+                  <button
+                    className="phone-auth-resend-button"
+                    type="button"
+                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
+                    onClick={() => void sendPhoneCode(true)}
+                  >
+                    {phoneResendSeconds > 0
+                      ? `Send a new code in 0:${String(phoneResendSeconds).padStart(2, "0")}`
+                      : "Send a new code"}
+                  </button>
                   <button
                     className="phone-auth-text-button"
                     type="button"
                     disabled={authStatus === "loading"}
                     onClick={resetPhoneChallenge}
                   >
-                    Change number
+                    Use a different number
                   </button>
-                  <button
-                    className="phone-auth-text-button"
-                    type="button"
-                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
-                    onClick={() => void sendPhoneCode(true)}
-                  >
-                    {phoneResendSeconds > 0
-                      ? `Resend in 0:${String(phoneResendSeconds).padStart(2, "0")}`
-                      : "Resend code"}
-                  </button>
-                  </div>
                 </>
               ) : (
                 <button
                   className="signup-submit phone-auth-primary"
                   type="submit"
-                  disabled={authStatus === "loading" || phoneNumber.replace(/\D/g, "").length !== 10}
+                  disabled={authStatus === "loading" || !isValidUsPhoneNumber(phoneNumber)}
                 >
-                  {authStatus === "loading" ? "Sending…" : "Continue"}
+                  {authStatus === "loading" ? "Sending…" : "Send code"}
                 </button>
               )}
             </div>
+            <button
+              className="phone-auth-back"
+              type="button"
+              disabled={authStatus === "loading"}
+              onClick={() => {
+                resetPhoneChallenge();
+                setPhoneAuthOpen(false);
+              }}
+            >
+              <ChevronLeft size={18} aria-hidden="true" />
+              Other sign-in options
+            </button>
           </div>
         )}
 
@@ -17716,12 +17795,33 @@ function AccountView({
   const [accountActionMessage, setAccountActionMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [phoneChangeOpen, setPhoneChangeOpen] = useState(false);
+  const [phoneChangeStep, setPhoneChangeStep] = useState<"current-code" | "new-number" | "new-code" | "success">("current-code");
+  const [phoneChangeStatus, setPhoneChangeStatus] = useState<"idle" | "loading">("idle");
+  const [phoneChangeMessage, setPhoneChangeMessage] = useState("");
+  const [currentPhoneCode, setCurrentPhoneCode] = useState("");
+  const [newPhoneNumber, setNewPhoneNumber] = useState("");
+  const [newPhoneCode, setNewPhoneCode] = useState("");
+  const [phoneChangeDestination, setPhoneChangeDestination] = useState("");
+  const [phoneChangeResendSeconds, setPhoneChangeResendSeconds] = useState(0);
 
   useEffect(() => {
     setDraftBirthDate(savedBirthDate);
     setDraftBirthTime(savedBirthTime);
     setDraftBirthCity(savedBirthCity);
   }, [savedBirthDate, savedBirthTime, savedBirthCity]);
+
+  useEffect(() => {
+    if (phoneChangeResendSeconds <= 0) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPhoneChangeResendSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [phoneChangeResendSeconds]);
 
   useEffect(() => {
     let cancelled = false;
@@ -17894,6 +17994,140 @@ function AccountView({
     }
   };
 
+  const openPhoneChange = async () => {
+    if (!profile.phone) {
+      return;
+    }
+
+    setPhoneChangeOpen(true);
+    setPhoneChangeStep("current-code");
+    setPhoneChangeStatus("loading");
+    setPhoneChangeMessage("");
+    setCurrentPhoneCode("");
+    setNewPhoneNumber("");
+    setNewPhoneCode("");
+    setPhoneChangeDestination("");
+
+    try {
+      await sendPhoneSignInCode(profile.phone, {
+        shouldCreateUser: false
+      });
+      setPhoneChangeResendSeconds(30);
+    } catch (error) {
+      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a code to your current number.");
+    } finally {
+      setPhoneChangeStatus("idle");
+    }
+  };
+
+  const verifyCurrentPhone = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!profile.phone || currentPhoneCode.length !== 6) {
+      return;
+    }
+
+    setPhoneChangeStatus("loading");
+    setPhoneChangeMessage("");
+
+    try {
+      await verifyPhoneSignInCode({
+        phone: profile.phone,
+        code: currentPhoneCode
+      });
+      setPhoneChangeStep("new-number");
+      setPhoneChangeResendSeconds(0);
+    } catch (error) {
+      setPhoneChangeMessage(error instanceof Error ? error.message : "That code could not be confirmed.");
+    } finally {
+      setPhoneChangeStatus("idle");
+    }
+  };
+
+  const sendNewPhoneCode = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!isValidUsPhoneNumber(newPhoneNumber)) {
+      return;
+    }
+
+    setPhoneChangeStatus("loading");
+    setPhoneChangeMessage("");
+
+    try {
+      const destination = await startPhoneNumberChange(newPhoneNumber);
+
+      setPhoneChangeDestination(destination);
+      setPhoneChangeStep("new-code");
+      setPhoneChangeResendSeconds(30);
+    } catch (error) {
+      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a code to the new number.");
+    } finally {
+      setPhoneChangeStatus("idle");
+    }
+  };
+
+  const confirmNewPhone = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!phoneChangeDestination || newPhoneCode.length !== 6) {
+      return;
+    }
+
+    setPhoneChangeStatus("loading");
+    setPhoneChangeMessage("");
+
+    try {
+      const account = await verifyPhoneNumberChange({
+        phone: phoneChangeDestination,
+        code: newPhoneCode
+      });
+
+      onUpdateProfile({
+        ...profile,
+        phone: account?.phone || phoneChangeDestination
+      });
+      setPhoneChangeStep("success");
+      setPhoneChangeResendSeconds(0);
+    } catch (error) {
+      setPhoneChangeMessage(error instanceof Error ? error.message : "That code could not be confirmed.");
+    } finally {
+      setPhoneChangeStatus("idle");
+    }
+  };
+
+  const resendPhoneChangeCode = async () => {
+    const destination = phoneChangeStep === "current-code" ? profile.phone : phoneChangeDestination;
+
+    if (!destination) {
+      return;
+    }
+
+    setPhoneChangeStatus("loading");
+    setPhoneChangeMessage("");
+
+    try {
+      if (phoneChangeStep === "current-code") {
+        await sendPhoneSignInCode(destination, {
+          shouldCreateUser: false
+        });
+      } else {
+        await resendPhoneNumberChangeCode(destination);
+      }
+      setPhoneChangeResendSeconds(30);
+      setPhoneChangeMessage("A new code is on its way.");
+    } catch (error) {
+      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a new code.");
+    } finally {
+      setPhoneChangeStatus("idle");
+    }
+  };
+
+  const profilePhoneLastFour = profile.phone ? phoneNumberLastFour(profile.phone) : "";
+  const accountLoginSummary = profile.provider === "phone" && profilePhoneLastFour
+    ? `Signed in with Phone ending in ${profilePhoneLastFour}`
+    : profile.email || `Signed in with ${providerLabel(profile.provider)}`;
+
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
@@ -17905,7 +18139,7 @@ function AccountView({
           <ProfileAvatar avatarUrl={profile.avatarUrl} email={profile.email} name={profile.name} size="large" />
           <div>
             <h3>{profile.name}</h3>
-            <span>{profile.email}</span>
+            <span>{accountLoginSummary}</span>
           </div>
         </div>
 
@@ -17914,10 +18148,26 @@ function AccountView({
             <span className="settings-row__label">Name</span>
             <span className="settings-row__value">{profile.name}</span>
           </div>
-          <div className="settings-row">
-            <span className="settings-row__label">Email</span>
-            <span className="settings-row__value">{profile.email}</span>
-          </div>
+          {profile.email && (
+            <div className="settings-row">
+              <span className="settings-row__label">Email</span>
+              <span className="settings-row__value">{profile.email}</span>
+            </div>
+          )}
+          {profile.phone && profilePhoneLastFour && (
+            <button
+              type="button"
+              className="settings-row settings-row-button"
+              onClick={() => void openPhoneChange()}
+            >
+              <span className="settings-row__label">Phone</span>
+              <span className="settings-row__field">
+                <span className="settings-row__value">{maskPhoneNumber(profile.phone)}</span>
+                <span className="settings-row__change">Change</span>
+                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+              </span>
+            </button>
+          )}
           {handleEditing ? (
             <form className="settings-row account-handle-edit-row" onSubmit={saveHandle}>
               <label className="settings-row__label" htmlFor="account-social-handle">Handle</label>
@@ -18163,6 +18413,145 @@ function AccountView({
               {accountActionStatus === "deleting" ? "Deleting…" : "Delete account"}
             </button>
           </div>
+        </ModalPortal>
+      )}
+
+      {phoneChangeOpen && (
+        <ModalPortal
+          closeOnBackdrop={phoneChangeStatus !== "loading"}
+          onClose={() => {
+            if (phoneChangeStatus !== "loading") {
+              setPhoneChangeOpen(false);
+            }
+          }}
+          panelClassName="account-phone-modal"
+          titleId="account-phone-title"
+          width="min(500px, calc(100vw - 32px))"
+        >
+          <button
+            className="modal-close"
+            type="button"
+            aria-label="Close change phone dialog"
+            disabled={phoneChangeStatus === "loading"}
+            onClick={() => setPhoneChangeOpen(false)}
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
+
+          {phoneChangeStep === "current-code" && (
+            <form onSubmit={verifyCurrentPhone}>
+              <span className="eyebrow section-label">Verify it’s you</span>
+              <h2 id="account-phone-title">Check your current phone</h2>
+              <p>Enter the code sent to {profile.phone ? maskPhoneNumber(profile.phone) : "your current number"}.</p>
+              <label>
+                <span>Six-digit code</span>
+                <input
+                  value={currentPhoneCode}
+                  onChange={(event) => {
+                    setCurrentPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                    setPhoneChangeMessage("");
+                  }}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  autoFocus
+                />
+              </label>
+              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
+              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || currentPhoneCode.length !== 6}>
+                {phoneChangeStatus === "loading" ? "Confirming…" : "Confirm current number"}
+              </button>
+              <button
+                className="account-phone-secondary"
+                type="button"
+                disabled={phoneChangeStatus === "loading" || phoneChangeResendSeconds > 0}
+                onClick={() => void resendPhoneChangeCode()}
+              >
+                {phoneChangeResendSeconds > 0
+                  ? `Send a new code in 0:${String(phoneChangeResendSeconds).padStart(2, "0")}`
+                  : "Send a new code"}
+              </button>
+            </form>
+          )}
+
+          {phoneChangeStep === "new-number" && (
+            <form onSubmit={sendNewPhoneCode}>
+              <span className="eyebrow section-label">New number</span>
+              <h2 id="account-phone-title">Enter your new phone</h2>
+              <p>We’ll text a six-digit code to confirm the change.</p>
+              <label>
+                <span>Mobile number</span>
+                <div className="phone-auth-number-control">
+                  <select className="phone-auth-country-select" aria-label="Country code" value={supportedPhoneCountry.code} onChange={() => undefined}>
+                    <option value={supportedPhoneCountry.code}>US {supportedPhoneCountry.callingCode}</option>
+                  </select>
+                  <input
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel-national"
+                    placeholder="(212) 555-0100"
+                    value={newPhoneNumber}
+                    onChange={(event) => {
+                      setNewPhoneNumber(formatUsPhoneInput(event.target.value));
+                      setPhoneChangeMessage("");
+                    }}
+                    autoFocus
+                  />
+                </div>
+              </label>
+              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
+              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || !isValidUsPhoneNumber(newPhoneNumber)}>
+                {phoneChangeStatus === "loading" ? "Sending…" : "Send code"}
+              </button>
+            </form>
+          )}
+
+          {phoneChangeStep === "new-code" && (
+            <form onSubmit={confirmNewPhone}>
+              <span className="eyebrow section-label">Confirm new number</span>
+              <h2 id="account-phone-title">Enter the code</h2>
+              <p>Enter the code sent to {maskPhoneNumber(phoneChangeDestination)}.</p>
+              <label>
+                <span>Six-digit code</span>
+                <input
+                  value={newPhoneCode}
+                  onChange={(event) => {
+                    setNewPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                    setPhoneChangeMessage("");
+                  }}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  autoFocus
+                />
+              </label>
+              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
+              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || newPhoneCode.length !== 6}>
+                {phoneChangeStatus === "loading" ? "Confirming…" : "Confirm new number"}
+              </button>
+              <button
+                className="account-phone-secondary"
+                type="button"
+                disabled={phoneChangeStatus === "loading" || phoneChangeResendSeconds > 0}
+                onClick={() => void resendPhoneChangeCode()}
+              >
+                {phoneChangeResendSeconds > 0
+                  ? `Send a new code in 0:${String(phoneChangeResendSeconds).padStart(2, "0")}`
+                  : "Send a new code"}
+              </button>
+            </form>
+          )}
+
+          {phoneChangeStep === "success" && (
+            <div>
+              <span className="eyebrow section-label">Phone updated</span>
+              <h2 id="account-phone-title">Your phone number has been updated</h2>
+              <p>Future sign-in codes will go to {maskPhoneNumber(phoneChangeDestination)}.</p>
+              <button className="account-phone-primary" type="button" onClick={() => setPhoneChangeOpen(false)}>
+                Done
+              </button>
+            </div>
+          )}
         </ModalPortal>
       )}
     </section>
