@@ -27,6 +27,14 @@ const adminPages = [
   { nav: "Release Notes", title: "Release Notes", breadcrumb: "Admin / Release notes", hash: "release-notes" }
 ];
 
+const adminCreateCases = [
+  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
+  { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
+  { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
+  { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
+  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
+];
+
 const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how this placement asks|puts first impressions, outward style|write a sentence|source framework|sourceSnapshot|templateVersion|Missing VITE|undefined|null|NaN)\b/i;
 
 const now = "2026-07-16T12:00:00.000Z";
@@ -603,21 +611,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("new content actions save with required admin API metadata", async ({ context }) => {
-    test.setTimeout(90_000);
-    const writes: { method: string; payload: Record<string, unknown> }[] = [];
-
-    const createCases = [
-      { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
-      { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
-      { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
-      { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-      { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
-    ];
-
-    for (const createCase of createCases) {
-      const page = await context.newPage();
+  for (const createCase of adminCreateCases) {
+    test(`${createCase.action} saves with required admin API metadata`, async ({ page }) => {
       const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      const writes: { method: string; payload: Record<string, unknown> }[] = [];
       await seedAdminApi(page, {
         onGeneratedContentWrite: (write) => {
           writes.push(write);
@@ -649,9 +646,8 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       });
       await assertNoBrowserErrors();
-      await page.close();
-    }
-  });
+    });
+  }
 
   test("content editor saves row changes through the admin API", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
