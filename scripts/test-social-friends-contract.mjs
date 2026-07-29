@@ -68,6 +68,10 @@ const shareLinksMigrationPath = path.join(
   repoRoot,
   "apps/web/supabase/migrations/20260726180000_social_share_links.sql"
 );
+const readableInviteCodesMigrationPath = path.join(
+  repoRoot,
+  "apps/web/supabase/migrations/20260729103000_readable_social_invitation_codes.sql"
+);
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuth.ts");
@@ -102,6 +106,7 @@ const searchVolatilityFixMigration = fs.readFileSync(searchVolatilityFixMigratio
 const rankedSearchMigration = fs.readFileSync(rankedSearchMigrationPath, "utf8");
 const invitationManagementMigration = fs.readFileSync(invitationManagementMigrationPath, "utf8");
 const shareLinksMigration = fs.readFileSync(shareLinksMigrationPath, "utf8");
+const readableInviteCodesMigration = fs.readFileSync(readableInviteCodesMigrationPath, "utf8");
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
@@ -727,8 +732,8 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /createSocialShareInvitation[\s\S]*Create invite link[\s\S]*Share link[\s\S]*Copy link[\s\S]*Recent invitations/,
-  "Non-member invitations must create a shareable private link with native share, copy, and manageable history."
+  /createSocialShareInvitation[\s\S]*Create invite link[\s\S]*Text it to a contact[\s\S]*Invite link[\s\S]*createdInvitationLink[\s\S]*Give them a code[\s\S]*Open invitations/,
+  "Non-member invitations must expose the full link and readable code alongside native share, text, copy, and history actions."
 );
 assert.match(
   socialFriendsPanel,
@@ -737,13 +742,23 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /expires in 30 days and works once[\s\S]*Anyone with the[\s\S]*link can use it/,
+  /Invite links expire in 30 days and work once\.[\s\S]*Share them privately\./,
   "The invitation composer must explain the single-use link's expiry and bearer-link privacy."
 );
 assert.match(
   shareLinksMigration,
   /contact_kind in \('email', 'phone', 'link'\)[\s\S]*create_social_share_invitation\(\)[\s\S]*share-invite-minute[\s\S]*'Share link'[\s\S]*invitation\.contact_kind = 'link'[\s\S]*return true[\s\S]*alter publication supabase_realtime add table public\.social_invitations/,
   "The database must create rate-limited bearer links that retain existing one-use invitation safeguards."
+);
+assert.match(
+  readableInviteCodesMigration,
+  /alphabet constant text[\s\S]*for token_index in 1\.\.12[\s\S]*contact_hint[\s\S]*token_hash[\s\S]*raw_token[\s\S]*digest\(raw_token, 'sha256'\)/,
+  "New share invitations must use readable codes while storing only a hash for redemption."
+);
+assert.match(
+  service,
+  /url\.pathname = `\/i\/\$\{encodeURIComponent\(token\.trim\(\)\)\}`[\s\S]*pathToken[\s\S]*pendingSocialInvitationKey/,
+  "Readable invite URLs must round-trip through the clean /i/CODE route."
 );
 assert.match(
   service,
