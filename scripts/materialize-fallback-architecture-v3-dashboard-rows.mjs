@@ -8,6 +8,7 @@ const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architecture-v3-dashboard-rows.json");
 const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
+const placementSentencePositiveTest = "passed-jul29-criteria";
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -168,6 +169,15 @@ function rowSummary(record) {
   return String(record.summary ?? record.intention ?? record.energy ?? record.note ?? record.notes ?? "").trim();
 }
 
+function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
+  return contentKey.startsWith("fallback-hook/placement-sentence/")
+    && (
+      reviewStatus === "needs_review"
+      || record.positive_test != null
+      || String(record.note ?? record.notes ?? "").includes("TLDR-Placement-Copy-Audit-Batch1.md")
+    );
+}
+
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
   if (contentRole === "fallback_hook" || contentKey.startsWith("fallback-hook/")) return "fallback_hook";
@@ -187,6 +197,13 @@ function mapPackageRecord(record, bucket) {
   const surface = surfaceForKey(contentKey, record.surface);
   const body = rowBody(record);
 
+  if (
+    requiresPlacementPositiveTest(record, contentKey, reviewStatus)
+    && record.positive_test !== placementSentencePositiveTest
+  ) {
+    throw new Error(`${contentKey} must carry positive_test="${placementSentencePositiveTest}" before dashboard import.`);
+  }
+
   return {
     content_key: contentKey,
     surface,
@@ -201,6 +218,7 @@ function mapPackageRecord(record, bucket) {
       packageRecord: record,
       body_you: record.body_you ?? null,
       body_they: record.body_they ?? null,
+      positive_test: record.positive_test ?? null,
       intention: record.intention ?? null,
       ritual: record.ritual ?? null,
       energy: record.energy ?? null
@@ -216,6 +234,7 @@ function mapPackageRecord(record, bucket) {
       packageBucket: bucket,
       content_role: contentRole,
       review_status: reviewStatus,
+      positive_test: record.positive_test ?? null,
       readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState
     },
     knowledge_ids: [],
@@ -223,6 +242,7 @@ function mapPackageRecord(record, bucket) {
       contentType: bucket,
       content_role: contentRole,
       review_status: reviewStatus,
+      positive_test: record.positive_test ?? null,
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,

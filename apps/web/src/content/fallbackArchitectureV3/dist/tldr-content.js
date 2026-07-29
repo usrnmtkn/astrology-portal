@@ -23,6 +23,7 @@ function mustache(body, ctx) {
     return !v || Array.isArray(v) && v.length === 0 ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => ctx[key] ?? `{{${key}}}`);
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => ctx[key] ?? `{${key}}`);
   return body;
 }
 function createFallbackRenderer(templatesFile, rowsFile) {
@@ -222,11 +223,13 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
     const REF = { sun: "the Sun", moon: "the Moon" };
+    const rulerRef = REF[ruler] ?? title(ruler);
     const ctx = {
       houseOrdinal: ordinal(house),
       houseTopic,
       signTitle: title(sign),
-      rulerRef: REF[ruler] ?? title(ruler),
+      rulerRef,
+      rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()),
       rulerTitle: title(ruler),
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
@@ -771,12 +774,12 @@ ${fogNote}`;
     }
     return { headline: `${title2(risingSign)} & ${title2(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
   }
-  const SKY_PLACEMENT_ASPECT_INTERACTION = {
-    conjunction: "amplify each other",
-    square: "push against each other",
-    opposition: "pull from opposite ends",
-    trine: "work together with less friction",
-    sextile: "open a workable route between them"
+  const SKY_PLACEMENT_ASPECT_FRAME = {
+    conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
+    square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
+    opposition: (aRef, bRef, timing) => `${aRef} and ${bRef} pull from opposite ends${timing.exact ? `, strongest on ${timing.label}` : ` ${timing.label}`}.`,
+    trine: (aRef, bRef, timing) => `${aRef} and ${bRef} work together with less friction${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`,
+    sextile: (aRef, bRef, timing) => `${aRef} and ${bRef} open a workable route between them${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`
   };
   function capitalizeSentence(value) {
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
@@ -784,21 +787,40 @@ ${fogNote}`;
   function skyPlacementAspectParagraph(placementPlanet, ev) {
     if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
     const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+    const isFullMoon = ev.aspect === "opposition" && (/* @__PURE__ */ new Set([ev.a, ev.b])).size === 2 && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
+    const moonSign = ev.a === "moon" ? ev.aSign : ev.b === "moon" ? ev.bSign : null;
+    const sunSign = ev.a === "sun" ? ev.aSign : ev.b === "sun" ? ev.bSign : null;
+    const fullMoonSpecific = isFullMoon && moonSign ? hooks.get(`fallback-hook/sky-placement-aspect/sun/moon/opposition/${moonSign}`)?.body_you : null;
+    if (fullMoonSpecific) {
+      if (!sunSign || !ev.exactDate) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon facts");
+      const fullMoonBody = fillKeep(fullMoonSpecific, {
+        moonSignTitle: title2(moonSign),
+        sunSignTitle: title2(sunSign),
+        exactDate: ev.exactDate
+      });
+      if (/\{\{/.test(fullMoonBody)) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon slots");
+      return fullMoonBody;
+    }
     const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
-    const aRef = transitRef(ev.a, ev.aSign);
+    const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
     const bRef = transitRef(ev.b, ev.bSign);
-    const interaction = placementPlanet === "sun" && otherPlanet === "jupiter" && ev.aspect === "conjunction" ? "amplify momentum" : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
-    const timing = ev.exactDate ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}` : ev.dateLine ?? "In the current aspect window";
-    const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+    const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
+    const timing = ev.exactDate ? { exact: true, label: ev.exactDate } : ev.dateLine ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) } : null;
+    if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
+    const fact = frame(aRef, bRef, timing);
     const effect = specific ?? pairEffectOf(ev);
     if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
-  function renderSkyPlacement({ planet, sign, events = [] }) {
+  function renderSkyPlacement({ planet, sign, events = [], isRetrograde = false }) {
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
+    const retrogradeGuidance = isRetrograde ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you : null;
+    if (isRetrograde && !retrogradeGuidance) {
+      throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
+    }
     const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
     if (authoredArticle) {
-      const parts2 = [authoredArticle.body, ...aspectParas].filter((part) => Boolean(part));
+      const parts2 = [authoredArticle.body, retrogradeGuidance, ...aspectParas].filter((part) => Boolean(part));
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
         body: parts2.join("\n\n"),
@@ -814,7 +836,7 @@ ${fogNote}`;
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
     const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
     if (pairHook && pairLived && pairTurn) {
-      const parts2 = [pairHook, pairLived, pairTurn, ...aspectParas];
+      const parts2 = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter((part) => Boolean(part));
       return {
         headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
         tagline,
@@ -850,7 +872,8 @@ ${fogNote}`;
     }
     const baseBody = fillKeep(template.body, templateCtx);
     if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-    const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+    const baseParts = baseBody.split(/\n{2,}/u).filter(Boolean);
+    const parts = retrogradeGuidance ? [...baseParts.slice(0, -1), retrogradeGuidance, ...baseParts.slice(-1), ...aspectParas] : [...baseParts, ...aspectParas];
     return {
       headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
       body: parts.join("\n\n"),
@@ -1125,7 +1148,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29j";
+var PACKAGE_VERSION = "v3-2026-07-29m";
 export {
   PACKAGE_VERSION,
   RoleViolationError,

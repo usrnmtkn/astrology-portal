@@ -62,11 +62,11 @@ const occurrences = (body, value) => body.split(value).length - 1;
 const vocabularyByKey = new Map(rows.vocabularyRows.map((row) => [row.contentKey, row]));
 const hooksByKey = new Map(rows.hookRows.map((row) => [row.contentKey, row]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29j");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29m");
 
 const expectedNote = "Everyone has all 12 houses, and an empty one is normal: no planet sat there when you were born, not that the area is missing from your life. An empty house takes its instructions from its ruling planet, wherever that planet sits. A birth chart can name a pattern before it feels obvious.";
-const expectedAries = "With Aries on the 11th house, friends, community, and long-term hopes respond best to speed and directness. You lose little by deciding fast here; the mistakes correct themselves quicker than the waiting does. Aries answers to Mars, so this house takes its cues from wherever Mars sits in your chart. Your Mars is in Aquarius, in the 9th house. You act from the head, cool and enterprising, and in a real emergency you are the one who stays functional. What drives you is less obvious to others, since you keep the effort quiet and let results do the talking. Friends and respect come to you through what you can actually do, so keep doing it where people can see. So the story of this house tends to surface there: through belief, study, travel, and the bigger picture. Quiet stretches here are normal. When Mars gets lit up, or a current planet crosses your 11th house, this side of your life steps forward and asks for real decisions.";
-const expectedGemini = "With Gemini on the 1st house, identity, the body, and self-presentation stay healthy by staying in motion. Talking it through, trying both options, and changing your mind are all part of how this area works. Gemini answers to Mercury, so this house takes its cues from wherever Mercury sits in your chart. Your Mercury is in Pisces, in the 10th house. Your mind works in images and impressions rather than tidy facts, and instinct usually gets there before reason does. Being pinned down to details feels like a cage, and a heavy mood can pull your thinking under with it. That imagination is real creative fuel, in music, writing, or anything poetic, so give it regular work instead of letting it drift. So the story of this house tends to surface there: through career, reputation, and public role. Quiet stretches here are normal. When Mercury gets lit up, or a current planet crosses your 1st house, this side of your life steps forward and asks for real decisions.";
+const expectedAries = "With Aries on the 11th house, friends, community, and long-term hopes respond best to speed and directness. You lose little by deciding fast here; the mistakes correct themselves quicker than the waiting does. Mars rules Aries, so this house takes its cues from wherever Mars sits in your chart. Your Mars is in Aquarius, in the 9th house. You act once the plan makes sense to you, and you are usually more motivated by the principle than by competition. You can stay with a difficult goal for a long time, especially when you have room to choose your own method. Pressure without a clear reason tends to make you resist rather than move faster. So the story of this house tends to surface there: through belief, study, travel, and the bigger picture. Timing: Quiet stretches here are normal. When Mars gets lit up, or a current planet crosses your 11th house, this side of your life steps forward and asks for real decisions.";
+const expectedGemini = "With Gemini on the 1st house, identity, the body, and self-presentation stay healthy by staying in motion. Talking it through, trying both options, and changing your mind are all part of how this area works. Mercury rules Gemini, so this house takes its cues from wherever Mercury sits in your chart. Your Mercury is in Pisces, in the 10th house. Your mind works through images, impressions, and what you pick up between the lines. You may understand the mood of a conversation before anyone says what is wrong, while exact details can be harder to hold when you are overwhelmed. You often arrive at the point by following an impression first and explaining the logic afterward. So the story of this house tends to surface there: through career, reputation, and public role. Timing: Quiet stretches here are normal. When Mercury gets lit up, or a current planet crosses your 1st house, this side of your life steps forward and asks for real decisions.";
 
 const ariesWorkedExample = browserRenderer.renderNatalEmptyHouse({
   house: 11,
@@ -77,7 +77,7 @@ const ariesWorkedExample = browserRenderer.renderNatalEmptyHouse({
   rulerSign: "aquarius",
   rulerHouse: 9,
   voice: "you"
-});
+}, { allowUnreviewed: true });
 const geminiWorkedExample = browserRenderer.renderNatalEmptyHouse({
   house: 1,
   sign: "gemini",
@@ -87,10 +87,51 @@ const geminiWorkedExample = browserRenderer.renderNatalEmptyHouse({
   rulerSign: "pisces",
   rulerHouse: 10,
   voice: "you"
-});
+}, { allowUnreviewed: true });
 assert.equal(ariesWorkedExample.note, expectedNote);
 assert.equal(ariesWorkedExample.body, expectedAries);
 assert.equal(geminiWorkedExample.body, expectedGemini);
+
+const cancerMoonScorpio = browserRenderer.renderNatalEmptyHouse({
+  house: 2,
+  sign: "cancer",
+  primaryRuler: "moon",
+  rulerSign: "scorpio",
+  rulerHouse: 6,
+  voice: "you"
+}, { allowUnreviewed: true });
+const moonScorpioPlacementRow = hooksByKey.get("fallback-hook/placement-sentence/moon/scorpio");
+const moonScorpioPlacementCard = browserRenderer.renderNatalPlacement({
+  planet: "moon",
+  sign: "scorpio",
+  house: 6,
+  voice: "you"
+}, { allowUnreviewed: true });
+assert.equal(moonScorpioPlacementRow?.positive_test, "passed-jul29-criteria");
+assert.match(cancerMoonScorpio.parts[0], /^With Cancer on the 2nd house,/u, "Cancer M1 row must render in QA preview.");
+assert.equal(cancerMoonScorpio.parts[1], "The Moon rules Cancer, so this house takes its cues from wherever the Moon sits in your chart.");
+assert.ok(
+  cancerMoonScorpio.parts[2].endsWith(moonScorpioPlacementRow.body_you),
+  "Empty-house M3 must use the Moon-in-Scorpio placement sentence bytes."
+);
+assert.ok(
+  moonScorpioPlacementCard.body.includes(moonScorpioPlacementRow.body_you),
+  "Natal placement card must use the same Moon-in-Scorpio placement sentence bytes."
+);
+assert.match(cancerMoonScorpio.parts[4], /^Timing:/u, "Empty-house close must keep the labeled Timing line.");
+assert.doesNotMatch(cancerMoonScorpio.body, /\b(?:hurt|pouring|creative)\b/iu, "Cancer/Moon/Scorpio QA assembly must avoid blocked batch strings.");
+assert.throws(
+  () => browserRenderer.renderNatalEmptyHouse({
+    house: 2,
+    sign: "cancer",
+    primaryRuler: "moon",
+    rulerSign: "scorpio",
+    rulerHouse: 6,
+    voice: "you"
+  }),
+  /SOURCE_GAP/u,
+  "needs_review M1/M3 rows must not serve without QA preview."
+);
 
 for (let house = 1; house <= 12; house += 1) {
   const jurisdictionRow = vocabularyByKey.get(`fallback-vocab/house-jurisdiction/${house}`);
@@ -118,14 +159,14 @@ for (let house = 1; house <= 12; house += 1) {
         rulerHouse: ((house + 3) % 12) + 1,
         voice
       };
-      const browserResult = browserRenderer.renderNatalEmptyHouse(facts);
-      const nodeResult = renderNatalEmptyHouseNode(facts);
+      const browserResult = browserRenderer.renderNatalEmptyHouse(facts, { allowUnreviewed: true });
+      const nodeResult = renderNatalEmptyHouseNode(facts, { allowUnreviewed: true });
       const houseTopic = vocabularyByKey.get(`fallback-vocab/house-topic/${house}`)?.body;
       const placementLine = hooksByKey.get(
         `fallback-hook/placement-sentence/${primaryRuler}/capricorn`
       )?.[voice === "you" ? "body_you" : "body_they"];
       const rulerReference = rulerReferences[primaryRuler] ?? title(primaryRuler);
-      const expectedM2 = `${title(sign)} answers to ${rulerReference}, so this house takes its cues from wherever ${rulerReference} sits in ${voice === "you" ? "your" : "their"} chart.`;
+      const expectedM2 = `${rulerReference.replace(/^./, (character) => character.toUpperCase())} rules ${title(sign)}, so this house takes its cues from wherever ${rulerReference} sits in ${voice === "you" ? "your" : "their"} chart.`;
 
       assert.deepEqual(browserResult, nodeResult, `${house}/${sign}/${voice}: browser/Node parity`);
       assert.equal(browserResult.parts.length, 5, `${house}/${sign}/${voice}: five movements`);

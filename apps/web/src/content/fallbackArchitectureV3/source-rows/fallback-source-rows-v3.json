@@ -9062,14 +9062,15 @@
    "contentKey": "fallback-hook/placement-sentence/moon/scorpio",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You keep your guard up until you're sure about someone, and quietly wonder if there's a catch. You feel things to extremes, get hurt more deeply than you ever show, and hold onto old hurts longer than you want to. Pouring all of that into something creative is what actually settles you.",
-   "body_they": "They keep their guard up until they're sure about someone, and quietly wonder if there's a catch. They feel things to extremes, get hurt more deeply than they ever show, and hold onto old hurts longer than they want to. Pouring all of that into something creative is what actually settles them.",
-   "review_status": "approved",
+   "body_you": "You keep your guard up until you know where you stand with someone, and you notice quickly when the story does not add up. You may keep the strongest reaction private, but that does not mean it passes quickly. You would rather hear a hard truth than spend another week guessing.",
+   "body_they": "They keep their guard up until they know where they stand with someone, and they notice quickly when the story does not add up. They may keep the strongest reaction private, but that does not mean it passes quickly. They would rather hear a hard truth than spend another week guessing.",
+   "review_status": "needs_review",
+   "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/moon-in-scorpio",
     "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio"
    ],
-   "note": "Authored from CC moon-in-scorpio and the book's Moon in Scorpio passage.",
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
    "approved_via": "owner chat review 2026-07-21"
   },
   {
@@ -10067,14 +10068,15 @@
    "contentKey": "fallback-hook/placement-sentence/mars/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You act from the head, cool and enterprising, and in a real emergency you are the one who stays functional. What drives you is less obvious to others, since you keep the effort quiet and let results do the talking. Friends and respect come to you through what you can actually do, so keep doing it where people can see.",
-   "body_they": "They act from the head, cool and enterprising, and in a real emergency they are the ones who stay functional. What drives them is less obvious to others, since they keep the effort quiet and let results do the talking. Friends and respect come to them through what they can actually do, so it pays to do it where people can see.",
-   "review_status": "approved",
+   "body_you": "You act once the plan makes sense to you, and you are usually more motivated by the principle than by competition. You can stay with a difficult goal for a long time, especially when you have room to choose your own method. Pressure without a clear reason tends to make you resist rather than move faster.",
+   "body_they": "They act once the plan makes sense to them, and they are usually more motivated by the principle than by competition. They can stay with a difficult goal for a long time, especially when they have room to choose their own method. Pressure without a clear reason tends to make them resist rather than move faster.",
+   "review_status": "needs_review",
+   "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/mars-in-aquarius",
     "book/201419935-a-spiritual-approach-to-astrology/mars-in-the-signs/aquarius"
    ],
-   "note": "Authored from CC and the book per the placement-writing brief.",
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
    "approved_via": "owner chat review 2026-07-21"
   },
   {
@@ -10417,14 +10419,15 @@
    "contentKey": "fallback-hook/placement-sentence/mercury/pisces",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Your mind works in images and impressions rather than tidy facts, and instinct usually gets there before reason does. Being pinned down to details feels like a cage, and a heavy mood can pull your thinking under with it. That imagination is real creative fuel, in music, writing, or anything poetic, so give it regular work instead of letting it drift.",
-   "body_they": "Their mind works in images and impressions rather than tidy facts, and instinct usually gets there before reason does. Being pinned down to details feels like a cage, and a heavy mood can pull their thinking under with it. That imagination is real creative fuel, in music, writing, or anything poetic, so it does best with regular work instead of drifting.",
-   "review_status": "approved",
+   "body_you": "Your mind works through images, impressions, and what you pick up between the lines. You may understand the mood of a conversation before anyone says what is wrong, while exact details can be harder to hold when you are overwhelmed. You often arrive at the point by following an impression first and explaining the logic afterward.",
+   "body_they": "Their mind works through images, impressions, and what they pick up between the lines. They may understand the mood of a conversation before anyone says what is wrong, while exact details can be harder to hold when they are overwhelmed. They often arrive at the point by following an impression first and explaining the logic afterward.",
+   "review_status": "needs_review",
+   "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/mercury-in-pisces",
     "book/201419935-a-spiritual-approach-to-astrology/mercury-in-the-signs/pisces"
    ],
-   "note": "Authored from CC and the book per the placement-writing brief. | plain-language pass applied",
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
    "approved_via": "owner chat review 2026-07-21"
   },
   {
@@ -21568,10 +21571,10 @@
    "contentKey": "fallback-hook/house-cusp/taurus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Taurus on the {{houseOrdinal}} house, {{houseTopic}} build slowly and hold. Nothing here rewards rushing; consistency is what makes this area feel safe.",
-   "body_they": "With Taurus on the {{houseOrdinal}} house, {{houseTopic}} build slowly and hold. Nothing here rewards rushing; consistency is what makes this area feel safe.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Taurus on the {houseOrdinal} house, {houseTopic} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
+   "body_they": "With Taurus on the {houseOrdinal} house, {houseTopic} take shape slowly and become more reliable over time. Rushing usually creates more work than it saves.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
@@ -21588,98 +21591,98 @@
    "contentKey": "fallback-hook/house-cusp/cancer",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Cancer on the {{houseOrdinal}} house, {{houseTopic}} run on feeling first. This area needs to feel safe before it works well, and it remembers how it has been treated.",
-   "body_they": "With Cancer on the {{houseOrdinal}} house, {{houseTopic}} run on feeling first. This area needs to feel safe before it works well, and it remembers how it has been treated.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Cancer on the {houseOrdinal} house, {houseTopic} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
+   "body_they": "With Cancer on the {houseOrdinal} house, {houseTopic} run on feeling first. This area responds to trust and familiarity, and past experience carries real weight.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Leo on the {{houseOrdinal}} house, {{houseTopic}} want warmth and a little recognition. This area comes alive when you put your name on it instead of managing it from the side.",
-   "body_they": "With Leo on the {{houseOrdinal}} house, {{houseTopic}} want warmth and a little recognition. This area comes alive when they put their name on it instead of managing it from the side.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Leo on the {houseOrdinal} house, {houseTopic} want recognition and a visible role. This area works best when you can put your name on what you contribute instead of managing it from the side.",
+   "body_they": "With Leo on the {houseOrdinal} house, {houseTopic} want recognition and a visible role. This area works best when they can put their name on what they contribute instead of managing it from the side.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/virgo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Virgo on the {{houseOrdinal}} house, {{houseTopic}} become clearer through the details that refuse to be ignored. The goal is not perfection; it is finding what actually works and keeping it.",
-   "body_they": "With Virgo on the {{houseOrdinal}} house, {{houseTopic}} become clearer through the details that refuse to be ignored. The goal is not perfection; it is finding what actually works and keeping it.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Virgo on the {houseOrdinal} house, {houseTopic} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
+   "body_they": "With Virgo on the {houseOrdinal} house, {houseTopic} become clearer through small corrections made regularly. The goal is not perfection; it is finding what works and continuing with it.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/libra",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Libra on the {{houseOrdinal}} house, {{houseTopic}} settle best in dialogue. This area rarely resolves alone; it needs a second perspective and fair terms before it feels right.",
-   "body_they": "With Libra on the {{houseOrdinal}} house, {{houseTopic}} settle best in dialogue. This area rarely resolves alone; it needs a second perspective and fair terms before it feels right.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Libra on the {houseOrdinal} house, {houseTopic} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
+   "body_they": "With Libra on the {houseOrdinal} house, {houseTopic} become clearer through dialogue. A second perspective helps, but the terms still have to be fair to everyone involved.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/scorpio",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Scorpio on the {{houseOrdinal}} house, {{houseTopic}} run deep and private. This area is all-or-nothing: it asks for real trust, and when it changes, it changes completely.",
-   "body_they": "With Scorpio on the {{houseOrdinal}} house, {{houseTopic}} run deep and private. This area is all-or-nothing: it asks for real trust, and when it changes, it changes completely.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Scorpio on the {houseOrdinal} house, {houseTopic} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once you commit, you do not do it halfway.",
+   "body_they": "With Scorpio on the {houseOrdinal} house, {houseTopic} run deep and stay private until trust has been earned. Experience carries more weight here than promises, and once they commit, they do not do it halfway.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/sagittarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Sagittarius on the {{houseOrdinal}} house, {{houseTopic}} need room to grow. This area does best with an open horizon and honest optimism, and it suffocates under too many small rules.",
-   "body_they": "With Sagittarius on the {{houseOrdinal}} house, {{houseTopic}} need room to grow. This area does best with an open horizon and honest optimism, and it suffocates under too many small rules.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Sagittarius on the {houseOrdinal} house, {houseTopic} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
+   "body_they": "With Sagittarius on the {houseOrdinal} house, {houseTopic} grow through new experience and a wider point of view. Too many minor restrictions can turn curiosity into frustration.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/capricorn",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Capricorn on the {{houseOrdinal}} house, {{houseTopic}} are built for the long term. This area responds to structure and patience, and what gets done properly here tends to stay done.",
-   "body_they": "With Capricorn on the {{houseOrdinal}} house, {{houseTopic}} are built for the long term. This area responds to structure and patience, and what gets done properly here tends to stay done.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Capricorn on the {houseOrdinal} house, {houseTopic} are built for the long term. Patience matters here, and what you build tends to last when the structure is sound.",
+   "body_they": "With Capricorn on the {houseOrdinal} house, {houseTopic} are built for the long term. Patience matters here, and what they build tends to last when the structure is sound.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Aquarius on the {{houseOrdinal}} house, {{houseTopic}} follow their own rules. This area works best a step outside convention, and it improves the moment you stop forcing it to look normal.",
-   "body_they": "With Aquarius on the {{houseOrdinal}} house, {{houseTopic}} follow their own rules. This area works best a step outside convention, and it improves the moment they stop forcing it to look normal.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Aquarius on the {houseOrdinal} house, {houseTopic} follow a logic of their own. This area works best when you can question the usual arrangement and build one that still holds up over time.",
+   "body_they": "With Aquarius on the {houseOrdinal} house, {houseTopic} follow a logic of their own. This area works best when they can question the usual arrangement and build one that still holds up over time.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/house-cusp/pisces",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "With Pisces on the {{houseOrdinal}} house, {{houseTopic}} may not follow a straight line. This area needs time, quiet, and a softer pace before the right choice becomes clear.",
-   "body_they": "With Pisces on the {{houseOrdinal}} house, {{houseTopic}} may not follow a straight line. This area needs time, quiet, and a softer pace before the right choice becomes clear.",
-   "review_status": "approved",
-   "notes": "Empty-house page P1: how this sign runs the house. Slots {{houseOrdinal}}, {{houseTopic}}. Dual-voice authored separately, NEVER pronoun-substituted (replaces app copy with 'draining they' / 'how they thinks' bugs).",
+   "body_you": "With Pisces on the {houseOrdinal} house, {houseTopic} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before you decide what comes next.",
+   "body_they": "With Pisces on the {houseOrdinal} house, {houseTopic} may not follow a straight line. This area needs time, quiet, and room for impressions to settle before they decide what comes next.",
+   "review_status": "needs_review",
+   "notes": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-M1-Sign-Expression-Rewrites-REVIEW.md); flips to approved on collision rulings.",
    "approved_via": "owner sign-off, chat 2026-07-22"
   },
   {
    "contentKey": "fallback-hook/empty-house-ruler",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{signTitle}} answers to {{rulerRef}}, so this house takes its cues from wherever {{rulerRef}} sits in your chart.",
-   "body_they": "{{signTitle}} answers to {{rulerRef}}, so this house takes its cues from wherever {{rulerRef}} sits in their chart.",
+   "body_you": "{{rulerRefCap}} rules {{signTitle}}, so this house takes its cues from wherever {{rulerRef}} sits in your chart.",
+   "body_they": "{{rulerRefCap}} rules {{signTitle}}, so this house takes its cues from wherever {{rulerRef}} sits in their chart.",
    "review_status": "approved",
    "notes": "Empty-house M2: single traditional-ruler handoff. The renderer supplies primaryRuler only.",
    "approved_via": "owner-approved empty-house refinement, 2026-07-29"
@@ -21708,8 +21711,8 @@
    "contentKey": "fallback-hook/empty-house-close",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses your {{houseOrdinal}} house, this side of your life steps forward and asks for real decisions.",
-   "body_they": "Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses their {{houseOrdinal}} house, this side of their life steps forward and asks for real decisions.",
+   "body_you": "Timing: Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses your {{houseOrdinal}} house, this side of your life steps forward and asks for real decisions.",
+   "body_they": "Timing: Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses their {{houseOrdinal}} house, this side of their life steps forward and asks for real decisions.",
    "review_status": "approved",
    "notes": "Empty-house M5: activation close without repeating the jurisdiction list.",
    "approved_via": "owner-approved empty-house refinement, 2026-07-29"
@@ -40016,15 +40019,15 @@
    "contentKey": "fallback-hook/sky-placement-hook/sun/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You've been running on autopilot through a version of yourself that needs updating. The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with. Use it on the part of your life that has been needing your attention.",
-   "body_they": "You've been running on autopilot through a version of yourself that needs updating. The Sun's move into Leo hands everyone a month of warm, expressive, spotlight-seeking light to work with. Use it on the part of your life that has been needing your attention.",
+   "body_you": "Somewhere along the way, you switched to autopilot on a version of yourself that needs updating. A change of season is the natural time to look up.",
+   "body_they": "Somewhere along the way, you switched to autopilot on a version of yourself that needs updating. A change of season is the natural time to look up.",
    "review_status": "approved",
    "source_keys": [
-    "owner screenshot 2026-07-27",
-    "outputs/sky-placement-gold-sun-leo.md"
+    "TLDR-Sky-Placement-Hooks-Rewrite-DRAFT.md",
+    "owner correction 2026-07-29"
    ],
-   "notes": "Voice-first placement hook. Pair-authored copy overrides the generic planet hook.",
-   "approved_via": "owner feedback, 2026-07-27"
+   "notes": "Revised hook keeps duration and sign-style mechanics in the lived slot.",
+   "approved_via": "owner correction, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/sun/leo",
@@ -40289,6 +40292,216 @@
    "approved_via": "owner feedback, 2026-07-27"
   },
   {
+   "contentKey": "fallback-hook/sky-placement-tagline/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Show the work",
+   "body_they": "Show the work",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/sun/leo",
+    "fallback-hook/sky-placement-lived/sun/leo",
+    "fallback-hook/sky-placement-turn/sun/leo"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/sun/leo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Put one piece of work you are proud of where other people can see it.\nGive credit out loud before asking for your own.\nChoose one project worth the spotlight and finish its visible version.",
+   "body_they": "Put one piece of work you are proud of where other people can see it.\nGive credit out loud before asking for your own.\nChoose one project worth the spotlight and finish its visible version.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/sun/leo",
+    "fallback-hook/sky-placement-lived/sun/leo",
+    "fallback-hook/sky-placement-turn/sun/leo"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Feel it off the clock",
+   "body_they": "Feel it off the clock",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/moon/capricorn",
+    "fallback-hook/sky-placement-lived/moon/capricorn",
+    "fallback-hook/sky-placement-turn/moon/capricorn"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/moon/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Name the feeling before turning it into another task.\nLeave one nonessential item unfinished and ask what the pressure was protecting.\nAsk for help with one responsibility you keep treating as proof of competence.",
+   "body_they": "Name the feeling before turning it into another task.\nLeave one nonessential item unfinished and ask what the pressure was protecting.\nAsk for help with one responsibility you keep treating as proof of competence.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/moon/capricorn",
+    "fallback-hook/sky-placement-lived/moon/capricorn",
+    "fallback-hook/sky-placement-turn/moon/capricorn"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Say it without hints",
+   "body_they": "Say it without hints",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/mercury/cancer",
+    "fallback-hook/sky-placement-lived/mercury/cancer",
+    "fallback-hook/sky-placement-turn/mercury/cancer"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/mercury/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "State what happened before explaining what you think the other person meant.\nAsk for the response you need instead of hoping someone reads your tone.\nRevisit one family conversation with the missing sentence written down first.",
+   "body_they": "State what happened before explaining what you think the other person meant.\nAsk for the response you need instead of hoping someone reads your tone.\nRevisit one family conversation with the missing sentence written down first.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/mercury/cancer",
+    "fallback-hook/sky-placement-lived/mercury/cancer",
+    "fallback-hook/sky-placement-turn/mercury/cancer"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Help without keeping score",
+   "body_they": "Help without keeping score",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/venus/virgo",
+    "fallback-hook/sky-placement-lived/venus/virgo",
+    "fallback-hook/sky-placement-turn/venus/virgo"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/venus/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Do one useful thing for someone without correcting how they receive it.\nBefore buying, name the daily problem the purchase will actually solve.\nAsk what support would help instead of deciding for the other person.",
+   "body_they": "Do one useful thing for someone without correcting how they receive it.\nBefore buying, name the daily problem the purchase will actually solve.\nAsk what support would help instead of deciding for the other person.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/venus/virgo",
+    "fallback-hook/sky-placement-lived/venus/virgo",
+    "fallback-hook/sky-placement-turn/venus/virgo"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Say the raw thing",
+   "body_they": "Say the raw thing",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/moon/scorpio",
+    "fallback-hook/sky-placement-lived/moon/scorpio",
+    "fallback-hook/sky-placement-turn/moon/scorpio"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/moon/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Ask the direct question instead of testing whether someone notices your silence.\nWrite down the fact, the fear, and the story you built between them.\nGive the feeling one honest sentence before it turns into suspicion.",
+   "body_they": "Ask the direct question instead of testing whether someone notices your silence.\nWrite down the fact, the fear, and the story you built between them.\nGive the feeling one honest sentence before it turns into suspicion.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/moon/scorpio",
+    "fallback-hook/sky-placement-lived/moon/scorpio",
+    "fallback-hook/sky-placement-turn/moon/scorpio"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Go first without apology",
+   "body_they": "Go first without apology",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/chiron/aries",
+    "fallback-hook/sky-placement-lived/chiron/aries",
+    "fallback-hook/sky-placement-turn/chiron/aries"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/chiron/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Ask for what you want without adding a reason that makes it easier to refuse.\nTake one visible first step before confidence arrives.\nWhen anger rises, name the boundary underneath it before choosing the fight.",
+   "body_they": "Ask for what you want without adding a reason that makes it easier to refuse.\nTake one visible first step before confidence arrives.\nWhen anger rises, name the boundary underneath it before choosing the fight.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/chiron/aries",
+    "fallback-hook/sky-placement-lived/chiron/aries",
+    "fallback-hook/sky-placement-turn/chiron/aries"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-tagline/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "fragment",
+   "body_you": "Question who controls the system",
+   "body_they": "Question who controls the system",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/pluto/aquarius",
+    "fallback-hook/sky-placement-lived/pluto/aquarius",
+    "fallback-hook/sky-placement-turn/pluto/aquarius"
+   ],
+   "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-moves/pluto/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Trace one shared rule back to the person or institution that benefits from it.\nProtect the dissenting voice before the group decides it speaks for everyone.\nPut your time behind one collective project whose power is actually shared.",
+   "body_they": "Trace one shared rule back to the person or institution that benefits from it.\nProtect the dissenting voice before the group decides it speaks for everyone.\nPut your time behind one collective project whose power is actually shared.",
+   "review_status": "approved",
+   "source_keys": [
+    "fallback-hook/sky-placement-hook/pluto/aquarius",
+    "fallback-hook/sky-placement-lived/pluto/aquarius",
+    "fallback-hook/sky-placement-turn/pluto/aquarius"
+   ],
+   "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
+   "approved_via": "owner directive, 2026-07-29"
+  },
+  {
    "contentKey": "fallback-hook/sky-placement-opening/sun/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "clause",
@@ -40357,6 +40570,20 @@
    ],
    "notes": "Impact & Clarity effect-and-catch slot. The renderer supplies the applying/exact fact sentence.",
    "approved_via": "owner-supplied locked gold, 2026-07-27"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The Full Moon in {{moonSignTitle}} peaks on {{exactDate}}, opposite the Sun in {{sunSignTitle}}. Personal recognition comes into tension with the expectations of the group. Notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. Let the information settle before turning one difficult moment into a final decision.",
+   "body_they": "The Full Moon in {{moonSignTitle}} peaks on {{exactDate}}, opposite the Sun in {{sunSignTitle}}. Personal recognition comes into tension with the expectations of the group. Notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. Let the information settle before turning one difficult moment into a final decision.",
+   "review_status": "approved",
+   "source_keys": [
+    "authored/sky-lunation-macro/full-moon/aquarius",
+    "owner correction 2026-07-29"
+   ],
+   "notes": "Aquarius Full Moon event paragraph for the Sun and Moon placement pages. Sign and date slots are engine-computed.",
+   "approved_via": "owner correction, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-opening/pluto/aquarius",
@@ -46429,14 +46656,14 @@
    "contentKey": "fallback-hook/sky-placement-moves/saturn/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Design a simple workflow that includes every team member’s role and share it openly.\nHost a monthly check-in focused on practical progress, not just vision talks.",
-   "body_they": "Design a simple workflow that includes every team member’s role and share it openly.\nHost a monthly check-in focused on practical progress, not just vision talks.",
+   "body_you": "Design a simple workflow that includes every team member’s role and share it openly.\nHost a monthly check-in focused on practical progress, not just vision talks.\nTake responsibility for one shared rule you usually criticize from the sidelines.",
+   "body_they": "Design a simple workflow that includes every team member’s role and share it openly.\nHost a monthly check-in focused on practical progress, not just vision talks.\nTake responsibility for one shared rule you usually criticize from the sidelines.",
    "review_status": "approved",
    "source_keys": [
     "data/placements/sign/saturn-aquarius.json"
    ],
-   "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-   "approved_via": "owner approval in Codex, 2026-07-27"
+   "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval. Third move added to complete the universal three-move presentation.",
+   "approved_via": "owner approval in Codex, 2026-07-27; universal presentation completion, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/saturn/aries",

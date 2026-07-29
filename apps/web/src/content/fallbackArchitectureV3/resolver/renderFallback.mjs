@@ -69,6 +69,7 @@ function mustache(body, ctx) {
     return !v || (Array.isArray(v) && v.length === 0) ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => (ctx[key] ?? `{{${key}}}`));
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => (ctx[key] ?? `{${key}}`));
   return body;
 }
 
@@ -330,9 +331,10 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
     throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
   }
   const REF = { sun: "the Sun", moon: "the Moon" };
+  const rulerRef = REF[ruler] ?? title(ruler);
   const ctx = {
     houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-    rulerRef: REF[ruler] ?? title(ruler), rulerTitle: title(ruler),
+    rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
     rulerSignTitle: rulerSign ? title(rulerSign) : null,
     rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, rulerHouseTopic, placementLine,
   };

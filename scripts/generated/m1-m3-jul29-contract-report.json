@@ -1,0 +1,152 @@
+{
+  "files": {
+    "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json": {
+      "jul29NeedsReviewRows": 13,
+      "jul29PlacementPositiveTests": 3,
+      "hurtFlags": [
+        {
+          "contentKey": "fallback-hook/placement-sentence/moon/leo",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        },
+        {
+          "contentKey": "fallback-hook/placement-sentence/sun/leo",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        },
+        {
+          "contentKey": "fallback-hook/placement-sentence/sun/scorpio",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        },
+        {
+          "contentKey": "fallback-hook/placement-sentence/venus/aries",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        },
+        {
+          "contentKey": "fallback-hook/placement-sentence/venus/capricorn",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        },
+        {
+          "contentKey": "fallback-hook/placement-sentence/venus/leo",
+          "review_status": "approved",
+          "fields": [
+            "body_you",
+            "body_they"
+          ]
+        }
+      ],
+      "houseCuspCollisionCount": 10,
+      "houseCuspCollisions": [
+        {
+          "stem": "on the house",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/aries",
+            "fallback-hook/house-cusp/cancer",
+            "fallback-hook/house-cusp/capricorn",
+            "fallback-hook/house-cusp/gemini",
+            "fallback-hook/house-cusp/leo",
+            "fallback-hook/house-cusp/libra",
+            "fallback-hook/house-cusp/pisces",
+            "fallback-hook/house-cusp/sagittarius",
+            "fallback-hook/house-cusp/scorpio",
+            "fallback-hook/house-cusp/taurus",
+            "fallback-hook/house-cusp/virgo"
+          ]
+        },
+        {
+          "stem": "this area works",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/gemini",
+            "fallback-hook/house-cusp/leo"
+          ]
+        },
+        {
+          "stem": "area works best",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/leo"
+          ]
+        },
+        {
+          "stem": "become clearer through",
+          "rows": [
+            "fallback-hook/house-cusp/libra",
+            "fallback-hook/house-cusp/virgo"
+          ]
+        },
+        {
+          "stem": "best when you",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/leo"
+          ]
+        },
+        {
+          "stem": "house become clearer",
+          "rows": [
+            "fallback-hook/house-cusp/libra",
+            "fallback-hook/house-cusp/virgo"
+          ]
+        },
+        {
+          "stem": "the house become",
+          "rows": [
+            "fallback-hook/house-cusp/libra",
+            "fallback-hook/house-cusp/virgo"
+          ]
+        },
+        {
+          "stem": "the house run",
+          "rows": [
+            "fallback-hook/house-cusp/cancer",
+            "fallback-hook/house-cusp/scorpio"
+          ]
+        },
+        {
+          "stem": "when you can",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/leo"
+          ]
+        },
+        {
+          "stem": "works best when",
+          "rows": [
+            "fallback-hook/house-cusp/aquarius",
+            "fallback-hook/house-cusp/leo"
+          ]
+        }
+      ]
+    },
+    "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs": {
+      "placementPositiveTestGate": true,
+      "positiveTestMirrorFields": 3
+    },
+    "scripts/test-reader-facing-content-contract.mjs": {
+      "bannedWordsReportedNotAutoEdited": [
+        "hurt"
+      ],
+      "collisionReportScope": "all 12 house-cusp rows"
+    }
+  }
+}

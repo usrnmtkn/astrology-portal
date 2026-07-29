@@ -88,6 +88,7 @@ function mustache(body: string, ctx: Ctx): string {
     return !v || (Array.isArray(v) && v.length === 0) ? inner : "";
   });
   body = body.replace(/\{\{([\w.]+)\}\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{{${key}}}`);
+  body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => (ctx[key] as string | undefined) ?? `{${key}}`);
   return body;
 }
 
@@ -314,9 +315,10 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
     const REF: Record<string, string> = { sun: "the Sun", moon: "the Moon" };
+    const rulerRef = REF[ruler] ?? title(ruler);
     const ctx: Record<string, string | null> = {
       houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-      rulerRef: REF[ruler] ?? title(ruler), rulerTitle: title(ruler),
+      rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, rulerHouseTopic, placementLine,
     };
