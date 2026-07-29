@@ -1711,6 +1711,27 @@ function textPreview(text: string, characterLimit = synastryCardPreviewCharacter
 const transitCardPreviewSentenceLimit = 2;
 const transitCardPreviewCharacterLimit = 280;
 
+function transitBodyWithoutRepeatedWindow(text: string, windowLabel?: string | null) {
+  const normalizedWindow = windowLabel?.replace(/\s+/g, " ").trim();
+  const trimmedText = text.trimStart();
+
+  if (!normalizedWindow) {
+    return text;
+  }
+
+  const repeatedWindowPrefix = `${normalizedWindow},`;
+
+  if (!trimmedText.startsWith(repeatedWindowPrefix)) {
+    return text;
+  }
+
+  const body = trimmedText.slice(repeatedWindowPrefix.length).trimStart();
+
+  return body
+    ? `${body.charAt(0).toUpperCase()}${body.slice(1)}`
+    : "";
+}
+
 function transitCardPreview(text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
 
@@ -18651,7 +18672,9 @@ function ProfileView({
         )
       );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
-      const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedHouseTransit));
+      const rowSummary = transitCardPreview(
+        transitBodyWithoutRepeatedWindow(normalizedSurfacePreview(normalizedHouseTransit), renderedWindow)
+      );
       const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
       const articleSections = normalizedHouseTransit.sections.map((section) => ({
         heading: section.heading,
@@ -19197,14 +19220,17 @@ function ManualChartsPanel({
             currentSky.generatedAt
           )
         );
+        const renderedWindow = normalized.sections[0]?.window ?? timingRange;
 
         return {
           activation,
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
-          rowSummary: transitCardPreview(normalizedSurfacePreview(normalized)),
+          rowSummary: transitCardPreview(
+            transitBodyWithoutRepeatedWindow(normalizedSurfacePreview(normalized), renderedWindow)
+          ),
           durationLabel,
-          timingRange: normalized.sections[0]?.window ?? timingRange,
+          timingRange: renderedWindow,
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
         };

@@ -92,13 +92,15 @@ const inlineWindow = (w: string | null | undefined): string | null => {
 };
 
 const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
-const FRIEND_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|within|find|finds|found|help|helps|helped|give|gives|gave|pull|pulls|pulled|support|supports|supported|affect|affects|affected|remind|reminds|reminded|ask|asks|asked|tell|tells|told|leave|leaves|left|show|shows|showed|make|makes|made|let|lets|keep|keeps|kept|cost|costs|teach|teaches|taught|push|pushes|pushed|hold|holds|held|stop|stops|stopped)\s+you\b/gi;
+const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
+const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
+const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
 
 function possessiveDisplayName(name: string) {
   return `${name}'s`;
 }
 
-function friendVoiceFromReaderCopy(body: string, name: string) {
+export function friendVoiceFromReaderCopy(body: string, name: string) {
   let named = false;
   const namePossessive = possessiveDisplayName(name);
   const nameForPossessive = (source: string) => {
@@ -111,6 +113,11 @@ function friendVoiceFromReaderCopy(body: string, name: string) {
     named = true;
     return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
   };
+  const nameForObject = () => {
+    const objectReference = named ? "them" : name;
+    named = true;
+    return objectReference;
+  };
 
   let rendered = body
     .replace(/\byourself\b/gi, "themselves")
@@ -120,7 +127,12 @@ function friendVoiceFromReaderCopy(body: string, name: string) {
       nameForContraction(verb.toLowerCase().replace("’", "'"))
     ))
     .replace(/\byour\b/gi, (source: string) => nameForPossessive(source))
-    .replace(FRIEND_OBJECT_YOU, (_, governor: string) => `${governor} them`)
+    .replace(
+      FRIEND_REPORTED_SUBJECT_YOU,
+      (_, governor: string, auxiliary: string) => `${governor} they ${auxiliary}`
+    )
+    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
+    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
     .replace(/\byou\b/gi, (source: string) => (/^[A-Z]/.test(source) ? "They" : "they"));
 
   rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix: string, verb: string) => {

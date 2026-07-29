@@ -210,14 +210,14 @@ function sentenceForIndex(text: string, index: number) {
 }
 
 export function findPronounGrammarIssues(text: string): PronounGrammarIssue[] {
-  const patterns: Array<{ label: string; pattern: RegExp }> = [
+  const patterns: Array<{ label: string; pattern: RegExp; ignorePrefix?: RegExp }> = [
     {
       label: "object position uses subject they",
-      pattern: /\b(?:in|to|for|with|without|around|before|after|from|of|at|near|inside|outside|through|toward|towards|beside|behind|within)\s+they\b/gi
+      pattern: /\b(?:in|to|for|with|without|around|from|of|at|near|inside|outside|through|toward|towards|beside|behind|within)\s+they\b/gi
     },
     {
       label: "object verb uses subject they",
-      pattern: /\b(?:reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|affect|affects|affected|remind|reminds|reminded)\s+they\b/gi
+      pattern: /\b(?:reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|affect|affects|affected|remind|reminds|reminded|satisfy|satisfies|satisfied|satisfying)\s+they\b/gi
     },
     {
       label: "they with singular verb",
@@ -229,16 +229,24 @@ export function findPronounGrammarIssues(text: string): PronounGrammarIssue[] {
     },
     {
       label: "object pronoun used as subject",
-      pattern: /\b(?:her|him|them)\s+(?:is|are|was|were|has|have|can|may|will|would|could|should|needs?|wants?|moves?|lives?|acts?|builds?|learns?|notices?)\b/gi
+      pattern: /\b(?:her|him|them)\s+(?:is|are|was|were|has|have|can|may|will|would|could|should|needs?|wants?|moves?|lives?|acts?|builds?|learns?|notices?)\b/gi,
+      ignorePrefix: /\b(?:around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|within|let|lets|letting|make|makes|made|making|help|helps|helped|helping|allow|allows|allowed|allowing|satisfy|satisfies|satisfied|satisfying)\s+$/i
     }
   ];
 
-  return patterns.flatMap(({ label, pattern }) => (
-    [...text.matchAll(pattern)].map((match) => ({
-      index: match.index ?? 0,
-      pattern: label,
-      sentence: sentenceForIndex(text, match.index ?? 0)
-    }))
+  return patterns.flatMap(({ ignorePrefix, label, pattern }) => (
+    [...text.matchAll(pattern)]
+      .filter((match) => {
+        const index = match.index ?? 0;
+        const prefix = text.slice(Math.max(0, index - 32), index);
+
+        return !ignorePrefix?.test(prefix);
+      })
+      .map((match) => ({
+        index: match.index ?? 0,
+        pattern: label,
+        sentence: sentenceForIndex(text, match.index ?? 0)
+      }))
   ));
 }
 
