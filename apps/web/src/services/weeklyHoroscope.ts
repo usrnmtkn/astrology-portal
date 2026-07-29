@@ -68,6 +68,12 @@ type WeeklyWindow = {
   dateKeys: string[];
 };
 
+type WeeklyEphemerisData = {
+  events: LunarCalendarEvent[];
+  snapshots: SkySnapshot[];
+  lunationEventSkies: Map<string, SkySnapshot>;
+};
+
 type TransitContact = {
   transiting: string;
   natal: string;
@@ -119,6 +125,8 @@ const signRulers: Record<string, string> = {
   pisces: "jupiter"
 };
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const weeklyEphemerisCache = new Map<string, Promise<WeeklyEphemerisData>>();
+const maxWeeklyEphemerisCacheEntries = 12;
 
 export const weeklyContentImportCounts = Object.freeze({
   total: sourceRows.length,
@@ -189,6 +197,60 @@ function wholeSignHouse(sign: string, risingSign: string) {
   const signIndex = signs.indexOf(normalizeId(sign));
   const risingIndex = signs.indexOf(normalizeId(risingSign));
   return signIndex < 0 || risingIndex < 0 ? null : ((signIndex - risingIndex + 12) % 12) + 1;
+}
+
+function weeklyEphemerisCacheKey(location: LocationInput, window: WeeklyWindow) {
+  return [
+    window.weekStart,
+    window.weekEnd,
+    location.latitude.toFixed(4),
+    location.longitude.toFixed(4),
+    location.timeZone || "UTC"
+  ].join("|");
+}
+
+async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow): Promise<WeeklyEphemerisData> {
+  const key = weeklyEphemerisCacheKey(location, window);
+  const cached = weeklyEphemerisCache.get(key);
+  if (cached) return cached;
+
+  const request = (async () => {
+    const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
+    const rangeStart = new Date(`${window.weekStart}T00:00:00Z`);
+    const rangeEnd = new Date(`${window.weekEnd}T23:59:59.999Z`);
+    const { getAstrodienstSky, getLunarCalendarRangeEvents } = await import("./ephemeris");
+    const [rangeEvents, ...snapshots] = await Promise.all([
+      getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
+      ...calculationDates.map((date) => getAstrodienstSky(location, date))
+    ]);
+    const dateKeySet = new Set(window.dateKeys);
+    const events = rangeEvents
+      .filter((event) => dateKeySet.has(event.dateKey))
+      .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+    const lunationEvents = events.filter((event) => event.type === "lunation");
+    const lunationEventSkies = new Map<string, SkySnapshot>(
+      await Promise.all(lunationEvents.map(async (event) => [
+        event.id,
+        await getAstrodienstSky(location, new Date(event.startsAt))
+      ] as const))
+    );
+
+    return { events, snapshots, lunationEventSkies };
+  })();
+
+  weeklyEphemerisCache.set(key, request);
+  void request.catch(() => {
+    if (weeklyEphemerisCache.get(key) === request) {
+      weeklyEphemerisCache.delete(key);
+    }
+  });
+
+  if (weeklyEphemerisCache.size > maxWeeklyEphemerisCacheEntries) {
+    const oldestKey = weeklyEphemerisCache.keys().next().value;
+    if (oldestKey) weeklyEphemerisCache.delete(oldestKey);
+  }
+
+  return request;
 }
 
 export function lunationBlendFacts(
@@ -482,23 +544,7 @@ export async function buildWeeklyHoroscope({
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
-  const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
-  const { getAstrodienstSky, getLunarCalendarMonth } = await import("./ephemeris");
-  const [calendar, ...snapshots] = await Promise.all([
-    getLunarCalendarMonth(location, calculationDates[3], { detail: "full" }),
-    ...calculationDates.map((date) => getAstrodienstSky(location, date, { includeTransitWindows: true }))
-  ]);
-  const dateKeySet = new Set(window.dateKeys);
-  const events = calendar.events
-    .filter((event) => dateKeySet.has(event.dateKey))
-    .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
-  const lunationEvents = events.filter((event) => event.type === "lunation");
-  const lunationEventSkies = new Map<string, SkySnapshot>(
-    await Promise.all(lunationEvents.map(async (event) => [
-      event.id,
-      await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
-    ] as const))
-  );
+  const { events, snapshots, lunationEventSkies } = await loadWeeklyEphemeris(location, window);
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
   const contactsByDay = snapshots.map((snapshot) => allTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();

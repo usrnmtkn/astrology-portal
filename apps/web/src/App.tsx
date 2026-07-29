@@ -244,6 +244,7 @@ import {
   type PersonReference,
   type PronounChoice
 } from "./services/personReferences";
+import { groupBondTransitActivations } from "./services/bondTransitGrouping";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
@@ -7703,7 +7704,7 @@ function normalizeEmptyHouseCardSurface(
   try {
     rendered = fallbackRendererV3.renderNatalEmptyHouse({
       house,
-      ruler: normalizeContentIdPart(ruler),
+      primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
       rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
       sign: normalizeContentIdPart(sign),
@@ -7787,7 +7788,7 @@ function normalizeEmptyHouseDetailSurface({
   try {
     const rendered = fallbackRendererV3.renderNatalEmptyHouse({
       house,
-      ruler: normalizeContentIdPart(ruler),
+      primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
       rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
       sign: normalizeContentIdPart(sign),
@@ -8600,8 +8601,6 @@ function normalizeTransitHouseSurface(
   };
 }
 
-// Bond-effect copy is keyed by transiting planet + soft/hard family, so cards that share
-// both must never share a variant or adjacent cards read identically (owner report 2026-07-28).
 const bondEffectHeavyPlanets = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 
 function bondEffectFamily(transiting: string, aspect: string) {
@@ -8619,68 +8618,94 @@ function activeBondTransitCards(
   friendTransits: TransitItem[],
   readerTransits: TransitItem[],
   friendName: string,
+  friendPronouns: PronounChoice | null | undefined,
   generatedAt: string
 ) {
-  const eligible = contacts.flatMap((contact) => {
+  const candidates = contacts.flatMap((contact) => {
     const activations = [
-      ...readerTransits.map((transit) => ({ transit, endpoint: contact.yourPoint.name })),
-      ...friendTransits.map((transit) => ({ transit, endpoint: contact.friendPoint.name }))
-    ];
-    const activation = activations.find(({ transit, endpoint }) => (
-      transit.natalPoint === endpoint
+      ...readerTransits.map((transit) => ({
+        transit,
+        endpointOwner: "reader" as const,
+        endpointPlanet: contact.yourPoint.name,
+        counterpartPlanet: contact.friendPoint.name
+      })),
+      ...friendTransits.map((transit) => ({
+        transit,
+        endpointOwner: "friend" as const,
+        endpointPlanet: contact.friendPoint.name,
+        counterpartPlanet: contact.yourPoint.name
+      }))
+    ].filter(({ transit, endpointPlanet }) => (
+      normalizeContentIdPart(transit.natalPoint) === normalizeContentIdPart(endpointPlanet)
       && Math.min(...transit.arc) <= 1
-    ))?.transit;
+    ));
 
-    if (!activation) {
-      return [];
-    }
+    return activations.flatMap(({
+      transit: activation,
+      endpointOwner,
+      endpointPlanet,
+      counterpartPlanet
+    }) => {
+      const activationAspect = normalizeFallbackV3Aspect(activation.aspect);
+      const transiting = normalizeContentIdPart(activation.transitPlanet);
 
-    const activationAspect = normalizeFallbackV3Aspect(activation.aspect);
-    const contactAspect = normalizeFallbackV3Aspect(contact.aspect);
+      if (!activationAspect || !normalizeFallbackV3Aspect(contact.aspect)) {
+        return [];
+      }
 
-    if (!activationAspect || !contactAspect) {
-      return [];
-    }
+      // Walker canon: Lilith contacts render on conjunction and opposition only.
+      if (transiting === "lilith" && activationAspect !== "conjunction" && activationAspect !== "opposition") {
+        return [];
+      }
 
-    const transiting = normalizeContentIdPart(activation.transitPlanet);
-
-    // Walker canon: Lilith contacts render on conjunction and opposition only.
-    if (transiting === "lilith" && activationAspect !== "conjunction" && activationAspect !== "opposition") {
-      return [];
-    }
-
-    return [{ contact, activation, activationAspect, contactAspect, transiting }];
+      return [{
+        activation,
+        activationId: activation.id,
+        aspect: activationAspect,
+        contactId: contact.id,
+        counterpartPlanet,
+        endpointOwner,
+        endpointPlanet,
+        transiting
+      }];
+    });
   });
+  const groups = groupBondTransitActivations(candidates);
 
-  // Deterministic per-friend starting point, then rotate within each planet+family group
-  // so cards drawing on the same effect row always land on different variants.
+  // Exact per-aspect rows ignore variants. Legacy soft/hard fallback rows keep their
+  // deterministic rotation for nodes, Lilith, and missing exact units.
   const groupCounts = new Map<string, number>();
+  const friendPossessivePronoun = ownerDisplayPronouns(friendName, friendPronouns).possessiveAdjective;
 
-  return eligible.flatMap(({ contact, activation, activationAspect, contactAspect, transiting }) => {
-    const groupKey = `${transiting}:${bondEffectFamily(transiting, activationAspect)}`;
-    const indexInGroup = groupCounts.get(groupKey) ?? 0;
-    groupCounts.set(groupKey, indexInGroup + 1);
-    const baseVariant = (stableTransitCopyVariant(friendName, groupKey) ?? 1) - 1;
+  return groups.flatMap((group) => {
+    const familyKey = `${group.transiting}:${bondEffectFamily(group.transiting, group.aspect)}`;
+    const indexInGroup = groupCounts.get(familyKey) ?? 0;
+    groupCounts.set(familyKey, indexInGroup + 1);
+    const baseVariant = (stableTransitCopyVariant(friendName, familyKey) ?? 1) - 1;
     const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderBondTransit({
-        transiting,
-        aspect: activationAspect,
-        planetA: normalizeContentIdPart(contact.yourPoint.name),
-        planetB: normalizeContentIdPart(contact.friendPoint.name),
-        natalAspect: contactAspect,
+        transiting: group.transiting,
+        aspect: group.aspect,
+        endpointPlanet: group.endpointPlanet,
+        endpointOwner: group.endpointOwner,
+        activatedPlanets: group.activatedPlanets,
         otherName: friendName,
-        sign: activation.transitSign ? normalizeContentIdPart(activation.transitSign) : undefined,
+        friendPossessivePronoun,
+        sign: group.activation.transitSign
+          ? normalizeContentIdPart(group.activation.transitSign)
+          : undefined,
         variant: variantSlot === 1 ? undefined : variantSlot,
-        window: personalTransitPackageWindow(activation, generatedAt)
+        window: personalTransitPackageWindow(group.activation, generatedAt)
       });
 
       return [{
-        id: `${contact.id}-${activation.id}`,
+        id: `${group.key}-${group.activationId}`,
         headline: rendered.headline,
-        transitPlanet: activation.transitPlanet,
-        body: readerFacingParagraphs(rendered.parts).join("\n\n")
+        transitPlanet: group.activation.transitPlanet,
+        body: readerFacingParagraphs(rendered.parts).join("\n\n"),
+        effectBody: rendered.parts[0] ?? ""
       }];
     } catch (error) {
       if (error instanceof FallbackV3SourceGapError) {
@@ -19717,6 +19742,7 @@ function ManualChartsPanel({
         selectedFriendTransits,
         profileTransits,
         selectedChart.displayName,
+        selectedChart.pronouns,
         currentSky.generatedAt
       )
     : [];

@@ -41,15 +41,15 @@ const bondAspectRows = fallbackRows.hookRows.filter((row) =>
 );
 assert.equal(bondAspectRows.length, 55, "Bond Batch 14 must contain 55 per-aspect effects.");
 
-const sunSquare = renderBondTransit({ transiting: "sun", aspect: "square", planetA: "venus", planetB: "mars", otherName: "Sofia" });
+const sunSquare = renderBondTransit({ transiting: "sun", aspect: "square", endpointPlanet: "mars", endpointOwner: "friend", activatedPlanets: ["venus"], otherName: "Sofia" });
 assert.match(sunSquare.body, /^Pride gets between you: who gets credit, who decides, whose day mattered more\./u, "Sun square must use the exact-aspect effect.");
 
 const approvedSaturnSquare = "The next few months test this connection: less credit for good intentions, more weight on what actually happens. Show up when you said you would; that is most of the work.";
-const saturnSquare = renderBondTransit({ transiting: "saturn", aspect: "square", planetA: "venus", planetB: "mars", otherName: "Sofia" });
+const saturnSquare = renderBondTransit({ transiting: "saturn", aspect: "square", endpointPlanet: "mars", endpointOwner: "friend", activatedPlanets: ["venus"], otherName: "Sofia" });
 assert.ok(saturnSquare.body.startsWith(approvedSaturnSquare), "Saturn square must preserve the approved rev-2 line byte-for-byte.");
 
 const northNodeHardVariant = fallbackRows.hookRows.find((row) => row.contentKey === "fallback-hook/bond-effect-hard/north-node/variant-2")?.body_you;
-const northNodeSquare = renderBondTransit({ transiting: "north-node", aspect: "square", planetA: "venus", planetB: "mars", otherName: "Sofia", variant: 2 });
+const northNodeSquare = renderBondTransit({ transiting: "north-node", aspect: "square", endpointPlanet: "mars", endpointOwner: "friend", activatedPlanets: ["venus"], otherName: "Sofia", variant: 2 });
 assert.ok(northNodeHardVariant && northNodeSquare.body.startsWith(northNodeHardVariant), "North Node square must retain soft/hard variant fallback.");
 assert.match(
   app,

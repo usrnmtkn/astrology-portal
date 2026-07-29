@@ -27,6 +27,18 @@ export interface TransitHouseFacts { planet: string; house: number; sign?: strin
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
+export interface BondTransitFacts {
+  transiting: string;
+  aspect: string;
+  endpointPlanet: string;
+  endpointOwner: "reader" | "friend";
+  activatedPlanets: string[];
+  otherName: string;
+  friendPossessivePronoun?: string | null;
+  sign?: string | null;
+  variant?: number | null;
+  window?: string | null;
+}
 export interface LunationHoroscopeFacts {
   kind: string;
   sign: string;
@@ -101,6 +113,11 @@ const inlineWindow = (w: string | null | undefined): string | null => {
   if (w.startsWith("For the next")) return "over the next" + w.slice(12);
   if (w.startsWith("For about")) return "for about" + w.slice(9);
   return w.charAt(0).toLowerCase() + w.slice(1);
+};
+const serialList = (items: string[]) => {
+  if (items.length < 2) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 };
 
 const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
@@ -884,7 +901,21 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   // ---- Transits to your bond: a transiting planet activating the synastry contact between
   // the reader and a named friend. Reader-facing; the engine renders the friend's mirrored
   // card by swapping perspective (never by editing this output). ----
-  function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }: { transiting: string; aspect: string; planetA: string; planetB: string; natalAspect?: string; otherName: string; sign?: string; variant?: number; window?: string }): TransitRenderResult {
+  function renderBondTransit({
+    transiting,
+    aspect,
+    endpointPlanet,
+    endpointOwner,
+    activatedPlanets,
+    otherName,
+    friendPossessivePronoun,
+    sign,
+    variant,
+    window: win
+  }: BondTransitFacts): TransitRenderResult {
+    if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
+      throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
+    }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
     // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
@@ -895,21 +926,31 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
-    const paras: string[] = [effect];
     const relation: Record<string, string> = {
-      conjunction: "meeting",
+      conjunction: "conjunct",
       opposition: "opposite",
-      square: "squaring",
-      trine: "in a trine to",
-      sextile: "sextile to",
+      square: "square",
+      trine: "trine",
+      sextile: "sextile",
     };
     const timeClose = inlineWindow(timeOpen);
-    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} the connection between your ${title(planetA)} and ${otherName}'s ${title(planetB)}${timeClose ? ` ${timeClose}` : ""}.`);
-    const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
+    const endpoint = endpointOwner === "reader"
+      ? `your ${title(endpointPlanet)}`
+      : `${otherName}'s ${title(endpointPlanet)}`;
+    const activatedList = endpointOwner === "reader"
+      ? `${otherName}'s ${serialList(activatedPlanets.map(title))}`
+      : serialList(activatedPlanets.map((planet) => `your ${title(planet)}`));
+    const plural = activatedPlanets.length !== 1;
+    const endpointReference = plural && endpointOwner === "friend"
+      ? `${friendPossessivePronoun || "their"} ${title(endpointPlanet)}`
+      : "it";
+    const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
+    const paras = [effect, closing];
+    const body = paras.join("\n\n").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL: Record<string, string> = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} the ${title(planetA)}-${title(planetB)} connection with ${otherName}`;
-    return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
+    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
+    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
   }
 
   // ---- Per-rising lunation horoscope (owner template library): house illuminated ->

@@ -28,21 +28,7 @@
 .weekly-horoscope__macro,
 .weekly-horoscope__aspect,
 .weekly-horoscope__reading {
-  padding: var(--card-row-padding-compact);
   width: 100%;
-}
-
-.weekly-horoscope__macro h3,
-.weekly-horoscope__aspect h3,
-.weekly-horoscope__reading h3 {
-  font-size: var(--text-compact-title);
-}
-
-.weekly-horoscope__macro p,
-.weekly-horoscope__aspect p,
-.weekly-horoscope__reading p {
-  font-size: var(--text-compact-meta);
-  line-height: var(--leading-description);
 }
 
 .weekly-horoscope__aspect .weekly-horoscope__driver,

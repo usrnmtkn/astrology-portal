@@ -312,34 +312,42 @@ export function renderHouseGlossary({ house, voice = "you" }) {
 }
 
 export function renderNatalEmptyHouse(facts, opts = {}) {
-  // facts: { house, sign, rulerSign, rulerHouse, ruler?, voice }. ruler defaults to the
-  // traditional ruler (matches app behavior: Pisces -> Jupiter, Aquarius -> Saturn).
+  // facts: { house, sign, rulerSign, rulerHouse, primaryRuler?, voice }.
+  // Legacy ruler and modernRuler fields are intentionally ignored.
   const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
   const v = voice === "you" ? "you" : "they";
-  const ruler = facts.ruler ?? SIGN_RULER[sign];
+  const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
   const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
   const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null;
   const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
   const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts);
   const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
+  const bridgeFrame = getHook("fallback-hook/empty-house-bridge", v, opts);
   const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
   const note = getHook("fallback-hook/empty-house-explainer", v, opts);
-  const rulerMode = getHook(`fallback-hook/planet-mode/${ruler}`, v, opts);
   const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts) : null;
-  if (!houseTopic || !cusp || !rulerFrame || !closeFrame || !rulerMode) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+  if (!houseTopic || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeFrame || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+    throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+  }
   const REF = { sun: "the Sun", moon: "the Moon" };
   const ctx = {
     houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-    rulerRef: REF[ruler] ?? title(ruler), rulerMode, rulerTitle: title(ruler),
+    rulerRef: REF[ruler] ?? title(ruler), rulerTitle: title(ruler),
     rulerSignTitle: rulerSign ? title(rulerSign) : null,
     rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, rulerHouseTopic, placementLine,
   };
-  const paras = [mustache(cusp, ctx), mustache(rulerFrame, ctx)];
-  if (placementFrame && placementLine && rulerHouse && rulerHouseTopic) paras.push(mustache(placementFrame, ctx));
-  paras.push(mustache(closeFrame, ctx));
+  const paras = [
+    mustache(cusp, ctx),
+    mustache(rulerFrame, ctx),
+    mustache(placementFrame, ctx),
+    mustache(bridgeFrame, ctx),
+    mustache(closeFrame, ctx)
+  ];
   const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
   for (const p of cleaned) if (/\{\{/.test(p)) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} unresolved slot`);
-  return { headline: `${ordinal(house)} House`, note, body: cleaned.join("\n\n"), parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
+  const body = cleaned.join(" ");
+  if (/[—]|--/u.test(body)) throw new RoleViolationError(`Empty-house punctuation gate failed for ${house}/${sign}.`);
+  return { headline: `${ordinal(house)} House`, note, body, parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
 }
 
 // Profection-year line (annual profections): per-person section for Friends Circle

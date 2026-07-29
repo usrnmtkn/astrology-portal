@@ -39,7 +39,7 @@ const EXAMPLES = {
   "Profection years": para(renderProfectionYear({ house: 6, sign: "virgo", voice: "you" }, O)),
   "Transits: effect lines + variants": para(renderTransitAspect({ transiting: "saturn", natal: "mercury", aspect: "square", window: "Until November 13" })),
   "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "trine", otherName: "Sofia" })),
-  "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", planetA: "moon", planetB: "mercury", natalAspect: "trine", otherName: "Jose", window: "This month" })),
+  "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", endpointPlanet: "mercury", endpointOwner: "friend", activatedPlanets: ["moon"], otherName: "Jose", window: "This month" })),
   "Sky page: placements + articles": para(renderSkyPlacement({ planet: "saturn", sign: "aries" })),
   "Sky page: seasons, lunations, eclipses": para(renderSkyLunation({ kind: "full-moon", sign: "aquarius", dateLine: "On July 29" })),
   "Calendar: phases, void, markers": para(renderCalendarPhase({ phase: "full-moon", sign: "cancer" })),

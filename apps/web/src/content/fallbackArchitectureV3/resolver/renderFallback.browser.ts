@@ -44,7 +44,18 @@ export interface PlacementFacts {
   sect?: { hasReliableSect: boolean; isDayChart: boolean; effect: string } | null;
 }
 export interface AngleFacts { angle: "ascendant" | "midheaven" | "descendant" | "imum-coeli"; sign: string; voice: Voice }
-export interface EmptyHouseFacts { house: number; sign: string; rulerSign?: string; rulerHouse?: number; ruler?: string; voice?: Voice }
+export interface EmptyHouseFacts {
+  house: number;
+  sign: string;
+  rulerSign?: string;
+  rulerHouse?: number;
+  primaryRuler?: string;
+  /** @deprecated Empty-house rulership is computed from primaryRuler or the traditional canon. */
+  ruler?: string;
+  /** Explicitly ignored by empty-house assembly. Modern co-rulers are not primary rulers. */
+  modernRuler?: string;
+  voice?: Voice;
+}
 export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition"; voice: Voice }
 export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string }
 export interface RenderOpts { allowUnreviewed?: boolean }
@@ -289,30 +300,38 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   function renderNatalEmptyHouse(facts: EmptyHouseFacts, opts: RenderOpts = {}): RenderResult & { note: string | null } {
     const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
     const v = voice === "you" ? "you" : "they";
-    const ruler = facts.ruler ?? SIGN_RULER[sign];
+    const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
     const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null;
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
     const rulerFrame = getHook("fallback-hook/empty-house-ruler", v, opts);
     const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
+    const bridgeFrame = getHook("fallback-hook/empty-house-bridge", v, opts);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts);
-    const rulerMode = getHook(`fallback-hook/planet-mode/${ruler}`, v, opts);
     const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts) : null;
-    if (!houseTopic || !cusp || !rulerFrame || !closeFrame || !rulerMode) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+    if (!houseTopic || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeFrame || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+      throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
+    }
     const REF: Record<string, string> = { sun: "the Sun", moon: "the Moon" };
     const ctx: Record<string, string | null> = {
       houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-      rulerRef: REF[ruler] ?? title(ruler), rulerMode, rulerTitle: title(ruler),
+      rulerRef: REF[ruler] ?? title(ruler), rulerTitle: title(ruler),
       rulerSignTitle: rulerSign ? title(rulerSign) : null,
       rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null, rulerHouseTopic, placementLine,
     };
-    const paras = [mustache(cusp, ctx), mustache(rulerFrame, ctx)];
-    if (placementFrame && placementLine && rulerHouse && rulerHouseTopic) paras.push(mustache(placementFrame, ctx));
-    paras.push(mustache(closeFrame, ctx));
+    const paras = [
+      mustache(cusp, ctx),
+      mustache(rulerFrame, ctx),
+      mustache(placementFrame, ctx),
+      mustache(bridgeFrame, ctx),
+      mustache(closeFrame, ctx)
+    ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
     for (const p of cleaned) if (/\{\{/.test(p)) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} unresolved slot`);
-    return { headline: `${ordinal(house)} House`, note, body: cleaned.join("\n\n"), parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
+    const body = cleaned.join(" ");
+    if (/[—]|--/u.test(body)) throw new RoleViolationError(`Empty-house punctuation gate failed for ${house}/${sign}.`);
+    return { headline: `${ordinal(house)} House`, note, body, parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
   }
 
 
