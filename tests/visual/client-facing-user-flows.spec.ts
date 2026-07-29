@@ -1678,7 +1678,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("signed-in user can inspect profile chart setup steps", async ({ page }) => {
+  test("signed-in user can edit prefilled profile chart details", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
@@ -1688,9 +1688,6 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Profile options" }).click();
     await page.getByRole("menuitem", { name: "Edit details" }).click();
 
-    await expect(page.getByRole("heading", { name: "Create your chart" })).toBeVisible();
-    await expect(page.getByLabel("Create your chart steps")).toBeVisible();
-    await page.getByRole("button", { name: /Add birth information/ }).click();
     await expect(page.getByRole("heading", { name: "Your birth information" })).toBeVisible();
     await expect(page.getByLabel("Birth month")).toBeVisible();
     await expect(page.getByPlaceholder("Your name")).toBeVisible();
