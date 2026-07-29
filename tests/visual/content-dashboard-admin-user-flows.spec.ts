@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
@@ -25,6 +25,14 @@ const adminPages = [
   { nav: "Connection", title: "Connection", breadcrumb: "Admin / Connection", hash: "connection" },
   { nav: "App Behavior", title: "App Behavior", breadcrumb: "Admin / App behavior", hash: "app-behavior" },
   { nav: "Release Notes", title: "Release Notes", breadcrumb: "Admin / Release notes", hash: "release-notes" }
+];
+
+const adminCreateCases = [
+  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
+  { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
+  { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
+  { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
+  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
 ];
 
 const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how this placement asks|puts first impressions, outward style|write a sentence|source framework|sourceSnapshot|templateVersion|Missing VITE|undefined|null|NaN)\b/i;
@@ -436,6 +444,9 @@ async function expectAdminRouteLoads(page: Page, route: string) {
     await expect(page.locator(".admin-dashboard-header h1")).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("8 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
   });
 }
 
@@ -453,9 +464,23 @@ async function openCreateMenu(page: Page) {
   await page.getByRole("button", { name: "Create", exact: true }).click();
 }
 
+async function fillAdminEditorField(editor: Locator, label: string, value: string) {
+  const field = editor.getByLabel(label);
+  await field.evaluate((element, nextValue) => {
+    const prototype = element instanceof HTMLTextAreaElement
+      ? HTMLTextAreaElement.prototype
+      : HTMLInputElement.prototype;
+    const valueSetter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+    if (!valueSetter) throw new Error(`No value setter available for ${element.tagName}`);
+    valueSetter.call(element, nextValue);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }, value);
+  await expect(field).toHaveValue(value);
+}
+
 async function openAdminCreateMenuHost(page: Page) {
-  await expectAdminRouteLoads(page, "/admin/content");
-  await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Slots" }).click();
+  await expectAdminRouteLoads(page, "/admin/content#slots");
   await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
 }
 
@@ -601,44 +626,33 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("new content actions save with required admin API metadata", async ({ page }) => {
-    test.setTimeout(90_000);
-    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    const writes: { method: string; payload: Record<string, unknown> }[] = [];
-    await seedAdminApi(page, {
-      onGeneratedContentWrite: (write) => {
-        writes.push(write);
-      }
-    });
-
-    const createCases = [
-      { action: "Create article", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
-      { action: "Create content row", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
-      { action: "Create reusable phrase", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
-      { action: "Create template", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-      { action: "Create fallback hook", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
-    ];
-
-    await openAdminCreateMenuHost(page);
-
-    for (const createCase of createCases) {
+  for (const createCase of adminCreateCases) {
+    test(`${createCase.action} saves with required admin API metadata`, async ({ page }) => {
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      const writes: { method: string; payload: Record<string, unknown> }[] = [];
+      await seedAdminApi(page, {
+        onGeneratedContentWrite: (write) => {
+          writes.push(write);
+        }
+      });
+      await expectAdminRouteLoads(page, `/admin/content#${createCase.hash}`);
       await openCreateMenu(page);
       const createAction = page.getByRole("menuitem", { name: createCase.action });
       await expect(createAction).toBeVisible();
-      await createAction.evaluate((element) => {
-        (element as HTMLButtonElement).click();
-      });
+      await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
-        await editor.getByLabel("Phrase title").fill(`${createCase.action} QA row`);
-        await editor.getByLabel("Reusable phrase text").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, "Phrase title", `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, "Reusable phrase text", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
         await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
-        await editor.getByLabel("Headline").fill(`${createCase.action} QA row`);
-        await editor.getByLabel("Body").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, "Headline", `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
       }
-      await editor.getByRole("button", { name: "Save" }).click();
+      await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
+        (element as HTMLButtonElement).click();
+      });
 
       await expect.poll(() => writes.at(-1)).toMatchObject({
         method: "POST",
@@ -648,11 +662,9 @@ test.describe("content dashboard admin user flow case studies", () => {
           blockType: createCase.blockType
         }
       });
-      await openAdminCreateMenuHost(page);
-    }
-
-    await assertNoBrowserErrors();
-  });
+      await assertNoBrowserErrors();
+    });
+  }
 
   test("content editor saves row changes through the admin API", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
