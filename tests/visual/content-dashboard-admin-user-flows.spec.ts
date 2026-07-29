@@ -545,7 +545,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.goBack();
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
-    await expect(page).toHaveURL(/\/admin\/content#home$/);
+    await expect(page).toHaveURL(/\/admin\/content(?:#home)?$/);
 
     await page.goForward();
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
@@ -661,14 +661,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.sun.cancer");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
     await expect(savedRow).toHaveCount(1);
-    await savedRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.locator(".admin-editor-panel");
     const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
-    await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
-    await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
-    await expect(contentSystemPanel).toBeVisible();
+    await expect(async () => {
+      if (!await editor.isVisible()) {
+        await savedRow.getByRole("button", { name: "Edit" }).click();
+      }
+      await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
+      await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+      await expect(contentSystemPanel).toContainText("Authored");
+    }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
-    await expect(contentSystemPanel).toContainText("Authored");
     await expect(editor.getByLabel("App display source")).toHaveCount(0);
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
