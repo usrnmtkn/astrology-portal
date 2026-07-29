@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29b");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29f");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -341,10 +341,13 @@ const connectionTransit = transitRenderer.renderBondTransit({
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^This connection will face pressure over the next few months\./u);
-assert.match(connectionTransit.body, /Saturn is squaring the connection between your Venus and Sofia's Pluto through November 13\./u);
+assert.match(connectionTransit.body, /^The next few months test this connection:/u);
+assert.match(
+  connectionTransit.body,
+  /Saturn is squaring Sofia's Pluto through November 13, activating the connection Sofia's Pluto makes with your Venus\./u
+);
 assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
-assert.match(connectionTransit.body, /Reliability stops being a promise and starts being something you have to prove/u);
+assert.match(connectionTransit.body, /Show up when you said you would; that is most of the work/u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
@@ -361,7 +364,11 @@ const thirdConnectionVariant = transitRenderer.renderBondTransit({
   otherName: "X",
   variant: 3
 });
-assert.notEqual(thirdConnectionVariant.body, baseConnectionVariant.body);
+assert.equal(
+  thirdConnectionVariant.body,
+  baseConnectionVariant.body,
+  "Exact per-aspect bond rows replace variant rotation; variants remain only on the soft/hard fallback lane."
+);
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const aspectStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/aspects.css"), "utf8");
@@ -514,11 +521,9 @@ assert.match(
   /renderBondTransit\(\{[\s\S]*?variant: variantSlot === 1 \? undefined : variantSlot/u,
   "Connection transits must receive their rotated stable variant slot."
 );
-assert.match(
-  appSource,
-  /const groupKey = `\$\{transiting\}:\$\{bondEffectFamily\(transiting, activationAspect\)\}`;[\s\S]*?stableTransitCopyVariant\(friendName, groupKey\)[\s\S]*?\(baseVariant \+ indexInGroup\) % 3/u,
-  "Adjacent connection transits in the same planet/family group must rotate from one shared base so their three previews stay distinct."
-);
+assert.match(appSource, /const groupKey = \[[\s\S]*?item\.endpointOwner[\s\S]*?\]\.join\(":"\);/u);
+assert.match(appSource, /const activatedPlanets = \[\.\.\.new Set\(group\.map/u);
+assert.match(appSource, /endpointOwner,[\s\S]*?endpointPlanet,[\s\S]*?endpointPossessive:[\s\S]*?activatedPlanets/u);
 assert.match(
   runtimeSource,
   /authoredCards: bundle\.transitLib\.authoredCards\.filter\(isReaderEligible\)/u,

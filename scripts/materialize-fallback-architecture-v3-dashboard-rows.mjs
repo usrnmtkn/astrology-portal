@@ -117,12 +117,16 @@ function surfaceForKey(key, explicitSurface) {
   if (explicitSurface === "friends") {
     return "relationship";
   }
+  if (explicitSurface === "weekly-station" || explicitSurface === "weekly-opener") {
+    return "you";
+  }
 
   if (["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].includes(explicitSurface ?? "")) {
     return explicitSurface;
   }
 
   if (key.includes("/compat-") || key.startsWith("fallback-hook/compat")) return "relationship";
+  if (key.startsWith("fallback-hook/lunation-ruler-house/")) return "you";
   if (key.includes("synastry")) return "synastry";
   if (key.includes("/transit-") || key.startsWith("fallback-hook/transit") || key.includes("/empty-house")) return "you";
   if (key.startsWith("fallback-vocab/") || key.startsWith("fallback-template/")) return "modifier";
@@ -132,7 +136,7 @@ function surfaceForKey(key, explicitSurface) {
 }
 
 function modeForKey(key) {
-  if (key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/")) return "article";
+  if (key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/") || key.includes("/sky-lunation-macro/")) return "article";
   if (key.includes("/compat-deep/") || key.includes("/empty-house/") || key.includes("/profection-year/")) return "in_depth";
   return "feed";
 }
@@ -146,7 +150,10 @@ function eventTypeForKey(key, role) {
   if (key.includes("/transit-aspect/")) return "transit-to-natal-aspect";
   if (key.includes("/sky-newmoon/")) return "sky-newmoon";
   if (key.includes("/sky-fullmoon/")) return "sky-fullmoon";
+  if (key.includes("/sky-lunation-macro/")) return "sky-lunation-macro";
   if (key.includes("/sky-season/")) return "planetary-ingress";
+  if (key.startsWith("authored/station/")) return "planetary-station";
+  if (key.startsWith("authored/week-opener/")) return "weekly-horoscope-opener";
   return "fallback-architecture-v3";
 }
 
@@ -231,11 +238,19 @@ function mapPackageRecord(record, bucket) {
 function materializeRows() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
+  const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
+  const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
+  const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
 
   return [
     ...authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material"))

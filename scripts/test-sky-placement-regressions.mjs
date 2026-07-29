@@ -123,6 +123,17 @@ const venusAscendantBondTransit = renderer.renderBondTransit({
   planetB: "ascendant",
   otherName: "X"
 });
+const groupedJoseBondTransit = renderer.renderBondTransit({
+  transiting: "saturn",
+  aspect: "sextile",
+  planetA: "moon",
+  planetB: "mars",
+  otherName: "Jose",
+  endpointOwner: "friend",
+  endpointPlanet: "mars",
+  endpointPossessive: "his",
+  activatedPlanets: ["moon", "midheaven", "lilith"]
+});
 const marsAscendantTransit = renderer.renderTransitAspect({
   transiting: "mars",
   aspect: "square",
@@ -217,8 +228,14 @@ assert.match(
 );
 assert.equal(
   venusAscendantBondTransit.headline,
-  "Mars square the Venus-Ascendant connection with X",
-  "Bond-transit headlines must use the reader-facing connection label."
+  "Mars square X's Ascendant",
+  "Bond-transit headlines must name the aspected endpoint."
+);
+assert.equal(groupedJoseBondTransit.headline, "Saturn sextile Jose's Mars");
+assert.match(
+  groupedJoseBondTransit.body,
+  /activating the connections his Mars makes with your Moon, your Midheaven, and your Lilith\./u,
+  "One endpoint card must list every activated contact once."
 );
 assert.notEqual(
   marsAscendantTransit.body,
