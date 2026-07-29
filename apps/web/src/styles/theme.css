@@ -643,6 +643,7 @@
   --row-min-height: var(--sp-8);
   --account-mobile-label-column: minmax(104px, 0.42fr);
   --account-mobile-row-gap: var(--space-4);
+  --account-table-control-height: 44px;
   --nav-surface: var(--surface);
   --nav-height: var(--sp-8);
   --nav-radius: var(--radius-pill);
