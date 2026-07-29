@@ -2001,7 +2001,7 @@
 
 .synastry-placement-column-inner .synastry-placement-row {
   border-color: var(--card-border);
-  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+  background: var(--synastry-row-bg);
 }
 
 .synastry-placement-table > .synastry-placement-row {
@@ -2012,7 +2012,7 @@
 }
 
 .synastry-placement-table > .synastry-placement-row-inner {
-  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+  background: var(--synastry-row-bg);
 }
 
 .synastry-placement-row-empty {
@@ -2117,6 +2117,7 @@
   display: block;
   width: 24px;
   height: 24px;
+  filter: var(--filter-glyph-current);
   object-fit: contain;
 }
 
@@ -2129,6 +2130,11 @@
 .synastry-placement-row-inner .synastry-placement-glyph,
 .synastry-placement-row-inner .synastry-placement-sign {
   color: var(--synastry-accent);
+}
+
+.synastry-placement-column-inner .synastry-placement-sign-svg,
+.synastry-placement-row-inner .synastry-placement-sign-svg {
+  filter: var(--filter-synastry-inner-glyph);
 }
 
 .synastry-placement-degree,
@@ -2433,7 +2439,7 @@
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-table,
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-row,
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row-inner {
-  background: color-mix(in srgb, var(--synastry-accent) 12%, var(--card-bg));
+  background: var(--synastry-row-bg);
 }
 
 .friend-chart-page .aspect-row,
