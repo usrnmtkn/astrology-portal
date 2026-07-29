@@ -136,6 +136,21 @@ assert.match(renderedParts(friendSunMars), /The Sun square Chris's Mars until Ju
 assert.doesNotMatch(renderedParts(friendSunMars), /\byou(?:r|rs|self)?\b/iu);
 assert.doesNotMatch(renderedParts(friendSunMars), /wants the spotlight to land and stay/u);
 
+const friendSunSun = transitSynastryFallbackRendererV3.renderTransitAspect({
+  transiting: "sun",
+  aspect: "opposition",
+  natal: "sun",
+  voice: "Chris",
+  window: "Until July 31"
+});
+assert.equal(friendSunSun.contentKey, "authored/transit-aspect/sun/sun/hard");
+assert.match(renderedParts(friendSunSun), /A plan they assumed was finished gets handed back with questions/u);
+assert.notEqual(
+  renderedParts(friendSunSun),
+  renderedParts(friendSunMars),
+  "Adjacent Sun transit cards with different natal targets must not reuse the same body."
+);
+
 const friendBond = transitSynastryFallbackRendererV3.renderBondTransit({
   transiting: "lilith",
   aspect: "trine",
@@ -149,6 +164,25 @@ const friendBond = transitSynastryFallbackRendererV3.renderBondTransit({
 assert.match(renderedParts(friendBond), /^The unfiltered versions of you two get along right now/u);
 assert.match(renderedParts(friendBond), /Lilith in Sagittarius is in a trine to the connection between your Ascendant and Chris's Ascendant through August 1\.$/u);
 assert.doesNotMatch(renderedParts(friendBond), /That line is one of|How you come across meets/u);
+
+const friendBondVariantBodies = [undefined, 2, 3].map((variant) => renderedParts(
+  transitSynastryFallbackRendererV3.renderBondTransit({
+    transiting: "lilith",
+    aspect: "trine",
+    planetA: "ascendant",
+    planetB: "ascendant",
+    natalAspect: "trine",
+    otherName: "Chris",
+    sign: "sagittarius",
+    variant,
+    window: "Until August 1"
+  })
+));
+assert.equal(
+  new Set(friendBondVariantBodies).size,
+  3,
+  "The three Lilith bond slots must provide distinct preview language."
+);
 
 const friendLilithAscendant = transitSynastryFallbackRendererV3.renderTransitAspect({
   transiting: "lilith",
