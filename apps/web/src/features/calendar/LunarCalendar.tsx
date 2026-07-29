@@ -513,11 +513,16 @@ function calendarDayTooltipEvents(events: LunarCalendarEvent[]) {
   return monthGridEvents(events).filter((event) => event.type !== "lunation");
 }
 
-function calendarDayTooltipLines(day: LunarCalendarDay, events: LunarCalendarEvent[], timeZone: string) {
+function calendarDayTooltipLines(
+  day: LunarCalendarDay,
+  events: LunarCalendarEvent[],
+  timeZone: string,
+  calendarDays: LunarCalendarDay[]
+) {
   const voidWindow = formatVoidCourseTooltip(day, timeZone);
 
   return [
-    phaseLabelForDay(day),
+    phaseLabelForDay(day, calendarDays),
     `Moon in ${day.moonSign}`,
     ...events.map((event) => event.title),
     ...(voidWindow ? [`Void of course · ${voidWindow}`] : [])
@@ -628,10 +633,31 @@ function primaryLunationForDay(day: LunarCalendarDay) {
   ));
 }
 
-function phaseLabelForDay(day: LunarCalendarDay) {
+function phaseLabelForDay(day: LunarCalendarDay, calendarDays: LunarCalendarDay[]) {
   const lunation = primaryLunationForDay(day);
 
-  return lunation && isEclipseLunation(lunation) ? lunationDisplayLabel(lunation) : day.moonPhase;
+  if (lunation) {
+    return lunationDisplayLabel(lunation);
+  }
+
+  if (day.moonPhase !== "Full Moon" && day.moonPhase !== "New Moon") {
+    return day.moonPhase;
+  }
+
+  const dayIndex = calendarDays.findIndex((calendarDay) => calendarDay.dateKey === day.dateKey);
+  const previousDay = dayIndex > 0 ? calendarDays[dayIndex - 1] : null;
+  const nextDay = dayIndex >= 0 && dayIndex < calendarDays.length - 1 ? calendarDays[dayIndex + 1] : null;
+  const illuminationTrend = nextDay
+    ? nextDay.illumination - day.illumination
+    : previousDay
+      ? day.illumination - previousDay.illumination
+      : 0;
+
+  if (day.moonPhase === "Full Moon") {
+    return illuminationTrend >= 0 ? "Waxing Gibbous" : "Waning Gibbous";
+  }
+
+  return illuminationTrend >= 0 ? "Waxing Crescent" : "Waning Crescent";
 }
 
 function compactEventLabel(event: LunarCalendarEvent) {
@@ -1585,6 +1611,9 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     return writeups;
   }, [selectedDayTransits]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
+  const selectedDayPhase = selectedDay && calendar
+    ? phaseLabelForDay(selectedDay, calendar.days)
+    : null;
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
         .map((note) => ({
@@ -1616,12 +1645,12 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     prompt: null,
     storyPosition: null
   };
-  const selectedPackagePhase = selectedDay
+  const selectedPackagePhase = selectedDay && selectedDayPhase
     ? (() => {
         try {
           const rendered = calendarFallbackRendererV3.renderCalendarPhase({
-            phase: calendarPhaseContentKey(selectedDay.moonPhase),
-            sign: slugContentPart(selectedDay.moonSign)
+            phase: calendarPhaseContentKey(selectedDayPhase),
+            sign: slugContentPart(selectedPrimaryLunation?.sign ?? selectedDay.moonSign)
           }) as ReturnType<typeof calendarFallbackRendererV3.renderCalendarPhase> & { tagline?: string };
 
           return {
@@ -2069,13 +2098,14 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
             {selectedWeekDays.map((day, index) => {
               const isSelected = selectedDateKey === day.dateKey;
               const isToday = day.dateKey === currentDateKey;
+              const dayPhase = phaseLabelForDay(day, calendar.days);
               const marker = day.events.find((event) => event.type === "lunation");
               const tooltipClass = [
                 index >= 5 ? "is-tooltip-left" : index <= 1 ? "is-tooltip-right" : "",
                 "is-tooltip-below"
               ].filter(Boolean).join(" ");
               const tooltipEvents = calendarDayTooltipEvents(day.events);
-              const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone);
+              const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone, calendar.days);
               const dayLabel = tooltipLines.join(". ");
               const voidTooltipLabel = formatVoidCourseTooltip(day, zone);
               const voidLabel = formatVoidCourseGridWindow(day, zone);
@@ -2091,7 +2121,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                 >
                   <span className="lunar-week-day__weekday">{formatWeekday(day, zone)}</span>
                   <span className="lunar-week-day__date">{formatDayNumber(day, zone)}</span>
-                  <span className={`lunar-moon-disc ${isWaxingPhase(day.moonPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                  <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
                   <span className={`lunar-week-day__sign lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                     {day.moonSignGlyph}
                   </span>
@@ -2114,7 +2144,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                   )}
                   {!isSelected && (
                     <span className="lunar-calendar-day-tooltip" role="tooltip">
-                      <span className="lunar-calendar-day-tooltip__phase">{phaseLabelForDay(day)}</span>
+                      <span className="lunar-calendar-day-tooltip__phase">{dayPhase}</span>
                       <span className="lunar-calendar-day-tooltip__sign">Moon in {day.moonSign}</span>
                       {tooltipEvents.length > 0 && (
                         <span className="lunar-calendar-day-tooltip__events">
@@ -2170,6 +2200,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               {calendar.days.map((day, index) => {
                 const isSelected = selectedDateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
+                const dayPhase = phaseLabelForDay(day, calendar.days);
                 const columnIndex = index % 7;
                 const rowIndex = Math.floor(index / 7);
                 const tooltipClass = [
@@ -2178,7 +2209,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                 ].filter(Boolean).join(" ");
                 const previewEvents = monthGridEvents(day.events);
                 const tooltipEvents = calendarDayTooltipEvents(day.events);
-                const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone);
+                const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone, calendar.days);
                 const dayLabel = tooltipLines.join(". ");
                 const voidLabel = formatVoidCourseGridWindow(day, zone);
                 const voidTooltipLabel = formatVoidCourseTooltip(day, zone);
@@ -2196,7 +2227,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                       <span className="lunar-calendar-day__number">{formatDayNumber(day, zone)}</span>
                     </span>
                     <span className="lunar-calendar-day__lunar">
-                      <span className={`lunar-moon-disc ${isWaxingPhase(day.moonPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                      <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
                       <span className={`lunar-calendar-day__moon lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                         {day.moonSignGlyph}
                       </span>
@@ -2228,7 +2259,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                     </span>
                     {!isSelected && (
                       <span className="lunar-calendar-day-tooltip" role="tooltip">
-                        <span className="lunar-calendar-day-tooltip__phase">{phaseLabelForDay(day)}</span>
+                        <span className="lunar-calendar-day-tooltip__phase">{dayPhase}</span>
                         <span className="lunar-calendar-day-tooltip__sign">Moon in {day.moonSign}</span>
                         {tooltipEvents.length > 0 && (
                           <span className="lunar-calendar-day-tooltip__events">

@@ -769,6 +769,14 @@
   box-sizing: border-box;
 }
 
+.chart-fullscreen-overlay:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
+  --chart-fullscreen-wheel-size: min(
+    calc(100svh - 360px),
+    calc(100vw - 180px),
+    680px
+  );
+}
+
 .chart-fullscreen-header {
   display: flex;
   align-items: center;
@@ -809,6 +817,10 @@
   padding-top: clamp(var(--space-1), 1vh, var(--space-3));
 }
 
+.chart-fullscreen-wheel-wrap:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
+  overflow: auto;
+}
+
 .chart-shell--fullscreen {
   width: var(--chart-fullscreen-wheel-size);
   height: var(--chart-fullscreen-wheel-size);
@@ -816,6 +828,11 @@
   max-height: min(100%, 820px);
   justify-self: center;
   margin-inline: auto;
+}
+
+.chart-shell--fullscreen:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
+  height: auto;
+  max-height: none;
 }
 
 .chart-fullscreen-footer {

@@ -822,6 +822,42 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
 
+async function expectAspectInspector(
+  wheel: ReturnType<Page["locator"]>,
+  label: string,
+  pointId?: string
+) {
+  await expect(wheel, `${label} is visible`).toBeVisible();
+
+  let resolvedPointId = pointId;
+
+  if (!resolvedPointId) {
+    const configuredLine = wheel.locator("[data-from-point-id][data-to-point-id]").first();
+    const configuredLineCount = await configuredLine.count();
+
+    if (configuredLineCount > 0) {
+      resolvedPointId = await configuredLine.getAttribute("data-from-point-id") ?? undefined;
+    } else {
+      const configuredPoint = wheel.locator('.aspect-inspector-point[data-inspector-point-id][aria-label*=" orb)"]').first();
+
+      await expect(configuredPoint, `${label} has a configured aspect to inspect`).toBeAttached();
+      resolvedPointId = await configuredPoint.getAttribute("data-inspector-point-id") ?? undefined;
+    }
+  }
+
+  expect(resolvedPointId, `${label} exposes an inspector point id`).toBeTruthy();
+  const point = wheel.locator(`[data-inspector-point-id="${resolvedPointId}"]`);
+
+  await expect(point, `${label} exposes the selected aspect point`).toHaveCount(1);
+  await point.click();
+  await expect(point, `${label} marks the selected point`).toHaveClass(/aspect-inspector-point--selected/);
+  await expect(wheel.locator(".aspect-inspector-summary"), `${label} opens an inspector summary`).toBeVisible();
+  await expect(wheel.locator(".aspect-inspector-line"), `${label} highlights at least one configured aspect`).not.toHaveCount(0);
+
+  await point.press("Enter");
+  await expect(wheel.locator(".aspect-inspector-summary"), `${label} closes from the keyboard`).toHaveCount(0);
+}
+
 test.describe("client-facing user flow case studies", () => {
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
@@ -833,6 +869,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
     await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible();
+    await expectAspectInspector(
+      page.getByRole("region", { name: "Current sky" }),
+      "Current sky wheel"
+    );
 
     const firstPlacement = page.locator(".sky-pl-item button").first();
     await expect(firstPlacement).toBeVisible();
@@ -947,6 +987,46 @@ test.describe("client-facing user flow case studies", () => {
       await chartTab.click();
       await expect(chartTab).toHaveAttribute("aria-selected", "true");
     }
+
+    await assertNoClientErrors();
+  });
+
+  test("aspect inspector works across every saved-chart wheel", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+
+    await page.getByRole("tab", { name: "Compatibility" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki compatibility chart wheel"),
+      "Nikki compatibility wheel"
+    );
+
+    await page.getByRole("tab", { name: "Natal" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki natal chart wheel"),
+      "Nikki natal wheel"
+    );
+
+    await page.getByRole("tab", { name: "Transits" }).click();
+    await expectAspectInspector(
+      page.getByLabel("Nikki transit chart wheel"),
+      "Nikki transit wheel"
+    );
+
+    await selectFriendDetailTab(page, "Synastry");
+    await expectAspectInspector(
+      page.getByLabel("Nikki synastry chart wheel"),
+      "Nikki synastry wheel"
+    );
+
+    await selectFriendDetailTab(page, "Composite");
+    await expectAspectInspector(
+      page.getByLabel(/Nikki and you composite chart wheel/i),
+      "Nikki composite wheel"
+    );
 
     await assertNoClientErrors();
   });
@@ -1152,6 +1232,23 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     }
 
+    await assertNoClientErrors();
+  });
+
+  test("calendar reserves the Full Moon title for the exact lunation day", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-29T03:30:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const selectedDay = page.getByLabel("Selected lunar day");
+    await expect(selectedDay).toBeVisible({ timeout: 15_000 });
+    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Capricorn");
+    await expect(page.getByRole("button", { name: /Full Moon in Aquarius Jul 29 tomorrow/ })).toBeVisible();
+
+    await page.getByLabel("Selected week").getByRole("button", { name: /^Full Moon\. Moon in Aquarius/ }).click();
+    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
+    await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
     await assertNoClientErrors();
   });
 
