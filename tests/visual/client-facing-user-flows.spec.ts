@@ -1338,8 +1338,28 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls.getByRole("button", { name: "Today", exact: true })).toBeVisible();
     await expect(skyControls.getByRole("button", { name: "Tomorrow" })).toBeVisible();
     await expect(skyControls.getByRole("button", { name: "Date" })).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeVisible();
+    const locationButton = skyControls.getByRole("button", { name: /Portsmouth/ });
+    await expect(locationButton).toBeVisible();
+    await locationButton.click();
 
+    const cityInput = page.getByRole("textbox", { name: "City" });
+    await expect(cityInput).toBeVisible();
+    await expect(cityInput).toBeFocused();
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(cityInput).toBeHidden();
+    await expect(dateControl).toBeFocused();
+
+    await dateControl.click();
+    await expect(skyControls).toBeVisible();
+    await skyControls.getByRole("button", { name: "Date" }).click();
+    const datePicker = page.getByRole("region", { name: "Select sky date" });
+    await expect(datePicker).toBeVisible();
+    await page.getByRole("button", { name: "Close date picker" }).click();
+    await expect(datePicker).toBeHidden();
+    await expect(dateControl).toBeFocused();
+
+    await dateControl.click();
+    await expect(skyControls).toBeVisible();
     await skyControls.getByRole("button", { name: "Tomorrow" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
 
