@@ -625,7 +625,9 @@ test.describe("content dashboard admin user flow case studies", () => {
       await openCreateMenu(page);
       const createAction = page.getByRole("menuitem", { name: createCase.action });
       await expect(createAction).toBeVisible();
-      await createAction.click({ force: true });
+      await createAction.evaluate((element) => {
+        (element as HTMLButtonElement).click();
+      });
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
