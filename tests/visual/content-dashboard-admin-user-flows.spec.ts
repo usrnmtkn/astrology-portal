@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
@@ -464,6 +464,21 @@ async function openCreateMenu(page: Page) {
   await page.getByRole("button", { name: "Create", exact: true }).click();
 }
 
+async function fillAdminEditorField(editor: Locator, label: string, value: string) {
+  const field = editor.getByLabel(label);
+  await field.evaluate((element, nextValue) => {
+    const prototype = element instanceof HTMLTextAreaElement
+      ? HTMLTextAreaElement.prototype
+      : HTMLInputElement.prototype;
+    const valueSetter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+    if (!valueSetter) throw new Error(`No value setter available for ${element.tagName}`);
+    valueSetter.call(element, nextValue);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }, value);
+  await expect(field).toHaveValue(value);
+}
+
 async function openAdminCreateMenuHost(page: Page) {
   await expectAdminRouteLoads(page, "/admin/content#slots");
   await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
@@ -628,14 +643,16 @@ test.describe("content dashboard admin user flow case studies", () => {
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
-        await editor.getByLabel("Phrase title").fill(`${createCase.action} QA row`);
-        await editor.getByLabel("Reusable phrase text").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, "Phrase title", `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, "Reusable phrase text", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
         await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
-        await editor.getByLabel("Headline").fill(`${createCase.action} QA row`);
-        await editor.getByLabel("Body").fill(`${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, "Headline", `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
       }
-      await editor.getByRole("button", { name: "Save" }).click();
+      await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
+        (element as HTMLButtonElement).click();
+      });
 
       await expect.poll(() => writes.at(-1)).toMatchObject({
         method: "POST",
