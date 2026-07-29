@@ -27,6 +27,18 @@ export interface TransitHouseFacts { planet: string; house: number; sign?: strin
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
+export interface LunationHoroscopeFacts {
+  kind: string;
+  sign: string;
+  risingSign: string;
+  house?: number;
+  moonHouse?: number;
+  sunHouse?: number | null;
+  ruler?: string | null;
+  rulerHouse?: number | null;
+  uranusHouse?: number | null;
+  uranusLayerActive?: boolean;
+}
 export interface CompatFacts { planet: string; signA: string; signB: string; otherName: string }
 export interface SynastryAspectFacts { planetA: string; planetB: string; aspect: string; otherName: string }
 export interface SkyEvent { type: string; a?: string; b?: string; aspect?: string; sign?: string; aSign?: string; bSign?: string; houseA?: number; houseB?: number; dateLine?: string; exactDate?: string; applying?: boolean }
@@ -571,7 +583,11 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const opp = OPP[sign];
     const axisRow = (hooks.get(`fallback-hook/sky-axis/${sign}-${opp}`) ?? hooks.get(`fallback-hook/sky-axis/${opp}-${sign}`)) as ({ body_you?: string; axis_name?: string } | undefined);
     if (!opener || !close || !lore || !trap) throw new SourceGapError(`SOURCE_GAP: lunation sections for ${sign}`);
-    const paras = [fill(opener, { dateLine, signTitle: title(sign) }) + (mechanics ? ` ${mechanics}` : "")];
+    const macroKind = which === "new" ? "new-moon" : "full-moon";
+    const macro = card(`authored/sky-lunation-macro/${macroKind}/${sign}`);
+    const paras: string[] = [];
+    if (macro?.body) paras.push(macro.body);
+    paras.push(fill(opener, { dateLine, signTitle: title(sign) }) + (mechanics ? ` ${mechanics}` : ""));
     if (isEclipse) {
       const ecOpen = hooks.get(`fallback-hook/sky-eclipse-opener/${which === "new" ? "solar" : "lunar"}`)?.body_you;
       if (ecOpen) paras.push(ecOpen);
@@ -897,13 +913,32 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   }
 
   // ---- Per-rising lunation horoscope (owner template library): house illuminated ->
-  // Release/Shift -> Higher Path. Eclipses skip the Release section per canon and append
-  // the observe-only note. house auto-derives from risingSign + lunation sign (whole sign). ----
+  // sign core -> full-moon counterpoint -> current ruler house -> manifestations ->
+  // Release/Shift -> Higher Path. Eclipses skip Release and append the observe-only note.
+  // All moving-body houses arrive as engine-computed event-time facts. ----
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-  function renderLunationHoroscope({ kind, sign, risingSign, house }: { kind: string; sign: string; risingSign: string; house?: number }): TransitRenderResult {
+  function renderLunationMacro({ kind, sign }: { kind: string; sign: string }): TransitRenderResult {
+    const which = kind === "new-moon" || kind === "eclipse-solar" ? "new-moon" : "full-moon";
+    const macro = card(`authored/sky-lunation-macro/${which}/${sign}`);
+    if (!macro) throw new SourceGapError(`SOURCE_GAP: no lunation macro for ${which}/${sign}`);
+    return result(macro, "authored/sky-lunation-macro");
+  }
+
+  function renderLunationHoroscope({
+    kind,
+    sign,
+    risingSign,
+    house,
+    moonHouse,
+    sunHouse,
+    ruler,
+    rulerHouse,
+    uranusHouse,
+    uranusLayerActive
+  }: LunationHoroscopeFacts): TransitRenderResult {
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
     const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
-    const h = house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
+    const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
     const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
     const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
@@ -912,6 +947,25 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     // sign alignment: the per-sign lunation section distilled from the owner's book
     const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
     if (signSection) paras.push(signSection);
+    if (which === "full" && sunHouse && sunHouse !== h) {
+      const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
+      if (sunJurisdiction) {
+        paras.push(`The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`);
+      }
+    }
+    if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
+      const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
+      if (rulerHouseBody) {
+        const lunationLabel = isEclipse
+          ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse")
+          : (which === "new" ? "New Moon" : "Full Moon");
+        paras.push(`With ${title(ruler)} ruling this ${lunationLabel} from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`);
+      }
+    }
+    if (uranusLayerActive && uranusHouse) {
+      const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
+      if (uranusLayer) paras.push(uranusLayer);
+    }
     // concrete manifestations for this house (from the book's per-house chapters)
     const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
     if (shows) paras.push(shows);
@@ -992,5 +1046,5 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }

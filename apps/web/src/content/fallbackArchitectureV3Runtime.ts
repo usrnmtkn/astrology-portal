@@ -1,6 +1,9 @@
 import fallbackSourceRowsV3 from "./fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-templates-v3.json";
+import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
+import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
 import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
+import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
 import { createFallbackRenderer, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
@@ -120,10 +123,29 @@ export type AspectFacts = {
 
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
-    authoredCards: transitSynastryRowsV1.authoredCards as AuthoredCard[]
+    authoredCards: [
+      ...(transitSynastryRowsV1.authoredCards as AuthoredCard[]),
+      ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
+      ...(weeklySourceRowsV1 as AuthoredCard[])
+    ]
   },
-  templatesFile: fallbackTemplatesV3 as TemplatesFile,
-  rowsFile: fallbackSourceRowsV3 as RowsFile
+  templatesFile: {
+    templates: [
+      ...((fallbackTemplatesV3 as TemplatesFile).templates ?? []),
+      ...(placementInterimFixesV1.templates as TemplateRow[])
+    ]
+  },
+  rowsFile: {
+    ...(fallbackSourceRowsV3 as RowsFile),
+    hookRows: [
+      ...((fallbackSourceRowsV3 as RowsFile).hookRows ?? []),
+      ...(lunationBlendUnitsV1.hookRows as HookRow[])
+    ],
+    vocabularyRows: [
+      ...((fallbackSourceRowsV3 as RowsFile).vocabularyRows ?? []),
+      ...(placementInterimFixesV1.vocabularyRows as VocabRow[])
+    ]
+  }
 };
 
 const readerEligibleReviewStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
@@ -139,7 +161,11 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
     transitLib: {
       authoredCards: bundle.transitLib.authoredCards.filter(isReaderEligible)
     },
-    templatesFile: bundle.templatesFile,
+    templatesFile: {
+      templates: bundle.templatesFile.templates.filter((row) => (
+        !row.review_status || isReaderEligible(row)
+      ))
+    },
     rowsFile: {
       hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
       vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
@@ -154,7 +180,11 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
 }
 
 function createAppFallbackRenderer(bundle: FallbackArchitectureV3Bundle) {
-  return createFallbackRenderer(bundle.templatesFile, {
+  return createFallbackRenderer({
+    templates: bundle.templatesFile.templates.filter((row) => (
+      !row.review_status || isReaderEligible(row)
+    ))
+  }, {
     hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
     vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
   });

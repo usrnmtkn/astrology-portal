@@ -149,6 +149,12 @@ export default async function loadUnits() {
   const fallbackTemplates = readJson(
     "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json"
   );
+  const lunationBlendRows = readJson(
+    "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json"
+  );
+  const weeklyRows = readJson(
+    "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json"
+  );
   const moonCompatibilityLibrary = readJson(
     "tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json"
   );
@@ -177,5 +183,27 @@ export default async function loadUnits() {
       }
     };
   });
-  return [...houses, ...aspects, ...compat, ...skyPlacements];
+  const weekly = weeklyRows
+    .filter((record) => ["approved", "approved_reuse", "reviewed"].includes(record.review_status))
+    .map((record) => {
+      const body = record.contentKey.startsWith("authored/week-opener/")
+        ? record.body.replaceAll("{{signTitle}}", "Leo")
+        : record.body;
+
+      return {
+        key: record.contentKey.replaceAll("/", "."),
+        surface: "daily",
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        version: "author-final",
+        declaredSlots: ["headline", "body"],
+        fields: {
+          headline: record.headline,
+          body
+        }
+      };
+    });
+  const lunationMacros = lunationBlendRows.authoredCards
+    .filter((record) => ["approved", "approved_reuse", "reviewed"].includes(record.review_status))
+    .map((record) => authoredUnit(record, "daily"));
+  return [...houses, ...aspects, ...compat, ...skyPlacements, ...weekly, ...lunationMacros];
 }

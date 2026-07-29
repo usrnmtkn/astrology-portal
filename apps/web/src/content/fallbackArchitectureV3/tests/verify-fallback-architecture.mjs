@@ -11,7 +11,15 @@ import url from "node:url";
 import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, RoleViolationError } from "../resolver/renderFallback.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
-const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const baseRowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
+const rowsFile = {
+  ...baseRowsFile,
+  vocabularyRows: [
+    ...baseRowsFile.vocabularyRows,
+    ...placementInterim.vocabularyRows
+  ]
+};
 const contract = JSON.parse(fs.readFileSync(path.join(here, "../contracts/CONTENT-ROLE-CONTRACT.json"), "utf8"));
 
 const BANNED = [
@@ -70,7 +78,14 @@ for (const r of rowsFile.fallbackSourceRows) {
   }
 }
 {
-  const templatesFile = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
+  const baseTemplatesFile = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
+  const templatesFile = {
+    ...baseTemplatesFile,
+    templates: [
+      ...baseTemplatesFile.templates,
+      ...placementInterim.templates
+    ]
+  };
   for (const t of templatesFile.templates) {
     if (/[\u2014\u2013]/.test((t.body ?? "") + (t.body_you ?? "") + (t.body_they ?? ""))) fail(`${t.contentKey}: em/en dash prohibited in template bodies`);
   }
@@ -147,6 +162,116 @@ for (const r of rowsFile.fallbackSourceRows) {
     }
   }
   console.log(`Verified ${SLOT_OWNERSHIP_PLANETS.length * rowsFile.coverage.signs.length} sky-placement fallback slot contracts.`);
+}
+
+// Natal-placement interim gate: draft overrides must remove cross-vocab stem
+// collisions, render all 14 planet frames across all signs, keep sign/house
+// paragraphs trigram-distinct, and retain per-planet opening variation.
+{
+  const vocab = new Map(rowsFile.vocabularyRows.map((row) => [row.contentKey, row]));
+  const STOP_WORDS = new Set([
+    "and", "the", "what", "with", "into", "from", "that", "this", "they", "them",
+    "their", "your", "you", "most", "things", "itself", "someone", "both", "more"
+  ]);
+  const stem = (word) => {
+    let normalized = word.toLowerCase().replace(/[^a-z]/gu, "");
+    if (normalized.length <= 3 || STOP_WORDS.has(normalized)) return null;
+    for (const suffix of ["ingly", "edly", "ation", "ition", "ness", "ment", "able", "ible", "ing", "ed", "ly", "es", "s", "th"]) {
+      if (normalized.endsWith(suffix) && normalized.length - suffix.length > 3) {
+        normalized = normalized.slice(0, -suffix.length);
+        break;
+      }
+    }
+    return normalized.length > 3 ? normalized : null;
+  };
+  const contentStems = (body) => new Set(
+    body.split(/\s+/u).map(stem).filter(Boolean)
+  );
+  const normalizedWords = (body) => body
+    .toLowerCase()
+    .replace(/[^a-z' ]+/gu, " ")
+    .split(/\s+/u)
+    .filter(Boolean);
+  const trigrams = (body) => {
+    const phrases = new Set();
+    for (const sentence of body.split(/[.!?]+/u)) {
+      const words = normalizedWords(sentence);
+      for (let index = 0; index + 2 < words.length; index++) {
+        phrases.add(`${words[index]} ${words[index + 1]} ${words[index + 2]}`);
+      }
+    }
+    return phrases;
+  };
+
+  for (const sign of rowsFile.coverage.signs) {
+    for (const [leftFamily, rightFamily] of [
+      ["sign-adverb", "sign-need"],
+      ["sign-style", "sign-does"]
+    ]) {
+      const left = vocab.get(`fallback-vocab/${leftFamily}/${sign}`)?.body;
+      const right = vocab.get(`fallback-vocab/${rightFamily}/${sign}`)?.body;
+      if (!left || !right) {
+        fail(`placement vocab ${sign}: missing ${leftFamily}/${rightFamily}`);
+        continue;
+      }
+      const leftStems = contentStems(left);
+      const shared = [...contentStems(right)].find((candidate) => leftStems.has(candidate));
+      if (shared) {
+        fail(`placement vocab ${sign}: ${leftFamily}/${rightFamily} share stem "${shared}" (${left} | ${right})`);
+      }
+      const leftTrigrams = trigrams(left);
+      const sharedTrigram = [...trigrams(right)].find((phrase) => leftTrigrams.has(phrase));
+      if (sharedTrigram) {
+        fail(`placement vocab ${sign}: ${leftFamily}/${rightFamily} share phrase "${sharedTrigram}"`);
+      }
+    }
+  }
+
+  const placementPlanets = placementInterim.templates.map((template) => template.contentKey.split("/").pop());
+  const openingPrefixes = new Map();
+  let placementFrameRenders = 0;
+
+  for (const planet of placementPlanets) {
+    for (const sign of rowsFile.coverage.signs) {
+      const out = renderNatalPlacement(
+        { planet, sign, house: 1, voice: "you", dignity: null, isRetrograde: false },
+        { allowUnreviewed: true }
+      );
+      placementFrameRenders++;
+      if (/\{\{|\}\}/u.test(out.body)) fail(`placement frame ${planet}/${sign}: unresolved slot`);
+      if (out.parts.length !== 2) fail(`placement frame ${planet}/${sign}: expected sign and house parts`);
+
+      if (sign === rowsFile.coverage.signs[0]) {
+        const planetTitle = planet.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
+        const openerStart = out.parts[0].indexOf(`Your ${planetTitle}`);
+        if (openerStart < 0) {
+          fail(`placement frame ${planet}: rendered opener not found`);
+          continue;
+        }
+        const firstFour = normalizedWords(out.parts[0].slice(openerStart)).slice(0, 4).join(" ");
+        if (openingPrefixes.has(firstFour)) {
+          fail(`placement frame ${planet}: first four words duplicate ${openingPrefixes.get(firstFour)} ("${firstFour}")`);
+        } else {
+          openingPrefixes.set(firstFour, planet);
+        }
+      }
+    }
+  }
+  if (placementFrameRenders !== 168) fail(`placement frames: expected 168 renders, got ${placementFrameRenders}`);
+
+  const gatedLeo = renderNatalPlacement(
+    { planet: "lilith", sign: "leo", house: null, voice: "you", dignity: null, isRetrograde: false }
+  );
+  const previewLeo = renderNatalPlacement(
+    { planet: "lilith", sign: "leo", house: null, voice: "you", dignity: null, isRetrograde: false },
+    { allowUnreviewed: true }
+  );
+  if (!gatedLeo.body.includes("recognition and warmth")) fail("placement review gate: approved Leo need did not remain live");
+  if (gatedLeo.body.includes("recognition and devotion")) fail("placement review gate: needs-review Leo need leaked");
+  if (!previewLeo.body.includes("recognition and devotion")) fail("placement review gate: draft Leo need missing from QA preview");
+  if (!previewLeo.body.includes("meaning you refuse and reclaim")) fail("placement review gate: Lilith benchmark frame missing");
+
+  console.log(`Verified ${placementFrameRenders} review-gated natal placement frames and placement vocab collisions.`);
 }
 
 // 3 + 4: full-coverage dry run (allowUnreviewed so needs_review drafts render for QA)

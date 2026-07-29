@@ -1,0 +1,192 @@
+#!/usr/bin/env node
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const sourcePath = path.join(
+  repoRoot,
+  "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json"
+);
+const rows = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
+const vite = await createServer({
+  configFile: false,
+  root: path.join(repoRoot, "apps/web"),
+  appType: "custom",
+  server: { middlewareMode: true, hmr: false },
+  logLevel: "error"
+});
+
+try {
+  const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");
+
+  assert.deepEqual(weekly.weeklyContentImportCounts, {
+    total: rows.length,
+    station: rows.filter((row) => row.surface === "weekly-station").length,
+    openers: rows.filter((row) => row.surface === "weekly-opener").length,
+    readerEligible: rows.length,
+    needsReview: 0
+  });
+  assert.equal(rows.length, 24);
+  assert.equal(rows.filter((row) => row.surface === "weekly-station").length, 18);
+  assert.equal(rows.filter((row) => row.surface === "weekly-opener").length, 6);
+  assert.ok(rows.every((row) => row.review_status === "approved"));
+  assert.ok(rows.every((row) => !/SOURCE_GAP/u.test(`${row.headline}\n${row.body}`)));
+
+  const sundayBefore = weekly.weeklyWindowFor(new Date("2026-08-02T23:59:00Z"), "America/New_York");
+  const sundayAfter = weekly.weeklyWindowFor(new Date("2026-08-03T00:00:00Z"), "America/New_York");
+  assert.equal(sundayBefore.weekStart, "2026-07-27");
+  assert.equal(sundayBefore.weekEnd, "2026-08-02");
+  assert.equal(sundayAfter.weekStart, "2026-08-03");
+  assert.equal(sundayAfter.weekEnd, "2026-08-09");
+
+  const stationEvent = {
+    id: "station-mercury-retrograde-test",
+    type: "station",
+    title: "Mercury stations retrograde",
+    startsAt: "2026-08-01T12:00:00.000Z",
+    dateKey: "2026-08-01",
+    glyph: "☿",
+    primary: true,
+    planet: "Mercury",
+    sign: "Leo",
+    direction: "retrograde"
+  };
+  const gatedRows = rows.map((row) => (
+    row.contentKey === "authored/station/mercury/rx"
+      ? { ...row, review_status: "needs_review" }
+      : row
+  ));
+  const gatedStation = weekly.resolveWeeklyStationCopy(stationEvent, gatedRows);
+  const approvedStation = weekly.resolveWeeklyStationCopy(stationEvent, rows);
+  assert.notEqual(gatedStation.body, rows[0].body, "Needs-review station copy must stay out of reader view.");
+  assert.equal(approvedStation.body, rows[0].body, "Approval must switch station copy without a code change.");
+
+  const lunationEvent = {
+    id: "new-moon-test",
+    type: "lunation",
+    title: "New Moon",
+    startsAt: "2026-08-04T12:00:00.000Z",
+    dateKey: "2026-08-04",
+    glyph: "●",
+    primary: true,
+    sign: "Leo"
+  };
+  const gatedOpeners = rows.map((row) => (
+    row.contentKey === "authored/week-opener/new-moon"
+      ? { ...row, review_status: "needs_review" }
+      : row
+  ));
+  assert.equal(weekly.resolveWeeklyOpener("lunation", [lunationEvent], gatedOpeners), undefined);
+  const opener = weekly.resolveWeeklyOpener("lunation", [lunationEvent], rows);
+  assert.ok(opener);
+  assert.match(opener.body, /Leo/u);
+  assert.doesNotMatch(opener.body, /\{\{/u);
+
+  const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
+  const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+  assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
+  assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
+  assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
+  assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
+  assert.match(youPage, /weekly-horoscope__reading daily-horoscope-summary/u);
+  assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
+  assert.match(youPage, /weekly-horoscope__aspect daily-horoscope-summary/u);
+  assert.match(youPage, />The macro view</u);
+  assert.match(youPage, />Aspect</u);
+  assert.match(youPage, />Your horoscope</u);
+  assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
+  assert.match(app, /buildWeeklyHoroscope\(\{/u);
+
+  const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
+  const location = {
+    label: "New York City, NY",
+    latitude: 40.7128,
+    longitude: -74.006,
+    timeZone: "America/New_York"
+  };
+  const natalSky = await ephemeris.getAstrodienstSky(location, new Date("1990-01-01T12:00:00Z"));
+  const realWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-acceptance-fixture",
+    natalSky,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  assert.equal(realWeek.weekStart, "2026-07-27");
+  assert.equal(realWeek.weekEnd, "2026-08-02");
+  assert.equal(realWeek.weekType, "lunation");
+  assert.equal(realWeek.macro?.headline, "The Macro View: What the Aquarius Full Moon Represents");
+  assert.match(realWeek.macro?.body ?? "", /^Full Moons bring what has been building/u);
+  assert.ok(realWeek.horoscope.headline.trim().length > 0);
+  assert.notEqual(realWeek.horoscope.headline, "Full Moon week");
+  assert.match(realWeek.horoscope.driverLabel, /Full Moon in Aquarius/u);
+  assert.ok(realWeek.horoscope.body.trim().length > 0);
+  assert.equal(realWeek.horoscope.sourceUnits.length, 1);
+  assert.match(realWeek.horoscope.body, /9th house/u);
+  assert.match(realWeek.horoscope.body, /3rd house/u);
+  assert.match(
+    realWeek.horoscope.body,
+    /With Saturn ruling this Full Moon from your 11th house, the realizations arrive through your circles:/u
+  );
+  assert.match(
+    realWeek.horoscope.body,
+    /Uranus in your 1st house adds a more personal element of change/u
+  );
+  assert.ok(Array.isArray(realWeek.aspects));
+  const readerText = [
+    realWeek.horoscope.headline,
+    realWeek.horoscope.driverLabel,
+    realWeek.horoscope.body
+  ].join("\n");
+  assert.doesNotMatch(readerText, /SOURCE_GAP/u);
+  assert.doesNotMatch(readerText, /\btoday\b/iu, "Weekly copy must not read like a daily horoscope.");
+  assert.ok(
+    realWeek.horoscope.sourceUnits.every((unit) => !unit.startsWith("station:retrograde-")),
+    "An ongoing retrograde passage must not be treated as a station-day override."
+  );
+  assert.doesNotMatch(readerText, /remains retrograde/u);
+
+  const mondaySky = await ephemeris.getAstrodienstSky(
+    location,
+    new Date("2026-07-27T16:00:00Z")
+  );
+  const mondaySaturn = mondaySky.positions.find((position) => position.planet === "Saturn");
+  assert.ok(mondaySaturn && typeof mondaySaturn.longitude === "number");
+  const forcedSaturnVenusNatal = {
+    ...natalSky,
+    positions: natalSky.positions.map((position) => (
+      position.planet === "Venus"
+        ? { ...position, longitude: (mondaySaturn.longitude + 90) % 360 }
+        : position
+    ))
+  };
+  const separatedAspectWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-separated-aspect-fixture",
+    natalSky: forcedSaturnVenusNatal,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  const saturnVenusAspect = separatedAspectWeek.aspects.find((aspect) => (
+    /Saturn square your Venus/iu.test(aspect.driverLabel)
+  ));
+  assert.ok(saturnVenusAspect, "The supporting Saturn-Venus aspect must remain available.");
+  assert.doesNotMatch(
+    separatedAspectWeek.horoscope.body,
+    /You may feel lonely even next to people who love you/u,
+    "Aspect copy must not be appended to the lunation horoscope."
+  );
+  assert.match(
+    saturnVenusAspect.body,
+    /You may feel lonely even next to people who love you/u,
+    "Aspect copy must render in its own standalone card."
+  );
+
+  console.log("weekly horoscope assembly checks passed: event-time blend facts, macro, and standalone aspect cards");
+} finally {
+  await vite.close();
+}

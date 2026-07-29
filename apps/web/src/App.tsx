@@ -98,6 +98,11 @@ import {
   resolvedNatalAspectPatternSectionLabel
 } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
+import {
+  buildWeeklyHoroscope,
+  lunationBlendFacts,
+  type WeeklyHoroscopeAssembly
+} from "./services/weeklyHoroscope";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
   SkyAspectGroup,
@@ -18607,6 +18612,8 @@ function ProfileView({
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
+  const [weeklyHoroscopeRequested, setWeeklyHoroscopeRequested] = useState(false);
+  const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
   useContentRegistryRevision();
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
@@ -18630,6 +18637,72 @@ function ProfileView({
   const safeMoon = displayMoon || "your Moon";
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
+  useEffect(() => {
+    if (!weeklyHoroscopeRequested || !natalSky || !displayRising || displayRising === "Rising pending") {
+      setWeeklyHoroscopeAssembly(null);
+      return;
+    }
+
+    const currentLocation = profile.currentLocationData
+      ? withTimeZone(profile.currentLocationData)
+      : profile.currentLocation
+        ? locationFromLabel(profile.currentLocation)
+        : null;
+    if (!currentLocation) {
+      setWeeklyHoroscopeAssembly(null);
+      return;
+    }
+
+    let cancelled = false;
+    setWeeklyHoroscopeAssembly((current) => current
+      ? { ...current, status: "loading" }
+      : null);
+    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+    const dailyServedUnitsByDate = dailyDriver
+      ? {
+          [transitForm.chartDate]: [
+            dailyDriver.kind === "aspect"
+              ? `${dailyDriver.aspect}:${normalizeContentIdPart(dailyDriver.natal)}`
+              : `house:${dailyDriver.house}`
+          ]
+        }
+      : {};
+
+    buildWeeklyHoroscope({
+      userId: profile.id,
+      natalSky,
+      risingSign: displayRising,
+      location: currentLocation,
+      dailyServedUnitsByDate
+    })
+      .then((assembly) => {
+        if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+      })
+      .catch((error) => {
+        console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
+        if (!cancelled) {
+          setWeeklyHoroscopeAssembly((current) => current
+            ? { ...current, status: "error" }
+            : null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    profile.id,
+    profile.currentLocation,
+    profile.currentLocationData?.label,
+    profile.currentLocationData?.latitude,
+    profile.currentLocationData?.longitude,
+    profile.currentLocationData?.timeZone,
+    natalSky?.generatedAt,
+    currentSky?.generatedAt,
+    displayRising,
+    transitForm.chartDate,
+    weeklyHoroscopeRequested
+  ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
     ? timingContextForChart({
         birthDate: savedBirthDate,
@@ -19202,7 +19275,13 @@ function ProfileView({
       const rendered = transitSynastryFallbackRendererV3.renderLunationHoroscope({
         kind,
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
-        risingSign: normalizeContentIdPart(displayRising)
+        risingSign: normalizeContentIdPart(displayRising),
+        ...lunationBlendFacts(
+          currentSky,
+          currentSky.moonEvent.sign,
+          displayRising,
+          kind
+        )
       });
       return [{ headline: rendered.headline, body: rendered.body }];
     } catch (error) {
@@ -19329,6 +19408,8 @@ function ProfileView({
         bigThreeRows={bigThreeRows}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
+        weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
+        onRequestWeeklyHoroscope={() => setWeeklyHoroscopeRequested(true)}
         displayMoon={displayMoon}
         displayRising={displayRising}
         displaySun={displaySun}
