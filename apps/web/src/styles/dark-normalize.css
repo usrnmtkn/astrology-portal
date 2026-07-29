@@ -1,11 +1,11 @@
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-table {
   border-color: var(--card-border);
-  background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
+  background: var(--synastry-row-bg);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-row {
   border-bottom-color: var(--card-border);
-  background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
+  background: var(--synastry-row-bg);
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(
