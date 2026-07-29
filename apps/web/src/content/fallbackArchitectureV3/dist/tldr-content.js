@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -212,8 +212,9 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const v = voice === "you" ? "you" : "they";
     const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
     const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts2);
-    const rulerHouseJurisdiction = rulerHouse ? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts2) : null) ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts2) : null;
-    const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts2) : null;
+    const rulerHouseJurisdiction = rulerHouse ? getVocab(`fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`, opts2) ?? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts2) : null) ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts2) : null;
+    const emptyHouseRulerTopic = rulerHouse ? getVocab(`fallback-vocab/empty-house-ruler-topic/${rulerHouse}`, opts2) : null;
+    const rulerHouseTopic = emptyHouseRulerTopic ?? (rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts2) : null);
     const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts2);
     const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
     const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts2) ?? getHook("fallback-hook/empty-house-ruler", v, opts2);
@@ -221,7 +222,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts2);
     const closeFrame = getHook("fallback-hook/empty-house-close", v, opts2);
     const note = getHook("fallback-hook/empty-house-explainer", v, opts2);
-    const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts2) : null;
+    const placementLine = rulerSign ? getHook(`fallback-hook/ruler-method/${ruler}/${rulerSign}`, v, opts2) : null;
     if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
@@ -242,11 +243,19 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       rulerHouseTopic,
       placementLine
     };
+    const repeatedRuler = (facts.rulerOccurrence ?? 1) > 1;
+    const emptyHousePossessive = v === "you" ? "your" : "their";
+    const rulerHouseTopicRef = emptyHouseRulerTopic ? `${emptyHousePossessive} ${rulerHouseTopic}` : rulerHouseTopic;
+    const m1 = mustache(cusp, ctx).replace(
+      `on the ${ordinal(house)} house`,
+      `on ${emptyHousePossessive} ${ordinal(house)} house`
+    );
+    const m4 = repeatedRuler ? `Because ${title(sign)} is also ruled by ${rulerRef}, the same pattern applies: ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.` : `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`;
     const paras = [
-      mustache(cusp, ctx),
+      m1,
       mustache(rulerFrame, ctx),
-      mustache(placementFrame, ctx),
-      `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopic}.`,
+      ...repeatedRuler ? [] : [mustache(placementFrame, ctx)],
+      m4,
       mustache(closeFrame, ctx)
     ];
     const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
@@ -294,7 +303,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -361,10 +370,26 @@ function friendVoiceFromReaderCopy(body, name) {
   });
   return rendered;
 }
-function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile) {
-  const cards = new Map(transitLib.authoredCards.map((c) => [c.contentKey, c]));
-  const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
-  const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
+var READER_ELIGIBLE2 = /* @__PURE__ */ new Set(["approved_reuse", "approved", "reviewed"]);
+function eligibleRowsByKey(rows, allowUnreviewed) {
+  const candidates = /* @__PURE__ */ new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return new Map(
+    [...candidates].map(([key, keyed]) => [
+      key,
+      [...keyed].reverse().find((candidate) => allowUnreviewed || READER_ELIGIBLE2.has(candidate.review_status ?? ""))
+    ]).filter((entry) => Boolean(entry[1]))
+  );
+}
+function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts2 = {}) {
+  const allowUnreviewed = Boolean(opts2.allowUnreviewed);
+  const cards = eligibleRowsByKey(transitLib.authoredCards, allowUnreviewed);
+  const vocab = eligibleRowsByKey(rowsFile.vocabularyRows, allowUnreviewed);
+  const hooks = eligibleRowsByKey(rowsFile.hookRows ?? [], allowUnreviewed);
   const tpl = (key) => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
@@ -738,18 +763,17 @@ ${fogNote}`;
     paras.push(`The ${title2(sign)} trap runs strong under this Moon: ${trap}`);
     const moonKind = which === "full" ? "fullmoon" : "newmoon";
     const authored = (variant ? card(`authored/sky-${moonKind}/${sign}-${variant}`) : null) ?? (isEclipse ? card(`authored/sky-eclipse/${which === "new" ? "solar" : "lunar"}-${sign}`) : null) ?? card(`authored/sky-${moonKind}/${sign}`);
+    const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`);
     const tail = [];
+    const signBody = signMoon?.supersedes_authored_body ? signMoon.body_you : authored?.body ?? signMoon?.body_you;
+    if (signBody) paras.push(signBody);
     if (authored) {
-      paras.push(authored.body);
       if (!isEclipse) {
         if (authored.axis) tail.push(authored.axis);
         if (authored.intention) tail.push(`Set your intention: ${authored.intention}`);
         if (authored.ritual) tail.push(`Ritual: ${authored.ritual}`);
         if (authored.completion) tail.push(`To close the cycle, ask: ${authored.completion}`);
       }
-    } else {
-      const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`)?.body_you;
-      if (signMoon) paras.push(signMoon);
     }
     if (isEclipse && northSign && southSign) {
       const nodeRow = hooks.get("fallback-hook/sky-eclipse-node")?.body_you;
@@ -1055,7 +1079,7 @@ ${fogNote}`;
     const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
     const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
     const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
-    const signCompact = which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null;
+    const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
     if (signCompact) paras.push(signCompact);
     if (which === "full" && sunHouse && sunHouse !== h) {
       const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
@@ -1069,7 +1093,7 @@ ${fogNote}`;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
         const rulerTitle = title2(ruler);
-        let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, so ${rulerHouseBody}.`;
+        let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, so ${rulerHouseBody.replace(/\.+$/u, "")}.`;
         if (rulerRetrograde) {
           const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
           if (!retroOverlay) {
@@ -1145,8 +1169,8 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29r";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-07-29v";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -1159,7 +1183,14 @@ function stablePackageValue(value) {
   );
 }
 function packageRowsByKey(rows) {
-  return [...new Map(rows.map((row) => [row.contentKey, row])).values()].sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+  const readerEligible = /* @__PURE__ */ new Set(["approved_reuse", "approved", "reviewed"]);
+  const candidates = /* @__PURE__ */ new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return [...candidates.values()].map((keyed) => [...keyed].reverse().find((row) => readerEligible.has(String(row.review_status ?? row.reviewStatus ?? "")))).filter((row) => Boolean(row)).sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
 function packageHash(value) {
   const input = JSON.stringify(stablePackageValue(value));

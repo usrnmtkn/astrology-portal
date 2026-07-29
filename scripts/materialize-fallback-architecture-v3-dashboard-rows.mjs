@@ -298,34 +298,45 @@ function readerEligibleReviewStatus(row, allowBlank = false) {
     || (allowBlank && !reviewStatus);
 }
 
-function packageRowsWithLatestOverride(rows) {
-  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+
+  return [...candidates.values()]
+    .map((keyed) => [...keyed]
+      .reverse()
+      .find((row) => readerEligibleReviewStatus(row, allowBlank)))
+    .filter(Boolean);
 }
 
 function readerPackageBundle(sources) {
   return {
     transitLib: {
-      authoredCards: packageRowsWithLatestOverride([
+      authoredCards: packageRowsWithLatestEligibleOverride([
         ...sources.authoredRows.authoredCards,
         ...sources.lunationBlendRows.authoredCards,
         ...sources.weeklyRows
-      ]).filter((row) => readerEligibleReviewStatus(row))
+      ])
     },
     rowsFile: {
-      hookRows: packageRowsWithLatestOverride([
+      hookRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.hookRows,
         ...sources.lunationBlendRows.hookRows
-      ]).filter((row) => readerEligibleReviewStatus(row)),
-      vocabularyRows: packageRowsWithLatestOverride([
+      ]),
+      vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
         ...sources.placementInterimRows.vocabularyRows
-      ]).filter((row) => readerEligibleReviewStatus(row))
+      ])
     },
     templatesFile: {
-      templates: packageRowsWithLatestOverride([
+      templates: packageRowsWithLatestEligibleOverride([
         ...sources.templateRows.templates,
         ...sources.placementInterimRows.templates
-      ]).filter((row) => readerEligibleReviewStatus(row, true))
+      ], true)
     }
   };
 }

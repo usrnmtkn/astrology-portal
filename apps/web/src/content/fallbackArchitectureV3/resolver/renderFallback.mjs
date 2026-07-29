@@ -316,17 +316,22 @@ export function renderHouseGlossary({ house, voice = "you" }) {
 }
 
 export function renderNatalEmptyHouse(facts, opts = {}) {
-  // facts: { house, sign, rulerSign, rulerHouse, primaryRuler?, voice }.
+  // facts: { house, sign, rulerSign, rulerHouse, primaryRuler?, rulerOccurrence?, voice }.
   // Legacy ruler and modernRuler fields are intentionally ignored.
   const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
   const v = voice === "you" ? "you" : "they";
   const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
   const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
   const rulerHouseJurisdiction = rulerHouse
-    ? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts) : null)
+    ? getVocab(`fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`, opts)
+      ?? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts) : null)
       ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts)
     : null;
-  const rulerHouseTopic = rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null;
+  const emptyHouseRulerTopic = rulerHouse
+    ? getVocab(`fallback-vocab/empty-house-ruler-topic/${rulerHouse}`, opts)
+    : null;
+  const rulerHouseTopic = emptyHouseRulerTopic
+    ?? (rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null);
   const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
   const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
   const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts)
@@ -335,7 +340,9 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
   const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts);
   const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
   const note = getHook("fallback-hook/empty-house-explainer", v, opts);
-  const placementLine = rulerSign ? getHook(`fallback-hook/placement-sentence/${ruler}/${rulerSign}`, v, opts) : null;
+  const placementLine = rulerSign
+    ? getHook(`fallback-hook/ruler-method/${ruler}/${rulerSign}`, v, opts)
+    : null;
   if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
     throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
   }
@@ -352,11 +359,23 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
     rulerHouseTopic,
     placementLine,
   };
+  const repeatedRuler = (facts.rulerOccurrence ?? 1) > 1;
+  const emptyHousePossessive = v === "you" ? "your" : "their";
+  const rulerHouseTopicRef = emptyHouseRulerTopic
+    ? `${emptyHousePossessive} ${rulerHouseTopic}`
+    : rulerHouseTopic;
+  const m1 = mustache(cusp, ctx).replace(
+    `on the ${ordinal(house)} house`,
+    `on ${emptyHousePossessive} ${ordinal(house)} house`
+  );
+  const m4 = repeatedRuler
+    ? `Because ${title(sign)} is also ruled by ${rulerRef}, the same pattern applies: ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`
+    : `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`;
   const paras = [
-    mustache(cusp, ctx),
+    m1,
     mustache(rulerFrame, ctx),
-    mustache(placementFrame, ctx),
-    `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopic}.`,
+    ...(repeatedRuler ? [] : [mustache(placementFrame, ctx)]),
+    m4,
     mustache(closeFrame, ctx)
   ];
   const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());

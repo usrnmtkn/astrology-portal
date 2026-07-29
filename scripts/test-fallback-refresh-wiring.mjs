@@ -23,6 +23,8 @@ const sourceRows = readPackageJson("source-rows/fallback-source-rows-v3.json");
 const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json");
 const templates = readPackageJson("templates/fallback-templates-v3.json");
 const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
+const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.json");
+const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
@@ -34,7 +36,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29r");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29v");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -570,13 +572,18 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /authoredCards: packageRowsWithLatestOverride\(bundle\.transitLib\.authoredCards\)\.filter\(isReaderEligible\)/u,
-  "Production must resolve latest overrides before filtering review-gated authored cards."
+  /authoredCards: packageRowsWithLatestReaderEligibleOverride\(bundle\.transitLib\.authoredCards\)/u,
+  "Production must select the latest reader-eligible authored override without letting a newer draft hide approved copy."
 );
 assert.match(
   runtimeSource,
-  /hookRows: packageRowsWithLatestOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
-  "Production must resolve latest overrides before filtering review-gated hook variants."
+  /hookRows: packageRowsWithLatestReaderEligibleOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)/u,
+  "Production must select the latest reader-eligible hook override without letting a newer draft hide approved copy."
+);
+assert.match(
+  runtimeSource,
+  /\.map\(\(keyed\) => \[\.\.\.keyed\]\.reverse\(\)\.find\(isEligible\)\)/u,
+  "Review-gated duplicate keys must fall back to the newest approved candidate."
 );
 assert.match(
   runtimeSource,
@@ -655,25 +662,29 @@ try {
   ]);
   const materialized = JSON.parse(fs.readFileSync(materializerOutput, "utf8"));
   const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
-  const isMaterializedReaderRow = (row) => (
-    ["approved", "approved_reuse", "reviewed"].includes(row.source_snapshot.review_status)
-  );
   const localManifest = createPackageManifest({
-    transitLib: { authoredCards: materialized.rows
-      .filter((row) => row.source_snapshot.contentType === "authored-content" && isMaterializedReaderRow(row))
-      .map((row) => row.sections.packageRecord) },
+    transitLib: {
+      authoredCards: [
+        ...transitRows.authoredCards,
+        ...lunationBlendRows.authoredCards,
+        ...weeklyRows
+      ]
+    },
     rowsFile: {
-      hookRows: materialized.rows
-        .filter((row) => row.source_snapshot.content_role === "fallback_hook" && isMaterializedReaderRow(row))
-        .map((row) => row.sections.packageRecord),
-      vocabularyRows: materialized.rows
-        .filter((row) => row.source_snapshot.content_role === "vocabulary" && isMaterializedReaderRow(row))
-        .map((row) => row.sections.packageRecord)
+      hookRows: [
+        ...sourceRows.hookRows,
+        ...lunationBlendRows.hookRows
+      ],
+      vocabularyRows: [
+        ...sourceRows.vocabularyRows,
+        ...placementInterimRows.vocabularyRows
+      ]
     },
     templatesFile: {
-      templates: materialized.rows
-        .filter((row) => row.source_snapshot.content_role === "template" && isMaterializedReaderRow(row))
-        .map((row) => row.sections.packageRecord)
+      templates: [
+        ...templates.templates,
+        ...placementInterimRows.templates
+      ]
     }
   }, PACKAGE_VERSION);
 

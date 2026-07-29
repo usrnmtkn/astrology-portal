@@ -163,8 +163,22 @@ function isReaderEligible(row: { review_status?: ReviewStatus | null }) {
   return readerEligibleReviewStatuses.has(String(row.review_status ?? "").trim().toLowerCase());
 }
 
-function packageRowsWithLatestOverride<T extends { contentKey: string }>(rows: T[]) {
-  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+function packageRowsWithLatestReaderEligibleOverride<
+  T extends { contentKey: string; review_status?: ReviewStatus | null }
+>(
+  rows: T[],
+  isEligible: (row: T) => boolean = isReaderEligible
+) {
+  const candidates = new Map<string, T[]>();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+
+  return [...candidates.values()]
+    .map((keyed) => [...keyed].reverse().find(isEligible))
+    .filter((row): row is T => Boolean(row));
 }
 
 function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArchitectureV3Bundle {
@@ -172,16 +186,17 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
   // Production gets a reader-eligible view so needs_review additions stay dark.
   return {
     transitLib: {
-      authoredCards: packageRowsWithLatestOverride(bundle.transitLib.authoredCards).filter(isReaderEligible)
+      authoredCards: packageRowsWithLatestReaderEligibleOverride(bundle.transitLib.authoredCards)
     },
     templatesFile: {
-      templates: packageRowsWithLatestOverride(bundle.templatesFile.templates).filter((row) => (
-        !row.review_status || isReaderEligible(row)
-      ))
+      templates: packageRowsWithLatestReaderEligibleOverride(
+        bundle.templatesFile.templates,
+        (row) => !row.review_status || isReaderEligible(row)
+      )
     },
     rowsFile: {
-      hookRows: packageRowsWithLatestOverride(bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
-      vocabularyRows: packageRowsWithLatestOverride(bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
+      hookRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.hookRows ?? []),
+      vocabularyRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.vocabularyRows ?? [])
     }
   };
 }
