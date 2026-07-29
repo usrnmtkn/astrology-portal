@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29f");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29i");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -335,35 +335,56 @@ assert.match(outerConnection.body, /Build the trust to match the heat/u);
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
   aspect: "square",
-  planetA: "venus",
-  planetB: "pluto",
-  natalAspect: "trine",
+  endpointPlanet: "venus",
+  endpointOwner: "reader",
+  activatedPlanets: ["pluto"],
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^This connection will face pressure over the next few months\./u);
-assert.match(connectionTransit.body, /Saturn is squaring the connection between your Venus and Sofia's Pluto through November 13\./u);
+const exactSaturnSquareBond = sourceRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/bond-effect-square/saturn"
+);
+assert.ok(exactSaturnSquareBond, "The exact Saturn-square bond row must exist.");
+assert.ok(
+  connectionTransit.body.startsWith(exactSaturnSquareBond.body_you),
+  "Exact aspect copy must supersede the legacy hard-family fallback."
+);
+assert.match(
+  connectionTransit.body,
+  /Saturn is square your Venus through November 13, activating the connection it makes with Sofia's Pluto\./u
+);
+assert.equal(connectionTransit.headline, "Saturn square your Venus");
+assert.doesNotMatch(connectionTransit.body, /connection between/iu);
 assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
-assert.match(connectionTransit.body, /Reliability stops being a promise and starts being something you have to prove/u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
   aspect: "square",
-  planetA: "moon",
-  planetB: "venus",
+  endpointPlanet: "venus",
+  endpointOwner: "friend",
+  activatedPlanets: ["moon"],
   otherName: "X"
 });
 const thirdConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
   aspect: "square",
-  planetA: "moon",
-  planetB: "venus",
+  endpointPlanet: "venus",
+  endpointOwner: "friend",
+  activatedPlanets: ["moon"],
   otherName: "X",
   variant: 3
 });
-assert.notEqual(thirdConnectionVariant.body, baseConnectionVariant.body);
+assert.equal(
+  thirdConnectionVariant.body,
+  baseConnectionVariant.body,
+  "Exact aspect copy must remain byte-identical instead of rotating legacy family variants."
+);
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const bondGroupingSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
+  "utf8"
+);
 const aspectStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/aspects.css"), "utf8");
 const dashboardImportSource = fs.readFileSync(
   path.join(repoRoot, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),
@@ -512,12 +533,22 @@ assert.match(
 assert.match(
   appSource,
   /renderBondTransit\(\{[\s\S]*?variant: variantSlot === 1 \? undefined : variantSlot/u,
-  "Connection transits must receive their rotated stable variant slot."
+  "Bond transits must retain rotated stable variants for legacy fallback rows."
 );
 assert.match(
   appSource,
-  /const groupKey = `\$\{transiting\}:\$\{bondEffectFamily\(transiting, activationAspect\)\}`;[\s\S]*?stableTransitCopyVariant\(friendName, groupKey\)[\s\S]*?\(baseVariant \+ indexInGroup\) % 3/u,
-  "Adjacent connection transits in the same planet/family group must rotate from one shared base so their three previews stay distinct."
+  /const groups = groupBondTransitActivations\(candidates\)/u,
+  "Bond transit contacts must group before rendering cards."
+);
+assert.match(
+  bondGroupingSource,
+  /`\$\{transiting\}:\$\{aspect\}:\$\{endpointPlanet\}:\$\{candidate\.endpointOwner\}`/u,
+  "The grouping key must include transiting planet, aspect, endpoint planet, and endpoint owner."
+);
+assert.match(
+  appSource,
+  /effectBody: rendered\.parts\[0\] \?\? ""/u,
+  "Bond cards must retain the single effect body separately from the computed closing line."
 );
 assert.match(
   runtimeSource,

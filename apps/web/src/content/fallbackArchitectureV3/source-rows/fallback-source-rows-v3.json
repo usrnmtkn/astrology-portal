@@ -19050,14 +19050,14 @@
    "contentKey": "fallback-hook/sky-fullmoon-sign/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "An Aquarius Full Moon brings the structure behind a situation into clearer view. Saturn rules this sign, so attention turns to responsibilities, limits, and the rules shaping what happens next. Notice where you keep adjusting to a system that no longer works, where an ideal lacks a practical plan, or where distance has replaced direct participation. Aquarius is fixed air: it can see the pattern clearly, but it can also stay loyal to a principle after circumstances change. This Moon asks what needs firmer terms, shared accountability, or a clear limit.",
-   "body_they": "An Aquarius Full Moon brings the structure behind a situation into clearer view. Saturn rules this sign, so attention turns to responsibilities, limits, and the rules shaping what happens next. They may notice where they keep adjusting to a system that no longer works, where an ideal lacks a practical plan, or where distance has replaced direct participation. Aquarius is fixed air: it can see the pattern clearly, but it can also stay loyal to a principle after circumstances change. This Moon asks what needs firmer terms, shared accountability, or a clear limit.",
+   "body_you": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?",
+   "body_they": "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules Aquarius, so the focus falls on responsibility, limits, and the rules everyone has been following, including the ones nobody remembers agreeing to.\n\nYou may notice that the same person keeps organizing the group, covering the missing work, or adjusting their schedule so the plan can continue. A friendship, agreement, or long-term goal may still exist, but that does not mean the current version of it is working.\n\nAquarius is fixed air. It can step back from the immediate emotion and see the pattern clearly. It can also keep defending a principle after the circumstances have changed. The fixed signs are involved, so check your grip. Commitment matters. So does knowing when loyalty has become an excuse to avoid a necessary conversation.\n\nWhat has been building may become easier to name now. You do not have to make the final decision at the same speed. Let the information settle before one difficult conversation becomes the reason to end the entire arrangement. Which commitments still deserve your effort? Where has staying quiet become the price of belonging?",
    "review_status": "approved",
    "source_keys": [
-    "Ritual and the Moon (per-sign Full Moon write-ups, owner-supplied excerpts)"
+    "TLDR-Lunation-Sign-Sections-Fix-Batch1.md"
    ],
-   "notes": "Sign-specific Full Moon section, distilled from the owner's book. Ten remaining signs pending extraction.",
-   "approved_via": "owner direction, chat 2026-07-29"
+   "notes": "Owner-final Saturn-ruled, house-neutral Aquarius Full Moon sign section, imported verbatim.",
+   "approved_via": "owner-final batch 1, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-fullmoon-sign/aries",
@@ -19323,14 +19323,14 @@
    "contentKey": "fallback-hook/sky-newmoon-sign/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "An Aquarius New Moon plants seeds for the future, yours and everyone's. Set intentions about community: the friendships you want, the groups worth your energy, the cause that needs your particular gifts. This is the Moon for the original idea, the experiment, the break from a status quo that no longer deserves your compliance. Challenge what threatens your freedom, and plant the invention you keep talking yourself out of. The caution is the fringe. Being different is your strength, but aloofness can quietly become isolation. Plant at least one seed that requires other people.",
-   "body_they": "An Aquarius New Moon plants seeds for the future, yours and everyone's. Set intentions about community: the friendships you want, the groups worth your energy, the cause that needs your particular gifts. This is the Moon for the original idea, the experiment, the break from a status quo that no longer deserves your compliance. Challenge what threatens your freedom, and plant the invention you keep talking yourself out of. The caution is the fringe. Being different is your strength, but aloofness can quietly become isolation. Plant at least one seed that requires other people.",
+   "body_you": "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.",
+   "body_they": "An Aquarius New Moon is useful for changing the rules before the old arrangement becomes permanent. Saturn rules Aquarius, so the beginning needs more than a good idea. It needs a plan, clear responsibilities, and limits that everyone understands.\n\nThis may be the new group where one person is not expected to do all the organizing, the project with an actual budget and deadline, or the agreement that finally says what happens when someone does not follow through. Aquarius thinks beyond the immediate moment. It looks at the structure and asks if people can still live with it six months from now.\n\nThe caution is distance. Stepping back can help you see the pattern, but it can also become a way to avoid participating. Do not build a future you only want to advise from the sidelines. Choose one change that requires your time, your presence, and your share of the responsibility.",
    "review_status": "approved",
    "source_keys": [
-    "Ritual and the Moon (per-sign New Moon write-ups, Parts 2-3)"
+    "TLDR-Lunation-Sign-Sections-Fix-Batch1.md"
    ],
-   "notes": "Sign-specific New Moon section distilled from the owner's book: what to plant + the sign's caution.",
-   "approved_via": "owner sign-off, chat 2026-07-21"
+   "notes": "Owner-final Saturn-ruled, house-neutral Aquarius New Moon sign section, imported verbatim.",
+   "approved_via": "owner-final batch 1, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-newmoon-sign/pisces",
@@ -21548,11 +21548,11 @@
    "contentKey": "fallback-hook/empty-house-explainer",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Everyone has all 12 houses. An empty house means no natal planets sit in it, not that the area is missing from your life; it simply is not a constant theme. To read it, look at the sign on the house and the planet that rules that sign. The area usually gets loud only when its ruler is active or a moving planet crosses the house.",
-   "body_they": "Everyone has all 12 houses. An empty house means no natal planets sit in it, not that the area is missing from their life; it simply is not a constant theme. To read it, look at the sign on the house and the planet that rules that sign. The area usually gets loud only when its ruler is active or a moving planet crosses the house.",
+   "body_you": "Everyone has all 12 houses, and an empty one is normal: no planet sat there when you were born, not that the area is missing from your life. An empty house takes its instructions from its ruling planet, wherever that planet sits. A birth chart can name a pattern before it feels obvious.",
+   "body_they": "Everyone has all 12 houses, and an empty one is normal: no planet sat there when they were born, not that the area is missing from their life. An empty house takes its instructions from its ruling planet, wherever that planet sits. A birth chart can name a pattern before it feels obvious.",
    "review_status": "approved",
    "notes": "Empty-house page: gray explainer box. Replaces legacy app explainer.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/house-cusp/aries",
@@ -21678,31 +21678,41 @@
    "contentKey": "fallback-hook/empty-house-ruler",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{signTitle}} is ruled by {{rulerRef}}, so {{rulerRef}} is the planet to follow here. It shows {{rulerMode}}, and its condition decides when {{houseTopic}} move to the front of ordinary life.",
-   "body_they": "{{signTitle}} is ruled by {{rulerRef}}, so {{rulerRef}} is the planet to follow here. It shows {{rulerMode}}, and its condition decides when {{houseTopic}} move to the front of ordinary life.",
+   "body_you": "{{signTitle}} answers to {{rulerRef}}, so this house takes its cues from wherever {{rulerRef}} sits in your chart.",
+   "body_they": "{{signTitle}} answers to {{rulerRef}}, so this house takes its cues from wherever {{rulerRef}} sits in their chart.",
    "review_status": "approved",
-   "notes": "Empty-house page P2: ruler line. {{rulerMode}} = planet-mode hook in the correct voice, so both bodies are identical frames; the voice lives in the slot value.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Empty-house M2: single traditional-ruler handoff. The renderer supplies primaryRuler only.",
+   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/empty-house-placement",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Your {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}} That placement is where this house's story usually surfaces: through {{rulerHouseTopic}}.",
-   "body_they": "Their {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}} That placement is where this house's story usually surfaces: through {{rulerHouseTopic}}.",
+   "body_you": "Your {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}}",
+   "body_they": "Their {{rulerTitle}} is in {{rulerSignTitle}}, in the {{rulerHouseOrdinal}} house. {{placementLine}}",
    "review_status": "approved",
-   "notes": "Empty-house page P3: ruler placement. {{placementLine}} = placement-sentence hook in the correct voice.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Empty-house M3: ruler placement. The existing dual-voice {{placementLine}} remains untouched.",
+   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
+  },
+  {
+   "contentKey": "fallback-hook/empty-house-bridge",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "So the story of this house tends to surface there: through {{rulerHouseTopic}}.",
+   "body_they": "So the story of this house tends to surface there: through {{rulerHouseTopic}}.",
+   "review_status": "approved",
+   "notes": "Empty-house M4: bridge from the house to the traditional ruler's placement.",
+   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/empty-house-close",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "This house can stay quiet for long stretches, and that is normal. When {{rulerRef}} is activated, or when current planets move through your {{houseOrdinal}} house, {{houseTopic}} step forward and ask for real decisions.",
-   "body_they": "This house can stay quiet for long stretches, and that is normal. When {{rulerRef}} is activated, or when current planets move through their {{houseOrdinal}} house, {{houseTopic}} step forward and ask for real decisions.",
+   "body_you": "Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses your {{houseOrdinal}} house, this side of your life steps forward and asks for real decisions.",
+   "body_they": "Quiet stretches here are normal. When {{rulerRef}} gets lit up, or a current planet crosses their {{houseOrdinal}} house, this side of their life steps forward and asks for real decisions.",
    "review_status": "approved",
-   "notes": "Empty-house page P4: activation close.",
-   "approved_via": "owner sign-off, chat 2026-07-22"
+   "notes": "Empty-house M5: activation close without repeating the jurisdiction list.",
+   "approved_via": "owner-approved empty-house refinement, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/profection-year/1",
@@ -41505,40 +41515,40 @@
    "contentKey": "fallback-hook/sky-placement-hook/jupiter/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Someone just took the stage without asking if they were invited. Jupiter in Leo rolls through like a spotlight, pulling the big-hearted out of the wings and into the center. It’s not subtle - it's a call to stretch what you believe you deserve to show and give.",
-   "body_they": "Someone just took the stage without asking if they were invited. Jupiter in Leo rolls through like a spotlight, pulling the big-hearted out of the wings and into the center. It’s not subtle - it's a call to stretch what you believe you deserve to show and give.",
+   "body_you": "Jupiter in Leo makes it easier to admit that we want more. Ambition, creativity, and the desire to be recognized step forward instead of staying in the background.",
+   "body_they": "Jupiter in Leo makes it easier to admit that we want more. Ambition, creativity, and the desire to be recognized step forward instead of staying in the background.",
    "review_status": "approved",
    "source_keys": [
     "data/placements/sign/jupiter-leo.json"
    ],
-   "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-   "approved_via": "owner approval in Codex, 2026-07-27"
+   "notes": "Owner-edited from the generated placement draft into the approved hybrid hook. Pair-authored copy overrides the generic planet fallback.",
+   "approved_via": "owner approval in Codex, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/jupiter/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For about a year, you notice people pitching bigger ideas in meetings, not by shrinking the ask but by turning up the volume on their confidence. The office artist volunteers for the mural, the team leader claims the win with full chest, and generosity shows up as open invitations and extra hands when the spotlight’s on. This is a time when bold gestures expand your reach, and the pride behind them makes the difference between noise and magnetism.",
-   "body_they": "For about a year, you notice people pitching bigger ideas in meetings, not by shrinking the ask but by turning up the volume on their confidence. The office artist volunteers for the mural, the team leader claims the win with full chest, and generosity shows up as open invitations and extra hands when the spotlight’s on. This is a time when bold gestures expand your reach, and the pride behind them makes the difference between noise and magnetism.",
+   "body_you": "For about a year, we take up more space in the work and choices that carry our name. Creative projects grow, leadership becomes more visible, and recognition matters more openly. Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
+   "body_they": "For about a year, we take up more space in the work and choices that carry our name. Creative projects grow, leadership becomes more visible, and recognition matters more openly. Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
    "review_status": "approved",
    "source_keys": [
     "data/placements/sign/jupiter-leo.json"
    ],
-   "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-   "approved_via": "owner approval in Codex, 2026-07-27"
+   "notes": "Owner-edited from the generated placement draft into the approved hybrid lived-expression beat. Pair-authored copy overrides the generic planet fallback.",
+   "approved_via": "owner approval in Codex, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/jupiter/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "But the line blurs quickly. The same voice that commands attention can drown out others, and enthusiasm turns into spectacle for its own sake. Watch for the impulse to overplay every move, to mistake size for substance. When ego drives the script, generosity becomes a performance, and the roar just echoes back to you.",
-   "body_they": "But the line blurs quickly. The same voice that commands attention can drown out others, and enthusiasm turns into spectacle for its own sake. Watch for the impulse to overplay every move, to mistake size for substance. When ego drives the script, generosity becomes a performance, and the roar just echoes back to you.",
+   "body_you": "Ambition is not the problem. Needing an audience to prove the work matters is. When every win needs applause and every response gets measured by enthusiasm, confidence starts promising more than reality can carry. Recognition can confirm the work. It cannot give the work its substance.",
+   "body_they": "Ambition is not the problem. Needing an audience to prove the work matters is. When every win needs applause and every response gets measured by enthusiasm, confidence starts promising more than reality can carry. Recognition can confirm the work. It cannot give the work its substance.",
    "review_status": "approved",
    "source_keys": [
     "data/placements/sign/jupiter-leo.json"
    ],
-   "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-   "approved_via": "owner approval in Codex, 2026-07-27"
+   "notes": "Owner-edited from the generated placement draft into the approved hybrid turn. Pair-authored copy overrides the generic planet fallback.",
+   "approved_via": "owner approval in Codex, 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/sky-placement-moves/jupiter/leo",

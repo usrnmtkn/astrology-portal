@@ -75,8 +75,9 @@ const northNodeSouthNodeConjunction = renderer.renderSynastryAspect({
 const venusAscendantBondTransit = renderer.renderBondTransit({
   transiting: "mars",
   aspect: "square",
-  planetA: "venus",
-  planetB: "ascendant",
+  endpointPlanet: "ascendant",
+  endpointOwner: "friend",
+  activatedPlanets: ["venus"],
   otherName: "X"
 });
 const marsAscendantTransit = renderer.renderTransitAspect({
@@ -173,8 +174,8 @@ assert.match(
 );
 assert.equal(
   venusAscendantBondTransit.headline,
-  "Mars square the Venus-Ascendant connection with X",
-  "Bond-transit headlines must use the reader-facing connection label."
+  "Mars square X's Ascendant",
+  "Bond-transit headlines must name the activated endpoint."
 );
 assert.notEqual(
   marsAscendantTransit.body,

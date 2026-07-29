@@ -306,7 +306,7 @@ let bond = 0;
 const BOND_PAIRS = [["venus","mars"],["moon","mercury"],["sun","saturn"],["mercury","mercury"]];
 for (const tr of SKY_PL) for (const asp of ["conjunction","square","trine","sextile","opposition"]) for (const [pa, pb] of BOND_PAIRS) {
   try {
-    const r = renderBondTransit({ transiting: tr, aspect: asp, planetA: pa, planetB: pb, natalAspect: "trine", otherName: "Sofia" });
+    const r = renderBondTransit({ transiting: tr, aspect: asp, endpointPlanet: pb, endpointOwner: "friend", activatedPlanets: [pa], otherName: "Sofia" });
     if (/\{\{|[\u2014\u2013]|natal/.test(r.body)) fail(`bond ${tr}/${asp}/${pa}-${pb}: bad output`);
     bond++;
   } catch (e) { fail(`bond ${tr}/${asp}/${pa}-${pb}: ${e.message}`); }
@@ -337,7 +337,7 @@ console.log("Rendered 12 Lilith sky placements.");
     }
   }
   renderTransitLabel({ transiting: "saturn", natal: "lilith", aspect: "square" });
-  for (const asp of ["trine","square"]) { const r = renderBondTransit({ transiting: "lilith", aspect: asp, planetA: "venus", planetB: "mars", natalAspect: "trine", otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith bond ${asp}`); lt += 1; }
+  for (const asp of ["trine","square"]) { const r = renderBondTransit({ transiting: "lilith", aspect: asp, endpointPlanet: "mars", endpointOwner: "friend", activatedPlanets: ["venus"], otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith bond ${asp}`); lt += 1; }
   for (const asp of ["conjunction","square","trine"]) { const r = renderSynastryAspect({ planetA: "lilith", planetB: "venus", aspect: asp, otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith synastry ${asp}`); lt += 1; }
   console.log(`Rendered ${lt} Lilith transit/synastry pieces.`);
 }

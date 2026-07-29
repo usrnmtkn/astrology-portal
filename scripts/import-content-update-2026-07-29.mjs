@@ -189,7 +189,7 @@ for (const unit of parseBondBatch(fs.readFileSync(bondHtmlPath, "utf8"))) {
     body_you: unit.body,
     body_they: unit.body,
     review_status: "approved",
-    notes: "Bond transit: aspect-specific effect for the connection between the reader and a named friend. Per-aspect rows take precedence over the legacy soft/hard fallback lane.",
+    notes: "Bond transit: aspect-specific effect for an endpoint activation shared by the reader and a named friend. Per-aspect rows take precedence over the legacy soft/hard fallback lane.",
     approved_via: "owner-approved Bond Transit Effects Batch 14 rev 2, 2026-07-29",
   });
 }

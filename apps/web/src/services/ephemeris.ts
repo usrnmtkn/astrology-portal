@@ -1821,6 +1821,8 @@ function activeSkyAspectsForDay(swe: SwissEphInstance, date: Date): LunarCalenda
 
 const lunarCalendarMonthCache = new Map<string, Promise<LunarCalendarMonth>>();
 const maxLunarCalendarMonthCacheEntries = 12;
+const lunarCalendarRangeEventsCache = new Map<string, Promise<LunarCalendarEvent[]>>();
+const maxLunarCalendarRangeEventsCacheEntries = 24;
 
 function lunarCalendarMonthCacheKey(
   location: LocationInput,
@@ -2015,6 +2017,54 @@ export function getLunarCalendarWeek(
     if (oldestKey) {
       lunarCalendarMonthCache.delete(oldestKey);
     }
+  }
+
+  return request;
+}
+
+/**
+ * Lean event feed for horoscope assembly. Unlike the visual calendar builders,
+ * this skips ingress/aspect scans, daily moon status, void-of-course searches,
+ * illumination, and the 42-day month grid.
+ */
+export function getLunarCalendarRangeEvents(
+  location: LocationInput = defaultLocation,
+  start: Date,
+  end: Date
+): Promise<LunarCalendarEvent[]> {
+  const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const key = [
+    "range-events",
+    start.toISOString(),
+    end.toISOString(),
+    location.latitude.toFixed(4),
+    location.longitude.toFixed(4),
+    timeZone
+  ].join("|");
+  const cached = lunarCalendarRangeEventsCache.get(key);
+
+  if (cached) return cached;
+
+  const request = getSwissEph().then((swe) => {
+    const searchStart = new Date(start.getTime() - 2 * 86_400_000);
+    const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
+
+    return [
+      ...findLunations(swe, searchStart, searchEnd, timeZone),
+      ...findStations(swe, searchStart, searchEnd, timeZone)
+    ].sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+  });
+
+  lunarCalendarRangeEventsCache.set(key, request);
+  void request.catch(() => {
+    if (lunarCalendarRangeEventsCache.get(key) === request) {
+      lunarCalendarRangeEventsCache.delete(key);
+    }
+  });
+
+  if (lunarCalendarRangeEventsCache.size > maxLunarCalendarRangeEventsCacheEntries) {
+    const oldestKey = lunarCalendarRangeEventsCache.keys().next().value;
+    if (oldestKey) lunarCalendarRangeEventsCache.delete(oldestKey);
   }
 
   return request;
