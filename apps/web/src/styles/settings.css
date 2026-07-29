@@ -64,6 +64,18 @@
   background: var(--card-bg);
 }
 
+.settings-profile-row {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.settings-profile-row > div {
+  min-width: 0;
+}
+
+.settings-profile-row :where(h3, span) {
+  overflow-wrap: anywhere;
+}
+
 .settings-row-control {
   align-items: start;
 }
