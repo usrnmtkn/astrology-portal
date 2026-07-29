@@ -34,6 +34,7 @@ jobs:
       - run: npm ci
       - run: node scripts/test-social-friends-contract.mjs
       - run: npm run typecheck
+      - run: npm run build:knowledge
       - run: npm run build:web
 
   database-authorization:
