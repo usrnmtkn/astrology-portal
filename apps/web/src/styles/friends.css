@@ -3419,6 +3419,10 @@
   --aspect-row-glyph-width: 68px;
 }
 
+.compatibility-dynamic-row__quality {
+  margin-top: 2px;
+}
+
 .compatibility-dynamic-row h4 {
   font-size: var(--text-body-size);
 }

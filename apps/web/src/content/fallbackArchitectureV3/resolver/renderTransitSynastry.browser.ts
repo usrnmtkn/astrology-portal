@@ -27,6 +27,18 @@ export interface TransitHouseFacts { planet: string; house: number; sign?: strin
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
+export interface LunationHoroscopeFacts {
+  kind: string;
+  sign: string;
+  risingSign: string;
+  house?: number;
+  moonHouse?: number;
+  sunHouse?: number | null;
+  ruler?: string | null;
+  rulerHouse?: number | null;
+  uranusHouse?: number | null;
+  uranusActive?: boolean;
+}
 export interface CompatFacts { planet: string; signA: string; signB: string; otherName: string }
 export interface SynastryAspectFacts { planetA: string; planetB: string; aspect: string; otherName: string }
 export interface SkyEvent { type: string; a?: string; b?: string; aspect?: string; sign?: string; aSign?: string; bSign?: string; houseA?: number; houseB?: number; dateLine?: string; exactDate?: string; applying?: boolean }
@@ -94,7 +106,7 @@ const inlineWindow = (w: string | null | undefined): string | null => {
 const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
 const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
 const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
-const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
+const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|cheer|cheers|cheered|cheering|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
 
 function possessiveDisplayName(name: string) {
   return `${name}'s`;
@@ -571,7 +583,11 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     const opp = OPP[sign];
     const axisRow = (hooks.get(`fallback-hook/sky-axis/${sign}-${opp}`) ?? hooks.get(`fallback-hook/sky-axis/${opp}-${sign}`)) as ({ body_you?: string; axis_name?: string } | undefined);
     if (!opener || !close || !lore || !trap) throw new SourceGapError(`SOURCE_GAP: lunation sections for ${sign}`);
-    const paras = [fill(opener, { dateLine, signTitle: title(sign) }) + (mechanics ? ` ${mechanics}` : "")];
+    const macroKind = which === "new" ? "new-moon" : "full-moon";
+    const macro = card(`authored/sky-lunation-macro/${macroKind}/${sign}`);
+    const paras: string[] = [];
+    if (macro?.body) paras.push(macro.body);
+    paras.push(fill(opener, { dateLine, signTitle: title(sign) }) + (mechanics ? ` ${mechanics}` : ""));
     if (isEclipse) {
       const ecOpen = hooks.get(`fallback-hook/sky-eclipse-opener/${which === "new" ? "solar" : "lunar"}`)?.body_you;
       if (ecOpen) paras.push(ecOpen);
@@ -869,11 +885,41 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
   // ---- Transits to your bond: a transiting planet activating the synastry contact between
   // the reader and a named friend. Reader-facing; the engine renders the friend's mirrored
   // card by swapping perspective (never by editing this output). ----
-  function renderBondTransit({ transiting, aspect, planetA, planetB, natalAspect, otherName, sign, variant, window: win }: { transiting: string; aspect: string; planetA: string; planetB: string; natalAspect?: string; otherName: string; sign?: string; variant?: number; window?: string }): TransitRenderResult {
+  function renderBondTransit({
+    transiting,
+    aspect,
+    planetA,
+    planetB,
+    natalAspect,
+    otherName,
+    sign,
+    variant,
+    window: win,
+    endpointOwner = "friend",
+    endpointPlanet,
+    endpointPossessive,
+    activatedPlanets
+  }: {
+    transiting: string;
+    aspect: string;
+    planetA: string;
+    planetB: string;
+    natalAspect?: string;
+    otherName: string;
+    sign?: string;
+    variant?: number;
+    window?: string;
+    endpointOwner?: "reader" | "friend";
+    endpointPlanet?: string;
+    endpointPossessive?: string;
+    activatedPlanets?: string[];
+  }): TransitRenderResult {
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-    // variant rotation for repeat viewers (2 or 3; absent = base line)
-    const effect = (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
+    // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
+    // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
+    const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
+      ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
       ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
@@ -887,22 +933,59 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
       sextile: "sextile to",
     };
     const timeClose = inlineWindow(timeOpen);
-    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} the connection between your ${title(planetA)} and ${otherName}'s ${title(planetB)}${timeClose ? ` ${timeClose}` : ""}.`);
+    const endpoint = endpointPlanet ?? (endpointOwner === "friend" ? planetB : planetA);
+    const activated = [...new Set(
+      (activatedPlanets?.length ? activatedPlanets : [endpointOwner === "friend" ? planetA : planetB])
+        .filter(Boolean)
+    )];
+    const endpointLabel = endpointOwner === "friend"
+      ? `${otherName}'s ${title(endpoint)}`
+      : `your ${title(endpoint)}`;
+    const endpointReference = endpointOwner === "friend"
+      ? `${endpointPossessive ?? `${otherName}'s`} ${title(endpoint)}`
+      : `your ${title(endpoint)}`;
+    const activatedLabels = activated.map((planet) => (
+      endpointOwner === "friend" ? `your ${title(planet)}` : `${otherName}'s ${title(planet)}`
+    ));
+    const activatedList = activatedLabels.length <= 1
+      ? activatedLabels[0] ?? ""
+      : `${activatedLabels.slice(0, -1).join(", ")}, and ${activatedLabels.at(-1)}`;
+    const connectionWord = activatedLabels.length === 1 ? "connection" : "connections";
+    paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpointLabel}${timeClose ? ` ${timeClose}` : ""}, activating the ${connectionWord} ${endpointReference} makes with ${activatedList}.`);
     const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL: Record<string, string> = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} the ${title(planetA)}-${title(planetB)} connection with ${otherName}`;
+    const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpointLabel}`;
     return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
   }
 
   // ---- Per-rising lunation horoscope (owner template library): house illuminated ->
-  // Release/Shift -> Higher Path. Eclipses skip the Release section per canon and append
-  // the observe-only note. house auto-derives from risingSign + lunation sign (whole sign). ----
+  // sign core -> full-moon counterpoint -> current ruler house -> manifestations ->
+  // Release/Shift -> Higher Path. Eclipses skip Release and append the observe-only note.
+  // All moving-body houses arrive as engine-computed event-time facts. ----
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-  function renderLunationHoroscope({ kind, sign, risingSign, house }: { kind: string; sign: string; risingSign: string; house?: number }): TransitRenderResult {
+  function renderLunationMacro({ kind, sign }: { kind: string; sign: string }): TransitRenderResult {
+    const which = kind === "new-moon" || kind === "eclipse-solar" ? "new-moon" : "full-moon";
+    const macro = card(`authored/sky-lunation-macro/${which}/${sign}`);
+    if (!macro) throw new SourceGapError(`SOURCE_GAP: no lunation macro for ${which}/${sign}`);
+    return result(macro, "authored/sky-lunation-macro");
+  }
+
+  function renderLunationHoroscope({
+    kind,
+    sign,
+    risingSign,
+    house,
+    moonHouse,
+    sunHouse,
+    ruler,
+    rulerHouse,
+    uranusHouse,
+    uranusActive
+  }: LunationHoroscopeFacts): TransitRenderResult {
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
     const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
-    const h = house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
+    const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
     const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
     const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
@@ -911,6 +994,22 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     // sign alignment: the per-sign lunation section distilled from the owner's book
     const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
     if (signSection) paras.push(signSection);
+    if (which === "full" && sunHouse && sunHouse !== h) {
+      const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
+      if (sunJurisdiction) {
+        paras.push(`The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`);
+      }
+    }
+    if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
+      const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
+      if (rulerHouseBody) {
+        paras.push(`With ${title(ruler)} ruling this lunation from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`);
+      }
+    }
+    if (uranusActive && uranusHouse) {
+      const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
+      if (uranusLayer) paras.push(uranusLayer);
+    }
     // concrete manifestations for this house (from the book's per-house chapters)
     const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
     if (shows) paras.push(shows);
@@ -991,5 +1090,5 @@ export function createTransitSynastryRenderer(transitLib: TransitLibFile, templa
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationHoroscope, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderDoDont, renderDailyGlance };
 }

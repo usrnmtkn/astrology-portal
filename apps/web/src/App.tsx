@@ -93,6 +93,11 @@ import {
   resolvedNatalAspectPatternSectionLabel
 } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
+import {
+  buildWeeklyHoroscope,
+  lunationBlendFacts,
+  type WeeklyHoroscopeAssembly
+} from "./services/weeklyHoroscope";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
   SkyAspectGroup,
@@ -8617,49 +8622,91 @@ function activeBondTransitCards(
   friendTransits: TransitItem[],
   readerTransits: TransitItem[],
   friendName: string,
+  friendPronouns: PronounChoice | null | undefined,
   generatedAt: string
 ) {
   const eligible = contacts.flatMap((contact) => {
     const activations = [
-      ...readerTransits.map((transit) => ({ transit, endpoint: contact.yourPoint.name })),
-      ...friendTransits.map((transit) => ({ transit, endpoint: contact.friendPoint.name }))
+      ...readerTransits.map((transit) => ({
+        transit,
+        endpoint: contact.yourPoint.name,
+        endpointOwner: "reader" as const
+      })),
+      ...friendTransits.map((transit) => ({
+        transit,
+        endpoint: contact.friendPoint.name,
+        endpointOwner: "friend" as const
+      }))
     ];
     const activation = activations.find(({ transit, endpoint }) => (
       transit.natalPoint === endpoint
       && Math.min(...transit.arc) <= 1
-    ))?.transit;
+    ));
 
     if (!activation) {
       return [];
     }
 
-    const activationAspect = normalizeFallbackV3Aspect(activation.aspect);
+    const activationAspect = normalizeFallbackV3Aspect(activation.transit.aspect);
     const contactAspect = normalizeFallbackV3Aspect(contact.aspect);
 
     if (!activationAspect || !contactAspect) {
       return [];
     }
 
-    const transiting = normalizeContentIdPart(activation.transitPlanet);
+    const transiting = normalizeContentIdPart(activation.transit.transitPlanet);
 
     // Walker canon: Lilith contacts render on conjunction and opposition only.
     if (transiting === "lilith" && activationAspect !== "conjunction" && activationAspect !== "opposition") {
       return [];
     }
 
-    return [{ contact, activation, activationAspect, contactAspect, transiting }];
+    return [{
+      contact,
+      activation: activation.transit,
+      activationAspect,
+      contactAspect,
+      transiting,
+      endpointOwner: activation.endpointOwner,
+      endpointPlanet: normalizeContentIdPart(activation.endpoint)
+    }];
   });
 
-  // Deterministic per-friend starting point, then rotate within each planet+family group
-  // so cards drawing on the same effect row always land on different variants.
-  const groupCounts = new Map<string, number>();
+  const groups = new Map<string, typeof eligible>();
+  eligible.forEach((item) => {
+    const groupKey = [
+      item.transiting,
+      item.activationAspect,
+      item.endpointPlanet,
+      item.endpointOwner
+    ].join(":");
+    const group = groups.get(groupKey) ?? [];
+    group.push(item);
+    groups.set(groupKey, group);
+  });
+  const friendReference = pronounSetForOwner(friendName, "person", friendPronouns);
 
-  return eligible.flatMap(({ contact, activation, activationAspect, contactAspect, transiting }) => {
-    const groupKey = `${transiting}:${bondEffectFamily(transiting, activationAspect)}`;
-    const indexInGroup = groupCounts.get(groupKey) ?? 0;
-    groupCounts.set(groupKey, indexInGroup + 1);
-    const baseVariant = (stableTransitCopyVariant(friendName, groupKey) ?? 1) - 1;
-    const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
+  return [...groups.entries()].flatMap(([groupKey, group]) => {
+    const first = group[0];
+    if (!first) return [];
+    const {
+      contact,
+      activation,
+      activationAspect,
+      contactAspect,
+      transiting,
+      endpointOwner,
+      endpointPlanet
+    } = first;
+    const variantSlot = stableTransitCopyVariant(
+      friendName,
+      `${groupKey}:${bondEffectFamily(transiting, activationAspect)}`
+    ) ?? 1;
+    const activatedPlanets = [...new Set(group.map((item) => normalizeContentIdPart(
+      endpointOwner === "friend"
+        ? item.contact.yourPoint.name
+        : item.contact.friendPoint.name
+    )))];
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderBondTransit({
@@ -8671,11 +8718,15 @@ function activeBondTransitCards(
         otherName: friendName,
         sign: activation.transitSign ? normalizeContentIdPart(activation.transitSign) : undefined,
         variant: variantSlot === 1 ? undefined : variantSlot,
-        window: personalTransitPackageWindow(activation, generatedAt)
+        window: personalTransitPackageWindow(activation, generatedAt),
+        endpointOwner,
+        endpointPlanet,
+        endpointPossessive: friendReference.possessive,
+        activatedPlanets
       });
 
       return [{
-        id: `${contact.id}-${activation.id}`,
+        id: `${group.map((item) => item.contact.id).join("+")}-${activation.id}`,
         headline: rendered.headline,
         transitPlanet: activation.transitPlanet,
         body: readerFacingParagraphs(rendered.parts).join("\n\n")
@@ -13303,7 +13354,7 @@ export function App() {
             continue;
           }
 
-          const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+          const timing = transitItemTimingDisplay(transit, skyDate);
           let generated: LiveGeneratedContent | null = null;
 
           try {
@@ -13391,7 +13442,6 @@ export function App() {
     remoteAccountId,
     isProfileMode,
     skyDate,
-    transitForm.chartDate,
     transitsDrawn,
     userProfile?.id,
     userProfile?.name,
@@ -14422,6 +14472,7 @@ export function App() {
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
                       onUpdateProfile={setUserProfile}
+                      targetDate={skyDate}
                       transitForm={transitForm}
                       transitItems={activeTransits}
                       currentSky={sky}
@@ -18580,6 +18631,7 @@ function AccountView({
 function ProfileView({
   profile,
   profileHandle,
+  targetDate,
   transitForm,
   transitItems,
   currentSky,
@@ -18600,6 +18652,7 @@ function ProfileView({
   profile: UserProfile;
   profileHandle?: string | null;
   onUpdateProfile: (profile: UserProfile) => void;
+  targetDate: string;
   transitForm: TransitForm;
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
@@ -18620,6 +18673,8 @@ function ProfileView({
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
+  const [weeklyHoroscopeRequested, setWeeklyHoroscopeRequested] = useState(false);
+  const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
   useContentRegistryRevision();
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
@@ -18643,6 +18698,72 @@ function ProfileView({
   const safeMoon = displayMoon || "your Moon";
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
+  useEffect(() => {
+    if (!weeklyHoroscopeRequested || !natalSky || !displayRising || displayRising === "Rising pending") {
+      setWeeklyHoroscopeAssembly(null);
+      return;
+    }
+
+    const currentLocation = profile.currentLocationData
+      ? withTimeZone(profile.currentLocationData)
+      : profile.currentLocation
+        ? locationFromLabel(profile.currentLocation)
+        : null;
+    if (!currentLocation) {
+      setWeeklyHoroscopeAssembly(null);
+      return;
+    }
+
+    let cancelled = false;
+    setWeeklyHoroscopeAssembly((current) => current
+      ? { ...current, status: "loading" }
+      : null);
+    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+    const dailyServedUnitsByDate = dailyDriver
+      ? {
+          [targetDate]: [
+            dailyDriver.kind === "aspect"
+              ? `${dailyDriver.aspect}:${normalizeContentIdPart(dailyDriver.natal)}`
+              : `house:${dailyDriver.house}`
+          ]
+        }
+      : {};
+
+    buildWeeklyHoroscope({
+      userId: profile.id,
+      natalSky,
+      risingSign: displayRising,
+      location: currentLocation,
+      dailyServedUnitsByDate
+    })
+      .then((assembly) => {
+        if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+      })
+      .catch((error) => {
+        console.warn("Weekly horoscope assembly failed; hiding unavailable sections.", error);
+        if (!cancelled) {
+          setWeeklyHoroscopeAssembly((current) => current
+            ? { ...current, status: "error" }
+            : null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    profile.id,
+    profile.currentLocation,
+    profile.currentLocationData?.label,
+    profile.currentLocationData?.latitude,
+    profile.currentLocationData?.longitude,
+    profile.currentLocationData?.timeZone,
+    natalSky?.generatedAt,
+    currentSky?.generatedAt,
+    displayRising,
+    targetDate,
+    weeklyHoroscopeRequested
+  ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
     ? timingContextForChart({
         birthDate: savedBirthDate,
@@ -18707,13 +18828,13 @@ function ProfileView({
     : undefined;
   const qualifyingDailyTransits = dedupeSameBeatPersonalTransits(
     rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
-    transitForm.chartDate
+    targetDate
   )
     .filter(dailyTransitQualifies)
     .sort((first, second) => transitOrbValue(first) - transitOrbValue(second));
   const dailyIsHeadliner = qualifyingDailyTransits.some(dailyHeadlinerTransit);
   const aspectRows = qualifyingDailyTransits.slice(0, dailyIsHeadliner ? 3 : 4);
-  const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, transitForm.chartDate);
+  const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, targetDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
     : [];
@@ -18881,11 +19002,11 @@ function ProfileView({
     })
   }));
   const updateAspectRows = aspectRows.map((transit) => {
-    const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
-    const normalizedTransit = normalizePersonalTransitSurface(transit, transitForm.chartDate);
+    const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
+    const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
     const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
-    const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+    const timing = transitItemTimingDisplay(transit, targetDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
     const articleSections = normalizedTransit.sections.map((section) => ({
       heading: section.heading || title,
@@ -18954,7 +19075,7 @@ function ProfileView({
     if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
 
     const end = dateFromOffsetDays(
-      transitForm.chartDate,
+      targetDate,
       Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
     );
     const window = `Until ${formatEditorialDate(end, true)}`;
@@ -18983,7 +19104,7 @@ function ProfileView({
   })();
   const behindForecastRows = [
     ...qualifyingDailyTransits.map((transit) => ({
-      end: transitItemActiveWindow(transit, transitForm.chartDate).end,
+      end: transitItemActiveWindow(transit, targetDate).end,
       transit
     })),
     ...(dailyMoonLabel ? [{ end: dailyMoonLabel.end, moonLabel: dailyMoonLabel }] : [])
@@ -19013,7 +19134,7 @@ function ProfileView({
           transiting: normalizeContentIdPart(transit.transitPlanet),
           natal: normalizeContentIdPart(transit.natalPoint),
           aspect,
-          window: personalTransitPackageWindow(transit, transitForm.chartDate)
+          window: personalTransitPackageWindow(transit, targetDate)
         });
 
         return [(
@@ -19021,11 +19142,11 @@ function ProfileView({
             className="daily-forecast-label"
             key={`daily-label-${transit.id}`}
             onClick={() => {
-              const normalized = normalizePersonalTransitSurface(transit, transitForm.chartDate);
+              const normalized = normalizePersonalTransitSurface(transit, targetDate);
               setSelectedTransitId(transit.id);
               setActivePlacementRouteId(null);
               setTransitArticle({
-                id: personalTransitGeneratedContentKey(transit, transitForm.chartDate),
+                id: personalTransitGeneratedContentKey(transit, targetDate),
                 title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
                 glyph: pointGlyph(transit.transitPlanet),
                 subtitle: "",
@@ -19036,7 +19157,7 @@ function ProfileView({
                   body: taggedSectionBody(section)
                 })),
                 meta: [
-                  { label: "Duration", value: transitItemTimingDisplay(transit, transitForm.chartDate).rangeLabel },
+                  { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
                   { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
                 ]
               });
@@ -19066,8 +19187,8 @@ function ProfileView({
         transitSign: position.sign
       };
       const contentKey = transitHouseContentKey(transit.transitPlanet, house);
-      const timingRange = placementTransitRangeLabel(position, transitForm.chartDate);
-      const durationLabel = placementTransitDurationLabel(position, transitForm.chartDate);
+      const timingRange = placementTransitRangeLabel(position, targetDate);
+      const durationLabel = placementTransitDurationLabel(position, targetDate);
       const normalizedHouseTransit = normalizeTransitHouseSurface(
         transit,
         house,
@@ -19076,7 +19197,7 @@ function ProfileView({
         transitHouseAspectEvents(
           transit.transitPlanet,
           qualifyingDailyTransits,
-          transitForm.chartDate
+          targetDate
         )
       );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
@@ -19196,8 +19317,8 @@ function ProfileView({
         // day key so the list rotates daily instead of freezing for a whole transit.
         moonSign: dailyMoon ? normalizeContentIdPart(dailyMoon.sign) : null,
         moonHouse: dailyMoonHouse ?? null,
-        dayKey: Number.isFinite(Date.parse(`${transitForm.chartDate}T00:00:00Z`))
-          ? Math.floor(Date.parse(`${transitForm.chartDate}T00:00:00Z`) / 86400000)
+        dayKey: Number.isFinite(Date.parse(`${targetDate}T00:00:00Z`))
+          ? Math.floor(Date.parse(`${targetDate}T00:00:00Z`) / 86400000)
           : 0
       });
       return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
@@ -19215,7 +19336,13 @@ function ProfileView({
       const rendered = transitSynastryFallbackRendererV3.renderLunationHoroscope({
         kind,
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
-        risingSign: normalizeContentIdPart(displayRising)
+        risingSign: normalizeContentIdPart(displayRising),
+        ...lunationBlendFacts(
+          currentSky,
+          currentSky.moonEvent.sign,
+          displayRising,
+          kind
+        )
       });
       return [{ headline: rendered.headline, body: rendered.body }];
     } catch (error) {
@@ -19230,7 +19357,7 @@ function ProfileView({
     specialSections: dailySpecialSections.slice(0, 2),
     behindForecastRows,
     derivation: {
-      targetDate: transitForm.chartDate,
+      targetDate,
       localNoon: true,
       headliner: dailyIsHeadliner,
       areaCap: dailyIsHeadliner ? 3 : 4,
@@ -19242,7 +19369,7 @@ function ProfileView({
         orb: transitOrbValue(transit),
         house: transit.natalHouse ?? null,
         direction: transit.direction ?? null,
-        window: personalTransitPackageWindow(transit, transitForm.chartDate)
+        window: personalTransitPackageWindow(transit, targetDate)
       })),
       moonDriver: dailyMoon
         ? {
@@ -19343,6 +19470,7 @@ function ProfileView({
         bigThreeRows={bigThreeRows}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
+        weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
         displayMoon={displayMoon}
         displayRising={displayRising}
         displaySun={displaySun}
@@ -19360,6 +19488,7 @@ function ProfileView({
         natalTableRows={natalChartTableRows}
         updatesChart={updatesChart}
         onCreateChart={onCreateChart}
+        onRequestWeeklyHoroscope={() => setWeeklyHoroscopeRequested(true)}
         onCloseTransitArticle={() => {
           setActivePlacementRouteId(null);
           setTransitArticle(null);
@@ -19650,6 +19779,7 @@ function ManualChartsPanel({
         selectedFriendTransits,
         profileTransits,
         selectedChart.displayName,
+        selectedChart.pronouns,
         currentSky.generatedAt
       )
     : [];

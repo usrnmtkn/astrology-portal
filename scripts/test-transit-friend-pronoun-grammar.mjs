@@ -26,7 +26,7 @@ const transitAspectRows = transitLibrary.authoredCards.filter((row) => (
 
 assert.equal(
   transitAspectRows.length,
-  376,
+  377,
   "The friend-pronoun gate must cover the complete authored transit-aspect library."
 );
 
@@ -35,6 +35,11 @@ assert.ok(
     (issue) => issue.pattern === "object verb uses subject they"
   ),
   "Pronoun grammar review must retain teeth for object-position `they`."
+);
+assert.equal(
+  friendVoiceFromReaderCopy("Someone keeps cheering you up.", "Sofia"),
+  "Someone keeps cheering Sofia up.",
+  "Object-position reader references in phrasal verbs must use the friend object form."
 );
 
 for (const row of transitAspectRows) {

@@ -15,16 +15,16 @@ import {
   servedFieldsContract,
   type ServedFieldSurface
 } from "../content/servedFieldsContract";
-import type {
-  FallbackArchitectureV3Bundle
-} from "../content/fallbackArchitectureV3Runtime";
-import type {
-  HookRow,
-  TemplateRow,
-  VocabRow
-} from "../content/fallbackArchitectureV3Runtime";
-import type {
-  AuthoredCard
+import {
+  fallbackArchitectureV3BundledManifest,
+  fallbackArchitectureV3ManifestForBundle,
+  fallbackArchitectureV3PackageVersion,
+  type FallbackArchitectureV3Bundle,
+  type FallbackArchitectureV3PackageManifest,
+  type HookRow,
+  type TemplateRow,
+  type VocabRow,
+  type AuthoredCard
 } from "../content/fallbackArchitectureV3Runtime";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
@@ -97,6 +97,61 @@ const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
+const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3";
+const fallbackArchitectureV3ImportBatchId = `fallback-architecture-${fallbackArchitectureV3PackageVersion}`;
+
+type FallbackArchitectureV3MirrorMetadata = {
+  packageVersion: string;
+  contentHash: string;
+  keyManifestHash: string;
+  keyCount: number;
+};
+
+type CachedFallbackArchitectureV3Bundle = {
+  version: number;
+  bundle: FallbackArchitectureV3Bundle;
+  mirror: FallbackArchitectureV3PackageManifest;
+};
+
+function fallbackArchitectureV3VersionParts(version: string) {
+  const match = /^v(\d+)-(\d{4})-(\d{2})-(\d{2})([a-z]+)?$/u.exec(version.trim().toLowerCase());
+
+  if (!match) {
+    return null;
+  }
+
+  const suffix = match[5] ?? "";
+  let suffixValue = 0;
+
+  for (const character of suffix) {
+    suffixValue = (suffixValue * 26) + (character.charCodeAt(0) - 96);
+  }
+
+  return [
+    Number(match[1]),
+    Number(match[2]),
+    Number(match[3]),
+    Number(match[4]),
+    suffixValue
+  ];
+}
+
+export function compareFallbackArchitectureV3PackageVersions(first: string, second: string) {
+  const firstParts = fallbackArchitectureV3VersionParts(first);
+  const secondParts = fallbackArchitectureV3VersionParts(second);
+
+  if (!firstParts || !secondParts) {
+    return null;
+  }
+
+  for (let index = 0; index < firstParts.length; index += 1) {
+    if (firstParts[index] !== secondParts[index]) {
+      return firstParts[index] > secondParts[index] ? 1 : -1;
+    }
+  }
+
+  return 0;
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
@@ -812,12 +867,105 @@ function fallbackSystemBucket(row: GeneratedContentRow) {
 }
 
 function isApprovedFallbackArchitectureV3Row(row: GeneratedContentRow) {
-  const { reviewStatus } = generatedRowPackageRole(row);
+  const { role, reviewStatus } = generatedRowPackageRole(row);
 
   return Boolean(
     row.provider === fallbackArchitectureV3Provider
-      && fallbackArchitectureV3ApprovedReviews.has(reviewStatus)
+      && (
+        fallbackArchitectureV3ApprovedReviews.has(reviewStatus)
+        || (role === "template" && !reviewStatus)
+      )
   );
+}
+
+function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): FallbackArchitectureV3MirrorMetadata | null {
+  const sourceSnapshot = rowSourceSnapshot(row);
+  const facts = rowFacts(row);
+  const record = packageRecord(row);
+  const packageVersion = stringFrom(
+    sourceSnapshot.packageVersion,
+    sourceSnapshot.package_version,
+    facts.packageVersion,
+    facts.package_version,
+    record.packageVersion,
+    record.package_version
+  );
+  const contentHash = stringFrom(
+    sourceSnapshot.packageContentHash,
+    sourceSnapshot.package_content_hash,
+    facts.packageContentHash,
+    facts.package_content_hash,
+    record.packageContentHash,
+    record.package_content_hash
+  );
+  const keyManifestHash = stringFrom(
+    sourceSnapshot.packageKeyManifestHash,
+    sourceSnapshot.package_key_manifest_hash,
+    facts.packageKeyManifestHash,
+    facts.package_key_manifest_hash,
+    record.packageKeyManifestHash,
+    record.package_key_manifest_hash
+  );
+  const rawKeyCount = sourceSnapshot.packageKeyCount
+    ?? sourceSnapshot.package_key_count
+    ?? facts.packageKeyCount
+    ?? facts.package_key_count
+    ?? record.packageKeyCount
+    ?? record.package_key_count;
+  const keyCount = Number(rawKeyCount);
+
+  if (!packageVersion || !contentHash || !keyManifestHash || !Number.isInteger(keyCount) || keyCount <= 0) {
+    return null;
+  }
+
+  return { packageVersion, contentHash, keyManifestHash, keyCount };
+}
+
+function equalFallbackArchitectureV3MirrorMetadata(
+  first: FallbackArchitectureV3MirrorMetadata,
+  second: FallbackArchitectureV3MirrorMetadata
+) {
+  return first.packageVersion === second.packageVersion
+    && first.contentHash === second.contentHash
+    && first.keyManifestHash === second.keyManifestHash
+    && first.keyCount === second.keyCount;
+}
+
+function fallbackArchitectureV3BundleManifestIfValid(
+  bundle: FallbackArchitectureV3Bundle,
+  metadata: FallbackArchitectureV3MirrorMetadata
+): FallbackArchitectureV3PackageManifest | null {
+  const versionComparison = compareFallbackArchitectureV3PackageVersions(
+    metadata.packageVersion,
+    fallbackArchitectureV3BundledManifest.packageVersion
+  );
+
+  if (versionComparison === null || versionComparison < 0) {
+    return null;
+  }
+
+  const manifest = fallbackArchitectureV3ManifestForBundle(bundle, metadata.packageVersion);
+  const bundledKeys = new Set(fallbackArchitectureV3BundledManifest.keys);
+  const mirrorKeys = new Set(manifest.keys);
+  const containsBundledManifest = [...bundledKeys].every((key) => mirrorKeys.has(key));
+  const sameVersionMatchesBundled = versionComparison !== 0
+    || (
+      manifest.contentHash === fallbackArchitectureV3BundledManifest.contentHash
+      && manifest.keyManifestHash === fallbackArchitectureV3BundledManifest.keyManifestHash
+      && manifest.keyCount === fallbackArchitectureV3BundledManifest.keyCount
+    );
+
+  if (
+    !containsBundledManifest
+    || !sameVersionMatchesBundled
+    || manifest.contentHash !== metadata.contentHash
+    || manifest.keyManifestHash !== metadata.keyManifestHash
+    || manifest.keyCount !== metadata.keyCount
+  ) {
+    return null;
+  }
+
+  return manifest;
 }
 
 function fallbackArchitectureV3DashboardVersionFromRows(rows: Pick<GeneratedContentRow, "updated_at">[]) {
@@ -827,7 +975,20 @@ function fallbackArchitectureV3DashboardVersionFromRows(rows: Pick<GeneratedCont
   }, 0);
 }
 
-function readCachedFallbackArchitectureV3Bundle(): { version: number; bundle: FallbackArchitectureV3Bundle } | null {
+export function clearCachedFallbackArchitectureV3Bundle() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.removeItem(fallbackArchitectureV3BundleVersionKey);
+    window.localStorage.removeItem(fallbackArchitectureV3BundleCacheKey);
+  } catch {
+    // The static package remains active when browser storage is blocked.
+  }
+}
+
+export function readCachedFallbackArchitectureV3Bundle(): CachedFallbackArchitectureV3Bundle | null {
   if (typeof window === "undefined") {
     return null;
   }
@@ -840,26 +1001,81 @@ function readCachedFallbackArchitectureV3Bundle(): { version: number; bundle: Fa
       return null;
     }
 
-    const bundle = JSON.parse(rawBundle) as FallbackArchitectureV3Bundle;
+    const envelope = JSON.parse(rawBundle) as {
+      schema?: unknown;
+      bundledPackageVersion?: unknown;
+      bundledContentHash?: unknown;
+      bundledKeyManifestHash?: unknown;
+      mirrorPackageVersion?: unknown;
+      mirrorContentHash?: unknown;
+      mirrorKeyManifestHash?: unknown;
+      mirrorKeyCount?: unknown;
+      dashboardVersion?: unknown;
+      bundle?: unknown;
+    };
+    const bundle = envelope?.bundle as FallbackArchitectureV3Bundle | undefined;
 
-    if (!bundle?.transitLib?.authoredCards?.length || !bundle?.rowsFile || !bundle?.templatesFile?.templates?.length) {
+    if (
+      envelope?.schema !== fallbackArchitectureV3BundleCacheSchema
+      || envelope?.bundledPackageVersion !== fallbackArchitectureV3BundledManifest.packageVersion
+      || envelope?.bundledContentHash !== fallbackArchitectureV3BundledManifest.contentHash
+      || envelope?.bundledKeyManifestHash !== fallbackArchitectureV3BundledManifest.keyManifestHash
+      || envelope?.dashboardVersion !== version
+      || !bundle?.transitLib
+      || !bundle?.rowsFile
+      || !bundle?.templatesFile
+    ) {
+      clearCachedFallbackArchitectureV3Bundle();
       return null;
     }
 
-    return { version, bundle };
+    const mirrorMetadata: FallbackArchitectureV3MirrorMetadata = {
+      packageVersion: String(envelope.mirrorPackageVersion ?? ""),
+      contentHash: String(envelope.mirrorContentHash ?? ""),
+      keyManifestHash: String(envelope.mirrorKeyManifestHash ?? ""),
+      keyCount: Number(envelope.mirrorKeyCount)
+    };
+    const mirror = fallbackArchitectureV3BundleManifestIfValid(bundle, mirrorMetadata);
+
+    if (!mirror) {
+      clearCachedFallbackArchitectureV3Bundle();
+      return null;
+    }
+
+    return {
+      version,
+      bundle: { ...bundle, packageManifest: mirror },
+      mirror
+    };
   } catch {
+    clearCachedFallbackArchitectureV3Bundle();
     return null;
   }
 }
 
-function cacheFallbackArchitectureV3Bundle(version: number, bundle: FallbackArchitectureV3Bundle) {
+function cacheFallbackArchitectureV3Bundle(
+  version: number,
+  bundle: FallbackArchitectureV3Bundle,
+  mirror: FallbackArchitectureV3PackageManifest
+) {
   if (typeof window === "undefined" || !version) {
     return;
   }
 
   try {
     window.localStorage.setItem(fallbackArchitectureV3BundleVersionKey, String(version));
-    window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify(bundle));
+    window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify({
+      schema: fallbackArchitectureV3BundleCacheSchema,
+      bundledPackageVersion: fallbackArchitectureV3BundledManifest.packageVersion,
+      bundledContentHash: fallbackArchitectureV3BundledManifest.contentHash,
+      bundledKeyManifestHash: fallbackArchitectureV3BundledManifest.keyManifestHash,
+      mirrorPackageVersion: mirror.packageVersion,
+      mirrorContentHash: mirror.contentHash,
+      mirrorKeyManifestHash: mirror.keyManifestHash,
+      mirrorKeyCount: mirror.keyCount,
+      dashboardVersion: version,
+      bundle
+    }));
   } catch {
     // The static package remains available when browser storage is full or blocked.
   }
@@ -868,16 +1084,16 @@ function cacheFallbackArchitectureV3Bundle(version: number, bundle: FallbackArch
 function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const body = stringFrom(row.body, record.body);
+  const body = stringFrom(record.body);
 
   if (!body) {
     return null;
   }
 
   return {
+    ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "full_copy",
-    ...(stringFrom(row.headline, record.headline) ? { headline: stringFrom(row.headline, record.headline) } : {}),
     body,
     review_status: reviewStatus || stringFrom(record.review_status) || "approved"
   };
@@ -885,20 +1101,22 @@ function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | nu
 
 function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
   const record = packageRecord(row);
-  const sections = rowSections(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const bodyYou = stringFrom(row.body, sections.body_you, record.body_you, record.body);
-  const bodyThey = stringFrom(sections.body_they, record.body_they, bodyYou);
+  const recordBody = stringFrom(record.body);
+  const recordBodyYou = stringFrom(record.body_you);
+  const recordBodyThey = stringFrom(record.body_they);
 
-  if (!bodyYou || !bodyThey) {
+  if (!recordBody && !recordBodyYou && !recordBodyThey) {
     return null;
   }
 
   return {
+    ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "fallback_hook",
-    body_you: bodyYou,
-    body_they: bodyThey,
+    ...(recordBody ? { body: recordBody } : {}),
+    ...(recordBodyYou ? { body_you: recordBodyYou } : {}),
+    ...(recordBodyThey ? { body_they: recordBodyThey } : {}),
     review_status: reviewStatus || stringFrom(record.review_status) || "approved"
   };
 }
@@ -906,14 +1124,15 @@ function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
 function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const body = stringFrom(row.body, record.body);
-  const grammarFrame = stringFrom(record.grammar_frame, rowFacts(row).grammar_frame, rowSourceSnapshot(row).grammar_frame);
+  const body = stringFrom(record.body);
+  const grammarFrame = stringFrom(record.grammar_frame);
 
   if (!body || !grammarFrame) {
     return null;
   }
 
   return {
+    ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "vocabulary",
     grammar_frame: grammarFrame,
@@ -924,22 +1143,23 @@ function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
 
 function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null {
   const record = packageRecord(row);
-  const { role } = generatedRowPackageRole(row);
-  const body = stringFrom(row.body, record.body);
+  const { role, reviewStatus } = generatedRowPackageRole(row);
+  const body = stringFrom(record.body);
 
   if (!body) {
     return null;
   }
 
   return {
+    ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "template",
-    ...(stringFrom(row.headline, record.headline) ? { headline: stringFrom(row.headline, record.headline) } : {}),
     body,
     ...(stringFrom(record.body_you) ? { body_you: stringFrom(record.body_you) } : {}),
     ...(stringFrom(record.body_they) ? { body_they: stringFrom(record.body_they) } : {}),
     ...(stringArrayFrom(record.requiredSlots).length ? { requiredSlots: stringArrayFrom(record.requiredSlots) } : {}),
-    ...(stringArrayFrom(record.optionalSlots).length ? { optionalSlots: stringArrayFrom(record.optionalSlots) } : {})
+    ...(stringArrayFrom(record.optionalSlots).length ? { optionalSlots: stringArrayFrom(record.optionalSlots) } : {}),
+    review_status: reviewStatus || stringFrom(record.review_status) || "approved_reuse"
   };
 }
 
@@ -981,6 +1201,7 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
       .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .eq("provider", fallbackArchitectureV3Provider)
       .order("updated_at", { ascending: false })
+      .order("id", { ascending: false })
       .range(from, to)
       .returns<GeneratedContentRow[]>();
 
@@ -996,14 +1217,33 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     }
   }
 
+  const approvedRows = rows.filter(isApprovedFallbackArchitectureV3Row);
+  const metadataByRow = approvedRows.map((row) => fallbackArchitectureV3RowMirrorMetadata(row));
+  const mirrorMetadata = metadataByRow.find((metadata): metadata is FallbackArchitectureV3MirrorMetadata => Boolean(metadata));
+
+  if (
+    !mirrorMetadata
+    || metadataByRow.some((metadata) => !metadata || !equalFallbackArchitectureV3MirrorMetadata(metadata, mirrorMetadata))
+  ) {
+    console.warn("Fallback architecture V3 dashboard package metadata is missing or inconsistent; bundled package remains active.", {
+      installedPackage: fallbackArchitectureV3ImportBatchId,
+      approvedRows: approvedRows.length,
+      rowsWithoutMetadata: metadataByRow.filter((metadata) => !metadata).length
+    });
+    clearCachedFallbackArchitectureV3Bundle();
+    return null;
+  }
+
   const seen = new Set<string>();
+  const duplicateKeys = new Set<string>();
   const authoredCards: AuthoredCard[] = [];
   const hookRows: HookRow[] = [];
   const vocabularyRows: VocabRow[] = [];
   const templates: TemplateRow[] = [];
 
-  for (const row of rows) {
-    if (seen.has(row.content_key) || !isApprovedFallbackArchitectureV3Row(row)) {
+  for (const row of approvedRows) {
+    if (seen.has(row.content_key)) {
+      duplicateKeys.add(row.content_key);
       continue;
     }
 
@@ -1038,23 +1278,42 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     }
   }
 
-  if (authoredCards.length === 0 || hookRows.length === 0 || vocabularyRows.length === 0 || templates.length === 0) {
-    console.warn("Fallback architecture V3 dashboard bundle was incomplete; local JSON snapshot remains active.", {
-      authoredCards: authoredCards.length,
-      hookRows: hookRows.length,
-      vocabularyRows: vocabularyRows.length,
-      templates: templates.length
+  if (
+    duplicateKeys.size > 0
+    || authoredCards.length + hookRows.length + vocabularyRows.length + templates.length === 0
+  ) {
+    console.warn("Fallback architecture V3 dashboard package is empty or contains duplicate keys; bundled package remains active.", {
+      duplicateKeys: [...duplicateKeys].slice(0, 20)
     });
-    return cached?.bundle ?? null;
+    clearCachedFallbackArchitectureV3Bundle();
+    return null;
   }
 
-  const bundle = {
+  const candidateBundle: FallbackArchitectureV3Bundle = {
     transitLib: { authoredCards },
     rowsFile: { hookRows, vocabularyRows },
     templatesFile: { templates }
   };
+  const mirror = fallbackArchitectureV3BundleManifestIfValid(candidateBundle, mirrorMetadata);
 
-  cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle);
+  if (!mirror) {
+    console.warn("Fallback architecture V3 dashboard package failed version, completeness, or hash validation; bundled package remains active.", {
+      installedPackage: fallbackArchitectureV3BundledManifest,
+      mirrorPackage: mirrorMetadata
+    });
+    clearCachedFallbackArchitectureV3Bundle();
+    return null;
+  }
+
+  const bundle: FallbackArchitectureV3Bundle = {
+    ...candidateBundle,
+    packageManifest: mirror
+  };
+  cacheFallbackArchitectureV3Bundle(
+    dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows),
+    bundle,
+    mirror
+  );
 
   return bundle;
 }

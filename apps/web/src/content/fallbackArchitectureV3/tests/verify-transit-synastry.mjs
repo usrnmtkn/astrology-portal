@@ -176,13 +176,13 @@ for (const p of signsPl) for (let h = 1; h <= 12; h++) {
   if (ch.templateKey !== "authored/transit-aspect") fail("chiron/jupiter square: authored v2 card expected");
   if (!ch.body.includes("Chiron square your Jupiter until Jul 30, 2026")) fail("chiron/jupiter square: exact-aspect closer with filled window missing");
   if (/\{\{/.test(ch.body)) fail("chiron/jupiter square: unfilled slot");
-  // Reader voice is authored-first across the library; the composer register is exercised
-  // by the friend-voice checks below (authored cards never serve friend view).
+  // Reader and friend voices are authored-first across the library. Friend output
+  // uses authored body_they when present, otherwise the grammar-safe transformer.
   const chf = renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", sign: "taurus", voice: "Sofia" });
   if (/\b(you|your|yourself)\b/i.test(chf.body)) fail("transit-aspect composer friend voice: second-person leak");
-  if (!chf.body.includes("Sofia's natal Jupiter")) fail("transit-aspect composer friend voice: possessive missing");
+  if (!chf.body.includes("Sofia's Jupiter")) fail("transit-aspect authored friend voice: possessive missing");
   const nosign = renderTransitAspect({ transiting: "pluto", natal: "moon", aspect: "opposition", voice: "Sofia" });
-  if (!nosign.body.includes("Pluto wants it transformed at the root")) fail("transit-aspect fallback: sign-less wants fallback missing (friend voice)");
+  if (!nosign.body.includes("Pluto opposite Sofia's Moon")) fail("transit-aspect authored friend voice: exact closer missing");
   if (/\b(you|your)\b/i.test(nosign.body)) fail("transit-aspect sign-less friend voice: second-person leak");
   const moonfast = renderTransitAspect({ transiting: "moon", natal: "venus", aspect: "trine", sign: "pisces" });
   if (moonfast.body.includes("In plain terms")) fail("moon transit-aspect: old scaffold leaked");
@@ -343,14 +343,13 @@ console.log("Rendered 12 Lilith sky placements.");
 }
 
 
-// Friend-voice transit cards: full grid, no second-person leaks, authored library never leaks
+// Friend-voice transit cards: full grid, authored-first, and no second-person leaks.
 {
   let fv = 0;
   for (const tr of SKY_PL) for (const nat of ["sun","moon","venus","saturn","lilith"]) for (const asp of ["conjunction","square","trine"]) {
     try {
       const r = renderTransitAspect({ transiting: tr, natal: nat, aspect: asp, voice: "Sofia" });
       if (/\b(you|your|yourself)\b/i.test(r.body + " " + r.headline)) fail(`friend transit ${tr}/${asp}/${nat}: second-person leak`);
-      if (r.contentKey) fail(`friend transit ${tr}/${asp}/${nat}: authored card leaked into friend view`);
       fv++;
     } catch (e) {
       // Walker canon: natal-Lilith square/trine SOURCE_GAP by design (friend view too)
