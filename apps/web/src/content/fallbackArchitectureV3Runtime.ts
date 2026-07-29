@@ -6,7 +6,7 @@ import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
-import { createFallbackRenderer, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
+import { createFallbackRenderer, createPackageManifest, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
 
 export { normalizeAspect, SourceGapError };
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
@@ -90,6 +90,15 @@ export type FallbackArchitectureV3Bundle = {
   transitLib: TransitLibFile;
   templatesFile: TemplatesFile;
   rowsFile: RowsFile;
+  packageManifest?: FallbackArchitectureV3PackageManifest;
+};
+
+export type FallbackArchitectureV3PackageManifest = {
+  packageVersion: string;
+  contentHash: string;
+  keyManifestHash: string;
+  keyCount: number;
+  keys: string[];
 };
 
 export type SkyEvent = {
@@ -154,24 +163,31 @@ function isReaderEligible(row: { review_status?: ReviewStatus | null }) {
   return readerEligibleReviewStatuses.has(String(row.review_status ?? "").trim().toLowerCase());
 }
 
-function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
+function packageRowsWithLatestOverride<T extends { contentKey: string }>(rows: T[]) {
+  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+}
+
+function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArchitectureV3Bundle {
   // The package transit factory intentionally exposes review rows for admin QA.
   // Production gets a reader-eligible view so needs_review additions stay dark.
-  const readerBundle: FallbackArchitectureV3Bundle = {
+  return {
     transitLib: {
-      authoredCards: bundle.transitLib.authoredCards.filter(isReaderEligible)
+      authoredCards: packageRowsWithLatestOverride(bundle.transitLib.authoredCards).filter(isReaderEligible)
     },
     templatesFile: {
-      templates: bundle.templatesFile.templates.filter((row) => (
+      templates: packageRowsWithLatestOverride(bundle.templatesFile.templates).filter((row) => (
         !row.review_status || isReaderEligible(row)
       ))
     },
     rowsFile: {
-      hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
-      vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
+      hookRows: packageRowsWithLatestOverride(bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
+      vocabularyRows: packageRowsWithLatestOverride(bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
     }
   };
+}
 
+function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
+  const readerBundle = readerEligibleBundle(bundle);
   return createTransitSynastryRenderer(
     readerBundle.transitLib,
     readerBundle.templatesFile,
@@ -180,21 +196,31 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
 }
 
 function createAppFallbackRenderer(bundle: FallbackArchitectureV3Bundle) {
+  const readerBundle = readerEligibleBundle(bundle);
+
   return createFallbackRenderer({
-    templates: bundle.templatesFile.templates.filter((row) => (
-      !row.review_status || isReaderEligible(row)
-    ))
+    templates: readerBundle.templatesFile.templates
   }, {
-    hookRows: (bundle.rowsFile.hookRows ?? []).filter(isReaderEligible),
-    vocabularyRows: (bundle.rowsFile.vocabularyRows ?? []).filter(isReaderEligible)
+    hookRows: readerBundle.rowsFile.hookRows,
+    vocabularyRows: readerBundle.rowsFile.vocabularyRows
   });
 }
 
-export let fallbackRendererV3 = createAppFallbackRenderer(snapshotBundle);
-export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(snapshotBundle);
-let vocabularyRowsByKey = vocabularyRowsByContentKey(snapshotBundle.rowsFile);
-let hookRowsByKey = hookRowsByContentKey(snapshotBundle.rowsFile);
-let transitAuthoredCardsByKey = authoredCardsByContentKey(snapshotBundle.transitLib);
+export function fallbackArchitectureV3ManifestForBundle(
+  bundle: FallbackArchitectureV3Bundle,
+  packageVersion = fallbackArchitectureV3PackageVersion
+): FallbackArchitectureV3PackageManifest {
+  return createPackageManifest(readerEligibleBundle(bundle), packageVersion);
+}
+
+export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle(snapshotBundle);
+
+const initialReaderBundle = readerEligibleBundle(snapshotBundle);
+export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
+export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
+let vocabularyRowsByKey = vocabularyRowsByContentKey(initialReaderBundle.rowsFile);
+let hookRowsByKey = hookRowsByContentKey(initialReaderBundle.rowsFile);
+let transitAuthoredCardsByKey = authoredCardsByContentKey(initialReaderBundle.transitLib);
 
 const signRulers: Record<string, string> = {
   aries: "Mars",
@@ -326,10 +352,17 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
   return null;
 }
 
-export function installFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle) {
-  fallbackRendererV3 = createAppFallbackRenderer(bundle);
-  transitSynastryFallbackRendererV3 = createAppTransitRenderer(bundle);
-  vocabularyRowsByKey = vocabularyRowsByContentKey(bundle.rowsFile);
-  hookRowsByKey = hookRowsByContentKey(bundle.rowsFile);
-  transitAuthoredCardsByKey = authoredCardsByContentKey(bundle.transitLib);
+export function installFallbackArchitectureV3Bundle(
+  bundle: FallbackArchitectureV3Bundle,
+  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+) {
+  const readerBundle = readerEligibleBundle(bundle);
+  const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
+  fallbackRendererV3 = createAppFallbackRenderer(readerBundle);
+  transitSynastryFallbackRendererV3 = createAppTransitRenderer(readerBundle);
+  vocabularyRowsByKey = vocabularyRowsByContentKey(readerBundle.rowsFile);
+  hookRowsByKey = hookRowsByContentKey(readerBundle.rowsFile);
+  transitAuthoredCardsByKey = authoredCardsByContentKey(readerBundle.transitLib);
+
+  return manifest;
 }
