@@ -48,8 +48,8 @@
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: none;
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
-  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(39%) sepia(76%) saturate(1842%) hue-rotate(217deg) brightness(92%) contrast(91%);
-  --synastry-inner-glyph: #4169e1;
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) opacity(0.52);
+  --synastry-inner-glyph: var(--color-muted);
   --color-dig-good: #3f7a3a;
   --color-dig-good-bg: rgba(63, 122, 58, 0.13);
   --color-aspect-hard: rgba(176, 112, 63, 0.62);
@@ -57,7 +57,7 @@
   --color-aspect-adjust: #8fa873;
   --color-aspect-union: #8d8982;
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
-  --color-synastry-accent: #4169e1;
+  --color-synastry-accent: var(--color-muted);
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -145,6 +145,7 @@
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
   --synastry-accent: var(--color-synastry-accent);
+  --synastry-row-bg: color-mix(in srgb, var(--surface-2) 62%, var(--card-bg));
   --elev-pill:
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
@@ -875,8 +876,8 @@
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
-  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(39%) sepia(76%) saturate(1842%) hue-rotate(217deg) brightness(92%) contrast(91%);
-  --synastry-inner-glyph: #4169e1;
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(1) opacity(0.48);
+  --synastry-inner-glyph: var(--color-muted);
   --color-dig-good: #84c57c;
   --color-dig-good-bg: rgba(110, 180, 100, 0.16);
   --color-aspect-hard: rgba(231, 171, 112, 0.88);
