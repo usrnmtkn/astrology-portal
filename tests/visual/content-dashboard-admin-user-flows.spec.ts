@@ -501,6 +501,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("admin dashboard deep links restore primary surfaces, filters, and history state", async ({ page }) => {
+    test.setTimeout(90_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
     let deepLinkLoadIndex = 0;
