@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-28h");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-28i");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -451,13 +451,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const rowSummary = transitCardPreview\(normalizedSurfacePreview\(normalizedHouseTransit\)\)/u,
-  "Personal house-transit cards must use the truncated preview."
+  /const rowSummary = transitCardPreview\(\s*transitBodyWithoutRepeatedWindow\(normalizedSurfacePreview\(normalizedHouseTransit\), renderedWindow\)\s*\)/u,
+  "Personal house-transit cards must remove a repeated visible window before truncating the preview."
 );
 assert.match(
   appSource,
-  /rowSummary: transitCardPreview\(normalizedSurfacePreview\(normalized\)\)/u,
-  "Friend house-transit cards must use the truncated preview."
+  /rowSummary: transitCardPreview\(\s*transitBodyWithoutRepeatedWindow\(normalizedSurfacePreview\(normalized\), renderedWindow\)\s*\)/u,
+  "Friend house-transit cards must remove a repeated visible window before truncating the preview."
 );
 assert.match(
   appSource,

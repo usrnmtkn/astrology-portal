@@ -970,6 +970,16 @@ test.describe("client-facing user flow case studies", () => {
         houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
         "House transit keyword tags follow the card description"
       ).toBeVisible();
+      const houseTransitRange = (
+        await houseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
+      ).trim();
+      const houseTransitDescription = (
+        await houseTransitCard.locator(".updates-aspect-row__description").innerText()
+      ).trim();
+      expect(
+        houseTransitDescription.startsWith(`${houseTransitRange},`),
+        "House transit body does not repeat its visible date range"
+      ).toBe(false);
       expect(await houseTransitKeywords.count(), "House transit keywords render as separate tags").toBeGreaterThan(1);
       for (const keyword of await houseTransitKeywords.allTextContents()) {
         expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
@@ -1114,6 +1124,16 @@ test.describe("client-facing user flow case studies", () => {
       friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
       "Friend house transit keyword tags follow the card description"
     ).toBeVisible();
+    const friendHouseTransitRange = (
+      await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
+    ).trim();
+    const friendHouseTransitDescription = (
+      await friendHouseTransitCard.locator(".updates-aspect-row__description").innerText()
+    ).trim();
+    expect(
+      friendHouseTransitDescription.startsWith(`${friendHouseTransitRange},`),
+      "Friend house transit body does not repeat its visible date range"
+    ).toBe(false);
     await friendHouseTransitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
