@@ -44,6 +44,16 @@ try {
   assert.equal(southNode.motion, "retrograde", "South Node should expose the node-axis retrograde state.");
   assert.equal(astrologyDisplay.isDisplayRetrograde(northNode), false, "North Node must not render as a retrograde planet.");
   assert.equal(astrologyDisplay.isDisplayRetrograde(southNode), false, "South Node must not render as a retrograde planet.");
+  assert.equal(
+    astrologyDisplay.lunarNodeTransitRangeLabel(northNode),
+    "Jul 26, 2026 - Mar 26, 2028",
+    "True North Node content must use the ephemeris ingress and egress in the chart time zone."
+  );
+  assert.equal(
+    astrologyDisplay.lunarNodeTransitRangeLabel(southNode),
+    "Jul 26, 2026 - Mar 26, 2028",
+    "True South Node content must share the computed node-axis window."
+  );
   assert.equal(sky.calculationProvenance.nodeType, "true", "Calculation provenance must disclose True Node.");
   assert.equal(sky.calculationProvenance.calculationVersion, "tldrastro-calculation-v2");
 } finally {

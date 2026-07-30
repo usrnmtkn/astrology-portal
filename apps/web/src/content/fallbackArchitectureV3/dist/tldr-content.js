@@ -425,7 +425,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     if (!day) {
       return null;
     }
-    return pair.find((candidate) => !candidate.archive_only && (candidate.article_variant !== "retrograde" || isRetrograde || isShadowPhase) && Boolean(candidate.valid_from && candidate.valid_to) && candidate.valid_from <= day && candidate.valid_to >= day) ?? null;
+    const inWindow = pair.filter((candidate) => !candidate.archive_only && candidate.article_structure === "final-v1" && Boolean(candidate.valid_from && candidate.valid_to) && candidate.valid_from <= day && candidate.valid_to >= day);
+    const retrogradeWindow = isRetrograde || isShadowPhase;
+    return (retrogradeWindow ? inWindow.find((candidate) => candidate.article_variant === "retrograde") ?? inWindow.find((candidate) => candidate.article_variant !== "retrograde") : inWindow.find((candidate) => candidate.article_variant !== "retrograde")) ?? null;
   };
   const skyPlacementHistoryAllowed = (planet, isRetrograde, historyEligible) => {
     if (typeof historyEligible === "boolean") {
@@ -441,6 +443,160 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
       "north-node",
       "south-node"
     ])).has(planet) || isRetrograde && ["mercury", "venus", "mars"].includes(planet);
+  };
+  const ARTICLE_SECTION_ORDER = {
+    "seasonal-context": 1,
+    ingress: 2,
+    "collective-read": 3,
+    "dated-aspect": 4,
+    "event-interaction": 5,
+    "exit-tone-shift": 6,
+    "historic-movement": 7,
+    "retrograde-variant": 8
+  };
+  const ARTICLE_COPY_PUNCTUATION_FAILURE = /—|--/u;
+  const ARTICLE_LITERAL_ENGINE_FACT = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|(?:19|20)\d{2}|\d+(?:\.\d+)?\s*(?:°|degrees?))\b/u;
+  const articleCopyFields = (candidate) => [
+    candidate.headline,
+    candidate.body,
+    candidate.preview_note,
+    candidate.core_theme,
+    candidate.sign_jurisdiction,
+    candidate.lived_experience,
+    candidate.rulership_twist,
+    candidate.history_echo,
+    candidate.closing_charge,
+    ...(candidate.article_sections ?? []).flatMap((section) => [section.heading, section.body]),
+    ...(candidate.rising_horoscopes ?? []).map((entry) => entry.body)
+  ].filter((value) => typeof value === "string");
+  const assertSkyArticleCopy = (candidate) => {
+    for (const copy of articleCopyFields(candidate)) {
+      if (ARTICLE_COPY_PUNCTUATION_FAILURE.test(copy)) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} contains a prohibited em dash or double hyphen`
+        );
+      }
+    }
+    if (candidate.article_structure === "final-v1") {
+      for (const copy of (candidate.article_sections ?? []).flatMap((section) => [
+        section.heading,
+        section.body
+      ]).filter((value) => typeof value === "string")) {
+        if (ARTICLE_LITERAL_ENGINE_FACT.test(copy)) {
+          throw new SourceGapError(
+            `SOURCE_GAP: sky article ${candidate.contentKey} hardcodes a date or degree outside an engine slot`
+          );
+        }
+      }
+    }
+  };
+  const articleSectionEvent = (section, events) => {
+    if (section.kind === "dated-aspect") {
+      return events.find((event) => event.type === "aspect" && event.aspect === section.aspect && (/* @__PURE__ */ new Set([event.a, event.b])).size === 2 && (/* @__PURE__ */ new Set([event.a, event.b])).has(section.a) && (/* @__PURE__ */ new Set([event.a, event.b])).has(section.b)) ?? null;
+    }
+    if (section.kind === "event-interaction" || section.kind === "retrograde-variant" && section.event_type) {
+      return events.find((event) => event.type === section.event_type) ?? null;
+    }
+    return null;
+  };
+  const articleSlotFill = (value, slots, contentKey) => {
+    const rendered = value.replace(/\{\{([\w.]+)\}\}/g, (_, key) => slots[key] == null ? `{{${key}}}` : String(slots[key])).trim();
+    const leftover = rendered.match(/\{\{([\w.]+)\}\}/u);
+    if (leftover) {
+      throw new SourceGapError(
+        `SOURCE_GAP: sky article ${contentKey} is missing engine slot ${leftover[1]}`
+      );
+    }
+    return rendered;
+  };
+  const renderFinalSkyArticle = (candidate, facts) => {
+    if (candidate.article_structure !== "final-v1") {
+      return null;
+    }
+    assertSkyArticleCopy(candidate);
+    const sections = candidate.article_sections ?? [];
+    const kinds = new Set(sections.map((section) => section.kind));
+    const hasOpening = facts.planet === "sun" ? kinds.has("seasonal-context") || kinds.has("ingress") : FAST.has(facts.planet) ? kinds.has("seasonal-context") && kinds.has("ingress") : kinds.has("ingress");
+    if (!hasOpening || !kinds.has("collective-read") || !kinds.has("exit-tone-shift")) {
+      throw new SourceGapError(
+        `SOURCE_GAP: sky article ${candidate.contentKey} is missing a required FINAL section`
+      );
+    }
+    const baseSlots = {
+      entryDate: facts.entryDate,
+      exitDate: facts.exitDate,
+      historyEntryDate: facts.historyEntryDate,
+      historyExitDate: facts.historyExitDate,
+      historyDegreeRange: facts.historyDegreeRange
+    };
+    const renderedSections = sections.map((section, sourceIndex) => ({ section, sourceIndex })).sort((first, second) => ARTICLE_SECTION_ORDER[first.section.kind] - ARTICLE_SECTION_ORDER[second.section.kind] || first.sourceIndex - second.sourceIndex).flatMap(({ section }) => {
+      if (section.kind === "historic-movement" && !skyPlacementHistoryAllowed(facts.planet, Boolean(facts.isRetrograde), facts.historyEligible)) {
+        return [];
+      }
+      if (section.kind === "retrograde-variant" && !facts.isRetrograde && !facts.isShadowPhase) {
+        return [];
+      }
+      const event = articleSectionEvent(section, facts.events ?? []);
+      if ((section.kind === "dated-aspect" || section.kind === "event-interaction" || section.kind === "retrograde-variant" && section.event_type) && !event) {
+        return [];
+      }
+      if (section.exact_date && section.exact_date !== event?.exactDateKey) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event date contradicts the ephemeris`
+        );
+      }
+      if (section.exact_date && candidate.valid_from && candidate.valid_to && (section.exact_date < candidate.valid_from || section.exact_date > candidate.valid_to)) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event falls outside the article window`
+        );
+      }
+      if (typeof section.degree === "number" && section.degree !== event?.exactDegree) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event degree contradicts the ephemeris`
+        );
+      }
+      const slots = {
+        ...baseSlots,
+        aspectDate: event?.exactDate,
+        eventDate: event?.exactDate,
+        aspectDegree: event?.exactDegree,
+        eventDegree: event?.exactDegree
+      };
+      return [{
+        kind: section.kind,
+        heading: section.heading ? articleSlotFill(section.heading, slots, candidate.contentKey) : "",
+        body: articleSlotFill(section.body, slots, candidate.contentKey)
+      }];
+    });
+    const risingRows = candidate.rising_horoscopes ?? [];
+    const risingSigns = new Set(risingRows.map((entry) => entry.rising_sign));
+    if (risingRows.length !== 12 || risingSigns.size !== 12 || !facts.risingHouseMap) {
+      throw new SourceGapError(
+        `SOURCE_GAP: sky article ${candidate.contentKey} must provide twelve public rising horoscopes`
+      );
+    }
+    const risingHoroscopes = risingRows.map((entry) => {
+      const house = facts.risingHouseMap?.[entry.rising_sign];
+      if (!house) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} is missing the ${entry.rising_sign} rising house`
+        );
+      }
+      return {
+        risingSign: title2(entry.rising_sign),
+        body: articleSlotFill(entry.body, {
+          house,
+          houseOrdinal: ordinal2(house)
+        }, candidate.contentKey)
+      };
+    });
+    const parts = renderedSections.map((section) => section.body);
+    return {
+      body: parts.join("\n\n"),
+      parts,
+      articleSections: renderedSections,
+      risingHoroscopes
+    };
   };
   const hookVoice = (key, voice) => {
     const r = hooks.get(key);
@@ -899,14 +1055,13 @@ ${fogNote}`;
     exitDate,
     hasPriorIngress = false,
     historyEligible,
+    historyEntryDate,
+    historyExitDate,
+    historyDegreeRange,
+    risingHouseMap,
     isRetrograde = false,
     isShadowPhase = false
   }) {
-    const nodeDay = articleDay(asOfDate);
-    if (nodeDay && (planet === "north-node" || planet === "south-node")) {
-      const afterAxisFlip = nodeDay >= "2026-08-18";
-      sign = planet === "north-node" ? afterAxisFlip ? "aquarius" : "pisces" : afterAxisFlip ? "leo" : "virgo";
-    }
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const retrogradeGuidance = isRetrograde ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you : null;
     if (isRetrograde && !retrogradeGuidance) {
@@ -926,8 +1081,39 @@ ${fogNote}`;
       throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
     }
     if (authoredArticle) {
-      const tagline2 = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
-      const moves2 = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
+      assertSkyArticleCopy(authoredArticle);
+      const finalArticle = renderFinalSkyArticle(authoredArticle, {
+        planet,
+        sign,
+        events,
+        asOfDate,
+        articleMode,
+        articleKey,
+        entryDate,
+        exitDate,
+        hasPriorIngress,
+        historyEligible,
+        historyEntryDate,
+        historyExitDate,
+        historyDegreeRange,
+        risingHouseMap,
+        isRetrograde,
+        isShadowPhase
+      });
+      if (finalArticle) {
+        return {
+          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
+          tagline: null,
+          moves: [],
+          closingCharge: null,
+          keyDates: [],
+          articleWindow: articleWindow(authoredArticle),
+          articleMode,
+          ...finalArticle,
+          templateKey: "sky-article-final-v1",
+          contentKey: authoredArticle.contentKey
+        };
+      }
       const structuredParts = [
         authoredArticle.core_theme,
         authoredArticle.sign_jurisdiction,
@@ -942,15 +1128,14 @@ ${fogNote}`;
           reviewNote,
           ...structuredParts,
           skyPlacementHistoryAllowed(planet, isRetrograde, historyEligible) ? authoredArticle.history_echo : null,
-          ...aspectParas,
           closingCharge
         ].filter((part) => Boolean(part));
         return {
           headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
-          tagline: tagline2,
-          moves: moves2,
+          tagline: null,
+          moves: [],
           closingCharge,
-          keyDates: authoredArticle.key_dates ?? [],
+          keyDates: [],
           articleWindow: articleWindow(authoredArticle),
           articleMode,
           risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
@@ -963,12 +1148,12 @@ ${fogNote}`;
           contentKey: authoredArticle.contentKey
         };
       }
-      const parts2 = [authoredArticle.body, retrogradeGuidance, ...aspectParas].filter((part) => Boolean(part));
+      const parts2 = [authoredArticle.body, retrogradeGuidance].filter((part) => Boolean(part));
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
-        tagline: tagline2,
-        moves: moves2,
-        keyDates: authoredArticle.key_dates ?? [],
+        tagline: null,
+        moves: [],
+        keyDates: [],
         articleWindow: articleWindow(authoredArticle),
         articleMode,
         risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
@@ -1358,7 +1543,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-29ah";
+var PACKAGE_VERSION = "v3-2026-07-29aj";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

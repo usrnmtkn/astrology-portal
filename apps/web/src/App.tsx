@@ -527,6 +527,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   articleWindow?: string | null;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
+  articleSections?: { kind: string; heading: string; body: string }[];
 };
 type NormalizedSkyPlacementArticle = {
   surface: "sky-placement";
@@ -4343,6 +4344,21 @@ function formatEditorialDate(date: Date, includeYear = false) {
   }).format(date);
 }
 
+function formatPlacementTransitEndpoint(
+  position: Pick<PlanetPosition, "planet" | "transitTimeZone">,
+  date: Date,
+  includeYear = false
+) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: isLunarNodePoint(position.planet)
+      ? position.transitTimeZone || "UTC"
+      : "UTC",
+    ...(includeYear ? { year: "numeric" } : {})
+  }).format(date);
+}
+
 function formatEditorialTime(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
@@ -5760,6 +5776,8 @@ type SkyWritingAspectBeat = {
   applying?: boolean;
   dateLine?: string | null;
   exactDate?: string | null;
+  exactDateKey?: string | null;
+  exactDegree?: number | null;
   from: string;
   fromSign?: string | null;
   to: string;
@@ -5924,6 +5942,32 @@ function skyPlacementAspectExactDate(
   }).format(exactDate);
 }
 
+function skyPlacementAspectExactDegree(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  placementPlanet: string,
+  positions?: PlanetPosition[]
+) {
+  const position = skyAspectPosition(placementPlanet, positions);
+  const longitude = position?.longitude;
+  const speed = position?.speed;
+  const generatedTime = new Date(generatedAt).getTime();
+  const exactTime = skyPlacementAspectExactMoment(aspect, generatedAt, positions).getTime();
+
+  if (
+    typeof longitude !== "number"
+    || typeof speed !== "number"
+    || !Number.isFinite(generatedTime)
+    || !Number.isFinite(exactTime)
+  ) {
+    return null;
+  }
+
+  const offsetDays = (exactTime - generatedTime) / 86_400_000;
+  const exactLongitude = normalizedAngle(longitude + speed * offsetDays);
+  return Number((exactLongitude % 30).toFixed(2));
+}
+
 function skyPlacementEgressDateLabel(position: PlanetPosition, generatedAt: string) {
   if (!position.transitEnd) {
     return null;
@@ -6046,6 +6090,10 @@ function skyPlacementWritingBeats({
       applying: aspect.applying,
       dateLine: currentSkyAspectTransitRange(aspect, generatedAt),
       exactDate: skyPlacementAspectExactDate(aspect, generatedAt, positions),
+      exactDateKey: skyPlacementAspectExactMoment(aspect, generatedAt, positions)
+        .toISOString()
+        .slice(0, 10),
+      exactDegree: skyPlacementAspectExactDegree(aspect, generatedAt, planet, positions),
       from: aspect.from,
       fromSign: fromPosition?.sign ?? null,
       to: aspect.to,
@@ -6353,7 +6401,9 @@ function skyPlacementWritingSection(
         bSign: beat.toSign ? normalizeContentIdPart(beat.toSign) : undefined,
         aspect,
         dateLine: beat.dateLine ?? undefined,
-        exactDate: beat.exactDate ?? undefined
+        exactDate: beat.exactDate ?? undefined,
+        exactDateKey: beat.exactDateKey ?? undefined,
+        exactDegree: beat.exactDegree ?? undefined
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
@@ -6369,9 +6419,13 @@ function skyPlacementWritingSection(
     asOfDate: generatedAt,
     articleMode: articleOptions?.articleMode ?? "current",
     articleKey: articleOptions?.articleKey ?? null,
-    entryDate: formatEditorialDate(transitEndpoints.start, true),
-    exitDate: formatEditorialDate(transitEndpoints.end, true),
+    entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
+    exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
     hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
+    risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
+      normalizeContentIdPart(risingSign),
+      wholeSignHouseForSign(position.sign, risingSign) ?? 0
+    ])),
     egressDate: skyPlacementEgressDateLabel(position, generatedAt),
     isRetrograde: hasRetrogradeGuidance,
     isShadowPhase: !isArchiveArticle && skyPlacementShadowPhaseActive(position, generatedAt)
@@ -6424,6 +6478,7 @@ function skyPlacementWritingSection(
     articleWindow: rendered.articleWindow,
     articleMode: rendered.articleMode,
     risingHoroscopes: rendered.risingHoroscopes,
+    articleSections: rendered.articleSections,
     body
   };
 }
@@ -6539,13 +6594,20 @@ function currentSkyPlacementDetailArticle({
         normalizedParagraphs
       )
     : normalizedParagraphs;
-  const relatedAspectSections = relatedSkyAspectSectionsForPlacement({
-    aspects,
-    generatedAt,
-    generatedContent,
-    pointName: position.planet,
-    positions
-  });
+  const relatedAspectSections = isRegistryArticle
+    ? []
+    : relatedSkyAspectSectionsForPlacement({
+        aspects,
+        generatedAt,
+        generatedContent,
+        pointName: position.planet,
+        positions
+      });
+  const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
+    heading: section.heading,
+    body: section.body,
+    role: "main" as const
+  }));
   const effectiveTransitRangeLabel = placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
@@ -6557,25 +6619,20 @@ function currentSkyPlacementDetailArticle({
     title: placementSection?.heading || fallbackTitle,
     meta: [
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
-      effectiveTransitRangeLabel
+      isRegistryArticle ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    duration: effectiveTransitRangeLabel ?? undefined,
+    duration: isRegistryArticle ? undefined : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     moves: placementSection?.moves,
-    keyDates: isRegistryArticle
-      ? placementSection?.keyDates?.length
-        ? placementSection.keyDates
-        : articleMode === "archive"
-          ? []
-          : skyPlacementKeyDates(position)
-      : [],
+    keyDates: [],
     closingCharge: placementSection?.closingCharge,
     risingHoroscopes: placementSection?.risingHoroscopes,
     retrograde: isRetrograde,
-    plainBody: normalized.sections.some((section) => section.layer === "authored"),
+    plainBody: articleSections.length === 0
+      && normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
-    body,
-    sections: relatedAspectSections,
+    body: articleSections.length > 0 ? [] : body,
+    sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
     historicalLookback,
     astrologyDrilldown: null
   };

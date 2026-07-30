@@ -63,6 +63,11 @@ assert.doesNotMatch(skyPlacementResolver, /fallback-vocab\/sign-style\//u);
 assert.doesNotMatch(skyPlacementResolver, /fallback-vocab\/planet-function\//u);
 assert.match(skyPlacementResolver, /fallback-vocab\/sky-sign-style\//u);
 assert.match(skyPlacementResolver, /fallback-vocab\/sky-planet-function\//u);
+assert.doesNotMatch(
+  skyPlacementResolver,
+  /2026-08-18|afterAxisFlip/u,
+  "Node placement copy must use the True Node sign supplied by the ephemeris, not a hardcoded axis date."
+);
 assert.match(
   appSource,
   /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/u,
@@ -258,10 +263,9 @@ const saturnRetrograde = previewRenderer.renderSkyPlacement({
   exitDate: "Apr 12, 2028",
   isRetrograde: true
 });
-assert.equal(saturnRetrograde.contentKey, saturnAries.contentKey);
-assert.equal(saturnRetrograde.keyDates.length, 0);
-assert.equal(saturnRetrograde.risingHoroscopes.length, 0);
-assert.equal(saturnRetrograde.parts.at(-1), saturnAries.closing_charge);
+assert.equal(saturnRetrograde.templateKey, "sky-placement-frame-v3");
+assert.notEqual(saturnRetrograde.contentKey, saturnAries.contentKey);
+assert.equal(saturnRetrograde.articleSections, undefined);
 const saturnShadow = previewRenderer.renderSkyPlacement({
   planet: "saturn",
   sign: "aries",
@@ -270,26 +274,38 @@ const saturnShadow = previewRenderer.renderSkyPlacement({
   exitDate: "Apr 12, 2028",
   isShadowPhase: true
 });
-assert.equal(saturnShadow.contentKey, saturnAries.contentKey);
+assert.equal(saturnShadow.templateKey, "sky-placement-frame-v3");
 
 const nodeBeforeFlip = previewRenderer.renderSkyPlacement({
   planet: "north-node",
-  sign: "aquarius",
-  asOfDate: "2026-08-17T16:00:00Z",
+  sign: "pisces",
+  asOfDate: "2026-07-22T16:00:00Z",
   entryDate: "Jan 11, 2025",
-  exitDate: "Aug 18, 2026"
+  exitDate: "Jul 26, 2026"
 });
 assert.equal(nodeBeforeFlip.templateKey, "sky-placement-frame-v3");
 assert.match(nodeBeforeFlip.headline, /North Node in Pisces/u);
 const nodeAfterFlip = previewRenderer.renderSkyPlacement({
   planet: "north-node",
-  sign: "pisces",
-  asOfDate: "2026-08-18T16:00:00Z",
-  entryDate: "Aug 18, 2026",
+  sign: "aquarius",
+  asOfDate: "2026-07-29T16:00:00Z",
+  entryDate: "Jul 26, 2026",
   exitDate: "Mar 26, 2028"
 });
 assert.equal(nodeAfterFlip.templateKey, "sky-placement-frame-v3");
 assert.match(nodeAfterFlip.headline, /North Node in Aquarius/u);
+assert.match(nodeAfterFlip.body, /North Node is in Aquarius from Jul 26, 2026 to Mar 26, 2028/u);
+assert.doesNotMatch(nodeAfterFlip.body, /North Node is in Pisces/u);
+const southNodeAfterFlip = previewRenderer.renderSkyPlacement({
+  planet: "south-node",
+  sign: "leo",
+  asOfDate: "2026-07-29T16:00:00Z",
+  entryDate: "Jul 26, 2026",
+  exitDate: "Mar 26, 2028"
+});
+assert.match(southNodeAfterFlip.headline, /South Node in Leo/u);
+assert.match(southNodeAfterFlip.body, /South Node is in Leo from Jul 26, 2026 to Mar 26, 2028/u);
+assert.doesNotMatch(southNodeAfterFlip.body, /South Node is in Virgo/u);
 
 const archived = renderer.renderSkyPlacement({
   planet: "saturn",
@@ -301,7 +317,7 @@ const archived = renderer.renderSkyPlacement({
 });
 assert.equal(archived.contentKey, archive.contentKey);
 assert.equal(archived.articleMode, "archive");
-assert.equal(archived.keyDates.length, 9);
+assert.equal(archived.keyDates.length, 0);
 assert.equal(archived.parts[0], archive.preview_note);
 assert.ok(archived.parts.includes(archive.history_echo));
 assert.equal(archived.parts.at(-1), archive.closing_charge);
@@ -331,10 +347,8 @@ const live = liveRenderer.renderSkyPlacement({
   sign: "pisces",
   asOfDate: "2024-07-01T12:00:00Z"
 });
-assert.equal(live.contentKey, archive.contentKey);
-assert.ok(!live.parts.includes(archive.preview_note));
-assert.ok(live.parts.includes(archive.history_echo));
-assert.equal(live.parts.at(-1), archive.closing_charge);
+assert.notEqual(live.contentKey, archive.contentKey);
+assert.equal(live.templateKey, "fallback-template/sky.placement-article");
 
 const shadow = liveRenderer.renderSkyPlacement({
   planet: "saturn",
@@ -342,7 +356,7 @@ const shadow = liveRenderer.renderSkyPlacement({
   asOfDate: "2024-07-01T12:00:00Z",
   isShadowPhase: true
 });
-assert.equal(shadow.parts[0], archive.preview_note);
+assert.notEqual(shadow.contentKey, archive.contentKey);
 
 const fastDirectArticle = {
   ...archive,
@@ -361,6 +375,242 @@ const fastDirect = fastRenderer.renderSkyPlacement({
   asOfDate: "2024-07-01T12:00:00Z"
 });
 assert.ok(!fastDirect.parts.includes(archive.history_echo));
+
+const risingSigns = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+];
+const risingHouseMap = Object.fromEntries(
+  risingSigns.map((risingSign, index) => [risingSign, ((5 - index + 12) % 12) + 1])
+);
+const finalArticleBase = {
+  contentKey: "sky-article/mercury/virgo/2026",
+  content_role: "authored_card",
+  planet: "mercury",
+  sign: "virgo",
+  valid_from: "2026-08-25",
+  valid_to: "2026-09-15",
+  archive_only: false,
+  headline: "Mercury in Virgo",
+  article_structure: "final-v1",
+  article_sections: [
+    {
+      kind: "collective-read",
+      body: "The plan gets sharper, but perfection is still a trap. What gets simpler now?"
+    },
+    {
+      kind: "seasonal-context",
+      body: "During Virgo season, the details are already loud."
+    },
+    {
+      kind: "dated-aspect",
+      a: "mercury",
+      b: "uranus",
+      aspect: "square",
+      exact_date: "2026-09-07",
+      degree: 15,
+      heading: "The Mercury-Uranus Square: {{aspectDate}}",
+      body: "The plan meets a surprise at {{aspectDegree}} degrees."
+    },
+    {
+      kind: "ingress",
+      body: "Mercury entered Virgo on {{entryDate}}."
+    },
+    {
+      kind: "exit-tone-shift",
+      body: "Mercury continues through Virgo until {{exitDate}}, then the tone shifts."
+    },
+    {
+      kind: "historic-movement",
+      body: "The prior passage ran from {{historyEntryDate}} to {{historyExitDate}} across {{historyDegreeRange}}."
+    },
+    {
+      kind: "retrograde-variant",
+      body: "The retrograde edition reviews the same ground."
+    }
+  ],
+  rising_horoscopes: risingSigns.map((risingSign) => ({
+    rising_sign: risingSign,
+    body: "Mercury moves through your {{houseOrdinal}} house. You are allowed to use a simpler system."
+  })),
+  review_status: "approved"
+};
+const finalArticleRenderer = createTransitSynastryRenderer(
+  { authoredCards: [...transitRows.authoredCards, finalArticleBase] },
+  templates,
+  combinedRows
+);
+const finalArticleFacts = {
+  planet: "mercury",
+  sign: "virgo",
+  asOfDate: "2026-09-01T12:00:00Z",
+  entryDate: "August 25, 2026",
+  exitDate: "September 15, 2026",
+  historyEntryDate: "August 30, 2016",
+  historyExitDate: "September 20, 2016",
+  historyDegreeRange: "0 to 29 degrees Virgo",
+  risingHouseMap,
+  events: [{
+    type: "aspect",
+    a: "mercury",
+    b: "uranus",
+    aspect: "square",
+    exactDate: "September 7",
+    exactDateKey: "2026-09-07",
+    exactDegree: 15
+  }]
+};
+const finalArticleDirect = finalArticleRenderer.renderSkyPlacement(finalArticleFacts);
+assert.equal(finalArticleDirect.templateKey, "sky-article-final-v1");
+assert.equal(finalArticleDirect.tagline, null);
+assert.deepEqual(finalArticleDirect.moves, []);
+assert.deepEqual(finalArticleDirect.keyDates, []);
+assert.deepEqual(
+  finalArticleDirect.articleSections.map((section) => section.kind),
+  ["seasonal-context", "ingress", "collective-read", "dated-aspect", "exit-tone-shift"]
+);
+assert.doesNotMatch(finalArticleDirect.body, /prior passage|retrograde edition/u);
+assert.equal(finalArticleDirect.risingHoroscopes.length, 12);
+assert.match(finalArticleDirect.risingHoroscopes[0].body, /6th house/u);
+assert.ok(!finalArticleDirect.parts.some((part) => /workable route between them/u.test(part)));
+
+const finalArticleRetrograde = finalArticleRenderer.renderSkyPlacement({
+  ...finalArticleFacts,
+  isRetrograde: true
+});
+assert.match(finalArticleRetrograde.body, /prior passage/u);
+assert.match(finalArticleRetrograde.body, /retrograde edition/u);
+
+const finalRetrogradeEdition = {
+  ...finalArticleBase,
+  contentKey: "sky-article/mercury/virgo/2026/retrograde",
+  article_variant: "retrograde",
+  article_sections: finalArticleBase.article_sections.map((section) => (
+    section.kind === "collective-read"
+      ? { ...section, body: "This is the authored retrograde collective read." }
+      : section
+  ))
+};
+const variantRenderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...transitRows.authoredCards,
+      finalArticleBase,
+      finalRetrogradeEdition
+    ]
+  },
+  templates,
+  combinedRows
+);
+assert.equal(
+  variantRenderer.renderSkyPlacement(finalArticleFacts).contentKey,
+  finalArticleBase.contentKey
+);
+assert.equal(
+  variantRenderer.renderSkyPlacement({
+    ...finalArticleFacts,
+    isRetrograde: true
+  }).contentKey,
+  finalRetrogradeEdition.contentKey
+);
+
+const finalSlowArticle = {
+  ...finalArticleBase,
+  contentKey: "sky-article/saturn/virgo/2026",
+  planet: "saturn",
+  headline: "Saturn in Virgo"
+};
+const finalSlowRenderer = createTransitSynastryRenderer(
+  { authoredCards: [...transitRows.authoredCards, finalSlowArticle] },
+  templates,
+  combinedRows
+);
+const finalSlow = finalSlowRenderer.renderSkyPlacement({
+  ...finalArticleFacts,
+  planet: "saturn",
+  historyEntryDate: "August 30, 1996",
+  historyExitDate: "September 20, 1998"
+});
+assert.match(finalSlow.body, /prior passage/u);
+
+const emDashArticle = {
+  ...finalArticleBase,
+  contentKey: "sky-article/venus/virgo/2026",
+  planet: "venus",
+  headline: "Venus in Virgo",
+  article_sections: finalArticleBase.article_sections.map((section) => (
+    section.kind === "collective-read"
+      ? { ...section, body: "Useful care — without a performance." }
+      : section
+  ))
+};
+const emDashRenderer = createTransitSynastryRenderer(
+  { authoredCards: [...transitRows.authoredCards, emDashArticle] },
+  templates,
+  combinedRows
+);
+assert.throws(
+  () => emDashRenderer.renderSkyPlacement({
+    ...finalArticleFacts,
+    planet: "venus"
+  }),
+  /prohibited em dash/u
+);
+
+const literalDateArticle = {
+  ...finalArticleBase,
+  contentKey: "sky-article/mars/virgo/2026",
+  planet: "mars",
+  headline: "Mars in Virgo",
+  article_sections: finalArticleBase.article_sections.map((section) => (
+    section.kind === "ingress"
+      ? { ...section, body: "Mars entered Virgo on September 1, 2026." }
+      : section
+  ))
+};
+const literalDateRenderer = createTransitSynastryRenderer(
+  { authoredCards: [...transitRows.authoredCards, literalDateArticle] },
+  templates,
+  combinedRows
+);
+assert.throws(
+  () => literalDateRenderer.renderSkyPlacement({
+    ...finalArticleFacts,
+    planet: "mars"
+  }),
+  /hardcodes a date or degree/u
+);
+
+assert.throws(
+  () => finalArticleRenderer.renderSkyPlacement({
+    ...finalArticleFacts,
+    events: [{
+      type: "aspect",
+      a: "mercury",
+      b: "uranus",
+      aspect: "square",
+      exactDate: "September 8",
+      exactDateKey: "2026-09-08",
+      exactDegree: 15
+    }]
+  }),
+  /event date contradicts the ephemeris/u
+);
+assert.throws(
+  () => finalArticleRenderer.renderSkyPlacement({
+    ...finalArticleFacts,
+    events: [{
+      type: "aspect",
+      a: "mercury",
+      b: "uranus",
+      aspect: "square",
+      exactDate: "September 7",
+      exactDateKey: "2026-09-07",
+      exactDegree: 16
+    }]
+  }),
+  /event degree contradicts the ephemeris/u
+);
 
 function localDateKey(date, timeZone) {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -495,5 +745,6 @@ console.log(
   "Sky article v1 passed: 2 registry articles, 42 approved V3 slot rows, 23 approved three-beat frames, "
   + "42 review-gated voice-pass rows, 12 review-gated Sun sign modules, 25 approved vocab rows, "
   + "9/9 archive ephemeris facts, wrong-station rejection, retrograde fallback, shared-bank hashes, "
-  + "and the Aug 18 node-axis flip."
+  + "True Node sign-through, FINAL section order, article/slot exclusivity, twelve public rising blocks, "
+  + "history/retrograde gates, and seeded punctuation/date/degree failures."
 );
