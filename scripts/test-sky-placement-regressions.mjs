@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import fallbackSourceRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json" with { type: "json" };
 import fallbackTemplates from "../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json" with { type: "json" };
 import transitSynastryRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json" with { type: "json" };
+import skyArticleV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-article-v1.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
@@ -28,7 +29,16 @@ const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/r
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
 
-const renderer = createTransitSynastryRenderer(transitSynastryRows, fallbackTemplates, fallbackSourceRows);
+const renderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [...transitSynastryRows.authoredCards, ...skyArticleV1.authoredCards]
+  },
+  fallbackTemplates,
+  {
+    ...fallbackSourceRows,
+    vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
+  }
+);
 const sunLeo = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "leo",
@@ -79,16 +89,22 @@ const mercuryCancerRetrograde = renderer.renderSkyPlacement({
 });
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
-  sign: "pisces"
+  sign: "pisces",
+  articleMode: "archive",
+  articleKey: "sky-article/saturn/pisces/2023"
 });
 const saturnPiscesRetrograde = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
+  articleMode: "archive",
+  articleKey: "sky-article/saturn/pisces/2023",
   isRetrograde: true
 });
 const saturnPiscesShadow = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
+  articleMode: "archive",
+  articleKey: "sky-article/saturn/pisces/2023",
   isShadowPhase: true
 });
 const ascendantSaturnSquare = renderer.renderSynastryAspect({
@@ -399,12 +415,12 @@ assert.doesNotMatch(
 
 assert.equal(
   saturnPiscesDirect.templateKey,
-  "authored/sky-ingress/sky-article-v1",
+  "sky-article-v1",
   "The owner-final Saturn-in-Pisces exemplar must use the structured sky-article-v1 lane."
 );
 assert.equal(
   saturnPiscesDirect.contentKey,
-  "authored/sky-ingress/saturn/pisces",
+  "sky-article/saturn/pisces/2023",
   "The structured article must retain its exact authored content key."
 );
 assert.doesNotMatch(
@@ -437,6 +453,8 @@ for (const rendered of [saturnPiscesRetrograde, saturnPiscesShadow]) {
 const saturnPiscesReference = renderSkyPlacementReference({
   planet: "saturn",
   sign: "pisces",
+  articleMode: "archive",
+  articleKey: "sky-article/saturn/pisces/2023",
   isShadowPhase: true
 });
 assert.deepEqual(

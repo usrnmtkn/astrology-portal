@@ -523,6 +523,10 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   tagline?: string | null;
   moves?: string[];
   closingCharge?: string | null;
+  keyDates?: SkyDetailKeyDate[];
+  articleWindow?: string | null;
+  articleMode?: "current" | "archive" | null;
+  risingHoroscopes?: { risingSign: string; body: string }[];
 };
 type NormalizedSkyPlacementArticle = {
   surface: "sky-placement";
@@ -628,6 +632,7 @@ type SkyDetail = {
   moves?: string[];
   keyDates?: SkyDetailKeyDate[];
   closingCharge?: string | null;
+  risingHoroscopes?: { risingSign: string; body: string }[];
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;
@@ -2440,6 +2445,16 @@ function skyPlacementRoutePath(position: Pick<PlanetPosition, "planet"> & Partia
   }
 
   return parts.map(encodeURIComponent).join("/");
+}
+
+function skyArticleArchiveRoutePath(contentKey: string) {
+  const [prefix, planet, sign, entryYear] = contentKey.split("/");
+
+  if (prefix !== "sky-article" || !planet || !sign || !entryYear) {
+    return "";
+  }
+
+  return ["sky", "archive", planet, sign, entryYear].map(encodeURIComponent).join("/");
 }
 
 function skyRetrogradeRoutePath(position: Pick<PlanetPosition, "planet">) {
@@ -4614,6 +4629,19 @@ function formatDurationLong(startInput: string | Date, endInput: string | Date, 
 }
 
 function placementTransitRange(position: PlanetPosition, generatedAt: string) {
+  const { start, end } = placementTransitEndpoints(position, generatedAt);
+
+  return formatTransitRange(start, end);
+}
+
+function placementTransitEndpoints(position: PlanetPosition, generatedAt: string) {
+  if (position.transitStart && position.transitEnd) {
+    return {
+      start: new Date(position.transitStart),
+      end: new Date(position.transitEnd)
+    };
+  }
+
   const speed = averageDailyMotion[position.planet] ?? 1;
   const isRetrograde = isDisplayRetrograde(position);
   const entryOffset = isRetrograde
@@ -4623,10 +4651,10 @@ function placementTransitRange(position: PlanetPosition, generatedAt: string) {
     ? position.degree
     : 30 - position.degree;
 
-  return formatTransitRange(
-    daysFrom(generatedAt, -(entryOffset / speed)),
-    daysFrom(generatedAt, exitOffset / speed)
-  );
+  return {
+    start: daysFrom(generatedAt, -(entryOffset / speed)),
+    end: daysFrom(generatedAt, exitOffset / speed)
+  };
 }
 
 function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
@@ -5025,6 +5053,9 @@ function SkyDetailArticle({
             {detail.duration ? (
               <p className="article-duration">{detail.duration}</p>
             ) : null}
+            {detail.risingHoroscopes?.length ? (
+              <a className="article-duration" href="#sky-rising-horoscopes">Jump to horoscopes</a>
+            ) : null}
             {articleSub ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
@@ -5111,6 +5142,23 @@ function SkyDetailArticle({
               {detail.closingCharge ? (
                 <section className="article-section sky-detail-section sky-placement-closing-charge">
                   <p>{detail.closingCharge}</p>
+                </section>
+              ) : null}
+              {detail.risingHoroscopes?.length ? (
+                <section
+                  className="article-section sky-detail-section"
+                  id="sky-rising-horoscopes"
+                  aria-label="Horoscopes by rising sign"
+                >
+                  <h3>Horoscopes by rising sign</h3>
+                  {detail.risingHoroscopes.map((entry) => (
+                    <div key={entry.risingSign}>
+                      <h4>{entry.risingSign} rising</h4>
+                      {readerFacingParagraphs([entry.body]).map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                  ))}
                 </section>
               ) : null}
               {detail.moves?.length ? (
@@ -5843,7 +5891,7 @@ function relatedSkyAspectSectionsForPlacement({
     .slice(0, 2);
 }
 
-function skyPlacementAspectExactDate(
+function skyPlacementAspectExactMoment(
   aspect: SkySnapshot["aspects"][number],
   generatedAt: string,
   positions?: PlanetPosition[]
@@ -5854,10 +5902,18 @@ function skyPlacementAspectExactDate(
   const toSpeed = typeof to?.speed === "number" ? to.speed : averageDailyMotion[aspect.to] ?? 0;
   const relativeSpeed = Math.max(0.05, Math.abs(fromSpeed - toSpeed));
   const offsetDays = aspect.orb / relativeSpeed;
-  const exactDate = dateFromOffsetDays(
+  return dateFromOffsetDays(
     generatedAt,
     aspect.applying === false ? -offsetDays : offsetDays
   );
+}
+
+function skyPlacementAspectExactDate(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  positions?: PlanetPosition[]
+) {
+  const exactDate = skyPlacementAspectExactMoment(aspect, generatedAt, positions);
   const generatedDate = new Date(generatedAt);
   const includeYear = exactDate.getFullYear() !== generatedDate.getFullYear();
 
@@ -6275,7 +6331,12 @@ function skyPlacementWritingSection(
   position: PlanetPosition,
   _duration: string | null | undefined,
   beats: SkyWritingAspectBeat[] = [],
-  generatedAt = new Date().toISOString()
+  generatedAt = new Date().toISOString(),
+  articleOptions?: {
+    articleMode?: "current" | "archive";
+    articleKey?: string | null;
+    hasPriorIngress?: boolean;
+  }
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
   const sign = normalizeContentIdPart(position.sign);
@@ -6296,15 +6357,24 @@ function skyPlacementWritingSection(
       } : null;
     })
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
+  const isArchiveArticle = articleOptions?.articleMode === "archive";
   const hasRetrogradeGuidance = isDisplayRetrograde(position)
+    && !isArchiveArticle
     && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
+  const transitEndpoints = placementTransitEndpoints(position, generatedAt);
   const rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
     planet,
     sign,
     events,
+    asOfDate: generatedAt,
+    articleMode: articleOptions?.articleMode ?? "current",
+    articleKey: articleOptions?.articleKey ?? null,
+    entryDate: formatEditorialDate(transitEndpoints.start, true),
+    exitDate: formatEditorialDate(transitEndpoints.end, true),
+    hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
     egressDate: skyPlacementEgressDateLabel(position, generatedAt),
     isRetrograde: hasRetrogradeGuidance,
-    isShadowPhase: skyPlacementShadowPhaseActive(position, generatedAt)
+    isShadowPhase: !isArchiveArticle && skyPlacementShadowPhaseActive(position, generatedAt)
   });
   const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
   const renderedParagraphs = rendered.closingCharge
@@ -6318,9 +6388,23 @@ function skyPlacementWritingSection(
   }
 
   const layer = (
-    rendered.contentKey?.startsWith("authored/")
+    rendered.templateKey === "sky-placement-frame-v3"
+    || rendered.templateKey === "sky-placement-article-v2"
+    || rendered.contentKey?.startsWith("authored/")
+    || rendered.contentKey?.startsWith("sky-article/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-hook/")
+    || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
+  const keyDateFormatter = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+  const keyDates = (rendered.keyDates ?? []).map((keyDate: { date: string; label: string }) => ({
+    date: keyDateFormatter.format(new Date(`${keyDate.date.slice(0, 10)}T00:00:00Z`)),
+    label: keyDate.label
+  }));
 
   return {
     slot: "meaning",
@@ -6332,10 +6416,14 @@ function skyPlacementWritingSection(
       rendered.templateKey,
       rendered.contentKey ?? ""
     ].filter(Boolean),
-    heading: skyPlacementDisplayTitle(position),
+    heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     moves: rendered.moves,
     closingCharge: rendered.closingCharge,
+    keyDates,
+    articleWindow: rendered.articleWindow,
+    articleMode: rendered.articleMode,
+    risingHoroscopes: rendered.risingHoroscopes,
     body
   };
 }
@@ -6349,10 +6437,15 @@ function normalizeSkyPlacementSurface(
   topperContext?: {
     aspects: SkySnapshot["aspects"];
     positions: PlanetPosition[];
+  },
+  articleOptions?: {
+    articleMode?: "current" | "archive";
+    articleKey?: string | null;
+    hasPriorIngress?: boolean;
   }
 ): NormalizedSkyPlacementArticle {
   const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
-  const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt);
+  const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
   const topper = generatedSection && topperContext
     ? generatedSkyPlacementTopper(
         position,
@@ -6392,12 +6485,16 @@ function normalizeSkyPlacementSurface(
 
 function currentSkyPlacementDetailArticle({
   aspects,
+  articleKey,
+  articleMode = "current",
   generatedAt,
   generatedContent,
   position,
   positions
 }: {
   aspects: SkySnapshot["aspects"];
+  articleKey?: string | null;
+  articleMode?: "current" | "archive";
   generatedAt: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail?: (detail: SkyDetail) => void;
@@ -6405,8 +6502,8 @@ function currentSkyPlacementDetailArticle({
   positions: PlanetPosition[];
 }): SkyDetail {
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
-  const title = placementDetailTitle(position, activeAspects);
-  const isRetrograde = isDisplayRetrograde(position);
+  const fallbackTitle = placementDetailTitle(position, activeAspects);
+  const isRetrograde = articleMode === "archive" ? false : isDisplayRetrograde(position);
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
@@ -6422,11 +6519,17 @@ function currentSkyPlacementDetailArticle({
     generatedContent,
     placementEvents,
     generatedAt,
-    { aspects, positions }
+    { aspects, positions },
+    {
+      articleKey,
+      articleMode,
+      hasPriorIngress: articleMode === "archive"
+    }
   );
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const placementSection = normalized.sections[0];
+  const isRegistryArticle = placementSection?.sourceKeys.includes("sky-article-v1") ?? false;
   const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
     .flatMap((section) => readerFacingParagraphs([section.body]));
@@ -6443,18 +6546,31 @@ function currentSkyPlacementDetailArticle({
     pointName: position.planet,
     positions
   });
+  const effectiveTransitRangeLabel = placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
-    routePath: skyPlacementRoutePath(position),
+    routePath: articleMode === "archive" && articleKey
+      ? skyArticleArchiveRoutePath(articleKey)
+      : skyPlacementRoutePath(position),
     glyph: detailGlyphForPlacement(position),
     kicker: placementDetailKicker(position, activeAspects),
-    title,
-    meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
-    duration: transitRangeLabel ?? undefined,
+    title: placementSection?.heading || fallbackTitle,
+    meta: [
+      articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
+      effectiveTransitRangeLabel
+    ].filter(Boolean).join(" · "),
+    duration: effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     moves: placementSection?.moves,
-    keyDates: skyPlacementKeyDates(position),
+    keyDates: isRegistryArticle
+      ? placementSection?.keyDates?.length
+        ? placementSection.keyDates
+        : articleMode === "archive"
+          ? []
+          : skyPlacementKeyDates(position)
+      : [],
     closingCharge: placementSection?.closingCharge,
+    risingHoroscopes: placementSection?.risingHoroscopes,
     retrograde: isRetrograde,
     plainBody: normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
@@ -6507,6 +6623,31 @@ function skyDetailFromRoutePath(
 
     return routedPosition ? currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
+      generatedAt: sky.generatedAt,
+      generatedContent,
+      onOpenDetail,
+      position: routedPosition,
+      positions: displayPositions
+    }) : null;
+  }
+
+  if (detailType === "archive" && firstPart && secondPart && thirdPart) {
+    const displayPositions = skyNodeDisplayPositions(sky.positions);
+    const position = displayPositions.find((candidate) => skyRoutePartMatches(candidate.planet, firstPart));
+    const routeSign = zodiacSigns.find((candidate) => skyRoutePartMatches(candidate, secondPart));
+    const articleKey = `sky-article/${firstPart}/${secondPart}/${thirdPart}`;
+    const routedPosition = position && routeSign
+      ? {
+          ...position,
+          sign: routeSign,
+          signGlyph: signGlyph(routeSign)
+        }
+      : null;
+
+    return routedPosition ? currentSkyPlacementDetailArticle({
+      aspects: [],
+      articleKey,
+      articleMode: "archive",
       generatedAt: sky.generatedAt,
       generatedContent,
       onOpenDetail,
@@ -19130,6 +19271,9 @@ function ProfileView({
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
     const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
+    const lifeAreaTags = transit.natalHouse
+      ? houseLifeAreaKeywords(transit.natalHouse)
+      : [];
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, targetDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
@@ -19179,6 +19323,21 @@ function ProfileView({
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
+          {lifeAreaTags.length ? (
+            <span className="updates-aspect-row__life-areas" aria-label="Duration and areas of your life">
+              <span className="ui-pill house-transit-term-tag">
+                {transit.term === "long" ? "Long-term" : "Short-term"}
+              </span>
+              {lifeAreaTags.map((lifeArea) => (
+                <span
+                  className="ui-pill ui-pill--muted house-transit-keyword"
+                  key={`${transit.id}-${lifeArea}`}
+                >
+                  {lifeArea}
+                </span>
+              ))}
+            </span>
+          ) : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />

@@ -273,21 +273,70 @@ function mapPackageRecord(record, bucket) {
   };
 }
 
+function editorialSourceBankRecords(bank) {
+  const reviewStatus = String(bank.authoring?.review_status ?? "").trim();
+  const approvedVia = String(bank.authoring?.approved_via ?? "").trim();
+
+  if (reviewStatus !== "approved" || approvedVia !== "owner-authored") {
+    throw new Error("Editorial source bank must preserve its owner-authored approved provenance.");
+  }
+
+  return bank.collections.flatMap((collection) =>
+    collection.entries.map((entry) => {
+      const entryId = String(entry.id ?? "").trim();
+      const body = String(entry.body ?? "").trim();
+
+      if (!entryId || !body) {
+        throw new Error(`Editorial source bank collection "${collection.id}" has an incomplete entry.`);
+      }
+
+      return {
+        ...entry,
+        contentKey: `fallback-source/editorial/${collection.id}/${entryId}`,
+        headline: entry.headline ?? titleFromKey(entryId),
+        body,
+        surface: collection.surface,
+        content_role: "fallback_source",
+        review_status: reviewStatus,
+        approved_via: approvedVia,
+        owner_authored: true,
+        family: collection.family,
+        collection_id: collection.id,
+        collection_title: collection.title,
+        judge_profile: collection.judgeProfile,
+        source_keys: collection.source_keys ?? [],
+        bank_version: bank.bankVersion,
+        note: "Owner-authored and approved. Preserve exact wording. Optional phrase-judge results are advisory and never revoke approval."
+      };
+    })
+  );
+}
+
 function readPackageSources() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+  const editorialSourceBank = readJson("source-rows/editorial-source-bank-v1.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
+  const skyArticleRows = readJson("source-rows/sky-article-v1.json");
+  const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+  const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
+  const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
 
   return {
     sourceRows,
+    editorialSourceBank,
     authoredRows,
     bondLanguagePass2,
     lunationBlendRows,
     placementInterimRows,
+    skyArticleRows,
+    skyPlacementVoicePass,
+    skyPlanetFrames,
+    skySignCopySun,
     weeklyRows,
     templateRows
   };
@@ -321,6 +370,7 @@ function readerPackageBundle(sources) {
       authoredCards: packageRowsWithLatestEligibleOverride([
         ...sources.authoredRows.authoredCards,
         ...sources.lunationBlendRows.authoredCards,
+        ...sources.skyArticleRows.authoredCards,
         ...sources.weeklyRows
       ])
     },
@@ -328,11 +378,16 @@ function readerPackageBundle(sources) {
       hookRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.hookRows,
         ...sources.lunationBlendRows.hookRows,
-        ...sources.bondLanguagePass2.rows
+        ...sources.bondLanguagePass2.rows,
+        ...sources.skyArticleRows.hookRows,
+        ...sources.skyPlanetFrames.rows,
+        ...sources.skyPlacementVoicePass.rows,
+        ...sources.skySignCopySun.rows
       ]),
       vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
-        ...sources.placementInterimRows.vocabularyRows
+        ...sources.placementInterimRows.vocabularyRows,
+        ...sources.skyArticleRows.vocabularyRows
       ])
     },
     templatesFile: {
@@ -348,15 +403,23 @@ function materializeRows(sources) {
   const rows = [
     ...sources.authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.skyArticleRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skySignCopySun.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material"))
+    ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
+    ...editorialSourceBankRecords(sources.editorialSourceBank)
+      .map((row) => mapPackageRecord(row, "editorial-source-bank"))
   ];
 
   // Runtime maps use later rows as intentional overrides. Mirror that exact

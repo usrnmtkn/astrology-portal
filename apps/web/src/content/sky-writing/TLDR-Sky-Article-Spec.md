@@ -1,5 +1,12 @@
 # Sky Placement Articles — `sky-article-v1`
 
+The fallback article assembly now follows the owner-supplied Sky Placement
+Template V3 contract. The 42 `sky-placement`, `sky-placement-you`, and
+`sky-placement-practice` rows are approved slot-tier inputs. Planet-sign
+article modules such as `fallback-hook/sky-sign-copy/sun/{sign}` are staged
+separately and remain invisible to readers while `needs_review`; preview and
+Content Book tooling may resolve them with `allowUnreviewed`.
+
 Updated: 2026-07-29
 
 Sky placement pages are deterministic assemblies. The resolver selects approved
@@ -8,33 +15,50 @@ and aspects supplied by the ephemeris. It does not invent prose.
 
 ## Serving order
 
-1. Exact approved `authored/sky-ingress/{planet}/{sign}` article.
-2. Complete approved Content Book placement assembly.
-3. `SOURCE_GAP`.
+1. Select `sky-article/{planet}/{sign}/{entryYear}` only when its validity window
+   contains the engine-supplied date and it is not archive-only.
+2. Otherwise serve the approved V3 placement pair/frame rows.
+3. Otherwise return `SOURCE_GAP`.
 
-The legacy three-beat pair rows remain the coverage fallback while the structured
-authored family is populated. They must not be rewritten or expanded in the
-resolver.
+Expired or explicitly archive-only articles never serve as current sky. They are
+available only from `sky/archive/{planet}/{sign}/{entryYear}` routes.
+
+An article with `article_variant: "retrograde"` serves only while the
+ephemeris reports retrograde motion or an active shadow phase. Outside that
+window the page returns to the frame tier even when the sign-level validity
+window still contains the current date.
 
 ## Article order
 
-1. Window block: computed transit dates and current degree.
-2. Preview or shadow note: conditional on a computed retrograde or shadow phase.
-3. Core theme.
-4. Sign jurisdiction paragraph.
-5. Lived experience.
-6. Traditional-rulership twist.
-7. Historical echo: optional, authored only.
-8. Key dates: computed ingress, shadow, station, and exit facts.
-9. Closing charge.
+`TLDR-Sky-Assembly-Spec-V2.md` supersedes the earlier assembly order:
 
-Closely applying sky aspects may appear after the article's authored context and
-before the computed key-date block.
+1. Title and current window.
+2. First-pass preview, when the ephemeris reports one.
+3. Planet-in-sign opening.
+4. What this looks like in real life.
+5. The useful expression.
+6. The distortion.
+7. Current exact aspects.
+8. Key dates.
+9. Personal chart layer.
+10. Historical lookback, when useful.
+11. Practical close.
 
-## Structured authored fields
+The article registry, validity-window serving, scoped vocabulary, and import
+validation rules in this document remain in force.
 
-An `authored/sky-ingress/{planet}/{sign}` row may expose:
+## Registry fields
 
+A structured registry row may expose:
+
+- `contentKey`
+- `planet`
+- `sign`
+- `entry_year`
+- `valid_from`
+- `valid_to`
+- `archive_only`
+- `article_variant`
 - `preview_note`
 - `core_theme`
 - `sign_jurisdiction`
@@ -42,10 +66,64 @@ An `authored/sky-ingress/{planet}/{sign}` row may expose:
 - `rulership_twist`
 - `history_echo`
 - `closing_charge`
+- `key_dates`
+- `key_dates_mode`
+- `rising_horoscopes`
 
-The first five fields other than `preview_note` are required for a structured
-article. `preview_note` renders only during a computed retrograde or shadow
-phase. `history_echo` is optional. `closing_charge` renders after the key dates.
+Current serving requires a matching planet/sign pair, a valid engine date, and a
+non-archive row whose inclusive validity window contains that date. Archive
+serving requires the exact registry key.
+
+## Conditional modules
+
+Preview copy renders only when the engine reports a prior brief ingress,
+retrograde passage, or active shadow. An authored preview is not sufficient by
+itself.
+
+History copy renders:
+
+- always for Uranus, Neptune, Pluto, Chiron, and the lunar nodes;
+- for Saturn on its long recurrence and Jupiter on its 12-year recurrence;
+- for Mercury, Venus, or Mars only during a retrograde;
+- never for routine direct Sun or Moon placements.
+
+## Surface-scoped vocabulary
+
+Sky article/template assembly reads:
+
+- `fallback-vocab/sky-planet-function/{planet}`
+- `fallback-vocab/sky-sign-style/{sign}`
+
+It must never resolve these slots from shared
+`fallback-vocab/planet-function/{planet}` or
+`fallback-vocab/sign-style/{sign}` rows. Those shared banks remain unchanged for
+natal and other surfaces.
+
+Existing approved placement families remain the V3 fallthrough:
+
+- `fallback-hook/sky-placement-tagline/{planet}/{sign}`
+- `fallback-hook/sky-placement-hook/{planet}/{sign}`
+- `fallback-hook/sky-placement-lived/{planet}/{sign}`
+- `fallback-hook/sky-placement-turn/{planet}/{sign}`
+- `fallback-hook/sky-placement-moves/{planet}/{sign}`
+- `fallback-hook/sky-placement-you/{planet}`
+- `fallback-hook/sky-placement/{planet}`
+- `fallback-hook/sky-placement-frame/{planet}`
+- `fallback-hook/sky-placement-retro-frame/{planet}`
+- `fallback-hook/sky-placement-practice/{planet}`
+
+The date-anchored 42-row V3 supersede and both sky-scoped vocabulary banks were
+owner-approved on July 29, 2026. Production assembles them with the existing
+planet-in-sign rows rather than replacing those rows. The frame order is:
+computed window and planet frame, planet-in-sign opening, lived pattern, useful
+expression and distortion, computed aspect paragraphs, personal frame, and
+practice close. Existing planet-sign moves continue to render. Fast-mover
+frames do not render a separate Key Dates block.
+
+The direct three-beat frame explains what the planet does, its useful
+expression, and its distortion. For Mercury through Chiron, the approved
+retrograde twin replaces only this module from shadow entry through shadow
+exit. The direct twin resumes after the post-retrograde shadow.
 
 ## Traditional rulers
 
@@ -67,54 +145,28 @@ phase. `history_echo` is optional. `closing_charge` renders after the key dates.
 Uranus, Neptune, and Pluto may be computed placements or aspect layers. They are
 never default sign rulers.
 
-## Existing phrase inventory
+## Key dates and fact boundary
 
-Coverage assemblies continue to read these approved families:
+Entry and exit dates, current degree, retrograde/shadow state, station facts, and
+live aspect dates are ephemeris facts. Current articles receive these through
+engine fields.
 
-- `sky-placement-tagline/{planet}/{sign}`
-- `sky-placement-hook/{planet}/{sign}`
-- `sky-placement-lived/{planet}/{sign}`
-- `sky-placement-turn/{planet}/{sign}`
-- `sky-placement-moves/{planet}/{sign}`
-- `sky-placement-you/{planet}`
-- `sky-placement/{planet}`
-- `sky-placement-practice/{planet}`
-- `fallback-vocab/sign-style/{sign}`
-- `fallback-vocab/sign-does/{sign}`
-- `fallback-vocab/planet-function/{planet}`
-- `fallback-vocab/planet-topic/{planet}`
-- `fallback-vocab/planet-verb/{planet}`
-- `fallback-vocab/sign-adverb/{sign}`
-- `fallback-vocab/sign-need/{sign}`
+An authored archive may carry a `key_dates` block only when every date, sign, and
+degree has passed the ephemeris import gate. A mismatch fails the import.
+Editorial exemplars are not trusted as an independent fact source.
 
-## Motion
+For current authored articles, Key Dates retain the older rule and position:
+ingresses, stations, re-entries, shadow boundaries, and exits only, rendered
+after the article body and before the closing charge.
 
-- Direct motion emphasizes visible execution and outward decisions.
-- Retrograde and shadow phases emphasize review, unlearning, stopping leaks, and
-  auditing earlier choices.
-
-Motion language must come from an approved authored note or
-`fallback-hook/transit-retro/{planet}`. The UI must not synthesize an
-interpretation from the motion flag.
-
-## Fact boundary
-
-The following values are always engine-computed:
-
-- entry and exit dates;
-- current degree;
-- retrograde and shadow state;
-- station and shadow dates;
-- live aspect dates.
-
-They may appear only in declared fact fields or computed UI blocks. Literal
-dates in an editorial exemplar are calibration references, not reusable prose.
+The content axis for the lunar nodes flips on 2026-08-18: Pisces/Virgo before
+the boundary and Aquarius/Leo on and after it. The article registry still
+applies its validity guard, so an old-axis article cannot leak across the flip.
 
 ## Voice
 
 - Direct, diagnostic, pragmatic, and boundary-aware.
 - Concrete behavior before textbook jargon.
 - No spiritual bypassing or generic motivational filler.
-- Contractions are allowed on this published-article surface when they are part
-  of approved copy.
+- Contractions are allowed when present in approved authored copy.
 - Approved authored prose is immutable.

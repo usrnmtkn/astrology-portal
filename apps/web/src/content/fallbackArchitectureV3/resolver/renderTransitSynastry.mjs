@@ -12,12 +12,16 @@ const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fall
 const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
+const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
 lib.authoredCards.push(...lunationBlend.authoredCards);
+lib.authoredCards.push(...skyArticleV1.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
 rowsFile.hookRows.push(...bondLanguagePass2.rows);
+rowsFile.hookRows.push(...skyArticleV1.hookRows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
+rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
 const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
 const eligibleRowsByKey = (rows) => {
   const candidates = new Map();
@@ -129,6 +133,68 @@ export function friendVoiceFromReaderCopy(body, name) {
   return rendered;
 }
 const card = (k) => cards.get(k) ?? null;
+const skyArticles = [...cards.values()].filter((candidate) => candidate.contentKey.startsWith("sky-article/"));
+const articleDay = (value) => {
+  const day = value?.slice(0, 10);
+  return day && /^\d{4}-\d{2}-\d{2}$/u.test(day) ? day : null;
+};
+const articleDateLabel = (value) => new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC"
+}).format(new Date(`${value.slice(0, 10)}T00:00:00Z`));
+const articleWindow = (candidate) => (
+  candidate.valid_from && candidate.valid_to
+    ? `${articleDateLabel(candidate.valid_from)} – ${articleDateLabel(candidate.valid_to)}`
+    : null
+);
+const selectSkyArticle = ({
+  planet,
+  sign,
+  asOfDate,
+  articleMode = "current",
+  articleKey,
+  isRetrograde = false,
+  isShadowPhase = false
+}) => {
+  const pair = skyArticles.filter((candidate) => candidate.planet === planet && candidate.sign === sign);
+
+  if (articleMode === "archive") {
+    return articleKey
+      ? pair.find((candidate) => candidate.contentKey === articleKey) ?? null
+      : null;
+  }
+
+  const day = articleDay(asOfDate);
+  if (!day) return null;
+
+  return pair.find((candidate) => (
+    !candidate.archive_only
+    && (
+      candidate.article_variant !== "retrograde"
+      || isRetrograde
+      || isShadowPhase
+    )
+    && candidate.valid_from
+    && candidate.valid_to
+    && candidate.valid_from <= day
+    && candidate.valid_to >= day
+  )) ?? null;
+};
+const skyPlacementHistoryAllowed = (planet, isRetrograde, historyEligible) => {
+  if (typeof historyEligible === "boolean") return historyEligible;
+  return new Set([
+    "jupiter",
+    "saturn",
+    "uranus",
+    "neptune",
+    "pluto",
+    "chiron",
+    "north-node",
+    "south-node"
+  ]).has(planet) || (isRetrograde && ["mercury", "venus", "mars"].includes(planet));
+};
 const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, parts: [c.body], templateKey, contentKey: c.contentKey });
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
@@ -758,9 +824,23 @@ export function renderSkyPlacement({
   planet,
   sign,
   events = [],
+  asOfDate,
+  articleMode = "current",
+  articleKey,
+  entryDate,
+  exitDate,
+  hasPriorIngress = false,
+  historyEligible,
   isRetrograde = false,
   isShadowPhase = false
 }) {
+  const nodeDay = articleDay(asOfDate);
+  if (nodeDay && (planet === "north-node" || planet === "south-node")) {
+    const afterAxisFlip = nodeDay >= "2026-08-18";
+    sign = planet === "north-node"
+      ? afterAxisFlip ? "aquarius" : "pisces"
+      : afterAxisFlip ? "leo" : "virgo";
+  }
   const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
   const retrogradeGuidance = isRetrograde
     ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
@@ -768,7 +848,19 @@ export function renderSkyPlacement({
   if (isRetrograde && !retrogradeGuidance) {
     throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
   }
-  const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
+  const authoredArticle = selectSkyArticle({
+    planet,
+    sign,
+    events,
+    asOfDate,
+    articleMode,
+    articleKey,
+    isRetrograde,
+    isShadowPhase
+  });
+  if (articleMode === "archive" && !authoredArticle) {
+    throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
+  }
   if (authoredArticle) {
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
     const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
@@ -784,14 +876,16 @@ export function renderSkyPlacement({
     const isStructured = structuredParts.every((part) => typeof part === "string" && part.trim());
 
     if (isStructured) {
-      const reviewNote = isRetrograde || isShadowPhase
+      const reviewNote = isRetrograde || isShadowPhase || hasPriorIngress
         ? authoredArticle.preview_note ?? retrogradeGuidance
         : null;
       const closingCharge = authoredArticle.closing_charge?.trim() || null;
       const parts = [
         reviewNote,
         ...structuredParts,
-        authoredArticle.history_echo,
+        skyPlacementHistoryAllowed(planet, isRetrograde, historyEligible)
+          ? authoredArticle.history_echo
+          : null,
         ...aspectParas,
         closingCharge
       ].filter(Boolean);
@@ -801,9 +895,16 @@ export function renderSkyPlacement({
         tagline,
         moves,
         closingCharge,
+        keyDates: authoredArticle.key_dates ?? [],
+        articleWindow: articleWindow(authoredArticle),
+        articleMode,
+        risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
+          risingSign: entry.rising_sign,
+          body: entry.body
+        })),
         body: parts.join("\n\n"),
         parts,
-        templateKey: "authored/sky-ingress/sky-article-v1",
+        templateKey: "sky-article-v1",
         contentKey: authoredArticle.contentKey
       };
     }
@@ -813,9 +914,16 @@ export function renderSkyPlacement({
       headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
       tagline,
       moves,
+      keyDates: authoredArticle.key_dates ?? [],
+      articleWindow: articleWindow(authoredArticle),
+      articleMode,
+      risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
+        risingSign: entry.rising_sign,
+        body: entry.body
+      })),
       body: parts.join("\n\n"),
       parts,
-      templateKey: "authored/sky-ingress",
+      templateKey: "sky-article-v1",
       contentKey: authoredArticle.contentKey
     };
   }
@@ -823,11 +931,64 @@ export function renderSkyPlacement({
   const pairHook = hooks.get(pairKey)?.body_you;
   const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
   const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+  const signCopyKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
+  const signCopy = hooks.get(signCopyKey)?.body_you;
+  const signParts = signCopy
+    ? [signCopy]
+    : pairHook && pairLived && pairTurn
+      ? [pairHook, pairLived, pairTurn]
+      : [];
   const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
   const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
     .split(/\r?\n/u)
     .map((move) => move.trim())
     .filter(Boolean);
+  {
+    const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+    const directPlanetFrame = hooks.get(`fallback-hook/sky-placement-frame/${planet}`)?.body_you;
+    const retrogradePlanetFrame = hooks.get(`fallback-hook/sky-placement-retro-frame/${planet}`)?.body_you;
+    const planetFrame = isRetrograde || isShadowPhase
+      ? retrogradePlanetFrame ?? directPlanetFrame
+      : directPlanetFrame;
+    const personal = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+    const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
+    const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
+    const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
+    if (
+      windowFrame
+      && planetFrame
+      && personal
+      && practice
+      && signStyle
+      && planetFunction
+      && entryDate
+      && exitDate
+      && signParts.length > 0
+    ) {
+      const ctx = { signTitle: title(sign), signStyle, planetFunction, entryDate, exitDate };
+      const parts = [
+        windowFrame,
+        planetFrame,
+        ...signParts,
+        ...aspectParas,
+        personal,
+        practice
+      ].map((part) => fillKeep(part, ctx));
+      if (parts.some((part) => /\{\{/u.test(part))) {
+        throw new SourceGapError(`SOURCE_GAP: sky placement V3 frame ${planet}/${sign}`);
+      }
+      return {
+        headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+        tagline,
+        moves: signCopy ? [] : moves,
+        body: parts.join("\n\n"),
+        parts,
+        templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
+        contentKey: signCopy ? signCopyKey : `fallback-hook/sky-placement/${planet}`
+      };
+    }
+  }
+
   if (pairHook && pairLived && pairTurn) {
     const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
     return {
@@ -843,10 +1004,18 @@ export function renderSkyPlacement({
   const template = tpl("fallback-template/sky.placement-article");
   if (!template) throw new SourceGapError("SOURCE_GAP: missing template fallback-template/sky.placement-article");
   const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-  const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+  const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
+  const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
   const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-  if (!fallbackHook || !frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-  const ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
+  if (!fallbackHook || !frame || !signStyle || !planetFunction) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  const ctx = {
+    signTitle: title(sign),
+    signStyle,
+    signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body,
+    planetFunction,
+    entryDate,
+    exitDate
+  };
   const placementRef = capitalizeSentence(transitRef(planet));
   const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you
     ?? fill(fallbackHook, ctx);

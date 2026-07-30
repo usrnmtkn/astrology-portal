@@ -3,6 +3,10 @@ import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-tem
 import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-language-pass-2.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
+import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
+import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
+import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
+import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
 import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
@@ -261,11 +265,140 @@ function assertBondLanguagePass2Import(
 
 assertBondLanguagePass2Import(fallbackSourceRowsV3, bondLanguagePass2);
 
+function assertSkyArticleV1Import(
+  registry: typeof skyArticleV1
+) {
+  const articles = registry.authoredCards;
+  const hookRows = registry.hookRows;
+  const vocabularyRows = registry.vocabularyRows;
+  const articleKeys = new Set(articles.map((row) => row.contentKey));
+  const vocabularyKeys = new Set(vocabularyRows.map((row) => row.contentKey));
+
+  if (articles.length !== articleKeys.size) {
+    throw new Error("Sky article registry contains duplicate article keys.");
+  }
+  if (
+    vocabularyRows.length !== 25
+    || vocabularyKeys.size !== 25
+    || vocabularyRows.some((row) => !row.contentKey.startsWith("fallback-vocab/sky-"))
+  ) {
+    throw new Error("Sky article registry must contain exactly 25 surface-scoped vocabulary rows.");
+  }
+  if (
+    hookRows.length !== 42
+    || hookRows.some((row) => row.review_status !== "approved")
+    || vocabularyRows.some((row) => row.review_status !== "approved")
+  ) {
+    throw new Error("Sky V3 frames and surface-scoped vocabulary must be owner-approved.");
+  }
+  const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
+  for (const row of hookRows) {
+    if (literalSkyRowDate.test(row.body_you)) {
+      throw new Error(`Sky placement V3 row contains a literal date: ${row.contentKey}`);
+    }
+  }
+  if (vocabularyRows.some((row) => (
+    row.contentKey.startsWith("fallback-vocab/sign-style/")
+    || row.contentKey.startsWith("fallback-vocab/planet-function/")
+  ))) {
+    throw new Error("Sky article imports may not modify shared sign-style or planet-function banks.");
+  }
+  for (const article of articles) {
+    if (
+      !/^sky-article\/[a-z-]+\/[a-z-]+\/\d{4}$/u.test(article.contentKey)
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(article.valid_from)
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(article.valid_to)
+      || article.valid_from > article.valid_to
+    ) {
+      throw new Error(`Invalid sky article registry row: ${article.contentKey}`);
+    }
+  }
+  const saturnArchive = articles.find((row) => row.contentKey === "sky-article/saturn/pisces/2023");
+  const saturnAries = articles.find((row) => row.contentKey === "sky-article/saturn/aries/2026");
+  if (
+    !saturnArchive
+    || saturnArchive.archive_only !== true
+    || saturnArchive.key_dates.length !== 9
+  ) {
+    throw new Error("Saturn in Pisces must import as the nine-date archive calibration article.");
+  }
+  if (
+    !saturnAries
+    || saturnAries.review_status !== "approved"
+    || saturnAries.article_variant !== "retrograde"
+    || saturnAries.key_dates_mode !== "engine"
+  ) {
+    throw new Error("Saturn in Aries must be an approved, engine-dated retrograde article.");
+  }
+}
+
+assertSkyArticleV1Import(skyArticleV1);
+
+function assertSkyPlanetFramesV1Import(
+  source: typeof skyPlanetFramesV1
+) {
+  const rows = source.rows;
+  const direct = rows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-frame/"));
+  const retrograde = rows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-retro-frame/"));
+  const keys = new Set(rows.map((row) => row.contentKey));
+
+  if (
+    rows.length !== 23
+    || keys.size !== 23
+    || direct.length !== 14
+    || retrograde.length !== 9
+    || rows.some((row) => row.review_status !== "approved")
+    || rows.some((row) => row.body_you !== row.body_they)
+  ) {
+    throw new Error("Sky planet frames must contain 14 direct and 9 retrograde owner-approved single-voice rows.");
+  }
+}
+
+assertSkyPlanetFramesV1Import(skyPlanetFramesV1);
+
+function assertSkyPlacementVoicePassV1Import(
+  source: typeof skyPlacementVoicePassV1
+) {
+  const rows = source.rows;
+  const keys = new Set(rows.map((row) => row.contentKey));
+
+  if (
+    rows.length !== 42
+    || keys.size !== 42
+    || rows.some((row) => row.review_status !== "needs_review")
+    || rows.some((row) => row.body_you !== row.body_they)
+  ) {
+    throw new Error("Sky placement voice pass must contain 42 review-gated, single-voice rows.");
+  }
+}
+
+assertSkyPlacementVoicePassV1Import(skyPlacementVoicePassV1);
+
+function assertSkySignCopySunV1Import(
+  source: typeof skySignCopySunV1
+) {
+  const rows = source.rows;
+  const keys = new Set(rows.map((row) => row.contentKey));
+
+  if (
+    rows.length !== 12
+    || keys.size !== 12
+    || rows.some((row) => !row.contentKey.startsWith("fallback-hook/sky-sign-copy/sun/"))
+    || rows.some((row) => row.review_status !== "needs_review")
+    || rows.some((row) => row.body_you !== row.body_they)
+  ) {
+    throw new Error("Sun sign copy must contain 12 review-gated, single-voice rows.");
+  }
+}
+
+assertSkySignCopySunV1Import(skySignCopySunV1);
+
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: [
       ...(transitSynastryRowsV1.authoredCards as AuthoredCard[]),
       ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
+      ...(skyArticleV1.authoredCards as AuthoredCard[]),
       ...(weeklySourceRowsV1 as AuthoredCard[])
     ]
   },
@@ -280,11 +413,16 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
     hookRows: [
       ...((fallbackSourceRowsV3 as RowsFile).hookRows ?? []),
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
-      ...(bondLanguagePass2.rows as HookRow[])
+      ...(bondLanguagePass2.rows as HookRow[]),
+      ...(skyArticleV1.hookRows as HookRow[]),
+      ...(skyPlanetFramesV1.rows as HookRow[]),
+      ...(skyPlacementVoicePassV1.rows as HookRow[]),
+      ...(skySignCopySunV1.rows as HookRow[])
     ],
     vocabularyRows: [
       ...((fallbackSourceRowsV3 as RowsFile).vocabularyRows ?? []),
-      ...(placementInterimFixesV1.vocabularyRows as VocabRow[])
+      ...(placementInterimFixesV1.vocabularyRows as VocabRow[]),
+      ...(skyArticleV1.vocabularyRows as VocabRow[])
     ]
   }
 };
