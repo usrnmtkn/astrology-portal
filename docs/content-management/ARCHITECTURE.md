@@ -158,10 +158,15 @@ Path:
 | Path | Responsibility |
 |---|---|
 | `source-rows/fallback-source-rows-v3.json` | Main hook, vocabulary, and source-material banks |
+| `source-rows/editorial-source-bank-v1.json` | Owner-authored, approved sign-axis, lunation, season, New Moon, and categorized quotable source material; deliberately non-serving until a resolver uses it |
 | `source-rows/transit-synastry-rows-v1.json` | Authored transits, compatibility, and relationship units |
 | `source-rows/bond-language-pass-2.json` | Review-gated, same-key bond-effect supersessions |
 | `source-rows/lunation-blend-units-v1.json` | Lunation macro and per-rising blend rows |
 | `source-rows/placement-interim-fixes-v1.json` | Placement frames and targeted vocabulary corrections |
+| `source-rows/sky-article-v1.json` | Validity-window sky article registry, archive articles, approved date-slot frames, and sky-scoped vocabulary |
+| `source-rows/sky-placement-inventories-voice-pass-v1.json` | Forty-two review-gated slot-tier voice-pass candidates; supersede approved V3 rows only after owner approval |
+| `source-rows/sky-planet-frames-v1.json` | Owner-approved three-beat planet frames: 14 direct and 9 shadow-to-shadow retrograde replacements |
+| `source-rows/sky-sign-copy-sun-v1.json` | Twelve review-gated Sun-in-sign article modules; staged for preview and dashboard review, excluded from reader serving until approval |
 | `source-rows/station-cards-week-openers-v1.json` | Weekly openers and station units |
 | `templates/fallback-templates-v3.json` | Slot-bearing fallback templates |
 | `resolver/renderFallback.*` | Natal, empty-house, aspect, and profection assembly |

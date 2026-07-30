@@ -275,8 +275,10 @@ function YouProfileSummary({
         size="large"
       />
       <div className="you-profile-copy">
-        <h1>{profileName}</h1>
-        {profileHandle ? <p className="you-profile-handle">@{profileHandle}</p> : null}
+        <div className="you-profile-name-row">
+          <h1>{profileName}</h1>
+          {profileHandle ? <span className="you-profile-handle">@{profileHandle}</span> : null}
+        </div>
         {signaturesReady ? (
           <div className="you-signature-row" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
