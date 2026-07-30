@@ -1290,6 +1290,33 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("calendar Week view presents seven API-backed day write-ups without mobile overflow", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-30T12:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const weeklyTab = page.getByRole("tab", { name: "Week", exact: true });
+    await expect(weeklyTab).toBeVisible();
+    await weeklyTab.click();
+    await expect(weeklyTab).toHaveAttribute("aria-selected", "true");
+
+    const weeklyView = page.locator(".lunar-weekly-view");
+    await expect(weeklyView).toBeVisible();
+    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
+    await expect(weeklyView.locator(".lunar-weekly-event__body").first()).toBeVisible({ timeout: 15_000 });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const widths = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      page: document.documentElement.scrollWidth
+    }));
+
+    expect(widths.page, "The Weekly does not introduce horizontal page overflow").toBe(widths.viewport);
+    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
+    await assertNoClientErrors();
+  });
+
   test("calendar reserves the Full Moon title for the exact lunation day", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

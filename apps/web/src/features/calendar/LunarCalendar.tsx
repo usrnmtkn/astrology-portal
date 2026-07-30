@@ -33,7 +33,7 @@ import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
 
 type LunarCalendarStatus = "loading" | "ready" | "error";
-type LunarCalendarViewMode = "week" | "month";
+type LunarCalendarViewMode = "week" | "month" | "weekly";
 type CalendarEventProseLayer = "authored" | "fallback";
 
 type NormalizedCalendarEventSection = {
@@ -62,7 +62,8 @@ type LunarCalendarProps = {
 type LocationSearchStatus = "idle" | "loading" | "ready" | "empty" | "error";
 
 const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = [
-  { value: "week", label: "Week" },
+  { value: "week", label: "Day" },
+  { value: "weekly", label: "Week" },
   { value: "month", label: "Month" }
 ];
 
@@ -162,6 +163,10 @@ function startOfWeekDate(date: Date) {
   return start;
 }
 
+function isWeekBasedView(mode: LunarCalendarViewMode) {
+  return mode === "week" || mode === "weekly";
+}
+
 function storageDateKey(date: Date) {
   return dateKeyFromDate(date);
 }
@@ -171,12 +176,13 @@ function calendarStorageKey(
   mode: LunarCalendarViewMode,
   anchor: Date
 ) {
-  const normalizedAnchor = mode === "week" ? startOfWeekDate(anchor) : monthStart(anchor);
+  const normalizedMode = isWeekBasedView(mode) ? "week" : "month";
+  const normalizedAnchor = normalizedMode === "week" ? startOfWeekDate(anchor) : monthStart(anchor);
 
   return [
     "tldr-lunar-calendar",
     calendarStorageVersion,
-    mode,
+    normalizedMode,
     storageDateKey(normalizedAnchor),
     location.latitude.toFixed(4),
     location.longitude.toFixed(4),
@@ -217,14 +223,15 @@ async function loadCalendarData(
   anchor: Date,
   detail: "basic" | "full"
 ) {
-  const loadCalendar = mode === "week" ? getLunarCalendarWeek : getLunarCalendarMonth;
+  const dataMode = isWeekBasedView(mode) ? "week" : "month";
+  const loadCalendar = dataMode === "week" ? getLunarCalendarWeek : getLunarCalendarMonth;
 
   if (!enableCalendarApi) {
     return loadCalendar(location, anchor, { detail });
   }
 
   try {
-    return await getLunarCalendarFromApi(location, mode, anchor, detail);
+    return await getLunarCalendarFromApi(location, dataMode, anchor, detail);
   } catch {
     return loadCalendar(location, anchor, { detail });
   }
@@ -298,6 +305,38 @@ function formatSelectedDay(day: LunarCalendarDay, timeZone: string) {
     month: "long",
     day: "numeric"
   }).format(new Date(day.date));
+}
+
+function formatWeeklyDate(day: LunarCalendarDay, timeZone: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "long",
+    month: "short",
+    day: "numeric"
+  }).format(new Date(day.date));
+}
+
+function formatWeeklyRange(days: LunarCalendarDay[], timeZone: string) {
+  const first = days[0];
+  const last = days.at(-1);
+
+  if (!first || !last) {
+    return "";
+  }
+
+  const start = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "short",
+    day: "numeric"
+  }).format(new Date(first.date));
+  const end = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(new Date(last.date));
+
+  return `${start} – ${end}`;
 }
 
 function formatWeekday(day: LunarCalendarDay, timeZone: string) {
@@ -388,6 +427,42 @@ function dayEventPreview(events: LunarCalendarEvent[]) {
 
     return new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime();
   });
+}
+
+function weeklyWriteupEvents(day: LunarCalendarDay) {
+  const events = dayEventPreview(day.events).filter((event) => (
+    event.dateKey === day.dateKey
+    && !isActiveRetrogradeEvent(event)
+    && (
+      event.type === "lunation"
+      || (
+        event.primary
+        && (
+          event.type === "ingress"
+          || event.type === "station"
+          || (event.type === "aspect" && !event.planets?.includes("Moon"))
+        )
+      )
+    )
+  ));
+  const byMovement = new Map<string, LunarCalendarEvent>();
+
+  for (const event of events) {
+    const movementKey = [
+      event.type,
+      event.title,
+      event.planet ?? "",
+      event.planets?.join("-") ?? "",
+      event.aspect ?? "",
+      event.sign ?? event.toSign ?? ""
+    ].join("|");
+
+    if (!byMovement.has(movementKey)) {
+      byMovement.set(movementKey, event);
+    }
+  }
+
+  return [...byMovement.values()];
 }
 
 function monthTransitCardEvents(days: LunarCalendarDay[]) {
@@ -955,6 +1030,19 @@ function calendarStationDirectPackageDescription(event: LunarCalendarEvent) {
 }
 
 function calendarEventPackageDescription(event: LunarCalendarEvent) {
+  if (event.type === "lunation" && event.sign) {
+    try {
+      const rendered = calendarFallbackRendererV3.renderCalendarPhase({
+        phase: calendarPhaseContentKey(lunationDisplayLabel(event)),
+        sign: slugContentPart(event.sign)
+      });
+
+      return firstReaderFacingCopy(rendered.parts);
+    } catch (error) {
+      return calendarEventPackageFailure(event, error);
+    }
+  }
+
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
     const sign = event.toSign ?? event.sign;
 
@@ -1377,7 +1465,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   useEffect(() => {
     let cancelled = false;
     let cancelHydration: (() => void) | null = null;
-    const visibleAnchor = viewMode === "week" ? dateFromDateKey(visibleWeekDateKey) : visibleMonth;
+    const visibleAnchor = isWeekBasedView(viewMode) ? dateFromDateKey(visibleWeekDateKey) : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
 
@@ -1467,7 +1555,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
       return;
     }
 
-    const selectedDateIsInVisibleRange = viewMode === "week"
+    const selectedDateIsInVisibleRange = isWeekBasedView(viewMode)
       ? dateKeyInSameWeek(selectedDateKey, visibleWeekDateKey)
       : dateKeyInMonth(selectedDateKey, visibleMonth);
 
@@ -1556,6 +1644,54 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   const selectedWeekDays = visibleWeekAnchorIndex >= 0 && calendar
     ? calendar.days.slice(visibleWeekAnchorIndex - (visibleWeekAnchorIndex % 7), visibleWeekAnchorIndex - (visibleWeekAnchorIndex % 7) + 7)
     : [];
+  const weeklyDayWriteups = useMemo(() => {
+    if (!calendar) {
+      return [];
+    }
+
+    return selectedWeekDays.map((day) => {
+      const events = weeklyWriteupEvents(day).map((event) => {
+        const content = liveCalendarEventContent(generatedContent, event);
+        const normalizedEvent = normalizeCalendarEventSurface(event, content);
+
+        return {
+          event,
+          title: calendarEventTitleWithSign(event, calendarEventTitle(event, content)),
+          description: normalizedEvent.sections[0]?.body ?? ""
+        };
+      });
+      let moonGuidance: { headline: string; body: string; focus?: string } | null = null;
+
+      try {
+        moonGuidance = calendarFallbackRendererV3.renderWeeklyMoon({
+          sign: slugContentPart(day.moonSign),
+          variant: weeklyMoonVariantForDate(day.dateKey)
+        });
+      } catch (error) {
+        if (!(error instanceof FallbackV3SourceGapError)) {
+          throw error;
+        }
+      }
+
+      return {
+        day,
+        phase: phaseLabelForDay(day, calendar.days),
+        events,
+        moonGuidance
+      };
+    });
+  }, [calendar, generatedContent, selectedWeekDays]);
+  const weeklyLeadEvent = weeklyDayWriteups
+    .flatMap((writeup) => writeup.events.map((event) => ({ ...event, day: writeup.day })))
+    .sort((first, second) => (
+      eventPriority(first.event) - eventPriority(second.event)
+      || first.event.startsAt.localeCompare(second.event.startsAt)
+    ))
+    .find((event) => event.description)
+    ?? null;
+  const weeklyLeadMoon = weeklyDayWriteups.find((writeup) => writeup.moonGuidance?.body)?.moonGuidance ?? null;
+  const weeklyEventCount = weeklyDayWriteups.reduce((total, writeup) => total + writeup.events.length, 0);
+  const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
     const eventsById = new Map<string, LunarCalendarEvent>();
@@ -1935,7 +2071,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     setVisibleWeekDateKey(dateKey);
   }
   const handleCalendarNavigation = (direction: -1 | 1) => {
-    if (viewMode === "week") {
+    if (isWeekBasedView(viewMode)) {
       const nextWeekDateKey = dateKeyFromUtcTime(dayKeyToUtcTime(visibleWeekDateKey) + direction * 7 * 86_400_000);
 
       setVisibleWeekDateKey(nextWeekDateKey);
@@ -1992,11 +2128,11 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
         <div className="lunar-calendar-title-block">
           <div className="lunar-calendar-title-row">
             <h1><span>{monthParts.month}</span> <em>{monthParts.year}</em></h1>
-            <div className="lunar-calendar-controls" aria-label={viewMode === "week" ? "Calendar week controls" : "Calendar month controls"}>
-              <button type="button" aria-label={viewMode === "week" ? "Previous week" : "Previous month"} onClick={() => handleCalendarNavigation(-1)}>
+            <div className="lunar-calendar-controls" aria-label={isWeekBasedView(viewMode) ? "Calendar week controls" : "Calendar month controls"}>
+              <button type="button" aria-label={isWeekBasedView(viewMode) ? "Previous week" : "Previous month"} onClick={() => handleCalendarNavigation(-1)}>
                 <ChevronLeft size={18} aria-hidden="true" />
               </button>
-              <button type="button" aria-label={viewMode === "week" ? "Next week" : "Next month"} onClick={() => handleCalendarNavigation(1)}>
+              <button type="button" aria-label={isWeekBasedView(viewMode) ? "Next week" : "Next month"} onClick={() => handleCalendarNavigation(1)}>
                 <ChevronRight size={18} aria-hidden="true" />
               </button>
             </div>
@@ -2177,6 +2313,85 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               </div>
             </section>
           )}
+        </div>
+      )}
+
+      {viewMode === "weekly" && (
+        <div className="lunar-weekly-view">
+          <section className="lunar-weekly-hero" aria-labelledby="lunar-weekly-title">
+            <div className="lunar-weekly-hero__meta">
+              <span>{weeklyRangeLabel}</span>
+              <span>{formatEventCount(weeklyEventCount)}</span>
+            </div>
+            <p className="lunar-weekly-hero__eyebrow">The Weekly</p>
+            <h2 id="lunar-weekly-title">
+              {weeklyLeadEvent?.title ?? weeklyLeadMoon?.headline ?? "Your week in the sky"}
+            </h2>
+            {(weeklyLeadEvent?.description || weeklyLeadMoon?.body) && (
+              <p className="lunar-weekly-hero__body">
+                {weeklyLeadEvent?.description ?? weeklyLeadMoon?.body}
+              </p>
+            )}
+          </section>
+
+          <section className="lunar-weekly-days" aria-label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
+            <div className="lunar-weekly-days__heading">
+              <p>Day by day</p>
+            </div>
+            <ol>
+              {weeklyDayWriteups.map(({ day, events, moonGuidance, phase }) => {
+                const eventDescriptions = events.filter((event) => event.description);
+                const voidWindow = formatVoidCourseDetailWindow(day, zone);
+
+                return (
+                  <li key={day.dateKey}>
+                    <article className="lunar-weekly-day">
+                      <header className="lunar-weekly-day__header">
+                        <div>
+                          <p>{formatWeeklyDate(day, zone)}</p>
+                          <h3>Moon in {day.moonSign}</h3>
+                        </div>
+                        <span
+                          className={`lunar-moon-disc ${isWaxingPhase(phase) ? "is-waxing" : "is-waning"}`}
+                          style={moonDiscStyle(day)}
+                          aria-hidden="true"
+                        />
+                      </header>
+                      <div className="lunar-weekly-day__facts">
+                        <span>{phase}</span>
+                        <span>{day.illumination}% illuminated</span>
+                        {voidWindow && <span>Void · {voidWindow}</span>}
+                      </div>
+
+                      {events.length > 0 && (
+                        <div className="lunar-weekly-day__events" aria-label={`${formatWeeklyDate(day, zone)} movements`}>
+                          {events.map(({ event, title, description }) => (
+                            <section className={`lunar-weekly-event event-${event.type}`} key={event.id}>
+                              <div className="lunar-weekly-event__heading">
+                                <span aria-hidden="true">{monthCellEventLabel(event)}</span>
+                                <div>
+                                  <h4>{title}</h4>
+                                  <p>{formatEventTime(event.startsAt, zone)} · {transitCardStatusTag(event)}</p>
+                                </div>
+                              </div>
+                              {description && <p className="lunar-weekly-event__body">{description}</p>}
+                            </section>
+                          ))}
+                        </div>
+                      )}
+
+                      {eventDescriptions.length === 0 && moonGuidance?.body && (
+                        <section className="lunar-weekly-day__guidance">
+                          <p>{moonGuidance.headline}</p>
+                          <div>{moonGuidance.body}</div>
+                        </section>
+                      )}
+                    </article>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
         </div>
       )}
 
