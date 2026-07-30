@@ -1,5 +1,11 @@
 # Sky Placement Articles — `sky-article-v1`
 
+> Article-tier section order, header behavior, conditional history/retrograde
+> blocks, and public rising-sign horoscopes are superseded by
+> [`TLDR-Sky-Article-Structure-FINAL.md`](./TLDR-Sky-Article-Structure-FINAL.md).
+> This document remains authoritative for registry validity windows, archive
+> serving, surface-scoped vocabulary, and ephemeris validation.
+
 The fallback article assembly now follows the owner-supplied Sky Placement
 Template V3 contract. The 42 `sky-placement`, `sky-placement-you`, and
 `sky-placement-practice` rows are approved slot-tier inputs. Planet-sign
@@ -15,8 +21,9 @@ and aspects supplied by the ephemeris. It does not invent prose.
 
 ## Serving order
 
-1. Select `sky-article/{planet}/{sign}/{entryYear}` only when its validity window
-   contains the engine-supplied date and it is not archive-only.
+1. Select `sky-article/{planet}/{sign}/{entryYear}` only when it declares
+   `article_structure: "final-v1"`, its validity window contains the
+   engine-supplied date, and it is not archive-only.
 2. Otherwise serve the approved V3 placement pair/frame rows.
 3. Otherwise return `SOURCE_GAP`.
 
@@ -159,9 +166,11 @@ For current authored articles, Key Dates retain the older rule and position:
 ingresses, stations, re-entries, shadow boundaries, and exits only, rendered
 after the article body and before the closing charge.
 
-The content axis for the lunar nodes flips on 2026-08-18: Pisces/Virgo before
-the boundary and Aquarius/Leo on and after it. The article registry still
-applies its validity guard, so an old-axis article cannot leak across the flip.
+Lunar-node placement content takes its sign, ingress, and egress directly from
+the True Node ephemeris result (`SE_TRUE_NODE`). The South Node is derived at
+the exact opposite longitude. No editorial date may override the computed
+axis. The article registry still applies its validity guard, so an old-axis
+article cannot leak across a computed ingress.
 
 ## Voice
 
