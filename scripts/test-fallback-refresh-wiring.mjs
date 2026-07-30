@@ -25,6 +25,10 @@ const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json")
 const templates = readPackageJson("templates/fallback-templates-v3.json");
 const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
 const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.json");
+const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
+const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
+const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
@@ -37,7 +41,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29ab");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29ah");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -668,6 +672,7 @@ try {
       authoredCards: [
         ...transitRows.authoredCards,
         ...lunationBlendRows.authoredCards,
+        ...skyArticleRows.authoredCards,
         ...weeklyRows
       ]
     },
@@ -675,11 +680,14 @@ try {
       hookRows: [
         ...sourceRows.hookRows,
         ...lunationBlendRows.hookRows,
-        ...bondLanguagePass2.rows
+        ...bondLanguagePass2.rows,
+        ...skyArticleRows.hookRows,
+        ...skyPlanetFrames.rows
       ],
       vocabularyRows: [
         ...sourceRows.vocabularyRows,
-        ...placementInterimRows.vocabularyRows
+        ...placementInterimRows.vocabularyRows,
+        ...skyArticleRows.vocabularyRows
       ]
     },
     templatesFile: {
@@ -723,6 +731,22 @@ try {
       "reviewed",
       `${row.contentKey} must carry its reviewed state into the dashboard mirror.`
     );
+  }
+
+  for (const row of skySignCopySun.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for owner review.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.status, "DRAFT");
+    assert.equal(materializedRow.source_snapshot.review_status, "needs_review");
+  }
+
+  for (const row of skyPlacementVoicePass.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for owner review.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.status, "DRAFT");
+    assert.equal(materializedRow.source_snapshot.review_status, "needs_review");
   }
 } finally {
   fs.rmSync(materializerTempDir, { recursive: true, force: true });

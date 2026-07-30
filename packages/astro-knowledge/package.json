@@ -59,6 +59,7 @@
     "fixtures:aspect-pattern-activations": "node scripts/print-aspect-pattern-activation-fixtures.js",
     "import:authored-placements": "node scripts/import-authored-placements.js",
     "lint:pattern-voice": "node scripts/lint-pattern-voice.js --examples",
+    "lint:editorial-bank": "node scripts/judge-editorial-source-bank.js --lint",
     "test:pattern-voice": "node scripts/test-pattern-voice.mjs"
   },
   "license": "UNLICENSED",

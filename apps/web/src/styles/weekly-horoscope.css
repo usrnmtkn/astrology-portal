@@ -1,6 +1,6 @@
 .you-timing-tabs {
   align-self: flex-start;
-  margin-bottom: var(--space-2);
+  margin-bottom: 0;
   width: min(280px, 100%);
 }
 

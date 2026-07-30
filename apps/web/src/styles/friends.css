@@ -1563,6 +1563,14 @@
   gap: 5px;
 }
 
+.you-profile-name-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 4px 12px;
+}
+
 .friend-hero-copy h2,
 .you-profile-copy h1 {
   overflow-wrap: anywhere;
@@ -1583,6 +1591,7 @@
 
 .you-profile-handle {
   margin: 0;
+  overflow-wrap: anywhere;
   font-family: var(--font-ui);
   letter-spacing: var(--tracking-number);
 }

@@ -1,0 +1,954 @@
+{
+  "schema": "tldrastro-sky-article-v1",
+  "version": "1.2.0",
+  "authoredCards": [
+    {
+      "contentKey": "sky-article/saturn/pisces/2023",
+      "content_role": "authored_card",
+      "surface": "sky-placement-archive",
+      "headline": "Saturn in Pisces",
+      "planet": "saturn",
+      "sign": "pisces",
+      "entry_year": 2023,
+      "valid_from": "2023-03-07",
+      "valid_to": "2026-02-13",
+      "archive_only": true,
+      "body": "The pre-retrograde shadow phase and retrograde station periods pull subconscious patterns to the surface for a second pass, forcing a review of where your boundaries have dissolved into porous avoidance.\n\nThe core theme of this transit is bringing structural discipline to your inner life, and releasing the belief that you must destroy yourself to prove your devotion.\n\nPisces governs the unmapped domain: wisdom, grief, spiritual surrender, and the boundless waters where individual edges blur. When Saturn moves through Pisces, it tests the scaffolding beneath your empathy. It inspects the places you have been using sensitivity as both shield and excuse. It forces you to find plain-text words for what has only existed as unexamined feeling. It reminds us that compassion without boundaries is not generosity; it is slow-motion self-destruction.\n\nYou have spent years treating your nervous system like a software bug that needs debugging, running diagnostics on your moods while taking on everyone else's emergencies. In daily life, this transit shows up where your \"holding space\" became an excuse to avoid making a decision, or where your \"yes\" was just fear of disappointing someone. The exhaustion you are feeling is not a mystery; it is your truth trying to surface through your body. Your career, your sleep, and your closest bonds are asking for proof of work, not a three-paragraph explanation for why you are overwhelmed.\n\nPisces is ruled by Jupiter, the Greater Benefic that seeks growth, faith, and boundless expansion. Saturn does not indulge the unchecked flood; it requires a container. It builds a real wall around the fertile waters so your energy does not drain dry.\n\nThe last time Saturn moved through this part of Pisces was between 1993 and 1996. That era marked a collective overhaul in how we defined recovery, emotional boundaries, and institutional accountability. The same contract returns for completion now: you are applying thirty years of experience to stop paying interest on debts that were never yours.\n\nStop treating your sensitivity like a flaw and stop using it to avoid your life. Set the boundary, lay the first brick, and let the rest pass without holding a summit over it.",
+      "preview_note": "The pre-retrograde shadow phase and retrograde station periods pull subconscious patterns to the surface for a second pass, forcing a review of where your boundaries have dissolved into porous avoidance.",
+      "core_theme": "The core theme of this transit is bringing structural discipline to your inner life, and releasing the belief that you must destroy yourself to prove your devotion.",
+      "sign_jurisdiction": "Pisces governs the unmapped domain: wisdom, grief, spiritual surrender, and the boundless waters where individual edges blur. When Saturn moves through Pisces, it tests the scaffolding beneath your empathy. It inspects the places you have been using sensitivity as both shield and excuse. It forces you to find plain-text words for what has only existed as unexamined feeling. It reminds us that compassion without boundaries is not generosity; it is slow-motion self-destruction.",
+      "lived_experience": "You have spent years treating your nervous system like a software bug that needs debugging, running diagnostics on your moods while taking on everyone else's emergencies. In daily life, this transit shows up where your \"holding space\" became an excuse to avoid making a decision, or where your \"yes\" was just fear of disappointing someone. The exhaustion you are feeling is not a mystery; it is your truth trying to surface through your body. Your career, your sleep, and your closest bonds are asking for proof of work, not a three-paragraph explanation for why you are overwhelmed.",
+      "rulership_twist": "Pisces is ruled by Jupiter, the Greater Benefic that seeks growth, faith, and boundless expansion. Saturn does not indulge the unchecked flood; it requires a container. It builds a real wall around the fertile waters so your energy does not drain dry.",
+      "history_echo": "The last time Saturn moved through this part of Pisces was between 1993 and 1996. That era marked a collective overhaul in how we defined recovery, emotional boundaries, and institutional accountability. The same contract returns for completion now: you are applying thirty years of experience to stop paying interest on debts that were never yours.",
+      "closing_charge": "Stop treating your sensitivity like a flaw and stop using it to avoid your life. Set the boundary, lay the first brick, and let the rest pass without holding a summit over it.",
+      "history_policy": "saturn-cycle",
+      "preview_policy": "retrograde-or-shadow",
+      "key_dates": [
+        {
+          "date": "2023-03-07",
+          "label": "Saturn enters Pisces",
+          "sign": "pisces",
+          "degree": 0,
+          "event": "ingress"
+        },
+        {
+          "date": "2023-06-17",
+          "label": "Saturn stations Retrograde at 7° Pisces",
+          "sign": "pisces",
+          "degree": 7,
+          "event": "station-retrograde"
+        },
+        {
+          "date": "2023-11-04",
+          "label": "Saturn stations Direct at 0° Pisces",
+          "sign": "pisces",
+          "degree": 0,
+          "event": "station-direct"
+        },
+        {
+          "date": "2024-06-29",
+          "label": "Saturn stations Retrograde at 19° Pisces",
+          "sign": "pisces",
+          "degree": 19,
+          "event": "station-retrograde"
+        },
+        {
+          "date": "2024-11-15",
+          "label": "Saturn stations Direct at 12° Pisces",
+          "sign": "pisces",
+          "degree": 12,
+          "event": "station-direct"
+        },
+        {
+          "date": "2025-05-24",
+          "label": "Saturn briefly enters Aries",
+          "sign": "aries",
+          "degree": 0,
+          "event": "ingress"
+        },
+        {
+          "date": "2025-09-01",
+          "label": "Saturn retrogrades back into Pisces at 29° Pisces",
+          "sign": "pisces",
+          "degree": 29,
+          "event": "re-entry"
+        },
+        {
+          "date": "2025-11-27",
+          "label": "Saturn stations Direct at 25° Pisces",
+          "sign": "pisces",
+          "degree": 25,
+          "event": "station-direct"
+        },
+        {
+          "date": "2026-02-13",
+          "label": "Saturn completes its passage through Pisces",
+          "sign": "aries",
+          "degree": 0,
+          "event": "egress"
+        }
+      ],
+      "review_status": "approved",
+      "approved_via": "owner-supplied sky-article-v1 production specification, 2026-07-29",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ]
+    },
+    {
+      "contentKey": "sky-article/saturn/aries/2026",
+      "content_role": "authored_card",
+      "surface": "sky-placement",
+      "headline": "Saturn in Aries",
+      "planet": "saturn",
+      "sign": "aries",
+      "entry_year": 2026,
+      "valid_from": "2026-02-13",
+      "valid_to": "2028-04-12",
+      "archive_only": false,
+      "article_variant": "retrograde",
+      "body": "Saturn stationed retrograde on July 27, 2026 in early Aries, opening the review phase of this transit's first year. Station and shadow dates below are engine-computed; the retrograde asks you to re-walk the ground covered since February before building further on it.\n\nThe core theme of this transit is proving you can lead yourself, and finding out which of your commitments survive without an authority figure to report to.\n\nAries governs the front of the line: the first move, the direct ask, the body in motion, the self that acts before the committee inside finishes voting. When Saturn moves through Aries, it slows the start until the start is real. It makes you show your work on independence you used to just claim. It turns impatience into a bill you can read. It reminds us that courage without follow-through is just noise with good posture.\n\nIn daily life, this transit shows up where the fresh start keeps not starting: the training plan restarted every Monday, the exit you keep announcing and not taking, the anger that arrives on time while the action runs late. The frustration you are feeling is not a verdict on the goal; it is the gap between deciding and doing, presented as an invoice. What gets built slowly here, under your own name and on your own schedule, does not need anyone's permission to keep standing.\n\nAries is ruled by Mars, the lesser malefic that supplies drive, speed, and the first move. Saturn does not smother that fire; it apprentices it. The push learns patience, the anger learns aim, and the independence stops needing an audience to be real.\n\nThe last time Saturn moved through Aries was 1996 to 1999. That era rewarded the people who stopped waiting to be picked and built their own ventures at the edge of everyone else's attention. The same contract returns: self-reliance is being restructured from a mood into a practice.\n\nStop rehearsing the bolder life and schedule its first hour. Saturn in Aries pays out to the ones who move small, move now, and keep moving.",
+      "preview_note": "Saturn stationed retrograde on July 27, 2026 in early Aries, opening the review phase of this transit's first year. Station and shadow dates below are engine-computed; the retrograde asks you to re-walk the ground covered since February before building further on it.",
+      "core_theme": "The core theme of this transit is proving you can lead yourself, and finding out which of your commitments survive without an authority figure to report to.",
+      "sign_jurisdiction": "Aries governs the front of the line: the first move, the direct ask, the body in motion, the self that acts before the committee inside finishes voting. When Saturn moves through Aries, it slows the start until the start is real. It makes you show your work on independence you used to just claim. It turns impatience into a bill you can read. It reminds us that courage without follow-through is just noise with good posture.",
+      "lived_experience": "In daily life, this transit shows up where the fresh start keeps not starting: the training plan restarted every Monday, the exit you keep announcing and not taking, the anger that arrives on time while the action runs late. The frustration you are feeling is not a verdict on the goal; it is the gap between deciding and doing, presented as an invoice. What gets built slowly here, under your own name and on your own schedule, does not need anyone's permission to keep standing.",
+      "rulership_twist": "Aries is ruled by Mars, the lesser malefic that supplies drive, speed, and the first move. Saturn does not smother that fire; it apprentices it. The push learns patience, the anger learns aim, and the independence stops needing an audience to be real.",
+      "history_echo": "The last time Saturn moved through Aries was 1996 to 1999. That era rewarded the people who stopped waiting to be picked and built their own ventures at the edge of everyone else's attention. The same contract returns: self-reliance is being restructured from a mood into a practice.",
+      "closing_charge": "Stop rehearsing the bolder life and schedule its first hour. Saturn in Aries pays out to the ones who move small, move now, and keep moving.",
+      "history_policy": "saturn-cycle",
+      "preview_policy": "retrograde-or-shadow",
+      "key_dates_mode": "engine",
+      "key_dates": [],
+      "rising_horoscopes": [],
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ]
+    }
+  ],
+  "vocabularyRows": [
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/chiron",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "old bruises you stop hiding and slowly learn to hold",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/jupiter",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "growth, patience, and where you bet on yourself",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/mars",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "momentum, direct push, and the heat to take action",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/mercury",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "talking, planning, and how you process raw data",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/moon",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "moods, gut signals, and what helps your nervous system settle",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/neptune",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "intuition, imagination, and where rigid lines dissolve",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/north-node",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "the unfamiliar step that levels you up",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/pluto",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "power dynamics, hidden truths, and clean completions",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/saturn",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "rules, boundaries, time, and proven reliability",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/south-node",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "autopilot skills and habits you have outgrown",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/sun",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "vitality, purpose, and where you stop editing yourself",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/uranus",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "short-notice changes, sharp clarity, and breaking static",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-planet-function/venus",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "body": "affection, boundaries, taste, and real worth",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/aquarius",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "independent, unscripted, principle-first",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/aries",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "direct, swift, un-edited",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/cancer",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "protective, tender, rooted",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/capricorn",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "disciplined, long-game, proven",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/gemini",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "curious, nimble, fast-moving",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/leo",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "warm, visible, unmasked",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/libra",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "balanced, boundary-led, fair-minded",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/pisces",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "intuitive, gentle, un-fixed",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/sagittarius",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "expansive, candid, truth-seeking",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/scorpio",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "deep, private, un-maneuvered",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/taurus",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "unhurried, deliberate, grounded",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    },
+    {
+      "contentKey": "fallback-vocab/sky-sign-style/virgo",
+      "content_role": "vocabulary",
+      "grammar_frame": "adjective_phrase",
+      "body": "precise, practical, detail-clean",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-Article-V1-Spec.md"
+      ],
+      "approved_via": "owner approval, chat 2026-07-29"
+    }
+  ],
+  "hookRows": [
+    {
+      "contentKey": "fallback-hook/sky-placement/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When the Sun moves through {{signTitle}}, it puts this sign's priorities on the calendar: what gets celebrated, started, and argued about turns {{signStyle}} until {{exitDate}}.",
+      "body_they": "The Sun is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When the Sun moves through {{signTitle}}, it puts this sign's priorities on the calendar: what gets celebrated, started, and argued about turns {{signStyle}} until {{exitDate}}.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Moon is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When the Moon moves through {{signTitle}}, the shared mood turns {{signStyle}}: it colors reactions more than events, and it moves on by {{exitDate}}.",
+      "body_they": "The Moon is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When the Moon moves through {{signTitle}}, the shared mood turns {{signStyle}}: it colors reactions more than events, and it moves on by {{exitDate}}.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mercury is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Mercury moves through {{signTitle}}, it changes how we talk to each other: thinking, planning, and deciding turn {{signStyle}}, and the messages, meetings, and headlines follow.",
+      "body_they": "Mercury is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Mercury moves through {{signTitle}}, it changes how we talk to each other: thinking, planning, and deciding turn {{signStyle}}, and the messages, meetings, and headlines follow.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Venus moves through {{signTitle}}, it changes what we find beautiful and worth wanting: attraction turns {{signStyle}}, and how affection gets shown, what money gets spent on, and which pleasures count shift with it.",
+      "body_they": "Venus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Venus moves through {{signTitle}}, it changes what we find beautiful and worth wanting: attraction turns {{signStyle}}, and how affection gets shown, what money gets spent on, and which pleasures count shift with it.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mars is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Mars moves through {{signTitle}}, it changes how we push: effort, anger, and appetite turn {{signStyle}}, in how people compete and how they defend what is theirs.",
+      "body_they": "Mars is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Mars moves through {{signTitle}}, it changes how we push: effort, anger, and appetite turn {{signStyle}}, in how people compete and how they defend what is theirs.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Jupiter is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Jupiter moves through {{signTitle}}, it changes where growth comes from: opportunity favors the people willing to work the {{signStyle}} way, and the culture gets optimistic in the same direction.",
+      "body_they": "Jupiter is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Jupiter moves through {{signTitle}}, it changes where growth comes from: opportunity favors the people willing to work the {{signStyle}} way, and the culture gets optimistic in the same direction.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Saturn moves through {{signTitle}}, it tests what this sign has been holding up: the promises, the structures, the habits doing the work of decisions.",
+      "body_they": "Saturn is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Saturn moves through {{signTitle}}, it tests what this sign has been holding up: the promises, the structures, the habits doing the work of decisions.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Uranus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Uranus moves through {{signTitle}}, it questions the rules this sign lives by, including the ones nobody remembers agreeing to.",
+      "body_they": "Uranus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Uranus moves through {{signTitle}}, it questions the rules this sign lives by, including the ones nobody remembers agreeing to.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Neptune is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Neptune moves through {{signTitle}}, it softens what this sign was certain about: ideals, images, and longings shift under the surface long before the headlines catch up.",
+      "body_they": "Neptune is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Neptune moves through {{signTitle}}, it softens what this sign was certain about: ideals, images, and longings shift under the surface long before the headlines catch up.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Pluto is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Pluto moves through {{signTitle}}, it digs into what everyone agreed not to look at: where the real power is, what the arrangement actually costs, who has been paying.",
+      "body_they": "Pluto is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Pluto moves through {{signTitle}}, it digs into what everyone agreed not to look at: where the real power is, what the arrangement actually costs, who has been paying.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Chiron is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Chiron moves through {{signTitle}}, it traces where a generation carries its tender spot: the places people overcompensate or go quiet.",
+      "body_they": "Chiron is in {{signTitle}} from {{entryDate}} to {{exitDate}}. When Chiron moves through {{signTitle}}, it traces where a generation carries its tender spot: the places people overcompensate or go quiet.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The North Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's head: the point of appetite, where the hunger arrives before the plan does.",
+      "body_they": "The North Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's head: the point of appetite, where the hunger arrives before the plan does.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The South Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's tail: the point of release, where what is finished gets set down, willingly or otherwise.",
+      "body_they": "The South Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's tail: the point of release, where what is finished gets set down, willingly or otherwise.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Lilith, the far edge of the Moon's orbit, is in {{signTitle}} from {{entryDate}} to {{exitDate}}. While she is here, the refusals turn {{signStyle}}: what people are done apologizing for, the no that stops explaining itself.",
+      "body_they": "Lilith, the far edge of the Moon's orbit, is in {{signTitle}} from {{entryDate}} to {{exitDate}}. While she is here, the refusals turn {{signStyle}}: what people are done apologizing for, the no that stops explaining itself.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You keep rescheduling a decision in one specific area of your life. The Sun in {{signTitle}} puts its subjects under direct light through {{exitDate}}, and what has been coasting there becomes harder to ignore. Use the visibility while it lasts.",
+      "body_they": "You keep rescheduling a decision in one specific area of your life. The Sun in {{signTitle}} puts its subjects under direct light through {{exitDate}}, and what has been coasting there becomes harder to ignore. Use the visibility while it lasts.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The mood in the air has changed again, and you can feel it before you can name it. The Moon in {{signTitle}} tilts everyone's reactions {{signStyle}} through {{exitDate}}, including the ones aimed at you. Read the tone before you take it personally.",
+      "body_they": "The mood in the air has changed again, and you can feel it before you can name it. The Moon in {{signTitle}} tilts everyone's reactions {{signStyle}} through {{exitDate}}, including the ones aimed at you. Read the tone before you take it personally.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You already know the conversation you have been avoiding. Mercury in {{signTitle}} changes the register through {{exitDate}}: words turn {{signStyle}}, and what refused to surface until now may come easily. Say it while the channel is open.",
+      "body_they": "You already know the conversation you have been avoiding. Mercury in {{signTitle}} changes the register through {{exitDate}}: words turn {{signStyle}}, and what refused to surface until now may come easily. Say it while the channel is open.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What you want has been getting more specific, and pretending otherwise has a price. Venus in {{signTitle}} turns attraction {{signStyle}} through {{exitDate}}: across love, beauty, and money alike. Want what you actually want, not what looks good on paper.",
+      "body_they": "What you want has been getting more specific, and pretending otherwise has a price. Venus in {{signTitle}} turns attraction {{signStyle}} through {{exitDate}}: across love, beauty, and money alike. Want what you actually want, not what looks good on paper.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The restlessness you have been sitting on is fuel, not a flaw. Mars in {{signTitle}} gives everyone's drive a {{signStyle}} edge through {{exitDate}}. Pick the fight that matters, the project that matters, or the run that clears your head, and spend it on purpose.",
+      "body_they": "The restlessness you have been sitting on is fuel, not a flaw. Mars in {{signTitle}} gives everyone's drive a {{signStyle}} edge through {{exitDate}}. Pick the fight that matters, the project that matters, or the run that clears your head, and spend it on purpose.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The ceiling you have been living under is lower than you think. Jupiter in {{signTitle}} rewards asking through {{exitDate}}: the bigger request, the wider reach, the yes you assumed was reserved for other people. Ask for more where you have been settling.",
+      "body_they": "The ceiling you have been living under is lower than you think. Jupiter in {{signTitle}} rewards asking through {{exitDate}}: the bigger request, the wider reach, the yes you assumed was reserved for other people. Ask for more where you have been settling.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The green light you have been waiting for is not coming from outside. Saturn in {{signTitle}} opens a slow chapter through {{exitDate}}: building your own authority in this sign's territory, on evidence instead of permission. Start before conditions are ideal.",
+      "body_they": "The green light you have been waiting for is not coming from outside. Saturn in {{signTitle}} opens a slow chapter through {{exitDate}}: building your own authority in this sign's territory, on evidence instead of permission. Start before conditions are ideal.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The {{signTitle}} corners of your life are where the loosening starts: wherever this sign falls in your chart, arrangements that looked permanent become negotiable through {{exitDate}}. Treat the swerves as data, not attacks.",
+      "body_they": "The {{signTitle}} corners of your life are where the loosening starts: wherever this sign falls in your chart, arrangements that looked permanent become negotiable through {{exitDate}}. Treat the swerves as data, not attacks.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Not everything blurry is lost; some of it is dissolving on purpose. Neptune blurs this sign's certainties through {{exitDate}}, the ones everyone treated as fact. Keep your feet on the floor and let the dream get bigger anyway.",
+      "body_they": "Not everything blurry is lost; some of it is dissolving on purpose. Neptune blurs this sign's certainties through {{exitDate}}, the ones everyone treated as fact. Keep your feet on the floor and let the dream get bigger anyway.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Some structures do not reform; they end. Pluto in {{signTitle}} takes apart this sign's arrangements that stopped serving anyone, working through {{exitDate}}, and it does not take apologies. Stop rebuilding what is already coming down.",
+      "body_they": "Some structures do not reform; they end. Pluto in {{signTitle}} takes apart this sign's arrangements that stopped serving anyone, working through {{exitDate}}, and it does not take apologies. Stop rebuilding what is already coming down.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The sore spot you keep working around is asking for attention, not avoidance. Chiron in {{signTitle}} brings this sign's wound to the surface through {{exitDate}}, for everyone at once. Treating it is slow work, and it counts every day you do it.",
+      "body_they": "The sore spot you keep working around is asking for attention, not avoidance. Chiron in {{signTitle}} brings this sign's wound to the surface through {{exitDate}}, for everyone at once. Treating it is slow work, and it counts every day you do it.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "One part of your life just got hungrier. Wherever {{signTitle}} falls in your chart, the North Node stirs appetite, urgency, and ambition there through {{exitDate}}, and every eclipse before that date lands its beginnings in the same place. Feed it on purpose.",
+      "body_they": "One part of your life just got hungrier. Wherever {{signTitle}} falls in your chart, the North Node stirs appetite, urgency, and ambition there through {{exitDate}}, and every eclipse before that date lands its beginnings in the same place. Feed it on purpose.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "One part of your life is due for a release. Wherever {{signTitle}} falls in your chart, the South Node marks what is ready to be set down through {{exitDate}}: the habits of this sign that once protected you and now mostly cost you. Letting go here is not losing; it is finishing.",
+      "body_they": "One part of your life is due for a release. Wherever {{signTitle}} falls in your chart, the South Node marks what is ready to be set down through {{exitDate}}: the habits of this sign that once protected you and now mostly cost you. Letting go here is not losing; it is finishing.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "There is a part of you that got exiled for being too much, and it did not die; it waited. Lilith in {{signTitle}} stirs this sign's version of that refusal in everyone through {{exitDate}}. Notice what you have been swallowing to stay acceptable.",
+      "body_they": "There is a part of you that got exiled for being too much, and it did not die; it waited. Lilith in {{signTitle}} stirs this sign's version of that refusal in everyone through {{exitDate}}. Notice what you have been swallowing to stay acceptable.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Choose one visible act before {{exitDate}} that matches who you are now rather than who you were. Vitality follows honesty here.",
+      "body_they": "Choose one visible act before {{exitDate}} that matches who you are now rather than who you were. Vitality follows honesty here.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Keep plans light where you can and let the mood pass without a verdict. By {{exitDate}} it is a different sky.",
+      "body_they": "Keep plans light where you can and let the mood pass without a verdict. By {{exitDate}} it is a different sky.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Send the clear version: the message, the booked conversation, the written page. Precision is kindness through {{exitDate}}.",
+      "body_they": "Send the clear version: the message, the booked conversation, the written page. Precision is kindness through {{exitDate}}.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give your taste a vote: upgrade one object you touch daily, and stop paying for what you no longer enjoy.",
+      "body_they": "Give your taste a vote: upgrade one object you touch daily, and stop paying for what you no longer enjoy.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give the energy a job: one physical practice, one honest confrontation, or one project that gets your full push before {{exitDate}}.",
+      "body_they": "Give the energy a job: one physical practice, one honest confrontation, or one project that gets your full push before {{exitDate}}.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Make one bigger ask than feels polite before {{exitDate}}: the application, the pitch, the trip. Growth favors the request actually made.",
+      "body_they": "Make one bigger ask than feels polite before {{exitDate}}: the application, the pitch, the trip. Growth favors the request actually made.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Keep the commitments you make to yourself first: one limit stated plainly, one practice kept daily. Freedom here is built out of chosen discipline, not granted by anyone.",
+      "body_they": "Keep the commitments you make to yourself first: one limit stated plainly, one practice kept daily. Freedom here is built out of chosen discipline, not granted by anyone.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Choose your experiments before the era chooses them for you. Change one arrangement on purpose while it is still a choice.",
+      "body_they": "Choose your experiments before the era chooses them for you. Change one arrangement on purpose while it is still a choice.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Pair every dream with one concrete anchor: a practice, a budget, a date. Imagination does its best work with one foot on the ground.",
+      "body_they": "Pair every dream with one concrete anchor: a practice, a budget, a date. Imagination does its best work with one foot on the ground.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Tell the truth about what is over. Power returns to the places you stop pretending, one honest ending at a time.",
+      "body_they": "Tell the truth about what is over. Power returns to the places you stop pretending, one honest ending at a time.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Treat the tender spot like a real injury: gently, regularly, and without a deadline. Small consistent care beats dramatic cures.",
+      "body_they": "Treat the tender spot like a real injury: gently, regularly, and without a deadline. Small consistent care beats dramatic cures.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Take one step toward the unfamiliar direction every time the familiar one gets tempting. Awkward progress in the right direction beats fluent progress in the wrong one.",
+      "body_they": "Take one step toward the unfamiliar direction every time the familiar one gets tempting. Awkward progress in the right direction beats fluent progress in the wrong one.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Use your easiest skills in service of the new direction instead of hiding inside them. Mastery is a launchpad, not a bed.",
+      "body_they": "Use your easiest skills in service of the new direction instead of hiding inside them. Mastery is a launchpad, not a bed.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give the banned feeling one honest outlet: name it to a safe person, or put it into the work. What gets acknowledged does not have to erupt.",
+      "body_they": "Give the banned feeling one honest outlet: name it to a safe person, or put it into the work. What gets acknowledged does not have to erupt.",
+      "review_status": "approved",
+      "approved_via": "owner approval, chat 2026-07-29",
+      "notes": "Sky placement slot-tier frame.",
+      "source_keys": [
+        "TLDR-Sky-Placement-Template-Spec-V3.md"
+      ]
+    }
+  ]
+}
