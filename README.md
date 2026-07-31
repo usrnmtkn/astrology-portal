@@ -26,6 +26,19 @@ flowchart LR
 
 The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JSON file into the app. When the knowledge package changes, run the root build so `packages/astro-knowledge/dist/knowledge.json` is regenerated before the web app builds.
 
+## Calculation Integrity
+
+TLDR Astro uses Swiss Ephemeris for real-time astrology calculations and
+NASA/JPL Horizons as an independent verification layer. A daily integrity
+workflow compares supported planetary positions, motion, and aspects against
+Horizons. Its latest status and dated history are persisted in a GitHub monitor
+issue, and the `nasa-jpl-freshness` release check rejects a pull request when
+the newest main-branch comparison failed or is more than 36 hours old.
+
+Horizons is deliberately not called during reader requests. Houses, angles,
+nodes, stations, shadow boundaries, and exact-hit searches remain outside the
+current Horizons adapter's coverage and continue to use the primary engine.
+
 ## Content Precedence
 
 Fallback copy is a floor, not a competing source. Reader-facing app surfaces should resolve copy in this order:
