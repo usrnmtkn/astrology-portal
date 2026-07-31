@@ -91,8 +91,14 @@ file volume, or host directory depending on the provider.
 
 Health checks:
 
-- `/health` returns service status and ephemeris diagnostics.
-- `/ready` returns `200` only when the ephemeris library/data path can initialize.
+- `/health` reports the requested and actual calculation engines, fallback
+  state, data-path availability, and fixed Sun/Moon calculation probes.
+- `/ready` returns `200` only when the ephemeris probes succeed. If
+  `TLDR_ASTRO_EPHEMERIS_PATH` is configured, readiness also requires the
+  returned calculation flags to confirm that Swiss Ephemeris—not the built-in
+  Moshier fallback—actually answered.
+- Chart response metadata includes ephemeris provenance captured from the
+  flags returned by the calculations for that request.
 
 ### Google Cloud Run
 

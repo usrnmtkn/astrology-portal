@@ -18,6 +18,7 @@ from tldrastro_api.services.chart import (
     normalize_degrees,
     whole_sign_cusps_for_ascendant,
 )
+from tldrastro_api.services.ephemeris import merge_ephemeris_provenance
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.relationship_facts import composite_aspect_fact
 
@@ -146,6 +147,10 @@ def calculate_composite(request: CompositeRequest) -> CompositeResponse:
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
+            ephemeris=merge_ephemeris_provenance(
+                person_a.metadata.ephemeris,
+                person_b.metadata.ephemeris,
+            ),
         ),
         app=_app_contract(aspects, content_facts),
         personA=person_a,
