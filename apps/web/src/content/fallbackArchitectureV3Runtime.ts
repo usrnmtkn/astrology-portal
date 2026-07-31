@@ -139,11 +139,15 @@ const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts 
 const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
 
 function assertLunationBlendImport(
-  blend: typeof lunationBlendUnitsV1
+  blend: typeof lunationBlendUnitsV1,
+  primaryTransitRows: typeof transitSynastryRowsV1,
+  primarySourceRows: typeof fallbackSourceRowsV3
 ) {
-  const allRows = [...blend.authoredCards, ...blend.hookRows];
+  const allAuthoredCards = [...primaryTransitRows.authoredCards, ...blend.authoredCards];
+  const allHookRows = [...primarySourceRows.hookRows, ...blend.hookRows];
+  const allRows = [...allAuthoredCards, ...allHookRows];
   const fallbackSetSource = "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores";
-  const fixedFrameMacros = blend.authoredCards.filter(
+  const fixedFrameMacros = allAuthoredCards.filter(
     (row) => row.contentKey.startsWith("authored/sky-lunation-macro/")
       && (
         row.review_status === "approved"
@@ -159,25 +163,21 @@ function assertLunationBlendImport(
     }
   }
 
-  const hookRowsByKey = new Map<string, typeof blend.hookRows>();
-  for (const row of blend.hookRows) {
-    const keyed = hookRowsByKey.get(row.contentKey) ?? [];
-    keyed.push(row);
-    hookRowsByKey.set(row.contentKey, keyed);
+  const stagedRulerRows = blend.hookRows.filter((row) =>
+    row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
+  );
+  const primaryHooksByKey = new Map(primarySourceRows.hookRows.map((row) => [row.contentKey, row]));
+  if (
+    stagedRulerRows.length !== 12
+    || stagedRulerRows.filter((row) => row.review_status === "needs_review").length !== 11
+    || stagedRulerRows.filter((row) => row.review_status === "approved").length !== 1
+  ) {
+    throw new Error("Lunation ruler staging must contain one approved row and 11 review-gated rows.");
   }
-  const duplicateHooks = [...hookRowsByKey]
-    .filter(([, rows]) => rows.length > 1);
-  if (duplicateHooks.length !== 11) {
-    throw new Error(`Expected 11 intentional lunation ruler duplicates; found ${duplicateHooks.length}`);
-  }
-  for (const [contentKey, rows] of duplicateHooks) {
-    const statuses = rows.map((row) => row.review_status).sort().join(",");
-    if (
-      !contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-      || rows.length !== 2
-      || statuses !== "approved,needs_review"
-    ) {
-      throw new Error(`Invalid duplicate lunation import: ${contentKey} (${statuses})`);
+  for (const row of stagedRulerRows) {
+    const mirrored = primaryHooksByKey.get(row.contentKey);
+    if (!mirrored || mirrored.review_status !== row.review_status || mirrored.body_you !== row.body_you) {
+      throw new Error(`Lunation ruler mirror mismatch: ${row.contentKey}`);
     }
   }
 
@@ -205,10 +205,10 @@ function assertLunationBlendImport(
   ) {
     throw new Error("Lunation fallback compact rows must contain the authored prose.");
   }
-  const macroKeys = new Set(blend.authoredCards
+  const macroKeys = new Set(allAuthoredCards
     .filter((row) => row.contentKey.startsWith("authored/sky-lunation-macro/"))
     .map((row) => row.contentKey));
-  const compactKeys = new Set(blend.hookRows
+  const compactKeys = new Set(allHookRows
     .filter((row) => row.contentKey.startsWith("fallback-hook/lunation-sign-compact/"))
     .map((row) => row.contentKey));
   if (macroKeys.size !== 24 || compactKeys.size !== 24) {
@@ -218,7 +218,7 @@ function assertLunationBlendImport(
   }
 }
 
-assertLunationBlendImport(lunationBlendUnitsV1);
+assertLunationBlendImport(lunationBlendUnitsV1, transitSynastryRowsV1, fallbackSourceRowsV3);
 
 function assertBondLanguagePass2Import(
   base: typeof fallbackSourceRowsV3,

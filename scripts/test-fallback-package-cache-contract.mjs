@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29q");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
@@ -43,6 +43,16 @@ assert.match(
   generatedContentSource,
   /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
   "Database packages must be complete, same-or-newer, and hash verified."
+);
+assert.match(
+  generatedContentSource,
+  /packageAuthoredCardFromRow[\s\S]*?!recordBody && !recordBodyYou && !recordBodyThey/u,
+  "Database package reconstruction must retain authored cards that use dual-voice bodies."
+);
+assert.match(
+  generatedContentSource,
+  /packageVocabRowFromRow[\s\S]*?if \(!body\)[\s\S]*?grammarFrame \? \{ grammar_frame: grammarFrame \} : \{\}/u,
+  "Database package reconstruction must retain vocabulary rows with optional grammar frames."
 );
 assert.match(
   generatedContentSource,

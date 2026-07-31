@@ -41,7 +41,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29aj");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -55,20 +55,13 @@ const packageRows = [
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
-const expectedNeedsReviewHooks = new Set(
-  ["a", "b", "c", "d", "e", "f"].map((variant) => `fallback-hook/empty-house-ruler-v3/${variant}`)
-);
-assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
 assert.deepEqual(
-  new Set(needsReviewHooks.map((row) => row.contentKey)),
-  expectedNeedsReviewHooks,
-  "Only the six owner-routed V3 M2 drafts may remain needs_review."
+  needsReviewCards.map((row) => row.contentKey),
+  ["authored/sky-lunation-macro/new-moon/aquarius"],
+  "Only the explicitly staged Aquarius New Moon article may stay review-gated."
 );
-assert.deepEqual(
-  new Set(needsReviewRows.map((row) => row.contentKey)),
-  expectedNeedsReviewHooks,
-  "The package must not retain stale needs_review rows outside the V3 M2 review batch."
-);
+assert.equal(needsReviewHooks.length, 93, "The reconciled package must preserve all 93 explicitly staged, non-serving hooks.");
+assert.equal(needsReviewRows.length, 108, "The primary package must retain its 108 staged authored, hook, and template rows; interim overrides are gated separately.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,

@@ -177,9 +177,14 @@ function fallbackSkyPlanetTopic(planet: string) {
 
 function skyTopicValue(topic: PlanetTopicPhrases | undefined, planet: string) {
   const sky = topic?.sky?.trim() ?? "";
+  const body = topic?.body?.trim() ?? "";
 
   if (sky && !natalLanguagePattern.test(sky)) {
     return sky;
+  }
+
+  if (!sky && body && !natalLanguagePattern.test(body)) {
+    return body;
   }
 
   if (sky) {
@@ -332,6 +337,10 @@ export function signNeedPhrase(sign: string, variant: PlanetTopicVariant = "nata
 
 export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = "natal") {
   if (!cachedVocabulary) {
+    if (variant === "sky") {
+      return fallbackSkyPlanetTopic(planet);
+    }
+
     warnTopicMissing(planet, variant, "cache");
     return "";
   }
