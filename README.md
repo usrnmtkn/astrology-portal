@@ -26,7 +26,20 @@ flowchart LR
 
 The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JSON file into the app. When the knowledge package changes, run the root build so `packages/astro-knowledge/dist/knowledge.json` is regenerated before the web app builds.
 
-## Content Management
+## Calculation Integrity
+
+TLDR Astro uses Swiss Ephemeris for real-time astrology calculations and
+NASA/JPL Horizons as an independent verification layer. A daily integrity
+workflow compares supported planetary positions, motion, and aspects against
+Horizons. Its latest status and dated history are persisted in a GitHub monitor
+issue, and the `nasa-jpl-freshness` release check rejects a pull request when
+the newest main-branch comparison failed or is more than 36 hours old.
+
+Horizons is deliberately not called during reader requests. Houses, angles,
+nodes, stations, shadow boundaries, and exact-hit searches remain outside the
+current Horizons adapter's coverage and continue to use the primary engine.
+
+## Content Management and Precedence
 
 Start with the [content-management README](docs/content-management/README.md).
 The detailed [content architecture](docs/content-management/ARCHITECTURE.md)
@@ -53,6 +66,9 @@ Some surfaces first request an exact live generated row by content key and use
 the package or a knowledge bundle as their fallback floor. Trace the call site
 before changing precedence. Missing interpretation copy must omit the unit and
 log the source gap; it must not be replaced by emergency prose in UI code.
+Async registry loading must also be monotonic: a broad fallback may fill a blank
+field, but it must never replace more specific personalized, generated,
+authored, or approved copy that is already visible.
 
 ## Social Friends Architecture
 

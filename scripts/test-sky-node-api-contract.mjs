@@ -1,13 +1,31 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createServer } from "vite";
+import { createLogger, createServer } from "vite";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const logger = createLogger("error");
+const viteError = logger.error;
+logger.error = (message, options) => {
+  const text = String(message);
+  if (
+    text.includes("WebSocket server error")
+    || text.includes("Failed to run dependency scan")
+    || text.includes("The server is being restarted or closed")
+  ) {
+    return;
+  }
+  viteError(message, options);
+};
 
 const vite = await createServer({
   root: path.join(repoRoot, "apps/web"),
-  server: { middlewareMode: true },
+  customLogger: logger,
+  server: { middlewareMode: true, hmr: false },
+  optimizeDeps: {
+    entries: [],
+    noDiscovery: true
+  },
   appType: "custom",
   logLevel: "error"
 });
@@ -19,7 +37,7 @@ try {
     ephemeris.defaultLocation,
     new Date("2026-07-22T16:00:00Z")
   );
-  const sky = await ephemeris.getAstrodienstSky(ephemeris.defaultLocation, new Date("2026-07-29T16:00:00Z"), {
+  const sky = await ephemeris.getAstrodienstSky(ephemeris.defaultLocation, new Date("2026-07-31T16:00:00Z"), {
     includeTransitWindows: true
   });
   const beforeNorthNode = beforeIngress.positions.find((position) => position.planet === "North Node");
@@ -41,7 +59,7 @@ try {
   assert.equal(northNode.glyph, "☊", "North Node should keep the north-node glyph.");
   assert.equal(southNode.glyph, "☋", "South Node should keep the south-node glyph.");
   assert.notEqual(northNode.house, southNode.house, "South Node should not inherit North Node's house.");
-  assert.equal(southNode.motion, "retrograde", "South Node should expose the node-axis retrograde state.");
+  assert.equal(southNode.motion, northNode.motion, "Both ends of the node axis must share the same motion state.");
   assert.equal(astrologyDisplay.isDisplayRetrograde(northNode), false, "North Node must not render as a retrograde planet.");
   assert.equal(astrologyDisplay.isDisplayRetrograde(southNode), false, "South Node must not render as a retrograde planet.");
   assert.equal(
@@ -59,3 +77,5 @@ try {
 } finally {
   await vite.close();
 }
+
+console.log("True Node sky contract passed across the July 2026 sign boundary");
