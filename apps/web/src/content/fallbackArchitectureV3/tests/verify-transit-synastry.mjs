@@ -244,12 +244,24 @@ if (secs[0].name !== "You" || secs[1].name !== "a friend") fail("circle: section
 console.log(`Rendered ${circ} circle stories.`);
 
 
-// Sky placement articles: full 13 x 12 grid renders, no leftover slots, no dashes
+// Sky placement articles: approved continuous Sun units render; superseded Sun
+// modules stay dark; every other placement keeps full-grid coverage.
 const SKY_PL = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","chiron","north-node","south-node"];
 let skyPl = 0;
 for (const pl of SKY_PL) for (const sg of SIGNS) {
+  if (pl === "sun" && sg !== "leo") {
+    try {
+      renderSkyPlacement({ planet: pl, sign: sg, entryDate: "March 20", exitDate: "April 20" });
+      fail(`sky placement ${pl}/${sg}: superseded modules rendered`);
+    } catch (e) {
+      if (!/SOURCE_GAP: continuous Sun sign copy/u.test(e.message)) fail(`sky placement ${pl}/${sg}: ${e.message}`);
+    }
+    continue;
+  }
   try {
-    const r = renderSkyPlacement({ planet: pl, sign: sg, events: [{ type: "aspect", a: pl === "mars" ? "saturn" : "mars", b: pl, aspect: "trine", dateLine: "Through Saturday" }] });
+    const r = pl === "sun"
+      ? renderSkyPlacement({ planet: pl, sign: sg, entryDate: "July 22", exitDate: "August 23", events: [{ type: "aspect", a: "jupiter", b: pl, aspect: "conjunction", exactDate: "July 29" }] })
+      : renderSkyPlacement({ planet: pl, sign: sg, events: [{ type: "aspect", a: pl === "mars" ? "saturn" : "mars", b: pl, aspect: "trine", dateLine: "Through Saturday" }] });
     if (/[\u2014\u2013]|\{\{/.test(r.body)) fail(`sky placement ${pl}/${sg}: bad output`);
     if (r.parts.length < 3) fail(`sky placement ${pl}/${sg}: too thin (${r.parts.length} paras)`);
     skyPl++;

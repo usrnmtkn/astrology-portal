@@ -41,7 +41,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -675,7 +675,8 @@ try {
         ...lunationBlendRows.hookRows,
         ...bondLanguagePass2.rows,
         ...skyArticleRows.hookRows,
-        ...skyPlanetFrames.rows
+        ...skyPlanetFrames.rows,
+        ...skySignCopySun.rows
       ],
       vocabularyRows: [
         ...sourceRows.vocabularyRows,
@@ -728,10 +729,22 @@ try {
 
   for (const row of skySignCopySun.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
-    assert.ok(materializedRow, `${row.contentKey} must materialize for owner review.`);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.status, "DRAFT");
-    assert.equal(materializedRow.source_snapshot.review_status, "needs_review");
+    assert.equal(materializedRow.source_snapshot.review_status, "approved");
+    assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+  }
+
+  for (const row of skySignCopySun.superseded_rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} supersession must remain in dashboard history.`);
+    if (row.contentKey === "fallback-hook/sky-sign-copy/sun/leo") {
+      assert.equal(materializedRow.source_snapshot.review_status, "approved");
+      continue;
+    }
+    assert.equal(materializedRow.source_snapshot.review_status, "superseded");
+    assert.equal(materializedRow.facts.readerServing, false);
   }
 
   for (const row of skyPlacementVoicePass.rows) {
@@ -739,8 +752,17 @@ try {
     assert.ok(materializedRow, `${row.contentKey} must materialize for owner review.`);
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.status, "DRAFT");
-    assert.equal(materializedRow.source_snapshot.review_status, "needs_review");
+    const planet = row.contentKey.split("/").at(-1);
+    assert.equal(
+      materializedRow.source_snapshot.review_status,
+      ["moon", "lilith"].includes(planet) ? "needs_review" : "superseded"
+    );
   }
+
+  const retiredMercuryModule = materializedByKey.get("fallback-hook/sky-placement-hook/mercury/cancer");
+  assert.ok(retiredMercuryModule);
+  assert.equal(retiredMercuryModule.source_snapshot.review_status, "superseded");
+  assert.equal(retiredMercuryModule.facts.readerServing, false);
 } finally {
   fs.rmSync(materializerTempDir, { recursive: true, force: true });
 }
