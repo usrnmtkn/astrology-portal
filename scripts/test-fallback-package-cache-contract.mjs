@@ -46,6 +46,16 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
+  /packageAuthoredCardFromRow[\s\S]*?!recordBody && !recordBodyYou && !recordBodyThey/u,
+  "Database package reconstruction must retain authored cards that use dual-voice bodies."
+);
+assert.match(
+  generatedContentSource,
+  /packageVocabRowFromRow[\s\S]*?if \(!body\)[\s\S]*?grammarFrame \? \{ grammar_frame: grammarFrame \} : \{\}/u,
+  "Database package reconstruction must retain vocabulary rows with optional grammar frames."
+);
+assert.match(
+  generatedContentSource,
   /package metadata is missing or inconsistent[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
   "Unversioned or inconsistent database packages must fail closed."
 );
