@@ -114,6 +114,76 @@
           "retrogradeEnd": "2026-11-13"
         }
       }
+    },
+    {
+      "id": "sky-sun-pisces-before-aries-ingress-2026",
+      "surface": "Sky",
+      "date": "2026-03-20T14:45:00.000Z",
+      "location": {
+        "label": "Greenwich, UK",
+        "latitude": 51.4769,
+        "longitude": 0,
+        "timeZone": "Europe/London"
+      },
+      "assertions": {
+        "position": {
+          "planetOrPointId": "sun",
+          "sign": "Pisces",
+          "motion": "direct",
+          "longitudeMin": 359.99,
+          "longitudeMax": 360
+        }
+      }
+    },
+    {
+      "id": "sky-sun-aries-after-ingress-2026",
+      "surface": "Sky",
+      "date": "2026-03-20T14:47:00.000Z",
+      "location": {
+        "label": "Greenwich, UK",
+        "latitude": 51.4769,
+        "longitude": 0,
+        "timeZone": "Europe/London"
+      },
+      "assertions": {
+        "position": {
+          "planetOrPointId": "sun",
+          "sign": "Aries",
+          "motion": "direct",
+          "longitudeMin": 0,
+          "longitudeMax": 0.01
+        }
+      }
+    },
+    {
+      "id": "sky-saturn-neptune-exact-conjunction-2026",
+      "surface": "Sky",
+      "date": "2026-02-20T17:00:00.000Z",
+      "location": {
+        "label": "Greenwich, UK",
+        "latitude": 51.4769,
+        "longitude": 0,
+        "timeZone": "Europe/London"
+      },
+      "assertions": {
+        "positions": [
+          {
+            "planetOrPointId": "saturn",
+            "sign": "Aries"
+          },
+          {
+            "planetOrPointId": "neptune",
+            "sign": "Aries"
+          }
+        ],
+        "aspect": {
+          "planetOrPointId": "saturn",
+          "targetId": "neptune",
+          "aspectType": "conjunction",
+          "maxOrb": 0.01,
+          "applyingSeparating": "separating"
+        }
+      }
     }
   ]
 }

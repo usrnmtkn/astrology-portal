@@ -162,7 +162,13 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
+import { resolveSkyAspectGeneratedContent } from "./services/skyAspectContent";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
+import {
+  readCachedSkySnapshot,
+  skySnapshotCacheKey,
+  writeCachedSkySnapshot
+} from "./services/verifiedSkyCache";
 import {
   aspectGiftOrLesson,
   groupAspectsByGiftLesson,
@@ -183,7 +189,6 @@ import {
   natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
-  skyAspectInstanceContentKey,
   skyPlacementBaseContentKey,
   skyPlacementTopperContentKey,
   synastryAspectContentKey,
@@ -2023,7 +2028,7 @@ type ProfilePersistencePayload = {
   updatedAt: string;
 };
 
-type SkyLoadStatus = "loading" | "ready" | "error";
+type SkyLoadStatus = "loading" | "ready" | "cached" | "stale" | "error";
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -2035,7 +2040,6 @@ const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
 const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
-const skySnapshotSessionStoragePrefix = "tldrastro:skySnapshot";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
@@ -3002,29 +3006,6 @@ function skyDateTimeFromInput(value: string, location: LocationInput, now: Date 
   return zonedDateTimeToUtc(value, localTime, resolvedLocation.timeZone);
 }
 
-function skySnapshotCacheKey(location: LocationInput, date: string) {
-  const resolvedLocation = withTimeZone(location);
-  const latitude = Number.isFinite(resolvedLocation.latitude) ? resolvedLocation.latitude.toFixed(3) : "0";
-  const longitude = Number.isFinite(resolvedLocation.longitude) ? resolvedLocation.longitude.toFixed(3) : "0";
-
-  return `${skySnapshotSessionStoragePrefix}:${date}:${latitude}:${longitude}:${resolvedLocation.timeZone ?? ""}`;
-}
-
-function isCachedSkySnapshot(value: unknown): value is SkySnapshot {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const snapshot = value as Partial<SkySnapshot>;
-
-  return typeof snapshot.generatedAt === "string"
-    && typeof snapshot.ascendant === "string"
-    && typeof snapshot.midheaven === "string"
-    && Array.isArray(snapshot.positions)
-    && Array.isArray(snapshot.aspects)
-    && Boolean(snapshot.location);
-}
-
 function skyFactValidation(snapshot: SkySnapshot) {
   return validateAstrologyFacts(snapshot.facts ?? []);
 }
@@ -3036,69 +3017,6 @@ function logSkyFactDiagnostic(stage: string, snapshot: SkySnapshot | null, diagn
     location: snapshot?.location ?? null,
     diagnostics
   });
-}
-
-function readCachedSkySnapshot(cacheKey: string) {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    const saved = window.sessionStorage.getItem(cacheKey);
-    const parsed = saved ? JSON.parse(saved) : null;
-
-    if (!isCachedSkySnapshot(parsed)) {
-      return null;
-    }
-
-    const validation = skyFactValidation(parsed);
-
-    if (!validation.ok) {
-      logSkyFactDiagnostic("cache-read", parsed, validation.diagnostics);
-      return null;
-    }
-
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function readMostRecentCachedSkySnapshot() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    const snapshots = Object.keys(window.sessionStorage)
-      .filter((key) => key.startsWith(`${skySnapshotSessionStoragePrefix}:`))
-      .map((key) => readCachedSkySnapshot(key))
-      .filter((snapshot): snapshot is SkySnapshot => Boolean(snapshot))
-      .sort((a, b) => Date.parse(b.generatedAt) - Date.parse(a.generatedAt));
-
-    return snapshots[0] ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function writeCachedSkySnapshot(cacheKey: string, snapshot: SkySnapshot) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const validation = skyFactValidation(snapshot);
-
-  if (!validation.ok) {
-    logSkyFactDiagnostic("cache-write", snapshot, validation.diagnostics);
-    return;
-  }
-
-  try {
-    window.sessionStorage.setItem(cacheKey, JSON.stringify(snapshot));
-  } catch {
-    return;
-  }
 }
 
 function formatSkyDate(value: string) {
@@ -5625,98 +5543,10 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-const collectiveSkyAspectBodyOrder = [
-  "sun",
-  "moon",
-  "mercury",
-  "venus",
-  "mars",
-  "jupiter",
-  "saturn",
-  "uranus",
-  "neptune",
-  "pluto"
-];
-
-function normalizedCollectiveSkyAspectFacts(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
-) {
-  const from = normalizeContentIdPart(aspect.from);
-  const to = normalizeContentIdPart(aspect.to);
-  const fromIndex = collectiveSkyAspectBodyOrder.indexOf(from);
-  const toIndex = collectiveSkyAspectBodyOrder.indexOf(to);
-  const fromPosition = skyAspectPosition(aspect.from, positions);
-  const toPosition = skyAspectPosition(aspect.to, positions);
-
-  if (
-    fromIndex < 0
-    || toIndex < 0
-    || fromIndex === toIndex
-    || !["conjunction", "sextile", "square", "trine", "opposition"].includes(normalizeContentIdPart(aspect.type))
-    || !fromPosition?.sign
-    || !toPosition?.sign
-  ) {
-    return null;
-  }
-
-  return fromIndex < toIndex
-    ? {
-        a: from,
-        b: to,
-        aspect: normalizeContentIdPart(aspect.type),
-        signA: normalizeContentIdPart(fromPosition.sign),
-        signB: normalizeContentIdPart(toPosition.sign),
-        pairKey: `${from}-${to}`,
-        pairSource: `data/pairs/${from}-${to}.json`
-      }
-    : {
-        a: to,
-        b: from,
-        aspect: normalizeContentIdPart(aspect.type),
-        signA: normalizeContentIdPart(toPosition.sign),
-        signB: normalizeContentIdPart(fromPosition.sign),
-        pairKey: `${to}-${from}`,
-        pairSource: `data/pairs/${to}-${from}.json`
-      };
-}
-
 function recordField(value: unknown) {
   return value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
     : null;
-}
-
-function generatedSkyAspectCardPassesBoundary(
-  content: LiveGeneratedContent,
-  expected: NonNullable<ReturnType<typeof normalizedCollectiveSkyAspectFacts>>
-) {
-  const source = content.sourceSnapshot ?? {};
-  const lint = recordField(source.skyAspectVoiceLint);
-  const facts = recordField(source.cardFacts);
-  const body = generatedContentParagraphs(content).join("\n\n").trim();
-  const containsMechanics = /\b(?:orb|degrees?)\b|°/i.test(body);
-  const containsDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(body);
-  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
-
-  return Boolean(
-    body
-    && isReaderFacingCopy(body)
-    && !containsMechanics
-    && !containsDate
-    && !containsInternalMetadata
-    && lint?.score === 3
-    && lint?.fails === 0
-    && content.judgeScore === 3
-    && content.judgeGate === "auto-publish"
-    && source.pairSource === expected.pairSource
-    && source.pairKey === expected.pairKey
-    && facts?.a === expected.a
-    && facts?.b === expected.b
-    && facts?.aspect === expected.aspect
-    && facts?.signA === expected.signA
-    && facts?.signB === expected.signB
-  );
 }
 
 function generatedSkyAspectWritingSection(
@@ -5729,34 +5559,24 @@ function generatedSkyAspectWritingSection(
     return null;
   }
 
-  const expected = normalizedCollectiveSkyAspectFacts(aspect, positions);
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
 
-  if (!expected) {
+  if (!firstSign || !secondSign) {
     return null;
   }
 
-  const targetDate = generatedAt?.slice(0, 10);
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
-  const evergreenKey = skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+  const resolved = resolveSkyAspectGeneratedContent({
+    generatedContent,
+    first: aspect.from,
+    second: aspect.to,
+    aspect: aspect.type,
     firstSign,
-    secondSign
+    secondSign,
+    targetDate: generatedAt?.slice(0, 10)
   });
-  const datedKey = targetDate
-    ? skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
-        firstSign,
-        secondSign,
-        targetDate
-      })
-    : "";
-  const content = [evergreenKey, datedKey]
-    .filter(Boolean)
-    .map((key) => liveGeneratedContent(generatedContent, key))
-    .find((candidate): candidate is LiveGeneratedContent => Boolean(
-      candidate && generatedSkyAspectCardPassesBoundary(candidate, expected)
-    ));
 
-  if (!content) {
+  if (!resolved) {
     return null;
   }
 
@@ -5765,9 +5585,9 @@ function generatedSkyAspectWritingSection(
     required: true,
     layer: "authored",
     tier: "generated-sky-aspect-lint-v1",
-    sourceKeys: [content.contentKey, expected.pairSource],
-    heading: content.headline || skyAspectDisplayTitle(aspect),
-    body: generatedContentParagraphs(content).join("\n\n").trim()
+    sourceKeys: [resolved.content.contentKey, resolved.pairSource],
+    heading: resolved.content.headline || skyAspectDisplayTitle(aspect),
+    body: resolved.body
   };
 }
 
@@ -12419,10 +12239,13 @@ export function App() {
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
   const lastSocialProfileSaveRef = useRef("");
-  const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
-  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey) ?? readMostRecentCachedSkySnapshot();
+  const initialSkyCacheKey = skySnapshotCacheKey(
+    withTimeZone(initialLocationState.location),
+    dateInputValue()
+  );
+  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
-  const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "ready" : "loading");
+  const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -12782,7 +12605,7 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadSkyGenerated = mode === "guest" || mode === "member";
+    const shouldLoadSkyGenerated = mode === "guest" || mode === "member" || mode === "calendar";
 
     if (!shouldLoadSkyGenerated) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
@@ -13130,17 +12953,9 @@ export function App() {
 
     if (cachedSky) {
       setSky(cachedSky);
-      setSkyStatus("ready");
-    } else if (isFriendsMode) {
-      const recentSky = readMostRecentCachedSkySnapshot();
-
-      if (recentSky) {
-        setSky((currentSky) => currentSky ?? recentSky);
-        setSkyStatus((currentStatus) => currentStatus === "ready" ? currentStatus : "loading");
-      } else {
-        setSkyStatus("loading");
-      }
+      setSkyStatus("cached");
     } else {
+      setSky(null);
       setSkyStatus("loading");
     }
 
@@ -13151,21 +12966,27 @@ export function App() {
 
           if (!validation.ok) {
             logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
-            setSky(null);
-            setSkyStatus("error");
+            setSky(cachedSky);
+            setSkyStatus(cachedSky ? "stale" : "error");
             return;
           }
 
           setSky(nextSky);
           setSkyStatus("ready");
-          writeCachedSkySnapshot(cacheKey, nextSky);
+          if (!writeCachedSkySnapshot(cacheKey, nextSky)) {
+            logSkyFactDiagnostic(
+              "cache-write",
+              nextSky,
+              ["Validated sky snapshot could not be persisted in the verified cache."]
+            );
+          }
         }
       })
       .catch((error) => {
-        console.warn("Swiss Ephemeris sky calculation failed; no fallback sky snapshot will be fabricated.", error);
+        console.warn("Swiss Ephemeris sky calculation failed; using only an exact-key verified cache entry when available.", error);
         if (!cancelled) {
-          setSky((currentSky) => currentSky ?? null);
-          setSkyStatus("error");
+          setSky(cachedSky);
+          setSkyStatus(cachedSky ? "stale" : "error");
         }
       });
 
@@ -14716,6 +14537,27 @@ export function App() {
                       </form>
                     )}
                   </section>
+                  {(skyStatus === "cached" || skyStatus === "stale") && sky?.cacheState && (
+                    <div
+                      className="sky-cache-notice"
+                      data-cache-state={skyStatus}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <strong>
+                        {skyStatus === "stale"
+                          ? "Live sky refresh is temporarily unavailable."
+                          : "Refreshing the live sky."}
+                      </strong>
+                      <span>
+                        {" "}Showing the last verified calculation saved at{" "}
+                        {new Date(sky.cacheState.verifiedAt).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit"
+                        })}.
+                      </span>
+                    </div>
+                  )}
                   <section className="today-summary-cards" aria-label="Sky summary">
                     {isSkyLoading ? (
                       <SkyLoadingCards compact />
@@ -16767,7 +16609,7 @@ function CalculationDiagnosticsPanel({
   const sampleContent = generatedContent.get("sky.retrograde.mercury.cancer.retrograde_passage")
     ?? generatedContent.get("sky.placement.sun.cancer")
     ?? null;
-  const cacheAge = Date.now() - new Date(sky.generatedAt).getTime();
+  const cacheAge = sky.cacheState?.ageMs ?? Date.now() - new Date(sky.generatedAt).getTime();
 
   return (
     <details className="calculation-diagnostics-panel">
