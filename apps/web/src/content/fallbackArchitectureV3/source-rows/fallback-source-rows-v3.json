@@ -9064,14 +9064,14 @@
    "grammar_frame": "complete_sentence",
    "body_you": "You keep your guard up until you know where you stand with someone, and you notice quickly when the story does not add up. You may keep the strongest reaction private, but that does not mean it passes quickly. You would rather hear a hard truth than spend another week guessing.",
    "body_they": "They keep their guard up until they know where they stand with someone, and they notice quickly when the story does not add up. They may keep the strongest reaction private, but that does not mean it passes quickly. They would rather hear a hard truth than spend another week guessing.",
-   "review_status": "needs_review",
+   "review_status": "approved",
    "positive_test": "passed-jul29-criteria",
    "source_keys": [
     "cc/planet-in-sign/moon-in-scorpio",
     "book/201419935-a-spiritual-approach-to-astrology/moon-in-the-signs/scorpio"
    ],
-   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); flips to approved on the room-idiom ruling.",
-   "approved_via": "owner chat review 2026-07-21"
+   "note": "Owner-final rewrite Jul 29 2026 editorial pass (TLDR-Placement-Copy-Audit-Batch1.md); approved to serve in the empty-house refinement.",
+   "approved_via": "owner approval of needs_review rows and empty-house serving, chat 2026-07-29"
   },
   {
    "contentKey": "fallback-hook/dignity-line/fall/moon",
