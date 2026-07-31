@@ -154,6 +154,7 @@ async function judgeCard(card, opts = {}) {
         releaseId: "approved-exact-match",
         registryVersion: null,
         registryLaneId: null,
+        registryState: null,
         registryOverride: false,
         evaluationSetVersion: "pattern-aspect-approved-gold-v1",
         policyVersion: "editorial-judge-policy-v1",

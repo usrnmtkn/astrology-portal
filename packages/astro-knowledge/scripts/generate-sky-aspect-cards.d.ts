@@ -68,6 +68,7 @@ export type SkyAspectCardResult = {
       releaseId: string | null;
       registryVersion: string | null;
       registryLaneId: string | null;
+      registryState: "active" | "candidate" | null;
       registryOverride: boolean;
       evaluationSetVersion: string | null;
       policyVersion: string | null;

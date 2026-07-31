@@ -280,6 +280,23 @@ npm run calibrate:article-judge:live
 The other authorized calibration commands are documented in
 [Private editorial intelligence](../editorial-intelligence.md).
 
+### Private candidate-calibration workflow
+
+The manually dispatched GitHub Actions workflow
+`.github/workflows/editorial-model-calibration.yml` evaluates the staged
+`judge:sky-article-longform` candidate. Configure the GitHub environment named
+`editorial-calibration` with required reviewers and one or both protected
+secrets:
+
+- `EDITORIAL_OPENAI_JUDGE_API_KEY`
+- `EDITORIAL_ANTHROPIC_JUDGE_API_KEY`
+
+The workflow validates the registry and calibration fixtures before making any
+provider call. It uploads a 30-day calibration artifact containing hashes,
+scores, release provenance, and separation results, but no source copy. It has
+read-only repository permissions and cannot promote, commit, merge, publish, or
+deploy. A human must inspect the artifact and run the separate promotion flow.
+
 ## Current status
 
 The model-swappable judge boundary, versioned registry, candidate/promotion/

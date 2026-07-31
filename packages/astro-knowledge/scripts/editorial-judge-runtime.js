@@ -115,6 +115,7 @@ async function runJudgeSamples({
     releaseId: config.releaseId || null,
     registryVersion: config.registryVersion || null,
     registryLaneId: config.laneId || null,
+    registryState: config.registryState || null,
     registryOverride: Boolean(config.registryOverride),
     evaluationSetVersion: config.evaluationSetVersion || null,
     policyVersion: config.policyVersion || null,

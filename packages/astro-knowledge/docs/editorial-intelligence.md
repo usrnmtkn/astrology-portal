@@ -55,6 +55,29 @@ Promotion moves the prior active release to the rollback slot and records the
 approver plus a SHA-256 of the calibration report. Rollback is also an explicit
 human-authorized action and uses the same environment gate.
 
+### GitHub admin setup
+
+The workflow `.github/workflows/editorial-model-calibration.yml` is manual-only
+and currently supports the first private-model surface,
+`judge:sky-article-longform`.
+
+1. Create a protected GitHub environment named `editorial-calibration`.
+2. Add required human reviewers to that environment.
+3. Add `EDITORIAL_OPENAI_JUDGE_API_KEY` and/or
+   `EDITORIAL_ANTHROPIC_JUDGE_API_KEY` as environment secrets.
+4. Keep `EDITORIAL_JUDGE_PRIVACY_MODE` unset or set it to `redact` as an
+   environment variable. Unredacted mode requires the separate provider
+   approval variable and should remain exceptional.
+5. Stage the candidate release in the registry through a reviewed branch.
+6. Dispatch **Editorial model candidate calibration** against that commit.
+7. Download and inspect the redacted report artifact.
+8. If accepted, promote locally or in a separate protected admin job, commit
+   the registry change, and merge it through normal review.
+
+The workflow itself has `contents: read`; it cannot alter the registry or
+publish content. The calibration report contract is
+[`config/editorial-calibration-report.schema.json`](../config/editorial-calibration-report.schema.json).
+
 ## Authorization and privacy
 
 Live judging is disabled unless the CI or admin process explicitly sets:
@@ -96,6 +119,21 @@ TLDR_ALLOW_LIVE_LLM_JUDGE=1 \
 TLDR_ALLOW_LIVE_LLM_CALIBRATION=1 \
 npm run calibrate:article-judge:live
 ```
+
+The candidate-aware runner used by the protected workflow is:
+
+```sh
+TLDR_ALLOW_LIVE_LLM_JUDGE=1 \
+TLDR_ALLOW_LIVE_LLM_CALIBRATION=1 \
+npm run calibrate:candidate:live -- \
+  --lane judge:sky-article-longform \
+  --out out/editorial-calibration/report.json
+```
+
+It refuses to run when the lane has no staged candidate. During calibration,
+each judge audit identifies `registryState: candidate` and the candidate
+release ID. Candidate selection is rejected outside an explicitly authorized
+calibration process.
 
 The same authorization applies to the other private live calibration jobs:
 

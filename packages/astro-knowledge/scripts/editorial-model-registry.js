@@ -78,7 +78,16 @@ function resolveLane(registry, role, surface = "default") {
 
 function resolveActiveRelease({ role, surface = "default", registry = readRegistry() }) {
   const { laneId, lane } = resolveLane(registry, role, surface);
-  return { laneId, registryVersion: registry.registryVersion, ...lane.active };
+  return { laneId, registryVersion: registry.registryVersion, registryState: "active", ...lane.active };
+}
+
+function resolveCandidateRelease({ role, surface = "default", releaseId, registry = readRegistry() }) {
+  const { laneId, lane } = resolveLane(registry, role, surface);
+  if (!lane.candidate) throw new Error(`${laneId} has no staged candidate.`);
+  if (!releaseId || lane.candidate.releaseId !== releaseId) {
+    throw new Error(`Requested candidate release does not match the staged candidate in ${laneId}.`);
+  }
+  return { laneId, registryVersion: registry.registryVersion, registryState: "candidate", ...lane.candidate };
 }
 
 function clone(value) {
@@ -188,6 +197,7 @@ module.exports = {
   promoteCandidate,
   readRegistry,
   resolveActiveRelease,
+  resolveCandidateRelease,
   resolveLane,
   rollbackActive,
   sha256,

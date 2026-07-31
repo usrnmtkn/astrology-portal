@@ -90,6 +90,20 @@ Before a paid run:
 4. Record the base-model revision, dataset manifest hash, config, and evaluation results.
 5. Download the adapter checkpoint to private storage, then delete the remote volume.
 
+## Candidate evaluation
+
+Do not replace the active model configuration to test a checkpoint or hosted
+candidate. Stage a complete candidate release in
+`config/editorial-model-registry.json`, then use the protected
+`editorial-model-calibration.yml` workflow. Candidate selection is available
+only during an explicitly authorized calibration run, and every live verdict
+records the candidate release provenance.
+
+The first workflow supports `judge:sky-article-longform`. A future local-model
+adapter must implement the same prompt/output contract before `provider: local`
+can be calibrated through this path. Do not point the workflow at an
+unreviewed public endpoint or copy private training data into a workflow input.
+
 ## Release rule
 
 A checkpoint is not production-ready merely because training completed. It must beat the unfine-tuned base model on the held-out set without increasing factual additions, duplicated copy, stale dates, or voice failures. The existing long-form judge should be one signal, not the sole evaluator, and the generator and judge must not be calibrated on the same exact examples.
