@@ -1,0 +1,128 @@
+export const SKY_ASPECT_DEFINITIONS = Object.freeze([
+  Object.freeze({ type: "conjunction", exactAngle: 0, maxOrb: 5 }),
+  Object.freeze({ type: "sextile", exactAngle: 60, maxOrb: 5 }),
+  Object.freeze({ type: "square", exactAngle: 90, maxOrb: 5 }),
+  Object.freeze({ type: "trine", exactAngle: 120, maxOrb: 5 }),
+  Object.freeze({ type: "quincunx", exactAngle: 150, maxOrb: 3 }),
+  Object.freeze({ type: "opposition", exactAngle: 180, maxOrb: 5 })
+]);
+
+export const SKY_ASPECT_POINT_ORDER = Object.freeze([
+  "Sun",
+  "Moon",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+  "Chiron",
+  "Lilith",
+  "North Node",
+  "South Node"
+]);
+
+export function normalizeDegrees(degrees) {
+  return ((degrees % 360) + 360) % 360;
+}
+
+export function shortestAngleDistance(degrees) {
+  const normalized = normalizeDegrees(degrees);
+  return normalized > 180 ? normalized - 360 : normalized;
+}
+
+export function angularSeparation(first, second) {
+  const difference = Math.abs(normalizeDegrees(first - second));
+  return difference > 180 ? 360 - difference : difference;
+}
+
+function pointName(position) {
+  return position.planet || position.point || "Unknown";
+}
+
+function pointSlug(point) {
+  return point.toLowerCase().replaceAll(" ", "_");
+}
+
+function aspectForSeparation(separation) {
+  return SKY_ASPECT_DEFINITIONS
+    .map((definition) => ({
+      ...definition,
+      orb: Math.abs(separation - definition.exactAngle)
+    }))
+    .filter(({ orb, maxOrb }) => orb <= maxOrb)
+    .sort((first, second) => first.orb - second.orb)[0] || null;
+}
+
+function applyingForAspect(from, to, exactAngle) {
+  if (!Number.isFinite(from.speed) || !Number.isFinite(to.speed)) {
+    return false;
+  }
+
+  const currentDistance = Math.abs(shortestAngleDistance(
+    angularSeparation(from.longitude, to.longitude) - exactAngle
+  ));
+  const nextDistance = Math.abs(shortestAngleDistance(
+    angularSeparation(
+      normalizeDegrees(from.longitude + from.speed / 4),
+      normalizeDegrees(to.longitude + to.speed / 4)
+    ) - exactAngle
+  ));
+
+  if (currentDistance < 0.01) {
+    return false;
+  }
+
+  return nextDistance < currentDistance;
+}
+
+export function calculateSkyAspects(positions) {
+  if (!Array.isArray(positions)) {
+    throw new TypeError("positions must be an array");
+  }
+
+  const usablePositions = positions
+    .map((position, index) => ({ position, index }))
+    .filter(({ position }) => Number.isFinite(position?.longitude))
+    .sort((first, second) => {
+      const firstOrder = SKY_ASPECT_POINT_ORDER.indexOf(pointName(first.position));
+      const secondOrder = SKY_ASPECT_POINT_ORDER.indexOf(pointName(second.position));
+      const normalizedFirstOrder = firstOrder < 0 ? Number.MAX_SAFE_INTEGER : firstOrder;
+      const normalizedSecondOrder = secondOrder < 0 ? Number.MAX_SAFE_INTEGER : secondOrder;
+
+      return normalizedFirstOrder - normalizedSecondOrder || first.index - second.index;
+    })
+    .map(({ position }) => position);
+  const aspects = [];
+
+  usablePositions.forEach((from, fromIndex) => {
+    usablePositions.slice(fromIndex + 1).forEach((to) => {
+      const separation = angularSeparation(from.longitude, to.longitude);
+      const aspect = aspectForSeparation(separation);
+
+      if (!aspect) {
+        return;
+      }
+
+      const fromName = pointName(from);
+      const toName = pointName(to);
+
+      aspects.push({
+        id: `aspect.${pointSlug(fromName)}.${aspect.type}.${pointSlug(toName)}`,
+        bodyA: fromName,
+        bodyB: toName,
+        from: fromName,
+        to: toName,
+        type: aspect.type,
+        exactAngle: aspect.exactAngle,
+        separation: Number(separation.toFixed(4)),
+        orb: Number(aspect.orb.toFixed(1)),
+        applying: applyingForAspect(from, to, aspect.exactAngle)
+      });
+    });
+  });
+
+  return aspects.sort((first, second) => first.orb - second.orb);
+}
