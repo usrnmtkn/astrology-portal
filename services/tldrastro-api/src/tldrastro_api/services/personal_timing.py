@@ -14,6 +14,7 @@ from tldrastro_api.models import (
     TransitHit,
 )
 from tldrastro_api.services.chart import CANONICAL_HOUSE_SYSTEM
+from tldrastro_api.services.ephemeris import merge_ephemeris_provenance
 from tldrastro_api.services.profections import calculate_profections
 from tldrastro_api.services.transits import calculate_transits
 
@@ -222,6 +223,10 @@ def calculate_personal_timing(request: PersonalTimingRequest) -> PersonalTimingR
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
+            ephemeris=merge_ephemeris_provenance(
+                transits.metadata.ephemeris,
+                profections.metadata.ephemeris,
+            ),
         ),
         app=_app_contract(profections, boosted, content_facts),
         natal=transits.natal,
