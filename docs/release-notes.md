@@ -1,5 +1,66 @@
 # Release Notes
 
+## 2026-07-31: Ephemeris Reliability And Content Package Sync
+
+### Calculation Reliability
+
+- Added actual-engine reporting to API health checks and calculation
+  provenance, including returned flags, fallback state, library version, data
+  path, and calculation count.
+- Made readiness fail when configured Swiss Ephemeris data is expected but the
+  engine falls back to Moshier.
+- Added weekly and manually dispatchable NASA/JPL Horizons shadow verification
+  for supported planetary positions, motion, and aspects.
+- Retained verification reports, summaries, and raw response caches as workflow
+  artifacts for 90 days.
+- Kept Horizons out of the synchronous reader path. It is an independent
+  monitoring oracle rather than a production request-time dependency.
+
+### Verified Sky Recovery
+
+- Added a last-known-verified cache for current-Sky snapshots that passed fact
+  validation and carry verified provenance.
+- Isolated entries by date, coordinates, and timezone, limited them to 30
+  minutes, and capped storage at 24 snapshots.
+- Added reader notices for cached recovery and live refresh behavior.
+- Excluded natal, synastry, composite, and other personal calculations so those
+  surfaces continue to fail closed.
+
+### Fallback Architecture V3
+
+- Reconciled 7,382 Supabase rows with bundled package
+  `v3-2026-07-31a`.
+- Verified all 7,007 reader package keys with content hash
+  `6e9a07ecf8e989d0bff2941683e957fc` and key-manifest hash
+  `443892a75ab14c1362ab1f195532e7d7`.
+- Finished with zero missing, stale, duplicate, or changed rows. The database
+  synchronization changed package metadata without changing reader-facing
+  copy.
+- Hardened snapshot export for all authored-content roles, nullable headlines,
+  dual-voice records, blank-review templates, staged overrides, and canonical
+  source history.
+- Fixed browser reconstruction for authored rows that use only `body_you` and
+  `body_they`, and for vocabulary rows with optional `grammar_frame`.
+- Preserved the approved Moon-in-Scorpio placement row and removed transient
+  Saturn planet-topic vocabulary warnings on the Sky surface.
+- Kept strict version, completeness, content-hash, and key-manifest validation;
+  invalid remote packages fail closed to the bundled package.
+
+### CI And Production
+
+- Upgraded all GitHub-maintained workflow actions to Node.js 24-compatible v6
+  majors: `checkout`, `setup-node`, and `upload-artifact`.
+- Removed the Node.js 20 deprecation annotation without changing the Node.js 22
+  application test runtime or workflow behavior.
+- Passed aspect-pattern, content, social-security, database-authorization,
+  typecheck, build, NASA/JPL, Vercel, and browser regression gates.
+- Final `main` visual smoke passed in 6m43s with zero check annotations.
+- Verified production Saturn rendering with no planet-topic or V3
+  package-validation console warning.
+
+Full operating notes, commands, limitations, and manifest details are in the
+[2026-07-31 reliability release README](releases/2026-07-31-reliability-and-content-sync/README.md).
+
 ## 2026-07-26: Beta Social Friends
 
 ### Friends Experience

@@ -1,6 +1,8 @@
 # Calculation And API Integrity Audit
 
-Status: release blocker. The broader Dashboard/content migration is paused until this file, the fact contract, and independent verification are complete.
+Status: active integrity program. Supported Horizons facts are independently
+verified with zero discrepancies; unsupported fact families remain visible as
+`PARTIAL_WITH_GAPS` monitoring work.
 
 ## Current Calculation Stack
 
@@ -8,7 +10,9 @@ Status: release blocker. The broader Dashboard/content migration is paused until
 - Package version: `0.0.5` from `apps/web/package.json`.
 - Runtime data artifact: `node_modules/swisseph-wasm/wasm/swisseph.wasm`; copied/browser artifact also exists at `apps/web/public/wasm/swisseph.wasm`.
 - Local binary oracle: none found. `swetest` is not installed in this workspace.
-- Second independent provider: not configured. `scripts/verify-astrology-integrity.mjs` blocks by default until `TLDR_ASTRO_VERIFY_PROVIDER_COMMAND` is supplied.
+- Second independent provider: NASA/JPL Horizons, configured in the scheduled
+  integrity workflow through `scripts/providers/nasa-horizons-provider.mjs`.
+  Local release-gate runs still require `TLDR_ASTRO_VERIFY_PROVIDER_COMMAND`.
 
 ## Supplied Reference Sources
 
@@ -197,10 +201,9 @@ Covered in the current fixture file:
 - all three 2026 Mercury retrograde cycles;
 - July 12, 2026 Mercury in Cancer retrograde passage coherence.
 
-Still incomplete before release:
+Still incomplete and tracked as known monitoring gaps:
 
-- second-provider planetary longitude comparisons;
-- second-provider Moon/node comparisons;
+- second-provider node comparisons;
 - second-provider Asc/Desc/MC/IC comparisons;
 - all 12 house cusp comparisons;
 - aspect just-inside and just-outside orb fixtures;
