@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29q");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -45,9 +45,13 @@ const packageRows = [
 const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_status === "needs_review");
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
-assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, 12, "Only the remaining explicitly staged Jul 29 M1/M3 hooks may stay review-gated.");
-assert.equal(needsReviewRows.length, 12, "The package must retain exactly 12 explicitly staged M1/M3 review rows.");
+assert.deepEqual(
+  needsReviewCards.map((row) => row.contentKey),
+  ["authored/sky-lunation-macro/new-moon/aquarius"],
+  "Only the explicitly staged Aquarius New Moon article may stay review-gated."
+);
+assert.equal(needsReviewHooks.length, 93, "The reconciled package must preserve all 93 explicitly staged, non-serving hooks.");
+assert.equal(needsReviewRows.length, 108, "The primary package must retain its 108 staged authored, hook, and template rows; interim overrides are gated separately.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,
@@ -341,13 +345,13 @@ const connectionTransit = transitRenderer.renderBondTransit({
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^The next few months test this connection:/u);
+assert.match(connectionTransit.body, /^The next few months put more weight on follow-through\./u);
 assert.match(
   connectionTransit.body,
   /Saturn is squaring Sofia's Pluto through November 13, activating the connection Sofia's Pluto makes with your Venus\./u
 );
 assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
-assert.match(connectionTransit.body, /Show up when you said you would; that is most of the work/u);
+assert.match(connectionTransit.body, /What happens repeatedly will tell you more than the promise\./u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
