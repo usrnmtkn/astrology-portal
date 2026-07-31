@@ -72,7 +72,7 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-const calendarStorageVersion = "v6";
+const calendarStorageVersion = "v7";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -218,8 +218,11 @@ function calendarStorageKey(
   mode: LunarCalendarViewMode,
   anchor: Date
 ) {
-  const normalizedMode = isWeekBasedView(mode) ? "week" : "month";
-  const normalizedAnchor = normalizedMode === "week" ? startOfWeekDate(anchor) : monthStart(anchor);
+  // The editorial Week view requires fully hydrated event prose. Keep it
+  // separate from the lighter Day cache so partial data can never flash before
+  // the final weekly write-up replaces it.
+  const normalizedMode = mode === "weekly" ? "weekly" : mode;
+  const normalizedAnchor = isWeekBasedView(mode) ? startOfWeekDate(anchor) : monthStart(anchor);
 
   return [
     "tldr-lunar-calendar",
@@ -1577,6 +1580,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
     const visibleAnchor = isWeekBasedView(viewMode) ? dateFromDateKey(visibleWeekDateKey) : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
+    const initialDetail = viewMode === "weekly" ? "full" : "basic";
 
     if (storedCalendar) {
       setCalendar(storedCalendar);
@@ -1599,7 +1603,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
       setStatus("loading");
     }
 
-    loadCalendarData(location, viewMode, visibleAnchor, "basic")
+    loadCalendarData(location, viewMode, visibleAnchor, initialDetail)
       .then((nextCalendar) => {
         if (cancelled) return;
 
@@ -1621,11 +1625,16 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
         });
         setStatus("ready");
 
+        if (initialDetail === "full") {
+          return;
+        }
+
         cancelHydration = scheduleIdleTask(() => {
           loadCalendarData(location, viewMode, visibleAnchor, "full")
             .then((fullCalendar) => {
               if (!cancelled) {
                 setCalendar(fullCalendar);
+                writeStoredCalendar(storedCalendarKey, fullCalendar);
               }
             })
             .catch((error) => {
