@@ -16,9 +16,9 @@ Status: implemented locally.
 
 ## Phase 2: NASA/JPL shadow verification
 
-Status: workflow added locally.
+Status: implemented.
 
-- The `Ephemeris integrity` GitHub Actions workflow runs weekly and can also be
+- The `Ephemeris integrity` GitHub Actions workflow runs daily and can also be
   started manually.
 - It uses the existing NASA/JPL Horizons adapter sequentially, respecting the
   service's one-request-at-a-time fair-use requirement.
@@ -29,12 +29,17 @@ Status: workflow added locally.
   retained as workflow artifacts for 90 days.
 - Each run publishes the compact result into the GitHub Actions job summary;
   failed discrepancy runs also emit a visible workflow error annotation.
+- The latest result and a dated comment history are persisted in the
+  `NASA/JPL ephemeris integrity status` GitHub monitor issue, outside the
+  90-day artifact window.
+- Pull requests run the `nasa-jpl-freshness` release gate. It requires the
+  newest completed main-branch comparison to have passed within 36 hours.
 
 ## Next implementation work
 
-1. Configure repository-level Actions failure notifications for the team.
-2. Persist report summaries outside short-lived workflow artifacts for a
-   durable audit history.
+1. Require `nasa-jpl-freshness` in the `main` branch ruleset so production
+   releases cannot merge behind a failed or stale independent comparison.
+2. Configure repository-level Actions failure notifications for the team.
 3. Add focused station-boundary fixtures.
 4. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
    product requirement.
