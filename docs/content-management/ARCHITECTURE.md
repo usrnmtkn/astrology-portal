@@ -158,9 +158,19 @@ Path:
 | Path | Responsibility |
 |---|---|
 | `source-rows/fallback-source-rows-v3.json` | Main hook, vocabulary, and source-material banks |
+| `source-rows/editorial-source-bank-v1.json` | Owner-authored, approved sign-axis, lunation, season, New Moon, and categorized quotable source material; deliberately non-serving until a resolver uses it |
 | `source-rows/transit-synastry-rows-v1.json` | Authored transits, compatibility, and relationship units |
+| `source-rows/bond-language-pass-2.json` | Review-gated, same-key bond-effect supersessions |
 | `source-rows/lunation-blend-units-v1.json` | Lunation macro and per-rising blend rows |
 | `source-rows/placement-interim-fixes-v1.json` | Placement frames and targeted vocabulary corrections |
+| `source-rows/sky-article-v1.json` | Validity-window sky article registry, archive articles, approved date-slot frames, and sky-scoped vocabulary |
+| `source-rows/sky-placement-inventories-voice-pass-v1.json` | Forty-two review-gated slot-tier voice-pass candidates; supersede approved V3 rows only after owner approval |
+| `source-rows/sky-planet-frames-v1.json` | Owner-approved three-beat planet frames: 14 direct and 9 shadow-to-shadow retrograde replacements |
+| `source-rows/sky-sign-copy-sun-v1.json` | Owner-approved revised continuous Sun-in-Leo fallback unit plus thirteen superseded historical rows; the other V2 units remain outside the reader package until approval |
+| `authored-inputs/sky-placement-continuous-v2-pending.json` | Review-gated import manifest for the remaining Sun, Mercury, Venus, Mars, slow-mover, Chiron, and node units; also records the superseded legacy module families |
+| `contracts/SKY-PLACEMENT-CONTINUOUS-V2.schema.json` | Required continuous-unit slots and active-aspect insert contract |
+| `packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md` | Verbatim owner-approved canonical planet-in-sign fallback specification |
+| `scripts/import-sky-placement-continuous-v2.mjs` | Validates staged review files without writing by default; requires both `--approve` and an explicit `--out` path before it emits importable rows |
 | `source-rows/station-cards-week-openers-v1.json` | Weekly openers and station units |
 | `templates/fallback-templates-v3.json` | Slot-bearing fallback templates |
 | `resolver/renderFallback.*` | Natal, empty-house, aspect, and profection assembly |
@@ -232,6 +242,12 @@ The governing selection order is:
 3. SOURCE_GAP
 ```
 
+For Sun, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Chiron,
+and the nodes, step 2 means one approved continuous unit under
+`sky-placement-continuous-v2`. The retired placement module stack is not a
+fallback for those bodies. Moon and lunation rendering remain outside this
+contract.
+
 Resolution must be:
 
 - deterministic;
@@ -282,22 +298,20 @@ sequenceDiagram
   Runtime->>Resolver: create reader-eligible renderers
   App->>Dashboard: load approved V3 bundle
   Dashboard-->>App: current-package approved rows or null
-  App->>Runtime: install complete validated package
-  Runtime->>Resolver: replace the local package atomically
+  App->>Runtime: install approved row overrides
+  Runtime->>Resolver: merge overrides onto the local snapshot
 ```
 
 Important consequences:
 
 - The app can render from the local package before network hydration finishes.
-- Missing dashboard rows invalidate the remote package; the complete bundled
-  package keeps serving instead.
+- Missing dashboard rows remain supplied by the current local snapshot.
 - Only approved package review states survive dashboard loading.
-- Dashboard rows must carry one package version, content hash, key-manifest
-  hash, and key count. A mixed, incomplete, or older package is rejected in
-  full. A same-version package must match the bundled hashes exactly.
-- Local browser cache stores the bundled and remote package manifests. Any
-  unversioned cache, old schema, or bundled-hash mismatch is discarded on app
-  startup, so existing browsers self-heal to the current bundled package.
+- Dashboard rows must carry the import batch for the installed package version.
+  A mixed or older batch is rejected in full.
+- Local browser cache is versioned by both the installed package version and
+  the dashboard's latest update time. Older cache schemas fail closed to the
+  local snapshot.
 - Pagination is ordered by update time and unique row ID so tied import
   timestamps cannot repeat or skip rows between pages.
 - Dashboard synchronization is a deployment action, not an ordinary file edit.

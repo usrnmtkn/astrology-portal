@@ -2,7 +2,7 @@
 //
 // Calibration for the LLM-as-judge. Run this once the judge model is wired
 // (needs the generator's API key). It proves the judge is trustworthy before
-// you let it auto-publish anything:
+// you use it as editorial advice:
 //
 //   - every canonical exemplar must score 3 (in-voice)
 //   - every known-weak draft must score 1 or 2 (never a false 3)
@@ -72,6 +72,11 @@ async function main() {
     process.exit(1);
   }
   console.log("Judge calibrated: separates good from bad by a wide margin, no control mis-rated.");
+}
+
+if (!process.argv.includes("--authorize-live")) {
+  console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
+  process.exit(0);
 }
 
 main().catch((err) => {

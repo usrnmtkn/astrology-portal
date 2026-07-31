@@ -237,10 +237,11 @@
   white-space: nowrap;
 }
 
-.updates-section {
-  margin-top: var(--sp-4);
+.subpane.updates-section {
+  --you-updates-gap: var(--space-3);
+  margin-top: 0;
   display: grid;
-  gap: var(--sp-3);
+  gap: var(--you-updates-gap);
 }
 
 .updates-section .section-label {
@@ -249,19 +250,19 @@
 
 .updates-section > .section-label + .updates-aspect-list,
 .updates-section > .daily-behind-forecast-label + .daily-behind-forecast {
-  margin-top: calc(var(--section-label-gap-after) - var(--sp-3));
+  margin-top: calc(var(--section-label-gap-after) - var(--you-updates-gap));
 }
 
 .updates-section > :where(.daily-horoscope-summary, .daily-dodont, .daily-special-section)
   + :where(.daily-dodont, .daily-special-section) {
-  margin-top: calc(var(--card-list-gap) - var(--sp-3));
+  margin-top: calc(var(--card-list-gap) - var(--you-updates-gap));
 }
 
 .daily-horoscope-summary,
 .personal-timing-summary {
   display: grid;
   gap: var(--section-label-gap-after);
-  padding: var(--surface-card-padding);
+  padding: var(--card-row-padding-comfortable);
   background: var(--card-bg);
   color: var(--ink);
 }
@@ -516,6 +517,14 @@
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
+}
+
+.updates-aspect-row__life-areas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
 }
 
 .transit-card-preview {

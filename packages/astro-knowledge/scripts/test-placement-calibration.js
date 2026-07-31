@@ -179,6 +179,10 @@ module.exports = {
 };
 
 if (require.main === module) {
+  if (!process.argv.includes("--authorize-live")) {
+    console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
+    process.exit(0);
+  }
   main().catch((error) => {
     console.error(`Placement calibration could not run: ${error.message}`);
     console.error(

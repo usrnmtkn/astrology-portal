@@ -264,6 +264,46 @@
   line-height: var(--leading-body);
 }
 
+.sky-placement-moves-lines {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.sky-placement-key-dates dl {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.sky-placement-key-dates dl > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.sky-placement-key-dates dt,
+.sky-placement-key-dates dd {
+  margin: 0;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-body);
+}
+
+.sky-placement-key-dates dt {
+  font-weight: var(--weight-semibold);
+}
+
+.sky-placement-key-dates dd {
+  font-weight: var(--weight-regular);
+}
+
+.sky-placement-closing-charge p {
+  color: var(--card-title-color);
+  font-weight: var(--weight-medium);
+}
+
 .article-section,
 .sky-detail-section {
   max-width: none;
@@ -529,6 +569,11 @@
   .sky-detail-section h2 {
     font-size: var(--type-label-size);
     line-height: var(--leading-label);
+  }
+
+  .sky-placement-key-dates dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
   }
 
   .article-related-aspects {
@@ -811,7 +856,7 @@
   gap: var(--sp-1) 14px;
   font-family: var(--font-display);
   font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-title);
 }
 
@@ -899,7 +944,7 @@
   margin: 0;
   color: var(--card-title-color);
   font-size: var(--text-row-title-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-title);
 }
@@ -1478,13 +1523,13 @@
 }
 
 .sky-lunar-pill-copy em,
-.nl-copy em {
+.nl-eyebrow {
   display: block;
   color: var(--card-meta-color);
-  font-family: var(--font-ui);
-  font-size: var(--snap-eyebrow-size);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
   font-style: normal;
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: var(--snap-eyebrow-tracking);
   line-height: var(--leading-label);
   text-transform: uppercase;

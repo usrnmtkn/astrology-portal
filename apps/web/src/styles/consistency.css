@@ -19,9 +19,9 @@
   margin: var(--label-eyebrow-margin);
   padding: var(--label-eyebrow-padding);
   color: var(--card-meta-color);
-  font-family: var(--font-label);
+  font-family: var(--label-eyebrow-font-family);
   font-size: var(--label-eyebrow-font-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   line-height: var(--label-eyebrow-line-height);
   letter-spacing: var(--label-eyebrow-tracking);
   text-transform: uppercase;
@@ -38,7 +38,6 @@
   strong,
   small,
   li,
-  .lunar-selected-card__eyebrow,
   .lunar-selected-card__meta,
   .lunar-selected-card__meta-element,
   .lunar-selected-card__body,
@@ -113,4 +112,31 @@
   .admin-dashboard
 ) :where(label, legend, .auth-label, .settings-row__label) {
   font-weight: var(--weight-medium);
+}
+
+/*
+  Eyebrow typography is one indivisible token contract. Reassert it after
+  contextual menu and form rules so those rules cannot change its family,
+  size, or weight.
+*/
+:where(
+  .eyebrow,
+  .section-label,
+  .aspect-section-label,
+  .friend-section-label,
+  .placements-heading .eyebrow,
+  .settings-group-label,
+  .article-eyebrow,
+  .article-section__eyebrow,
+  .admin-eyebrow,
+  .admin-nav-section-label,
+  .phone-auth-eyebrow,
+  .natal-pattern-card__activation-eyebrow,
+  .lunar-selected-card__eyebrow,
+  .nl-eyebrow,
+  .sky-lunar-pill-copy em
+) {
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
 }

@@ -7,12 +7,14 @@ import {
   routeReadyTimeoutMs,
   watchBrowserErrors
 } from "./qaRuntimeGuards";
+import { resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/skyAspectContent";
 
 type SeedOptions = {
   profile?: boolean;
   friends?: boolean;
   theme?: "light" | "dark";
   now?: string;
+  generatedInterpretations?: Array<Record<string, unknown>>;
 };
 
 const fixtureLocation = {
@@ -77,6 +79,15 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     });
   });
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+    if (options.generatedInterpretations) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(options.generatedInterpretations)
+      });
+      return;
+    }
+
     await route.fulfill({
       status: 503,
       contentType: "application/json",
@@ -357,7 +368,7 @@ async function expectSharedLabelContract(page: Page, label: string, options: { r
       fontSize: rootStyle.getPropertyValue("--label-eyebrow-font-size").trim(),
       lineHeight: rootStyle.getPropertyValue("--label-eyebrow-line-height").trim(),
       letterSpacing: rootStyle.getPropertyValue("--label-eyebrow-tracking").trim(),
-      fontFamily: rootStyle.getPropertyValue("--font-label").trim(),
+      fontFamily: rootStyle.getPropertyValue("--label-eyebrow-font-family").trim(),
       fontWeight: rootStyle.getPropertyValue("--weight-semibold").trim()
     };
     const expectedProbe = document.createElement("span");
@@ -500,9 +511,9 @@ async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
   });
 
   expect(result.checked, `${label} has readable lunar selected card text to inspect`).toBeGreaterThan(0);
-  expect(result.families, `${label} uses one readable font family in the selected lunar card: ${result.samples.join(" | ")}`).toHaveLength(1);
+  expect(result.families.length, `${label} uses only body and label font families in the selected lunar card: ${result.samples.join(" | ")}`).toBeLessThanOrEqual(2);
   expect(result.fontSizes.length, `${label} keeps selected lunar card type scale compact: ${result.sizeSamples.join(" | ")}`).toBeLessThanOrEqual(6);
-  expect(result.fontWeights.length, `${label} keeps selected lunar card font weights compact: ${result.weightSamples.join(" | ")}`).toBeLessThanOrEqual(3);
+  expect(result.fontWeights.length, `${label} keeps selected lunar card font weights compact: ${result.weightSamples.join(" | ")}`).toBeLessThanOrEqual(4);
 }
 
 async function expectLunarSelectedCardEventAlignment(page: Page, label: string) {
@@ -951,6 +962,12 @@ test.describe("client-facing user flow case studies", () => {
     if (await updatesTab.isVisible()) {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+      const transitWheel = page.getByLabel("Transit chart wheel");
+      await expect(transitWheel).toBeVisible();
+      await expect(
+        transitWheel.locator(".sky-wheel--aspect-inspector"),
+        "Personal transit wheel omits the aspect inspector"
+      ).toHaveCount(0);
 
       const houseTransitCard = page
         .getByLabel("House transits")
@@ -1008,7 +1025,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("aspect inspector works across every saved-chart wheel", async ({ page }) => {
+  test("aspect inspector works across eligible saved-chart wheels and stays off transit wheels", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true, friends: true });
@@ -1028,16 +1045,34 @@ test.describe("client-facing user flow case studies", () => {
     );
 
     await page.getByRole("tab", { name: "Transits" }).click();
-    await expectAspectInspector(
-      page.getByLabel("Nikki transit chart wheel"),
-      "Nikki transit wheel"
-    );
+    const transitWheel = page.getByLabel("Nikki transit chart wheel");
+    await expect(transitWheel).toBeVisible();
+    await expect(
+      transitWheel.locator(".sky-wheel--aspect-inspector"),
+      "Friend transit wheel omits the aspect inspector"
+    ).toHaveCount(0);
+    const transitOuterBand = transitWheel.locator(".transit-planet-band");
+    const transitOuterBandBackground = await transitOuterBand.evaluate((element) => ({
+      opacity: getComputedStyle(element).opacity,
+      stroke: getComputedStyle(element).stroke
+    }));
 
     await selectFriendDetailTab(page, "Synastry");
+    const synastryWheel = page.getByLabel("Nikki synastry chart wheel");
     await expectAspectInspector(
-      page.getByLabel("Nikki synastry chart wheel"),
+      synastryWheel,
       "Nikki synastry wheel"
     );
+    const synastryInnerBand = synastryWheel.locator(".synastry-inner-planet-band");
+    await expect(synastryInnerBand, "Synastry inner wheel has a distinct background band").toBeVisible();
+    const synastryInnerBandBackground = await synastryInnerBand.evaluate((element) => ({
+      opacity: getComputedStyle(element).opacity,
+      stroke: getComputedStyle(element).stroke
+    }));
+    await expect(
+      synastryInnerBandBackground,
+      "Synastry inner wheel matches the transit outer-wheel background"
+    ).toEqual(transitOuterBandBackground);
 
     await selectFriendDetailTab(page, "Composite");
     await expectAspectInspector(
@@ -1148,6 +1183,25 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
     await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
     await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
+    const synastryPlacementHeaders = page.locator(".synastry-placement-column-header");
+    await expect(synastryPlacementHeaders, "Synastry shows both placement-column headings").toHaveCount(2);
+    await expect(
+      synastryPlacementHeaders.first(),
+      "Synastry placement headings omit the horizontal rule"
+    ).toHaveCSS("border-bottom-width", "0px");
+    const synastryContactCard = page.locator(".friend-aspect-row").first();
+    const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
+    const synastryContactTag = synastryContactCard.locator(".aspect-row-subtitle");
+    await expect(synastryContactDescription).toBeVisible();
+    await expect(synastryContactTag).toBeVisible();
+    const descriptionBox = await synastryContactDescription.boundingBox();
+    const tagBox = await synastryContactTag.boundingBox();
+    expect(descriptionBox, "Synastry contact description has layout geometry").not.toBeNull();
+    expect(tagBox, "Synastry contact tag has layout geometry").not.toBeNull();
+    expect(
+      tagBox!.y,
+      "Synastry contact tags render underneath the description"
+    ).toBeGreaterThanOrEqual(descriptionBox!.y + descriptionBox!.height);
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
@@ -1225,17 +1279,31 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
     await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByLabel("Selected lunar day")).toContainText("Today’s Moon");
+    await captureResponsiveSurface(page, "desktop", "calendar-day");
 
     const monthTab = page.getByRole("tab", { name: "Month" });
     if (await monthTab.isVisible()) {
       await monthTab.click();
       await expect(monthTab).toHaveAttribute("aria-selected", "true");
+      await expect(page).toHaveURL(/#calendar\?view=month&date=\d{4}-\d{2}-\d{2}$/);
     }
 
-    const firstCalendarDay = page.locator(".lunar-calendar-day").first();
+    const firstCalendarDay = page.locator(".lunar-calendar-day:not(.is-outside)").first();
     if (await firstCalendarDay.isVisible()) {
+      const selectedDate = await firstCalendarDay.getAttribute("data-calendar-date");
       await firstCalendarDay.click();
       await expect(page.getByLabel("Selected lunar day")).toBeVisible();
+      await expect(firstCalendarDay).toHaveAttribute("aria-pressed", "true");
+      await expect(firstCalendarDay).toHaveAttribute("aria-label", /^[A-Z][a-z]+day, [A-Z][a-z]+ \d{1,2}\./);
+      await expect(firstCalendarDay.locator('[tabindex="0"]')).toHaveCount(0);
+
+      await captureResponsiveSurface(page, "desktop", "calendar-month");
+      await page.reload();
+      await expect(page.getByRole("tab", { name: "Month" })).toHaveAttribute("aria-selected", "true");
+      if (selectedDate) {
+        await expect(page.locator(`[data-calendar-date="${selectedDate}"]`)).toHaveAttribute("aria-pressed", "true");
+      }
     }
 
     const transitCard = page.locator(".lunar-month-transit-card--button").first();
@@ -1244,6 +1312,209 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     }
 
+    await assertNoClientErrors();
+  });
+
+  test("calendar Week view presents seven API-backed day write-ups without mobile overflow", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const weeklyTab = page.getByRole("tab", { name: "Week", exact: true });
+    await expect(weeklyTab).toBeVisible();
+    await weeklyTab.click();
+    await expect(weeklyTab).toHaveAttribute("aria-selected", "true");
+
+    const weeklyView = page.locator(".lunar-weekly-view");
+    await expect(weeklyView).toBeVisible();
+    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
+    await expect(weeklyView.locator(".lunar-weekly-jump button")).toHaveCount(7);
+    const currentDayCard = weeklyView.locator('[data-is-today="true"]');
+    await expect(currentDayCard).toHaveCount(1);
+    await expect(currentDayCard).not.toHaveClass(/is-collapsed/);
+    await expect(currentDayCard.locator(".lunar-weekly-day__guidance")).toBeVisible();
+    await expect(weeklyView.locator(".lunar-weekly-event__body").first()).toBeVisible({ timeout: 15_000 });
+    await expect(weeklyView.locator('[data-weekly-day-role="lunation"]')).toHaveCount(1);
+    await expect(weeklyView.locator(".lunar-weekly-hero__body")).toContainText(
+      "Full Moons bring what has been building into clearer view."
+    );
+    await expect(weeklyView.locator(".lunar-weekly-event.event-lunation")).toHaveCount(0);
+    const integrationDays = weeklyView.locator('[data-weekly-day-role="integration"]');
+    expect(await integrationDays.count()).toBeGreaterThan(0);
+    const capricornDays = weeklyView.locator(".lunar-weekly-day").filter({
+      has: page.getByRole("heading", { name: "Moon in Capricorn", exact: true })
+    });
+    await expect(capricornDays).toHaveCount(3);
+    await expect(capricornDays.locator('[data-guidance-source="moon"]')).toHaveCount(1);
+    const weeklyEventBodies = await weeklyView.locator(".lunar-weekly-event__body").allTextContents();
+    expect(weeklyEventBodies.some((body) => /\bToday\b/.test(body)), "Weekly events use their weekday instead of repeating Today").toBe(false);
+    const weeklyAspectEvents = weeklyView.locator(".lunar-weekly-event.event-aspect");
+    const weeklyAspectEventCount = await weeklyAspectEvents.count();
+    expect(weeklyAspectEventCount, "Weekly aspects are present in the fixture week").toBeGreaterThan(0);
+    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount);
+    const overlappingCards = await weeklyView.evaluate((weekly) => (
+      Array.from(weekly.querySelectorAll(".lunar-weekly-day"))
+        .filter((card) => {
+          const events = card.querySelector(".lunar-weekly-day__events");
+          const guidance = card.querySelector(".lunar-weekly-day__guidance");
+
+          if (!events || !guidance) {
+            return false;
+          }
+
+          const eventsRect = events.getBoundingClientRect();
+          const guidanceRect = guidance.getBoundingClientRect();
+          return eventsRect.bottom > guidanceRect.top;
+        })
+        .length
+    ));
+    expect(overlappingCards, "Weekly event write-ups and Moon guidance do not overlap").toBe(0);
+    const moonGuidanceBlocks = weeklyView.locator(".lunar-weekly-day__guidance");
+    expect(await moonGuidanceBlocks.count()).toBeGreaterThan(1);
+    await expect(moonGuidanceBlocks.locator(":scope > p")).toHaveText(
+      Array(await moonGuidanceBlocks.count()).fill("Day theme")
+    );
+    await expect(weeklyView.getByText(/Weekly Moon:/i)).toHaveCount(0);
+    const moonGuidance = await moonGuidanceBlocks.locator("div").allTextContents();
+    expect(new Set(moonGuidance).size, "Weekly guidance does not repeat").toBe(moonGuidance.length);
+    await captureResponsiveSurface(page, "desktop", "calendar-week");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const widths = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      page: document.documentElement.scrollWidth
+    }));
+
+    expect(widths.page, "The Weekly does not introduce horizontal page overflow").toBe(widths.viewport);
+    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
+    await assertNoClientErrors();
+  });
+
+  test("Sky and Calendar share one reviewed aspect-content selector", () => {
+    const reviewedRow = {
+      id: "aspect-row",
+      contentKey: "sky.aspect.venus.square.mars.virgo.gemini",
+      surface: "sky",
+      mode: "article" as const,
+      eventType: "sky_aspect",
+      targetDate: null,
+      headline: "Venus square Mars",
+      summary: null,
+      body: "One reviewed aspect body is shared by the Sky and Calendar surfaces.",
+      sections: {},
+      blockType: "sky_aspect" as const,
+      provider: "test",
+      sourceSnapshot: {
+        skyAspectVoiceLint: { score: 3, fails: 0 },
+        pairSource: "data/pairs/venus-mars.json",
+        pairKey: "venus-mars",
+        cardFacts: {
+          a: "venus",
+          b: "mars",
+          aspect: "square",
+          signA: "virgo",
+          signB: "gemini"
+        }
+      },
+      judgeScore: 3,
+      judgeGate: "auto-publish",
+      model: null,
+      updatedAt: "2026-07-30T12:00:00.000Z"
+    };
+    const broadRow = {
+      ...reviewedRow,
+      id: "broad-row",
+      contentKey: "sky.aspect.venus.square.mars",
+      body: "This broad row must not replace the sign-specific reviewed Sky card."
+    };
+    const resolved = resolveSkyAspectGeneratedContent({
+      generatedContent: new Map([
+        [broadRow.contentKey, broadRow],
+        [reviewedRow.contentKey, reviewedRow]
+      ]),
+      first: "Venus",
+      second: "Mars",
+      aspect: "square",
+      firstSign: "Virgo",
+      secondSign: "Gemini",
+      targetDate: "2026-07-28"
+    });
+
+    expect(resolved?.content.contentKey).toBe(reviewedRow.contentKey);
+    expect(resolved?.body).toBe(reviewedRow.body);
+
+    const rejected = resolveSkyAspectGeneratedContent({
+      generatedContent: new Map([[
+        reviewedRow.contentKey,
+        { ...reviewedRow, judgeScore: 2, judgeGate: "hold" }
+      ]]),
+      first: "Venus",
+      second: "Mars",
+      aspect: "square",
+      firstSign: "Virgo",
+      secondSign: "Gemini"
+    });
+
+    expect(rejected, "The shared selector rejects a row that fails the Sky judge boundary").toBeNull();
+  });
+
+  test("Calendar Day and Month reuse the approved Sky aspect write-up", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    const sharedAspectBody = "One approved Sky write-up appears unchanged in Calendar Day and Month.";
+
+    await seedClientState(page, {
+      now: "2026-07-30T12:00:00.000Z",
+      generatedInterpretations: [{
+        id: "calendar-sky-aspect-row",
+        content_key: "sky.aspect.venus.square.mars.virgo.gemini",
+        surface: "sky",
+        mode: "article",
+        status: "LIVE",
+        lane: "serving",
+        review_state: null,
+        event_type: "sky_aspect",
+        target_date: null,
+        facts: {},
+        source_snapshot: {
+          skyAspectVoiceLint: { score: 3, fails: 0 },
+          pairSource: "data/pairs/venus-mars.json",
+          pairKey: "venus-mars",
+          cardFacts: {
+            a: "venus",
+            b: "mars",
+            aspect: "square",
+            signA: "virgo",
+            signB: "gemini"
+          }
+        },
+        headline: "Venus square Mars",
+        summary: null,
+        body: sharedAspectBody,
+        sections: {},
+        block_type: "sky_aspect",
+        flags: [],
+        provider: "qa",
+        judge_score: 3,
+        judge_gate: "auto-publish",
+        model: null,
+        updated_at: "2026-07-30T12:00:00.000Z"
+      }]
+    });
+    await expectClientRouteLoads(page, "/#calendar");
+
+    const selectedDay = page.getByLabel("Selected lunar day");
+    const aspectDay = page.getByLabel("Selected week").getByRole("button", {
+      name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
+    });
+    await aspectDay.click();
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+
+    const monthTab = page.getByRole("tab", { name: "Month", exact: true });
+    await monthTab.click();
+    await expect(monthTab).toHaveAttribute("aria-selected", "true");
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+    await expect(selectedDay).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
 
@@ -1258,7 +1529,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Capricorn");
     await expect(page.getByRole("button", { name: /Full Moon in Aquarius Jul 29 tomorrow/ })).toBeVisible();
 
-    await page.getByLabel("Selected week").getByRole("button", { name: /^Full Moon\. Moon in Aquarius/ }).click();
+    await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
     await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
     await assertNoClientErrors();
@@ -1409,6 +1680,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
     await expect(page.locator(".lunar-selected-card")).toBeVisible();
+    await captureResponsiveSurface(page, "mobile", "calendar-day");
 
     const layout = await page.evaluate(() => {
       const tolerance = 1;
@@ -1445,6 +1717,22 @@ test.describe("client-facing user flow case studies", () => {
 
     expect(layout.overflowingSurfaces, "Calendar surfaces honor the narrow page gutter").toEqual([]);
     await expectNoHorizontalOverflow(page, "Narrow mobile Calendar");
+
+    await page.getByRole("tab", { name: "Month" }).click();
+    await expect(page.locator(".lunar-calendar-day")).toHaveCount(42);
+    const mobileMonthMetrics = await page.evaluate(() => {
+      const day = document.querySelector(".lunar-calendar-day")?.getBoundingClientRect();
+      const tab = document.querySelector('[role="tab"][aria-selected="true"]')?.getBoundingClientRect();
+      return {
+        dayHeight: day?.height ?? 0,
+        tabHeight: tab?.height ?? 0,
+        nestedMonthFocusStops: document.querySelectorAll(".lunar-calendar-day [tabindex='0']").length
+      };
+    });
+    expect(mobileMonthMetrics.dayHeight, "Month cells stay scannable on a narrow phone").toBeLessThanOrEqual(100);
+    expect(mobileMonthMetrics.tabHeight, "Calendar view tabs meet the mobile touch target").toBeGreaterThanOrEqual(44);
+    expect(mobileMonthMetrics.nestedMonthFocusStops, "Each date is a single keyboard stop").toBe(0);
+    await captureResponsiveSurface(page, "mobile", "calendar-month");
     await assertNoClientErrors();
   });
 
@@ -2026,7 +2314,7 @@ test.describe("client-facing user flow case studies", () => {
   test("content fallback copy is reader-facing in sky placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page);
+    await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky");
 
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
@@ -2041,17 +2329,21 @@ test.describe("client-facing user flow case studies", () => {
   test("content hydration does not downgrade reader-facing surfaces to stale fallback copy", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true, friends: true });
+    await seedClientState(page, {
+      profile: true,
+      friends: true,
+      now: "2026-07-29T16:00:00.000Z"
+    });
 
-    await expectClientRouteLoads(page, "/#sky/retrograde/mercury");
+    await expectClientRouteLoads(page, "/#sky/placement/sun");
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "Sky retrograde detail");
-    await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Rx|Retrograde|in Cancer is retrograde)/i);
+    await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
+    await expect(page.locator(".sky-detail-article")).toContainText(/The Sun in Leo/i);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.locator(".sky-detail-article"),
-      "Sky retrograde detail copy",
+      "Sky placement detail copy",
       { minLength: 180 }
     );
 

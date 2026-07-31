@@ -9,14 +9,41 @@ import { SourceGapError } from "./renderFallback.mjs";
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
+const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
+const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
+const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
 lib.authoredCards.push(...lunationBlend.authoredCards);
+lib.authoredCards.push(...skyArticleV1.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
-const cards = new Map(lib.authoredCards.map((c) => [c.contentKey, c]));
-const vocab = new Map(rowsFile.vocabularyRows.map((r) => [r.contentKey, r]));
-const hooks = new Map(rowsFile.hookRows.map((r) => [r.contentKey, r]));
+rowsFile.hookRows.push(...bondLanguagePass2.rows);
+rowsFile.hookRows.push(...skyArticleV1.hookRows);
+rowsFile.hookRows.push(...skySignCopySunV1.rows);
+rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
+rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
+const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
+const eligibleRowsByKey = (rows) => {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return new Map(
+    [...candidates]
+      .map(([key, keyed]) => [
+        key,
+        [...keyed].reverse().find((candidate) => READER_ELIGIBLE_STATUS.has(candidate.review_status))
+      ])
+      .filter(([, row]) => Boolean(row))
+  );
+};
+const cards = eligibleRowsByKey(lib.authoredCards);
+const vocab = eligibleRowsByKey(rowsFile.vocabularyRows);
+const hooks = eligibleRowsByKey(rowsFile.hookRows);
 const FAST = new Set(["moon", "mercury", "venus", "mars"]);
 const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
@@ -43,6 +70,11 @@ const inlineWindow = (w) => {
   if (w.startsWith("For the next")) return "over the next" + w.slice(12);
   if (w.startsWith("For about")) return "for about" + w.slice(9);
   return w.charAt(0).toLowerCase() + w.slice(1);
+};
+const serialList = (items) => {
+  if (items.length < 2) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 };
 const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
 const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
@@ -103,6 +135,259 @@ export function friendVoiceFromReaderCopy(body, name) {
   return rendered;
 }
 const card = (k) => cards.get(k) ?? null;
+const skyArticles = [...cards.values()].filter((candidate) => candidate.contentKey.startsWith("sky-article/"));
+const articleDay = (value) => {
+  const day = value?.slice(0, 10);
+  return day && /^\d{4}-\d{2}-\d{2}$/u.test(day) ? day : null;
+};
+const articleDateLabel = (value) => new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC"
+}).format(new Date(`${value.slice(0, 10)}T00:00:00Z`));
+const articleWindow = (candidate) => (
+  candidate.valid_from && candidate.valid_to
+    ? `${articleDateLabel(candidate.valid_from)} – ${articleDateLabel(candidate.valid_to)}`
+    : null
+);
+const selectSkyArticle = ({
+  planet,
+  sign,
+  asOfDate,
+  articleMode = "current",
+  articleKey,
+  isRetrograde = false,
+  isShadowPhase = false
+}) => {
+  const pair = skyArticles.filter((candidate) => candidate.planet === planet && candidate.sign === sign);
+
+  if (articleMode === "archive") {
+    return articleKey
+      ? pair.find((candidate) => candidate.contentKey === articleKey) ?? null
+      : null;
+  }
+
+  const day = articleDay(asOfDate);
+  if (!day) return null;
+
+  const inWindow = pair.filter((candidate) => (
+    !candidate.archive_only
+    && candidate.article_structure === "final-v1"
+    && candidate.valid_from
+    && candidate.valid_to
+    && candidate.valid_from <= day
+    && candidate.valid_to >= day
+  ));
+  const retrogradeWindow = isRetrograde || isShadowPhase;
+  return (
+    retrogradeWindow
+      ? inWindow.find((candidate) => candidate.article_variant === "retrograde")
+        ?? inWindow.find((candidate) => candidate.article_variant !== "retrograde")
+      : inWindow.find((candidate) => candidate.article_variant !== "retrograde")
+  ) ?? null;
+};
+const skyPlacementHistoryAllowed = (planet, isRetrograde, historyEligible) => {
+  if (typeof historyEligible === "boolean") return historyEligible;
+  return new Set([
+    "jupiter",
+    "saturn",
+    "uranus",
+    "neptune",
+    "pluto",
+    "chiron",
+    "north-node",
+    "south-node"
+  ]).has(planet) || (isRetrograde && ["mercury", "venus", "mars"].includes(planet));
+};
+const ARTICLE_SECTION_ORDER = {
+  "seasonal-context": 1,
+  ingress: 2,
+  "collective-read": 3,
+  "dated-aspect": 4,
+  "event-interaction": 5,
+  "exit-tone-shift": 6,
+  "historic-movement": 7,
+  "retrograde-variant": 8
+};
+const ARTICLE_COPY_PUNCTUATION_FAILURE = /—|--/u;
+const ARTICLE_LITERAL_ENGINE_FACT = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|(?:19|20)\d{2}|\d+(?:\.\d+)?\s*(?:°|degrees?))\b/u;
+const articleCopyFields = (candidate) => [
+  candidate.headline,
+  candidate.body,
+  candidate.preview_note,
+  candidate.core_theme,
+  candidate.sign_jurisdiction,
+  candidate.lived_experience,
+  candidate.rulership_twist,
+  candidate.history_echo,
+  candidate.closing_charge,
+  ...(candidate.article_sections ?? []).flatMap((section) => [section.heading, section.body]),
+  ...(candidate.rising_horoscopes ?? []).map((entry) => entry.body)
+].filter((value) => typeof value === "string");
+const assertSkyArticleCopy = (candidate) => {
+  for (const copy of articleCopyFields(candidate)) {
+    if (ARTICLE_COPY_PUNCTUATION_FAILURE.test(copy)) {
+      throw new SourceGapError(
+        `SOURCE_GAP: sky article ${candidate.contentKey} contains a prohibited em dash or double hyphen`
+      );
+    }
+  }
+  if (candidate.article_structure === "final-v1") {
+    for (const copy of (candidate.article_sections ?? []).flatMap((section) => [
+      section.heading,
+      section.body
+    ]).filter((value) => typeof value === "string")) {
+      if (ARTICLE_LITERAL_ENGINE_FACT.test(copy)) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} hardcodes a date or degree outside an engine slot`
+        );
+      }
+    }
+  }
+};
+const articleSectionEvent = (section, events) => {
+  if (section.kind === "dated-aspect") {
+    return events.find((event) => (
+      event.type === "aspect"
+      && event.aspect === section.aspect
+      && new Set([event.a, event.b]).size === 2
+      && new Set([event.a, event.b]).has(section.a)
+      && new Set([event.a, event.b]).has(section.b)
+    )) ?? null;
+  }
+  if (
+    section.kind === "event-interaction"
+    || (section.kind === "retrograde-variant" && section.event_type)
+  ) {
+    return events.find((event) => event.type === section.event_type) ?? null;
+  }
+  return null;
+};
+const articleSlotFill = (value, slots, contentKey) => {
+  const rendered = value.replace(/\{\{([\w.]+)\}\}/g, (_, key) => (
+    slots[key] == null ? `{{${key}}}` : String(slots[key])
+  )).trim();
+  const leftover = rendered.match(/\{\{([\w.]+)\}\}/u);
+  if (leftover) {
+    throw new SourceGapError(
+      `SOURCE_GAP: sky article ${contentKey} is missing engine slot ${leftover[1]}`
+    );
+  }
+  return rendered;
+};
+const renderFinalSkyArticle = (candidate, facts) => {
+  if (candidate.article_structure !== "final-v1") return null;
+
+  assertSkyArticleCopy(candidate);
+  const sections = candidate.article_sections ?? [];
+  const kinds = new Set(sections.map((section) => section.kind));
+  const hasOpening = facts.planet === "sun"
+    ? kinds.has("seasonal-context") || kinds.has("ingress")
+    : FAST.has(facts.planet)
+      ? kinds.has("seasonal-context") && kinds.has("ingress")
+      : kinds.has("ingress");
+  if (!hasOpening || !kinds.has("collective-read") || !kinds.has("exit-tone-shift")) {
+    throw new SourceGapError(
+      `SOURCE_GAP: sky article ${candidate.contentKey} is missing a required FINAL section`
+    );
+  }
+
+  const baseSlots = {
+    entryDate: facts.entryDate,
+    exitDate: facts.exitDate,
+    historyEntryDate: facts.historyEntryDate,
+    historyExitDate: facts.historyExitDate,
+    historyDegreeRange: facts.historyDegreeRange
+  };
+  const renderedSections = sections
+    .map((section, sourceIndex) => ({ section, sourceIndex }))
+    .sort((first, second) => (
+      ARTICLE_SECTION_ORDER[first.section.kind] - ARTICLE_SECTION_ORDER[second.section.kind]
+      || first.sourceIndex - second.sourceIndex
+    ))
+    .flatMap(({ section }) => {
+      if (
+        section.kind === "historic-movement"
+        && !skyPlacementHistoryAllowed(facts.planet, Boolean(facts.isRetrograde), facts.historyEligible)
+      ) return [];
+      if (
+        section.kind === "retrograde-variant"
+        && !facts.isRetrograde
+        && !facts.isShadowPhase
+      ) return [];
+
+      const event = articleSectionEvent(section, facts.events ?? []);
+      if (
+        (
+          section.kind === "dated-aspect"
+          || section.kind === "event-interaction"
+          || (section.kind === "retrograde-variant" && section.event_type)
+        )
+        && !event
+      ) return [];
+      if (section.exact_date && section.exact_date !== event?.exactDateKey) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event date contradicts the ephemeris`
+        );
+      }
+      if (
+        section.exact_date
+        && candidate.valid_from
+        && candidate.valid_to
+        && (section.exact_date < candidate.valid_from || section.exact_date > candidate.valid_to)
+      ) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event falls outside the article window`
+        );
+      }
+      if (typeof section.degree === "number" && section.degree !== event?.exactDegree) {
+        throw new SourceGapError(
+          `SOURCE_GAP: sky article ${candidate.contentKey} event degree contradicts the ephemeris`
+        );
+      }
+      const slots = {
+        ...baseSlots,
+        aspectDate: event?.exactDate,
+        eventDate: event?.exactDate,
+        aspectDegree: event?.exactDegree,
+        eventDegree: event?.exactDegree
+      };
+      return [{
+        kind: section.kind,
+        heading: section.heading
+          ? articleSlotFill(section.heading, slots, candidate.contentKey)
+          : "",
+        body: articleSlotFill(section.body, slots, candidate.contentKey)
+      }];
+    });
+  const risingRows = candidate.rising_horoscopes ?? [];
+  const risingSigns = new Set(risingRows.map((entry) => entry.rising_sign));
+  if (risingRows.length !== 12 || risingSigns.size !== 12 || !facts.risingHouseMap) {
+    throw new SourceGapError(
+      `SOURCE_GAP: sky article ${candidate.contentKey} must provide twelve public rising horoscopes`
+    );
+  }
+  const risingHoroscopes = risingRows.map((entry) => {
+    const house = facts.risingHouseMap?.[entry.rising_sign];
+    if (!house) {
+      throw new SourceGapError(
+        `SOURCE_GAP: sky article ${candidate.contentKey} is missing the ${entry.rising_sign} rising house`
+      );
+    }
+    return {
+      risingSign: title(entry.rising_sign),
+      body: articleSlotFill(entry.body, { house, houseOrdinal: ordinal(house) }, candidate.contentKey)
+    };
+  });
+  const parts = renderedSections.map((section) => section.body);
+  return {
+    body: parts.join("\n\n"),
+    parts,
+    articleSections: renderedSections,
+    risingHoroscopes
+  };
+};
 const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, parts: [c.body], templateKey, contentKey: c.contentKey });
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
@@ -465,21 +750,22 @@ export function renderSkyLunation({ kind, sign, dateLine, mechanics, events = []
   const authored = (variant ? card(`authored/sky-${moonKind}/${sign}-${variant}`) : null)
     ?? (isEclipse ? card(`authored/sky-eclipse/${which === "new" ? "solar" : "lunar"}-${sign}`) : null)
     ?? card(`authored/sky-${moonKind}/${sign}`);
+  const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`);
   // All lunations: the authored axis/intention/ritual/completion block moves BELOW the aspect
   // events and replaces the generic close (owner edit, chat 2026-07-21). Eclipses never get
   // ritual sections and keep the observe-and-integrate canon close as the ending.
   const tail = [];
+  const signBody = signMoon?.supersedes_authored_body
+    ? signMoon.body_you
+    : (authored?.body ?? signMoon?.body_you);
+  if (signBody) paras.push(signBody);
   if (authored) {
-    paras.push(authored.body);
     if (!isEclipse) {
       if (authored.axis) tail.push(authored.axis);
       if (authored.intention) tail.push(`Set your intention: ${authored.intention}`);
       if (authored.ritual) tail.push(`Ritual: ${authored.ritual}`);
       if (authored.completion) tail.push(`To close the cycle, ask: ${authored.completion}`);
     }
-  } else {
-    const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`)?.body_you;
-    if (signMoon) paras.push(signMoon);
   }
   if (isEclipse && northSign && southSign) {
     const nodeRow = hooks.get("fallback-hook/sky-eclipse-node")?.body_you;
@@ -675,12 +961,12 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
-const SKY_PLACEMENT_ASPECT_INTERACTION = {
-  conjunction: "amplify each other",
-  square: "push against each other",
-  opposition: "pull from opposite ends",
-  trine: "work together with less friction",
-  sextile: "open a workable route between them"
+const SKY_PLACEMENT_ASPECT_FRAME = {
+  conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
+  square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
+  opposition: (aRef, bRef, timing) => `${aRef} and ${bRef} pull from opposite ends${timing.exact ? `, strongest on ${timing.label}` : ` ${timing.label}`}.`,
+  trine: (aRef, bRef, timing) => `${aRef} and ${bRef} work together with less friction${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`,
+  sextile: (aRef, bRef, timing) => `${aRef} and ${bRef} open a workable route between them${timing.exact ? `, closest on ${timing.label}` : ` ${timing.label}`}.`
 };
 
 function capitalizeSentence(value) {
@@ -690,50 +976,422 @@ function capitalizeSentence(value) {
 function skyPlacementAspectParagraph(placementPlanet, ev) {
   if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
   const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
+  const isFullMoon = ev.aspect === "opposition" && new Set([ev.a, ev.b]).size === 2
+    && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
+  const moonSign = ev.a === "moon" ? ev.aSign : ev.b === "moon" ? ev.bSign : null;
+  const sunSign = ev.a === "sun" ? ev.aSign : ev.b === "sun" ? ev.bSign : null;
+  const fullMoonSpecific = isFullMoon && moonSign
+    ? hooks.get(`fallback-hook/sky-placement-aspect/sun/moon/opposition/${moonSign}`)?.body_you
+    : null;
+  if (fullMoonSpecific) {
+    if (!sunSign || !ev.exactDate) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon facts");
+    const fullMoonBody = fillKeep(fullMoonSpecific, {
+      moonSignTitle: title(moonSign),
+      sunSignTitle: title(sunSign),
+      exactDate: ev.exactDate
+    });
+    if (/\{\{/.test(fullMoonBody)) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon slots");
+    return fullMoonBody;
+  }
   const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
     ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
-  const aRef = transitRef(ev.a, ev.aSign);
+  const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
   const bRef = transitRef(ev.b, ev.bSign);
-  const interaction = ev.aspect === "conjunction"
-    && ((ev.a === "sun" && ev.b === "jupiter") || (ev.a === "jupiter" && ev.b === "sun"))
-    ? "amplify momentum"
-    : SKY_PLACEMENT_ASPECT_INTERACTION[ev.aspect] ?? `form a ${ev.aspect}`;
+  const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
   const timing = ev.exactDate
-    ? `${ev.applying === false ? "Separating from" : "Building toward"} an exact ${ev.aspect} on ${ev.exactDate}`
-    : ev.dateLine ?? "In the current aspect window";
-  const fact = `${timing}, ${aRef} and ${bRef} ${interaction}.`;
+    ? { exact: true, label: ev.exactDate }
+    : ev.dateLine
+      ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) }
+      : null;
+  if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
+  const fact = frame(aRef, bRef, timing);
   const effect = specific ?? pairEffect(ev);
   if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
   return `${fact} ${capitalizeSentence(effect)}`.trim();
 }
 
-// ---- Sky page: voice-first planet-in-sign article. Approved pair rows render
-// hook -> lived expression -> shadow/turn, with a short tagline and three moves.
-// Computed aspect facts follow the evergreen article. ----
-export function renderSkyPlacement({ planet, sign, events = [] }) {
-  const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
-  const authoredArticle = card(`authored/sky-ingress/${planet}/${sign}`);
+const SKY_PLACEMENT_MAJOR_ASPECTS = new Set(["conjunction", "square", "opposition", "trine", "sextile"]);
+const SKY_PLACEMENT_CONTINUOUS_PLANETS = new Set([
+  "sun",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "north-node",
+  "south-node"
+]);
+const RETIRED_SUN_IDENTITY_HOOKS = [
+  "Somewhere along the way, you switched to autopilot.",
+  "You keep rescheduling a decision.",
+  "A version of yourself needs updating."
+];
+
+const SKY_PLACEMENT_MONTHS = {
+  jan: "January",
+  january: "January",
+  feb: "February",
+  february: "February",
+  mar: "March",
+  march: "March",
+  apr: "April",
+  april: "April",
+  may: "May",
+  jun: "June",
+  june: "June",
+  jul: "July",
+  july: "July",
+  aug: "August",
+  august: "August",
+  sep: "September",
+  sept: "September",
+  september: "September",
+  oct: "October",
+  october: "October",
+  nov: "November",
+  november: "November",
+  dec: "December",
+  december: "December"
+};
+
+function continuousSkyPlacementDate(value, label) {
+  const match = value.trim().match(/^([A-Za-z]+)\s+(\d{1,2})(?:,\s*(\d{4}))?$/u);
+  const month = match ? SKY_PLACEMENT_MONTHS[match[1].toLowerCase()] : null;
+  if (!match || !month) {
+    throw new SourceGapError(`SOURCE_GAP: continuous sky placement ${label} date ${value}`);
+  }
+  return {
+    body: `${month} ${Number(match[2])}`,
+    year: match[3] ?? null
+  };
+}
+
+function continuousSkyPlacementDateContext(entryDate, exitDate) {
+  const entry = continuousSkyPlacementDate(entryDate, "entry");
+  const exit = continuousSkyPlacementDate(exitDate, "exit");
+  const factLine = entry.year && exit.year
+    ? entry.year === exit.year
+      ? `${entry.body} to ${exit.body}, ${exit.year}`
+      : `${entry.body}, ${entry.year} to ${exit.body}, ${exit.year}`
+    : `${entry.body} to ${exit.body}`;
+  return { entry, exit, factLine };
+}
+
+function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDate, exitDate }) {
+  if (!entryDate || !exitDate) {
+    throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
+  }
+  const requiredFields = ["fact_line", "opening", "tension", "development", "close"];
+  if (requiredFields.some((field) => typeof signCopy[field] !== "string" || !signCopy[field].trim())) {
+    throw new SourceGapError(`SOURCE_GAP: continuous sky placement structure ${planet}/${sign}`);
+  }
+
+  const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
+  const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title(sign) };
+  const factLine = dates.factLine;
+  const collective = [signCopy.opening, signCopy.tension, signCopy.development]
+    .map((part) => fillKeep(part, ctx));
+  const close = fillKeep(signCopy.close, ctx);
+  const activeAspectMatch = events
+    .filter((event) => (
+      event.type === "aspect"
+      && event.exactDate
+      && event.a
+      && event.b
+      && [event.a, event.b].includes(planet)
+      && SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect)
+    ))
+    .map((event) => {
+      const planets = new Set([event.a, event.b]);
+      const unit = (signCopy.aspect_units ?? []).find((candidate) => (
+        candidate.aspect === event.aspect
+        && candidate.planets?.length === 2
+        && candidate.planets.every((planetName) => planets.has(planetName))
+      ));
+      return unit ? { event, unit } : null;
+    })
+    .find(Boolean);
+  let aspectSection = null;
+  let aspectParts = [];
+
+  if (activeAspectMatch) {
+    const exactDate = continuousSkyPlacementDate(activeAspectMatch.event.exactDate, "aspect").body;
+    const aspectCtx = { ...ctx, exactDate };
+    aspectParts = [activeAspectMatch.unit.opportunity, activeAspectMatch.unit.check]
+      .map((part) => fillKeep(part, aspectCtx));
+    aspectSection = {
+      kind: "dated-aspect",
+      heading: fillKeep(activeAspectMatch.unit.heading, aspectCtx),
+      body: aspectParts.join("\n\n")
+    };
+  }
+
+  const moves = Array.isArray(signCopy.try_this)
+    ? signCopy.try_this.map((move) => fillKeep(move, ctx)).slice(0, 3)
+    : [];
+  const parts = [factLine, ...collective, ...aspectParts, close];
+  const articleSections = [
+    { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
+    ...(aspectSection ? [aspectSection] : []),
+    { kind: "exit-tone-shift", heading: "", body: close }
+  ];
+  const renderedText = [
+    `${title(planet)} in ${title(sign)}`,
+    ...parts,
+    ...moves,
+    ...articleSections.map((section) => section.heading)
+  ].join("\n");
+
+  if (/\{\{/u.test(renderedText)) {
+    throw new SourceGapError(`SOURCE_GAP: continuous sky placement slots ${planet}/${sign}`);
+  }
+  if (/[\u2013\u2014]/u.test(renderedText)) {
+    throw new SourceGapError(`SOURCE_GAP: continuous sky placement dash ${planet}/${sign}`);
+  }
+  if (RETIRED_SUN_IDENTITY_HOOKS.some((hook) => renderedText.includes(hook))) {
+    throw new SourceGapError(`SOURCE_GAP: retired Sun identity hook ${planet}/${sign}`);
+  }
+  for (const transitDate of [dates.entry.body, dates.exit.body]) {
+    if (renderedText.split(transitDate).length - 1 > 2) {
+      throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
+    }
+  }
+
+  return {
+    headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+    tagline: null,
+    moves,
+    movesPresentation: "plain",
+    closingCharge: null,
+    keyDates: [],
+    body: parts.join("\n\n"),
+    parts,
+    articleSections,
+    templateKey: "sky-placement-continuous-v2",
+    contentKey: signCopy.contentKey
+  };
+}
+
+// ---- Sky page: FINAL articles render fixed authored sections and twelve public
+// rising-sign blocks. They are exclusive of the slot-tier frame, tagline, moves,
+// Key Dates list, and separately assembled aspect copy. When no article matches,
+// the approved slot tier remains the deterministic fallback. ----
+export function renderSkyPlacement({
+  planet,
+  sign,
+  events = [],
+  asOfDate,
+  articleMode = "current",
+  articleKey,
+  entryDate,
+  exitDate,
+  hasPriorIngress = false,
+  historyEligible,
+  historyEntryDate,
+  historyExitDate,
+  historyDegreeRange,
+  risingHouseMap,
+  isRetrograde = false,
+  isShadowPhase = false
+}) {
+  const retrogradeGuidance = isRetrograde
+    ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
+    : null;
+  if (isRetrograde && !retrogradeGuidance) {
+    throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
+  }
+  const authoredArticle = selectSkyArticle({
+    planet,
+    sign,
+    events,
+    asOfDate,
+    articleMode,
+    articleKey,
+    isRetrograde,
+    isShadowPhase
+  });
+  if (articleMode === "archive" && !authoredArticle) {
+    throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
+  }
   if (authoredArticle) {
-    const parts = [authoredArticle.body, ...aspectParas].filter(Boolean);
+    assertSkyArticleCopy(authoredArticle);
+    const finalArticle = renderFinalSkyArticle(authoredArticle, {
+      planet,
+      sign,
+      events,
+      asOfDate,
+      articleMode,
+      articleKey,
+      entryDate,
+      exitDate,
+      hasPriorIngress,
+      historyEligible,
+      historyEntryDate,
+      historyExitDate,
+      historyDegreeRange,
+      risingHouseMap,
+      isRetrograde,
+      isShadowPhase
+    });
+    if (finalArticle) {
+      return {
+        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline: null,
+        moves: [],
+        closingCharge: null,
+        keyDates: [],
+        articleWindow: articleWindow(authoredArticle),
+        articleMode,
+        ...finalArticle,
+        templateKey: "sky-article-final-v1",
+        contentKey: authoredArticle.contentKey
+      };
+    }
+    const structuredParts = [
+      authoredArticle.core_theme,
+      authoredArticle.sign_jurisdiction,
+      authoredArticle.lived_experience,
+      authoredArticle.rulership_twist
+    ];
+    const isStructured = structuredParts.every((part) => typeof part === "string" && part.trim());
+
+    if (isStructured) {
+      const reviewNote = isRetrograde || isShadowPhase || hasPriorIngress
+        ? authoredArticle.preview_note ?? retrogradeGuidance
+        : null;
+      const closingCharge = authoredArticle.closing_charge?.trim() || null;
+      const parts = [
+        reviewNote,
+        ...structuredParts,
+        skyPlacementHistoryAllowed(planet, isRetrograde, historyEligible)
+          ? authoredArticle.history_echo
+          : null,
+        closingCharge
+      ].filter(Boolean);
+
+      return {
+        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline: null,
+        moves: [],
+        closingCharge,
+        keyDates: [],
+        articleWindow: articleWindow(authoredArticle),
+        articleMode,
+        risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
+          risingSign: entry.rising_sign,
+          body: entry.body
+        })),
+        body: parts.join("\n\n"),
+        parts,
+        templateKey: "sky-article-v1",
+        contentKey: authoredArticle.contentKey
+      };
+    }
+
+    const parts = [authoredArticle.body, retrogradeGuidance].filter(Boolean);
     return {
       headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+      tagline: null,
+      moves: [],
+      keyDates: [],
+      articleWindow: articleWindow(authoredArticle),
+      articleMode,
+      risingHoroscopes: (authoredArticle.rising_horoscopes ?? []).map((entry) => ({
+        risingSign: entry.rising_sign,
+        body: entry.body
+      })),
       body: parts.join("\n\n"),
       parts,
-      templateKey: "authored/sky-ingress",
+      templateKey: "sky-article-v1",
       contentKey: authoredArticle.contentKey
     };
   }
+  const signCopyKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
+  const signCopyRow = hooks.get(signCopyKey);
+  const continuousSignCopy = signCopyRow?.render_policy === "sky-placement-continuous-v2"
+    ? signCopyRow
+    : null;
+  if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+    if (!continuousSignCopy) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+    }
+    return renderContinuousSkyPlacement(continuousSignCopy, {
+      planet,
+      sign,
+      events,
+      entryDate,
+      exitDate
+    });
+  }
+
+  const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
   const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
   const pairHook = hooks.get(pairKey)?.body_you;
   const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
   const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
+  const signCopy = continuousSignCopy?.body_you;
+  const signParts = signCopy
+    ? [signCopy]
+    : pairHook && pairLived && pairTurn
+      ? [pairHook, pairLived, pairTurn]
+      : [];
   const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
   const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
     .split(/\r?\n/u)
     .map((move) => move.trim())
     .filter(Boolean);
+  {
+    const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
+    const directPlanetFrame = hooks.get(`fallback-hook/sky-placement-frame/${planet}`)?.body_you;
+    const retrogradePlanetFrame = hooks.get(`fallback-hook/sky-placement-retro-frame/${planet}`)?.body_you;
+    const planetFrame = isRetrograde || isShadowPhase
+      ? retrogradePlanetFrame ?? directPlanetFrame
+      : directPlanetFrame;
+    const personal = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
+    const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
+    const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
+    const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
+    if (
+      windowFrame
+      && planetFrame
+      && personal
+      && practice
+      && signStyle
+      && planetFunction
+      && entryDate
+      && exitDate
+      && signParts.length > 0
+    ) {
+      const ctx = { signTitle: title(sign), signStyle, planetFunction, entryDate, exitDate };
+      const parts = [
+        windowFrame,
+        planetFrame,
+        ...signParts,
+        ...aspectParas,
+        personal,
+        practice
+      ].map((part) => fillKeep(part, ctx));
+      if (parts.some((part) => /\{\{/u.test(part))) {
+        throw new SourceGapError(`SOURCE_GAP: sky placement V3 frame ${planet}/${sign}`);
+      }
+      return {
+        headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
+        tagline,
+        moves: signCopy ? [] : moves,
+        body: parts.join("\n\n"),
+        parts,
+        templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
+        contentKey: signCopy ? signCopyKey : `fallback-hook/sky-placement/${planet}`
+      };
+    }
+  }
+
   if (pairHook && pairLived && pairTurn) {
-    const parts = [pairHook, pairLived, pairTurn, ...aspectParas];
+    const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline,
@@ -747,10 +1405,18 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
   const template = tpl("fallback-template/sky.placement-article");
   if (!template) throw new SourceGapError("SOURCE_GAP: missing template fallback-template/sky.placement-article");
   const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-  const signStyle = vocab.get(`fallback-vocab/sign-style/${sign}`)?.body;
+  const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
+  const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
   const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-  if (!fallbackHook || !frame || !signStyle) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-  const ctx = { signTitle: title(sign), signStyle, signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body };
+  if (!fallbackHook || !frame || !signStyle || !planetFunction) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  const ctx = {
+    signTitle: title(sign),
+    signStyle,
+    signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body,
+    planetFunction,
+    entryDate,
+    exitDate
+  };
   const placementRef = capitalizeSentence(transitRef(planet));
   const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you
     ?? fill(fallbackHook, ctx);
@@ -772,7 +1438,10 @@ export function renderSkyPlacement({ planet, sign, events = [] }) {
   }
   const baseBody = fillKeep(template.body, templateCtx);
   if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-  const parts = [...baseBody.split(/\n{2,}/u).filter(Boolean), ...aspectParas];
+  const baseParts = baseBody.split(/\n{2,}/u).filter(Boolean);
+  const parts = retrogradeGuidance
+    ? [...baseParts.slice(0, -1), retrogradeGuidance, ...baseParts.slice(-1), ...aspectParas]
+    : [...baseParts, ...aspectParas];
   return {
     headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
     body: parts.join("\n\n"),
@@ -839,21 +1508,10 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({
-  transiting,
-  aspect,
-  planetA,
-  planetB,
-  natalAspect,
-  otherName,
-  sign,
-  variant,
-  window: win,
-  endpointOwner = "friend",
-  endpointPlanet,
-  endpointPossessive,
-  activatedPlanets
-}) {
+export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, window: win }) {
+  if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
+    throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
+  }
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
@@ -865,44 +1523,37 @@ export function renderBondTransit({
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
-  const paras = [effect];
   const relation = {
-    conjunction: "meeting",
+    conjunction: "conjunct",
     opposition: "opposite",
-    square: "squaring",
-    trine: "in a trine to",
-    sextile: "sextile to",
+    square: "square",
+    trine: "trine",
+    sextile: "sextile",
   };
   const timeClose = inlineWindow(timeOpen);
-  const endpoint = endpointPlanet ?? (endpointOwner === "friend" ? planetB : planetA);
-  const activated = [...new Set(
-    (activatedPlanets?.length ? activatedPlanets : [endpointOwner === "friend" ? planetA : planetB])
-      .filter(Boolean)
-  )];
-  const endpointLabel = endpointOwner === "friend"
-    ? `${otherName}'s ${title(endpoint)}`
-    : `your ${title(endpoint)}`;
-  const endpointReference = endpointOwner === "friend"
-    ? `${endpointPossessive ?? `${otherName}'s`} ${title(endpoint)}`
-    : `your ${title(endpoint)}`;
-  const activatedLabels = activated.map((planet) => (
-    endpointOwner === "friend" ? `your ${title(planet)}` : `${otherName}'s ${title(planet)}`
-  ));
-  const activatedList = activatedLabels.length <= 1
-    ? activatedLabels[0] ?? ""
-    : `${activatedLabels.slice(0, -1).join(", ")}, and ${activatedLabels.at(-1)}`;
-  const connectionWord = activatedLabels.length === 1 ? "connection" : "connections";
-  paras.push(`${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpointLabel}${timeClose ? ` ${timeClose}` : ""}, activating the ${connectionWord} ${endpointReference} makes with ${activatedList}.`);
-  const body = paras.join(" ").replace(/\s{2,}/g, " ").trim();
+  const endpoint = endpointOwner === "reader"
+    ? `your ${title(endpointPlanet)}`
+    : `${otherName}'s ${title(endpointPlanet)}`;
+  const activatedList = endpointOwner === "reader"
+    ? `${otherName}'s ${serialList(activatedPlanets.map(title))}`
+    : serialList(activatedPlanets.map((planet) => `your ${title(planet)}`));
+  const plural = activatedPlanets.length !== 1;
+  const endpointReference = plural && endpointOwner === "friend"
+    ? `${friendPossessivePronoun || "their"} ${title(endpointPlanet)}`
+    : "it";
+  const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
+  const paras = [effect, closing];
+  const body = paras.join("\n\n").trim();
   if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
   const HL = { conjunction: "conjunct", opposition: "opposite" };
-  const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpointLabel}`;
-  return { headline, body, parts: [body], templateKey: "fallback-template/bond.transit" };
+  const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
+  return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
 }
 
-// ---- Per-rising lunation horoscope (owner template library): house illuminated ->
-// sign core -> full-moon counterpoint -> current ruler house -> manifestations ->
-// Release/Shift -> Higher Path. Moving-body houses arrive as event-time facts. ----
+// ---- Per-rising lunation horoscope (owner weekly shape): recognizable situation
+// -> house frame -> compact sign core -> full-moon counterpoint -> current ruler
+// house -> optional modern layer -> one present-tense ending. Moving-body houses
+// arrive as event-time facts. ----
 const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 export function renderLunationMacro({ kind, sign }) {
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new-moon" : "full-moon";
@@ -911,56 +1562,79 @@ export function renderLunationMacro({ kind, sign }) {
   return result(macro, "authored/sky-lunation-macro");
 }
 
-export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHouse, sunHouse, ruler, rulerHouse, uranusHouse, uranusActive }) {
+export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, uranusHouse, uranusLayerActive, weekly = false }) {
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
   const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
   const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
   const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
-  const higher = hooks.get(`fallback-hook/lunation-higher-path/${h}`)?.body_you;
-  if (!frame || !jurisdiction || !higher) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
-  const paras = [fill(frame, { houseOrdinal: ordinal(h), jurisdiction })];
-  // sign alignment: the per-sign lunation section distilled from the owner's book
-  const signSection = hooks.get(`fallback-hook/sky-${which === "full" ? "fullmoon" : "newmoon"}-sign/${sign}`)?.body_you;
-  if (signSection) paras.push(signSection);
+  if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+  const houseFrame = fill(frame, { houseOrdinal: ordinal(h), jurisdiction });
+  const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
+  const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
+  // Per-rising cards use a compact, reviewed sign core. The full per-sign
+  // section belongs to the Sky article and must never be copied into this card.
+  // Sign packages use kind-qualified compact cores. The approved Aquarius
+  // Full Moon calibration predates that namespace, so retain it as a
+  // Full-Moon-only fallback until its kind-qualified replacement arrives.
+  const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you
+    ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
+  if (signCompact) paras.push(signCompact);
   if (which === "full" && sunHouse && sunHouse !== h) {
     const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
     if (sunJurisdiction) {
-      paras.push(`The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`);
+      const counterpoint = `The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
+      paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
     }
   }
   if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
     const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
     if (rulerHouseBody) {
-      paras.push(`With ${title(ruler)} ruling this lunation from your ${ordinal(rulerHouse)} house, ${rulerHouseBody}.`);
+      const lunationLabel = isEclipse
+        ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse")
+        : (which === "new" ? "New Moon" : "Full Moon");
+      const rulerTitle = title(ruler);
+      let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal(rulerHouse)} house, so ${rulerHouseBody.replace(/\.+$/u, "")}.`;
+      if (rulerRetrograde) {
+        const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
+        if (!retroOverlay) {
+          throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+        }
+        rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
+      }
+      paras.push(rulerParagraph);
     }
   }
-  if (uranusActive && uranusHouse) {
+  const weekLayer = weekly
+    ? hooks.get("fallback-hook/lunation-week-layer")?.body_you
+    : null;
+  let weekLayerRendered = false;
+  if (uranusLayerActive && uranusHouse) {
     const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
-    if (uranusLayer) paras.push(uranusLayer);
+    if (uranusLayer) {
+      paras.push(weekLayer ? `${uranusLayer} ${weekLayer}` : uranusLayer);
+      weekLayerRendered = Boolean(weekLayer);
+    }
   }
-  // concrete manifestations for this house (from the book's per-house chapters)
-  const shows = hooks.get(`fallback-hook/lunation-shows/${h}`)?.body_you;
-  if (shows) paras.push(shows);
-  // in-the-moment events for this house + lunation kind (from the book's per-house chapters)
-  const moment = hooks.get(`fallback-hook/lunation-moment/${which}/${h}`)?.body_you;
-  if (moment) paras.push(moment);
-  if (!isEclipse) {
-    const release = hooks.get(`fallback-hook/lunation-release/${h}`)?.body_you;
-    if (release) paras.push(release);
-  }
-  paras.push(higher);
-  // New Moons close with the book's verbatim intention for this house
-  if (which === "new" && !isEclipse) {
-    const intent = hooks.get(`fallback-hook/lunation-intention/${h}`)?.body_you;
-    if (intent) paras.push(`Set your intention: "${intent}"`);
-  }
-  if (isEclipse) {
-    const note = hooks.get("fallback-hook/lunation-horoscope/eclipse-note")?.body_you;
-    if (note) paras.push(note);
-  }
+  if (weekLayer && !weekLayerRendered) paras.push(weekLayer);
+  // The former manifestations, moment, Release/Shift, Higher Path, intention,
+  // and eclipse-note stack is intentionally retired on per-rising cards. A
+  // dedicated reviewed closer may be added later; never synthesize one here.
   const label = isEclipse ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse") : (which === "new" ? "New Moon" : "Full Moon");
   return { headline: `${label} for ${title(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+}
+
+export function renderLunationEventCard({ eventDate, blendFallbackEnabled = false, ...blendFacts }) {
+  const normalizedEventDate = eventDate.trim().slice(0, 10);
+  const risingKey = `${blendFacts.risingSign}-rising`;
+  const satori = card(
+    `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
+  );
+  if (satori) return result(satori, "authored/satori-lunation-v1");
+  if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+  throw new SourceGapError(
+    `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
+  );
 }
 
 // ---- Daily At-a-Glance (Copy Batch A): engine-hidden headline + body driven by the

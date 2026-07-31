@@ -29,6 +29,9 @@ jobs:
 
       - name: Build app
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+          VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
 
       - name: Run admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts

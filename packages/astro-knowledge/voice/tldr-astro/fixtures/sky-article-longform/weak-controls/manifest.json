@@ -1,0 +1,18 @@
+[
+  {
+    "id": "weak-control-abstract-strategy-brief",
+    "title": "Abstract strategy brief",
+    "planet": "saturn",
+    "edition": "ingress",
+    "file": "abstract-strategy-brief.md",
+    "sha256": "145e9c990b9e99a23986b501ed021893b9d5a6004f40bb310766a3c3a6f20b87"
+  },
+  {
+    "id": "weak-control-generic-cosmic-overview",
+    "title": "Generic cosmic overview",
+    "planet": "jupiter",
+    "edition": "ingress",
+    "file": "generic-cosmic-overview.md",
+    "sha256": "9ee9b0f1c8ddb415a3507c2a27b0112e46361806b528bba4fd86a15c5949c19e"
+  }
+]

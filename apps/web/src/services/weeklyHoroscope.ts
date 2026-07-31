@@ -20,19 +20,17 @@ export type WeeklyHoroscopeSection = {
   headline: string;
   driverLabel: string;
   body: string;
-  macro?: {
-    headline: string;
-    body: string;
-  };
   tag?: string;
   accented: boolean;
   source: "lunation" | "station" | "return" | "heavy" | "weekly-moon";
   unit: string;
 };
 
-export type WeeklyHoroscopeOpener = {
+export type WeeklyHoroscopeReading = {
   headline: string;
+  driverLabel: string;
   body: string;
+  sourceUnits: string[];
 };
 
 export type WeeklyHoroscopeAssembly = {
@@ -41,9 +39,12 @@ export type WeeklyHoroscopeAssembly = {
   weekEnd: string;
   weekType: WeeklyHoroscopeWeekType;
   chip: string;
-  opener?: WeeklyHoroscopeOpener;
-  sections: WeeklyHoroscopeSection[];
-  background?: string;
+  macro?: {
+    headline: string;
+    body: string;
+  };
+  horoscope: WeeklyHoroscopeReading;
+  aspects: WeeklyHoroscopeReading[];
   sourceGaps: string[];
   derivation: {
     calculationTimeUtc: "16:00";
@@ -65,6 +66,12 @@ type WeeklyWindow = {
   weekStart: string;
   weekEnd: string;
   dateKeys: string[];
+};
+
+type WeeklyEphemerisData = {
+  events: LunarCalendarEvent[];
+  snapshots: SkySnapshot[];
+  lunationEventSkies: Map<string, SkySnapshot>;
 };
 
 type TransitContact = {
@@ -118,6 +125,12 @@ const signRulers: Record<string, string> = {
   pisces: "jupiter"
 };
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const skyBodyClaimPattern = new RegExp(
+  `\\b(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node)\\s+(?:(?:is\\s+)?(?:currently\\s+)?(?:retrograde|direct|Rx)\\s+|is\\s+)?in\\s+(${signs.join("|")})\\b`,
+  "giu"
+);
+const weeklyEphemerisCache = new Map<string, Promise<WeeklyEphemerisData>>();
+const maxWeeklyEphemerisCacheEntries = 12;
 
 export const weeklyContentImportCounts = Object.freeze({
   total: sourceRows.length,
@@ -133,6 +146,27 @@ function isReaderEligible(row: WeeklySourceRow) {
 
 function normalizeId(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+export function assertLunationBodyMatchesEventSky(body: string, snapshot: SkySnapshot) {
+  const eventPositions = new Map(
+    snapshot.positions.map((position) => [normalizeId(position.planet), position])
+  );
+
+  for (const match of body.matchAll(skyBodyClaimPattern)) {
+    const planet = normalizeId(match[1] ?? "");
+    const claimedSign = normalizeId(match[2] ?? "");
+    const eventPosition = eventPositions.get(planet);
+    if (!eventPosition) {
+      throw new SourceGapError(`SOURCE_GAP: event-time position missing for ${planet}`);
+    }
+    const eventSign = normalizeId(eventPosition.sign);
+    if (claimedSign !== eventSign) {
+      throw new SourceGapError(
+        `SOURCE_GAP: stale-sky lunation claim says ${planet} in ${claimedSign}; event-time ephemeris says ${eventSign}`
+      );
+    }
+  }
 }
 
 function title(value: string) {
@@ -190,6 +224,60 @@ function wholeSignHouse(sign: string, risingSign: string) {
   return signIndex < 0 || risingIndex < 0 ? null : ((signIndex - risingIndex + 12) % 12) + 1;
 }
 
+function weeklyEphemerisCacheKey(location: LocationInput, window: WeeklyWindow) {
+  return [
+    window.weekStart,
+    window.weekEnd,
+    location.latitude.toFixed(4),
+    location.longitude.toFixed(4),
+    location.timeZone || "UTC"
+  ].join("|");
+}
+
+async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow): Promise<WeeklyEphemerisData> {
+  const key = weeklyEphemerisCacheKey(location, window);
+  const cached = weeklyEphemerisCache.get(key);
+  if (cached) return cached;
+
+  const request = (async () => {
+    const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
+    const rangeStart = new Date(`${window.weekStart}T00:00:00Z`);
+    const rangeEnd = new Date(`${window.weekEnd}T23:59:59.999Z`);
+    const { getAstrodienstSky, getLunarCalendarRangeEvents } = await import("./ephemeris");
+    const [rangeEvents, ...snapshots] = await Promise.all([
+      getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
+      ...calculationDates.map((date) => getAstrodienstSky(location, date))
+    ]);
+    const dateKeySet = new Set(window.dateKeys);
+    const events = rangeEvents
+      .filter((event) => dateKeySet.has(event.dateKey))
+      .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+    const lunationEvents = events.filter((event) => event.type === "lunation");
+    const lunationEventSkies = new Map<string, SkySnapshot>(
+      await Promise.all(lunationEvents.map(async (event) => [
+        event.id,
+        await getAstrodienstSky(location, new Date(event.startsAt))
+      ] as const))
+    );
+
+    return { events, snapshots, lunationEventSkies };
+  })();
+
+  weeklyEphemerisCache.set(key, request);
+  void request.catch(() => {
+    if (weeklyEphemerisCache.get(key) === request) {
+      weeklyEphemerisCache.delete(key);
+    }
+  });
+
+  if (weeklyEphemerisCache.size > maxWeeklyEphemerisCacheEntries) {
+    const oldestKey = weeklyEphemerisCache.keys().next().value;
+    if (oldestKey) weeklyEphemerisCache.delete(oldestKey);
+  }
+
+  return request;
+}
+
 export function lunationBlendFacts(
   snapshot: SkySnapshot,
   lunationSign: string,
@@ -208,26 +296,30 @@ export function lunationBlendFacts(
     ? snapshot.positions.find((position) => normalizeId(position.planet) === ruler)
     : null;
   const rulerHouse = rulerPosition ? wholeSignHouse(rulerPosition.sign, risingSign) : null;
-  const uranus = snapshot.positions.find((position) => normalizeId(position.planet) === "uranus");
   const moon = snapshot.positions.find((position) => normalizeId(position.planet) === "moon");
+  const uranus = snapshot.positions.find((position) => normalizeId(position.planet) === "uranus");
   const uranusHouse = uranus ? wholeSignHouse(uranus.sign, risingSign) : null;
-  const uranusSeparation = uranus && moon
-    && typeof uranus.longitude === "number"
-    && typeof moon.longitude === "number"
-    ? angularSeparation(uranus.longitude, moon.longitude)
-    : null;
-  const uranusMakesCloseAspect = uranusSeparation !== null && exactAspects.some(
-    ({ degrees }) => Math.abs(uranusSeparation - degrees) <= 3
+  const lunationLights = isFullMoon ? [moon, sun] : [moon ?? sun];
+  const uranusLongitude = uranus?.longitude;
+  const uranusHasCloseAspect = typeof uranusLongitude === "number"
+    && lunationLights.some((light) => {
+      if (typeof light?.longitude !== "number") return false;
+      const separation = angularSeparation(uranusLongitude, light.longitude);
+      return exactAspects.some(({ degrees }) => Math.abs(separation - degrees) <= 3);
+    });
+  const uranusLayerActive = Boolean(
+    uranusHouse
+    && ([1, 4, 7, 10].includes(uranusHouse) || uranusHasCloseAspect)
   );
-  const uranusIsAngular = uranusHouse !== null && [1, 4, 7, 10].includes(uranusHouse);
 
   return {
     moonHouse,
     sunHouse,
     ruler,
     rulerHouse,
+    rulerRetrograde: rulerPosition?.motion === "retrograde",
     uranusHouse,
-    uranusActive: uranusMakesCloseAspect || uranusIsAngular
+    uranusLayerActive
   };
 }
 
@@ -319,8 +411,10 @@ function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky:
     kind,
     sign: normalizeId(event.sign ?? ""),
     risingSign: normalizeId(risingSign),
-    ...blendFacts
+    ...blendFacts,
+    weekly: true
   });
+  assertLunationBodyMatchesEventSky(rendered.body, eventSky);
 
   return {
     headline: rendered.headline,
@@ -421,111 +515,42 @@ type WeeklySectionCandidate = WeeklyHoroscopeSection & {
   orb?: number;
 };
 
-function bodyKey(body: string) {
-  return body.trim().replace(/\s+/g, " ").toLowerCase();
-}
-
-function mergeDistinctBodies(primary: string, additions: string[]) {
-  const seen = new Set(primary.split(/\n{2,}/).map(bodyKey));
-  const unique = additions
-    .map((body) => body.trim())
-    .filter(Boolean)
-    .filter((body) => {
-      const key = bodyKey(body);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-
-  return [primary.trim(), ...unique].filter(Boolean).join("\n\n");
-}
-
-function nextRetrogradeNodeSign(sign: string) {
-  const index = signs.indexOf(normalizeId(sign));
-  return index < 0 ? null : signs[(index + signs.length - 1) % signs.length];
-}
-
-function daysBetween(first: string, second: string) {
-  return Math.round(
-    (new Date(`${second}T12:00:00Z`).getTime() - new Date(`${first}T12:00:00Z`).getTime())
-    / 86_400_000
-  );
-}
-
-function weeklyBackground({
-  events,
-  snapshots,
-  previousSnapshot,
-  window
-}: {
-  events: LunarCalendarEvent[];
-  snapshots: SkySnapshot[];
-  previousSnapshot: SkySnapshot;
-  window: WeeklyWindow;
-}) {
-  const monday = snapshots[0];
-  if (!monday) return undefined;
-
-  const stationPlanets = new Set(
-    events.filter(isExactStation).map((event) => normalizeId(event.planet ?? ""))
-  );
-  const pieces: string[] = [];
-  const personalIngresses = events.filter((event) => (
-    event.type === "ingress"
-    && ["sun", "mercury", "venus", "mars"].includes(normalizeId(event.planet ?? ""))
-  ));
-
-  for (const event of personalIngresses) {
-    pieces.push(
-      `${title(normalizeId(event.planet ?? ""))} enters ${title(normalizeId(event.sign ?? ""))} on ${eventDayLabel(event.dateKey)}.`
-    );
+function composeWeeklyReading(sections: WeeklyHoroscopeSection[]): WeeklyHoroscopeReading {
+  const dominant = sections.find((section) => section.accented) ?? sections[0];
+  if (!dominant) {
+    return {
+      headline: "Your week",
+      driverLabel: "this week’s transits to your natal chart",
+      body: "No single transit takes over the week. Keep your schedule realistic and leave room to respond to what develops.",
+      sourceUnits: []
+    };
   }
 
-  const previousByPlanet = new Map(
-    previousSnapshot.positions.map((position) => [normalizeId(position.planet), position])
-  );
-  for (const position of monday.positions) {
-    if (pieces.length >= 4) break;
-    const planet = normalizeId(position.planet);
-    if (planet === "moon" || stationPlanets.has(planet)) continue;
-    const previous = previousByPlanet.get(planet);
-    if (!previous) continue;
+  return {
+    headline: dominant.headline || dominant.driverLabel,
+    driverLabel: dominant.driverLabel,
+    body: dominant.body,
+    sourceUnits: [dominant.unit]
+  };
+}
 
-    if (normalizeId(previous.sign) !== normalizeId(position.sign)) {
-      pieces.push(
-        `${title(planet)} begins the week in ${title(normalizeId(position.sign))}, a change from last week.`
-      );
-      continue;
-    }
+function composeWeeklyAspects(
+  sections: WeeklyHoroscopeSection[],
+  horoscope: WeeklyHoroscopeReading
+): WeeklyHoroscopeReading[] {
+  const primaryUnits = new Set(horoscope.sourceUnits);
 
-    if (
-      position.motion === "retrograde"
-      && previous.motion === "retrograde"
-      && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet)
-    ) {
-      pieces.push(`${title(planet)} remains retrograde in ${title(normalizeId(position.sign))}.`);
-    }
-  }
-
-  const northNode = monday.positions.find((position) => normalizeId(position.planet) === "north-node");
-  if (northNode?.transitEnd) {
-    const ingressDate = northNode.transitEnd.slice(0, 10);
-    const daysUntilIngress = daysBetween(window.weekEnd, ingressDate);
-    if (daysUntilIngress >= 0 && daysUntilIngress <= 42) {
-      const nextSign = nextRetrogradeNodeSign(northNode.sign);
-      if (nextSign) {
-        const countdown = daysUntilIngress <= 7
-          ? "within a week"
-          : `in about ${Math.max(2, Math.round(daysUntilIngress / 7))} weeks`;
-        pieces.unshift(
-          `The North Node changes signs ${countdown}, moving from ${title(normalizeId(northNode.sign))} into ${title(nextSign)}.`
-        );
-      }
-    }
-  }
-
-  const unique = [...new Map(pieces.map((piece) => [bodyKey(piece), piece])).values()].slice(0, 4);
-  return unique.length > 0 ? unique.join(" ") : undefined;
+  return sections
+    .filter((section) => (
+      (section.source === "heavy" || section.source === "return")
+      && !primaryUnits.has(section.unit)
+    ))
+    .map((section) => ({
+      headline: section.headline || section.driverLabel,
+      driverLabel: section.driverLabel,
+      body: section.body,
+      sourceUnits: [section.unit]
+    }));
 }
 
 export async function buildWeeklyHoroscope({
@@ -535,8 +560,7 @@ export async function buildWeeklyHoroscope({
   location,
   now = new Date(),
   dailyServedUnitsByDate = {},
-  rows = sourceRows,
-  ephemeris
+  rows = sourceRows
 }: {
   userId: string;
   natalSky: SkySnapshot;
@@ -545,38 +569,10 @@ export async function buildWeeklyHoroscope({
   now?: Date;
   dailyServedUnitsByDate?: Record<string, string[]>;
   rows?: WeeklySourceRow[];
-  ephemeris?: {
-    getAstrodienstSky: typeof import("./ephemeris").getAstrodienstSky;
-    getLunarCalendarMonth: typeof import("./ephemeris").getLunarCalendarMonth;
-  };
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
-  const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
-  const {
-    getAstrodienstSky,
-    getLunarCalendarMonth
-  } = ephemeris ?? await import("./ephemeris");
-  const [calendar, ...snapshots] = await Promise.all([
-    getLunarCalendarMonth(location, calculationDates[3], { detail: "full" }),
-    ...calculationDates.map((date) => getAstrodienstSky(location, date, { includeTransitWindows: true }))
-  ]);
-  const previousSnapshot = await getAstrodienstSky(
-    location,
-    new Date(`${addUtcDays(window.weekStart, -7)}T16:00:00Z`),
-    { includeTransitWindows: true }
-  );
-  const dateKeySet = new Set(window.dateKeys);
-  const events = calendar.events
-    .filter((event) => dateKeySet.has(event.dateKey))
-    .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
-  const lunationEvents = events.filter((event) => event.type === "lunation");
-  const lunationEventSkies = new Map<string, SkySnapshot>(
-    await Promise.all(lunationEvents.map(async (event) => [
-      event.id,
-      await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
-    ] as const))
-  );
+  const { events, snapshots, lunationEventSkies } = await loadWeeklyEphemeris(location, window);
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
   const contactsByDay = snapshots.map((snapshot) => allTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();
@@ -602,27 +598,12 @@ export async function buildWeeklyHoroscope({
           const eventSky = lunationEventSkies.get(event.id);
           if (!eventSky) throw new SourceGapError(`SOURCE_GAP: event-time sky missing for ${event.id}`);
           const rendered = renderLunation(event, risingSign, eventSky);
-          let macro: WeeklyHoroscopeSection["macro"];
-          try {
-            const renderedMacro = transitSynastryFallbackRendererV3.renderLunationMacro({
-              kind: lunationKind(event),
-              sign: normalizeId(event.sign ?? "")
-            });
-            macro = {
-              headline: renderedMacro.headline,
-              body: renderedMacro.body
-            };
-          } catch (error) {
-            if (!(error instanceof SourceGapError)) throw error;
-            // Sparse macro coverage falls back to the existing assembled card.
-          }
           candidates.push({
             dateKey: event.dateKey,
             dayLabel: eventDayLabel(event.dateKey),
             headline: rendered.headline,
             driverLabel: event.title,
             body: weeklyVoice(rendered.body),
-            macro,
             tag: event.eclipseType ? `${title(event.eclipseType)} eclipse` : event.title,
             accented: false,
             source: rendered.source,
@@ -689,22 +670,8 @@ export async function buildWeeklyHoroscope({
     }
   });
 
-  const lunationByDate = new Map(
-    candidates
-      .filter((candidate) => candidate.source === "lunation" && candidate.dateKey)
-      .map((candidate) => [candidate.dateKey as string, candidate])
-  );
-  const mergedSameDay = candidates.filter((candidate) => {
-    if (!candidate.dateKey || candidate.source === "lunation") return true;
-    const lunation = lunationByDate.get(candidate.dateKey);
-    if (!lunation) return true;
-    lunation.body = mergeDistinctBodies(lunation.body, [candidate.body]);
-    lunation.unit = `${lunation.unit}+${candidate.unit}`;
-    return false;
-  });
-
   const uniqueBodies = new Set<string>();
-  const capped = mergedSameDay
+  const capped = candidates
     .sort((first, second) => (
       first.priority - second.priority
       || (first.orb ?? 0) - (second.orb ?? 0)
@@ -728,7 +695,7 @@ export async function buildWeeklyHoroscope({
       try {
         const rendered = transitSynastryFallbackRendererV3.renderWeeklyMoon({
           sign: normalizeId(mondayMoon.sign),
-          variant: stableVariant(`${userId}:weekly-moon:${isoWeekNumber(window.weekStart)}:${normalizeId(mondayMoon.sign)}`)
+          variant: (isoWeekNumber(window.weekStart) % 3) + 1
         });
         sections = [{
           dayLabel: "Weekly Moon",
@@ -759,13 +726,25 @@ export async function buildWeeklyHoroscope({
     sections = sections.map((section, index) => ({ ...section, accented: index === accentIndex }));
   }
 
-  const opener = openerFor(weekType, events, rows);
-  const background = weeklyBackground({
-    events,
-    snapshots,
-    previousSnapshot,
-    window
-  });
+  const macroEvent = events.find((event) => event.type === "lunation");
+  let macro: WeeklyHoroscopeAssembly["macro"];
+  if (macroEvent) {
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderLunationMacro({
+        kind: lunationKind(macroEvent),
+        sign: normalizeId(macroEvent.sign ?? "")
+      });
+      macro = {
+        headline: rendered.headline,
+        body: rendered.body
+      };
+    } catch (error) {
+      if (!(error instanceof SourceGapError)) throw error;
+      // Macro coverage is intentionally sparse. Missing units leave the existing
+      // personalized weekly path unchanged and never trigger synthesized copy.
+    }
+  }
+  const horoscope = composeWeeklyReading(sections);
 
   return {
     status: "ready",
@@ -773,9 +752,9 @@ export async function buildWeeklyHoroscope({
     weekEnd: window.weekEnd,
     weekType,
     chip: weekTypeLabels[weekType],
-    opener,
-    sections,
-    background,
+    macro,
+    horoscope,
+    aspects: composeWeeklyAspects(sections, horoscope),
     sourceGaps,
     derivation: {
       calculationTimeUtc: "16:00",

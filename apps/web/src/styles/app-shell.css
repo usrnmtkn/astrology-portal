@@ -79,9 +79,9 @@
   margin: var(--label-eyebrow-margin);
   padding: var(--label-eyebrow-padding);
   color: var(--muted);
-  font-family: var(--font-label);
+  font-family: var(--label-eyebrow-font-family);
   font-size: var(--label-eyebrow-font-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: var(--label-eyebrow-tracking);
   line-height: var(--label-eyebrow-line-height);
   text-transform: uppercase;

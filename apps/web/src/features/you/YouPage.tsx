@@ -180,9 +180,11 @@ function natalAspectPatternDetailArticle({
 
 function YouEmptyState({
   onCreateChart,
+  onRequestWeeklyHoroscope,
   setupStepsLeft
 }: {
   onCreateChart: () => void;
+  onRequestWeeklyHoroscope?: () => void;
   setupStepsLeft: number;
 }) {
   return (
@@ -273,8 +275,10 @@ function YouProfileSummary({
         size="large"
       />
       <div className="you-profile-copy">
-        <h1>{profileName}</h1>
-        {profileHandle ? <p className="you-profile-handle">@{profileHandle}</p> : null}
+        <div className="you-profile-name-row">
+          <h1>{profileName}</h1>
+          {profileHandle ? <span className="you-profile-handle">@{profileHandle}</span> : null}
+        </div>
         {signaturesReady ? (
           <div className="you-signature-row" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
@@ -530,43 +534,40 @@ function YouUpdatesTab({
               </div>
               <span className="weekly-horoscope__chip ui-pill ui-pill--neutral">{weeklyHoroscopeAssembly.chip}</span>
             </header>
-            {weeklyHoroscopeAssembly.opener ? (
-              <article className="weekly-horoscope__opener daily-horoscope-summary">
-                <h3>{weeklyHoroscopeAssembly.opener.headline}</h3>
-                {weeklyHoroscopeAssembly.opener.body
+            {weeklyHoroscopeAssembly.macro ? (
+              <article className="weekly-horoscope__macro daily-horoscope-summary">
+                <span className="eyebrow section-label">The macro view</span>
+                <h3>{weeklyHoroscopeAssembly.macro.headline}</h3>
+                {weeklyHoroscopeAssembly.macro.body
                   .split(/\n{2,}/)
                   .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </article>
             ) : null}
-            {weeklyHoroscopeAssembly.sections.map((section) => (
+            <article className="weekly-horoscope__reading daily-horoscope-summary">
+              <span className="eyebrow section-label">Your horoscope</span>
+              <h3>{weeklyHoroscopeAssembly.horoscope.headline}</h3>
+              <p className="weekly-horoscope__driver">
+                Based on {weeklyHoroscopeAssembly.horoscope.driverLabel}
+              </p>
+              {weeklyHoroscopeAssembly.horoscope.body
+                .split(/\n{2,}/)
+                .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </article>
+            {weeklyHoroscopeAssembly.aspects.map((aspect) => (
               <article
-                className={`weekly-horoscope__event daily-horoscope-summary${section.accented ? " is-accented" : ""}`}
-                key={section.unit}
+                className="weekly-horoscope__aspect daily-horoscope-summary"
+                key={aspect.sourceUnits.join(":")}
               >
-                <div className="weekly-horoscope__event-meta">
-                  <span className="eyebrow section-label">{section.dayLabel}</span>
-                  {section.tag ? <span className="ui-pill ui-pill--neutral">{section.tag}</span> : null}
-                </div>
-                {section.macro ? (
-                  <div className="weekly-horoscope__macro">
-                    <h3>{section.macro.headline}</h3>
-                    {section.macro.body
-                      .split(/\n{2,}/)
-                      .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                  </div>
-                ) : null}
-                <h3>{section.headline}</h3>
-                {section.body
+                <span className="eyebrow section-label">Aspect</span>
+                <h3>{aspect.headline}</h3>
+                <p className="weekly-horoscope__driver">
+                  Based on {aspect.driverLabel}
+                </p>
+                {aspect.body
                   .split(/\n{2,}/)
                   .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </article>
             ))}
-            {weeklyHoroscopeAssembly.background ? (
-              <article className="weekly-horoscope__background daily-horoscope-summary">
-                <span className="eyebrow section-label">In the background</span>
-                <p>{weeklyHoroscopeAssembly.background}</p>
-              </article>
-            ) : null}
           </>
         )}
       </div>

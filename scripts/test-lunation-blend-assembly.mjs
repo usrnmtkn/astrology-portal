@@ -70,26 +70,26 @@ const geminiFacts = {
   sunHouse: 3,
   ruler: "saturn",
   rulerHouse: 11,
-  uranusActive: true,
+  uranusLayerActive: true,
   uranusHouse: 1
 };
 const geminiQa = qaRenderer.renderLunationHoroscope(geminiFacts);
 const geminiReader = readerRenderer.renderLunationHoroscope(geminiFacts);
-const geminiCounterpoint = geminiQa.parts.findIndex((part) => part.startsWith("The friction this week"));
-const geminiRuler = geminiQa.parts.findIndex((part) => part.startsWith("With Saturn ruling this lunation"));
+const geminiCounterpoint = geminiQa.parts.findIndex((part) => part.includes("The friction this week"));
+const geminiRuler = geminiQa.parts.findIndex((part) => part.startsWith("Saturn rules this Full Moon"));
 const geminiUranus = geminiQa.parts.findIndex((part) => part.startsWith("Uranus in your 1st house"));
 assert.match(geminiQa.parts[0], /9th house/u);
-assert.ok(geminiCounterpoint > 1, "Counterpoint must follow the house frame and sign core.");
+assert.ok(geminiCounterpoint >= 1, "Counterpoint must follow the house frame.");
 assert.ok(geminiRuler > geminiCounterpoint, "Traditional ruler localization must follow the counterpoint.");
 assert.ok(geminiUranus > geminiRuler, "The modern secondary layer must follow, never replace, the ruler line.");
 assert.match(geminiQa.parts[geminiCounterpoint], /3rd house/u);
 assert.match(
   geminiQa.parts[geminiRuler],
-  /^With Saturn ruling this lunation from your 11th house, friends, organizations, professional contacts, and shared commitments are part of the answer\./u
+  /^Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u
 );
 assert.match(
   geminiReader.body,
-  /With Saturn ruling this lunation from your 11th house, friends, organizations, professional contacts, and shared commitments are part of the answer\./u,
+  /Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u,
   "The approved 11th-house ruler row must remain in reader output."
 );
 assert.match(geminiReader.body, /Uranus in your 1st house adds a more personal element of change/u);
@@ -105,7 +105,7 @@ const houseOne = readerRenderer.renderLunationHoroscope({
 });
 assert.doesNotMatch(
   houseOne.body,
-  /With Saturn ruling this lunation/u,
+  /Saturn rules this Full Moon/u,
   "A needs-review 1st-house ruler row must remain out of reader output."
 );
 
@@ -120,7 +120,7 @@ const leoReader = readerRenderer.renderLunationHoroscope({
 });
 assert.match(leoReader.parts[0], /7th house/u);
 assert.match(leoReader.body, /your 1st house/u);
-assert.doesNotMatch(leoReader.body, /With Saturn ruling this lunation/u);
+assert.doesNotMatch(leoReader.body, /Saturn rules this Full Moon/u);
 
 const cancerNewMoon = readerRenderer.renderLunationHoroscope({
   kind: "new-moon",
