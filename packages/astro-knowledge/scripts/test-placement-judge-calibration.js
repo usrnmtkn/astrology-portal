@@ -2,7 +2,7 @@
 //
 // Calibration for the placement-article LLM-as-judge. Run once the judge model
 // is wired (needs the generator's API key). It proves the judge is trustworthy
-// before it may auto-publish:
+// before it may be used as editorial advice:
 //
 //   - no owner-approved calibration trio may be rated off-voice (1)
 //   - no known-weak draft may be rated in-voice (3)
@@ -97,6 +97,11 @@ async function main() {
     process.exit(1);
   }
   console.log("Judge calibrated: separates good from bad by a wide margin, no control mis-rated.");
+}
+
+if (!process.argv.includes("--authorize-live")) {
+  console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
+  process.exit(0);
 }
 
 main().catch((err) => {

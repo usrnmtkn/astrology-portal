@@ -15,8 +15,8 @@
 // the teaching correction, the benediction close, and whether the article
 // wears its own planet's furniture.
 //
-// Same gates and plumbing as the other judges: cold (0.1), optional
-// median-of-N, 3 auto-publish / 2 human-review / 1 regenerate.
+// The judge is advisory: even a 3 requires human approval. Live calls are
+// explicitly authorized and audited by editorial-judge-runtime.js.
 //
 //   node scripts/judge-article-voice.js --dry-run ./path/to/article.md --planet uranus
 
@@ -63,12 +63,9 @@ function buildJudgePrompt(articleText, { planet = "", edition = "" } = {}) {
   ].filter(Boolean).join("\n");
 }
 
-// Cold judge on the generator's plumbing (same provider/model/key).
-const { generate } = require("./generate-sky-aspect-cards.js");
+const { editorialGate } = require("./editorial-judge-policy.js");
+const { runJudgeSamples } = require("./editorial-judge-runtime.js");
 const JUDGE_TEMPERATURE = 0.1;
-async function judge(prompt) {
-  return generate(prompt, { temperature: JUDGE_TEMPERATURE });
-}
 
 function parseVerdict(raw) {
   const m = String(raw).match(/\{[\s\S]*\}/);
@@ -76,19 +73,22 @@ function parseVerdict(raw) {
   try { return JSON.parse(m[0]); } catch { return { score: 1, verdict: "off-voice", why: "unparseable judge output" }; }
 }
 
-const gateFor = (score) => (score === 3 ? "auto-publish" : score === 2 ? "human-review" : "regenerate");
-
 // samples > 1 -> median score (self-consistency); calibration uses 5, production 1.
 async function judgeLongformArticle(articleText, opts = {}) {
-  const fn = opts.judgeFn || judge;
   const prompt = buildJudgePrompt(articleText, opts);
-  const samples = Math.max(1, opts.samples || 1);
-  const verdicts = [];
-  for (let i = 0; i < samples; i++) verdicts.push(parseVerdict(await fn(prompt)));
-  const scores = verdicts.map((v) => v.score).sort((a, b) => a - b);
-  const median = scores[Math.floor(scores.length / 2)];
-  const chosen = verdicts.find((v) => v.score === median) || verdicts[0];
-  return { ...chosen, score: median, samples, gate: gateFor(median) };
+  const result = await runJudgeSamples({
+    content: articleText,
+    prompt,
+    rubric: JSON.stringify(spec),
+    rubricVersion: spec.id || "sky-article-longform-v1",
+    samples: opts.samples,
+    temperature: JUDGE_TEMPERATURE,
+    judgeFn: opts.judgeFn,
+    parseVerdict,
+    context: { surface: "sky-article-longform", planet: opts.planet || "", edition: opts.edition || "" },
+    calibration: Boolean(opts.calibration)
+  });
+  return { ...result, ...editorialGate(result) };
 }
 
 module.exports = { buildJudgePrompt, judgeLongformArticle, parseVerdict, furnitureFor };
