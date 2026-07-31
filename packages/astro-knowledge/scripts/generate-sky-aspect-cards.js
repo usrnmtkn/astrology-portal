@@ -651,61 +651,74 @@ function loadLocalEnv() {
   }
 }
 
-function modelConfig(role = "generation") {
+const { resolveActiveRelease } = require("./editorial-model-registry.js");
+
+function modelConfig(role = "generation", surface = "default") {
   loadLocalEnv();
   const isJudge = role === "judge";
+  const release = resolveActiveRelease({ role, surface });
   const requested = (isJudge
     ? (
         process.env.CONTENT_JUDGE_PROVIDER
         || process.env.CONTENT_GENERATION_PROVIDER_JUDGE
         || process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
         || process.env.CONTENT_GENERATION_PROVIDER
-        || "openai"
+        || release.provider
       )
     : (
         process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
         || process.env.CONTENT_GENERATION_PROVIDER
-        || "openai"
+        || release.provider
       )).trim().toLowerCase();
   const provider = requested === "anthropic" ? "claude" : requested;
+  const registryModel = provider === release.provider ? release.model : null;
+  const registryOverride = provider !== release.provider;
 
   if (provider === "claude") {
+    const configuredModel = isJudge
+      ? (process.env.ANTHROPIC_JUDGE_MODEL || process.env.ANTHROPIC_MODEL)
+      : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL);
     return {
+      ...release,
       provider,
-      model: isJudge
-        ? (process.env.ANTHROPIC_JUDGE_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6")
-        : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6"),
+      model: configuredModel || registryModel || "claude-sonnet-4-6",
       apiKey: isJudge
         ? (process.env.ANTHROPIC_JUDGE_API_KEY || process.env.ANTHROPIC_API_KEY)
         : process.env.ANTHROPIC_API_KEY,
       temperature: isJudge ? 0.1 : 0.7,
-      role
+      role,
+      surface,
+      registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
     };
   }
 
   if (provider === "openai") {
+    const configuredModel = isJudge
+      ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL)
+      : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
     return {
+      ...release,
       provider,
-      model: isJudge
-        ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini")
-        : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini"),
+      model: configuredModel || registryModel || "gpt-4.1-mini",
       apiKey: isJudge
         ? (process.env.OPENAI_JUDGE_API_KEY || process.env.OPENAI_API_KEY)
         : process.env.OPENAI_API_KEY,
       temperature: isJudge ? 0.1 : 0.7,
-      role
+      role,
+      surface,
+      registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
     };
   }
 
   throw new Error(`Unsupported ${isJudge ? "CONTENT_JUDGE_PROVIDER" : "CONTENT_GENERATION_PROVIDER_SKY_ASPECT"} '${requested}'. Use 'openai' or 'claude'.`);
 }
 
-function generationConfig() {
-  return modelConfig("generation");
+function generationConfig(surface = "default") {
+  return modelConfig("generation", surface);
 }
 
-function judgeConfig() {
-  return modelConfig("judge");
+function judgeConfig(surface = "sky-aspect") {
+  return modelConfig("judge", surface);
 }
 
 function openAiOutputText(payload) {
