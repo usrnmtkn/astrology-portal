@@ -2,7 +2,7 @@
 
 ## Phase 1: Actual-engine readiness and provenance
 
-Status: implemented locally.
+Status: released to production on 2026-07-31.
 
 - `/health` performs fixed Sun and Moon calculations and reports the engine
   returned by `pyswisseph`.
@@ -16,7 +16,7 @@ Status: implemented locally.
 
 ## Phase 2: NASA/JPL shadow verification
 
-Status: workflow added locally.
+Status: released and verified on 2026-07-31.
 
 - The `Ephemeris integrity` GitHub Actions workflow runs weekly and can also be
   started manually.
@@ -41,7 +41,7 @@ Status: workflow added locally.
 
 ## Phase 3: Last-known-verified current-sky cache
 
-Status: implemented locally.
+Status: released to production on 2026-07-31.
 
 - Only snapshots containing non-empty, validated facts marked
   `verified-primary` or `verified-independent` can be persisted.

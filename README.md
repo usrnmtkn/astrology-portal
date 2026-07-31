@@ -24,6 +24,19 @@ flowchart LR
 - `packages/astro-knowledge`: the source of truth for astrology content, schema, voice files, generators, and timing helpers.
 - `services/tldrastro-api`: FastAPI calculation service for charts, timing, relationship facts, and content-ready astrology facts.
 
+## Reliability Release Documentation
+
+The 2026-07-31 reliability release added actual-engine provenance, weekly
+NASA/JPL Horizons shadow verification, a last-known-verified current-Sky cache,
+an exact Fallback Architecture V3 Supabase mirror, and Node.js 24 GitHub Action
+runtimes.
+
+See the dedicated
+[reliability and content-sync release README](docs/releases/2026-07-31-reliability-and-content-sync/README.md)
+for the package manifest, operating commands, verification results, and known
+boundaries. NASA/JPL is a monitoring oracle in this design, not a synchronous
+runtime fallback.
+
 The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JSON file into the app. When the knowledge package changes, run the root build so `packages/astro-knowledge/dist/knowledge.json` is regenerated before the web app builds.
 
 ## Content Precedence
