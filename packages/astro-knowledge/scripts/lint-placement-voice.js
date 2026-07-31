@@ -139,7 +139,17 @@ function lintArticle(article) {
   // -- structural advisories (spec ranges; exemplars set the tolerance)
   const hookS = sentencesOf(slots.hook);
   const livedS = sentencesOf(slots.lived);
-  if (hookS.length > 3) notes.push(`hook is ${hookS.length} sentences; spec says 1-3`);
+  if (hookS.length < 2) {
+    findings.push({
+      severity: "fail",
+      source: "shape",
+      slot: "hook",
+      term: "missing-meaning-after-quote",
+      match: slots.hook,
+      reason: "hook sentence 1 renders as a standalone quote; at least one sentence must remain for the planet-plus-sign meaning paragraph"
+    });
+  }
+  if (hookS.length > 4) notes.push(`hook is ${hookS.length} sentences; spec says 2-4`);
   if (livedS.length < 2 || livedS.length > 4) notes.push(`lived is ${livedS.length} sentences; spec says 2-4`);
   if (turnSentences.length < 2 || turnSentences.length > 5) notes.push(`turn is ${turnSentences.length} sentences; spec says 2-5 with one close`);
   const hookWords = slots.hook.split(/\s+/).filter(Boolean).length;
