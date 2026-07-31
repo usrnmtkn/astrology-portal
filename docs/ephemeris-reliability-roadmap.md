@@ -34,12 +34,17 @@ Status: implemented.
   90-day artifact window.
 - Pull requests run the `nasa-jpl-freshness` release gate. It requires the
   newest completed main-branch comparison to have passed within 36 hours.
+- Failures reopen the persistent monitor issue, assign the configured alert
+  recipients, and mention them in the failure update. The repository owner is
+  the default recipient; `EPHEMERIS_ALERT_LOGINS` can route alerts to up to ten
+  GitHub usernames.
+- Focused Mercury fixtures bracket the July 23, 2026 direct station, asserting
+  retrograde motion before it, direct motion after it, and the primary
+  station timestamp within two minutes.
 
 ## Next implementation work
 
-1. Configure repository-level Actions failure notifications for the team.
-2. Add focused station-boundary fixtures.
-3. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
+1. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
    product requirement.
 
 The `nasa-jpl-freshness` check is now required by the protected `main` branch,

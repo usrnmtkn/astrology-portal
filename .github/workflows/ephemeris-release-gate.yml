@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Verify ephemeris monitoring contract
+        run: node scripts/test-ephemeris-monitoring-contract.mjs
       - name: Require a fresh passing NASA/JPL comparison
         env:
           GITHUB_TOKEN: ${{ github.token }}
