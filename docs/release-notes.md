@@ -1,5 +1,20 @@
 # Release Notes
 
+## 2026-07-31: True Lunar Node Parity and Calculation Transparency
+
+- Standardized the web app and calculation API on the True Lunar Node, fixing
+  the production/local discrepancy at the Aquarius-Pisces sign boundary.
+- Added exact web/API node-longitude parity checks and boundary fixtures so a
+  Mean Node/True Node split cannot silently return.
+- Added the calculation-method statement to member and guest Settings:
+  planetary positions are calculated with Swiss Ephemeris and independently
+  verified against NASA/JPL.
+- Expanded the optional Sky calculation diagnostic with timestamp, timezone,
+  calculation engine and version, zodiac frame, house system, node model,
+  calculation version, cache age, and snapshot verification status.
+- Confirmed 244 NASA/JPL-supported facts with zero discrepancies during the
+  release verification run.
+
 ## 2026-07-31: Daily NASA/JPL Calculation Verification
 
 - TLDR Astro now documents Swiss Ephemeris as its real-time calculation engine

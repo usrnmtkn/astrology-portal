@@ -120,16 +120,19 @@ If fact validation fails, the endpoint returns `422` with diagnostics and an emp
 
 The Sky page now exposes a developer-only calculation diagnostics panel when `import.meta.env.DEV` or `VITE_ASTRO_DIAGNOSTICS=true`.
 
-It reports:
+The diagnostic is enabled automatically in local development and can be enabled
+in a deployed environment with `VITE_ASTRO_DIAGNOSTICS=true`. It reports:
 
-- calculation source/version;
-- raw timestamp;
+- calculation engine and library version;
+- calculation timestamp and timezone;
+- zodiac frame, house system, and lunar-node model;
+- calculation contract version;
 - normalized fact ID;
 - content record ID sample;
 - snapshot/live source;
 - hydration state;
 - cache age;
-- validation status.
+- snapshot verification status.
 
 ## Independent Verification Harness
 
