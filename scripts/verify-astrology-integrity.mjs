@@ -23,6 +23,10 @@ function datePart(value) {
   return String(value ?? "").slice(0, 10);
 }
 
+function timestampDiffMinutes(first, second) {
+  return Math.abs(new Date(first).getTime() - new Date(second).getTime()) / 60_000;
+}
+
 function byId(facts, kind, id) {
   return facts.find((fact) => fact.kind === kind && fact.planetOrPointId === id);
 }
@@ -221,7 +225,7 @@ function compareReferenceFacts(fixture, primaryFacts, referenceFacts, tolerances
   return { discrepancies, gaps, verified };
 }
 
-function assertPosition(fixture, facts, assertion) {
+function assertPosition(fixture, facts, assertion, tolerances) {
   const fact = byId(facts, "position", assertion.planetOrPointId);
 
   assert.ok(fact, `${fixture.id}: expected position fact ${assertion.planetOrPointId}.`);
@@ -239,6 +243,14 @@ function assertPosition(fixture, facts, assertion) {
   }
   if (assertion.retrogradeEnd !== undefined) {
     assert.equal(datePart(fact.stationEnd), assertion.retrogradeEnd, `${fixture.id}: retrograde end`);
+  }
+  if (assertion.stationEndAt !== undefined) {
+    const toleranceMinutes = assertion.stationToleranceMinutes ?? tolerances.stationMinutes;
+    const differenceMinutes = timestampDiffMinutes(fact.stationEnd, assertion.stationEndAt);
+    assert.ok(
+      Number.isFinite(differenceMinutes) && differenceMinutes <= toleranceMinutes,
+      `${fixture.id}: station end ${fact.stationEnd} differs from ${assertion.stationEndAt} by ${differenceMinutes} minutes.`
+    );
   }
   if (assertion.longitudeMin !== undefined) {
     assert.ok(
@@ -281,13 +293,13 @@ function assertAspect(fixture, facts, assertion) {
   }
 }
 
-function assertFixtureSpecifics(fixture, facts) {
+function assertFixtureSpecifics(fixture, facts, tolerances) {
   const positionAssertions = [
     ...(fixture.assertions?.position ? [fixture.assertions.position] : []),
     ...(fixture.assertions?.positions ?? [])
   ];
   for (const assertion of positionAssertions) {
-    assertPosition(fixture, facts, assertion);
+    assertPosition(fixture, facts, assertion, tolerances);
   }
 
   const aspectAssertions = [
@@ -392,7 +404,7 @@ async function main() {
       const validation = factsModule.validateAstrologyFacts(facts);
 
       assert.ok(validation.ok, `${fixture.id}: primary facts failed validation: ${validation.diagnostics.join("; ")}`);
-      assertFixtureSpecifics(fixture, facts);
+      assertFixtureSpecifics(fixture, facts, fixturesConfig.tolerances);
 
       const referencePayload = runExternalProvider(fixture);
 

@@ -30,6 +30,49 @@
       }
     },
     {
+      "id": "sky-mercury-before-direct-station-2026-07-23",
+      "surface": "Sky",
+      "date": "2026-07-23T10:58:00.000Z",
+      "location": {
+        "label": "Greenwich, UK",
+        "latitude": 51.4769,
+        "longitude": 0,
+        "timeZone": "Europe/London"
+      },
+      "assertions": {
+        "position": {
+          "planetOrPointId": "mercury",
+          "sign": "Cancer",
+          "motion": "retrograde",
+          "retrogradePhase": "retrograde-passage",
+          "stationEndAt": "2026-07-23T22:57:52.000Z",
+          "stationToleranceMinutes": 2,
+          "longitudeMin": 106.31,
+          "longitudeMax": 106.34
+        }
+      }
+    },
+    {
+      "id": "sky-mercury-after-direct-station-2026-07-24",
+      "surface": "Sky",
+      "date": "2026-07-24T04:58:00.000Z",
+      "location": {
+        "label": "Greenwich, UK",
+        "latitude": 51.4769,
+        "longitude": 0,
+        "timeZone": "Europe/London"
+      },
+      "assertions": {
+        "position": {
+          "planetOrPointId": "mercury",
+          "sign": "Cancer",
+          "motion": "direct",
+          "longitudeMin": 106.31,
+          "longitudeMax": 106.34
+        }
+      }
+    },
+    {
       "id": "sky-la-dst-spring-boundary-2026-03-08",
       "surface": "Sky",
       "date": "2026-03-08T09:30:00.000Z",
