@@ -2188,7 +2188,7 @@ export async function getAstrodienstSky(
     swe.SE_PLUTO,
     SE_CHIRON,
     SE_MEAN_BLACK_MOON_LILITH,
-    swe.SE_MEAN_NODE
+    swe.SE_TRUE_NODE
   ];
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
     const result = swe.calc_ut(jd, planetIds[index], flags);
