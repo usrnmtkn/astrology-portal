@@ -1,0 +1,30 @@
+[
+  {
+    "file": "TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+    "title": "Saturn enters Aries 2025",
+    "planet": "saturn",
+    "edition": "ingress",
+    "sha256": "b533e709f2dfc329b11a9d3ff092aa86c52ed3f1be560987010447d3f3ddccb3"
+  },
+  {
+    "file": "TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER.md",
+    "title": "What Jupiter in Cancer Means for Your Sign",
+    "planet": "jupiter",
+    "edition": "ingress",
+    "sha256": "5430edd61cfa74e218e6c306c99dda588cf4f155f85efaf5d08ac4da3a7ebb33"
+  },
+  {
+    "file": "TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER.md",
+    "title": "Uranus direct in Taurus 2025",
+    "planet": "uranus",
+    "edition": "station-direct",
+    "sha256": "3a0c4cbab43e42961062f7628c8fb3e65a259293158cb22bfecf262ca7633b8c"
+  },
+  {
+    "file": "TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER.md",
+    "title": "Uranus Rx in Gemini",
+    "planet": "uranus",
+    "edition": "station-retrograde",
+    "sha256": "c87d8c26fbc1ada6b89d395a841f4c0dbbaafa95c6720fa3414f41f747f11fb8"
+  }
+]
