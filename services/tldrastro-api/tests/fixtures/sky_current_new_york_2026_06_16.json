@@ -45,7 +45,7 @@
       "Mars": { "longitude": 51.257366, "sign": "Taurus", "house": 9, "motion": "direct" },
       "Jupiter": { "longitude": 117.155454, "sign": "Cancer", "house": 11, "motion": "direct" },
       "Saturn": { "longitude": 13.415014, "sign": "Aries", "house": 8, "motion": "direct" },
-      "North Node": { "longitude": 333.345703, "sign": "Pisces", "house": 7, "motion": "retrograde" }
+      "North Node": { "longitude": 332.060607, "sign": "Pisces", "house": 7, "motion": "retrograde" }
     },
     "aspects": [
       { "from": "Venus", "to": "Neptune", "type": "trine", "orb": 0.5592 },
