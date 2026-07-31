@@ -1084,9 +1084,11 @@ function cacheFallbackArchitectureV3Bundle(
 function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const body = stringFrom(record.body);
+  const recordBody = stringFrom(record.body);
+  const recordBodyYou = stringFrom(record.body_you);
+  const recordBodyThey = stringFrom(record.body_they);
 
-  if (!body) {
+  if (!recordBody && !recordBodyYou && !recordBodyThey) {
     return null;
   }
 
@@ -1094,7 +1096,9 @@ function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | nu
     ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "full_copy",
-    body,
+    ...(recordBody ? { body: recordBody } : {}),
+    ...(recordBodyYou ? { body_you: recordBodyYou } : {}),
+    ...(recordBodyThey ? { body_they: recordBodyThey } : {}),
     review_status: reviewStatus || stringFrom(record.review_status) || "approved"
   };
 }
@@ -1127,7 +1131,7 @@ function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
   const body = stringFrom(record.body);
   const grammarFrame = stringFrom(record.grammar_frame);
 
-  if (!body || !grammarFrame) {
+  if (!body) {
     return null;
   }
 
@@ -1135,7 +1139,7 @@ function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
     ...record,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "vocabulary",
-    grammar_frame: grammarFrame,
+    ...(grammarFrame ? { grammar_frame: grammarFrame } : {}),
     body,
     review_status: reviewStatus || stringFrom(record.review_status) || "approved"
   };

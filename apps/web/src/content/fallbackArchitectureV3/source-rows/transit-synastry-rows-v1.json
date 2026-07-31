@@ -1,6 +1,6 @@
 {
  "schema": "tldrastro-transit-synastry-rows-v1",
- "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render. | 2026-07-28: fast-planet transit-aspect v2 wired (Sun/Mercury/Venus/Mars, incident-anchored short cards) + aspect-gated insert rows (authored/transit-aspect-insert/{t}/{n}/{aspect}, appended at render on exact aspect match). | 2026-07-28: restored 15 owner-approved exact Jupiter/Pluto/Neptune-to-Chiron Phase 1 cards dropped by the V2 merge.",
+ "note": "Owner-authored library content ingested verbatim (full_copy, approved). Sources: TLDR house-transit library, aspect-sample batches, compatibility card sets. {{other_name}} renders as the friend's name. | 2026-07-25: Mars two-layer house-transit set added (authored/transit-house-intro + authored/transit-house-sign, dual voice, base + Satori variant-2 for houses 1-7; owner-approved). | 2026-07-25: Venus two-layer house-transit set added (V3 transit register, 12 intros + 144 syntheses, dual voice, owner-approved). | 2026-07-26: Sun two-layer house-transit set added (Hand-grounded, month-explicit, varied openers; owner-approved) + Venus falsifiability pass applied. | 2026-07-26: Mercury two-layer house-transit set added (Hand-grounded thinking-window shape; owner-directed sourcing; personal planets complete). | 2026-07-27: Mars Satori variant-2 completed for houses 8-12 (rotation parity). | 2026-07-27: Jupiter + Saturn two-layer house-transit sets added (slow register, Hand-grounded, owner-calibrated 1st houses; six planets now layered). | 2026-07-28: transit-aspect library v2 wired - owner-approved sets for transiting Saturn, Chiron, Jupiter, Neptune, Uranus, Pluto (soft/hard per target incl. angles), Lilith (conj/opp only, Walker canon), Nodes (conjunction cards + nodal return + point explainers), Saturn 12-house intros + Aries layers rewritten. Closers use {{aspectWord}}/{{untilDate}} slots filled at render. | 2026-07-28: fast-planet transit-aspect v2 wired (Sun/Mercury/Venus/Mars, incident-anchored short cards) + aspect-gated insert rows (authored/transit-aspect-insert/{t}/{n}/{aspect}, appended at render on exact aspect match). | 2026-07-28: restored 15 owner-approved exact Jupiter/Pluto/Neptune-to-Chiron Phase 1 cards dropped by the V2 merge.\n\nExported from dashboard/Supabase on 2026-07-31T16:35:46.687Z; this file is the emergency local snapshot, not the source of truth.",
  "authoredCards": [
   {
    "contentKey": "authored/compat-deep/moon/aquarius/aquarius",
@@ -30706,18 +30706,6 @@
    ]
   },
   {
-   "contentKey": "authored/transit-aspect/saturn/venus/square",
-   "content_role": "full_copy",
-   "surface": "transit-aspect",
-   "headline": "Saturn square your Venus",
-   "body_you": "You may feel lonely even next to people who love you. You can still share a home, a calendar, or a bank account while affection gets buried under work schedules, childcare, debt, and the assumption that closeness will take care of itself.\n\nMoney may feel tighter too. A conversation about rent, spending, debt, or who keeps paying for the extras can reveal a larger problem about fairness. The disagreement may not really be about the bill. It may be about who feels considered, who keeps adjusting, and if both people are carrying the life they built together.\n\nSome connections can be rebuilt if both people are willing to name the problem and change the routine. In others, history, habit, or fear of being alone may be doing more of the work than affection. Saturn square Venus makes it difficult to keep calling familiarity closeness.",
-   "review_status": "approved",
-   "approved_via": "owner-final, TLDR-Lunation-Blend-Units-V1.md V2",
-   "source_keys": [
-    "TLDR-Lunation-Blend-Units-V1.md"
-   ]
-  },
-  {
    "contentKey": "authored/transit-aspect/saturn/venus/hard",
    "content_role": "full_copy",
    "surface": "transit-aspect",
@@ -35009,6 +34997,640 @@
     "house.lilith.12",
     "TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md"
    ]
+  },
+  {
+   "contentKey": "authored/transit-aspect/saturn/venus/square",
+   "content_role": "full_copy",
+   "surface": "transit-aspect",
+   "headline": "Saturn square your Venus",
+   "body_you": "You may feel lonely even next to people who love you. You can still share a home, a calendar, or a bank account while affection gets buried under work schedules, childcare, debt, and the assumption that closeness will take care of itself.\n\nMoney may feel tighter too. A conversation about rent, spending, debt, or who keeps paying for the extras can reveal a larger problem about fairness. The disagreement may not really be about the bill. It may be about who feels considered, who keeps adjusting, and if both people are carrying the life they built together.\n\nSome connections can be rebuilt if both people are willing to name the problem and change the routine. In others, history, habit, or fear of being alone may be doing more of the work than affection. Saturn square Venus makes it difficult to keep calling familiarity closeness.",
+   "review_status": "approved",
+   "approved_via": "owner-final, TLDR-Lunation-Blend-Units-V1.md V2",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ]
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Aquarius, that may be the friendship that only works because one person keeps organizing everything, the group plan everyone agrees with but no one supports, or the role you accepted years ago that no one has checked to see if you still want.\n\nAquarius is a fixed air sign ruled by Saturn. It can step back from the immediate emotion and see how the larger system works. Who makes the decisions? Who carries the responsibility? Who is expected to adjust? That distance is useful when you need to see the pattern clearly. Taken too far, it can become detachment, rigid thinking, or loyalty to a principle long after it stops helping the people involved.\n\nThe Sun in Leo sits opposite this Moon, bringing personal recognition into tension with the expectations of the group. You may notice where you have been waiting for approval, staying loyal to a familiar role, or agreeing with a plan because you do not want to risk your place in the room. If belonging depends on staying quiet or continuing to play the same part, that arrangement becomes harder to defend. You may also see where a group has been happy to use your work while treating your need for credit as an ego problem.\n\nSaturn gives this Full Moon weight. The problem probably did not begin this week. It may be the same limitation everyone keeps working around, the responsibility that keeps returning to the same person, or the future plan that still sounds good but has no budget, deadline, or clear owner.\n\nClarity does not require a decision on the same day. Let the information settle. Notice what needs new terms, what both sides are willing to repair, and what has reached its limit.",
+   "notes": "Owner-final house-neutral macro, imported verbatim.",
+   "headline": "The Macro View: What the Aquarius Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/aquarius",
+   "source_keys": [
+    "TLDR-Lunation-Blend-Units-V1.md"
+   ],
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Aries, what surfaces is anger with a history: the accommodation that went one direction for months, the independence traded away in small, reasonable-sounding pieces, the self that got manageable to keep a peace nobody else was keeping.\n\nAries is cardinal fire ruled by Mars, so what comes up now does not arrive politely. The heat is data: it points at the exact place a limit was crossed and nobody said so.\n\nThe Sun in Libra holds the other end: the relationship, the agreement, the appearance of harmony. The tension is not selfishness against love. It is if the current terms require one person to disappear in installments.\n\nSay the direct sentence. Anger that gets a clear channel becomes a boundary; anger that does not becomes an ambush later.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Aries Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/aries",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Cancer, what surfaces is what home has actually been costing: the care that runs one direction, the family role assigned before you could object, the difference between the place you live and a place that restores you. (Engine note: the Moon rules its own lunation here; skip rule active, no ruler line.)\n\nCancer is cardinal water ruled by the Moon, at full strength in its own sign: feelings arrive at high tide, and they are accurate about what they concern even when loud about how.\n\nThe Sun in Capricorn holds the other end: the job, the obligations, the version of you that functions in public. The tension is the oldest one: the life you maintain against the people and comfort it was supposed to be for.\n\nFeed the actual home: the person, the ritual, the reconciliation. Duty that never comes home is just employment.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Cancer Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/cancer",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Capricorn, what surfaces is the bill for the climb: the title that costs the evenings, the responsibility that was temporary two years ago, the reputation maintained at the expense of the person maintaining it.\n\nCapricorn is cardinal earth ruled by Saturn, and what rises now is structural: which ambitions are load-bearing and which are just heavy.\n\nThe Sun in Cancer holds the other end: home, family, the life the work was supposed to fund. The tension is between the mountain and the reason you started climbing it.\n\nRenegotiate one standing obligation before it renews by default. The career that costs the whole life is not success; it is an unexamined contract.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Capricorn Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/capricorn",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Gemini, what surfaces is the unsaid backlog: the conversation postponed into a private monologue, the facts collected but never assembled, the two versions of the story you tell depending on the listener.\n\nGemini is mutable air ruled by Mercury: the pressure here is verbal, and it breaks as words: the message finally sent, the question finally asked in plain terms, the sentence you have rehearsed for a month said in fifteen seconds.\n\nThe Sun in Sagittarius holds the other end: the big claim, the belief, the meaning of it all. The tension is between the details you know and the story you have been telling over them.\n\nSay the specific sentence, not the speech. One accurate detail moves more than the whole defended narrative.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Gemini Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/gemini",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Leo, what surfaces is the need to be seen specifically, not generally: the credit that went to the group, the effort mistaken for ego the moment it asked for acknowledgment, the warmth you stopped showing because it was mistaken for neediness. (Engine note: the Sun rules Leo and participates in every lunation; skip rule active, no ruler line.)\n\nLeo is fixed fire ruled by the Sun. What rises now is personal pride, and pride is not the flaw here; the hiding is. A heart that performs modesty long enough starts believing the diminished version.\n\nThe Sun in Aquarius holds the other end: the group, the cause, the collective schedule. The tension is between mattering as a person and functioning as a member.\n\nTake the credit that has your name on it, and give the specific praise you have been rationing. Recognition is not a scarce resource; treating it like one is the actual problem.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Leo Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/leo",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Libra, what surfaces is the price of balance: the opinions traded for approval, the conflict avoided so long it matured into distance, the relationship maintained by exactly one person's flexibility.\n\nLibra is cardinal air ruled by Venus. What becomes visible is the difference between peace and quiet: peace has been negotiated; quiet has just been enforced by whoever minds least.\n\nThe Sun in Aries holds the other end: the self, the want, the direct move. The tension is between being fair and being present, because a partner who has vanished into accommodation is not actually in the relationship.\n\nReopen one negotiation honestly. A relationship that cannot survive your actual preferences is not being protected; it is being postponed.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Libra Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/libra",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Pisces, what surfaces is usually whatever you have been absorbing without keeping score: the temporary help that turned into a permanent obligation, the empathy that became unpaid emotional labor, or the vague arrangement that drifted for months because naming the boundary felt unkind.\n\nPisces is a mutable water sign ruled by Jupiter, the planet of scale, belief, and generosity. That traditional rulership matters: this sign gives, forgives, and insists on finding a deeper meaning where other signs would just see a loss. At its best, that is faith working as designed. Taken too far, it is a refusal to look at plain facts because the fantasy version feels safer.\n\nThe Sun in Virgo sits directly opposite this Moon, holding the practical line: the budget, the physical body, the actual calendar, the real cost. The tension here is not between hope and cynicism; it is between what you want to believe about a situation and what you can actually verify.\n\nCheck the details without treating reality as a betrayal of the dream. What survives an honest look deserves your faith; what depended on vagueness to survive was already gone.",
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied).",
+   "headline": "The Macro View: What the Pisces Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/pisces",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Sagittarius, what surfaces is the gap between the philosophy and the itinerary: the freedom talked about and not scheduled, the belief announced and not lived, the promise that the real life starts after this next stretch.\n\nSagittarius is mutable fire ruled by Jupiter: what rises is appetite for meaning, and it will indict a comfortable routine without hesitation.\n\nThe Sun in Gemini holds the other end: the daily facts, the small commitments, the calendar as it actually looks. The tension is between the story of your life and its schedule, and only one of them is currently true.\n\nBook the concrete version of one belief: the trip, the course, the conversation with the mentor. A philosophy with no departure date is a decoration.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Sagittarius Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/sagittarius",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Scorpio, what surfaces is what the arrangement really runs on: who holds the power, who holds the information, and which loyalty is love and which is collateral.\n\nScorpio is fixed water ruled by Mars: what rises now was pursued and buried on purpose, and it comes back with receipts: the resentment with a start date, the secret with a shelf life, the desire that did not dissolve just because it was inconvenient.\n\nThe Sun in Taurus holds the other end: the simple, the ownable, the calm. The tension is between the depth that makes intimacy real and the peace that makes daily life possible.\n\nName one buried term of the arrangement to the other person in it. What is spoken can be renegotiated; what stays buried collects interest.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Scorpio Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/scorpio",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Taurus, what surfaces is the physical truth: what the body has been carrying, what the money has actually been doing, which comforts calm you and which ones just sedate the question.\n\nTaurus is fixed earth ruled by Venus. What comes into view is the difference between owning your possessions and being owned by their maintenance, between stability and the fear of moving.\n\nThe Sun in Scorpio holds the other end: the shared, the merged, the emotionally expensive. The tension runs between keeping what is yours and the intimacy that requires risking some of it.\n\nKeep what your hands actually use and your body actually rests in. What you keep out of fear owns you back.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Taurus Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/taurus",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Full Moons bring what has been building into clearer view. In Virgo, what surfaces is the invisible workload: the corrections nobody sees, the standards nobody else maintains, the sense that keeping everything working has quietly become your unpaid second job.\n\nVirgo is mutable earth ruled by Mercury: the details rise now, itemized. The question they document is not if you are useful. It is what the usefulness is costing, and who looks after the person who checks on everything.\n\nThe Sun in Pisces holds the other end: rest, faith, the unmeasured life. The tension is between the fixable and the acceptable, between service and dissolving into other people's needs.\n\nRetire two obligations that exist only because you never said no to them. Precision about your own limits is also a skill.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Virgo Full Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/full-moon/virgo",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "An Aquarius New Moon tends to arrive when everyone already agrees the old arrangement is broken, and nobody wants the uncomfortable work of writing down what changes. The group announces a fresh start, the project gets a new title, the relationship claims new rules, and the actual labor stays exactly where it was.\n\nAquarius is a fixed air sign ruled by Saturn, so this beginning is not the rush of an exciting idea; it is the structure required to sustain one. If the plan only works while one person quietly absorbs everyone else's inconvenience, it is not collaboration. It is the old deal wearing a new name.\n\nSaturn gives this start a long clock. Progress looks quiet at first because the foundation has to hold real weight, and a plan that survives only while nobody asks a hard question is already failing. The Aquarius shadow is distance: it is possible to analyze the system brilliantly and miss the people being worn down inside it.\n\nWrite the terms down while the start is still small. Six months from now, the results will not remember anyone's intentions. They will show which agreements were actually kept.",
+   "notes": "Batch 2 V2 (owner voice pass reconciled with ban list); serves the Feb 2027 event.",
+   "headline": "The Macro View: What the Aquarius New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/aquarius",
+   "source_keys": [
+    "Lunation blend batch 2 — house-keyed families complete + Aquarius NM macro"
+   ],
+   "content_role": "authored_card",
+   "review_status": "needs_review"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Aries, the terms are speed and ownership: this beginning belongs to whoever moves first, and it loses power every day it waits for a better moment. The right start here is closer to a first step than a plan.\n\nAries is cardinal fire ruled by Mars. The beginning it favors is direct: ask the person, send the application, sign up, start training. Mars does not negotiate with hesitation; it converts it into frustration, and frustration into either action or resentment.\n\nThe risk is the false start. Aries opens strong and delegates the follow-through to a future self who never agreed to it. Do not confuse the rush of deciding with the work of doing.\n\nStart one concrete effort this week and give it a move you can finish before the weekend. Momentum is easier to keep than to restart.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Aries New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/aries",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Cancer, the terms are belonging: who is inside the wall, what home is supposed to provide, and which people get your protection without applying for it. (Engine note: the Moon rules its own lunation here; skip rule active, no ruler line.)\n\nCancer is cardinal water ruled by the Moon, and the beginning it favors is close to home: the household change, the family conversation, the decision about where and with whom you actually live. Feelings are the evidence this start runs on, and they are admissible.\n\nThe risk is the shell: protecting so carefully that nothing new is allowed in, including the good. Safety that cannot be updated becomes a smaller life than the one you were protecting.\n\nBegin where you live: the home repair, the standing dinner, the boundary that makes your place feel like yours again.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Cancer New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/cancer",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Capricorn, the terms are structural: what is being built, who is responsible, and what it costs per month in effort you can actually supply.\n\nCapricorn is cardinal earth ruled by Saturn, at home and unsentimental. The beginning it favors has a foundation poured before the announcement: the business registered, the certification begun, the savings plan automated. Ambition here is a schedule, not a feeling.\n\nThe risk is postponement disguised as preparation, and its twin: building the impressive structure on top of a life with no rest in it.\n\nLay one foundation stone this month, on a timeline you would show a skeptic. What is built properly here tends to still be standing years later.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Capricorn New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/capricorn",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Gemini, the terms are curiosity and contact: the question you finally ask, the course you sample, the conversation that changes what you know.\n\nGemini is mutable air ruled by Mercury. This beginning does not need certainty; it needs correspondence: send the message, book the call, read the first chapter, talk to the person who has already done it. Information moves first here and commitment follows.\n\nThe risk is scattering: five beginnings, each two days deep, none with a second week.\n\nPick two threads at most and give both a next step. In Gemini the follow-up question is worth more than the brilliant first one.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Gemini New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/gemini",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Leo, those terms are personal. This beginning will not function as a committee decision, an audience poll, or a favor to keep someone else comfortable. It has to be owned, signed, and visibly yours.\n\nLeo is fixed fire ruled by the Sun. The Sun is at home here, which means the only start it honors is the one driven by genuine, unmanufactured desire. Ask yourself what you would still build if nobody was watching, and what you would refuse to abandon the moment public attention moves elsewhere. That is the test to run before you commit. Strip the audience away: if the work still feels vital, it is yours; if it goes cold, you were doing it for applause.\n\nThe shadow here is defensive pride. Leo energy wants to protect a plan early, sometimes long before there is an actual result to show for it. Validation feels good, but it makes a hollow foundation.\n\nStart the project that carries your name comfortably. When the work is genuinely yours, you never have to spend your energy defending its right to exist.",
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied).",
+   "headline": "The Macro View: What the Leo New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/leo",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Libra, the terms are mutual: this beginning involves another person, and it works only if the deal is stated instead of assumed.\n\nLibra is cardinal air ruled by Venus. The start it favors is relational and explicit: the partnership formalized, the collaboration proposed, the conflict opened politely on purpose. Fair terms at the start save the renegotiation later.\n\nThe risk is agreeableness: beginning what the other person wants and calling the relief of their approval a decision. A partnership begun on unstated terms is an argument on a delay timer.\n\nOpen the conversation you have been balancing in your head. Say the terms first; adjust them together second.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Libra New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/libra",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Pisces, the terms are quiet: this beginning starts as a pull rather than a plan, and it needs protecting from ridicule while it is still soft.\n\nPisces is mutable water ruled by Jupiter, which gives even this gentle sign a size: the creative practice, the spiritual commitment, the act of service that grows past its container. Begin before you can explain it; explanation arrives later here.\n\nThe risk is drift: a beginning that stays a feeling, comforted instead of started. Vagueness can protect a dream and starve it with the same gesture.\n\nGive the pull one scheduled hour a week and a place where nobody grades it. What is real will use the hour.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Pisces New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/pisces",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Sagittarius, the terms are size: this beginning has to be worth the story you will tell about it. Small maintenance starts do not hold here; a direction does.\n\nSagittarius is mutable fire ruled by Jupiter. The start it favors points at a horizon: the trip booked, the course of study entered, the belief tested in the world instead of defended at home. Optimism is legitimate fuel here.\n\nThe risk is the launch with no landing gear: enthusiasm that signs up for everything and completes the first tenth. A vision without a first concrete leg is a mood.\n\nChoose the destination, then buy the first ticket only. The rest of the route can adapt; the departure cannot keep moving.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Sagittarius New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/sagittarius",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Scorpio, the terms are total: this beginning is private, deliberate, and it requires telling yourself the truth before anyone else hears the plan.\n\nScorpio is fixed water ruled by Mars, the planet of pursuit: beneath the stillness, this sign hunts. The start it favors runs deep and quiet: the debt payoff mapped, the therapy begun, the merger of money or lives negotiated for real, the decision made once and not reopened.\n\nThe risk is control: waiting for guaranteed terms that never arrive, or starting a hidden version of the plan so no one can watch it fail.\n\nCommit fully in private first. What begins with your whole agreement does not need witnesses to hold.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Scorpio New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/scorpio",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. In Taurus, the terms are material: what this costs, what it pays, and if the pace can be kept for months without breaking what already works. The beginning it favors is slow, physical, and built to last.\n\nTaurus is fixed earth ruled by Venus, so the start has to feel good to survive: the routine you would keep even on a bad week, the purchase that still makes sense in a year, the work your body does not dread. Pleasure here is not indulgence; it is the maintenance plan.\n\nThe risk is refusing to start at all because the current arrangement is comfortable enough. Comfort can preserve a life that has quietly stopped fitting.\n\nBegin the slow build: one asset, one habit, one commitment with a long horizon. Choose what you are willing to repeat, because repetition is the whole method.",
+   "notes": "Owner-approved full-coverage lunation macro.",
+   "headline": "The Macro View: What the Taurus New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/taurus",
+   "source_keys": [
+    "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores"
+   ],
+   "approved_via": "owner approval in chat, 2026-07-29",
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "New Moons begin a six-month cycle, and what starts now grows on the terms you set first. A Virgo New Moon begins with the checklist. This is the sky for unglamorous progress: the health requirement entered into the calendar, the backlog finally cleared, or the daily workflow rebuilt so the same crisis stops arriving every Thursday. Nothing here needs a public announcement. It just works better inside of a month.\n\nVirgo is a mutable earth sign ruled by Mercury, operating here on precision over speed: test, adjust, and evaluate. A Virgo start is intentionally small. It knows a system shifts through its micro-details, and it distrusts any grand plan too large to test this week.\n\nThe trap is perfectionism as an avoidance tactic. Optimization can become its own endless project, and a standard set impossibly high functions identically to never starting at all. Flawlessness is not on the menu; small, repeated corrections are the entire method.\n\nPick one daily process and improve it by one concrete step. Small is not a compromise here; small is the actual design.",
+   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied).",
+   "headline": "The Macro View: What the Virgo New Moon Represents",
+   "contentKey": "authored/sky-lunation-macro/new-moon/virgo",
+   "source_keys": [
+    "Lunation sign packages batch 3 — the next three events"
+   ],
+   "content_role": "authored_card",
+   "review_status": "approved"
+  },
+  {
+   "body": "Chiron turns direct today. A subject that has been difficult to discuss may feel less consuming when it comes up again. You may still feel exposed, but you may be able to ask for what you need, remain in the conversation, or recover more quickly after the old insecurity is touched.",
+   "surface": "weekly-station",
+   "headline": "Chiron stations direct",
+   "contentKey": "authored/station/chiron/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Chiron turns retrograde today, and an old insecurity may become easier to recognize in the moment. A comment, delay, or rejection can touch a familiar fear before you have time to separate the present from the past. Give yourself enough time to understand what was actually said before responding to the older story it brought up.",
+   "surface": "weekly-station",
+   "headline": "Chiron stations retrograde",
+   "contentKey": "authored/station/chiron/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Jupiter turns direct today, and larger plans, applications, or long-term decisions can begin moving again. The pause may have shown you what the plan costs and where it needs more support. The timing improves when the opportunity fits the money, time, and responsibility you can actually give it.",
+   "surface": "weekly-station",
+   "headline": "Jupiter stations direct",
+   "contentKey": "authored/station/jupiter/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Jupiter turns retrograde today, bringing a more honest look at big plans, commitments, and resources. What seemed simple on paper may require more time, money, or responsibility than you first expected. Instead of adding another obligation, strengthen the work already underway. Sizing the plan to your actual calendar now can prevent a larger problem later.",
+   "surface": "weekly-station",
+   "headline": "Jupiter stations retrograde",
+   "contentKey": "authored/station/jupiter/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Mars turns direct today, and stalled projects can begin to loosen. Energy returns over days rather than hours, so avoid rushing into every unfinished task at once. Start with the responsibility, decision, or boundary that matters most. The frustration of recent weeks becomes easier to use once your effort has somewhere specific to go.",
+   "surface": "weekly-station",
+   "headline": "Mars stations direct",
+   "contentKey": "authored/station/mars/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Mars turns retrograde today, beginning a stretch when pushing harder may produce less. A blocked project can keep stalling, physical energy may dip, or an old disagreement may return through a minor trigger. Use the slower pace to rework the part of the plan that keeps failing instead of forcing the same approach harder.",
+   "surface": "weekly-station",
+   "headline": "Mars stations retrograde",
+   "contentKey": "authored/station/mars/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Mercury turns direct today, and the daily delays can begin clearing. Give the untangling a few days before expecting total clarity. The shadow passes over time, not instantly. A delayed message, contract, decision, or postponed conversation may start moving again. The second pass may give you a clearer answer than the first one did.",
+   "surface": "weekly-station",
+   "headline": "Mercury stations direct",
+   "contentKey": "authored/station/mercury/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Mercury turns retrograde today, beginning a few weeks of repeated conversations, crossed messages, changed plans, and details that need another look. An answer may arrive with missing information, or a decision you thought was finished may return with new questions. Check what was actually agreed to before responding as though everyone understood it the same way.",
+   "surface": "weekly-station",
+   "headline": "Mercury stations retrograde",
+   "contentKey": "authored/station/mercury/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Neptune turns direct today, and the ideas, feelings, or creative work you have been holding privately may begin moving outward again. The uncertainty may not disappear, but you can start seeing which vision has enough structure to continue. Give the idea a calendar, a budget, or a first visible step before expecting it to carry more.",
+   "surface": "weekly-station",
+   "headline": "Neptune stations direct",
+   "contentKey": "authored/station/neptune/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Neptune turns retrograde today, and a hope, relationship, or plan may become easier to see without the story you built around it. Missing details, vague promises, or the distance between intention and follow-through can be harder to ignore. You do not need to dismiss the dream. You may need to understand what it requires in time, money, and effort.",
+   "surface": "weekly-station",
+   "headline": "Neptune stations retrograde",
+   "contentKey": "authored/station/neptune/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Pluto turns direct today, and a power struggle, long negotiation, or decision you have been carrying privately may begin changing in the outside world. The shift is usually slow. What matters is that you may be less willing to return to an arrangement that required silence, fear, or constant control to keep it intact.",
+   "surface": "weekly-station",
+   "headline": "Pluto stations direct",
+   "contentKey": "authored/station/pluto/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Pluto turns retrograde today, bringing more attention to the control you use when you feel exposed. You may notice how long you stay in an argument, how much information you keep to yourself, or how quickly you try to manage another person’s response. The pattern becomes easier to change once you can name what you are afraid will happen without it.",
+   "surface": "weekly-station",
+   "headline": "Pluto stations retrograde",
+   "contentKey": "authored/station/pluto/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Saturn turns direct today after several months of delays, revisions, and responsibilities that kept returning before they could be completed. The pressure does not disappear overnight, but the same problem may stop repeating in circles. A long project, formal decision, or commitment can begin moving once the remaining work is clear.",
+   "surface": "weekly-station",
+   "headline": "Saturn stations direct",
+   "contentKey": "authored/station/saturn/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Saturn turns retrograde today, beginning several months of review around long-term obligations and commitments. The pressure of recent weeks may peak here and then ease. A carefully prepared plan may hold, while a rushed one shows where more work is needed. This period can clarify what you are responsible for and what another person, employer, or institution needs to carry.",
+   "surface": "weekly-station",
+   "headline": "Saturn stations retrograde",
+   "contentKey": "authored/station/saturn/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Uranus turns direct today, and changes that have been developing privately may start showing up in the outside world. A plan shifts, an unexpected option appears, or an arrangement that has been unstable finally changes shape. Move carefully enough to tell the difference between a real opening and the immediate urge to escape.",
+   "surface": "weekly-station",
+   "headline": "Uranus stations direct",
+   "contentKey": "authored/station/uranus/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Uranus turns retrograde today, and the pressure for change may become more internal. The job, relationship, plan, or routine you have been questioning may stay in place for now, but your tolerance for the old arrangement can keep changing. Notice what still feels restrictive after the first rush of frustration passes.",
+   "surface": "weekly-station",
+   "headline": "Uranus stations retrograde",
+   "contentKey": "authored/station/uranus/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Venus turns direct today, beginning a slow return to forward movement in relationships, money, creative work, and decisions about what you value. A conversation may resume, an old connection may look different once the nostalgia wears off, or a financial choice may become easier to judge with the full cost in view. Do not expect every answer tonight. The next few weeks may show what still belongs in your life, what needs different expectations, and what only looked appealing while the past was close.",
+   "surface": "weekly-station",
+   "headline": "Venus stations direct",
+   "contentKey": "authored/station/venus/direct",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Venus turns retrograde today, beginning several weeks of review around relationships, money, creative work, appearance, and what you still want. An ex, former friend, old project, unpaid expense, or purchase you regret may return because the decision was never fully settled. Nostalgia usually presents the best evidence first, so wait before making a permanent relationship decision, major purchase, investment, tattoo, haircut, or dramatic change in how you present yourself. The question is not simply if you can have it again. It is if it still fits the person and life you have now.",
+   "surface": "weekly-station",
+   "headline": "Venus stations retrograde",
+   "contentKey": "authored/station/venus/rx",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "A Full Moon in {{signTitle}} arrives this week, bringing more attention to a situation that has been building. A decision, feeling, result, or conflict may become harder to ignore. Leave enough room to respond before turning one intense moment into a final verdict.",
+   "surface": "weekly-opener",
+   "headline": "Full Moon week",
+   "contentKey": "authored/week-opener/full-moon",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "One date carries most of this week’s pressure. The surrounding days may feel quieter by comparison. Organize your schedule so you meet that day with time and attention to spare rather than arriving already depleted.",
+   "surface": "weekly-opener",
+   "headline": "One significant day this week",
+   "contentKey": "authored/week-opener/headliner",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "A New Moon in {{signTitle}} arrives this week. The beginning may be quiet, showing up first as a decision, conversation, or small commitment rather than a visible result. Notice what begins asking for your attention and give it one practical place in the week.",
+   "surface": "weekly-opener",
+   "headline": "New Moon week",
+   "contentKey": "authored/week-opener/new-moon",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "No major sky event dominates this week. The Moon keeps the days moving, but there is no single date asking for extra preparation. Use the quieter pace to finish what has been hanging over you or leave more room around your schedule.",
+   "surface": "weekly-opener",
+   "headline": "A quiet week",
+   "contentKey": "authored/week-opener/quiet",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "This week has a few active moments, but no single transit takes over the entire schedule. Most days can be handled as they come. Keep the calendar realistic and leave enough room for the one or two conversations, deadlines, or decisions that need more attention.",
+   "surface": "weekly-opener",
+   "headline": "An ordinary week",
+   "contentKey": "authored/week-opener/standard",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "A planet changes direction this week, and the pace may feel uneven around the station. A delay can begin moving, or a plan that was moving quickly may need another look. Give the shift a little time before deciding what it means.",
+   "surface": "weekly-opener",
+   "headline": "A planet changes direction this week",
+   "contentKey": "authored/week-opener/station",
+   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)",
+   "content_role": "full_copy",
+   "review_status": "approved"
+  },
+  {
+   "body": "Saturn stationed retrograde on July 27, 2026 in early Aries, opening the review phase of this transit's first year. Station and shadow dates below are engine-computed; the retrograde asks you to re-walk the ground covered since February before building further on it.\n\nThe core theme of this transit is proving you can lead yourself, and finding out which of your commitments survive without an authority figure to report to.\n\nAries governs the front of the line: the first move, the direct ask, the body in motion, the self that acts before the committee inside finishes voting. When Saturn moves through Aries, it slows the start until the start is real. It makes you show your work on independence you used to just claim. It turns impatience into a bill you can read. It reminds us that courage without follow-through is just noise with good posture.\n\nIn daily life, this transit shows up where the fresh start keeps not starting: the training plan restarted every Monday, the exit you keep announcing and not taking, the anger that arrives on time while the action runs late. The frustration you are feeling is not a verdict on the goal; it is the gap between deciding and doing, presented as an invoice. What gets built slowly here, under your own name and on your own schedule, does not need anyone's permission to keep standing.\n\nAries is ruled by Mars, the lesser malefic that supplies drive, speed, and the first move. Saturn does not smother that fire; it apprentices it. The push learns patience, the anger learns aim, and the independence stops needing an audience to be real.\n\nThe last time Saturn moved through Aries was 1996 to 1999. That era rewarded the people who stopped waiting to be picked and built their own ventures at the edge of everyone else's attention. The same contract returns: self-reliance is being restructured from a mood into a practice.\n\nStop rehearsing the bolder life and schedule its first hour. Saturn in Aries pays out to the ones who move small, move now, and keep moving.",
+   "sign": "aries",
+   "planet": "saturn",
+   "surface": "sky-placement",
+   "headline": "Saturn in Aries",
+   "valid_to": "2028-04-12",
+   "key_dates": [],
+   "contentKey": "sky-article/saturn/aries/2026",
+   "core_theme": "The core theme of this transit is proving you can lead yourself, and finding out which of your commitments survive without an authority figure to report to.",
+   "entry_year": 2026,
+   "valid_from": "2026-02-13",
+   "source_keys": [
+    "TLDR-Sky-Article-V1-Spec.md"
+   ],
+   "approved_via": "owner approval, chat 2026-07-29",
+   "archive_only": false,
+   "content_role": "authored_card",
+   "history_echo": "The last time Saturn moved through Aries was 1996 to 1999. That era rewarded the people who stopped waiting to be picked and built their own ventures at the edge of everyone else's attention. The same contract returns: self-reliance is being restructured from a mood into a practice.",
+   "preview_note": "Saturn stationed retrograde on July 27, 2026 in early Aries, opening the review phase of this transit's first year. Station and shadow dates below are engine-computed; the retrograde asks you to re-walk the ground covered since February before building further on it.",
+   "review_status": "approved",
+   "closing_charge": "Stop rehearsing the bolder life and schedule its first hour. Saturn in Aries pays out to the ones who move small, move now, and keep moving.",
+   "history_policy": "saturn-cycle",
+   "key_dates_mode": "engine",
+   "preview_policy": "retrograde-or-shadow",
+   "article_variant": "retrograde",
+   "rulership_twist": "Aries is ruled by Mars, the lesser malefic that supplies drive, speed, and the first move. Saturn does not smother that fire; it apprentices it. The push learns patience, the anger learns aim, and the independence stops needing an audience to be real.",
+   "lived_experience": "In daily life, this transit shows up where the fresh start keeps not starting: the training plan restarted every Monday, the exit you keep announcing and not taking, the anger that arrives on time while the action runs late. The frustration you are feeling is not a verdict on the goal; it is the gap between deciding and doing, presented as an invoice. What gets built slowly here, under your own name and on your own schedule, does not need anyone's permission to keep standing.",
+   "rising_horoscopes": [],
+   "sign_jurisdiction": "Aries governs the front of the line: the first move, the direct ask, the body in motion, the self that acts before the committee inside finishes voting. When Saturn moves through Aries, it slows the start until the start is real. It makes you show your work on independence you used to just claim. It turns impatience into a bill you can read. It reminds us that courage without follow-through is just noise with good posture."
+  },
+  {
+   "body": "The pre-retrograde shadow phase and retrograde station periods pull subconscious patterns to the surface for a second pass, forcing a review of where your boundaries have dissolved into porous avoidance.\n\nThe core theme of this transit is bringing structural discipline to your inner life, and releasing the belief that you must destroy yourself to prove your devotion.\n\nPisces governs the unmapped domain: wisdom, grief, spiritual surrender, and the boundless waters where individual edges blur. When Saturn moves through Pisces, it tests the scaffolding beneath your empathy. It inspects the places you have been using sensitivity as both shield and excuse. It forces you to find plain-text words for what has only existed as unexamined feeling. It reminds us that compassion without boundaries is not generosity; it is slow-motion self-destruction.\n\nYou have spent years treating your nervous system like a software bug that needs debugging, running diagnostics on your moods while taking on everyone else's emergencies. In daily life, this transit shows up where your \"holding space\" became an excuse to avoid making a decision, or where your \"yes\" was just fear of disappointing someone. The exhaustion you are feeling is not a mystery; it is your truth trying to surface through your body. Your career, your sleep, and your closest bonds are asking for proof of work, not a three-paragraph explanation for why you are overwhelmed.\n\nPisces is ruled by Jupiter, the Greater Benefic that seeks growth, faith, and boundless expansion. Saturn does not indulge the unchecked flood; it requires a container. It builds a real wall around the fertile waters so your energy does not drain dry.\n\nThe last time Saturn moved through this part of Pisces was between 1993 and 1996. That era marked a collective overhaul in how we defined recovery, emotional boundaries, and institutional accountability. The same contract returns for completion now: you are applying thirty years of experience to stop paying interest on debts that were never yours.\n\nStop treating your sensitivity like a flaw and stop using it to avoid your life. Set the boundary, lay the first brick, and let the rest pass without holding a summit over it.",
+   "sign": "pisces",
+   "planet": "saturn",
+   "surface": "sky-placement-archive",
+   "headline": "Saturn in Pisces",
+   "valid_to": "2026-02-13",
+   "key_dates": [
+    {
+     "date": "2023-03-07",
+     "sign": "pisces",
+     "event": "ingress",
+     "label": "Saturn enters Pisces",
+     "degree": 0
+    },
+    {
+     "date": "2023-06-17",
+     "sign": "pisces",
+     "event": "station-retrograde",
+     "label": "Saturn stations Retrograde at 7° Pisces",
+     "degree": 7
+    },
+    {
+     "date": "2023-11-04",
+     "sign": "pisces",
+     "event": "station-direct",
+     "label": "Saturn stations Direct at 0° Pisces",
+     "degree": 0
+    },
+    {
+     "date": "2024-06-29",
+     "sign": "pisces",
+     "event": "station-retrograde",
+     "label": "Saturn stations Retrograde at 19° Pisces",
+     "degree": 19
+    },
+    {
+     "date": "2024-11-15",
+     "sign": "pisces",
+     "event": "station-direct",
+     "label": "Saturn stations Direct at 12° Pisces",
+     "degree": 12
+    },
+    {
+     "date": "2025-05-24",
+     "sign": "aries",
+     "event": "ingress",
+     "label": "Saturn briefly enters Aries",
+     "degree": 0
+    },
+    {
+     "date": "2025-09-01",
+     "sign": "pisces",
+     "event": "re-entry",
+     "label": "Saturn retrogrades back into Pisces at 29° Pisces",
+     "degree": 29
+    },
+    {
+     "date": "2025-11-27",
+     "sign": "pisces",
+     "event": "station-direct",
+     "label": "Saturn stations Direct at 25° Pisces",
+     "degree": 25
+    },
+    {
+     "date": "2026-02-13",
+     "sign": "aries",
+     "event": "egress",
+     "label": "Saturn completes its passage through Pisces",
+     "degree": 0
+    }
+   ],
+   "contentKey": "sky-article/saturn/pisces/2023",
+   "core_theme": "The core theme of this transit is bringing structural discipline to your inner life, and releasing the belief that you must destroy yourself to prove your devotion.",
+   "entry_year": 2023,
+   "valid_from": "2023-03-07",
+   "source_keys": [
+    "TLDR-Sky-Article-V1-Spec.md"
+   ],
+   "approved_via": "owner-supplied sky-article-v1 production specification, 2026-07-29",
+   "archive_only": true,
+   "content_role": "authored_card",
+   "history_echo": "The last time Saturn moved through this part of Pisces was between 1993 and 1996. That era marked a collective overhaul in how we defined recovery, emotional boundaries, and institutional accountability. The same contract returns for completion now: you are applying thirty years of experience to stop paying interest on debts that were never yours.",
+   "preview_note": "The pre-retrograde shadow phase and retrograde station periods pull subconscious patterns to the surface for a second pass, forcing a review of where your boundaries have dissolved into porous avoidance.",
+   "review_status": "approved",
+   "closing_charge": "Stop treating your sensitivity like a flaw and stop using it to avoid your life. Set the boundary, lay the first brick, and let the rest pass without holding a summit over it.",
+   "history_policy": "saturn-cycle",
+   "preview_policy": "retrograde-or-shadow",
+   "rulership_twist": "Pisces is ruled by Jupiter, the Greater Benefic that seeks growth, faith, and boundless expansion. Saturn does not indulge the unchecked flood; it requires a container. It builds a real wall around the fertile waters so your energy does not drain dry.",
+   "lived_experience": "You have spent years treating your nervous system like a software bug that needs debugging, running diagnostics on your moods while taking on everyone else's emergencies. In daily life, this transit shows up where your \"holding space\" became an excuse to avoid making a decision, or where your \"yes\" was just fear of disappointing someone. The exhaustion you are feeling is not a mystery; it is your truth trying to surface through your body. Your career, your sleep, and your closest bonds are asking for proof of work, not a three-paragraph explanation for why you are overwhelmed.",
+   "sign_jurisdiction": "Pisces governs the unmapped domain: wisdom, grief, spiritual surrender, and the boundless waters where individual edges blur. When Saturn moves through Pisces, it tests the scaffolding beneath your empathy. It inspects the places you have been using sensitivity as both shield and excuse. It forces you to find plain-text words for what has only existed as unexamined feeling. It reminds us that compassion without boundaries is not generosity; it is slow-motion self-destruction."
   }
  ]
 }
