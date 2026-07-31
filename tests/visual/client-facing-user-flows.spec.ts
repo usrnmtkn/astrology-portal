@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -26,6 +26,9 @@ const fixtureLocation = {
 
 const fixtureUserId = "qa-flow-user";
 const fixedNow = "2026-07-16T16:00:00.000Z";
+const isolationSessionKey = "tldrastro:visualTestContextInitialized";
+const deployedApiRoutePattern = "https://tldrastro-api-27165565299.us-central1.run.app/**";
+const generatedInterpretationsRoutePattern = "**/rest/v1/generated_interpretations*";
 const themeScreenshotDir = path.join("test-results", "client-facing-theme-flow");
 const responsiveScreenshotDir = path.join("test-results", "client-facing-responsive-flow");
 const fallbackSourceRowsV3 = JSON.parse(readFileSync(
@@ -68,17 +71,45 @@ async function selectYouNatalTab(page: Page) {
   await expect(natalTab).toHaveAttribute("aria-selected", "true");
 }
 
+async function resetClientOriginState(page: Page) {
+  if (page.isClosed() || !/^https?:/u.test(page.url())) {
+    return;
+  }
+
+  await page.evaluate(async () => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+
+    if ("caches" in window) {
+      await Promise.all((await window.caches.keys()).map((key) => window.caches.delete(key)));
+    }
+  });
+}
+
+async function cleanClientTestContext(context: BrowserContext) {
+  await context.unrouteAll({ behavior: "ignoreErrors" });
+  await context.clearCookies();
+  await context.clearPermissions();
+
+  await Promise.all(
+    context.pages().map((contextPage) => resetClientOriginState(contextPage).catch(() => undefined))
+  );
+}
+
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   const requestedNow = options.now ?? fixedNow;
+  const context = page.context();
 
-  await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
+  await context.unroute(deployedApiRoutePattern);
+  await context.unroute(generatedInterpretationsRoutePattern);
+  await context.route(deployedApiRoutePattern, async (route) => {
     await route.fulfill({
       status: 503,
       contentType: "text/plain",
       body: "QA flow tests use local fallback content instead of the deployed API."
     });
   });
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+  await context.route(generatedInterpretationsRoutePattern, async (route) => {
     if (options.generatedInterpretations) {
       await route.fulfill({
         status: 200,
@@ -877,6 +908,30 @@ async function expectAspectInspector(
 }
 
 test.describe("client-facing user flow case studies", () => {
+  test.use({
+    serviceWorkers: "block",
+    storageState: { cookies: [], origins: [] }
+  });
+
+  test.beforeEach(async ({ context }) => {
+    await context.clearCookies();
+    await context.clearPermissions();
+    await context.unrouteAll({ behavior: "wait" });
+    await context.addInitScript((sessionKey) => {
+      if (window.sessionStorage.getItem(sessionKey) === "true") {
+        return;
+      }
+
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.sessionStorage.setItem(sessionKey, "true");
+    }, isolationSessionKey);
+  });
+
+  test.afterEach(async ({ context }) => {
+    await cleanClientTestContext(context);
+  });
+
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
