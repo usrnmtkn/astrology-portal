@@ -46,6 +46,12 @@ export type SolarDaylight = {
 export type SkySnapshot = {
   location: LocationInput;
   generatedAt: string;
+  cacheState?: {
+    source: "last-known-verified";
+    schema: "tldrastro-verified-sky-v1";
+    verifiedAt: string;
+    ageMs: number;
+  };
   calculationProvenance?: {
     source: string;
     library: string;

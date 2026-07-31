@@ -13,8 +13,11 @@ const sourceRegistryPath = path.join(repoRoot, "scripts/fixtures/ephemeris-sourc
 const fixturesConfig = JSON.parse(fs.readFileSync(fixturePath, "utf8"));
 const sourceRegistry = JSON.parse(fs.readFileSync(sourceRegistryPath, "utf8"));
 const allowMissingProvider = process.argv.includes("--allow-missing-provider");
+const allowReferenceGaps = process.argv.includes("--allow-reference-gaps");
+const summaryOnly = process.argv.includes("--summary");
 const providerCommand = process.env.TLDR_ASTRO_VERIFY_PROVIDER_COMMAND;
 const reportPath = process.env.TLDR_ASTRO_VERIFY_REPORT_PATH;
+const summaryPath = process.env.TLDR_ASTRO_VERIFY_SUMMARY_PATH;
 
 function datePart(value) {
   return String(value ?? "").slice(0, 10);
@@ -218,27 +221,158 @@ function compareReferenceFacts(fixture, primaryFacts, referenceFacts, tolerances
   return { discrepancies, gaps, verified };
 }
 
-function assertFixtureSpecifics(fixture, facts) {
-  const assertion = fixture.assertions?.position;
-
-  if (!assertion) {
-    return;
-  }
-
+function assertPosition(fixture, facts, assertion) {
   const fact = byId(facts, "position", assertion.planetOrPointId);
 
   assert.ok(fact, `${fixture.id}: expected position fact ${assertion.planetOrPointId}.`);
-  assert.equal(fact.normalizedSign, assertion.sign, `${fixture.id}: sign`);
-  assert.equal(fact.directRetrograde, assertion.motion, `${fixture.id}: direct/retrograde`);
-  assert.equal(fact.retrogradePhase, assertion.retrogradePhase, `${fixture.id}: retrograde phase`);
-  assert.equal(datePart(fact.stationStart), assertion.retrogradeStart, `${fixture.id}: retrograde start`);
-  assert.equal(datePart(fact.stationEnd), assertion.retrogradeEnd, `${fixture.id}: retrograde end`);
+  if (assertion.sign !== undefined) {
+    assert.equal(fact.normalizedSign, assertion.sign, `${fixture.id}: sign`);
+  }
+  if (assertion.motion !== undefined) {
+    assert.equal(fact.directRetrograde, assertion.motion, `${fixture.id}: direct/retrograde`);
+  }
+  if (assertion.retrogradePhase !== undefined) {
+    assert.equal(fact.retrogradePhase, assertion.retrogradePhase, `${fixture.id}: retrograde phase`);
+  }
+  if (assertion.retrogradeStart !== undefined) {
+    assert.equal(datePart(fact.stationStart), assertion.retrogradeStart, `${fixture.id}: retrograde start`);
+  }
+  if (assertion.retrogradeEnd !== undefined) {
+    assert.equal(datePart(fact.stationEnd), assertion.retrogradeEnd, `${fixture.id}: retrograde end`);
+  }
+  if (assertion.longitudeMin !== undefined) {
+    assert.ok(
+      Number(fact.longitude) >= assertion.longitudeMin,
+      `${fixture.id}: ${assertion.planetOrPointId} longitude ${fact.longitude} is below ${assertion.longitudeMin}.`
+    );
+  }
+  if (assertion.longitudeMax !== undefined) {
+    assert.ok(
+      Number(fact.longitude) <= assertion.longitudeMax,
+      `${fixture.id}: ${assertion.planetOrPointId} longitude ${fact.longitude} is above ${assertion.longitudeMax}.`
+    );
+  }
+}
+
+function assertAspect(fixture, facts, assertion) {
+  const fact = facts.find((candidate) => (
+    candidate.kind === "aspect"
+    && candidate.planetOrPointId === assertion.planetOrPointId
+    && candidate.targetId === assertion.targetId
+    && candidate.aspectType === assertion.aspectType
+  ));
+
+  assert.ok(
+    fact,
+    `${fixture.id}: expected ${assertion.planetOrPointId} ${assertion.aspectType} ${assertion.targetId}.`
+  );
+  if (assertion.maxOrb !== undefined) {
+    assert.ok(
+      Number(fact.orb) <= assertion.maxOrb,
+      `${fixture.id}: aspect orb ${fact.orb} exceeds ${assertion.maxOrb}.`
+    );
+  }
+  if (assertion.applyingSeparating !== undefined) {
+    assert.equal(
+      fact.applyingSeparating,
+      assertion.applyingSeparating,
+      `${fixture.id}: applying/separating`
+    );
+  }
+}
+
+function assertFixtureSpecifics(fixture, facts) {
+  const positionAssertions = [
+    ...(fixture.assertions?.position ? [fixture.assertions.position] : []),
+    ...(fixture.assertions?.positions ?? [])
+  ];
+  for (const assertion of positionAssertions) {
+    assertPosition(fixture, facts, assertion);
+  }
+
+  const aspectAssertions = [
+    ...(fixture.assertions?.aspect ? [fixture.assertions.aspect] : []),
+    ...(fixture.assertions?.aspects ?? [])
+  ];
+  for (const assertion of aspectAssertions) {
+    assertAspect(fixture, facts, assertion);
+  }
+}
+
+function buildSummary(report) {
+  const summary = report.results.reduce(
+    (totals, result) => {
+      totals.statusCounts[result.status] = (totals.statusCounts[result.status] ?? 0) + 1;
+      totals.discrepancies += result.discrepancies?.length ?? 0;
+      totals.gaps += result.gaps?.length ?? 0;
+      for (const [category, count] of Object.entries(result.verified ?? {})) {
+        totals.verified[category] = (totals.verified[category] ?? 0) + count;
+      }
+      if (result.status === "FAIL_DISCREPANCY" || result.status.startsWith("BLOCKED_")) {
+        totals.failedFixtures.push(result.id);
+      }
+      return totals;
+    },
+    {
+      fixtureCount: report.results.length,
+      statusCounts: {},
+      discrepancies: 0,
+      gaps: 0,
+      verified: {},
+      failedFixtures: []
+    }
+  );
+  return {
+    ok: report.ok,
+    generatedAt: report.generatedAt,
+    independentProvider: report.independentProvider,
+    ...summary
+  };
+}
+
+function summaryMarkdown(summary) {
+  const status = summary.ok ? "PASS" : "FAIL";
+  const verifiedRows = Object.entries(summary.verified)
+    .map(([category, count]) => `| ${category} | ${count} |`)
+    .join("\n");
+  const fixtureRows = Object.entries(summary.statusCounts)
+    .map(([fixtureStatus, count]) => `| ${fixtureStatus} | ${count} |`)
+    .join("\n");
+  const failed = summary.failedFixtures.length > 0
+    ? summary.failedFixtures.map((fixture) => `- ${fixture}`).join("\n")
+    : "- None";
+
+  return `# Ephemeris integrity: ${status}
+
+- Generated: ${summary.generatedAt}
+- Independent provider: ${summary.independentProvider}
+- Fixtures: ${summary.fixtureCount}
+- Supported-fact discrepancies: ${summary.discrepancies}
+- Known coverage gaps: ${summary.gaps}
+
+## Fixture statuses
+
+| Status | Count |
+| --- | ---: |
+${fixtureRows}
+
+## Verified facts
+
+| Category | Count |
+| --- | ---: |
+${verifiedRows}
+
+## Failed fixtures
+
+${failed}
+`;
 }
 
 async function main() {
   const vite = await createServer({
     root: path.join(repoRoot, "apps/web"),
     server: { middlewareMode: true },
+    optimizeDeps: { noDiscovery: true },
     appType: "custom",
     logLevel: "error"
   });
@@ -288,7 +422,7 @@ async function main() {
       const hasGaps = gaps.length > 0;
       const hasDiscrepancies = comparison.discrepancies.length > 0;
 
-      if (hasGaps || hasDiscrepancies) {
+      if (hasDiscrepancies || (hasGaps && !allowReferenceGaps)) {
         blocked = true;
       }
 
@@ -309,19 +443,43 @@ async function main() {
 
   const report = {
     ok: !blocked,
+    generatedAt: new Date().toISOString(),
     independentProvider: providerCommand ? "configured" : "missing",
+    referenceGapsAllowed: allowReferenceGaps,
     referenceSources: sourceRegistry,
     tolerances: fixturesConfig.tolerances,
     results
   };
+  const summary = buildSummary(report);
+  report.summary = summary;
 
   const reportJson = JSON.stringify(report, null, 2);
+  const markdown = summaryMarkdown(summary);
   if (reportPath) {
     fs.writeFileSync(reportPath, `${reportJson}\n`);
   }
-  console.log(reportJson);
+  if (summaryPath) {
+    fs.writeFileSync(summaryPath, markdown);
+  }
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+  }
+  if (summaryOnly) {
+    console.log(JSON.stringify({
+      ...summary,
+      reportPath: reportPath ?? null
+    }, null, 2));
+  } else {
+    console.log(reportJson);
+  }
 
   if (blocked && !allowMissingProvider) {
+    if (process.env.GITHUB_ACTIONS === "true") {
+      console.error(
+        `::error title=Ephemeris integrity failed::${summary.discrepancies} discrepancies; `
+        + `failed fixtures: ${summary.failedFixtures.join(", ") || "provider/coverage gate"}`
+      );
+    }
     process.exitCode = 2;
   }
 }

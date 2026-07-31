@@ -14,6 +14,7 @@ from tldrastro_api.models import (
     Position,
     Zodiac,
 )
+from tldrastro_api.services.ephemeris import start_ephemeris_trace, tracked_calc_ut
 from tldrastro_api.services.timezone import resolve_timezone_name
 
 SIGNS: List[Tuple[str, str]] = [
@@ -196,6 +197,7 @@ def configure_ephemeris(settings: ChartSettings) -> None:
     service_settings = get_settings()
     if service_settings.ephemeris_path:
         swe.set_ephe_path(service_settings.ephemeris_path)
+    start_ephemeris_trace(service_settings.ephemeris_path)
     if settings.zodiac == Zodiac.sidereal and settings.ayanamsa:
         # Additional named ayanamsa mapping can be added when sidereal support is activated.
         pass
@@ -264,8 +266,13 @@ def body_position(
     flags: int,
     cusps: List[float],
 ) -> Position:
-    result, _ = swe.calc_ut(julian_day, body_id, flags)
-    equatorial_result, _ = swe.calc_ut(julian_day, body_id, flags | swe.FLG_EQUATORIAL)
+    result, _ = tracked_calc_ut(swe, julian_day, body_id, flags)
+    equatorial_result, _ = tracked_calc_ut(
+        swe,
+        julian_day,
+        body_id,
+        flags | swe.FLG_EQUATORIAL,
+    )
     longitude = normalize_degrees(result[0])
     return make_position(
         point=point,
@@ -356,7 +363,7 @@ def _ephemeris_position(
     body_id = BODY_IDS.get(point)
     if body_id is None:
         return fallback
-    result, _ = swe.calc_ut(julian_day, body_id, configured_flags(settings))
+    result, _ = tracked_calc_ut(swe, julian_day, body_id, configured_flags(settings))
     _, sign, sign_glyph, degree_decimal, degree, minute = sign_for_longitude(result[0])
     return Position(
         point=fallback.point,

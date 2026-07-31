@@ -25,6 +25,7 @@ from tldrastro_api.services.chart import (
     resolve_datetime,
     sign_for_longitude,
 )
+from tldrastro_api.services.ephemeris import ephemeris_provenance, tracked_calc_ut
 
 MAJOR_PLANETS = [
     swe.SUN,
@@ -51,7 +52,12 @@ def _sky_subject(request: SkyCurrentRequest) -> ChartSubject:
 
 
 def _exact_longitude(julian_day: float, body_id: int) -> float:
-    result, _ = swe.calc_ut(julian_day, body_id, swe.FLG_SWIEPH | swe.FLG_SPEED)
+    result, _ = tracked_calc_ut(
+        swe,
+        julian_day,
+        body_id,
+        swe.FLG_SWIEPH | swe.FLG_SPEED,
+    )
     return normalize_degrees(result[0])
 
 
@@ -245,6 +251,7 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
             zodiac=subject.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,
+            ephemeris=ephemeris_provenance(swe),
         ),
         location=subject.location,
         generatedAt=utc_datetime.isoformat(),

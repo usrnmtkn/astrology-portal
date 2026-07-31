@@ -44,6 +44,9 @@ def test_natal_chart_returns_core_chart_shape():
 
     assert chart["metadata"]["houseSystem"] == "whole_sign"
     assert chart["metadata"]["zodiac"] == "tropical"
+    assert chart["metadata"]["ephemeris"]["requestedEngine"] == "swiss"
+    assert chart["metadata"]["ephemeris"]["actualEngine"] in {"swiss", "jpl", "moshier", "mixed"}
+    assert chart["metadata"]["ephemeris"]["calculations"] > 0
     assert chart["subjectName"] == "Maya"
     assert len(chart["houseCusps"]) == 12
     assert "Ascendant" in chart["angles"]
