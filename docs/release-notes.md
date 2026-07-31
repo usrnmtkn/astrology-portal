@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2026-07-31: Station-Boundary Monitoring and Failure Alerts
+
+- Added Mercury fixtures immediately before and after the July 23, 2026 direct
+  station, with exact motion, longitude, and station-time assertions.
+- The daily NASA/JPL comparison now independently confirms the direction of
+  Mercury's motion on both sides of that station boundary.
+- Failed integrity runs now reopen the persistent monitor issue, assign the
+  configured GitHub recipients, and mention them in the failure report.
+- Added `EPHEMERIS_ALERT_LOGINS` for comma-separated GitHub notification
+  recipients, with the repository owner as the default.
+- Added a protected monitoring-contract test covering both station fixtures and
+  failure-notification routing.
+
 ## 2026-07-31: True Lunar Node Parity and Calculation Transparency
 
 - Standardized the web app and calculation API on the True Lunar Node, fixing
