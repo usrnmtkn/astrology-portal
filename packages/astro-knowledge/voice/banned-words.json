@@ -1,4 +1,24 @@
 {
+  "surfaceBannedWords": {
+    "sky-article-longform": [
+      {
+        "term": "audit",
+        "reason": "House ban-list trade vocabulary; use a concrete description of what is being reviewed."
+      },
+      {
+        "term": "ledger",
+        "reason": "House ban-list trade vocabulary; name the actual record, debt, or exchange."
+      },
+      {
+        "term": "compound",
+        "reason": "House ban-list trade vocabulary; describe what accumulates or grows."
+      },
+      {
+        "term": "colonize",
+        "reason": "House ban-list trade vocabulary; name the specific takeover or occupation."
+      }
+    ]
+  },
   "bannedWords": [
     {
       "term": "reckoning",
