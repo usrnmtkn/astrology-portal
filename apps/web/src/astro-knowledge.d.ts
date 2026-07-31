@@ -13,6 +13,31 @@ declare module "@tldr/astro-knowledge/sky-web" {
   export default knowledge;
 }
 
+declare module "@tldr/astro-knowledge/sky-aspect-engine" {
+  export type SkyAspectPosition = {
+    planet?: string;
+    point?: string;
+    longitude: number;
+    speed?: number | null;
+  };
+
+  export type CalculatedSkyAspect = {
+    id: string;
+    bodyA: string;
+    bodyB: string;
+    from: string;
+    to: string;
+    type: "conjunction" | "sextile" | "square" | "trine" | "quincunx" | "opposition";
+    exactAngle: number;
+    separation: number;
+    orb: number;
+    applying: boolean;
+  };
+
+  export const SKY_ASPECT_POINT_ORDER: readonly string[];
+  export function calculateSkyAspects(positions: SkyAspectPosition[]): CalculatedSkyAspect[];
+}
+
 declare module "@tldr/astro-knowledge/natal" {
   const knowledge: unknown;
   export default knowledge;

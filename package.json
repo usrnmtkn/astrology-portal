@@ -51,7 +51,7 @@
     "test:aspect-patterns-writeups-runtime": "node scripts/test-aspect-pattern-writeups-runtime.mjs",
     "test:aspect-patterns-writeups-fallback": "node scripts/test-aspect-pattern-writeups-fallback.mjs",
     "test:aspect-patterns": "npm run test:aspect-patterns -w @tldr/astro-knowledge && npm run test:aspect-patterns-v3 -w @tldr/astro-knowledge && npm run test:pattern-voice -w @tldr/astro-knowledge && npm run test:natal-aspect-pattern-reader",
-    "test:sky-aspects": "node scripts/test-sky-aspect-integration.mjs",
+    "test:sky-aspects": "node scripts/test-sky-aspect-matrix-parity.mjs && node --experimental-strip-types scripts/test-current-sky-aspect-adapter.mjs && node scripts/test-sky-aspect-integration.mjs",
     "test:verified-sky-cache": "node scripts/test-verified-sky-cache.mjs",
     "test:ephemeris-release-gate": "node scripts/test-ephemeris-release-gate.mjs",
     "test:ephemeris-monitoring": "node scripts/test-ephemeris-monitoring-contract.mjs",

@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2026-07-31: Unified Current-Sky Aspect Matrix
+
+- Replaced the separate reader and content-writer aspect rules with one shared
+  matrix engine.
+- Standardized both surfaces on conjunction, sextile, square, trine, and
+  opposition within 5 degrees, plus quincunx within 3 degrees.
+- Added the derived South Node to the server-side content matrix and preserved
+  the True North Node as its source.
+- Removed the writer's fixed-noon calculation; it now requests the same exact
+  instant used for real-time sky facts.
+- Added multi-date direct Swiss Ephemeris parity coverage and an adapter test
+  that rejects wider server-returned aspects.
+
 ## 2026-07-31: Station-Boundary Monitoring and Failure Alerts
 
 - Added Mercury fixtures immediately before and after the July 23, 2026 direct

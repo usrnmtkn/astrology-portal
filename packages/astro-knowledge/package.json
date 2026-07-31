@@ -6,6 +6,7 @@
   "files": [
     "dist",
     "engine/aspect-patterns",
+    "engine/sky-aspects",
     "engine/timing",
     "docs",
     "aspect-pattern-contract.json",
@@ -33,6 +34,10 @@
       "types": "./engine/aspect-patterns/index.d.ts",
       "import": "./engine/aspect-patterns/index.js",
       "require": "./engine/aspect-patterns/index.js"
+    },
+    "./sky-aspect-engine": {
+      "types": "./engine/sky-aspects/index.d.ts",
+      "import": "./engine/sky-aspects/browser.mjs"
     },
     "./timing-engine": {
       "types": "./engine/timing/index.d.ts",
