@@ -83,7 +83,7 @@ async function runJudgeSamples({
   if (!injected) {
     assertLiveJudgeAuthorized({ calibration });
     privacyMode = privacyPolicy();
-    config = { ...judgeConfig(), temperature };
+    config = { ...judgeConfig(context.modelSurface || context.surface || "default"), temperature };
     if (privacyMode === "redact") {
       const redacted = redactText(prompt);
       outboundPrompt = redacted.text;
@@ -112,6 +112,12 @@ async function runJudgeSamples({
     contentSha256: sha256(content),
     provider: config.provider,
     model: config.model,
+    releaseId: config.releaseId || null,
+    registryVersion: config.registryVersion || null,
+    registryLaneId: config.laneId || null,
+    registryOverride: Boolean(config.registryOverride),
+    evaluationSetVersion: config.evaluationSetVersion || null,
+    policyVersion: config.policyVersion || null,
     temperature,
     samples: count,
     scores,

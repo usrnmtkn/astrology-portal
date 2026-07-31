@@ -193,7 +193,12 @@ async function judgeEntry(entry, judgeFn) {
     temperature: 0.1,
     judgeFn,
     parseVerdict,
-    context: { surface: entry.surface, family: entry.family, contentKey: entry.contentKey }
+    context: {
+      surface: entry.surface,
+      modelSurface: "editorial-source-bank",
+      family: entry.family,
+      contentKey: entry.contentKey
+    }
   });
 
   return {

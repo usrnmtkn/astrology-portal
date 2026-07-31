@@ -65,6 +65,12 @@ export type SkyAspectCardResult = {
       contentSha256: string;
       provider: string;
       model: string;
+      releaseId: string | null;
+      registryVersion: string | null;
+      registryLaneId: string | null;
+      registryOverride: boolean;
+      evaluationSetVersion: string | null;
+      policyVersion: string | null;
       temperature: number | null;
       samples: number;
       scores: number[];
