@@ -134,9 +134,9 @@
 
 .phone-auth-eyebrow {
   color: var(--app-muted);
-  font-family: var(--font-ui);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-medium);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-meta);
   text-transform: uppercase;

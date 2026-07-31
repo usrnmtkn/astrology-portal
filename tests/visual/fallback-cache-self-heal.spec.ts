@@ -4,7 +4,7 @@ const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const staleJupiterHook = "Someone just took the stage without asking if they were invited.";
 const currentJupiterHook = "Jupiter in Leo makes it easier to admit that we want more.";
-const currentSunJupiterAspect = "That confidence becomes concrete action";
+const currentSunJupiterAspect = "Confidence opens doors hesitation kept locked";
 
 test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {

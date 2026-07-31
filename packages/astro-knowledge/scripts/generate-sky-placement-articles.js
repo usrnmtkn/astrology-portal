@@ -208,8 +208,8 @@ const renderTrio = (e) => {
   return lines.join("\n");
 };
 
-// The approved trios predate the tagline/moves slots, so the shape of those two
-// is taught from the spec's marked shape illustrations instead.
+// Canonical exemplars now teach complete five-slot articles. These marked shape
+// illustrations remain supplemental reminders, not substitutes for gold copy.
 function extendedShapeExamples() {
   const byBeat = Object.fromEntries((spec.shape.extendedSlots || []).map((s) => [s.beat, s.shapeExamples || []]));
   return [
@@ -387,7 +387,7 @@ async function generateArticle(args, {
       if (withJudge) {
         const { judgeArticle } = require("./judge-placement-voice.js");
         result.judge = await judgeArticle(article, { tier: normalized.tier, planet: normalized.planet, sign: normalized.sign, judgeFn });
-        result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+        result.gate = result.judge.gate; // human-review | regenerate (exact approved assets may auto-publish elsewhere)
       }
       result.rows = toHookRows(normalized, article, { source: normalized.meaning.source, gate: result.gate });
       return result;

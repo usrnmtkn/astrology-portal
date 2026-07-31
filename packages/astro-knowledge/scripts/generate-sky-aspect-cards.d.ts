@@ -52,6 +52,35 @@ export type SkyAspectCardResult = {
     weakest: string;
     why: string;
     gate: "auto-publish" | "human-review" | "regenerate";
+    recommendation: "approve" | "revise" | "regenerate" | "resolve-judge-disagreement" | "approved-exact-match";
+    approvalSource: "llm-advisory" | "approved-exact-match";
+    disagreement: boolean;
+    audit: {
+      schemaVersion: number;
+      recordedAt: string;
+      promptVersion: string;
+      rubricVersion: string;
+      promptSha256: string | null;
+      rubricSha256: string;
+      contentSha256: string;
+      provider: string;
+      model: string;
+      releaseId: string | null;
+      registryVersion: string | null;
+      registryLaneId: string | null;
+      registryState: "active" | "candidate" | null;
+      registryOverride: boolean;
+      evaluationSetVersion: string | null;
+      policyVersion: string | null;
+      temperature: number | null;
+      samples: number;
+      scores: number[];
+      verdicts: Array<Record<string, unknown>>;
+      disagreement: boolean;
+      privacyMode: string;
+      redactionCount: number;
+      context: Record<string, unknown>;
+    };
   };
   facts?: {
     a?: string;

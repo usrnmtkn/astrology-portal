@@ -13,6 +13,8 @@ const {
   surfaceForContentKey
 } = require("./editorial-voice-router.js");
 const { runArticleJudgeCalibration } = require("./test-article-judge-calibration.js");
+const { redactText } = require("./editorial-judge-runtime.js");
+const { generationConfig, judgeConfig: configuredJudge } = require("./generate-sky-aspect-cards.js");
 
 const cleanArticle = [
   "You have spent enough mornings translating a changing rule before breakfast.",
@@ -61,7 +63,9 @@ async function main() {
   assert.strictEqual(calls, 5);
   assert.strictEqual(judged.lint.score, 3);
   assert.strictEqual(judged.judge.score, 3);
-  assert.strictEqual(judged.gate, "auto-publish");
+  assert.strictEqual(judged.gate, "human-review", "one LLM verdict may recommend approval but cannot publish");
+  assert.strictEqual(judged.judge.recommendation, "approve");
+  assert.strictEqual(judged.judge.audit.model, "injected");
 
   let blockedCalls = 0;
   const blocked = await runEditorialVoiceQa(
@@ -91,15 +95,55 @@ async function main() {
 
   let calibrationCalls = 0;
   const calibration = await runArticleJudgeCalibration({
-    judgeFn: async () => {
+    judgeFn: async (_prompt, { cohort }) => {
       calibrationCalls += 1;
-      return JSON.stringify({ score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "owner calibration fixture" });
+      return JSON.stringify(cohort === "approved"
+        ? { score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "owner calibration fixture" }
+        : { score: 1, verdict: "off-voice", failedChecks: ["spoken-register"], weakest: [], rewrites: [], why: "intentionally weak control" });
     }
   });
-  assert.strictEqual(calibration.length, 4);
-  assert.strictEqual(calibrationCalls, 20, "four fixtures must receive median-of-5 sampling");
-  assert.ok(calibration.every(({ result }) => result.samples === 5 && result.score === 3));
-  console.log("OK  four byte-verified owner fixtures calibrate at 3 with median-of-5 sampling");
+  assert.strictEqual(calibration.approved.length, 4);
+  assert.strictEqual(calibration.weak.length, 2);
+  assert.strictEqual(calibrationCalls, 30, "four approved and two weak fixtures must receive median-of-5 sampling");
+  assert.ok(calibration.approved.every(({ result }) => result.samples === 5 && result.score === 3));
+  assert.ok(calibration.weak.every(({ result }) => result.samples === 5 && result.score === 1));
+  assert.strictEqual(calibration.status, "passed");
+  assert.ok(calibration.separation >= 1);
+  console.log("OK  approved examples separate from weak controls under median-of-5 calibration");
+
+  let splitCall = 0;
+  const disagreement = await runArticleJudgeCalibration({
+    judgeFn: async (_prompt, { cohort }) => {
+      splitCall += 1;
+      const score = cohort === "weak" ? 1 : (splitCall % 5 === 0 ? 2 : 3);
+      return JSON.stringify({ score, verdict: score === 3 ? "in-voice" : score === 2 ? "borderline" : "off-voice", why: "disagreement control" });
+    }
+  });
+  assert.strictEqual(disagreement.status, "needs-human-review");
+  console.log("OK  repeated-sample disagreement enters the human-review lane");
+
+  const redacted = redactText("Email editor@example.com, call 212-555-0100, or ping @editor.");
+  assert.ok(!redacted.text.includes("editor@example.com"));
+  assert.ok(!redacted.text.includes("212-555-0100"));
+  assert.ok(!redacted.text.includes("@editor"));
+  assert.strictEqual(redacted.replacements, 3);
+  console.log("OK  default privacy redaction removes common proprietary identifiers");
+
+  const originalGenerationModel = process.env.OPENAI_GENERATION_MODEL;
+  const originalJudgeModel = process.env.OPENAI_JUDGE_MODEL;
+  const originalProvider = process.env.CONTENT_JUDGE_PROVIDER;
+  process.env.OPENAI_GENERATION_MODEL = "writer-test-model";
+  process.env.OPENAI_JUDGE_MODEL = "judge-test-model";
+  process.env.CONTENT_JUDGE_PROVIDER = "openai";
+  assert.strictEqual(generationConfig().model, "writer-test-model");
+  assert.strictEqual(configuredJudge().model, "judge-test-model");
+  if (originalGenerationModel === undefined) delete process.env.OPENAI_GENERATION_MODEL;
+  else process.env.OPENAI_GENERATION_MODEL = originalGenerationModel;
+  if (originalJudgeModel === undefined) delete process.env.OPENAI_JUDGE_MODEL;
+  else process.env.OPENAI_JUDGE_MODEL = originalJudgeModel;
+  if (originalProvider === undefined) delete process.env.CONTENT_JUDGE_PROVIDER;
+  else process.env.CONTENT_JUDGE_PROVIDER = originalProvider;
+  console.log("OK  writer and judge resolve from separate model configuration");
 
   console.log("\nAll long-form article voice routing checks passed.");
 }

@@ -152,7 +152,12 @@ export default defineConfig(({ mode }) => {
     server: {
       host: "127.0.0.1",
       port: 5173,
-      strictPort: true
+      strictPort: true,
+      fs: {
+        // swisseph-wasm resolves its .data and .wasm files relative to the
+        // workspace-level node_modules directory in development.
+        allow: [repoRoot]
+      }
     },
     optimizeDeps: {
       exclude: ["swisseph-wasm"]

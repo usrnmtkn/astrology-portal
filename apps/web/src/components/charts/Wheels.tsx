@@ -1,6 +1,7 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
   aspectIconFiles,
@@ -157,7 +158,7 @@ function formatWheelDegree(position: PlanetPosition) {
 }
 
 function formatPlanetPlacementTitle(position: PlanetPosition) {
-  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+  return `${position.planet}${isDisplayRetrograde(position) ? " Rx" : ""} in ${position.sign}`;
 }
 
 function formatPlanetPlacementLine(position: PlanetPosition) {
@@ -303,7 +304,7 @@ function formatInspectorOrb(orb: number) {
 }
 
 function wheelPlanetIconFile(position: PlanetPosition) {
-  if (position.motion === "retrograde") {
+  if (isDisplayRetrograde(position)) {
     return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
   }
 
@@ -1762,6 +1763,13 @@ export const SynastryWheel = memo(function SynastryWheel({
           <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
         ))}
       </defs>
+      <circle
+        className="synastry-inner-planet-band"
+        cx={center}
+        cy={center}
+        r={(radius.innerRingOuter + radius.innerRingInner) / 2}
+        aria-hidden="true"
+      />
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings synastry-base-rings">
         <circle cx={center} cy={center} r={radius.outer} />

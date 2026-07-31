@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/editorial-calibration-report.schema.json",
+  "title": "TLDR Astro editorial model calibration report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordedAt",
+    "laneId",
+    "registryVersion",
+    "releaseId",
+    "provider",
+    "model",
+    "promptVersion",
+    "rubricVersion",
+    "evaluationSetVersion",
+    "policyVersion",
+    "status",
+    "approvedMean",
+    "weakMean",
+    "separation",
+    "minimumSeparation",
+    "disagreement",
+    "approved",
+    "weakControls"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "sourceRevision": { "type": "string" },
+    "laneId": { "type": "string", "minLength": 1 },
+    "registryVersion": { "type": "string", "minLength": 1 },
+    "releaseId": { "type": "string", "minLength": 1 },
+    "provider": { "enum": ["openai", "claude", "local"] },
+    "model": { "type": "string", "minLength": 1 },
+    "promptVersion": { "type": "string", "minLength": 1 },
+    "rubricVersion": { "type": "string", "minLength": 1 },
+    "evaluationSetVersion": { "type": "string", "minLength": 1 },
+    "policyVersion": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["passed", "failed", "needs-human-review"] },
+    "approvedMean": { "type": "number" },
+    "weakMean": { "type": "number" },
+    "separation": { "type": "number" },
+    "minimumSeparation": { "type": "number", "exclusiveMinimum": 0 },
+    "disagreement": { "type": "boolean" },
+    "approved": { "type": "array", "items": { "$ref": "#/$defs/sample" } },
+    "weakControls": { "type": "array", "items": { "$ref": "#/$defs/sample" } }
+  },
+  "$defs": {
+    "sample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sourceSha256", "score", "verdict", "disagreement"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sourceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "score": { "enum": [1, 2, 3] },
+        "verdict": { "type": "string" },
+        "disagreement": { "type": "boolean" }
+      }
+    }
+  }
+}

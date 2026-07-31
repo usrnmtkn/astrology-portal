@@ -8,7 +8,7 @@ export * from "./renderTransitSynastry.browser";
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
 // that the running app and the dashboard are on the current package.
-export const PACKAGE_VERSION = "v3-2026-07-31a";
+export const PACKAGE_VERSION = "v3-2026-07-31c";
 
 type PackageRow = {
   contentKey: string;
@@ -53,7 +53,19 @@ function stablePackageValue(value: unknown): unknown {
 }
 
 function packageRowsByKey(rows: PackageRow[]) {
-  return [...new Map(rows.map((row) => [row.contentKey, row])).values()]
+  const readerEligible = new Set(["approved_reuse", "approved", "reviewed"]);
+  const candidates = new Map<string, PackageRow[]>();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+
+  return [...candidates.values()]
+    .map((keyed) => [...keyed]
+      .reverse()
+      .find((row) => readerEligible.has(String(row.review_status ?? row.reviewStatus ?? ""))))
+    .filter((row): row is PackageRow => Boolean(row))
     .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
 

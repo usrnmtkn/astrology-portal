@@ -37,14 +37,6 @@ type MenuPosition = {
   right: number;
 };
 
-function chartSyncStatusLabel(chart: ManualChart) {
-  if (chart.syncStatus === "synced") {
-    return "Saved";
-  }
-
-  return "Saved locally";
-}
-
 export function FriendChartsList({
   birthdayChiclet,
   charts,
@@ -181,9 +173,6 @@ export function FriendChartsList({
                         <span>☽ {moon}</span>
                         <span>↑ {rising}</span>
                         {patternSummary ? <ChartPatternPill summary={patternSummary} /> : null}
-                        <span className="manual-chart-sync-status" role="status">
-                          {chartSyncStatusLabel(chart)}
-                        </span>
                       </span>
                     </span>
                   </button>

@@ -3,16 +3,17 @@
 import fs from "node:fs"; import path from "node:path"; import url from "node:url";
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const rows = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
+const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
+const skyPlacementVoicePassV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-inventories-voice-pass-v1.json"), "utf8"));
+const skyPlanetFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-planet-frames-v1.json"), "utf8"));
+const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
-const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
-const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
-const weeklyRows = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/station-cards-week-openers-v1.json"), "utf8"));
 // [section name, matcher, plain-language "where this goes", optional example builder]
 const SECTIONS = [
-  ["Your authored cards (verbatim)", k => k.startsWith("authored/"),
+  ["Your authored cards (verbatim)", k => k.startsWith("authored/") || k.startsWith("sky-article/"),
    "These are your own write-ups. They show to readers word for word, and always win over generated copy."],
   ["Natal: planet meanings", k => /^fallback-hook\/(planet-intro|planet-best|natal-core)\//.test(k) || /^fallback-vocab\/planet-(topic|core|excess|productive|verb)\//.test(k)],
-  ["Natal: placement frames (review queue)", k => k.startsWith("fallback-template/natal.planet-in-sign/")],
   ["Natal: planet in sign", k => k.startsWith("fallback-hook/placement-sentence/")],
   ["Natal: planet in house", k => k.startsWith("fallback-hook/placement-house-sentence/") || k.startsWith("fallback-hook/house-meaning/")],
   ["Natal: angles (Rising, MC, DC, IC)", k => k.startsWith("fallback-hook/angle-")],
@@ -43,8 +44,13 @@ const EXAMPLES = {
   "Profection years": para(renderProfectionYear({ house: 6, sign: "virgo", voice: "you" }, O)),
   "Transits: effect lines + variants": para(renderTransitAspect({ transiting: "saturn", natal: "mercury", aspect: "square", window: "Until November 13" })),
   "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "trine", otherName: "Sofia" })),
-  "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", planetA: "moon", planetB: "mercury", natalAspect: "trine", otherName: "Jose", window: "This month" })),
-  "Sky page: placements + articles": para(renderSkyPlacement({ planet: "saturn", sign: "aries" })),
+  "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", endpointPlanet: "mercury", endpointOwner: "friend", activatedPlanets: ["moon"], otherName: "Jose", window: "This month" })),
+  "Sky page: placements + articles": para(renderSkyPlacement({
+    planet: "sun",
+    sign: "leo",
+    entryDate: "July 22, 2026",
+    exitDate: "August 23, 2026"
+  })),
   "Sky page: seasons, lunations, eclipses": para(renderSkyLunation({ kind: "full-moon", sign: "aquarius", dateLine: "On July 29" })),
   "Calendar: phases, void, markers": para(renderCalendarPhase({ phase: "full-moon", sign: "cancer" })),
   "Friends Circle feed": para(renderCircleStory({ trigger: "profection", house: 12, names: ["Alisa P", "Jose"], includesReader: true })),
@@ -54,10 +60,16 @@ const nice = k => k.replace(/^fallback-(hook|vocab)\//, "").replace(/^authored\/
 const buckets = SECTIONS.map(() => []);
 const place = (item) => { for (let i = 0; i < SECTIONS.length; i++) if (SECTIONS[i][1](item.key)) { buckets[i].push(item); return; } };
 const named = (obj, fields) => fields.map((f) => [f, obj[f]]).filter(([, v]) => v);
-for (const r of [...rows.hookRows, ...lunationBlend.hookRows]) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["title", "question", "headline", "review_status"]) });
-for (const r of [...rows.vocabularyRows, ...placementInterim.vocabularyRows]) { if (r.content_role === "vocabulary") place({ key: r.contentKey, you: r.body, they: null, extra: named(r, ["review_status"]) }); }
-for (const t of placementInterim.templates) place({ key: t.contentKey, you: t.body_you ?? t.body, they: t.body_they !== t.body_you ? t.body_they : null, extra: named(t, ["headline", "review_status"]) });
-for (const c of [...lib.authoredCards, ...lunationBlend.authoredCards, ...weeklyRows]) place({ key: c.contentKey, you: c.body ?? c.body_you, they: c.body_they && c.body_they !== c.body_you ? c.body_they : null, extra: named(c, ["headline", "keywords", "mantra", "intention", "ritual", "axis", "completion", "focus", "strategy", "review_status"]) });
+for (const r of rows.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["title", "question", "headline"]) });
+for (const r of bondLanguagePass2.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of skyArticleV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
+for (const r of skyPlanetFramesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of skyPlacementVoicePassV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of skySignCopySunV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of rows.vocabularyRows) { if (r.content_role === "vocabulary") place({ key: r.contentKey, you: r.body, they: null, extra: [] }); }
+for (const c of lib.authoredCards) place({ key: c.contentKey, you: c.body, they: null, extra: named(c, ["headline", "keywords", "mantra", "intention", "ritual", "axis", "completion", "focus", "strategy"]) });
+for (const r of skyArticleV1.vocabularyRows) place({ key: r.contentKey, you: r.body, they: null, extra: [] });
+for (const c of skyArticleV1.authoredCards) place({ key: c.contentKey, you: c.body, they: null, extra: named(c, ["headline", "valid_from", "valid_to"]) });
 const DESCS = {"Natal: planet meanings": "Ingredient sentences for every natal planet reading. The machine builds each reading in a fixed order: the intro line, then the planet-in-sign sentence, then the day-to-day list, then the warning (excess), then the Best line as the ending. Editing one entry here changes that part of the reading for ALL twelve signs.", "Natal: planet in sign": "The middle of each natal reading: the sentence written for that exact planet-sign pair. This is the most specific part of a reading.", "Natal: planet in house": "The second paragraph of each natal reading: what house the planet sits in and how it plays out there.", "Natal: angles (Rising, MC, DC, IC)": "The Rising, Midheaven, Descendant, and IC pages, one entry per sign.", "Natal: aspects": "Aspect pages between two natal planets: the per-pair sections plus the shared lines that explain what a square, trine, or conjunction is.", "Natal: empty houses": "The empty-house pages on friend charts: how the sign on the house runs it, plus the ruler, placement, and closing paragraphs.", "Profection years": "The yearly profection card: the clock explainer, one entry per house year, and the ruler paragraphs (who is driving the year).", "Transits: effect lines + variants": "The heart of every transit card: what each moving planet does when it touches part of a chart. Soft = trine/sextile, hard = square/opposition. Variants rotate so repeat viewers see fresh wording.", "Transits: retrogrades": "The retrograde season cards and long articles for the nine bodies that retrograde.", "Synastry + compatibility": "Between-two-charts pages: the aspect structures, how each planet thinks/feels (mode), and what each feels like on the receiving end (grates).", "Connection transits (bonds)": "The transits-to-your-connection cards: what each moving planet does to the line between you and a named friend.", "Sky page: placements + articles": "The planet-in-sign sky articles: the you-voice opener, the write-up, the practice paragraph, the element close, and the sign-off blessings.", "Sky page: seasons, lunations, eclipses": "The season articles, Full and New Moon articles, eclipse rules, sign lore and traps, and the event frames that report real sky aspects.", "Calendar: phases, void, markers": "The calendar page: the eight moon phase cards, the void-of-course card, and the solstice and equinox cards.", "Friends Circle feed": "The group stories in the Friends feed: shared profection years, lunations, retrogrades, returns, and the synastry spotlight, each with its headline, shared paragraph, and group question.", "Everything else (labels, houses, misc.)": "Small building blocks: house topics, one-line transit labels, aspect words, and other vocabulary the templates snap together."};
 let toc = "", body = "";
 SECTIONS.forEach(([name], i) => {

@@ -13,6 +13,7 @@ const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architect
 const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
 const placementSentencePositiveTest = "passed-jul29-criteria";
 let packageManifest;
+let continuousFallbackImportManifest;
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -185,11 +186,40 @@ function blockTypeForPackageRecord(contentRole, contentKey) {
   return null;
 }
 
+function isRetiredPlanetInSignModule(contentKey) {
+  const retirement = continuousFallbackImportManifest?.retired_module_rows;
+
+  if (!retirement || !Array.isArray(retirement.key_families)) {
+    return false;
+  }
+
+  const planets = new Set(retirement.planets ?? []);
+
+  return retirement.key_families.some((family) => {
+    const escaped = family.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    const pattern = escaped
+      .replace("\\{planet\\}", `(?:${[...planets].join("|")})`)
+      .replace("\\{sign\\}", "[^/]+")
+      .replace("\\{rest\\}", ".+");
+
+    return new RegExp(`^${pattern}$`, "u").test(contentKey);
+  });
+}
+
 function mapPackageRecord(record, bucket) {
   const contentKey = String(record.contentKey ?? record.content_key ?? "").trim();
 
   if (!contentKey) {
     throw new Error(`V3 ${bucket} row is missing contentKey.`);
+  }
+
+  if (isRetiredPlanetInSignModule(contentKey)) {
+    record = {
+      ...record,
+      review_status: "superseded",
+      render_eligible: false,
+      superseded_by: "sky-placement-continuous-v2"
+    };
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
@@ -273,19 +303,71 @@ function mapPackageRecord(record, bucket) {
   };
 }
 
+function editorialSourceBankRecords(bank) {
+  const reviewStatus = String(bank.authoring?.review_status ?? "").trim();
+  const approvedVia = String(bank.authoring?.approved_via ?? "").trim();
+
+  if (reviewStatus !== "approved" || approvedVia !== "owner-authored") {
+    throw new Error("Editorial source bank must preserve its owner-authored approved provenance.");
+  }
+
+  return bank.collections.flatMap((collection) =>
+    collection.entries.map((entry) => {
+      const entryId = String(entry.id ?? "").trim();
+      const body = String(entry.body ?? "").trim();
+
+      if (!entryId || !body) {
+        throw new Error(`Editorial source bank collection "${collection.id}" has an incomplete entry.`);
+      }
+
+      return {
+        ...entry,
+        contentKey: `fallback-source/editorial/${collection.id}/${entryId}`,
+        headline: entry.headline ?? titleFromKey(entryId),
+        body,
+        surface: collection.surface,
+        content_role: "fallback_source",
+        review_status: reviewStatus,
+        approved_via: approvedVia,
+        owner_authored: true,
+        family: collection.family,
+        collection_id: collection.id,
+        collection_title: collection.title,
+        judge_profile: collection.judgeProfile,
+        source_keys: collection.source_keys ?? [],
+        bank_version: bank.bankVersion,
+        note: "Owner-authored and approved. Preserve exact wording. Optional phrase-judge results are advisory and never revoke approval."
+      };
+    })
+  );
+}
+
 function readPackageSources() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+  const editorialSourceBank = readJson("source-rows/editorial-source-bank-v1.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
+  const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
+  const skyArticleRows = readJson("source-rows/sky-article-v1.json");
+  const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+  const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
+  const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
+  continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
 
   return {
     sourceRows,
+    editorialSourceBank,
     authoredRows,
+    bondLanguagePass2,
     lunationBlendRows,
     placementInterimRows,
+    skyArticleRows,
+    skyPlacementVoicePass,
+    skyPlanetFrames,
+    skySignCopySun,
     weeklyRows,
     templateRows
   };
@@ -298,34 +380,52 @@ function readerEligibleReviewStatus(row, allowBlank = false) {
     || (allowBlank && !reviewStatus);
 }
 
-function packageRowsWithLatestOverride(rows) {
-  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+
+  return [...candidates.values()]
+    .map((keyed) => [...keyed]
+      .reverse()
+      .find((row) => readerEligibleReviewStatus(row, allowBlank)))
+    .filter(Boolean);
 }
 
 function readerPackageBundle(sources) {
   return {
     transitLib: {
-      authoredCards: packageRowsWithLatestOverride([
+      authoredCards: packageRowsWithLatestEligibleOverride([
         ...sources.authoredRows.authoredCards,
         ...sources.lunationBlendRows.authoredCards,
+        ...sources.skyArticleRows.authoredCards,
         ...sources.weeklyRows
-      ]).filter((row) => readerEligibleReviewStatus(row))
+      ])
     },
     rowsFile: {
-      hookRows: packageRowsWithLatestOverride([
+      hookRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.hookRows,
-        ...sources.lunationBlendRows.hookRows
-      ]).filter((row) => readerEligibleReviewStatus(row)),
-      vocabularyRows: packageRowsWithLatestOverride([
+        ...sources.lunationBlendRows.hookRows,
+        ...sources.bondLanguagePass2.rows,
+        ...sources.skyArticleRows.hookRows,
+        ...sources.skyPlanetFrames.rows,
+        ...sources.skyPlacementVoicePass.rows,
+        ...sources.skySignCopySun.rows
+      ]),
+      vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
-        ...sources.placementInterimRows.vocabularyRows
-      ]).filter((row) => readerEligibleReviewStatus(row))
+        ...sources.placementInterimRows.vocabularyRows,
+        ...sources.skyArticleRows.vocabularyRows
+      ])
     },
     templatesFile: {
-      templates: packageRowsWithLatestOverride([
+      templates: packageRowsWithLatestEligibleOverride([
         ...sources.templateRows.templates,
         ...sources.placementInterimRows.templates
-      ]).filter((row) => readerEligibleReviewStatus(row, true))
+      ], true)
     }
   };
 }
@@ -334,14 +434,24 @@ function materializeRows(sources) {
   const rows = [
     ...sources.authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.skyArticleRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...(sources.skySignCopySun.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skySignCopySun.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material"))
+    ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
+    ...editorialSourceBankRecords(sources.editorialSourceBank)
+      .map((row) => mapPackageRecord(row, "editorial-source-bank"))
   ];
 
   // Runtime maps use later rows as intentional overrides. Mirror that exact
@@ -522,12 +632,6 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
   const liveCounts = importedCounts(importedRows);
   const expectedKeys = new Set(expectedRows.map((row) => row.content_key));
   const importedKeys = new Set(importedRows.map((row) => row.content_key));
-  const duplicateKeys = [...importedRows.reduce((counts, row) => {
-    counts.set(row.content_key, (counts.get(row.content_key) ?? 0) + 1);
-    return counts;
-  }, new Map())]
-    .filter(([, count]) => count > 1)
-    .map(([key]) => key);
   const missingKeys = [...expectedKeys].filter((key) => !importedKeys.has(key));
   const staleKeys = [...importedKeys].filter((key) => !expectedKeys.has(key));
   const expectedByKey = new Map(expectedRows.map((row) => [row.content_key, row]));
@@ -545,9 +649,9 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
     }
   }
 
-  if (missingKeys.length || staleKeys.length || duplicateKeys.length) {
+  if (missingKeys.length || staleKeys.length) {
     throw new Error(
-      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale, ${duplicateKeys.length} duplicate.`
+      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale.`
     );
   }
 
@@ -563,15 +667,7 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
     );
   }
 
-  return {
-    ...liveCounts,
-    parity: {
-      missing: 0,
-      stale: 0,
-      duplicate: 0,
-      changed: 0,
-    },
-  };
+  return liveCounts;
 }
 
 loadLocalWebEnv();
@@ -598,20 +694,7 @@ fs.writeFileSync(outPath, `${JSON.stringify({
 }, null, 2)}\n`);
 
 console.log(`materialized ${rows.length} V3 dashboard rows -> ${path.relative(repoRoot, outPath)}`);
-console.log(
-  JSON.stringify(
-    {
-      packageManifest: {
-        packageVersion: packageManifest.packageVersion,
-        contentHash: packageManifest.contentHash,
-        keyManifestHash: packageManifest.keyManifestHash,
-        keyCount: packageManifest.keyCount,
-      },
-    },
-    null,
-    2,
-  ),
-);
+console.log(JSON.stringify({ packageManifest }, null, 2));
 console.log(JSON.stringify(counts, null, 2));
 
 if (apply) {

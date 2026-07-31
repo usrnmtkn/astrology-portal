@@ -464,7 +464,8 @@
   filter: var(--filter-synastry-inner-glyph);
 }
 
-.sky-wheel .transit-planet-band {
+.sky-wheel .transit-planet-band,
+.sky-wheel-synastry .synastry-inner-planet-band {
   fill: none;
   stroke: var(--transit-wheel-band-fill, color-mix(in srgb, var(--bg) 82%, var(--ink) 8%));
   stroke-width: 60px;

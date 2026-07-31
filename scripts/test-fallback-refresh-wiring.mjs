@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   PACKAGE_VERSION,
   createFallbackRenderer,
+  createPackageManifest,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
@@ -17,12 +20,19 @@ function readPackageJson(relativePath) {
 }
 
 const sourceRows = readPackageJson("source-rows/fallback-source-rows-v3.json");
+const bondLanguagePass2 = readPackageJson("source-rows/bond-language-pass-2.json");
 const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json");
 const templates = readPackageJson("templates/fallback-templates-v3.json");
+const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
+const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.json");
+const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
+const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
+const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
+const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
-
 const counts = {
   authoredCards: transitRows.authoredCards.length,
   fallbackHooks: sourceRows.hookRows.length,
@@ -31,7 +41,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -339,42 +349,56 @@ assert.match(outerConnection.body, /Build the trust to match the heat/u);
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
   aspect: "square",
-  planetA: "venus",
-  planetB: "pluto",
-  natalAspect: "trine",
+  endpointPlanet: "venus",
+  endpointOwner: "reader",
+  activatedPlanets: ["pluto"],
   otherName: "Sofia",
   window: "Until November 13"
 });
-assert.match(connectionTransit.body, /^The next few months put more weight on follow-through\./u);
+const exactSaturnSquareBond = sourceRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/bond-effect-square/saturn"
+);
+assert.ok(exactSaturnSquareBond, "The exact Saturn-square bond row must exist.");
+assert.ok(
+  connectionTransit.body.startsWith(exactSaturnSquareBond.body_you),
+  "Exact aspect copy must supersede the legacy hard-family fallback."
+);
 assert.match(
   connectionTransit.body,
-  /Saturn is squaring Sofia's Pluto through November 13, activating the connection Sofia's Pluto makes with your Venus\./u
+  /Saturn is square your Venus through November 13, activating the connection it makes with Sofia's Pluto\./u
 );
+assert.equal(connectionTransit.headline, "Saturn square your Venus");
+assert.doesNotMatch(connectionTransit.body, /connection between/iu);
 assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
-assert.match(connectionTransit.body, /What happens repeatedly will tell you more than the promise\./u);
 
 const baseConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
   aspect: "square",
-  planetA: "moon",
-  planetB: "venus",
+  endpointPlanet: "venus",
+  endpointOwner: "friend",
+  activatedPlanets: ["moon"],
   otherName: "X"
 });
 const thirdConnectionVariant = transitRenderer.renderBondTransit({
   transiting: "mars",
   aspect: "square",
-  planetA: "moon",
-  planetB: "venus",
+  endpointPlanet: "venus",
+  endpointOwner: "friend",
+  activatedPlanets: ["moon"],
   otherName: "X",
   variant: 3
 });
 assert.equal(
   thirdConnectionVariant.body,
   baseConnectionVariant.body,
-  "Exact per-aspect bond rows replace variant rotation; variants remain only on the soft/hard fallback lane."
+  "Exact aspect copy must remain byte-identical instead of rotating legacy family variants."
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const bondGroupingSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
+  "utf8"
+);
 const aspectStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/aspects.css"), "utf8");
 const dashboardImportSource = fs.readFileSync(
   path.join(repoRoot, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),
@@ -382,6 +406,10 @@ const dashboardImportSource = fs.readFileSync(
 );
 const runtimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
+  "utf8"
+);
+const generatedContentSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
 );
 
@@ -472,13 +500,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?transitCardPreview\(card\.body\)/u,
-  "Connection-transit cards must be clickable and display only a preview."
+  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?\{card\.effectBody\}[\s\S]*?card\.activationBody/u,
+  "Connection-transit cards must be clickable and show the complete effect plus activation context."
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: card\.body\.split\(/u,
-  "Connection-transit detail views must retain the full authored body."
+  /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
+  "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.match(
   appSource,
@@ -523,20 +551,67 @@ assert.match(
 assert.match(
   appSource,
   /renderBondTransit\(\{[\s\S]*?variant: variantSlot === 1 \? undefined : variantSlot/u,
-  "Connection transits must receive their rotated stable variant slot."
-);
-assert.match(appSource, /const groupKey = \[[\s\S]*?item\.endpointOwner[\s\S]*?\]\.join\(":"\);/u);
-assert.match(appSource, /const activatedPlanets = \[\.\.\.new Set\(group\.map/u);
-assert.match(appSource, /endpointOwner,[\s\S]*?endpointPlanet,[\s\S]*?endpointPossessive:[\s\S]*?activatedPlanets/u);
-assert.match(
-  runtimeSource,
-  /authoredCards: packageRowsWithLatestOverride\(bundle\.transitLib\.authoredCards\)\.filter\(isReaderEligible\)/u,
-  "Production must resolve latest overrides before filtering review-gated authored cards."
+  "Bond transits must retain rotated stable variants for legacy fallback rows."
 );
 assert.match(
+  appSource,
+  /const groups = groupBondTransitActivations\(candidates\)/u,
+  "Bond transit contacts must group before rendering cards."
+);
+assert.match(
+  bondGroupingSource,
+  /`\$\{transiting\}:\$\{aspect\}:\$\{endpointPlanet\}:\$\{candidate\.endpointOwner\}`/u,
+  "The grouping key must include transiting planet, aspect, endpoint planet, and endpoint owner."
+);
+assert.match(
+  appSource,
+  /effectBody: rendered\.parts\[0\] \?\? ""/u,
+  "Bond cards must retain the single effect body separately from the computed closing line."
+);
+assert.match(
   runtimeSource,
-  /hookRows: packageRowsWithLatestOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
-  "Production must resolve latest overrides before filtering review-gated hook variants."
+  /authoredCards: packageRowsWithLatestReaderEligibleOverride\(bundle\.transitLib\.authoredCards\)/u,
+  "Production must select the latest reader-eligible authored override without letting a newer draft hide approved copy."
+);
+assert.match(
+  runtimeSource,
+  /hookRows: packageRowsWithLatestReaderEligibleOverride\(bundle\.rowsFile\.hookRows \?\? \[\]\)/u,
+  "Production must select the latest reader-eligible hook override without letting a newer draft hide approved copy."
+);
+assert.match(
+  runtimeSource,
+  /\.map\(\(keyed\) => \[\.\.\.keyed\]\.reverse\(\)\.find\(isEligible\)\)/u,
+  "Review-gated duplicate keys must fall back to the newest approved candidate."
+);
+assert.match(
+  runtimeSource,
+  /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
+  "Runtime must expose the bundled key manifest and content hash."
+);
+assert.match(
+  generatedContentSource,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  "Dashboard cache payloads must carry an invalidatable schema."
+);
+assert.match(
+  generatedContentSource,
+  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifest\.contentHash/u,
+  "Dashboard cache payloads must be rejected when the bundled content hash changes."
+);
+assert.match(
+  generatedContentSource,
+  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
+);
+assert.match(
+  generatedContentSource,
+  /\.order\("updated_at", \{ ascending: false \}\)[\s\S]*?\.order\("id", \{ ascending: false \}\)/u,
+  "Dashboard hydration pagination must have a stable unique-ID tiebreaker."
+);
+assert.match(
+  generatedContentSource,
+  /package metadata is missing or inconsistent[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
+  "An unversioned or inconsistent dashboard package must clear cache and fail closed to the bundled package."
 );
 
 assert.match(
@@ -559,5 +634,137 @@ assert.match(
   /const upserted = await upsertRows\(rows\);[\s\S]*?const deleted = await deleteStaleRows\(rows\);/u,
   "Dashboard imports must upsert the new mirror before removing stale provider rows."
 );
+assert.match(
+  dashboardImportSource,
+  /order=content_key\.asc,id\.asc/u,
+  "Dashboard verification pagination must have a unique ID tiebreaker."
+);
+assert.match(
+  dashboardImportSource,
+  /on_conflict=content_key/u,
+  "Dashboard imports must target the deployed composite identity."
+);
+assert.match(
+  dashboardImportSource,
+  /Dashboard mirror content mismatch/u,
+  "Dashboard verification must compare row content, not counts and keys alone."
+);
+
+const materializerTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-fallback-materializer-"));
+const materializerOutput = path.join(materializerTempDir, "rows.json");
+
+try {
+  execFileSync(process.execPath, [
+    path.join(repoRoot, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),
+    `--out=${materializerOutput}`
+  ]);
+  const materialized = JSON.parse(fs.readFileSync(materializerOutput, "utf8"));
+  const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
+  const localManifest = createPackageManifest({
+    transitLib: {
+      authoredCards: [
+        ...transitRows.authoredCards,
+        ...lunationBlendRows.authoredCards,
+        ...skyArticleRows.authoredCards,
+        ...weeklyRows
+      ]
+    },
+    rowsFile: {
+      hookRows: [
+        ...sourceRows.hookRows,
+        ...lunationBlendRows.hookRows,
+        ...bondLanguagePass2.rows,
+        ...skyArticleRows.hookRows,
+        ...skyPlanetFrames.rows,
+        ...skySignCopySun.rows
+      ],
+      vocabularyRows: [
+        ...sourceRows.vocabularyRows,
+        ...placementInterimRows.vocabularyRows,
+        ...skyArticleRows.vocabularyRows
+      ]
+    },
+    templatesFile: {
+      templates: [
+        ...templates.templates,
+        ...placementInterimRows.templates
+      ]
+    }
+  }, PACKAGE_VERSION);
+
+  assert.equal(
+    materialized.rows.length,
+    materializedByKey.size,
+    "Dashboard materialization must emit one deterministic row per content key."
+  );
+  assert.deepEqual(
+    materialized.packageManifest,
+    localManifest,
+    "Dashboard materialization must stamp the exact reader package version, key manifest, and content hash."
+  );
+
+  for (const row of placementInterimRows.vocabularyRows) {
+    if (!sourceRows.vocabularyRows.some((sourceRow) => sourceRow.contentKey === row.contentKey)) continue;
+    assert.equal(
+      materializedByKey.get(row.contentKey)?.body,
+      row.body,
+      `${row.contentKey} must retain placement-interim precedence in the dashboard mirror.`
+    );
+  }
+
+  for (const row of bondLanguagePass2.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize exactly once.`);
+    assert.equal(
+      materializedRow.body,
+      row.body_you,
+      `${row.contentKey} must expose the staged pass-2 candidate for review.`
+    );
+    assert.equal(
+      materializedRow.source_snapshot.review_status,
+      "reviewed",
+      `${row.contentKey} must carry its reviewed state into the dashboard mirror.`
+    );
+  }
+
+  for (const row of skySignCopySun.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.status, "DRAFT");
+    assert.equal(materializedRow.source_snapshot.review_status, "approved");
+    assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+  }
+
+  for (const row of skySignCopySun.superseded_rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} supersession must remain in dashboard history.`);
+    if (row.contentKey === "fallback-hook/sky-sign-copy/sun/leo") {
+      assert.equal(materializedRow.source_snapshot.review_status, "approved");
+      continue;
+    }
+    assert.equal(materializedRow.source_snapshot.review_status, "superseded");
+    assert.equal(materializedRow.facts.readerServing, false);
+  }
+
+  for (const row of skyPlacementVoicePass.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for owner review.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.status, "DRAFT");
+    const planet = row.contentKey.split("/").at(-1);
+    assert.equal(
+      materializedRow.source_snapshot.review_status,
+      ["moon", "lilith"].includes(planet) ? "needs_review" : "superseded"
+    );
+  }
+
+  const retiredMercuryModule = materializedByKey.get("fallback-hook/sky-placement-hook/mercury/cancer");
+  assert.ok(retiredMercuryModule);
+  assert.equal(retiredMercuryModule.source_snapshot.review_status, "superseded");
+  assert.equal(retiredMercuryModule.facts.readerServing, false);
+} finally {
+  fs.rmSync(materializerTempDir, { recursive: true, force: true });
+}
 
 console.log("fallback refresh wiring checks passed", counts);

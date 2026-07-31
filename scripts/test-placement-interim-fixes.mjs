@@ -17,8 +17,13 @@ const baseRows = readJson("source-rows/fallback-source-rows-v3.json");
 const baseTemplates = readJson("templates/fallback-templates-v3.json");
 const transitLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const interim = readJson("source-rows/placement-interim-fixes-v1.json");
+const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
 const rows = {
   ...baseRows,
+  hookRows: [
+    ...baseRows.hookRows,
+    ...skySignCopySun.rows
+  ],
   vocabularyRows: [
     ...baseRows.vocabularyRows,
     ...interim.vocabularyRows
@@ -143,11 +148,23 @@ for (const planet of [
   "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"
 ]) {
   for (const sign of baseRows.coverage.signs) {
-    const rendered = sky.renderSkyPlacement({ planet, sign });
+    const governedContinuousFallback = planet !== "moon";
+    if (governedContinuousFallback && !(planet === "sun" && sign === "leo")) {
+      assert.throws(
+        () => sky.renderSkyPlacement({ planet, sign, entryDate: "March 20", exitDate: "April 20" }),
+        /SOURCE_GAP: continuous sky placement sign copy/u
+      );
+      continue;
+    }
+    const rendered = sky.renderSkyPlacement({
+      planet,
+      sign,
+      ...(planet === "sun" ? { entryDate: "July 22", exitDate: "August 23" } : {})
+    });
     assert.doesNotMatch(rendered.body, /\{\{|\}\}/u);
     skyRenderCount++;
   }
 }
-assert.equal(skyRenderCount, 156);
+assert.equal(skyRenderCount, 13);
 
-console.log("placement interim checks passed: 7 gated vocab edits, 168 natal frames, and 156 sky renders");
+console.log("placement interim checks passed: 7 gated vocab edits, 168 natal frames, 13 in-scope sky renders, and canonical gaps for unapproved planet-in-sign units");

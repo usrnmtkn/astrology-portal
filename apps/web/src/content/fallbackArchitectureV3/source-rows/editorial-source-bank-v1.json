@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "bankVersion": "editorial-source-bank-v1",
+  "purpose": "Owner-authored astrology knowledge and quotable language for deliberate reuse by TLDR Astro resolvers and editors.",
+  "authoring": {
+    "origin": "owner-authored",
+    "review_status": "approved",
+    "approved_via": "owner-authored",
+    "preserve_exact_wording": true,
+    "reader_serving": false
+  },
+  "collections": [
+    {
+      "id": "sign-axis-tensions",
+      "title": "Sign-axis tensions",
+      "family": "sign-axis",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:sign-axis-tensions"],
+      "entries": [
+        {
+          "id": "aries-libra",
+          "headline": "Aries / Libra – Self vs. Others",
+          "body": "Core Tension: Independence vs. Partnership Integration Question: Can you stand fully in yourself while still making room for someone else? Aries is about trusting your gut, taking action, and not waiting for someone else to lead. Libra is about slowing down, listening, and making space for other perspectives. The work is knowing when to step forward and when to meet someone in the middle. Shadow Work: Times you kept the peace but lost yourself in the process, or times you pushed people away in the name of independence.",
+          "signs": ["aries", "libra"]
+        },
+        {
+          "id": "taurus-scorpio",
+          "headline": "Taurus / Scorpio – Security vs. Transformation",
+          "body": "Core Tension: Stability vs. Change Integration Question: Can you create stability in your life that also leaves room for change? Taurus is about steady routines, comfort, and things you can count on. Scorpio is about the moments that break those routines open and force growth. The work is learning how to hold on to what matters while letting go of what's run its course. Shadow Work: Times you stayed too long because it felt safe, or times you blew everything up because stability felt suffocating.",
+          "signs": ["taurus", "scorpio"]
+        },
+        {
+          "id": "gemini-sagittarius",
+          "headline": "Gemini / Sagittarius – Information vs. Wisdom",
+          "body": "Core Tension: Details vs. Big Picture Integration Question: Can you stay curious without getting lost in the details, and share your insights without oversimplifying them? Gemini wants to gather facts, ask questions, and explore all the options. Sagittarius wants to zoom out, see the pattern, and find meaning. The work is knowing when to dig deeper and when to trust what you already know. Shadow Work: Times you avoided making a decision by asking endless questions, or times you clung to a belief so tightly you stopped listening.",
+          "signs": ["gemini", "sagittarius"]
+        },
+        {
+          "id": "cancer-capricorn",
+          "headline": "Cancer / Capricorn – Nurturing vs. Achievement",
+          "body": "Core Tension: Emotional Safety vs. Public Success Integration Question: Can you build success without sacrificing the people and peace that matter most? Cancer focuses on home, care, and emotional connection. Capricorn focuses on building, achieving, and making a mark. The work is letting your ambitions strengthen your foundations instead of strain them. Shadow Work: Times you avoided challenges in the name of self-care, or times you pursued success at the expense of your well-being.",
+          "signs": ["cancer", "capricorn"]
+        },
+        {
+          "id": "leo-aquarius",
+          "headline": "Leo / Aquarius – Personal Expression vs. Collective Good",
+          "body": "Core Tension: Standing Out vs. Belonging Integration Question: Can you shine without making it all about you, and contribute to the group without disappearing? Leo is about showing up, sharing your gifts, and letting yourself be seen. Aquarius is about the collective, working together, and creating change that benefits everyone. The work is knowing when to lead and when to make space for others. Shadow Work: Times you shaped yourself to be accepted instead of showing up authentically, or moments you withdrew just to prove you didn't need anyone.",
+          "signs": ["leo", "aquarius"]
+        },
+        {
+          "id": "virgo-pisces",
+          "headline": "Virgo / Pisces – Precision vs. Flow",
+          "body": "Core Tension: Control vs. Surrender Integration Question: Can you give your all without losing yourself, and loosen your grip without letting go of the vision? Virgo asks you to tend to the tangible: the lists, the plans, the small daily actions. Pisces asks you to trust what can't be measured, to rest in the mystery. The work is knowing when focused effort serves you and when it's time to step back. Shadow Work: Times you fixated on details to avoid uncertainty, or drifted into fantasy to avoid facing reality.",
+          "signs": ["virgo", "pisces"]
+        }
+      ]
+    },
+    {
+      "id": "six-month-lunation-arcs",
+      "title": "Six-month New Moon to Full Moon arcs",
+      "family": "lunation-arc-six-month",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:lunation-arcs"],
+      "entries": [
+        {"id": "capricorn", "headline": "Capricorn New → Capricorn Full", "body": "From laying the groundwork to standing in what you've built. Foundation to legacy.", "signs": ["capricorn"]},
+        {"id": "aquarius", "headline": "Aquarius New → Aquarius Full", "body": "From the first spark of a radical idea to watching it change the game. Innovation to revolution.", "signs": ["aquarius"]},
+        {"id": "pisces", "headline": "Pisces New → Pisces Full", "body": "From quiet intuition to lived spiritual truth. Dream to wisdom.", "signs": ["pisces"]},
+        {"id": "aries", "headline": "Aries New → Aries Full", "body": "From the first step into the unknown to owning the role of leader. Courage to command.", "signs": ["aries"]},
+        {"id": "taurus", "headline": "Taurus New → Taurus Full", "body": "From knowing your worth to living in the abundance it creates. Value to harvest.", "signs": ["taurus"]},
+        {"id": "gemini", "headline": "Gemini New → Gemini Full", "body": "From sharing your message to making it part of a bigger truth. Words to vision.", "signs": ["gemini"]},
+        {"id": "cancer", "headline": "Cancer New → Cancer Full", "body": "From creating safety to living inside the sanctuary you built. Protection to belonging.", "signs": ["cancer"]},
+        {"id": "leo", "headline": "Leo New → Leo Full", "body": "From daring to be seen to standing fully in your light. Spark to radiance.", "signs": ["leo"]},
+        {"id": "virgo", "headline": "Virgo New → Virgo Full", "body": "From building better habits to mastering your craft. Routine to excellence.", "signs": ["virgo"]},
+        {"id": "libra", "headline": "Libra New → Libra Full", "body": "From seeking balance to living in harmony. Intention to embodiment.", "signs": ["libra"]},
+        {"id": "scorpio", "headline": "Scorpio New → Scorpio Full", "body": "From shedding the old skin to owning your full power. Transformation to rebirth.", "signs": ["scorpio"]},
+        {"id": "sagittarius", "headline": "Sagittarius New → Sagittarius Full", "body": "From chasing expansion to speaking what you've learned. Journey to message.", "signs": ["sagittarius"]}
+      ]
+    },
+    {
+      "id": "two-week-lunation-arcs",
+      "title": "Two-week New Moon to opposite Full Moon arcs",
+      "family": "lunation-arc-two-week",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:lunation-arcs"],
+      "entries": [
+        {"id": "aries-libra", "headline": "Aries New Moon → Full Moon in Libra", "body": "If you've been starting a new chapter but worrying about who you're leaving behind, this Full Moon shows you that the right people will support your growth.", "signs": ["aries", "libra"]},
+        {"id": "taurus-scorpio", "headline": "Taurus New Moon → Full Moon in Scorpio", "body": "This Full Moon is exposing where you've been accepting less because you didn't think you deserved more.", "signs": ["taurus", "scorpio"]},
+        {"id": "gemini-sagittarius", "headline": "Gemini New Moon → Full Moon in Sagittarius", "body": "If you've been keeping your message small, what if your truth could free someone else?", "signs": ["gemini", "sagittarius"]},
+        {"id": "cancer-capricorn", "headline": "Cancer New Moon → Full Moon in Capricorn", "body": "This Full Moon illuminates where protecting yourself became isolating yourself.", "signs": ["cancer", "capricorn"]},
+        {"id": "leo-aquarius", "headline": "Leo New Moon → Full Moon in Aquarius", "body": "Your people are waiting for exactly who you are, not who you think you should be.", "signs": ["leo", "aquarius"]},
+        {"id": "virgo-pisces", "headline": "Virgo New Moon → Full Moon in Pisces", "body": "You can't hate yourself into a version you'll love.", "signs": ["virgo", "pisces"]},
+        {"id": "libra-aries", "headline": "Libra New Moon → Full Moon in Aries", "body": "This Full Moon reveals where compromising has become self-betrayal.", "signs": ["libra", "aries"]},
+        {"id": "scorpio-taurus", "headline": "Scorpio New Moon → Full Moon in Taurus", "body": "Where holding on too tight is actually pushing away what you want.", "signs": ["scorpio", "taurus"]},
+        {"id": "sagittarius-gemini", "headline": "Sagittarius New Moon → Full Moon in Gemini", "body": "Your story needs updating to match who you've become.", "signs": ["sagittarius", "gemini"]},
+        {"id": "capricorn-cancer", "headline": "Capricorn New Moon → Full Moon in Cancer", "body": "Where success has been chosen over softness.", "signs": ["capricorn", "cancer"]},
+        {"id": "aquarius-leo", "headline": "Aquarius New Moon → Full Moon in Leo", "body": "You can't change the world while selling a version of yourself you don't believe in.", "signs": ["aquarius", "leo"]},
+        {"id": "pisces-virgo", "headline": "Pisces New Moon → Full Moon in Virgo", "body": "Where structure will set you free.", "signs": ["pisces", "virgo"]}
+      ]
+    },
+    {
+      "id": "sign-season-content",
+      "title": "Sign season content",
+      "family": "sign-season",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:sign-season-content"],
+      "entries": [
+        {"id": "aries", "headline": "Aries Season", "body": "When the Sun enters Aries, remember you were never meant to live on someone else's timeline. This is your season to begin. To decide. To move in the direction that works for you. Light: Courage that builds self-trust. Decisions that honor your truth. Momentum that renews you. Shadow: Reacting before pausing. Burning bridges you might need later. Mistaking speed for progress.", "signs": ["aries"]},
+        {"id": "taurus", "headline": "Taurus Season", "body": "When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting. Here, progress is patience. It's the consistency of tending to what you value most. Light: Patience, loyalty to priorities, slow sustainable growth. Shadow: Clinging to what's familiar even when it blocks growth. Refusing change that could bring stability.", "signs": ["taurus"]},
+        {"id": "gemini", "headline": "Gemini Season", "body": "The Sun in Gemini opens every window. Ideas and conversations multiply. Stay curious enough to explore without scattering yourself thin. Light: Adaptability, learning, finding connection through honest dialogue. Shadow: Leaving threads unfinished. Confusing motion for meaning. Staying safe in half-truths.", "signs": ["gemini"]},
+        {"id": "cancer", "headline": "Cancer Season", "body": "When the Sun returns to Cancer, you remember home is something you can build inside yourself. Tend to your own foundation with the same care you've offered others. Light: Emotional resilience, deep care, belonging to yourself. Shadow: Overextending for others. Neglecting your own needs. Using caretaking to avoid your own work.", "signs": ["cancer"]},
+        {"id": "leo", "headline": "Leo Season", "body": "The Sun in Leo is the moment to take center stage in your own life. Not for applause, but because this is where your light belongs. Light: Confidence, creative generosity, leading with warmth. Shadow: Chasing recognition over meaning. Centering ego instead of the work. Confusing being seen with being known.", "signs": ["leo"]},
+        {"id": "virgo", "headline": "Virgo Season", "body": "Virgo season invites you to refine, but not punish. Bring care and precision to what matters without making perfection the cost of your worth. Light: Thoughtful service, discernment, strengthening what sustains you. Shadow: Harsh self-criticism. Losing perspective in details. Holding yourself to impossible standards.", "signs": ["virgo"]},
+        {"id": "libra", "headline": "Libra Season", "body": "The Sun in Libra illuminates how you show up in connection. Balance isn't the absence of conflict, it's the presence of truth. Light: Cooperation, beauty, relationships built on mutuality. Shadow: People-pleasing. Staying silent to avoid discomfort. Choosing peace at the expense of your needs.", "signs": ["libra"]},
+        {"id": "scorpio", "headline": "Scorpio Season", "body": "When the Sun enters Scorpio, it urges you to take back what you've surrendered. Look closely at your desires, boundaries, and power. Light: Transformation, emotional honesty, living from your power. Shadow: Using control to avoid vulnerability. Holding pain as proof. Manipulating to feel safe.", "signs": ["scorpio"]},
+        {"id": "sagittarius", "headline": "Sagittarius Season", "body": "The Sun in Sagittarius pulls your attention past familiar limits. Step beyond comfort's edges. Adventure begins when you stop needing all answers first. Light: Vision, optimism, willingness to expand. Shadow: Avoiding responsibility for freedom. Making promises you can't keep. Restlessness without direction.", "signs": ["sagittarius"]},
+        {"id": "capricorn", "headline": "Capricorn Season", "body": "Capricorn season focuses on work that lasts. Strip away distractions and commit to what's worth the effort. Light: Resilience, mastery, building with intention. Shadow: Defining value through productivity. Working to exhaustion. Refusing to adapt when plans need changing.", "signs": ["capricorn"]},
+        {"id": "aquarius", "headline": "Aquarius Season", "body": "The Sun in Aquarius spotlights where you've been following rules that were never yours. Dismantle what no longer fits and dare to live by your own design. Light: Innovation, true belonging, building community through shared ideals. Shadow: Disconnection. Contradiction for its own sake. Withdrawing instead of engaging.", "signs": ["aquarius"]},
+        {"id": "pisces", "headline": "Pisces Season", "body": "The Sun in Pisces closes the astrological year reminding that not everything can be controlled. Some endings are meant to be released without fixing or explaining. Light: Compassion, spiritual openness, creativity without agenda. Shadow: Avoiding reality. Using escape to numb what needs attention. Giving yourself away to keep peace.", "signs": ["pisces"]}
+      ]
+    },
+    {
+      "id": "sign-specific-new-moons",
+      "title": "Sign-specific New Moon content",
+      "family": "new-moon-by-sign",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:new-moon-by-sign"],
+      "entries": [
+        {"id": "aries", "headline": "Aries New Moon", "body": "If you've been waiting for permission, for the right time, for things to feel less scary, this New Moon is showing you that the only permission you need is your own.", "signs": ["aries"]},
+        {"id": "taurus", "headline": "Taurus New Moon", "body": "If you've been undervaluing yourself for so long that it feels normal, this New Moon in Taurus reminds you that your worth isn't negotiable.", "signs": ["taurus"]},
+        {"id": "gemini", "headline": "Gemini New Moon", "body": "If you've been telling the same stories about yourself for years, the ones that keep you small, what if those stories were never true?", "signs": ["gemini"]},
+        {"id": "cancer", "headline": "Cancer New Moon", "body": "If you've been everyone's safe space while having nowhere to land yourself, this New Moon asks what it would look like to create safety for yourself.", "signs": ["cancer"]},
+        {"id": "leo", "headline": "Leo New Moon", "body": "If you've been dimming your light to make others comfortable, this New Moon wants you to stop apologizing for shining.", "signs": ["leo"]},
+        {"id": "virgo", "headline": "Virgo New Moon", "body": "If you've been chasing the idea that peace comes from getting everything right, this New Moon asks you to release the impossible standard.", "signs": ["virgo"]},
+        {"id": "libra", "headline": "Libra New Moon", "body": "If you've been keeping the peace by silencing your needs, this New Moon shows you that harmony includes your active participation.", "signs": ["libra"]},
+        {"id": "scorpio", "headline": "Scorpio New Moon", "body": "If you've been giving your power away in tiny pieces, this New Moon is your call to rise.", "signs": ["scorpio"]},
+        {"id": "sagittarius", "headline": "Sagittarius New Moon", "body": "If you've been playing small because big dreams felt dangerous, this New Moon wants you to remember what it feels like to believe in possibility.", "signs": ["sagittarius"]},
+        {"id": "capricorn", "headline": "Capricorn New Moon", "body": "If you've been exhausted from building everyone else's dreams while yours sit untouched, this is your moment.", "signs": ["capricorn"]},
+        {"id": "aquarius", "headline": "Aquarius New Moon", "body": "If you've been playing by rules that were never yours, this New Moon is your invitation to stop fitting in where you were never meant to belong.", "signs": ["aquarius"]},
+        {"id": "pisces", "headline": "Pisces New Moon", "body": "If you've been holding it all together for so long that you've forgotten how to let go, this New Moon invites you back into flow.", "signs": ["pisces"]}
+      ]
+    },
+    {
+      "id": "double-new-moon-elements",
+      "title": "Sign-specific Double New Moon interpretations",
+      "family": "double-new-moon-by-element",
+      "surface": "sky",
+      "judgeProfile": "astrology-source",
+      "source_keys": ["owner-authored:double-new-moon-by-element"],
+      "entries": [
+        {"id": "fire", "headline": "Fire Signs", "body": "First: \"I'll charge forward!\" → burns out. Second: \"I'll lead with wisdom\" → sustainable fire", "element": "fire"},
+        {"id": "earth", "headline": "Earth Signs", "body": "First: \"I'll control everything!\" → rigidity. Second: \"I'll build with flexibility\" → lasting structures", "element": "earth"},
+        {"id": "air", "headline": "Air Signs", "body": "First: \"I'll think my way through!\" → mental loops. Second: \"I'll communicate with depth\" → real connection", "element": "air"},
+        {"id": "water", "headline": "Water Signs", "body": "First: \"I'll feel everything!\" → emotional overwhelm. Second: \"I'll flow with wisdom\" → emotional mastery", "element": "water"}
+      ]
+    },
+    {
+      "id": "quotable-one-liners",
+      "title": "Description content quotable one-liners",
+      "family": "quotable-one-liner",
+      "surface": "modifier",
+      "judgeProfile": "quotable-one-liner",
+      "source_keys": ["owner-authored:quotable-one-liner-bank"],
+      "entries": [
+        {"id": "boundaries-energy-protection-01", "category": "boundaries-energy-protection", "body": "If it costs your peace, it's overpriced."},
+        {"id": "boundaries-energy-protection-02", "category": "boundaries-energy-protection", "body": "They'll drain you dry, then blame you for being empty."},
+        {"id": "boundaries-energy-protection-03", "category": "boundaries-energy-protection", "body": "You're allowed to close the door without explaining what's on the other side."},
+        {"id": "boundaries-energy-protection-04", "category": "boundaries-energy-protection", "body": "Don't rent space in your life to people who hate the view."},
+        {"id": "boundaries-energy-protection-05", "category": "boundaries-energy-protection", "body": "You don't have to be available for every crisis."},
+
+        {"id": "credit-ownership-creative-theft-01", "category": "credit-ownership-creative-theft", "body": "Stakeholders love a win they never had to work for."},
+        {"id": "credit-ownership-creative-theft-02", "category": "credit-ownership-creative-theft", "body": "If they needed your blueprint to build it, it's still your architecture."},
+        {"id": "credit-ownership-creative-theft-03", "category": "credit-ownership-creative-theft", "body": "They'll call it 'inspired' to avoid calling it stolen."},
+        {"id": "credit-ownership-creative-theft-04", "category": "credit-ownership-creative-theft", "body": "You weren't brought in to be background lighting."},
+
+        {"id": "authenticity-self-expression-01", "category": "authenticity-self-expression", "body": "Stop dimming your fire to make someone else's candle look brighter."},
+        {"id": "authenticity-self-expression-02", "category": "authenticity-self-expression", "body": "They'll love the version of you that's easiest to swallow. Serve 'em the full plate anyway."},
+        {"id": "authenticity-self-expression-03", "category": "authenticity-self-expression", "body": "Stop folding yourself into origami just so people can fit you in their pocket."},
+        {"id": "authenticity-self-expression-04", "category": "authenticity-self-expression", "body": "You're not here to blend, you're here to make the room rearrange itself."},
+        {"id": "authenticity-self-expression-05", "category": "authenticity-self-expression", "body": "Your difference isn't a flaw, it's the blueprint for something they've never seen."},
+        {"id": "authenticity-self-expression-06", "category": "authenticity-self-expression", "body": "If your shine makes them blind, they can find shade somewhere else."},
+
+        {"id": "self-worth-personal-power-01", "category": "self-worth-personal-power", "body": "You don't have to burn yourself to prove you're fire."},
+        {"id": "self-worth-personal-power-02", "category": "self-worth-personal-power", "body": "Sometimes the best thing you can do is put it all down and walk away for the night."},
+        {"id": "self-worth-personal-power-03", "category": "self-worth-personal-power", "body": "You're allowed to be off-duty from holding the whole world together."},
+        {"id": "self-worth-personal-power-04", "category": "self-worth-personal-power", "body": "Stop building palaces for people who'd leave you homeless."},
+
+        {"id": "empathy-emotional-labor-01", "category": "empathy-emotional-labor", "body": "You might be feeling tired of being the one who always holds it together."},
+        {"id": "empathy-emotional-labor-02", "category": "empathy-emotional-labor", "body": "There's a difference between resilience and never letting yourself rest."},
+        {"id": "empathy-emotional-labor-03", "category": "empathy-emotional-labor", "body": "You're allowed to put the weight down, even if no one else is ready to pick it up."},
+
+        {"id": "family-roles-breaking-patterns-01", "category": "family-roles-breaking-patterns", "body": "Some people love the version of you that doesn't hold them accountable."},
+        {"id": "family-roles-breaking-patterns-02", "category": "family-roles-breaking-patterns", "body": "Being of the same blood isn't a pass for bad behavior."},
+        {"id": "family-roles-breaking-patterns-03", "category": "family-roles-breaking-patterns", "body": "You can honor your roots without living tangled in them."},
+        {"id": "family-roles-breaking-patterns-04", "category": "family-roles-breaking-patterns", "body": "You can love them and still leave the patterns behind."},
+        {"id": "family-roles-breaking-patterns-05", "category": "family-roles-breaking-patterns", "body": "The healthiest thing you can hand down is freedom from generational trauma."},
+
+        {"id": "strategy-01", "category": "strategy", "body": "You can have a Plan B without betraying Plan A."},
+        {"id": "strategy-02", "category": "strategy", "body": "Success isn't just about winning once. It's about protecting your position so you can try again."},
+        {"id": "strategy-03", "category": "strategy", "body": "Every move should protect two things: the momentum you've built and your capacity to make the next move."},
+        {"id": "strategy-04", "category": "strategy", "body": "Patience is part of strategy. It's the discipline to act when timing will work in your favor."},
+
+        {"id": "retrograde-01", "category": "retrograde", "body": "Just because you chose it years ago doesn't mean you're still choosing it now."},
+        {"id": "retrograde-02", "category": "retrograde", "body": "Some habits look like discipline but are just outdated agreements you forgot to renegotiate."},
+        {"id": "retrograde-03", "category": "retrograde", "body": "If you wouldn't choose it today, it might be time to stop living like you did."},
+        {"id": "retrograde-04", "category": "retrograde", "body": "Step back far enough to see whether you're fighting for something or just fighting out of habit."},
+        {"id": "retrograde-05", "category": "retrograde", "body": "Retrograde seasons are invitations to clean up the mess before you build something new on top of it."},
+
+        {"id": "financial-growth-security-01", "category": "financial-growth-security", "body": "If it doesn't pay you back in the long run, it's an expense, not an investment."},
+        {"id": "financial-growth-security-02", "category": "financial-growth-security", "body": "Growth isn't always about making more. Sometimes it's about keeping more."},
+        {"id": "financial-growth-security-03", "category": "financial-growth-security", "body": "Stop discounting yourself because you think they can't afford you."},
+        {"id": "financial-growth-security-04", "category": "financial-growth-security", "body": "You can't build generational wealth on \"just happy to be here.\""},
+
+        {"id": "relationships-compromise-01", "category": "relationships-compromise", "body": "The right person will still piss you off. The difference is you're willing to work through it."},
+        {"id": "relationships-compromise-02", "category": "relationships-compromise", "body": "Every couple fights. The ones who last are the ones who know what they're fighting for."},
+
+        {"id": "health-creativity-01", "category": "health-creativity", "body": "You can't outrun stress on caffeine and willpower forever."},
+        {"id": "health-creativity-02", "category": "health-creativity", "body": "Creativity needs space, not constant productivity."}
+      ]
+    }
+  ]
+}

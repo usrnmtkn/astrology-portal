@@ -8,8 +8,8 @@
 // a regex cannot: does it read as ONE lived paragraph plus a tight mechanics
 // pass (not a pile of restatements), does it stay in the second person and true
 // to the geometry, does it keep the apex / balancing point to one mention each,
-// does it avoid moralizing. It returns a 1-3 verdict so the pipeline can
-// auto-publish only what passes BOTH gates.
+// does it avoid moralizing. Model verdicts are advisory; only an exact
+// approved-gold match may bypass human review.
 //
 //   node scripts/judge-pattern-voice.js --dry-run "<card text>"
 
@@ -117,13 +117,9 @@ function buildJudgePrompt(card, { tier = "figure" } = {}) {
   ].filter(Boolean).join("\n");
 }
 
-// Reuse the generator's model plumbing (provider, model, key), like the sky
-// judge. Works the moment the generator's key is set. Judge runs COLD.
-const { generate } = require("./generate-sky-aspect-cards.js");
+const { editorialGate } = require("./editorial-judge-policy.js");
+const { runJudgeSamples, sha256 } = require("./editorial-judge-runtime.js");
 const JUDGE_TEMPERATURE = 0.1;
-async function judge(prompt) {
-  return generate(prompt, { temperature: JUDGE_TEMPERATURE });
-}
 
 function parseVerdict(raw) {
   const m = String(raw).match(/\{[\s\S]*\}/);
@@ -131,12 +127,11 @@ function parseVerdict(raw) {
   try { return JSON.parse(m[0]); } catch { return { score: 1, verdict: "off-voice", why: "unparseable judge output" }; }
 }
 
-const gateFor = (score) => (score === 3 ? "auto-publish" : score === 2 ? "human-review" : "regenerate");
-
 async function judgeCard(card, opts = {}) {
   const tier = opts.tier || tierForCard(opts);
   const matchedGold = exactGoldMatch(card);
   if (matchedGold) {
+    const policy = editorialGate({ score: 3, exactApprovedGold: true });
     return {
       score: 3,
       verdict: "in-voice",
@@ -144,19 +139,50 @@ async function judgeCard(card, opts = {}) {
       why: `Exact canonical gold match: ${matchedGold.sourceId}.`,
       samples: 0,
       tier,
-      gate: "auto-publish",
-      exactGold: true
+      exactGold: true,
+      ...policy,
+      audit: {
+        schemaVersion: 1,
+        recordedAt: new Date().toISOString(),
+        promptVersion: "not-applicable-exact-approved-match",
+        rubricVersion: "pattern-aspect-approved-gold-v1",
+        promptSha256: null,
+        rubricSha256: sha256(JSON.stringify(pat)),
+        contentSha256: sha256(serializePatternCard(card)),
+        provider: "none",
+        model: "approved-exact-match",
+        releaseId: "approved-exact-match",
+        registryVersion: null,
+        registryLaneId: null,
+        registryState: null,
+        registryOverride: false,
+        evaluationSetVersion: "pattern-aspect-approved-gold-v1",
+        policyVersion: "editorial-judge-policy-v1",
+        temperature: null,
+        samples: 0,
+        scores: [3],
+        verdicts: [],
+        disagreement: false,
+        privacyMode: "not-sent",
+        redactionCount: 0,
+        context: { surface: "natal-pattern", tier, sourceId: matchedGold.sourceId }
+      }
     };
   }
-  const fn = opts.judgeFn || judge;
   const prompt = buildJudgePrompt(card, { tier });
-  const samples = Math.max(1, opts.samples || 1);
-  const verdicts = [];
-  for (let i = 0; i < samples; i++) verdicts.push(parseVerdict(await fn(prompt)));
-  const scores = verdicts.map((v) => v.score).sort((a, b) => a - b);
-  const median = scores[Math.floor(scores.length / 2)];
-  const chosen = verdicts.find((v) => v.score === median) || verdicts[0];
-  return { ...chosen, score: median, samples, tier, gate: gateFor(median) };
+  const result = await runJudgeSamples({
+    content: serializePatternCard(card),
+    prompt,
+    rubric: JSON.stringify(pat),
+    rubricVersion: "pattern-aspect-voice-v1",
+    samples: opts.samples,
+    temperature: JUDGE_TEMPERATURE,
+    judgeFn: opts.judgeFn,
+    parseVerdict,
+    context: { surface: "natal-pattern", tier },
+    calibration: Boolean(opts.calibration)
+  });
+  return { ...result, tier, ...editorialGate(result) };
 }
 
 module.exports = {

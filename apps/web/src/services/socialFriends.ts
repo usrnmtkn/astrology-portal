@@ -637,14 +637,19 @@ export async function cancelSocialInvitation(invitationId: string) {
 
 export function socialInvitationUrl(token: string) {
   const url = new URL(window.location.href);
-  url.searchParams.set("socialInvite", token);
-  url.hash = "friends?tab=circle";
+  url.pathname = `/i/${encodeURIComponent(token.trim())}`;
+  url.search = "";
+  url.hash = "";
   return url.toString();
 }
 
 export function captureSocialInvitationFromUrl() {
   const url = new URL(window.location.href);
-  const token = url.searchParams.get("socialInvite")?.trim();
+  const pathToken = url.pathname.match(/^\/i\/([^/]+)\/?$/)?.[1];
+  const token = (
+    url.searchParams.get("socialInvite")?.trim()
+    || (pathToken ? decodeURIComponent(pathToken).trim() : "")
+  );
 
   if (!token) {
     return false;
@@ -652,7 +657,9 @@ export function captureSocialInvitationFromUrl() {
 
   window.sessionStorage.setItem(pendingSocialInvitationKey, token);
   window.localStorage.removeItem(pendingSocialInvitationKey);
+  url.pathname = "/";
   url.searchParams.delete("socialInvite");
+  url.hash = "friends?tab=circle";
   window.history.replaceState(window.history.state, "", url);
   return true;
 }

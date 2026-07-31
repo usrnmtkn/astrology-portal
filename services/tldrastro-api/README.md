@@ -20,6 +20,10 @@ cp .env.example .env
 uvicorn tldrastro_api.main:app --reload --port 8000
 ```
 
+The API test and production runtime is Python 3.11. PySwissEph is pinned in
+`pyproject.toml` because changes to its calculation data can move contacts
+across aspect-orb boundaries.
+
 Then open:
 
 - API: `http://localhost:8000`
@@ -41,6 +45,28 @@ TLDR_ASTRO_EPHEMERIS_PATH=/path/to/ephemeris uvicorn tldrastro_api.main:app --re
 The service uses Swiss Ephemeris for natal, sky, transit, timing, synastry, and
 composite calculations. Keep licensed ephemeris data outside git and point the
 runtime at it with `TLDR_ASTRO_EPHEMERIS_PATH`.
+
+## Tests
+
+Run the full API suite from the service directory:
+
+```bash
+python -m pytest
+```
+
+Portable CI intentionally validates the known PySwissEph profile available
+without a private ephemeris-data mount: `moshier,swiss`. The relationship
+fixtures assert that profile explicitly, so fallback cannot happen silently.
+To validate against a mounted Swiss-only data set, configure both paths:
+
+```bash
+TLDR_ASTRO_EPHEMERIS_PATH=/path/to/ephemeris \
+TLDR_ASTRO_TEST_EPHEMERIS_ENGINES=swiss \
+python -m pytest
+```
+
+Production still requires the Swiss-only profile. `/ready` rejects fallback
+when `TLDR_ASTRO_EPHEMERIS_PATH` is configured.
 
 ## Timezone Lookup
 

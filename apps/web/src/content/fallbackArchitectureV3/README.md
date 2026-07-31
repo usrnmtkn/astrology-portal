@@ -2,6 +2,14 @@
 
 Created 2026-07-21 from `tldrastro-fallback-source-package-2026-07-21.zip`. Fixes the fallback vs authored split: fragments stop rendering as copy, natal placements get real per-surface templates, and every row carries a `content_role`.
 
+For the app-wide developer and agent guide, start with
+[`docs/content-management/README.md`](../../../../../docs/content-management/README.md)
+and its detailed
+[`ARCHITECTURE.md`](../../../../../docs/content-management/ARCHITECTURE.md).
+This package README describes package internals; the app-wide docs also cover
+fact ownership, generated-content precedence, dashboard hydration, publishing,
+and surface wiring.
+
 ## Contents
 
 | Path | What it is |

@@ -32,6 +32,7 @@ const vite = await createServer({
 
 try {
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
+  const astrologyDisplay = await vite.ssrLoadModule("/src/services/astrologyDisplay.ts");
   const beforeIngress = await ephemeris.getAstrodienstSky(
     ephemeris.defaultLocation,
     new Date("2026-07-22T16:00:00Z")
@@ -59,6 +60,18 @@ try {
   assert.equal(southNode.glyph, "☋", "South Node should keep the south-node glyph.");
   assert.notEqual(northNode.house, southNode.house, "South Node should not inherit North Node's house.");
   assert.equal(southNode.motion, northNode.motion, "Both ends of the node axis must share the same motion state.");
+  assert.equal(astrologyDisplay.isDisplayRetrograde(northNode), false, "North Node must not render as a retrograde planet.");
+  assert.equal(astrologyDisplay.isDisplayRetrograde(southNode), false, "South Node must not render as a retrograde planet.");
+  assert.equal(
+    astrologyDisplay.lunarNodeTransitRangeLabel(northNode),
+    "Jul 26, 2026 - Mar 26, 2028",
+    "True North Node content must use the ephemeris ingress and egress in the chart time zone."
+  );
+  assert.equal(
+    astrologyDisplay.lunarNodeTransitRangeLabel(southNode),
+    "Jul 26, 2026 - Mar 26, 2028",
+    "True South Node content must share the computed node-axis window."
+  );
   assert.equal(sky.calculationProvenance.nodeType, "true", "Calculation provenance must disclose True Node.");
   assert.equal(sky.calculationProvenance.calculationVersion, "tldrastro-calculation-v2");
 } finally {

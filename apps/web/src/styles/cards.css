@@ -158,9 +158,10 @@
 .natal-pattern-card__activation summary em,
 .natal-pattern-card__activation-eyebrow {
   color: var(--card-meta-color);
-  font-size: var(--type-xs);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
   font-style: normal;
-  font-weight: var(--weight-semibold);
+  font-weight: var(--label-eyebrow-font-weight);
   letter-spacing: 0;
   line-height: var(--leading-meta);
   text-transform: uppercase;
@@ -538,8 +539,7 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
-.daily-special-section,
-.daily-behind-forecast {
+.daily-special-section {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--card-radius);
@@ -582,26 +582,84 @@
   margin-top: 0;
 }
 
+.daily-behind-forecast {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
 .daily-behind-forecast > div {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--card-list-gap);
 }
 
 .daily-forecast-label {
-  align-items: start;
-  background: transparent;
-  border: 0;
-  border-top: 1px solid var(--line);
+  align-items: center;
+  background: var(--aspect-card-bg);
+  border: 1px solid var(--aspect-card-border);
+  border-radius: var(--aspect-card-radius);
+  box-shadow: var(--aspect-card-shadow);
   color: inherit;
-  cursor: pointer;
   display: grid;
-  gap: var(--space-1);
-  padding: var(--space-3) 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  min-height: var(--aspect-card-min-height);
+  padding: var(--surface-card-padding-compact);
   text-align: left;
+  width: 100%;
+}
+
+.daily-forecast-label > span {
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+  text-wrap: pretty;
 }
 
 .daily-forecast-label small {
-  color: var(--muted);
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-regular);
+  grid-column: 1;
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+}
+
+button.daily-forecast-label {
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+button.daily-forecast-label::after {
+  align-self: center;
+  color: var(--card-meta-color);
+  content: "→";
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  line-height: 1;
+}
+
+button.daily-forecast-label:hover {
+  border-color: color-mix(in srgb, var(--card-border) 58%, var(--card-title-color));
+  box-shadow: var(--card-shadow-raised);
+  transform: translateY(-1px);
+}
+
+button.daily-forecast-label:focus-visible {
+  outline: 2px solid var(--card-title-color);
+  outline-offset: 3px;
 }
 
 @media (max-width: 640px) {
