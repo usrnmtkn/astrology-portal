@@ -651,34 +651,61 @@ function loadLocalEnv() {
   }
 }
 
-function generationConfig() {
+function modelConfig(role = "generation") {
   loadLocalEnv();
-  const requested = (
-    process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
-    || process.env.CONTENT_GENERATION_PROVIDER
-    || "openai"
-  ).trim().toLowerCase();
+  const isJudge = role === "judge";
+  const requested = (isJudge
+    ? (
+        process.env.CONTENT_JUDGE_PROVIDER
+        || process.env.CONTENT_GENERATION_PROVIDER_JUDGE
+        || process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
+        || process.env.CONTENT_GENERATION_PROVIDER
+        || "openai"
+      )
+    : (
+        process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
+        || process.env.CONTENT_GENERATION_PROVIDER
+        || "openai"
+      )).trim().toLowerCase();
   const provider = requested === "anthropic" ? "claude" : requested;
 
   if (provider === "claude") {
     return {
       provider,
-      model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      temperature: 0.7
+      model: isJudge
+        ? (process.env.ANTHROPIC_JUDGE_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6")
+        : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6"),
+      apiKey: isJudge
+        ? (process.env.ANTHROPIC_JUDGE_API_KEY || process.env.ANTHROPIC_API_KEY)
+        : process.env.ANTHROPIC_API_KEY,
+      temperature: isJudge ? 0.1 : 0.7,
+      role
     };
   }
 
   if (provider === "openai") {
     return {
       provider,
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      apiKey: process.env.OPENAI_API_KEY,
-      temperature: 0.7
+      model: isJudge
+        ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini")
+        : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini"),
+      apiKey: isJudge
+        ? (process.env.OPENAI_JUDGE_API_KEY || process.env.OPENAI_API_KEY)
+        : process.env.OPENAI_API_KEY,
+      temperature: isJudge ? 0.1 : 0.7,
+      role
     };
   }
 
-  throw new Error(`Unsupported CONTENT_GENERATION_PROVIDER_SKY_ASPECT '${requested}'. Use 'openai' or 'claude'.`);
+  throw new Error(`Unsupported ${isJudge ? "CONTENT_JUDGE_PROVIDER" : "CONTENT_GENERATION_PROVIDER_SKY_ASPECT"} '${requested}'. Use 'openai' or 'claude'.`);
+}
+
+function generationConfig() {
+  return modelConfig("generation");
+}
+
+function judgeConfig() {
+  return modelConfig("judge");
 }
 
 function openAiOutputText(payload) {
@@ -715,8 +742,7 @@ function buildRepairPrompt(text, reason) {
 
 // Must return the poetic card body only. Facts such as dates, degrees, series,
 // and mechanics are deliberately not accepted here.
-async function generate(prompt, { temperature } = {}) {
-  const config = generationConfig();
+async function generateWithConfig(prompt, config, { temperature } = {}) {
   const temp = temperature ?? config.temperature;
 
   if (!config.apiKey) {
@@ -772,6 +798,14 @@ async function generate(prompt, { temperature } = {}) {
   const text = cleanCardText(openAiOutputText(payload));
   if (!text) throw new Error("OpenAI response did not include card text.");
   return text;
+}
+
+async function generate(prompt, options = {}) {
+  return generateWithConfig(prompt, generationConfig(), options);
+}
+
+async function generateJudge(prompt, options = {}) {
+  return generateWithConfig(prompt, judgeConfig(), options);
 }
 
 async function repairCard(text, reason, { generateFn = generate } = {}) {
@@ -853,7 +887,7 @@ async function runCardPipeline({
           tier: judgeTier,
           judgeFn
         });
-        result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+        result.gate = result.judge.gate; // human-review | regenerate (model verdicts are advisory)
 
         if (result.judge.score === 2) {
           const originalJudge = result.judge;
@@ -1066,10 +1100,12 @@ module.exports = {
   buildPrompt,
   closeBank,
   generate,
+  generateJudge,
   generateCard,
   generatePlacementCard,
   generatePlacementTopper,
   generationConfig,
+  judgeConfig,
   normalizeCardArgs,
   normalizePlacementArgs,
   normalizePlacementTopperArgs,

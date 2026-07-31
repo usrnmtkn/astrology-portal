@@ -1,0 +1,6 @@
+accelerate>=1.0.0
+datasets>=3.0.0
+peft>=0.17.0
+safetensors>=0.4.0
+transformers>=4.55.0
+trl>=0.20.0

@@ -13,6 +13,7 @@ Standalone shared content package for astrological meaning. This repository is t
 - `engine/timing/` is optional app logic: profection context and transit ranking only. It does not contain authored meaning or voice.
 - `docs/circle-feed-logic.md` is the product logic contract for scoring and rendering knowledge-backed feed items.
 - `docs/content-modes.md` defines Feed, In-Depth, and Article voice modes by surface.
+- `docs/editorial-ai/README.md` explains the model-swappable editorial AI architecture and the mandatory rules for humans and coding agents.
 - `dist/` is generated output. Apps consume `dist/`, never `data/`.
 
 Authoring shape and shipping shape are intentionally different. Human authors edit small JSON files in `data/`; `npm run build` validates and compiles those files into versioned static files under `dist/`.

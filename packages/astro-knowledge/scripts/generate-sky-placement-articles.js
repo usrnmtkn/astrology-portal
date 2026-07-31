@@ -387,7 +387,7 @@ async function generateArticle(args, {
       if (withJudge) {
         const { judgeArticle } = require("./judge-placement-voice.js");
         result.judge = await judgeArticle(article, { tier: normalized.tier, planet: normalized.planet, sign: normalized.sign, judgeFn });
-        result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+        result.gate = result.judge.gate; // human-review | regenerate (exact approved assets may auto-publish elsewhere)
       }
       result.rows = toHookRows(normalized, article, { source: normalized.meaning.source, gate: result.gate });
       return result;

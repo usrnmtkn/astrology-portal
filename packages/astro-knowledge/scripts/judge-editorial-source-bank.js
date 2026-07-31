@@ -10,6 +10,7 @@ const bankPath = path.join(
 );
 const voiceRoot = path.join(__dirname, "../voice/tldr-astro");
 const generalVoiceRoot = path.join(__dirname, "../voice");
+const { runJudgeSamples } = require("./editorial-judge-runtime.js");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -182,17 +183,25 @@ function parseVerdict(raw) {
 }
 
 async function judgeEntry(entry, judgeFn) {
-  const runJudge = judgeFn ?? (async (prompt) => {
-    const { generate } = require("./generate-sky-aspect-cards.js");
-    return generate(prompt, { temperature: 0.1 });
+  const prompt = buildJudgePrompt(entry);
+  const result = await runJudgeSamples({
+    content: entry.body,
+    prompt,
+    rubric: JSON.stringify({ judgeProfile: entry.judgeProfile, family: entry.family, category: entry.category ?? entry.family }),
+    rubricVersion: "editorial-source-bank-v1",
+    samples: 1,
+    temperature: 0.1,
+    judgeFn,
+    parseVerdict,
+    context: { surface: entry.surface, family: entry.family, contentKey: entry.contentKey }
   });
-  const verdict = parseVerdict(await runJudge(buildJudgePrompt(entry)));
 
   return {
     contentKey: entry.contentKey,
     ownerAuthored: true,
     reviewStatus: "approved",
-    ...verdict,
+    ...result,
+    editorialLane: result.score === 3 && !result.disagreement ? "no-action" : "human-review",
     approvalAction: "retain-owner-approval"
   };
 }
@@ -226,7 +235,8 @@ module.exports = {
 
 if (require.main === module) {
   const [mode, ...rest] = process.argv.slice(2);
-  const selector = rest.join(" ");
+  const authorizeLive = rest.includes("--authorize-live");
+  const selector = rest.filter((value) => value !== "--authorize-live").join(" ");
 
   if (mode === "--lint") {
     const result = lintBank();
@@ -235,6 +245,10 @@ if (require.main === module) {
   } else if (mode === "--dry-run" && selector) {
     console.log(buildJudgePrompt(findEntry(selector)));
   } else if (mode === "--judge" && selector) {
+    if (!authorizeLive) {
+      console.error("Live source-bank judging requires --authorize-live and TLDR_ALLOW_LIVE_LLM_JUDGE=1.");
+      process.exit(1);
+    }
     judgeEntry(findEntry(selector))
       .then((result) => console.log(JSON.stringify(result, null, 2)))
       .catch((error) => {

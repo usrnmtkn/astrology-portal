@@ -322,7 +322,8 @@ const generatedTopper = await generator.generatePlacementTopper(topperArgs, {
 });
 assert.equal(generatedTopper.status, "clean");
 assert.equal(generatedTopper.lint.score, 3);
-assert.equal(generatedTopper.gate, "auto-publish");
+assert.equal(generatedTopper.gate, "human-review");
+assert.equal(generatedTopper.judge.recommendation, "approve");
 assert.equal(generatedTopper.facts.pairKey, "sun-jupiter");
 assert.match(combinedJudgePrompt, /CURRENT-ASPECT TOPPER followed by an unchanged EVERGREEN/);
 assert.ok(combinedJudgePrompt.includes(`${topperGold.body}\n\n${sunGold.body}`));
@@ -365,7 +366,8 @@ const judged = await generator.generatePlacementCard({
   })
 });
 assert.equal(judged.judge.score, 3);
-assert.equal(judged.gate, "auto-publish");
+assert.equal(judged.gate, "human-review");
+assert.equal(judged.judge.recommendation, "approve");
 
   console.log("Sky-placement engine contract passed: 17 aspect golds, 5 placement golds, 2 topper golds, 168 source-backed placements.");
 }

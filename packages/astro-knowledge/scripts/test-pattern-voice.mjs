@@ -4,7 +4,7 @@
 //   - Mechanical linter (scripts/lint-pattern-voice.js) ALWAYS runs; any lint
 //     fail fails the suite.
 //   - LLM judge (scripts/judge-pattern-voice.js) runs only when a model key is
-//     present (OPENAI_API_KEY / ANTHROPIC_API_KEY); a median score of 1 fails.
+//     present AND the private live-judge action is explicitly authorized.
 // Wired as `npm run test:pattern-voice`; belongs in the aspect-pattern suite.
 import { createRequire } from "node:module";
 import process from "node:process";
@@ -14,13 +14,13 @@ const eng = require("../engine/aspect-patterns/index.js");
 const { resolveAspectPatternV3Copy } = require("../engine/aspect-patterns/v3-copy-resolver.js");
 const real = require("../engine/aspect-patterns/fixtures/real/index.js");
 const examples = require("../voice/tldr-astro/pattern-examples.json");
-const { generationConfig } = require("./generate-sky-aspect-cards.js");
+const { judgeConfig } = require("./generate-sky-aspect-cards.js");
 const { lintPatternCard } = require("./lint-pattern-voice.js");
 const judgeMod = require("./judge-pattern-voice.js");
 const { detectPatterns, rankAspectPatterns, buildAspectPatternInterpretationContexts } = eng;
 
-const MODEL_CONFIG = generationConfig();
-const HAS_KEY = Boolean(MODEL_CONFIG.apiKey);
+const MODEL_CONFIG = judgeConfig();
+const HAS_KEY = process.env.TLDR_ALLOW_LIVE_LLM_JUDGE === "1" && Boolean(MODEL_CONFIG.apiKey);
 const rc = (f) => ({ planets: f.input.planets, ...(f.input.angles ?? {}) });
 
 function contexts(f) {
@@ -120,7 +120,7 @@ if (sameLevelRepeatProbe.findings.some((finding) => finding.term === "cross-leve
 }
 
 let lintFails = 0, judgeFails = 0, resolveErrors = 0;
-console.log(`Pattern voice gate  (LLM judge: ${HAS_KEY ? `ON - ${MODEL_CONFIG.provider}/${MODEL_CONFIG.model}` : "OFF - no model key"})`);
+console.log(`Pattern voice gate  (LLM judge: ${HAS_KEY ? `ON - ${MODEL_CONFIG.provider}/${MODEL_CONFIG.model}` : "OFF - not explicitly authorized or no judge key"})`);
 console.log(`TEETH CHECK: PASS (old 11-block shape lint ${teeth.score}, ${teeth.fails} structural fails)\n`);
 console.log("CROSS-LEVEL DUP CHECK: PASS (verbatim L1/L2 repetition fails mechanically)\n");
 

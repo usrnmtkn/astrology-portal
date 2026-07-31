@@ -6,8 +6,8 @@
 // This judge scores the things a regex cannot: does it sound like a person,
 // does it stay true to the source, does it overreach or moralize, does it land
 // one clean close, does it match the planet tier. It returns a 1-3 verdict so
-// the pipeline can auto-publish only what passes BOTH gates and route only the
-// borderline cards to a human. That is what makes review scale.
+// the pipeline can prioritize review. The model is advisory and cannot publish
+// without a separate human approval.
 //
 // `judge()` is a seam - wire it to the app's model (reuse the provider config
 // in generate-sky-aspect-cards.js). Until then, --dry-run prints the prompt.
@@ -145,18 +145,16 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
   ].filter(Boolean).join("\n");
 }
 
-// The judge reuses the generator's model plumbing (provider, model, key), so it
-// works the moment the generator's key is set - no separate wiring. Note: it
-// runs at the generator's temperature; a dedicated low temperature (~0.1) makes
-// the judge's scores more consistent and is worth adding later.
-const { generate, generationConfig } = require("./generate-sky-aspect-cards.js");
+const { judgeConfig: configuredJudge } = require("./generate-sky-aspect-cards.js");
+const { editorialGate } = require("./editorial-judge-policy.js");
+const { runJudgeSamples } = require("./editorial-judge-runtime.js");
 // The judge runs COLD (low temperature). Judging wants determinism, not the
 // creative 0.7 the generator uses; at 0.7 the same card scores differently
 // across runs, which is why calibration kept shifting.
 const JUDGE_TEMPERATURE = 0.1;
 
 function judgeConfig() {
-  const config = generationConfig();
+  const config = configuredJudge();
 
   return {
     provider: config.provider,
@@ -165,32 +163,29 @@ function judgeConfig() {
   };
 }
 
-async function judge(prompt) {
-  return generate(prompt, { temperature: JUDGE_TEMPERATURE });
-}
-
 function parseVerdict(raw) {
   const m = String(raw).match(/\{[\s\S]*\}/);
   if (!m) return { score: 1, verdict: "off-voice", why: "judge did not return JSON" };
   try { return JSON.parse(m[0]); } catch { return { score: 1, verdict: "off-voice", why: "unparseable judge output" }; }
 }
 
-// The gate. autoPublish only on a 3; a 2 goes to the (small) human queue; a 1
-// is rejected and should be regenerated.
-const gateFor = (score) => (score === 3 ? "auto-publish" : score === 2 ? "human-review" : "regenerate");
-
 // samples > 1 runs the judge N times and takes the median score (self-consistency).
 // Default 1 is cheap for production; calibration uses 3 for a stable read.
 async function judgeCard(card, opts = {}) {
-  const fn = opts.judgeFn || judge;
   const prompt = buildJudgePrompt(card, opts);
-  const samples = Math.max(1, opts.samples || 1);
-  const verdicts = [];
-  for (let i = 0; i < samples; i++) verdicts.push(parseVerdict(await fn(prompt)));
-  const scores = verdicts.map((v) => v.score).sort((a, b) => a - b);
-  const median = scores[Math.floor(scores.length / 2)];
-  const chosen = verdicts.find((v) => v.score === median) || verdicts[0];
-  return { ...chosen, score: median, samples, gate: gateFor(median) };
+  const result = await runJudgeSamples({
+    content: card,
+    prompt,
+    rubric: JSON.stringify({ voiceDescription: sky.voiceDescription, mode: opts.mode || "collective-aspect-card", tier: opts.tier || "" }),
+    rubricVersion: "sky-aspect-voice-v1",
+    samples: opts.samples,
+    temperature: JUDGE_TEMPERATURE,
+    judgeFn: opts.judgeFn,
+    parseVerdict,
+    context: { surface: "sky-aspect", mode: opts.mode || "collective-aspect-card", tier: opts.tier || "" },
+    calibration: Boolean(opts.calibration)
+  });
+  return { ...result, ...editorialGate(result) };
 }
 
 module.exports = {
