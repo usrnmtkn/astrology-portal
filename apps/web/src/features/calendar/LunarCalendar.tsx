@@ -2682,13 +2682,15 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                 const visibleEvents = weeklyLeadEvent?.event.type === "lunation"
                   ? events.filter(({ event }) => event.id !== weeklyLeadEvent.event.id)
                   : events;
-                const isQuietDay = role === "full-day-moon" || role === "moon-ingress";
+                const isToday = day.dateKey === currentDateKey;
+                const isQuietDay = !isToday && (role === "full-day-moon" || role === "moon-ingress");
                 const isExpanded = !isQuietDay || expandedWeeklyDays.has(day.dateKey);
 
                 return (
                   <li key={day.dateKey}>
                     <article
                       className={`lunar-weekly-day${isQuietDay ? " is-quiet" : ""}${isQuietDay && !isExpanded ? " is-collapsed" : ""}`}
+                      data-is-today={isToday ? "true" : "false"}
                       data-weekly-day-role={role}
                       id={`lunar-weekly-${day.dateKey}`}
                     >
