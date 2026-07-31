@@ -1318,7 +1318,7 @@ test.describe("client-facing user flow case studies", () => {
   test("calendar Week view presents seven API-backed day write-ups without mobile overflow", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { now: "2026-07-30T12:00:00.000Z" });
+    await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar");
 
     const weeklyTab = page.getByRole("tab", { name: "Week", exact: true });
@@ -1330,6 +1330,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(weeklyView).toBeVisible();
     await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
     await expect(weeklyView.locator(".lunar-weekly-jump button")).toHaveCount(7);
+    const currentDayCard = weeklyView.locator('[data-is-today="true"]');
+    await expect(currentDayCard).toHaveCount(1);
+    await expect(currentDayCard).not.toHaveClass(/is-collapsed/);
+    await expect(currentDayCard.locator(".lunar-weekly-day__guidance")).toBeVisible();
     await expect(weeklyView.locator(".lunar-weekly-event__body").first()).toBeVisible({ timeout: 15_000 });
     await expect(weeklyView.locator('[data-weekly-day-role="lunation"]')).toHaveCount(1);
     await expect(weeklyView.locator(".lunar-weekly-hero__body")).toContainText(
