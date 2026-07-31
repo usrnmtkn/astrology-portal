@@ -29,6 +29,7 @@ const root = path.join(__dirname, "..");
 const repoRoot = path.resolve(root, "..", "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-placement.json"));
+const pointSignColors = readJson(path.join(root, "voice", "tldr-astro", "sign-colors-v2-points.json"));
 
 const SIGNS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 const PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"];
@@ -57,21 +58,89 @@ function normalizeToken(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[\s_]+/g, "-");
 }
 
-// The V3 raw placement source rows, loaded lazily and indexed by planet/sign.
-// Read-only: this file belongs to the V3 package; the engine only consumes it.
+// The V3 source rows, loaded lazily and indexed by content key. Read-only:
+// this file belongs to the V3 package; the engine only consumes it.
 let v3RawIndex = null;
-function v3Raw(planet, sign) {
-  if (!v3RawIndex) {
-    const p = path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "source-rows", "fallback-source-rows-v3.json");
-    v3RawIndex = new Map();
-    if (fs.existsSync(p)) {
-      for (const row of readJson(p).fallbackSourceRows || []) {
-        const m = String(row.contentKey || "").match(/^fallback-source\/placement\/([a-z-]+)\/([a-z-]+)\/raw$/);
-        if (m) v3RawIndex.set(`${m[1]}/${m[2]}`, row);
-      }
-    }
+let v3ContentIndex = null;
+function loadV3Indexes() {
+  if (v3ContentIndex) return;
+  const p = path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "source-rows", "fallback-source-rows-v3.json");
+  v3RawIndex = new Map();
+  v3ContentIndex = new Map();
+  if (!fs.existsSync(p)) return;
+
+  const sourceRows = readJson(p);
+  for (const row of [
+    ...(sourceRows.vocabularyRows || []),
+    ...(sourceRows.fallbackSourceRows || []),
+    ...(sourceRows.hookRows || [])
+  ]) {
+    const contentKey = String(row.contentKey || "");
+    if (contentKey) v3ContentIndex.set(contentKey, row);
+    const match = contentKey.match(/^fallback-source\/placement\/([a-z-]+)\/([a-z-]+)\/raw$/);
+    if (match) v3RawIndex.set(`${match[1]}/${match[2]}`, row);
   }
+}
+
+function v3Raw(planet, sign) {
+  loadV3Indexes();
   return v3RawIndex.get(`${planet}/${sign}`) || null;
+}
+
+function v3Text(contentKey) {
+  loadV3Indexes();
+  const row = v3ContentIndex.get(contentKey);
+  return row?.body ?? row?.body_you ?? null;
+}
+
+function authoringPairColor(planet, sign) {
+  const reviewed = pointSignColors.status === "approved"
+    ? pointSignColors.entries?.[`${planet}.${sign}`]
+    : null;
+  if (!reviewed) return null;
+
+  const withoutLegacyFrame = String(reviewed)
+    .replace(/^Right now (?:it|she) is in [A-Za-z]+, so\s+/u, "")
+    .replace(/\bthis season\b/giu, "during this transit")
+    .trim();
+
+  return withoutLegacyFrame
+    ? withoutLegacyFrame.charAt(0).toUpperCase() + withoutLegacyFrame.slice(1)
+    : null;
+}
+
+// Concise authoring layer assembled from existing approved V3 rows. This
+// teaches the model what the planet does and how the sign changes its method;
+// it is source material, never copy to paste verbatim into the article.
+function loadAuthoringLayer(planet, sign) {
+  const planetFunction = v3Text(`fallback-vocab/planet-function/${planet}`)
+    ?? v3Text(`fallback-vocab/planet-core/${planet}`);
+  const planetUseful = v3Text(`fallback-vocab/planet-productive/${planet}`);
+  const planetDistortion = v3Text(`fallback-vocab/planet-excess/${planet}`);
+  const signMethod = v3Text(`fallback-vocab/sign-style/${sign}`);
+  const signBehavior = v3Text(`fallback-vocab/sign-does/${sign}`);
+  const signNeed = v3Text(`fallback-vocab/sign-need/${sign}`);
+  const signDistortion = v3Text(`fallback-hook/sky-sign-trap/${sign}`);
+  const pairColor = authoringPairColor(planet, sign);
+  const fields = {
+    planetFunction,
+    planetUseful,
+    planetDistortion,
+    signMethod,
+    signBehavior,
+    signNeed,
+    signDistortion
+  };
+
+  if (Object.values(fields).some((value) => !value)) {
+    throw new SourceGapError(
+      "missing-authoring-layer",
+      `The planet/sign meaning layer is incomplete for ${planet} in ${sign}.`,
+      { planet, sign, missing: Object.entries(fields).filter(([, value]) => !value).map(([key]) => key) }
+    );
+  }
+
+  return { ...fields, pairColor };
 }
 
 // source meaning for a placement: data/placements/sign first, V3 raw second.
@@ -114,7 +183,13 @@ function normalizeArgs({ planet, sign }) {
       { planet: p, sign: s }
     );
   }
-  return { planet: p, sign: s, meaning, tier: TIER_OF[p] || "social" };
+  return {
+    planet: p,
+    sign: s,
+    meaning,
+    authoringLayer: loadAuthoringLayer(p, s),
+    tier: TIER_OF[p] || "social"
+  };
 }
 
 // few-shot: two exemplar trios, preferring the SAME tier so the register is
@@ -144,7 +219,7 @@ function extendedShapeExamples() {
 }
 
 function buildPrompt(args) {
-  const { planet, sign, meaning, tier } = normalizeArgs(args);
+  const { planet, sign, meaning, authoringLayer, tier } = normalizeArgs(args);
   const pace = spec.pace.labels[planet];
   const tierHint = spec.planetTierRegister.hints[tier];
   const failList = spec.outputBans.fail.map((x) => x.term).join(", ");
@@ -164,6 +239,17 @@ function buildPrompt(args) {
     meaning.challenge ? `  challenge: ${meaning.challenge}` : null,
     meaning.note ? `  note: ${meaning.note}` : null,
     ``,
+    `PLANET + SIGN MEANING LAYER (source material, not display copy):`,
+    `  what ${TITLE[planet]} does: ${authoringLayer.planetFunction}`,
+    `  useful expression: ${authoringLayer.planetUseful}`,
+    `  planet distortion: ${authoringLayer.planetDistortion}`,
+    `  how ${cap(sign)} moves: ${authoringLayer.signMethod}`,
+    `  recognizable behavior: ${authoringLayer.signBehavior}`,
+    `  what the sign needs: ${authoringLayer.signNeed}`,
+    `  sign distortion: ${authoringLayer.signDistortion}`,
+    authoringLayer.pairColor ? `  reviewed pair color: ${authoringLayer.pairColor}` : null,
+    `  Use this layer to explain the combination in fresh prose. Do not paste these fields as a keyword list.`,
+    ``,
     `SHAPE - the article renders top to bottom as tagline, computed date range, then three beats, then moves. You write five slots:`,
     `  0. TAGLINE: ${spec.articleStructure.taglineRules}`,
     ...spec.shape.beats.map((b) => `  ${b.n}. ${b.beat.toUpperCase()}: ${b.does}`),
@@ -175,7 +261,8 @@ function buildPrompt(args) {
     `  - Do not use the word "steady" AT ALL - it burned five drafts in the last sweep. Use grounded, solid, sure, calm, or unhurried. Em dash is banned; use a spaced hyphen " - ".`,
     `  - ${spec.loreBoundary}`,
     `  - No absolute dates, degrees, or ephemeris facts; the app appends the computed current-aspect line separately.`,
-    `  - Explain the planet through behavior, never a keyword list.`,
+    `  - HOOK SENTENCE 1 is a standalone recognition quote. The reader renders it separately in bold and removes it from the body. It must make sense on its own.`,
+    `  - The rest of HOOK is the meaning paragraph: explain what ${TITLE[planet]} governs and how ${cap(sign)} changes its method, pace, or priorities. Translate the source layer into natural prose and behavior; never recite a keyword list.`,
     ``,
     `ANTI-PATTERNS (why weak drafts fail - avoid every one):`,
     `  - THE SWAP TEST: if this article could have another planet or sign swapped in without sounding wrong, it is not specific enough. Every beat must only make sense for ${TITLE[planet]} in ${cap(sign)}.`,
@@ -293,7 +380,8 @@ async function generateArticle(args, {
           sign: normalized.sign,
           tier: normalized.tier,
           meaningSource: normalized.meaning.source,
-          meaningKind: normalized.meaning.kind
+          meaningKind: normalized.meaning.kind,
+          authoringLayer: "fallback-architecture-v3-approved-rows"
         }
       };
       if (withJudge) {
