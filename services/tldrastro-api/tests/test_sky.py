@@ -22,6 +22,9 @@ def test_sky_current_fixture_new_york():
 
     assert sky["metadata"]["houseSystem"] == expected["houseSystem"]
     assert sky["metadata"]["zodiac"] == expected["zodiac"]
+    assert sky["metadata"]["ephemeris"]["requestedEngine"] == "swiss"
+    assert sky["metadata"]["ephemeris"]["actualEngine"] in {"swiss", "jpl", "moshier", "mixed"}
+    assert sky["metadata"]["ephemeris"]["calculations"] > 0
     assert sky["generatedAt"] == expected["generatedAt"]
     assert sky["ascendant"] == expected["ascendant"]["sign"]
     assert abs(sky["ascendantLongitude"] - expected["ascendant"]["longitude"]) < 0.01
