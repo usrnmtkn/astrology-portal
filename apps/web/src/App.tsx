@@ -16372,7 +16372,8 @@ function CalculationDiagnosticsPanel({
   hydrationState: "snapshot" | "hydrated";
   sky: SkySnapshot;
 }) {
-  const diagnosticsEnabled = String(import.meta.env.VITE_ASTRO_DIAGNOSTICS ?? "false").toLowerCase() === "true";
+  const diagnosticsEnabled = import.meta.env.DEV
+    || String(import.meta.env.VITE_ASTRO_DIAGNOSTICS ?? "false").toLowerCase() === "true";
 
   if (!diagnosticsEnabled) {
     return null;
@@ -16390,10 +16391,24 @@ function CalculationDiagnosticsPanel({
     <details className="calculation-diagnostics-panel">
       <summary>Calculation diagnostics</summary>
       <dl>
-        <dt>Source</dt>
+        <dt>Calculation engine</dt>
         <dd>{sky.calculationProvenance?.library ?? "unknown"} {sky.calculationProvenance?.libraryVersion ?? ""}</dd>
-        <dt>Raw timestamp</dt>
+        <dt>Calculation timestamp</dt>
         <dd>{sky.generatedAt}</dd>
+        <dt>Calculation timezone</dt>
+        <dd>{sky.location.timeZone ?? "UTC"}</dd>
+        <dt>Zodiac and frame</dt>
+        <dd>
+          {sky.calculationProvenance?.zodiac ?? "unknown"}
+          {" · "}
+          {sky.calculationProvenance?.frame ?? "unknown"}
+        </dd>
+        <dt>House system</dt>
+        <dd>{sky.calculationProvenance?.houseSystem === "whole_sign" ? "Whole Sign" : "unknown"}</dd>
+        <dt>Lunar node model</dt>
+        <dd>{sky.calculationProvenance?.nodeType === "true" ? "True Node" : sky.calculationProvenance?.nodeType ?? "unknown"}</dd>
+        <dt>Calculation version</dt>
+        <dd>{sky.calculationProvenance?.calculationVersion ?? "unknown"}</dd>
         <dt>Normalized fact ID</dt>
         <dd>{mercuryFact?.id ?? facts[0]?.id ?? "none"}</dd>
         <dt>Content record ID</dt>
@@ -16406,10 +16421,30 @@ function CalculationDiagnosticsPanel({
         <dd>{hydrationState}</dd>
         <dt>Cache age</dt>
         <dd>{Number.isFinite(cacheAge) ? `${Math.max(0, Math.round(cacheAge / 1000))}s` : "unknown"}</dd>
-        <dt>Validation status</dt>
+        <dt>Snapshot verification</dt>
         <dd>{validation.ok ? "valid primary calculation" : validation.diagnostics.join("; ")}</dd>
       </dl>
     </details>
+  );
+}
+
+function CalculationMethodSettingsGroup() {
+  return (
+    <section className="settings-group" aria-label="Calculation method">
+      <span className="settings-group-label">Calculation method</span>
+      <div className="settings-card">
+        <div className="settings-list">
+          <div className="settings-row">
+            <div className="settings-row-copy">
+              <span className="settings-row-title">Ephemeris</span>
+              <small className="settings-row-description">
+                Planetary positions are calculated with Swiss Ephemeris and independently verified against NASA/JPL.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -17674,6 +17709,8 @@ function SettingsView({
           </div>
         </section>
 
+        <CalculationMethodSettingsGroup />
+
       </div>
     </section>
   );
@@ -17770,6 +17807,8 @@ function GuestSettingsView({
             </div>
           </div>
         </section>
+
+        <CalculationMethodSettingsGroup />
 
       </div>
     </section>

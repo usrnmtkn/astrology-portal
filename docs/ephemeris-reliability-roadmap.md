@@ -37,12 +37,14 @@ Status: implemented.
 
 ## Next implementation work
 
-1. Require `nasa-jpl-freshness` in the `main` branch ruleset so production
-   releases cannot merge behind a failed or stale independent comparison.
-2. Configure repository-level Actions failure notifications for the team.
-3. Add focused station-boundary fixtures.
-4. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
+1. Configure repository-level Actions failure notifications for the team.
+2. Add focused station-boundary fixtures.
+3. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
    product requirement.
+
+The `nasa-jpl-freshness` check is now required by the protected `main` branch,
+so production releases cannot merge behind a failed or stale independent
+comparison.
 
 ## Phase 3: Last-known-verified current-sky cache
 

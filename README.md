@@ -35,6 +35,12 @@ Horizons. Its latest status and dated history are persisted in a GitHub monitor
 issue, and the `nasa-jpl-freshness` release check rejects a pull request when
 the newest main-branch comparison failed or is more than 36 hours old.
 
+The Settings screen repeats the calculation-method statement for readers. In
+development, or when `VITE_ASTRO_DIAGNOSTICS=true`, the Sky screen also exposes
+a collapsed diagnostic with the calculation timestamp, timezone, engine and
+library version, zodiac frame, house system, lunar-node model, calculation
+version, cache age, and snapshot validation status.
+
 Horizons is deliberately not called during reader requests. Houses, angles,
 nodes, stations, shadow boundaries, and exact-hit searches remain outside the
 current Horizons adapter's coverage and continue to use the primary engine.
