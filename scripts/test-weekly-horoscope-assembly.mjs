@@ -94,12 +94,12 @@ try {
     total: 24,
     station: 18,
     openers: 6,
-    readerEligible: 0,
-    needsReview: 24
+    readerEligible: 24,
+    needsReview: 0
   });
   assert.equal(rows.filter((row) => row.surface === "weekly-station").length, 18);
   assert.equal(rows.filter((row) => row.surface === "weekly-opener").length, 6);
-  assert.ok(rows.every((row) => row.review_status === "needs_review"));
+  assert.ok(rows.every((row) => row.review_status === "approved"));
   assert.ok(rows.every((row) => !/SOURCE_GAP/u.test(`${row.headline}\n${row.body}`)));
 
   const sundayBefore = weekly.weeklyWindowFor(new Date("2026-08-02T23:59:00Z"), "America/New_York");
@@ -115,10 +115,12 @@ try {
     (row) => row.contentKey === "authored/station/saturn/rx"
   );
   assert.ok(authoredStation);
-  assert.notEqual(gatedStation.body, authoredStation.body);
+  assert.equal(gatedStation.body, authoredStation.body);
   assert.equal(approvedStation.body, authoredStation.body);
 
-  assert.equal(weekly.resolveWeeklyOpener("lunation", [aquariusFullMoon], rows), undefined);
+  const liveOpener = weekly.resolveWeeklyOpener("lunation", [aquariusFullMoon], rows);
+  assert.ok(liveOpener);
+  assert.match(liveOpener.body, /Aquarius/u);
   const approvedOpener = weekly.resolveWeeklyOpener(
     "lunation",
     [aquariusFullMoon],
@@ -178,7 +180,7 @@ try {
   assert.equal(realWeek.sourceGaps.length, 0);
   assert.match(realWeek.sections[1].body, /9th house/u);
   assert.match(realWeek.sections[1].body, /3rd house/u);
-  assert.doesNotMatch(realWeek.sections[1].body, /With Saturn ruling this lunation from your 11th house/u);
+  assert.match(realWeek.sections[1].body, /With Saturn ruling this lunation from your 11th house/u);
   assert.match(realWeek.sections[1].body, /Uranus in your 1st house/u);
 
   const quietWeek = await weekly.buildWeeklyHoroscope({

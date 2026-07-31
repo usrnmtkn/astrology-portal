@@ -207,6 +207,16 @@ assert.doesNotMatch(app, /from ["'][^"']*emergencyCopy["']/, "App reader surface
 assert.doesNotMatch(app, /emergency[A-Z][A-Za-z0-9_]*/, "App reader surfaces must not call legacy emergency helpers.");
 assert.doesNotMatch(youPage, /from ["'][^"']*emergencyCopy["']/, "You reader surfaces must not import legacy emergency copy.");
 assert.doesNotMatch(planetTopicVocabulary, /from ["'][^"']*emergencyCopy["']/, "Topic vocabulary must use V3 package rows, not legacy emergency copy.");
+assert.match(
+  planetTopicVocabulary,
+  /if \(variant === "sky"\) \{\s*return fallbackSkyPlanetTopic\(planet\);/,
+  "Sky topic rendering must use packaged vocabulary while the remote cache is still loading."
+);
+assert.match(
+  planetTopicVocabulary,
+  /if \(!sky && body && !natalLanguagePattern\.test\(body\)\) \{\s*return body;/,
+  "Sky topic rendering must accept a safe packaged body when a dedicated sky field is absent."
+);
 assert.doesNotMatch(lunarCalendar, /from ["'][^"']*emergencyCopy["']/, "Calendar reader surfaces must not import legacy emergency copy.");
 assert.doesNotMatch(lunarCalendar, /emergency[A-Z][A-Za-z0-9_]*/, "Calendar reader surfaces must not call legacy emergency helpers.");
 assert.doesNotMatch(apiContentGeneration, /emergencyCopy\.json|loadEmergencyVocab|EmergencyVocab/, "API content generation must not read the retired emergency copy tier.");

@@ -4,7 +4,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  SourceGapError,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
@@ -86,12 +85,12 @@ assert.ok(geminiUranus > geminiRuler, "The modern secondary layer must follow, n
 assert.match(geminiQa.parts[geminiCounterpoint], /3rd house/u);
 assert.match(
   geminiQa.parts[geminiRuler],
-  /^With Saturn ruling this lunation from your 11th house, the realizations arrive through your circles:/u
+  /^With Saturn ruling this lunation from your 11th house, friends, organizations, professional contacts, and shared commitments are part of the answer\./u
 );
-assert.doesNotMatch(
+assert.match(
   geminiReader.body,
-  /With Saturn ruling this lunation/u,
-  "A needs-review ruler row must remain out of reader output."
+  /With Saturn ruling this lunation from your 11th house, friends, organizations, professional contacts, and shared commitments are part of the answer\./u,
+  "The approved 11th-house ruler row must remain in reader output."
 );
 assert.match(geminiReader.body, /Uranus in your 1st house adds a more personal element of change/u);
 
@@ -104,9 +103,10 @@ const houseOne = readerRenderer.renderLunationHoroscope({
   ruler: "saturn",
   rulerHouse: 1
 });
-assert.match(
+assert.doesNotMatch(
   houseOne.body,
-  /With Saturn ruling this lunation from your 1st house, the realizations arrive personally:/u
+  /With Saturn ruling this lunation/u,
+  "A needs-review 1st-house ruler row must remain out of reader output."
 );
 
 const leoReader = readerRenderer.renderLunationHoroscope({
@@ -134,11 +134,9 @@ const cancerNewMoon = readerRenderer.renderLunationHoroscope({
 assert.doesNotMatch(cancerNewMoon.body, /The friction this week/u);
 assert.doesNotMatch(cancerNewMoon.body, /ruling this lunation/u);
 
-assert.throws(
-  () => readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "aries" }),
-  SourceGapError,
-  "Missing macro coverage must remain an explicit source gap."
-);
+const ariesMacro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "aries" });
+assert.match(ariesMacro.headline, /Aries Full Moon/u);
+assert.match(ariesMacro.body, /^Full Moons bring what has been building into clearer view\./u);
 
 const skyArticle = readerRenderer.renderSkyLunation({
   kind: "full-moon",
