@@ -31,9 +31,16 @@ The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JS
 TLDR Astro uses Swiss Ephemeris for real-time astrology calculations and
 NASA/JPL Horizons as an independent verification layer. A daily integrity
 workflow compares supported planetary positions, motion, and aspects against
-Horizons. Its latest status and dated history are persisted in a GitHub monitor
-issue, and the `nasa-jpl-freshness` release check rejects a pull request when
-the newest main-branch comparison failed or is more than 36 hours old.
+Horizons. The latest result and dated history are published in the
+[NASA/JPL ephemeris integrity monitor](https://github.com/usrnmtkn/astrology-portal/issues/17),
+with full reports retained by the
+[daily integrity workflow](https://github.com/usrnmtkn/astrology-portal/actions/workflows/ephemeris-integrity.yml).
+The strict, required `nasa-jpl-freshness` release check rejects a pull request
+when the newest main-branch comparison failed or is more than 36 hours old.
+
+The accurate public description is: **TLDR Astro uses Swiss Ephemeris for
+real-time calculations and NASA/JPL Horizons for independent daily
+verification.**
 
 Horizons is deliberately not called during reader requests. Houses, angles,
 nodes, stations, shadow boundaries, and exact-hit searches remain outside the

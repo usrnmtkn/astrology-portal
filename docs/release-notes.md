@@ -4,11 +4,16 @@
 
 - TLDR Astro now documents Swiss Ephemeris as its real-time calculation engine
   and NASA/JPL Horizons as its independent verification layer.
+- The first post-merge production verification passed all 10 fixtures with 244
+  supported facts verified and zero supported-fact discrepancies. The report
+  also recorded 350 known coverage gaps rather than treating unsupported facts
+  as verified.
 - The Horizons comparison runs daily, retains its report artifacts for 90
   days, and persists the latest result plus dated history in a GitHub monitor
-  issue.
-- Pull requests receive a `nasa-jpl-freshness` release check that fails when
-  the latest main-branch comparison failed or is older than 36 hours.
+  [issue](https://github.com/usrnmtkn/astrology-portal/issues/17).
+- The strict, required `nasa-jpl-freshness` branch-protection check now blocks
+  merges, including administrator merges, when the latest main-branch
+  comparison failed or is older than 36 hours.
 - NASA/JPL Horizons remains outside reader request paths; it verifies supported
   planetary positions, motion, and aspects without becoming a public-API
   runtime dependency.
