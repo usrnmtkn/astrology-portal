@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "VITE_ENABLE_NATAL_ASPECT_PATTERNS=true vite --host 127.0.0.1",
     "prebuild": "node ../../scripts/test-reader-facing-content-contract.mjs && node ../../scripts/test-calendar-package-boundary.mjs",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node ../../scripts/check-web-performance-budget.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"
   },

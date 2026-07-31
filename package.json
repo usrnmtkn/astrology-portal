@@ -30,6 +30,7 @@
     "qa:article-voice": "npm run test:article-voice-routing -w @tldr/astro-knowledge",
     "qa:css-audit": "node scripts/run-css-consistency-audit.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
+    "qa:web-performance": "node scripts/check-web-performance-budget.mjs",
     "qa:admin-boundary": "node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
     "qa:ephemeris:horizons": "node scripts/verify-astrology-integrity.mjs --allow-reference-gaps --summary",
     "qa:ephemeris:release-gate": "node scripts/check-ephemeris-release-gate.mjs",
