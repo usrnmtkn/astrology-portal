@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/contracts/sky-placement-continuous-v2.schema.json",
+  "title": "TLDR Astro continuous planet-in-sign fallback row",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "contentKey",
+    "content_role",
+    "grammar_frame",
+    "render_policy",
+    "fact_line",
+    "opening",
+    "tension",
+    "development",
+    "aspect_insert",
+    "close",
+    "review_status",
+    "source_keys"
+  ],
+  "properties": {
+    "contentKey": {
+      "type": "string",
+      "pattern": "^fallback-hook/sky-sign-copy/(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north-node|south-node|nodes)/[a-z-]+$"
+    },
+    "content_role": {
+      "const": "fallback_hook"
+    },
+    "grammar_frame": {
+      "const": "continuous_editorial_unit"
+    },
+    "render_policy": {
+      "const": "sky-placement-continuous-v2"
+    },
+    "fact_line": {
+      "const": "{{entryDate}} to {{exitDate}}"
+    },
+    "opening": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tension": {
+      "type": "string",
+      "minLength": 1
+    },
+    "development": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aspect_insert": {
+      "const": "{{aspectInsert}}"
+    },
+    "close": {
+      "type": "string",
+      "minLength": 1
+    },
+    "try_this": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "aspect_units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["planets", "aspect", "heading", "opportunity", "check"],
+        "properties": {
+          "planets": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "string" }
+          },
+          "aspect": {
+            "enum": ["conjunction", "square", "opposition", "trine", "sextile"]
+          },
+          "heading": { "type": "string", "minLength": 1 },
+          "opportunity": {
+            "type": "string",
+            "pattern": "\\{\\{exactDate\\}\\}"
+          },
+          "check": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "review_status": {
+      "enum": ["needs_review", "approved", "superseded"]
+    },
+    "source_keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -45,13 +45,17 @@ assert.equal(skyPlacementVoicePassV1.rows.length, 42);
 assert.equal(new Set(skyPlacementVoicePassV1.rows.map((row) => row.contentKey)).size, 42);
 assert.ok(skyPlacementVoicePassV1.rows.every((row) => row.review_status === "needs_review"));
 assert.ok(skyPlacementVoicePassV1.rows.every((row) => row.body_you === row.body_they));
-assert.equal(skySignCopySunV1.rows.length, 12);
-assert.equal(new Set(skySignCopySunV1.rows.map((row) => row.contentKey)).size, 12);
-assert.ok(skySignCopySunV1.rows.every((row) => row.review_status === "needs_review"));
+assert.equal(skySignCopySunV1.rows.length, 1);
+assert.equal(skySignCopySunV1.rows[0].contentKey, "fallback-hook/sky-sign-copy/sun/leo");
+assert.equal(skySignCopySunV1.rows[0].review_status, "approved");
+assert.equal(skySignCopySunV1.rows[0].render_policy, "sky-placement-continuous-v2");
 assert.ok(skySignCopySunV1.rows.every((row) => row.body_you === row.body_they));
 assert.ok(skySignCopySunV1.rows.every((row) => (
   row.contentKey.startsWith("fallback-hook/sky-sign-copy/sun/")
 )));
+assert.equal(skySignCopySunV1.superseded_rows.length, 13);
+assert.equal(new Set(skySignCopySunV1.superseded_rows.map((row) => row.contentKey)).size, 12);
+assert.ok(skySignCopySunV1.superseded_rows.every((row) => row.review_status === "superseded"));
 assert.ok(skyArticleV1.hookRows.every((row) => row.review_status === "approved"));
 assert.ok(skyArticleV1.vocabularyRows.every((row) => row.review_status === "approved"));
 assert.ok(skyArticleV1.vocabularyRows.every((row) => row.contentKey.startsWith("fallback-vocab/sky-")));
@@ -77,6 +81,11 @@ assert.match(
   appSource,
   /rendered\.templateKey === "sky-placement-frame-v3"[\s\S]*rendered\.templateKey === "sky-placement-article-v2"[\s\S]*\? "authored" : "fallback"/u,
   "Approved V3 assemblies must outrank stale generated Sky copy."
+);
+assert.match(
+  appSource,
+  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*isRegistryArticle \|\| isContinuousFallback \? undefined : effectiveTransitRangeLabel/u,
+  "Continuous fallback pages must not repeat the transit range in detail metadata or duration."
 );
 assert.doesNotMatch(
   JSON.stringify(skyArticleV1),
@@ -121,13 +130,15 @@ const combinedTransit = {
   authoredCards: [...transitRows.authoredCards, ...skyArticleV1.authoredCards]
 };
 const renderer = createTransitSynastryRenderer(combinedTransit, templates, combinedRows);
-const currentFallback = renderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "pisces",
-  asOfDate: "2025-01-15T12:00:00Z"
-});
-assert.notEqual(currentFallback.contentKey, archive.contentKey);
-assert.equal(currentFallback.templateKey, "fallback-template/sky.placement-article");
+assert.throws(
+  () => renderer.renderSkyPlacement({
+    planet: "saturn",
+    sign: "pisces",
+    asOfDate: "2025-01-15T12:00:00Z"
+  }),
+  /SOURCE_GAP: continuous sky placement sign copy saturn\/pisces/u,
+  "An out-of-window article must not fall through to the retired module stack."
+);
 
 const previewRenderer = createTransitSynastryRenderer(
   combinedTransit,
@@ -135,177 +146,114 @@ const previewRenderer = createTransitSynastryRenderer(
   combinedRows,
   { allowUnreviewed: true }
 );
-const framed = renderer.renderSkyPlacement({
-  planet: "venus",
-  sign: "virgo",
-  asOfDate: "2026-09-20T12:00:00Z",
-  entryDate: "Sep 19, 2026",
-  exitDate: "Oct 13, 2026"
-});
-assert.equal(framed.templateKey, "sky-placement-frame-v3");
-const venusVirgoHook = combinedRows.hookRows.find((row) => (
-  row.contentKey === "fallback-hook/sky-placement-hook/venus/virgo"
-  && row.review_status === "approved"
-));
-const venusVirgoLived = combinedRows.hookRows.find((row) => (
-  row.contentKey === "fallback-hook/sky-placement-lived/venus/virgo"
-  && row.review_status === "approved"
-));
-const venusVirgoTurn = combinedRows.hookRows.find((row) => (
-  row.contentKey === "fallback-hook/sky-placement-turn/venus/virgo"
-  && row.review_status === "approved"
-));
-const venusVirgoMoves = combinedRows.hookRows.find((row) => (
-  row.contentKey === "fallback-hook/sky-placement-moves/venus/virgo"
-  && row.review_status === "approved"
-));
-assert.ok(venusVirgoHook);
-assert.ok(venusVirgoLived);
-assert.ok(venusVirgoTurn);
-assert.ok(venusVirgoMoves);
-assert.ok(framed.parts.length >= 6);
-assert.match(framed.parts[0], /Sep 19, 2026/u);
-assert.match(framed.parts[0], /Oct 13, 2026/u);
-assert.ok(framed.parts.includes(venusVirgoHook.body_you));
-assert.ok(framed.parts.includes(venusVirgoLived.body_you));
-assert.ok(framed.parts.includes(venusVirgoTurn.body_you));
-assert.ok(framed.parts.some((part) => /through Oct 13, 2026/u.test(part)));
-assert.match(framed.parts.at(-1), /Give your taste a vote/u);
-assert.equal(
-  framed.parts[1],
-  skyPlanetFramesV1.rows.find((row) => row.contentKey === "fallback-hook/sky-placement-frame/venus")?.body_you
-);
-assert.deepEqual(
-  framed.moves,
-  venusVirgoMoves.body_you.split(/\r?\n/u).map((move) => move.trim()).filter(Boolean)
+assert.throws(
+  () => renderer.renderSkyPlacement({
+    planet: "venus",
+    sign: "virgo",
+    asOfDate: "2026-09-20T12:00:00Z",
+    entryDate: "Sep 19, 2026",
+    exitDate: "Oct 13, 2026"
+  }),
+  /SOURCE_GAP: continuous sky placement sign copy venus\/virgo/u,
+  "Approved legacy Venus modules must remain dark until the canonical replacement file is approved."
 );
 
 const sunLeo = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "leo",
   asOfDate: "2026-07-29T12:00:00Z",
-  entryDate: "Jul 22, 2026",
-  exitDate: "Aug 23, 2026"
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026",
+  events: [
+    {
+      type: "aspect",
+      a: "sun",
+      b: "jupiter",
+      aspect: "conjunction",
+      aSign: "leo",
+      bSign: "leo",
+      exactDate: "July 29, 2026"
+    },
+    {
+      type: "aspect",
+      a: "sun",
+      b: "mars",
+      aspect: "square",
+      aSign: "leo",
+      bSign: "taurus",
+      exactDate: "August 1, 2026"
+    }
+  ]
 });
-assert.equal(sunLeo.templateKey, "sky-placement-frame-v3");
-assert.match(
-  sunLeo.parts[0],
-  /^The Sun is in Leo from Jul 22, 2026 to Aug 23, 2026\. When the Sun moves through Leo,/u
-);
-assert.doesNotMatch(sunLeo.body, /month takes on this sign's subject/iu);
-assert.equal(
-  sunLeo.parts[1],
-  skyPlanetFramesV1.rows.find((row) => row.contentKey === "fallback-hook/sky-placement-frame/sun")?.body_you
-);
+assert.equal(sunLeo.templateKey, "sky-placement-continuous-v2");
+assert.equal(sunLeo.contentKey, "fallback-hook/sky-sign-copy/sun/leo");
+assert.equal(sunLeo.parts[0], "July 22 to August 23, 2026");
+assert.equal(sunLeo.parts[1], skySignCopySunV1.rows[0].opening.replaceAll("{{entryDate}}", "July 22"));
+assert.equal(sunLeo.parts[2], skySignCopySunV1.rows[0].tension);
+assert.equal(sunLeo.parts[3], skySignCopySunV1.rows[0].development);
+assert.match(sunLeo.parts[4], /^On July 29, the Sun meets Jupiter in Leo\./u);
+assert.equal(sunLeo.parts[5], skySignCopySunV1.rows[0].aspect_units[0].check);
+assert.equal(sunLeo.parts[6], skySignCopySunV1.rows[0].close.replaceAll("{{exitDate}}", "August 23"));
+assert.equal(sunLeo.articleSections.length, 3);
+assert.equal(sunLeo.articleSections.filter((section) => section.kind === "dated-aspect").length, 1);
+assert.equal(sunLeo.articleSections[1].heading, "Sun conjunct Jupiter in Leo");
+assert.equal(sunLeo.articleSections[1].body.split(/\n{2,}/u).length, 2);
+assert.equal(sunLeo.moves.length, 3);
+assert.equal(sunLeo.movesPresentation, "plain");
+assert.doesNotMatch(sunLeo.body, /[\u2013\u2014]/u);
+assert.doesNotMatch(sunLeo.body, /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion/iu);
+assert.equal(sunLeo.body.split("July 22").length - 1, 2);
+assert.equal(sunLeo.body.split("August 23").length - 1, 2);
+assert.equal(sunLeo.body.split("2026").length - 1, 1);
+assert.doesNotMatch(sunLeo.body, /August 1, 2026/u, "Only one active major-aspect section may render.");
+assert.equal(sunLeo.tagline, null);
+assert.equal(sunLeo.closingCharge, null);
 
 const previewSunLeo = previewRenderer.renderSkyPlacement({
   planet: "sun",
   sign: "leo",
   asOfDate: "2026-07-29T12:00:00Z",
-  entryDate: "Jul 22, 2026",
-  exitDate: "Aug 23, 2026"
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026"
 });
 const sunLeoSignCopy = skySignCopySunV1.rows.find((row) => (
   row.contentKey === "fallback-hook/sky-sign-copy/sun/leo"
 ));
 assert.ok(sunLeoSignCopy);
-assert.equal(previewSunLeo.templateKey, "sky-placement-article-v2");
+assert.equal(previewSunLeo.templateKey, "sky-placement-continuous-v2");
 assert.equal(previewSunLeo.contentKey, sunLeoSignCopy.contentKey);
-assert.equal(
-  previewSunLeo.parts[0],
-  skyPlacementVoicePassV1.rows.find((row) => row.contentKey === "fallback-hook/sky-placement/sun")?.body_you
-    .replaceAll("{{signTitle}}", "Leo")
-    .replaceAll("{{entryDate}}", "Jul 22, 2026")
-    .replaceAll("{{exitDate}}", "Aug 23, 2026")
-    .replaceAll("{{signStyle}}", "warm, visible, unmasked")
-);
-assert.equal(previewSunLeo.parts[2], sunLeoSignCopy.body_you);
-assert.deepEqual(previewSunLeo.moves, []);
+assert.equal(previewSunLeo.parts.length, 5);
+assert.deepEqual(previewSunLeo.moves, sunLeoSignCopy.try_this);
+const noAspectWordCount = [...previewSunLeo.parts, ...previewSunLeo.moves]
+  .join(" ")
+  .match(/[A-Za-z0-9’']+/gu)?.length ?? 0;
+assert.ok(noAspectWordCount >= 220 && noAspectWordCount <= 350);
+for (const unapprovedSign of ["aries", "taurus", "gemini", "cancer", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
+  assert.throws(
+    () => previewRenderer.renderSkyPlacement({
+      planet: "sun",
+      sign: unapprovedSign,
+      entryDate: "March 20, 2027",
+      exitDate: "April 20, 2027"
+    }),
+    SourceGapError,
+    `Superseded ${unapprovedSign} modules must never render, including in preview.`
+  );
+}
 
-const mercuryDirect = renderer.renderSkyPlacement({
-  planet: "mercury",
-  sign: "leo",
-  asOfDate: "2026-07-01T12:00:00Z",
-  entryDate: "Jun 29, 2026",
-  exitDate: "Aug 10, 2026"
-});
-const mercuryRetrograde = renderer.renderSkyPlacement({
-  planet: "mercury",
-  sign: "leo",
-  asOfDate: "2026-07-29T12:00:00Z",
-  entryDate: "Jun 29, 2026",
-  exitDate: "Aug 10, 2026",
-  isRetrograde: true
-});
-assert.equal(
-  mercuryDirect.parts[1],
-  skyPlanetFramesV1.rows.find((row) => row.contentKey === "fallback-hook/sky-placement-frame/mercury")?.body_you
-);
-assert.equal(
-  mercuryRetrograde.parts[1],
-  skyPlanetFramesV1.rows.find((row) => row.contentKey === "fallback-hook/sky-placement-retro-frame/mercury")?.body_you
-);
-assert.notEqual(mercuryRetrograde.parts[1], mercuryDirect.parts[1]);
-
-const saturnDirect = previewRenderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "aries",
-  asOfDate: "2026-06-01T12:00:00Z",
-  entryDate: "Feb 13, 2026",
-  exitDate: "Apr 12, 2028"
-});
-assert.equal(saturnDirect.templateKey, "sky-placement-frame-v3");
-const saturnRetrograde = previewRenderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "aries",
-  asOfDate: "2026-07-29T12:00:00Z",
-  entryDate: "Feb 13, 2026",
-  exitDate: "Apr 12, 2028",
-  isRetrograde: true
-});
-assert.equal(saturnRetrograde.templateKey, "sky-placement-frame-v3");
-assert.notEqual(saturnRetrograde.contentKey, saturnAries.contentKey);
-assert.equal(saturnRetrograde.articleSections, undefined);
-const saturnShadow = previewRenderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "aries",
-  asOfDate: "2026-12-10T12:00:00Z",
-  entryDate: "Feb 13, 2026",
-  exitDate: "Apr 12, 2028",
-  isShadowPhase: true
-});
-assert.equal(saturnShadow.templateKey, "sky-placement-frame-v3");
-
-const nodeBeforeFlip = previewRenderer.renderSkyPlacement({
-  planet: "north-node",
-  sign: "pisces",
-  asOfDate: "2026-07-22T16:00:00Z",
-  entryDate: "Jan 11, 2025",
-  exitDate: "Jul 26, 2026"
-});
-assert.equal(nodeBeforeFlip.templateKey, "sky-placement-frame-v3");
-assert.match(nodeBeforeFlip.headline, /North Node in Pisces/u);
-const nodeAfterFlip = previewRenderer.renderSkyPlacement({
-  planet: "north-node",
-  sign: "aquarius",
-  asOfDate: "2026-07-29T16:00:00Z",
-  entryDate: "Jul 26, 2026",
-  exitDate: "Mar 26, 2028"
-});
-assert.equal(nodeAfterFlip.templateKey, "sky-placement-frame-v3");
-assert.match(nodeAfterFlip.headline, /North Node in Aquarius/u);
-assert.match(nodeAfterFlip.body, /North Node is in Aquarius from Jul 26, 2026 to Mar 26, 2028/u);
-assert.doesNotMatch(nodeAfterFlip.body, /North Node is in Pisces/u);
-const southNodeAfterFlip = previewRenderer.renderSkyPlacement({
-  planet: "south-node",
-  sign: "leo",
-  asOfDate: "2026-07-29T16:00:00Z",
-  entryDate: "Jul 26, 2026",
-  exitDate: "Mar 26, 2028"
-});
-assert.match(southNodeAfterFlip.headline, /South Node in Leo/u);
-assert.match(southNodeAfterFlip.body, /South Node is in Leo from Jul 26, 2026 to Mar 26, 2028/u);
-assert.doesNotMatch(southNodeAfterFlip.body, /South Node is in Virgo/u);
+for (const facts of [
+  { planet: "mercury", sign: "leo", entryDate: "Jun 29, 2026", exitDate: "Aug 10, 2026" },
+  { planet: "venus", sign: "virgo", entryDate: "Sep 19, 2026", exitDate: "Oct 13, 2026" },
+  { planet: "saturn", sign: "aries", entryDate: "Feb 13, 2026", exitDate: "Apr 12, 2028", isRetrograde: true },
+  { planet: "north-node", sign: "aquarius", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" },
+  { planet: "south-node", sign: "leo", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" }
+]) {
+  assert.throws(
+    () => previewRenderer.renderSkyPlacement({ ...facts, asOfDate: "2026-07-29T16:00:00Z" }),
+    /SOURCE_GAP: continuous sky placement sign copy/u,
+    `${facts.planet}/${facts.sign} must not use the retired module stack, even in preview.`
+  );
+}
 
 const archived = renderer.renderSkyPlacement({
   planet: "saturn",
@@ -342,21 +290,17 @@ const liveRenderer = createTransitSynastryRenderer(
   templates,
   combinedRows
 );
-const live = liveRenderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "pisces",
-  asOfDate: "2024-07-01T12:00:00Z"
-});
-assert.notEqual(live.contentKey, archive.contentKey);
-assert.equal(live.templateKey, "fallback-template/sky.placement-article");
-
-const shadow = liveRenderer.renderSkyPlacement({
-  planet: "saturn",
-  sign: "pisces",
-  asOfDate: "2024-07-01T12:00:00Z",
-  isShadowPhase: true
-});
-assert.notEqual(shadow.contentKey, archive.contentKey);
+for (const isShadowPhase of [false, true]) {
+  assert.throws(
+    () => liveRenderer.renderSkyPlacement({
+      planet: "saturn",
+      sign: "pisces",
+      asOfDate: "2024-07-01T12:00:00Z",
+      isShadowPhase
+    }),
+    /SOURCE_GAP: continuous sky placement sign copy saturn\/pisces/u
+  );
+}
 
 const fastDirectArticle = {
   ...archive,
@@ -372,7 +316,9 @@ const fastRenderer = createTransitSynastryRenderer(
 const fastDirect = fastRenderer.renderSkyPlacement({
   planet: "sun",
   sign: "pisces",
-  asOfDate: "2024-07-01T12:00:00Z"
+  asOfDate: "2024-07-01T12:00:00Z",
+  articleMode: "archive",
+  articleKey: fastDirectArticle.contentKey
 });
 assert.ok(!fastDirect.parts.includes(archive.history_echo));
 
@@ -743,7 +689,7 @@ try {
 
 console.log(
   "Sky article v1 passed: 2 registry articles, 42 approved V3 slot rows, 23 approved three-beat frames, "
-  + "42 review-gated voice-pass rows, 12 review-gated Sun sign modules, 25 approved vocab rows, "
+  + "42 review-gated voice-pass rows, 1 approved continuous Sun unit, 13 superseded Sun rows, 25 approved vocab rows, "
   + "9/9 archive ephemeris facts, wrong-station rejection, retrograde fallback, shared-bank hashes, "
   + "True Node sign-through, FINAL section order, article/slot exclusivity, twelve public rising blocks, "
   + "history/retrograde gates, and seeded punctuation/date/degree failures."

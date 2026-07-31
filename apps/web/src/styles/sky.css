@@ -264,6 +264,11 @@
   line-height: var(--leading-body);
 }
 
+.sky-placement-moves-lines {
+  display: grid;
+  gap: var(--sp-2);
+}
+
 .sky-placement-key-dates dl {
   display: grid;
   gap: var(--space-3);

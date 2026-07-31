@@ -33,6 +33,21 @@ export interface HookRow {
   body_you: string;
   body_they: string;
   review_status: string;
+  render_policy?: string;
+  fact_line?: string;
+  aspect_insert?: string;
+  opening?: string;
+  tension?: string;
+  development?: string;
+  close?: string;
+  try_this?: string[];
+  aspect_units?: Array<{
+    planets: string[];
+    aspect: string;
+    heading: string;
+    opportunity: string;
+    check: string;
+  }>;
 }
 export interface TemplatesFile { templates: TemplateRow[] }
 export interface RowsFile { vocabularyRows: VocabRow[]; hookRows?: HookRow[] }

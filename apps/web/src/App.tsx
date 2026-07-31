@@ -527,6 +527,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   heading: string;
   tagline?: string | null;
   moves?: string[];
+  movesPresentation?: "list" | "plain";
   closingCharge?: string | null;
   keyDates?: SkyDetailKeyDate[];
   articleWindow?: string | null;
@@ -636,6 +637,7 @@ type SkyDetail = {
   duration?: string;
   tagline?: string;
   moves?: string[];
+  movesPresentation?: "list" | "plain";
   keyDates?: SkyDetailKeyDate[];
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
@@ -4268,7 +4270,7 @@ function formatPlacementTransitEndpoint(
   includeYear = false
 ) {
   return new Intl.DateTimeFormat("en-US", {
-    month: "short",
+    month: "long",
     day: "numeric",
     timeZone: isLunarNodePoint(position.planet)
       ? position.transitTimeZone || "UTC"
@@ -5098,9 +5100,15 @@ function SkyDetailArticle({
               {detail.moves?.length ? (
                 <section className="article-section sky-detail-section sky-placement-moves" aria-label="Try this">
                   <h3>Try this</h3>
-                  <ul>
-                    {detail.moves.map((move) => <li key={move}>{move}</li>)}
-                  </ul>
+                  {detail.movesPresentation === "plain" ? (
+                    <div className="sky-placement-moves-lines">
+                      {detail.moves.map((move) => <p key={move}>{move}</p>)}
+                    </div>
+                  ) : (
+                    <ul>
+                      {detail.moves.map((move) => <li key={move}>{move}</li>)}
+                    </ul>
+                  )}
                 </section>
               ) : null}
               {detail.seriesLine ? (
@@ -6264,6 +6272,7 @@ function skyPlacementWritingSection(
   const layer = (
     rendered.templateKey === "sky-placement-frame-v3"
     || rendered.templateKey === "sky-placement-article-v2"
+    || rendered.templateKey === "sky-placement-continuous-v2"
     || rendered.contentKey?.startsWith("authored/")
     || rendered.contentKey?.startsWith("sky-article/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-hook/")
@@ -6293,6 +6302,7 @@ function skyPlacementWritingSection(
     heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     moves: rendered.moves,
+    movesPresentation: rendered.movesPresentation,
     closingCharge: rendered.closingCharge,
     keyDates,
     articleWindow: rendered.articleWindow,
@@ -6405,6 +6415,7 @@ function currentSkyPlacementDetailArticle({
     .flatMap((section) => taggedSectionParagraphs(section));
   const placementSection = normalized.sections[0];
   const isRegistryArticle = placementSection?.sourceKeys.includes("sky-article-v1") ?? false;
+  const isContinuousFallback = placementSection?.sourceKeys.includes("sky-placement-continuous-v2") ?? false;
   const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
     .flatMap((section) => readerFacingParagraphs([section.body]));
@@ -6439,11 +6450,12 @@ function currentSkyPlacementDetailArticle({
     title: placementSection?.heading || fallbackTitle,
     meta: [
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
-      isRegistryArticle ? null : effectiveTransitRangeLabel
+      isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    duration: isRegistryArticle ? undefined : effectiveTransitRangeLabel ?? undefined,
+    duration: isRegistryArticle || isContinuousFallback ? undefined : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     moves: placementSection?.moves,
+    movesPresentation: placementSection?.movesPresentation,
     keyDates: [],
     closingCharge: placementSection?.closingCharge,
     risingHoroscopes: placementSection?.risingHoroscopes,

@@ -38,6 +38,21 @@ export type HookRow = {
   body_sky?: string | null;
   question?: string | null;
   review_status?: ReviewStatus | null;
+  render_policy?: string | null;
+  fact_line?: string | null;
+  aspect_insert?: string | null;
+  opening?: string | null;
+  tension?: string | null;
+  development?: string | null;
+  close?: string | null;
+  try_this?: string[];
+  aspect_units?: Array<{
+    planets: string[];
+    aspect: string;
+    heading: string;
+    opportunity: string;
+    check: string;
+  }>;
   [key: string]: unknown;
 };
 
@@ -378,16 +393,19 @@ function assertSkySignCopySunV1Import(
   source: typeof skySignCopySunV1
 ) {
   const rows = source.rows;
-  const keys = new Set(rows.map((row) => row.contentKey));
+  const supersededRows = source.superseded_rows;
 
   if (
-    rows.length !== 12
-    || keys.size !== 12
-    || rows.some((row) => !row.contentKey.startsWith("fallback-hook/sky-sign-copy/sun/"))
-    || rows.some((row) => row.review_status !== "needs_review")
+    rows.length !== 1
+    || rows[0]?.contentKey !== "fallback-hook/sky-sign-copy/sun/leo"
+    || rows[0]?.review_status !== "approved"
+    || rows[0]?.render_policy !== "sky-placement-continuous-v2"
     || rows.some((row) => row.body_you !== row.body_they)
+    || supersededRows.length !== 13
+    || new Set(supersededRows.map((row) => row.contentKey)).size !== 12
+    || supersededRows.some((row) => row.review_status !== "superseded")
   ) {
-    throw new Error("Sun sign copy must contain 12 review-gated, single-voice rows.");
+    throw new Error("Sun sign copy must contain one approved continuous Leo unit and 13 historical non-rendering superseded rows.");
   }
 }
 

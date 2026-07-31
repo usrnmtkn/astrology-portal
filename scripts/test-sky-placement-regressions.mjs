@@ -7,6 +7,7 @@ import fallbackSourceRows from "../apps/web/src/content/fallbackArchitectureV3/s
 import fallbackTemplates from "../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json" with { type: "json" };
 import transitSynastryRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json" with { type: "json" };
 import skyArticleV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-article-v1.json" with { type: "json" };
+import skySignCopySunV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
@@ -28,6 +29,13 @@ const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts
 const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts");
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
+const canonicalFallbackTemplate = read("packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md");
+const continuousFallbackSchema = JSON.parse(read(
+  "apps/web/src/content/fallbackArchitectureV3/contracts/SKY-PLACEMENT-CONTINUOUS-V2.schema.json"
+));
+const pendingContinuousImports = JSON.parse(read(
+  "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-continuous-v2-pending.json"
+));
 
 const renderer = createTransitSynastryRenderer(
   {
@@ -36,13 +44,31 @@ const renderer = createTransitSynastryRenderer(
   fallbackTemplates,
   {
     ...fallbackSourceRows,
+    hookRows: [...fallbackSourceRows.hookRows, ...skySignCopySunV1.rows],
     vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
   }
 );
 const sunLeo = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "leo",
-  egressDate: "August 22",
+  entryDate: "July 22",
+  exitDate: "August 23",
+  events: [{
+    type: "aspect",
+    a: "sun",
+    aSign: "leo",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "conjunction",
+    exactDate: "July 29",
+    applying: true
+  }]
+});
+const sunLeoReference = renderSkyPlacementReference({
+  planet: "sun",
+  sign: "leo",
+  entryDate: "July 22",
+  exitDate: "August 23",
   events: [{
     type: "aspect",
     a: "sun",
@@ -57,6 +83,8 @@ const sunLeo = renderer.renderSkyPlacement({
 const sunLeoMoonOpposition = renderer.renderSkyPlacement({
   planet: "sun",
   sign: "leo",
+  entryDate: "July 22",
+  exitDate: "August 23",
   events: [{
     type: "aspect",
     a: "sun",
@@ -68,24 +96,9 @@ const sunLeoMoonOpposition = renderer.renderSkyPlacement({
     applying: true
   }]
 });
-const sunAries = renderer.renderSkyPlacement({
-  planet: "sun",
-  sign: "aries"
-});
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
-});
-const mercuryCancerIngress = renderer.renderSkyPlacement({
-  planet: "mercury",
-  sign: "cancer",
-  egressDate: "August 9"
-});
-const mercuryCancerRetrograde = renderer.renderSkyPlacement({
-  planet: "mercury",
-  sign: "cancer",
-  egressDate: "August 9",
-  isRetrograde: true
 });
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
@@ -193,6 +206,36 @@ assert.ok(fallbackTemplates.templates.length > 0, "The imported package must exp
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
 assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
+assert.match(canonicalFallbackTemplate, /^# Canonical Planet-in-Sign Fallback Template/u);
+assert.match(canonicalFallbackTemplate, /Target length:\n350 to 550 words when an aspect insert is active\.\n220 to 350 words without an aspect insert\./u);
+assert.deepEqual(
+  pendingContinuousImports.slot_contract,
+  ["{{entryDate}}", "{{exitDate}}", "{{aspectInsert}}"]
+);
+assert.deepEqual(
+  pendingContinuousImports.sources.map((source) => [source.file, source.expected_units, source.review_status, source.imported]),
+  [
+    ["TLDR-Sky-SignCopy-Sun-AllSigns-V2-REVIEW.md", 11, "needs_review", false],
+    ["TLDR-Sky-SignCopy-Mercury-AllSigns-V2-REVIEW.md", 12, "needs_review", false],
+    ["TLDR-Sky-SignCopy-Venus-AllSigns-V2-REVIEW.md", 12, "needs_review", false],
+    ["TLDR-Sky-SignCopy-Mars-AllSigns-V2-REVIEW.md", 12, "needs_review", false],
+    ["TLDR-Sky-SignCopy-SlowMovers-Current-V2-REVIEW.md", 7, "needs_review", false]
+  ]
+);
+assert.equal(pendingContinuousImports.retired_module_rows.review_status, "superseded");
+assert.equal(pendingContinuousImports.retired_module_rows.render_eligible, false);
+assert.equal(continuousFallbackSchema.properties.fact_line.const, "{{entryDate}} to {{exitDate}}");
+assert.equal(continuousFallbackSchema.properties.aspect_insert.const, "{{aspectInsert}}");
+assert.match(
+  app,
+  /function formatPlacementTransitEndpoint\([\s\S]*month: "long"/u,
+  "Planet-in-sign dates must use full month names before entering the canonical renderer."
+);
+assert.match(
+  app,
+  /detail\.movesPresentation === "plain"[\s\S]*sky-placement-moves-lines[\s\S]*detail\.moves\.map\(\(move\) => <p key=\{move\}>\{move\}<\/p>\)/u,
+  "Canonical Try this actions must render as plain lines instead of list items."
+);
 assert.equal(anglePlacementRows.length, 24, "The package must provide all Ascendant and Midheaven placement sentences.");
 assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generic glossary row for every dignity badge.");
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
@@ -204,19 +247,12 @@ for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
   assert.equal(rows.length, 168, `Every sky placement must have an approved ${family} row.`);
 }
 for (const planet of retrogradePlacementPlanets) {
-  const retrogradeGuidance = fallbackSourceRows.hookRows.find((row) =>
-    row.contentKey === `fallback-hook/transit-retro/${planet}`
-  )?.body_you;
-  assert.ok(retrogradeGuidance, `${planet} must have approved retrograde guidance.`);
   for (const sign of zodiacSigns) {
-    if (planet === "saturn" && sign === "pisces") {
-      continue;
-    }
-    const rendered = renderer.renderSkyPlacement({ planet, sign, isRetrograde: true });
-    assert.equal(rendered.parts.length, 4, `${planet} retrograde in ${sign} must preserve the complete hybrid base.`);
-    assert.equal(rendered.parts[2], retrogradeGuidance, `${planet} retrograde in ${sign} must place its guidance before the turn.`);
-    assert.ok(rendered.tagline, `${planet} retrograde in ${sign} must retain its tagline.`);
-    assert.equal(rendered.moves?.length, 3, `${planet} retrograde in ${sign} must retain all three moves.`);
+    assert.throws(
+      () => renderer.renderSkyPlacement({ planet, sign, isRetrograde: true }),
+      /SOURCE_GAP: continuous sky placement sign copy/u,
+      `${planet} retrograde in ${sign} must not revive the retired module stack.`
+    );
   }
 }
 for (const row of approvedSkyPlacementRows) {
@@ -308,53 +344,71 @@ assert.match(
 );
 
 assert.equal(sunLeo.headline, "The Sun in Leo", "Package Sun-in-Leo headline must remain factual.");
+assert.equal(skySignCopySunV1.superseded_rows.length, 13);
+assert.ok(
+  skySignCopySunV1.superseded_rows.some((row) => (
+    row.contentKey === "fallback-hook/sky-sign-copy/sun/leo"
+    && row.review_status === "superseded"
+    && /A celebration becomes more important\./u.test(row.opening ?? "")
+  )),
+  "The first approved Leo V2 row must remain in superseded history."
+);
 assert.match(
   sunLeo.body,
-  /^Somewhere along the way, you switched to autopilot on a version of yourself that needs updating\. A change of season is the natural time to look up\./u,
-  "Package Sun-in-Leo copy must lead with the revised single-purpose hook."
+  /^July 22 to August 23\n\nThe Sun moves into Leo on July 22,/u,
+  "Package Sun-in-Leo copy must lead with the engine-filled fact line and lived opening."
 );
+assert.match(sunLeo.body, /A birthday, launch, or personal win becomes harder to treat like an ordinary day\./u);
+assert.match(sunLeo.body, /Not every project needs an audience, but the work you want recognized has to leave your desk eventually\./u);
+assert.match(sunLeo.body, /The encouraging response may be real\. It still does not mean the budget, deadline, or workload can stretch forever\./u);
+assert.match(sunLeo.body, /Take the good response seriously, then check the calendar, the cost, and who is doing the work\./u);
+assert.match(sunLeo.body, /Before August 23, choose one piece of work, decision, or role you are ready to stand behind\. Share the part that is ready now\. People can see what you made before every detail is perfect\./u);
 assert.doesNotMatch(
   sunLeo.body,
-  /Wishing you|Leo is the fifth sign|The Leo trap|for everyone at once/iu,
-  "Sky placement articles must not restore sign lore, a blessing, a trap label, or the collective wrapper."
+  /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion|Wishing you|Leo is the fifth sign|The Leo trap/iu,
+  "The continuous fallback must exclude every retired Sun module."
 );
 assert.match(
   sunLeo.body,
-  /Leo measures by applause, and applause is a fickle ruler\./u,
-  "Sun-in-Leo must keep the sharper authored turn instead of a generic confrontation."
+  /The problem begins when attention becomes the only proof that the work matters\./u,
+  "Sun-in-Leo must keep the owner-approved central tension."
 );
 assert.match(
   sunLeo.body,
-  /The Sun in Leo meets Jupiter in Leo, exact on July 29\./u,
-  "Sun-in-Leo must append the computed plain-language aspect fact below the evergreen article."
-);
-assert.match(
-  sunLeoMoonOpposition.body,
-  /The Full Moon in Aquarius peaks on July 29, opposite the Sun in Leo\. Personal recognition comes into tension with the expectations of the group\./u,
-  "Sun-in-Leo must identify the Sun-Moon opposition as the Aquarius Full Moon."
+  /On July 29, the Sun meets Jupiter in Leo\./u,
+  "Sun-in-Leo must render the owner-approved aspect opportunity with the engine date."
 );
 assert.doesNotMatch(
   sunLeoMoonOpposition.body,
-  /Emotions, instincts, and what brings safety get pulled into the spotlight/iu,
-  "The Aquarius Full Moon paragraph must not fall through to a generic transit-effect sentence."
+  /Full Moon|Emotions, instincts|July 29/iu,
+  "An active aspect without an approved canonical insert must not render generic aspect copy."
 );
 assert.doesNotMatch(
   `${sunLeo.body}\n${sunLeoMoonOpposition.body}`,
   /\b(?:conjunction|square|trine|sextile|opposition|applying|separating|orb)\b/iu,
   "Sky placement bodies must not expose aspect jargon."
 );
-assert.equal(sunAries.tagline, "Start before you think", "Approved placement taglines must be exposed to the Sky detail header.");
-assert.equal(sunAries.moves?.length, 3, "Approved placement articles must expose three practical moves.");
-assert.equal(sunLeo.tagline, "Show the work", "The original Sun-in-Leo calibration placement must now expose its approved tagline.");
+assert.throws(
+  () => renderer.renderSkyPlacement({
+    planet: "sun",
+    sign: "aries",
+    entryDate: "March 20",
+    exitDate: "April 20"
+  }),
+  /SOURCE_GAP: continuous sky placement sign copy sun\/aries/u,
+  "Superseded Sun-in-Aries modules must stay dark until its replacement is approved."
+);
+assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
 assert.deepEqual(
   sunLeo.moves,
   [
     "Put one piece of work you are proud of where other people can see it.",
-    "Give credit out loud before asking for your own.",
-    "Choose one project worth the spotlight and finish its visible version."
+    "Give someone else clear credit for what they contributed.",
+    "Ask directly for the support, recognition, or opportunity you need."
   ],
-  "The original Sun-in-Leo calibration placement must now expose all three approved moves."
+  "Sun-in-Leo must expose the owner's optional Try this list verbatim."
 );
+assert.equal(sunLeo.movesPresentation, "plain", "Canonical Try this actions must request plain-line presentation.");
 assert.equal(lilithAries.tagline, "Don’t let disrespect slide", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.match(
   lilithAries.body,
@@ -362,57 +416,12 @@ assert.match(
   "Owner-approved Lilith placement copy must render from the promoted pair rows."
 );
 assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement articles must expose three practical moves.");
-assert.equal(
-  sunAries.contentKey,
-  "fallback-hook/sky-placement-hook/sun/aries",
-  "Approved pair rows must be identifiable so the app can prioritize them over generated drafts."
-);
-assert.deepEqual(
-  sunAries.parts.slice(0, 3),
-  [
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-hook/sun/aries")?.body_you,
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-lived/sun/aries")?.body_you,
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-turn/sun/aries")?.body_you
-  ],
-  "Approved Sky placement articles must render hook, lived expression, and turn in order."
-);
 assert.doesNotMatch(
   sunLeo.body,
   /this energy|right now|reveals|heals|[\u2013\u2014]/iu,
   "Sun-in-Leo must satisfy the placement-article voice bans."
 );
 assert.match(app, /return `\$\{skyDisplayPlanetName\(position\.planet\)\} Rx in \$\{position\.sign\}`;/, "Retrograde Sky ID title must stay factual in the app route.");
-assert.equal(
-  mercuryCancerRetrograde.headline,
-  "Mercury in Cancer",
-  "Mercury retrograde must retain the factual hybrid placement headline."
-);
-assert.deepEqual(
-  mercuryCancerRetrograde.parts,
-  [
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-hook/mercury/cancer")?.body_you,
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-lived/mercury/cancer")?.body_you,
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/transit-retro/mercury")?.body_you,
-    fallbackSourceRows.hookRows.find((row) => row.contentKey === "fallback-hook/sky-placement-turn/mercury/cancer")?.body_you
-  ],
-  "Retrograde guidance must sit between the hybrid lived expression and turn."
-);
-assert.match(
-  mercuryCancerRetrograde.body,
-  /Plans, messages, and tech get glitchy, and old conversations come back around\./u,
-  "Mercury retrograde in Cancer must include the approved short retrograde guidance."
-);
-assert.match(
-  mercuryCancerIngress.body,
-  /^You already know the conversation you have been avoiding\./u,
-  "Direct-motion Mercury in Cancer must retain the stronger voice-first hook."
-);
-assert.doesNotMatch(
-  `${mercuryCancerIngress.headline}\n${mercuryCancerIngress.body}`,
-  /Plans, messages, and tech get glitchy, and old conversations come back around\./u,
-  "Direct-motion ingress articles must not contain retrograde guidance."
-);
-
 assert.equal(
   saturnPiscesDirect.templateKey,
   "sky-article-v1",
@@ -477,8 +486,27 @@ assert.deepEqual(
 
 assert.equal(
   sunLeo.templateKey,
-  "fallback-template/sky.placement-article",
-  "Sun-in-Leo must report the governed shared placement template."
+  "sky-placement-continuous-v2",
+  "Sun-in-Leo must report the governed continuous slot-tier template."
+);
+assert.deepEqual(
+  {
+    articleSections: sunLeo.articleSections,
+    body: sunLeo.body,
+    contentKey: sunLeo.contentKey,
+    moves: sunLeo.moves,
+    parts: sunLeo.parts,
+    templateKey: sunLeo.templateKey
+  },
+  {
+    articleSections: sunLeoReference.articleSections,
+    body: sunLeoReference.body,
+    contentKey: sunLeoReference.contentKey,
+    moves: sunLeoReference.moves,
+    parts: sunLeoReference.parts,
+    templateKey: sunLeoReference.templateKey
+  },
+  "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
 console.log(JSON.stringify({

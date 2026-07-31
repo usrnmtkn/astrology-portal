@@ -166,7 +166,11 @@ Path:
 | `source-rows/sky-article-v1.json` | Validity-window sky article registry, archive articles, approved date-slot frames, and sky-scoped vocabulary |
 | `source-rows/sky-placement-inventories-voice-pass-v1.json` | Forty-two review-gated slot-tier voice-pass candidates; supersede approved V3 rows only after owner approval |
 | `source-rows/sky-planet-frames-v1.json` | Owner-approved three-beat planet frames: 14 direct and 9 shadow-to-shadow retrograde replacements |
-| `source-rows/sky-sign-copy-sun-v1.json` | Twelve review-gated Sun-in-sign article modules; staged for preview and dashboard review, excluded from reader serving until approval |
+| `source-rows/sky-sign-copy-sun-v1.json` | Owner-approved revised continuous Sun-in-Leo fallback unit plus thirteen superseded historical rows; the other V2 units remain outside the reader package until approval |
+| `authored-inputs/sky-placement-continuous-v2-pending.json` | Review-gated import manifest for the remaining Sun, Mercury, Venus, Mars, slow-mover, Chiron, and node units; also records the superseded legacy module families |
+| `contracts/SKY-PLACEMENT-CONTINUOUS-V2.schema.json` | Required continuous-unit slots and active-aspect insert contract |
+| `packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md` | Verbatim owner-approved canonical planet-in-sign fallback specification |
+| `scripts/import-sky-placement-continuous-v2.mjs` | Validates staged review files without writing by default; requires both `--approve` and an explicit `--out` path before it emits importable rows |
 | `source-rows/station-cards-week-openers-v1.json` | Weekly openers and station units |
 | `templates/fallback-templates-v3.json` | Slot-bearing fallback templates |
 | `resolver/renderFallback.*` | Natal, empty-house, aspect, and profection assembly |
@@ -237,6 +241,12 @@ The governing selection order is:
 2. Approved template + hooks + vocabulary
 3. SOURCE_GAP
 ```
+
+For Sun, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Chiron,
+and the nodes, step 2 means one approved continuous unit under
+`sky-placement-continuous-v2`. The retired placement module stack is not a
+fallback for those bodies. Moon and lunation rendering remain outside this
+contract.
 
 Resolution must be:
 

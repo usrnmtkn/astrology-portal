@@ -58,6 +58,7 @@
     "test:phone-auth": "node --experimental-strip-types scripts/test-phone-auth-normalization.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "content:materialize-fallback-v3": "node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs",
+    "content:import-sky-placement-v2": "node scripts/import-sky-placement-continuous-v2.mjs",
     "content:verify-fallback-v3": "node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs --verify",
     "content:export-fallback-v3-snapshot": "node scripts/export-fallback-architecture-v3-snapshot.mjs",
     "preview": "npm run preview -w @tldr/web",
