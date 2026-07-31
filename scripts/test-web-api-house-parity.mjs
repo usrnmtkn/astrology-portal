@@ -49,6 +49,17 @@ const cases = [
       longitude: -74.006,
       timeZone: "America/New_York"
     }
+  },
+  {
+    id: "true-node-ingress-new-york-2026",
+    iso: "2026-07-31T16:00:00.000Z",
+    date: "2026-07-31",
+    location: {
+      label: "New York, NY",
+      latitude: 40.7128,
+      longitude: -74.006,
+      timeZone: "America/New_York"
+    }
   }
 ];
 
@@ -167,6 +178,7 @@ try {
     assert.equal(api.metadata.houseSystem, "whole_sign", `${caseData.id}: API house system`);
     assert.equal(web.calculationProvenance.houseSystem, "whole_sign", `${caseData.id}: web house system`);
     assert.equal(web.calculationProvenance.planetHouseSystem, "whole_sign", `${caseData.id}: web planet house system`);
+    assert.equal(web.calculationProvenance.nodeType, "true", `${caseData.id}: web node model`);
 
     assertCircularClose(api.ascendantLongitude, web.ascendantLongitude, 0.02, `${caseData.id}: ascendant longitude`);
     assertCircularClose(api.midheavenLongitude, web.midheavenLongitude, 0.02, `${caseData.id}: MC longitude`);
@@ -183,6 +195,7 @@ try {
       const apiPosition = apiPositions.get(point);
       assert.ok(webPosition, `${caseData.id}: missing web ${point}`);
       assert.ok(apiPosition, `${caseData.id}: missing API ${point}`);
+      assertCircularClose(apiPosition.longitude, webPosition.longitude, 0.02, `${caseData.id}: ${point} longitude`);
       assert.equal(apiPosition.sign, webPosition.sign, `${caseData.id}: ${point} sign`);
       assert.equal(apiPosition.house, webPosition.house, `${caseData.id}: ${point} house`);
       assert.equal(webPosition.houseSystem, "whole_sign", `${caseData.id}: ${point} web house system`);
