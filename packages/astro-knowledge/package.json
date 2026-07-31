@@ -59,6 +59,8 @@
     "model-registry:validate": "node scripts/manage-editorial-model-registry.js validate",
     "model-registry:status": "node scripts/manage-editorial-model-registry.js status",
     "test:model-registry": "node scripts/test-editorial-model-registry.js",
+    "test:calibration-report": "node scripts/test-editorial-calibration-report.js",
+    "calibrate:candidate:live": "node scripts/run-editorial-model-calibration.js --authorize-live",
     "private-model:export": "node private-model/scripts/export-sky-longform.mjs",
     "private-model:validate": "node private-model/scripts/validate-dataset.mjs",
     "test:private-model-data": "npm run private-model:export && npm run private-model:validate -- --allow-insufficient",
