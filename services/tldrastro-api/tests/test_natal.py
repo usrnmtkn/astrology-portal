@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
 
+import swisseph as swe
 from fastapi.testclient import TestClient
 
 from tldrastro_api.main import app
+from tldrastro_api.services.chart import BODY_IDS
 
 
 client = TestClient(app)
@@ -56,6 +58,32 @@ def test_natal_chart_returns_core_chart_shape():
     assert "North Node" in positions
     assert positions["Sun"]["sign"] == "Aries"
     assert isinstance(chart["aspects"], list)
+
+
+def test_north_node_uses_true_node_ephemeris_across_dates():
+    assert BODY_IDS["North Node"] == swe.TRUE_NODE
+    assert BODY_IDS["North Node"] != swe.MEAN_NODE
+
+    for date_value, time_value in [("1994-04-12", "08:35"), ("2026-07-31", "12:00")]:
+        payload = natal_payload()
+        payload["subject"]["datetime"]["date"] = date_value
+        payload["subject"]["datetime"]["time"] = time_value
+        response = client.post("/chart/natal", json=payload)
+
+        assert response.status_code == 200
+        positions = {position["point"]: position for position in response.json()["positions"]}
+        expected, _ = swe.calc_ut(
+            swe.julday(
+                int(date_value[:4]),
+                int(date_value[5:7]),
+                int(date_value[8:10]),
+                16.0 if date_value == "2026-07-31" else 12.5833333333,
+            ),
+            swe.TRUE_NODE,
+            swe.FLG_SWIEPH | swe.FLG_SPEED,
+        )
+
+        assert abs(positions["North Node"]["longitude"] - expected[0]) < 0.000001
 
 
 def test_natal_chart_unknown_birth_time_warns():
