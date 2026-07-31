@@ -51,7 +51,11 @@ Source registry: `scripts/fixtures/ephemeris-source-registry.json`
 - Retrograde stations: search speed sign changes, then binary-refine the station event.
 - Retrograde shadow boundaries: nearest previous/next longitude crossings around station longitudes.
 - Cazimi: angular separation from Sun `<= 1 degree`.
-- Current sky aspects: conjunction, sextile, square, trine, opposition; allowed orb `<= 5 degrees`.
+- Current sky aspects: conjunction, sextile, square, trine, opposition at an
+  allowed orb of `<= 5 degrees`, plus quincunx at `<= 3 degrees`. The reader and
+  content-generation adapter use the same shared matrix engine, point set, and
+  exact calculation instant. The South Node is derived exactly opposite the
+  Swiss Ephemeris True North Node.
 - Calendar aspects: same major aspects, with exact event detection by sign-change crossing of aspect distance.
 - Applying/separating for snapshot aspects: approximate next six-hour separation from current longitude plus one-quarter-day speed.
 - Lunar phase: Sun-Moon elongation buckets.

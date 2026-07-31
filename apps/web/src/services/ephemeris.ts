@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import { calculateSkyAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
 import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts.js";
 import { debugInfoForZonedDateTime } from "./timezones.js";
 
@@ -124,25 +125,14 @@ type LunarCalendarMonthOptions = {
   detail?: LunarCalendarDetailLevel;
 };
 
-const aspectDefinitions = [
+const calendarAspectDefinitions = [
   ["conjunction", 0],
   ["sextile", 60],
   ["square", 90],
   ["trine", 120],
-  ["quincunx", 150],
   ["opposition", 180]
 ] as const;
-
-const calendarAspectDefinitions = aspectDefinitions.filter(([type, degrees]) => type !== "quincunx" && degrees <= 180);
 const cazimiOrbDegrees = 1;
-const aspectOrbCaps = {
-  conjunction: 5,
-  sextile: 5,
-  square: 5,
-  trine: 5,
-  quincunx: 3,
-  opposition: 5
-} satisfies Record<(typeof aspectDefinitions)[number][0], number>;
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
 
@@ -2115,60 +2105,6 @@ function angularSeparation(first: number, second: number) {
   return difference > 180 ? 360 - difference : difference;
 }
 
-function aspectForSeparation(separation: number) {
-  return aspectDefinitions
-    .map(([type, exact]) => ({ type, orb: Math.abs(separation - exact) }))
-    .filter(({ type, orb }) => orb <= aspectOrbCaps[type])
-    .sort((a, b) => a.orb - b.orb)[0];
-}
-
-function applyingForAspect(from: CalculatedPlanet, to: CalculatedPlanet, exactDegrees: number) {
-  const currentDistance = Math.abs(shortestAngleDistance(angularSeparation(from.longitude, to.longitude) - exactDegrees));
-  const nextDistance = Math.abs(shortestAngleDistance(
-    angularSeparation(
-      normalizeDegrees(from.longitude + from.speed / 4),
-      normalizeDegrees(to.longitude + to.speed / 4)
-    ) - exactDegrees
-  ));
-
-  if (Math.abs(currentDistance) < 0.01) {
-    return false;
-  }
-
-  return nextDistance < currentDistance;
-}
-
-function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"] {
-  const aspects: SkySnapshot["aspects"] = [];
-
-  positions.forEach((from, fromIndex) => {
-    positions.slice(fromIndex + 1).forEach((to) => {
-      const aspect = aspectForSeparation(angularSeparation(from.longitude, to.longitude));
-
-      if (aspect) {
-        const definition = aspectDefinitions.find(([type]) => type === aspect.type);
-        const exactDegrees = definition?.[1] ?? 0;
-        const separation = angularSeparation(from.longitude, to.longitude);
-
-        aspects.push({
-          id: `aspect.${from.planet.toLowerCase().replaceAll(" ", "_")}.${aspect.type}.${to.planet.toLowerCase().replaceAll(" ", "_")}`,
-          bodyA: from.planet,
-          bodyB: to.planet,
-          from: from.planet,
-          to: to.planet,
-          type: aspect.type,
-          exactAngle: exactDegrees,
-          separation: Number(separation.toFixed(4)),
-          orb: Number(aspect.orb.toFixed(1)),
-          applying: applyingForAspect(from, to, exactDegrees)
-        });
-      }
-    });
-  });
-
-  return aspects.sort((a, b) => a.orb - b.orb);
-}
-
 export const defaultLocation: LocationInput = {
   label: "New York City, NY",
   latitude: 40.7128,
@@ -2276,7 +2212,7 @@ export async function getAstrodienstSky(
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
     positions: displayPositions.map((position) => ({ ...position })),
-    aspects: calculateAspects(displayPositions)
+    aspects: calculateSkyAspects(displayPositions)
   };
 
   return {

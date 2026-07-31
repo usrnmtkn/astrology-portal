@@ -1,3 +1,5 @@
+import { calculateSkyAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
+
 export type LocationInput = {
   label: string;
   latitude: number;
@@ -8,6 +10,8 @@ export type LocationInput = {
 export type PlanetPosition = {
   planet: string;
   glyph: string;
+  longitude: number;
+  speed: number | null;
   sign: string;
   signGlyph: string;
   degree: number;
@@ -20,10 +24,16 @@ export type PlanetPosition = {
 };
 
 export type SkyAspect = {
+  id?: string;
+  bodyA?: string;
+  bodyB?: string;
   from: string;
   to: string;
   type: string;
+  exactAngle?: number;
+  separation?: number;
   orb: number;
+  applying?: boolean;
   meaning: string;
   series?: {
     index: number;
@@ -79,6 +89,7 @@ type CloudRunPosition = {
   planet?: string;
   glyph?: string;
   longitude?: number;
+  speed?: number | null;
   sign?: string;
   signGlyph?: string;
   degree?: number;
@@ -94,7 +105,6 @@ type CloudRunPosition = {
 
 type CloudRunSkyResponse = Partial<Omit<SkySnapshot, "positions" | "aspects">> & {
   positions?: CloudRunPosition[];
-  aspects?: Partial<SkyAspect>[];
 };
 
 const defaultLocation: LocationInput = {
@@ -103,6 +113,21 @@ const defaultLocation: LocationInput = {
   longitude: -74.006,
   timeZone: "America/New_York"
 };
+
+const signs = [
+  ["Aries", "♈"],
+  ["Taurus", "♉"],
+  ["Gemini", "♊"],
+  ["Cancer", "♋"],
+  ["Leo", "♌"],
+  ["Virgo", "♍"],
+  ["Libra", "♎"],
+  ["Scorpio", "♏"],
+  ["Sagittarius", "♐"],
+  ["Capricorn", "♑"],
+  ["Aquarius", "♒"],
+  ["Pisces", "♓"]
+] as const;
 
 const signElements: Record<string, SkySnapshot["dominantElement"]> = {
   Aries: "Fire",
@@ -139,7 +164,10 @@ function themeForPoint(point: string) {
     Uranus: "change",
     Neptune: "imagination",
     Pluto: "depth",
-    "North Node": "direction"
+    Chiron: "integration",
+    Lilith: "instinct and refusal",
+    "North Node": "direction",
+    "South Node": "familiar patterns and release"
   };
 
   return themes[point] ?? point.toLowerCase();
@@ -165,6 +193,8 @@ function normalizePosition(position: CloudRunPosition): PlanetPosition {
   return {
     planet,
     glyph: position.glyph ?? "",
+    longitude: Number(position.longitude),
+    speed: Number.isFinite(position.speed) ? Number(position.speed) : null,
     sign: position.sign ?? "Aries",
     signGlyph: position.signGlyph ?? "",
     degree: Number(position.degreeDecimal ?? position.degree ?? 0),
@@ -177,43 +207,48 @@ function normalizePosition(position: CloudRunPosition): PlanetPosition {
   };
 }
 
-function normalizeAspect(aspect: Partial<SkyAspect>): SkyAspect | null {
-  if (!aspect.from || !aspect.to || !aspect.type) {
-    return null;
-  }
+function normalizeDegrees(degrees: number) {
+  return ((degrees % 360) + 360) % 360;
+}
+
+function signForLongitude(longitude: number) {
+  const normalized = normalizeDegrees(longitude);
+  const signIndex = Math.floor(normalized / 30);
+  const [sign, signGlyph] = signs[signIndex];
 
   return {
-    from: aspect.from,
-    to: aspect.to,
-    type: aspect.type,
-    orb: Number(aspect.orb ?? 0),
-    meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`,
-    series: aspect.series ?? null,
-    conditions: aspect.conditions
+    sign,
+    signGlyph,
+    degree: Number((normalized % 30).toFixed(6))
   };
 }
 
-function skyAspectConditionTier(aspect: SkyAspect) {
-  if (aspect.conditions?.applying && aspect.conditions.perfects) {
+function wholeSignHouse(sign: string, ascendant: string) {
+  const signIndex = signs.findIndex(([name]) => name === sign);
+  const ascendantIndex = signs.findIndex(([name]) => name === ascendant);
+
+  if (signIndex < 0 || ascendantIndex < 0) {
     return 0;
   }
 
-  if (aspect.conditions?.applying) {
-    return 1;
-  }
-
-  return 2;
+  return ((signIndex - ascendantIndex + 12) % 12) + 1;
 }
 
-function rankSkyAspectsByConditionTier(aspects: SkyAspect[]) {
-  return aspects
-    .map((aspect, index) => ({ aspect, index }))
-    .sort((first, second) => {
-      const tierDifference = skyAspectConditionTier(first.aspect) - skyAspectConditionTier(second.aspect);
+function southNodePositionFromNorthNode(northNode: PlanetPosition, ascendant: string): PlanetPosition {
+  const longitude = normalizeDegrees(northNode.longitude + 180);
+  const { sign, signGlyph, degree } = signForLongitude(longitude);
 
-      return tierDifference || first.index - second.index;
-    })
-    .map(({ aspect }) => aspect);
+  return {
+    ...northNode,
+    planet: "South Node",
+    glyph: "☋",
+    longitude: Number(longitude.toFixed(6)),
+    sign,
+    signGlyph,
+    degree,
+    house: wholeSignHouse(sign, ascendant),
+    theme: themeForPoint("South Node")
+  };
 }
 
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
@@ -237,9 +272,9 @@ export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
   const sky = await postTldrAstro<CloudRunSkyResponse>("/sky/current", {
     datetime: {
       date: dateOnly(date),
-      time: "12:00",
       timeKnown: true,
-      timeZone: defaultLocation.timeZone
+      timeZone: defaultLocation.timeZone,
+      utc: date.toISOString()
     },
     location: defaultLocation,
     settings: {
@@ -249,14 +284,20 @@ export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
     },
     includeContentFacts: false
   });
-  const positions = (sky.positions ?? []).map(normalizePosition);
-  const aspects = rankSkyAspectsByConditionTier(
-    (sky.aspects ?? []).map(normalizeAspect).filter((aspect): aspect is SkyAspect => Boolean(aspect))
-  );
+  const normalizedPositions = (sky.positions ?? []).map(normalizePosition);
+  const northNode = normalizedPositions.find((position) => position.planet === "North Node");
+  const positions = northNode && Number.isFinite(northNode.longitude)
+    ? [...normalizedPositions, southNodePositionFromNorthNode(northNode, sky.ascendant ?? "")]
+    : normalizedPositions;
+  const aspects = calculateSkyAspects(positions).map((aspect) => ({
+    ...aspect,
+    meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`,
+    series: null
+  }));
 
   return {
     location: sky.location ?? defaultLocation,
-    generatedAt: sky.generatedAt ?? new Date().toISOString(),
+    generatedAt: sky.generatedAt ?? date.toISOString(),
     ascendant: sky.ascendant ?? "",
     ascendantLongitude: sky.ascendantLongitude,
     midheaven: sky.midheaven ?? "",
