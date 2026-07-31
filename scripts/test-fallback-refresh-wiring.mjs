@@ -31,7 +31,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-29p");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-29q");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -46,8 +46,8 @@ const needsReviewCards = transitRows.authoredCards.filter((row) => row.review_st
 const needsReviewHooks = sourceRows.hookRows.filter((row) => row.review_status === "needs_review");
 const needsReviewRows = packageRows.filter((row) => row.review_status === "needs_review");
 assert.equal(needsReviewCards.length, 0, "All authored cards must be reader eligible.");
-assert.equal(needsReviewHooks.length, 13, "Only the explicitly staged Jul 29 M1/M3 hooks may remain review-gated.");
-assert.equal(needsReviewRows.length, 13, "The package must retain exactly 13 explicitly staged M1/M3 review rows.");
+assert.equal(needsReviewHooks.length, 12, "Only the remaining explicitly staged Jul 29 M1/M3 hooks may stay review-gated.");
+assert.equal(needsReviewRows.length, 12, "The package must retain exactly 12 explicitly staged M1/M3 review rows.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,
