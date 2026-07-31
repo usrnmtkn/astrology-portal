@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-31a");
+assert.equal(PACKAGE_VERSION, "v3-2026-07-31c");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
@@ -26,8 +26,8 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /packageRowsWithLatestOverride\(bundle\.rowsFile\.vocabularyRows \?\? \[\]\)\.filter\(isReaderEligible\)/u,
-  "Review-gated overrides must suppress older rows before reader filtering."
+  /packageRowsWithLatestReaderEligibleOverride\(bundle\.rowsFile\.vocabularyRows \?\? \[\]\)/u,
+  "Reader bundle assembly must select the latest eligible row for each vocabulary key."
 );
 assert.match(
   generatedContentSource,
@@ -88,32 +88,57 @@ assert.match(
 const packageDir = "apps/web/src/content/fallbackArchitectureV3";
 const sourceRows = readJson(`${packageDir}/source-rows/fallback-source-rows-v3.json`);
 const transitRows = readJson(`${packageDir}/source-rows/transit-synastry-rows-v1.json`);
+const bondLanguagePass2 = readJson(`${packageDir}/source-rows/bond-language-pass-2.json`);
 const lunationRows = readJson(`${packageDir}/source-rows/lunation-blend-units-v1.json`);
 const placementRows = readJson(`${packageDir}/source-rows/placement-interim-fixes-v1.json`);
+const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`);
+const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
+const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
+const skySignCopySun = readJson(`${packageDir}/source-rows/sky-sign-copy-sun-v1.json`);
 const weeklyRows = readJson(`${packageDir}/source-rows/station-cards-week-openers-v1.json`);
 const templates = readJson(`${packageDir}/templates/fallback-templates-v3.json`);
-const latest = (rows) => [...new Map(rows.map((row) => [row.contentKey, row])).values()];
 const eligible = (row, allowBlank = false) => (
   ["approved", "approved_reuse", "reviewed"].includes(String(row.review_status ?? "").toLowerCase())
   || (allowBlank && !row.review_status)
 );
+const latestEligible = (rows, allowBlank = false) => {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return [...candidates.values()]
+    .map((keyed) => [...keyed].reverse().find((row) => eligible(row, allowBlank)))
+    .filter(Boolean);
+};
 const expectedManifest = createPackageManifest({
   transitLib: {
-    authoredCards: latest([
+    authoredCards: latestEligible([
       ...transitRows.authoredCards,
       ...lunationRows.authoredCards,
+      ...skyArticleRows.authoredCards,
       ...weeklyRows
-    ]).filter((row) => eligible(row))
+    ])
   },
   rowsFile: {
-    hookRows: latest([...sourceRows.hookRows, ...lunationRows.hookRows]).filter((row) => eligible(row)),
-    vocabularyRows: latest([
+    hookRows: latestEligible([
+      ...sourceRows.hookRows,
+      ...lunationRows.hookRows,
+      ...bondLanguagePass2.rows,
+      ...skyArticleRows.hookRows,
+      ...skyPlanetFrames.rows,
+      ...skyPlacementVoicePass.rows,
+      ...skySignCopySun.rows
+    ]),
+    vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
-      ...placementRows.vocabularyRows
-    ]).filter((row) => eligible(row))
+      ...placementRows.vocabularyRows,
+      ...skyArticleRows.vocabularyRows
+    ])
   },
   templatesFile: {
-    templates: latest([...templates.templates, ...placementRows.templates]).filter((row) => eligible(row, true))
+    templates: latestEligible([...templates.templates, ...placementRows.templates], true)
   }
 }, PACKAGE_VERSION);
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-fallback-package-contract-"));

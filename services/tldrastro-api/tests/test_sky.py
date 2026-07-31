@@ -59,3 +59,18 @@ def test_sky_current_fixture_new_york():
         assert actual_aspect is not None
         assert abs(actual_aspect["orb"] - expected_aspect["orb"]) < 0.05
 
+
+def test_sky_current_uses_true_node_after_2026_aquarius_ingress():
+    fixture_path = Path(__file__).parent / "fixtures" / "sky_current_new_york_2026_06_16.json"
+    request = json.loads(fixture_path.read_text())["request"]
+    request["datetime"]["date"] = "2026-07-29"
+
+    response = client.post("/sky/current", json=request)
+
+    assert response.status_code == 200
+    north_node = next(
+        position for position in response.json()["positions"]
+        if position["point"] == "North Node"
+    )
+    assert north_node["sign"] == "Aquarius"
+    assert 329 <= north_node["longitude"] < 330

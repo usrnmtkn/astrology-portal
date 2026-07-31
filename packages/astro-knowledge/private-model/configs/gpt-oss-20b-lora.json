@@ -1,0 +1,20 @@
+{
+  "base_model": "openai/gpt-oss-20b",
+  "dataset_dir": "./.local-data",
+  "train_file": "sky-article-longform.train.jsonl",
+  "eval_file": "sky-article-longform.eval.jsonl",
+  "output_dir": "./checkpoints/sky-article-longform-gpt-oss-20b-lora",
+  "minimum_train_examples": 50,
+  "max_length": 4096,
+  "learning_rate": 0.0002,
+  "num_train_epochs": 1,
+  "per_device_train_batch_size": 1,
+  "per_device_eval_batch_size": 1,
+  "gradient_accumulation_steps": 16,
+  "warmup_ratio": 0.03,
+  "lora_rank": 8,
+  "lora_alpha": 16,
+  "seed": 20260731,
+  "push_to_hub": false,
+  "report_to": "none"
+}

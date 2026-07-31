@@ -1,0 +1,283 @@
+{
+ "schema": "tldrastro-sky-planet-frames-v1",
+ "version": "1.0.0",
+ "description": "Sky article module-3 planet frames (14 direct + 9 retrograde), owner-approved Jul 29 2026. New families; do not touch legacy sky-placement/{planet} rows until the article renderer ships, then these supersede them per the assembly spec.",
+ "rows": [
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/sun",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The Sun puts one part of life under direct light for about a month: the birthdays, launches, decisions, and arguments everyone suddenly has an opinion about. The useful version helps you give one priority your full attention instead of treating it like whatever fits after everyone else is handled. The distortion makes the current priority feel permanent, even though the attention will move again.",
+   "body_they": "The Sun puts one part of life under direct light for about a month: the birthdays, launches, decisions, and arguments everyone suddenly has an opinion about. The useful version helps you give one priority your full attention instead of treating it like whatever fits after everyone else is handled. The distortion makes the current priority feel permanent, even though the attention will move again.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/moon",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The Moon is the mood nobody announced: the group chat goes quiet, a small comment lands harder than expected, or everyone suddenly needs an answer today. It moves quickly. The useful version helps you notice when to have the conversation and when to put the phone down. The distortion treats a two-day feeling like proof that the entire plan is wrong.",
+   "body_they": "The Moon is the mood nobody announced: the group chat goes quiet, a small comment lands harder than expected, or everyone suddenly needs an answer today. It moves quickly. The useful version helps you notice when to have the conversation and when to put the phone down. The distortion treats a two-day feeling like proof that the entire plan is wrong.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mercury runs everything you said you would follow up on: the message, the meeting, the contract, the commute, and the story you keep retelling until it becomes the official version. The useful version gets the right words to the right person, and one clear conversation saves another week of guessing. The distortion is motion instead of meaning: so many tabs, texts, and updates that nothing actually gets confirmed.",
+   "body_they": "Mercury runs everything you said you would follow up on: the message, the meeting, the contract, the commute, and the story you keep retelling until it becomes the official version. The useful version gets the right words to the right person, and one clear conversation saves another week of guessing. The distortion is motion instead of meaning: so many tabs, texts, and updates that nothing actually gets confirmed.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Venus shows what feels worth wanting: who you make time for, what you spend on, what you call beautiful, and which small gesture stays with you longer than expected. The useful version tells you the truth about what you enjoy, which is harder than it sounds when other people have opinions about your taste. The distortion chooses what looks enviable over what feels good, then pays for the difference in money, time, or resentment.",
+   "body_they": "Venus shows what feels worth wanting: who you make time for, what you spend on, what you call beautiful, and which small gesture stays with you longer than expected. The useful version tells you the truth about what you enjoy, which is harder than it sounds when other people have opinions about your taste. The distortion chooses what looks enviable over what feels good, then pays for the difference in money, time, or resentment.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mars supplies the push: the workout, the deadline sprint, the confrontation you have been rehearsing, or the decision you keep delaying because acting makes the consequence real. The useful version puts that force behind one chosen aim, and the situation starts moving. The distortion sends the same force at whoever is closest instead of dealing with the person or problem that caused it.",
+   "body_they": "Mars supplies the push: the workout, the deadline sprint, the confrontation you have been rehearsing, or the decision you keep delaying because acting makes the consequence real. The useful version puts that force behind one chosen aim, and the situation starts moving. The distortion sends the same force at whoever is closest instead of dealing with the person or problem that caused it.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Jupiter enlarges whatever it touches: the promise, the appetite, the confidence, or the yes that arrives more easily than expected. The useful version grows what already has enough support to expand, and the request you were afraid to make may turn out to be the easy part. The distortion promises in a season what may take years, then commits time, money, and support nobody agreed to provide.",
+   "body_they": "Jupiter enlarges whatever it touches: the promise, the appetite, the confidence, or the yes that arrives more easily than expected. The useful version grows what already has enough support to expand, and the request you were afraid to make may turn out to be the easy part. The distortion promises in a season what may take years, then commits time, money, and support nobody agreed to provide.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Saturn tests what the arrangement is actually standing on: the promises, schedules, and roles everyone slid into without discussing them. It shows up as the deadline that will not move, the bill that arrives anyway, or the commitment that needs to be kept or ended honestly. The useful version turns effort into a structure that does not require constant rescue. The distortion says no to every adjustment until the job, schedule, or relationship has no flexibility left.",
+   "body_they": "Saturn tests what the arrangement is actually standing on: the promises, schedules, and roles everyone slid into without discussing them. It shows up as the deadline that will not move, the bill that arrives anyway, or the commitment that needs to be kept or ended honestly. The useful version turns effort into a structure that does not require constant rescue. The distortion says no to every adjustment until the job, schedule, or relationship has no flexibility left.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/uranus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus changes the rule, routine, or agreement everyone assumed would remain fixed. The change may arrive through a new route, technology, price, role, schedule, opinion, or agreement. The useful version solves a problem people have been living with. The distortion changes direction so often that nobody can build on the decision.",
+   "body_they": "Uranus changes the rule, routine, or agreement everyone assumed would remain fixed. The change may arrive through a new route, technology, price, role, schedule, opinion, or agreement. The useful version solves a problem people have been living with. The distortion changes direction so often that nobody can build on the decision.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/neptune",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Neptune blurs the line between what is true and what you need to be true: the plan described by its potential, the person judged by their promises, or the expense nobody includes when they talk about the dream. The useful version imagines a future the current facts cannot fully describe. The distortion keeps that future alive by refusing to check the price, the timeline, or the answer already given.",
+   "body_they": "Neptune blurs the line between what is true and what you need to be true: the plan described by its potential, the person judged by their promises, or the expense nobody includes when they talk about the dream. The useful version imagines a future the current facts cannot fully describe. The distortion keeps that future alive by refusing to check the price, the timeline, or the answer already given.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/pluto",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pluto works on what everyone agreed not to look at: who controls the decision, who keeps paying, and which resentment is doing more work than the agreement. It often appears as an ending that took years to become public. The useful version names the real cost and changes who carries it. The distortion holds the arrangement together through pressure and calls that loyalty.",
+   "body_they": "Pluto works on what everyone agreed not to look at: who controls the decision, who keeps paying, and which resentment is doing more work than the agreement. It often appears as an ending that took years to become public. The useful version names the real cost and changes who carries it. The distortion holds the arrangement together through pressure and calls that loyalty.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/chiron",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Chiron marks the old insecurity you have worked around for so long that the workaround now looks normal. It may show up through overpreparing, going quiet when the subject gets close, or assuming the current person will respond the way someone else did years ago. The useful version separates the present situation from the older fear. The distortion builds every decision around avoiding the same feeling again.",
+   "body_they": "Chiron marks the old insecurity you have worked around for so long that the workaround now looks normal. It may show up through overpreparing, going quiet when the subject gets close, or assuming the current person will respond the way someone else did years ago. The useful version separates the present situation from the older fear. The distortion builds every decision around avoiding the same feeling again.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/north-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The North Node points toward the response that does not feel practiced yet. It may show up as the application you keep postponing, the skill you are still awkward at, or the opportunity that requires more experience than you currently have. The useful version takes one concrete step and learns from the result. The distortion waits for confidence before beginning.",
+   "body_they": "The North Node points toward the response that does not feel practiced yet. It may show up as the application you keep postponing, the skill you are still awkward at, or the opportunity that requires more experience than you currently have. The useful version takes one concrete step and learns from the result. The distortion waits for confidence before beginning.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/south-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The South Node marks the familiar role, skill, or response you can perform without thinking. It may still be useful, but it may also be the reason everyone keeps handing you the same responsibility. The useful version keeps the skill and releases the entire job. The distortion treats familiarity as proof that the old role still belongs to you.",
+   "body_they": "The South Node marks the familiar role, skill, or response you can perform without thinking. It may still be useful, but it may also be the reason everyone keeps handing you the same responsibility. The useful version keeps the skill and releases the entire job. The distortion treats familiarity as proof that the old role still belongs to you.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-frame/lilith",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Lilith holds the preference, anger, desire, or refusal you learned to keep quiet because too much depended on staying agreeable. It may show up through the opinion you soften, the role you keep accepting, or the no that turns into resentment because you never said it directly. The useful version gives the real position one honest outlet. The distortion keeps swallowing it until it comes out through withdrawal, a cancellation, or a sharper response than the moment required.",
+   "body_they": "Lilith holds the preference, anger, desire, or refusal you learned to keep quiet because too much depended on staying agreeable. It may show up through the opinion you soften, the role you keep accepting, or the no that turns into resentment because you never said it directly. The useful version gives the real position one honest outlet. The distortion keeps swallowing it until it comes out through withdrawal, a cancellation, or a sharper response than the moment required.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Module-3 planet frame, owner-approved Jul 29 2026 (TLDR-Planet-Frames-ThreeBeat-REVIEW.md). Single-voice sky surface."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mercury retrograde rereads what you filed as finished: the plan, the message, the agreement, or the story you keep telling about what happened. It may show up through a double-booked calendar, a text sent to the wrong thread, or a conversation returning because the first answer did not resolve it. The useful version catches the error before it spreads and finds the wording the first pass missed. The distortion keeps acting on the original assumption after the facts have changed.",
+   "body_they": "Mercury retrograde rereads what you filed as finished: the plan, the message, the agreement, or the story you keep telling about what happened. It may show up through a double-booked calendar, a text sent to the wrong thread, or a conversation returning because the first answer did not resolve it. The useful version catches the error before it spreads and finds the wording the first pass missed. The distortion keeps acting on the original assumption after the facts have changed.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Venus retrograde reopens what you thought was settled: what you want, what you are paying for affection, and which standards still belong to you. It may show up through an old connection returning to mind, second thoughts about a relationship, or a purchase that stops making sense before you complete it. The useful version renegotiates a real desire honestly. The distortion changes the presentation without reconsidering the desire, price, or relationship underneath it.",
+   "body_they": "Venus retrograde reopens what you thought was settled: what you want, what you are paying for affection, and which standards still belong to you. It may show up through an old connection returning to mind, second thoughts about a relationship, or a purchase that stops making sense before you complete it. The useful version renegotiates a real desire honestly. The distortion changes the presentation without reconsidering the desire, price, or relationship underneath it.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mars retrograde slows the push and brings unfinished effort back into view. A project may stall, an old frustration may return, or the pace that worked before may stop working now. The useful version redirects effort toward what was abandoned or poorly planned. The distortion keeps forcing the original pace after the body, schedule, or result has shown that it cannot continue.",
+   "body_they": "Mars retrograde slows the push and brings unfinished effort back into view. A project may stall, an old frustration may return, or the pace that worked before may stop working now. The useful version redirects effort toward what was abandoned or poorly planned. The distortion keeps forcing the original pace after the body, schedule, or result has shown that it cannot continue.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Jupiter retrograde reviews what has expanded: which opportunities are useful, which promises were too large, and which beliefs still match your experience. It may show up as a plan needing a smaller number or an opportunity improving once someone questions the cost. The useful version protects what is working and adjusts the scale. The distortion keeps expanding to avoid reading the results.",
+   "body_they": "Jupiter retrograde reviews what has expanded: which opportunities are useful, which promises were too large, and which beliefs still match your experience. It may show up as a plan needing a smaller number or an opportunity improving once someone questions the cost. The useful version protects what is working and adjusts the scale. The distortion keeps expanding to avoid reading the results.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Saturn retrograde inspects what already exists: the standing arrangements, the roles nobody renegotiated, and who is actually carrying the weight while everyone calls it teamwork. It may show up as the commitment returning for clearer terms or a second decision. The useful version repairs the structure while there is still time to change it. The distortion treats the review as an insult and doubles down on the original agreement.",
+   "body_they": "Saturn retrograde inspects what already exists: the standing arrangements, the roles nobody renegotiated, and who is actually carrying the weight while everyone calls it teamwork. It may show up as the commitment returning for clearer terms or a second decision. The useful version repairs the structure while there is still time to change it. The distortion treats the review as an insult and doubles down on the original agreement.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/uranus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus retrograde tests the changes already made. The new schedule, role, route, or agreement may need adjustment once people have lived with it long enough to see the problems. The useful version keeps what improved the situation and repairs what did not. The distortion reverses the entire decision because revision feels less exciting than starting over.",
+   "body_they": "Uranus retrograde tests the changes already made. The new schedule, role, route, or agreement may need adjustment once people have lived with it long enough to see the problems. The useful version keeps what improved the situation and repairs what did not. The distortion reverses the entire decision because revision feels less exciting than starting over.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/neptune",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Neptune retrograde compares the ideal with the receipts. The person, cause, plan, or promise may look different once the glamour wears off. The useful version keeps the hope and corrects the story. The distortion replaces one preferred explanation with another before the facts are fully considered.",
+   "body_they": "Neptune retrograde compares the ideal with the receipts. The person, cause, plan, or promise may look different once the glamour wears off. The useful version keeps the hope and corrects the story. The distortion replaces one preferred explanation with another before the facts are fully considered.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/pluto",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pluto retrograde brings the private power arrangement back under review: who decides, who pays, who keeps the information, and who changes their behavior to prevent conflict. The useful version changes the pattern instead of only changing the person involved. The distortion repeats the same arrangement with a different name.",
+   "body_they": "Pluto retrograde brings the private power arrangement back under review: who decides, who pays, who keeps the information, and who changes their behavior to prevent conflict. The useful version changes the pattern instead of only changing the person involved. The distortion repeats the same arrangement with a different name.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-retro-frame/chiron",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Chiron retrograde brings an old sensitivity back without requiring a new injury to explain it. A familiar subject may feel more charged, or an old coping habit may stop helping. The useful version notices what belongs to the current situation and what belongs to the past. The distortion keeps examining the pain without changing the choice built around it.",
+   "body_they": "Chiron retrograde brings an old sensitivity back without requiring a new injury to explain it. A familiar subject may feel more charged, or an old coping habit may stop helping. The useful version notices what belongs to the current situation and what belongs to the past. The distortion keeps examining the pain without changing the choice built around it.",
+   "review_status": "approved",
+   "source_keys": [
+    "owner/planet-frames-threebeat-v3"
+   ],
+   "note": "Retro variant of the module-3 frame; renders shadow-to-shadow, replacing the direct frame."
+  }
+ ]
+}

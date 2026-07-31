@@ -1,0 +1,57 @@
+name: Editorial model candidate calibration
+
+on:
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: Staged candidate lane to evaluate
+        required: true
+        type: choice
+        default: judge:sky-article-longform
+        options:
+          - judge:sky-article-longform
+
+permissions:
+  contents: read
+
+jobs:
+  calibrate:
+    name: Calibrate staged candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: editorial-calibration
+    env:
+      TLDR_ALLOW_LIVE_LLM_JUDGE: "1"
+      TLDR_ALLOW_LIVE_LLM_CALIBRATION: "1"
+      EDITORIAL_JUDGE_PRIVACY_MODE: ${{ vars.EDITORIAL_JUDGE_PRIVACY_MODE || 'redact' }}
+      EDITORIAL_JUDGE_PROVIDER_APPROVED: ${{ vars.EDITORIAL_JUDGE_PROVIDER_APPROVED || '0' }}
+      OPENAI_JUDGE_API_KEY: ${{ secrets.EDITORIAL_OPENAI_JUDGE_API_KEY }}
+      ANTHROPIC_JUDGE_API_KEY: ${{ secrets.EDITORIAL_ANTHROPIC_JUDGE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registry and offline contracts
+        run: |
+          npm run model-registry:validate -w @tldr/astro-knowledge
+          npm run test:model-registry -w @tldr/astro-knowledge
+          npm run test:calibration-report -w @tldr/astro-knowledge
+          npm run test:article-judge-calibration -w @tldr/astro-knowledge
+      - name: Calibrate candidate release
+        run: >-
+          npm run calibrate:candidate:live -w @tldr/astro-knowledge --
+          --lane "${{ inputs.lane }}"
+          --out "${{ github.workspace }}/out/editorial-calibration/report.json"
+      - name: Upload redacted calibration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-calibration-${{ github.run_id }}
+          path: |
+            out/editorial-calibration/report.json
+            packages/astro-knowledge/out/editorial-judge-audit/verdicts.jsonl
+          if-no-files-found: warn
+          retention-days: 30

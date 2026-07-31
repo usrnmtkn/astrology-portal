@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "registryVersion": "2026-07-31.1",
+  "policyVersion": "editorial-model-promotion-v1",
+  "lanes": {
+    "generation:default": {
+      "role": "generation",
+      "surface": "default",
+      "active": {
+        "releaseId": "generation-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-generation-prompts-v1",
+        "rubricVersion": "not-applicable",
+        "evaluationSetVersion": "sky-generation-contracts-v1",
+        "policyVersion": "editorial-generation-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    },
+    "judge:sky-aspect": {
+      "role": "judge",
+      "surface": "sky-aspect",
+      "active": {
+        "releaseId": "sky-aspect-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "sky-aspect-voice-v1",
+        "evaluationSetVersion": "sky-aspect-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    },
+    "judge:sky-placement": {
+      "role": "judge",
+      "surface": "sky-placement",
+      "active": {
+        "releaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-placement-voice-v1:prompt-v1",
+        "rubricVersion": "sky-placement-voice-v1",
+        "evaluationSetVersion": "sky-placement-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    },
+    "judge:sky-article-longform": {
+      "role": "judge",
+      "surface": "sky-article-longform",
+      "active": {
+        "releaseId": "sky-article-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-article-longform-v1:prompt-v1",
+        "rubricVersion": "sky-article-longform-v1",
+        "evaluationSetVersion": "sky-article-longform-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    },
+    "judge:natal-pattern": {
+      "role": "judge",
+      "surface": "natal-pattern",
+      "active": {
+        "releaseId": "natal-pattern-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "pattern-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "pattern-aspect-voice-v1",
+        "evaluationSetVersion": "pattern-aspect-approved-gold-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    },
+    "judge:editorial-source-bank": {
+      "role": "judge",
+      "surface": "editorial-source-bank",
+      "active": {
+        "releaseId": "editorial-source-bank-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "editorial-source-bank-v1:prompt-v1",
+        "rubricVersion": "editorial-source-bank-v1",
+        "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": null,
+      "rollback": null,
+      "history": []
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/editorial-model-registry.schema.json",
+  "title": "TLDR Astro editorial model registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "registryVersion", "policyVersion", "lanes"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "registryVersion": { "type": "string", "minLength": 1 },
+    "policyVersion": { "type": "string", "minLength": 1 },
+    "lanes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/lane" }
+    }
+  },
+  "$defs": {
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releaseId",
+        "provider",
+        "model",
+        "promptVersion",
+        "rubricVersion",
+        "evaluationSetVersion",
+        "policyVersion"
+      ],
+      "properties": {
+        "releaseId": { "type": "string", "minLength": 1 },
+        "provider": { "enum": ["openai", "claude", "local"] },
+        "model": { "type": "string", "minLength": 1 },
+        "promptVersion": { "type": "string", "minLength": 1 },
+        "rubricVersion": { "type": "string", "minLength": 1 },
+        "evaluationSetVersion": { "type": "string", "minLength": 1 },
+        "policyVersion": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "recordedAt", "approvedBy", "fromReleaseId", "toReleaseId"],
+      "properties": {
+        "action": { "enum": ["promote", "rollback"] },
+        "recordedAt": { "type": "string", "format": "date-time" },
+        "approvedBy": { "type": "string", "minLength": 1 },
+        "fromReleaseId": { "type": ["string", "null"] },
+        "toReleaseId": { "type": "string", "minLength": 1 },
+        "calibrationReportSha256": { "type": ["string", "null"] }
+      }
+    },
+    "lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "surface", "active", "candidate", "rollback", "history"],
+      "properties": {
+        "role": { "enum": ["generation", "judge"] },
+        "surface": { "type": "string", "minLength": 1 },
+        "active": { "$ref": "#/$defs/release" },
+        "candidate": { "anyOf": [{ "$ref": "#/$defs/release" }, { "type": "null" }] },
+        "rollback": { "anyOf": [{ "$ref": "#/$defs/release" }, { "type": "null" }] },
+        "history": { "type": "array", "items": { "$ref": "#/$defs/history" } }
+      }
+    }
+  }
+}

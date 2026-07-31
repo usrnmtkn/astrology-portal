@@ -244,12 +244,24 @@ if (secs[0].name !== "You" || secs[1].name !== "a friend") fail("circle: section
 console.log(`Rendered ${circ} circle stories.`);
 
 
-// Sky placement articles: full 13 x 12 grid renders, no leftover slots, no dashes
+// Sky placement articles: approved continuous Sun units render; superseded Sun
+// modules stay dark; every other placement keeps full-grid coverage.
 const SKY_PL = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","chiron","north-node","south-node"];
 let skyPl = 0;
 for (const pl of SKY_PL) for (const sg of SIGNS) {
+  if (pl === "sun" && sg !== "leo") {
+    try {
+      renderSkyPlacement({ planet: pl, sign: sg, entryDate: "March 20", exitDate: "April 20" });
+      fail(`sky placement ${pl}/${sg}: superseded modules rendered`);
+    } catch (e) {
+      if (!/SOURCE_GAP: continuous Sun sign copy/u.test(e.message)) fail(`sky placement ${pl}/${sg}: ${e.message}`);
+    }
+    continue;
+  }
   try {
-    const r = renderSkyPlacement({ planet: pl, sign: sg, events: [{ type: "aspect", a: pl === "mars" ? "saturn" : "mars", b: pl, aspect: "trine", dateLine: "Through Saturday" }] });
+    const r = pl === "sun"
+      ? renderSkyPlacement({ planet: pl, sign: sg, entryDate: "July 22", exitDate: "August 23", events: [{ type: "aspect", a: "jupiter", b: pl, aspect: "conjunction", exactDate: "July 29" }] })
+      : renderSkyPlacement({ planet: pl, sign: sg, events: [{ type: "aspect", a: pl === "mars" ? "saturn" : "mars", b: pl, aspect: "trine", dateLine: "Through Saturday" }] });
     if (/[\u2014\u2013]|\{\{/.test(r.body)) fail(`sky placement ${pl}/${sg}: bad output`);
     if (r.parts.length < 3) fail(`sky placement ${pl}/${sg}: too thin (${r.parts.length} paras)`);
     skyPl++;
@@ -306,7 +318,7 @@ let bond = 0;
 const BOND_PAIRS = [["venus","mars"],["moon","mercury"],["sun","saturn"],["mercury","mercury"]];
 for (const tr of SKY_PL) for (const asp of ["conjunction","square","trine","sextile","opposition"]) for (const [pa, pb] of BOND_PAIRS) {
   try {
-    const r = renderBondTransit({ transiting: tr, aspect: asp, planetA: pa, planetB: pb, natalAspect: "trine", otherName: "Sofia" });
+    const r = renderBondTransit({ transiting: tr, aspect: asp, endpointPlanet: pb, endpointOwner: "friend", activatedPlanets: [pa], otherName: "Sofia" });
     if (/\{\{|[\u2014\u2013]|natal/.test(r.body)) fail(`bond ${tr}/${asp}/${pa}-${pb}: bad output`);
     bond++;
   } catch (e) { fail(`bond ${tr}/${asp}/${pa}-${pb}: ${e.message}`); }
@@ -337,7 +349,7 @@ console.log("Rendered 12 Lilith sky placements.");
     }
   }
   renderTransitLabel({ transiting: "saturn", natal: "lilith", aspect: "square" });
-  for (const asp of ["trine","square"]) { const r = renderBondTransit({ transiting: "lilith", aspect: asp, planetA: "venus", planetB: "mars", natalAspect: "trine", otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith bond ${asp}`); lt += 1; }
+  for (const asp of ["trine","square"]) { const r = renderBondTransit({ transiting: "lilith", aspect: asp, endpointPlanet: "mars", endpointOwner: "friend", activatedPlanets: ["venus"], otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith bond ${asp}`); lt += 1; }
   for (const asp of ["conjunction","square","trine"]) { const r = renderSynastryAspect({ planetA: "lilith", planetB: "venus", aspect: asp, otherName: "Sofia" }); if (/\{\{/.test(r.body)) fail(`lilith synastry ${asp}`); lt += 1; }
   console.log(`Rendered ${lt} Lilith transit/synastry pieces.`);
 }
@@ -388,14 +400,19 @@ console.log("Rendered 12 Lilith sky placements.");
 }
 
 
-// Per-rising lunation horoscopes: all 12 risings x 4 kinds, correct house math, eclipse canon
+// Per-rising lunation horoscopes: all 12 risings x 4 kinds, correct house math,
+// compact sign core only where approved, and no retired closer stack.
 {
   let lh = 0;
   for (const rs of SIGNS) for (const kd of ["new-moon", "full-moon", "eclipse-solar", "eclipse-lunar"]) {
     const r = renderLunationHoroscope({ kind: kd, sign: "aquarius", risingSign: rs });
     if (/\{\{/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: slot leak`);
-    if (kd.startsWith("eclipse") && /Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release leaked into eclipse`);
-    if (!kd.startsWith("eclipse") && !/Let go of/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: release missing`);
+    if (/\b(?:It can show up|That might look|Let go of|Your higher path|Set your intention)\b/.test(r.body)) {
+      fail(`lunation horoscope ${kd}/${rs}: retired closer stack leaked`);
+    }
+    if ((kd === "new-moon" || kd === "eclipse-solar") && /An Aquarius Full Moon/.test(r.body)) {
+      fail(`lunation horoscope ${kd}/${rs}: Full Moon compact row leaked`);
+    }
     lh++;
   }
   const aq = renderLunationHoroscope({ kind: "full-moon", sign: "aquarius", risingSign: "aquarius" });

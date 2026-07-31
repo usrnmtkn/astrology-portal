@@ -1,5 +1,29 @@
 # TLDR Astro agent instructions
 
+## Content changes
+
+Before changing reader-facing astrology content, review state, resolver
+selection, or content-package distribution, read
+[`docs/content-management/README.md`](docs/content-management/README.md) and
+[`docs/content-management/ARCHITECTURE.md`](docs/content-management/ARCHITECTURE.md).
+Keep computed facts in the calculation layer, approved prose in content rows,
+and presentation in React/CSS.
+
+## Calculation integrity
+
+- Never hardcode planetary, lunar-node, angle, house, sign, degree, motion, or
+  aspect placements in production code, UI components, content templates, or
+  API responses. Every placement must be calculated from the configured
+  ephemeris for the requested date, time, and location.
+- The canonical North Node is the Swiss Ephemeris True Node (`swe.TRUE_NODE`).
+  Do not substitute the Mean Node or a dated sign table.
+- Test fixtures may store expected placements as regression evidence, but
+  fixture values must never be imported by or used as fallbacks in runtime
+  code.
+- Any calculation change must preserve ephemeris provenance and include a test
+  that checks more than one date against a direct ephemeris calculation. Mocks
+  and fallback engines must be explicit and confined to tests or development.
+
 ## Production deployments
 
 Vercel production has one source of truth: the `main` branch.

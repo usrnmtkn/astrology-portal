@@ -1,0 +1,229 @@
+{
+  "schema": "tldrastro-sky-sign-copy-v2",
+  "version": "2.1.0",
+  "planet": "sun",
+  "superseded_status": "superseded",
+  "superseded_render_eligible": false,
+  "superseded_rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Aries starts the zodiac's year, and the month runs on ignition. This can look like: the training plan begun the same day it was decided, the resignation everyone saw coming except the manager, the first argument a couple has been avoiding since winter, the kid who learns to ride the bike by riding into the hedge.\n\nThe useful version is courage with a target: one direct act that settles what waiting was making worse. Aries light rewards the person who asks first, applies first, and apologizes first, because being first is the sign's native advantage.\n\nThe distortion is heat without aim. Every errand becomes a race, every discussion becomes a contest, and the anger that was fuel for one necessary confrontation gets spent on traffic and slow websites.\n\nBefore the Sun moves on, start the effort that needs you at full strength. Fast beginnings forgive rough edges; unstarted plans do not.",
+      "body_they": "The Sun in Aries starts the zodiac's year, and the month runs on ignition. This can look like: the training plan begun the same day it was decided, the resignation everyone saw coming except the manager, the first argument a couple has been avoiding since winter, the kid who learns to ride the bike by riding into the hedge.\n\nThe useful version is courage with a target: one direct act that settles what waiting was making worse. Aries light rewards the person who asks first, applies first, and apologizes first, because being first is the sign's native advantage.\n\nThe distortion is heat without aim. Every errand becomes a race, every discussion becomes a contest, and the anger that was fuel for one necessary confrontation gets spent on traffic and slow websites.\n\nBefore the Sun moves on, start the effort that needs you at full strength. Fast beginnings forgive rough edges; unstarted plans do not.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Taurus slows the year down to the speed of the body. This can look like: the garden finally planted, the grocery budget reviewed line by line, the mattress replaced after years of complaining, dinner cooked slowly for no occasion at all.\n\nThe useful version treats comfort as information: what the body enjoys, it will repeat, and what it will repeat becomes a life. This is the month to consolidate rather than expand, and to notice which pleasures return effort and which only absorb it.\n\nThe distortion is refusal dressed as patience. The purchase instead of the nap, the third subscription instead of the conversation about money, the arrangement kept because changing it sounds tiring.\n\nChoose one physical improvement and finish it: the account, the kitchen, the sleep. What Taurus builds during this month tends to stay built.",
+      "body_they": "The Sun in Taurus slows the year down to the speed of the body. This can look like: the garden finally planted, the grocery budget reviewed line by line, the mattress replaced after years of complaining, dinner cooked slowly for no occasion at all.\n\nThe useful version treats comfort as information: what the body enjoys, it will repeat, and what it will repeat becomes a life. This is the month to consolidate rather than expand, and to notice which pleasures return effort and which only absorb it.\n\nThe distortion is refusal dressed as patience. The purchase instead of the nap, the third subscription instead of the conversation about money, the arrangement kept because changing it sounds tiring.\n\nChoose one physical improvement and finish it: the account, the kitchen, the sleep. What Taurus builds during this month tends to stay built.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Gemini fills the calendar with contact. This can look like: three plans in one Saturday, the sibling who calls twice in a week after months of silence, the errand list that turns into a tour of the neighborhood, the interesting stranger at the school pickup.\n\nThe useful version is the question you actually wanted to ask. Conversations move faster now, so the right one can replace a month of wondering: the price, the diagnosis, the intention, the timeline.\n\nThe distortion is coverage without depth: every group chat answered, every headline skimmed, and by evening nothing read past the first paragraph, including the message that mattered.\n\nHave the conversation that has been waiting behind the small talk. One real exchange outlasts forty quick replies.",
+      "body_they": "The Sun in Gemini fills the calendar with contact. This can look like: three plans in one Saturday, the sibling who calls twice in a week after months of silence, the errand list that turns into a tour of the neighborhood, the interesting stranger at the school pickup.\n\nThe useful version is the question you actually wanted to ask. Conversations move faster now, so the right one can replace a month of wondering: the price, the diagnosis, the intention, the timeline.\n\nThe distortion is coverage without depth: every group chat answered, every headline skimmed, and by evening nothing read past the first paragraph, including the message that mattered.\n\nHave the conversation that has been waiting behind the small talk. One real exchange outlasts forty quick replies.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/cancer",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Cancer brings the year home. This can look like: the visit that finally gets scheduled, the recipe made from memory, the lease decision, the relative who needs more help than they will admit. Feelings arrive at full size this month, and they are admissible evidence.\n\nThe useful version is care delivered directly: the meal cooked, the call made, the door opened. Protection that names itself lands as love; protection that hides becomes management.\n\nThe distortion runs the household on mood. Everyone reads the silence at dinner, nobody names it, and the person who needs comfort punishes the people most likely to provide it.\n\nTend one part of home until it feels like yours again: the corner, the ritual, the relationship. Belonging is built out of maintenance, not luck.",
+      "body_they": "The Sun in Cancer brings the year home. This can look like: the visit that finally gets scheduled, the recipe made from memory, the lease decision, the relative who needs more help than they will admit. Feelings arrive at full size this month, and they are admissible evidence.\n\nThe useful version is care delivered directly: the meal cooked, the call made, the door opened. Protection that names itself lands as love; protection that hides becomes management.\n\nThe distortion runs the household on mood. Everyone reads the silence at dinner, nobody names it, and the person who needs comfort punishes the people most likely to provide it.\n\nTend one part of home until it feels like yours again: the corner, the ritual, the relationship. Belonging is built out of maintenance, not luck.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun is in Leo, its own sign, which makes this the month the year organizes around visibility. This can look like: the birthday that turns into a production, the launch announced instead of polished again, the kid who insists on performing the whole routine before dinner starts. Work made quietly gets a name put on it, and someone in your circle receives public recognition while everyone else notices what that stirs in them.\n\nThe useful version is the honest form of pride: naming what you made, saying it plainly, and letting the reaction be whatever it is. Visibility is how the work finds the people it was for, and Leo runs on that exchange in both directions, so give praise the way you want it: specific.\n\nThe distortion is living for the audience. The dinner staged for the photo, the generosity that keeps a receipt, the quiet after a post read as a verdict on your worth. Applause rewards what is easy to clap for, and most of what matters is not.\n\nBefore the Sun moves on, put one piece of work where people can see it, with your name on it. Let the rest of the month be lived, not staged.",
+      "body_they": "The Sun is in Leo, its own sign, which makes this the month the year organizes around visibility. This can look like: the birthday that turns into a production, the launch announced instead of polished again, the kid who insists on performing the whole routine before dinner starts. Work made quietly gets a name put on it, and someone in your circle receives public recognition while everyone else notices what that stirs in them.\n\nThe useful version is the honest form of pride: naming what you made, saying it plainly, and letting the reaction be whatever it is. Visibility is how the work finds the people it was for, and Leo runs on that exchange in both directions, so give praise the way you want it: specific.\n\nThe distortion is living for the audience. The dinner staged for the photo, the generosity that keeps a receipt, the quiet after a post read as a verdict on your worth. Applause rewards what is easy to clap for, and most of what matters is not.\n\nBefore the Sun moves on, put one piece of work where people can see it, with your name on it. Let the rest of the month be lived, not staged.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Virgo turns the light on how everything actually works. This can look like: the closet finally sorted, the appointment booked after a year of meaning to, the spreadsheet that reveals where the money goes, the coworker who quietly fixes what three meetings could not.\n\nThe useful version is repair. Virgo light finds the loose screw before it becomes the broken shelf, and the sign's real gift is service without an announcement: help that shows up as a finished task.\n\nThe distortion is correction as a personality. The diet becomes punishment, the feedback becomes a hobby, and the flaw in the work becomes the only visible part of it.\n\nFix one system you rely on daily. Small working order, repeated, carries more than one grand overhaul.",
+      "body_they": "The Sun in Virgo turns the light on how everything actually works. This can look like: the closet finally sorted, the appointment booked after a year of meaning to, the spreadsheet that reveals where the money goes, the coworker who quietly fixes what three meetings could not.\n\nThe useful version is repair. Virgo light finds the loose screw before it becomes the broken shelf, and the sign's real gift is service without an announcement: help that shows up as a finished task.\n\nThe distortion is correction as a personality. The diet becomes punishment, the feedback becomes a hobby, and the flaw in the work becomes the only visible part of it.\n\nFix one system you rely on daily. Small working order, repeated, carries more than one grand overhaul.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Libra puts every arrangement between two people up for review. This can look like: the wedding invitations arriving in a cluster, the business partnership formalized, the roommate conversation about dishes that is actually about respect, the friend who finally says what the favor costs them.\n\nThe useful version is fairness said plainly. Naming the deal, the price, and the split turns resentment into negotiation, and Libra light is the easiest of the year to negotiate under.\n\nThe distortion is peace purchased with honesty. Agreeing to the restaurant, the plan, and the other version of events, until the accumulated concessions come due as one disproportionate fight.\n\nState one term you have been keeping to yourself, and let the response tell you what the relationship can carry.",
+      "body_they": "The Sun in Libra puts every arrangement between two people up for review. This can look like: the wedding invitations arriving in a cluster, the business partnership formalized, the roommate conversation about dishes that is actually about respect, the friend who finally says what the favor costs them.\n\nThe useful version is fairness said plainly. Naming the deal, the price, and the split turns resentment into negotiation, and Libra light is the easiest of the year to negotiate under.\n\nThe distortion is peace purchased with honesty. Agreeing to the restaurant, the plan, and the other version of events, until the accumulated concessions come due as one disproportionate fight.\n\nState one term you have been keeping to yourself, and let the response tell you what the relationship can carry.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Scorpio lights what usually stays covered. This can look like: the will drafted, the debt named at its full number, the conversation about what the marriage has actually been this year, the friend who tells you the truth nobody else would.\n\nThe useful version is depth on purpose: one honest reckoning entered voluntarily, with the money, the intimacy, or the grief. What Scorpio examines in daylight stops governing from underneath.\n\nThe distortion is control as intimacy. Testing instead of asking, watching instead of trusting, and keeping a private file of grievances the other person never gets to answer.\n\nOpen one covered subject with the person it involves. Said once, at full strength, it costs less than a year of managing it.",
+      "body_they": "The Sun in Scorpio lights what usually stays covered. This can look like: the will drafted, the debt named at its full number, the conversation about what the marriage has actually been this year, the friend who tells you the truth nobody else would.\n\nThe useful version is depth on purpose: one honest reckoning entered voluntarily, with the money, the intimacy, or the grief. What Scorpio examines in daylight stops governing from underneath.\n\nThe distortion is control as intimacy. Testing instead of asking, watching instead of trusting, and keeping a private file of grievances the other person never gets to answer.\n\nOpen one covered subject with the person it involves. Said once, at full strength, it costs less than a year of managing it.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Sagittarius points the year at the horizon. This can look like: the flights booked, the course brochure saved for the third time, the opinion delivered at the family table with unusual confidence, the plan for next year that requires a bigger life than this one.\n\nThe useful version is belief taken outside for testing: the trip that checks the fantasy against the place, the class that checks the interest against the work. Optimism is legitimate fuel when it produces an itinerary.\n\nThe distortion is the sermon. Certainty grows louder than experience, promises outrun the calendar, and the trip gets described so thoroughly it never needs to be taken.\n\nCommit to one journey, literal or studied, and take its first concrete leg while the appetite is real.",
+      "body_they": "The Sun in Sagittarius points the year at the horizon. This can look like: the flights booked, the course brochure saved for the third time, the opinion delivered at the family table with unusual confidence, the plan for next year that requires a bigger life than this one.\n\nThe useful version is belief taken outside for testing: the trip that checks the fantasy against the place, the class that checks the interest against the work. Optimism is legitimate fuel when it produces an itinerary.\n\nThe distortion is the sermon. Certainty grows louder than experience, promises outrun the calendar, and the trip gets described so thoroughly it never needs to be taken.\n\nCommit to one journey, literal or studied, and take its first concrete leg while the appetite is real.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Capricorn opens the calendar year at its most sober. This can look like: resolutions written like contracts, the promotion conversation finally scheduled, the parent whose approval still organizes decisions, the bill from the holidays arriving anyway.\n\nThe useful version is ambition with a foundation: the certification begun, the savings automated, the responsibility accepted by name. Capricorn light honors what is built to be maintained.\n\nThe distortion measures a person by output. Rest becomes guilt, help becomes weakness, and the structure gets finished on top of a life with nobody left in it.\n\nChoose one responsibility worth carrying for years and set its schedule now. What Capricorn agrees to, it keeps.",
+      "body_they": "The Sun in Capricorn opens the calendar year at its most sober. This can look like: resolutions written like contracts, the promotion conversation finally scheduled, the parent whose approval still organizes decisions, the bill from the holidays arriving anyway.\n\nThe useful version is ambition with a foundation: the certification begun, the savings automated, the responsibility accepted by name. Capricorn light honors what is built to be maintained.\n\nThe distortion measures a person by output. Rest becomes guilt, help becomes weakness, and the structure gets finished on top of a life with nobody left in it.\n\nChoose one responsibility worth carrying for years and set its schedule now. What Capricorn agrees to, it keeps.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Aquarius moves the light from the self to the group. This can look like: the friend group renegotiating after someone's news, the cause that suddenly has your evening hours, the junior coworker who suggests the obvious fix nobody with seniority could see, the reunion that reveals who you have become since.\n\nThe useful version is perspective: enough distance from your own story to see the system it runs inside. The favor this month is to the future, and the sign's gift is the improvement that helps people you will never meet.\n\nThe distortion is exile dressed as independence. Detachment from the group becomes contempt for it, and being the exception becomes more important than being of use.\n\nGive one evening to the people or the cause that outlast your current mood. Belonging to a future is also belonging.",
+      "body_they": "The Sun in Aquarius moves the light from the self to the group. This can look like: the friend group renegotiating after someone's news, the cause that suddenly has your evening hours, the junior coworker who suggests the obvious fix nobody with seniority could see, the reunion that reveals who you have become since.\n\nThe useful version is perspective: enough distance from your own story to see the system it runs inside. The favor this month is to the future, and the sign's gift is the improvement that helps people you will never meet.\n\nThe distortion is exile dressed as independence. Detachment from the group becomes contempt for it, and being the exception becomes more important than being of use.\n\nGive one evening to the people or the cause that outlast your current mood. Belonging to a future is also belonging.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/pisces",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Pisces closes the zodiac's year, and the month runs on dissolve. This can look like: the daydream interrupting the meeting, the film that opens grief filed as finished, the charity ask answered without deliberation, the nap that turns into an afternoon.\n\nThe useful version is mercy and imagination in working order: rest taken seriously, art made or absorbed, forgiveness extended where the account was never going to balance anyway.\n\nThe distortion is exit. The fantasy replaces the plan, the substance replaces the feeling, and compassion for everyone else becomes the reason nothing at home gets decided.\n\nLet one ending finish: the project, the grudge, the year itself. Pisces clears the table so Aries can set it.",
+      "body_they": "The Sun in Pisces closes the zodiac's year, and the month runs on dissolve. This can look like: the daydream interrupting the meeting, the film that opens grief filed as finished, the charity ask answered without deliberation, the nap that turns into an afternoon.\n\nThe useful version is mercy and imagination in working order: rest taken seriously, art made or absorbed, forgiveness extended where the account was never going to balance anyway.\n\nThe distortion is exit. The fantasy replaces the plan, the substance replaces the feeling, and compassion for everyone else becomes the reason nothing at home gets decided.\n\nLet one ending finish: the project, the grudge, the year itself. Pisces clears the table so Aries can set it.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
+      ],
+      "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close."
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A celebration becomes more important. Someone finally asks for the title, credit, invitation, or opportunity they have been waiting to receive.",
+      "tension": "Leo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.",
+      "development": "This is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. You do not need to turn every part of your life into a public event, but the work you want recognized cannot stay hidden forever.",
+      "close": "Between now and {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share it at the size it is now. You can let people see what you have made without pretending it is already finished becoming.",
+      "try_this": [
+        "Put one piece of work you are proud of where other people can see it.",
+        "Give someone else clear credit for what they contributed.",
+        "Ask directly for the support, recognition, or opportunity you need."
+      ],
+      "aspect_units": [
+        {
+          "planets": [
+            "sun",
+            "jupiter"
+          ],
+          "aspect": "conjunction",
+          "heading": "Sun conjunct Jupiter in Leo",
+          "opportunity": "On {{exactDate}}, the Sun meets Jupiter in Leo. A request may receive a warmer response, a project may attract more attention, or you may feel ready to ask for more than you normally would.",
+          "check": "The opportunity can be real without being unlimited. Early encouragement may tempt you to promise a larger result, spend more money, or accept a deadline before checking what the work requires. Let the opening be encouraging. Then check the calendar, the cost, and who will be responsible for carrying the plan forward."
+        }
+      ],
+      "body_you": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A celebration becomes more important. Someone finally asks for the title, credit, invitation, or opportunity they have been waiting to receive.\n\nLeo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.\n\nThis is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. You do not need to turn every part of your life into a public event, but the work you want recognized cannot stay hidden forever.\n\nBetween now and {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share it at the size it is now. You can let people see what you have made without pretending it is already finished becoming.",
+      "body_they": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A celebration becomes more important. Someone finally asks for the title, credit, invitation, or opportunity they have been waiting to receive.\n\nLeo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.\n\nThis is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. You do not need to turn every part of your life into a public event, but the work you want recognized cannot stay hidden forever.\n\nBetween now and {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share it at the size it is now. You can let people see what you have made without pretending it is already finished becoming.",
+      "review_status": "superseded",
+      "source_keys": [
+        "TLDR-Sky-SignCopy-Sun-Leo-V2-REVIEW.md"
+      ],
+      "approved_via": "owner-authored and owner-approved, 2026-07-31",
+      "superseded_by": "owner revision after live render review, 2026-07-31",
+      "note": "Superseded initial continuous Sun-in-Leo unit retained for history."
+    }
+  ],
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A birthday, launch, or personal win becomes harder to treat like an ordinary day. Someone finally asks for the credit or opportunity they have been waiting for.",
+      "tension": "Leo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.",
+      "development": "This is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. Not every project needs an audience, but the work you want recognized has to leave your desk eventually.",
+      "close": "Before {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share the part that is ready now. People can see what you made before every detail is perfect.",
+      "try_this": [
+        "Put one piece of work you are proud of where other people can see it.",
+        "Give someone else clear credit for what they contributed.",
+        "Ask directly for the support, recognition, or opportunity you need."
+      ],
+      "aspect_units": [
+        {
+          "planets": [
+            "sun",
+            "jupiter"
+          ],
+          "aspect": "conjunction",
+          "heading": "Sun conjunct Jupiter in Leo",
+          "opportunity": "On {{exactDate}}, the Sun meets Jupiter in Leo. A request may receive a warmer response, a project may attract more attention, or you may feel ready to ask for more than you normally would.",
+          "check": "The encouraging response may be real. It still does not mean the budget, deadline, or workload can stretch forever. Early interest may tempt you to promise a larger result, spend more money, or accept a deadline before checking what the work requires. Take the good response seriously, then check the calendar, the cost, and who is doing the work."
+        }
+      ],
+      "body_you": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A birthday, launch, or personal win becomes harder to treat like an ordinary day. Someone finally asks for the credit or opportunity they have been waiting for.\n\nLeo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.\n\nThis is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. Not every project needs an audience, but the work you want recognized has to leave your desk eventually.\n\nBefore {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share the part that is ready now. People can see what you made before every detail is perfect.",
+      "body_they": "The Sun moves into Leo on {{entryDate}}, bringing more attention to what we are proud of and what we want other people to notice. A project gets shared. A birthday, launch, or personal win becomes harder to treat like an ordinary day. Someone finally asks for the credit or opportunity they have been waiting for.\n\nLeo season can help us stop hiding the work and put our name on it. It can also make recognition feel more personal than usual. You may notice who gets thanked, who gets interrupted, or who goes quiet when someone else is praised. Wanting to be seen is not the problem. The problem begins when attention becomes the only proof that the work matters.\n\nThis is a useful month for choosing one priority and giving it your full attention. Finish the draft. Make the announcement. Take the lead on the project you already care about. Not every project needs an audience, but the work you want recognized has to leave your desk eventually.\n\nBefore {{exitDate}}, choose one piece of work, decision, or role you are ready to stand behind. Share the part that is ready now. People can see what you made before every detail is perfect.",
+      "review_status": "approved",
+      "source_keys": [
+        "TLDR-Sky-SignCopy-Sun-Leo-V2-REVIEW.md"
+      ],
+      "approved_via": "owner-authored and owner-approved, 2026-07-31",
+      "note": "Continuous Sun-in-sign slot-tier unit. Dates and active major aspect facts are engine-filled."
+    }
+  ]
+}

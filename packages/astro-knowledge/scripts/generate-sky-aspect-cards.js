@@ -651,34 +651,83 @@ function loadLocalEnv() {
   }
 }
 
-function generationConfig() {
+const { resolveActiveRelease, resolveCandidateRelease } = require("./editorial-model-registry.js");
+
+function registeredRelease(role, surface) {
+  const candidateReleaseId = String(process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID || "").trim();
+  if (!candidateReleaseId) return resolveActiveRelease({ role, surface });
+  if (role !== "judge" || process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION !== "1") {
+    throw new Error("Candidate model selection is allowed only for an explicitly authorized judge calibration.");
+  }
+  return resolveCandidateRelease({ role, surface, releaseId: candidateReleaseId });
+}
+
+function modelConfig(role = "generation", surface = "default") {
   loadLocalEnv();
-  const requested = (
-    process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
-    || process.env.CONTENT_GENERATION_PROVIDER
-    || "openai"
-  ).trim().toLowerCase();
+  const isJudge = role === "judge";
+  const release = registeredRelease(role, surface);
+  const requested = (isJudge
+    ? (
+        process.env.CONTENT_JUDGE_PROVIDER
+        || process.env.CONTENT_GENERATION_PROVIDER_JUDGE
+        || process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
+        || process.env.CONTENT_GENERATION_PROVIDER
+        || release.provider
+      )
+    : (
+        process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
+        || process.env.CONTENT_GENERATION_PROVIDER
+        || release.provider
+      )).trim().toLowerCase();
   const provider = requested === "anthropic" ? "claude" : requested;
+  const registryModel = provider === release.provider ? release.model : null;
+  const registryOverride = provider !== release.provider;
 
   if (provider === "claude") {
+    const configuredModel = isJudge
+      ? (process.env.ANTHROPIC_JUDGE_MODEL || process.env.ANTHROPIC_MODEL)
+      : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL);
     return {
+      ...release,
       provider,
-      model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      temperature: 0.7
+      model: configuredModel || registryModel || "claude-sonnet-4-6",
+      apiKey: isJudge
+        ? (process.env.ANTHROPIC_JUDGE_API_KEY || process.env.ANTHROPIC_API_KEY)
+        : process.env.ANTHROPIC_API_KEY,
+      temperature: isJudge ? 0.1 : 0.7,
+      role,
+      surface,
+      registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
     };
   }
 
   if (provider === "openai") {
+    const configuredModel = isJudge
+      ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL)
+      : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
     return {
+      ...release,
       provider,
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      apiKey: process.env.OPENAI_API_KEY,
-      temperature: 0.7
+      model: configuredModel || registryModel || "gpt-4.1-mini",
+      apiKey: isJudge
+        ? (process.env.OPENAI_JUDGE_API_KEY || process.env.OPENAI_API_KEY)
+        : process.env.OPENAI_API_KEY,
+      temperature: isJudge ? 0.1 : 0.7,
+      role,
+      surface,
+      registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
     };
   }
 
-  throw new Error(`Unsupported CONTENT_GENERATION_PROVIDER_SKY_ASPECT '${requested}'. Use 'openai' or 'claude'.`);
+  throw new Error(`Unsupported ${isJudge ? "CONTENT_JUDGE_PROVIDER" : "CONTENT_GENERATION_PROVIDER_SKY_ASPECT"} '${requested}'. Use 'openai' or 'claude'.`);
+}
+
+function generationConfig(surface = "default") {
+  return modelConfig("generation", surface);
+}
+
+function judgeConfig(surface = "sky-aspect") {
+  return modelConfig("judge", surface);
 }
 
 function openAiOutputText(payload) {
@@ -715,8 +764,7 @@ function buildRepairPrompt(text, reason) {
 
 // Must return the poetic card body only. Facts such as dates, degrees, series,
 // and mechanics are deliberately not accepted here.
-async function generate(prompt, { temperature } = {}) {
-  const config = generationConfig();
+async function generateWithConfig(prompt, config, { temperature } = {}) {
   const temp = temperature ?? config.temperature;
 
   if (!config.apiKey) {
@@ -772,6 +820,14 @@ async function generate(prompt, { temperature } = {}) {
   const text = cleanCardText(openAiOutputText(payload));
   if (!text) throw new Error("OpenAI response did not include card text.");
   return text;
+}
+
+async function generate(prompt, options = {}) {
+  return generateWithConfig(prompt, generationConfig(), options);
+}
+
+async function generateJudge(prompt, options = {}) {
+  return generateWithConfig(prompt, judgeConfig(), options);
 }
 
 async function repairCard(text, reason, { generateFn = generate } = {}) {
@@ -853,7 +909,7 @@ async function runCardPipeline({
           tier: judgeTier,
           judgeFn
         });
-        result.gate = result.judge.gate; // auto-publish | human-review | regenerate
+        result.gate = result.judge.gate; // human-review | regenerate (model verdicts are advisory)
 
         if (result.judge.score === 2) {
           const originalJudge = result.judge;
@@ -1066,10 +1122,12 @@ module.exports = {
   buildPrompt,
   closeBank,
   generate,
+  generateJudge,
   generateCard,
   generatePlacementCard,
   generatePlacementTopper,
   generationConfig,
+  judgeConfig,
   normalizeCardArgs,
   normalizePlacementArgs,
   normalizePlacementTopperArgs,

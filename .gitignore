@@ -17,6 +17,12 @@ api/_lib/local-env.js
 exports/
 scripts/generated/
 
+# Private-model datasets, checkpoints, and local model caches
+packages/astro-knowledge/private-model/.local-data/
+packages/astro-knowledge/private-model/checkpoints/
+packages/astro-knowledge/private-model/model-cache/
+packages/astro-knowledge/out/editorial-judge-audit/
+
 # Python cache files from phrasebank tooling
 __pycache__/
 *.py[cod]

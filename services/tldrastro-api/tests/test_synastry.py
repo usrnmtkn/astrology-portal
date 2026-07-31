@@ -5,11 +5,10 @@ from fastapi.testclient import TestClient
 
 from tldrastro_api.main import app
 
-
 client = TestClient(app)
 
 
-def test_synastry_fixture_maya_river():
+def test_synastry_fixture_maya_river(assert_known_ephemeris_profile):
     fixture_path = Path(__file__).parent / "fixtures" / "synastry_maya_river.json"
     fixture = json.loads(fixture_path.read_text())
 
@@ -17,6 +16,7 @@ def test_synastry_fixture_maya_river():
 
     assert response.status_code == 200
     body = response.json()
+    assert_known_ephemeris_profile(body["metadata"])
     expected = fixture["expected"]
 
     assert body["metadata"]["houseSystem"] == "whole_sign"
@@ -45,4 +45,3 @@ def test_synastry_fixture_maya_river():
         assert actual["point"] == expected_overlay["point"]
         assert actual["houseOwner"] == expected_overlay["houseOwner"]
         assert actual["house"] == expected_overlay["house"]
-

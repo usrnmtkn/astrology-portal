@@ -1,0 +1,510 @@
+{
+  "schema": "tldrastro-sky-placement-inventories-voice-pass-v1",
+  "version": "1.0.0",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-placement/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun is in {{signTitle}} from {{entryDate}} to {{exitDate}}. For the next month the calendar takes its orders from this sign: what gets celebrated, launched, and argued about turns {{signStyle}}, and everyone suddenly has an opinion about it.",
+      "body_they": "The Sun is in {{signTitle}} from {{entryDate}} to {{exitDate}}. For the next month the calendar takes its orders from this sign: what gets celebrated, launched, and argued about turns {{signStyle}}, and everyone suddenly has an opinion about it.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Moon is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The mood nobody announced turns {{signStyle}} for two days: the group chat, the dinner table, and the tone of every small comment take it on before anyone names it.",
+      "body_they": "The Moon is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The mood nobody announced turns {{signStyle}} for two days: the group chat, the dinner table, and the tone of every small comment take it on before anyone names it.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mercury is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The messages, meetings, contracts, and commutes run {{signStyle}} now, and so does the story you keep retelling until it becomes the official version.",
+      "body_they": "Mercury is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The messages, meetings, contracts, and commutes run {{signStyle}} now, and so does the story you keep retelling until it becomes the official version.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. What feels worth wanting turns {{signStyle}}: who gets your time, what the money goes to, which small gesture stays with you longer than expected.",
+      "body_they": "Venus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. What feels worth wanting turns {{signStyle}}: who gets your time, what the money goes to, which small gesture stays with you longer than expected.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Mars is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The push turns {{signStyle}}: how people compete, how they argue, what the deadline sprint looks like, and what happens to anger that has nowhere chosen to go.",
+      "body_they": "Mars is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The push turns {{signStyle}}: how people compete, how they argue, what the deadline sprint looks like, and what happens to anger that has nowhere chosen to go.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Jupiter is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The promises, appetites, and easy yeses grow in this sign's direction, and opportunity favors whoever is willing to work the {{signStyle}} way.",
+      "body_they": "Jupiter is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The promises, appetites, and easy yeses grow in this sign's direction, and opportunity favors whoever is willing to work the {{signStyle}} way.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The deadline that will not move and the bill that arrives anyway belong to this sign now: the promises, schedules, and roles everyone slid into without discussing them get tested here.",
+      "body_they": "Saturn is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The deadline that will not move and the bill that arrives anyway belong to this sign now: the promises, schedules, and roles everyone slid into without discussing them get tested here.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Uranus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The rules this sign lives by, including the ones nobody remembers agreeing to, stop being fixed: the route, the price, the role, the schedule.",
+      "body_they": "Uranus is in {{signTitle}} from {{entryDate}} to {{exitDate}}. The rules this sign lives by, including the ones nobody remembers agreeing to, stop being fixed: the route, the price, the role, the schedule.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Neptune is in {{signTitle}} from {{entryDate}} to {{exitDate}}. What this sign was certain about goes soft at the edges: the plan described by its potential, the person judged by their promises, the dream priced without the expense nobody mentions.",
+      "body_they": "Neptune is in {{signTitle}} from {{entryDate}} to {{exitDate}}. What this sign was certain about goes soft at the edges: the plan described by its potential, the person judged by their promises, the dream priced without the expense nobody mentions.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Pluto is in {{signTitle}} from {{entryDate}} to {{exitDate}}. It works on what everyone agreed not to look at in this sign's territory: who controls the decision, who keeps paying, and which resentment is doing more work than the agreement.",
+      "body_they": "Pluto is in {{signTitle}} from {{entryDate}} to {{exitDate}}. It works on what everyone agreed not to look at in this sign's territory: who controls the decision, who keeps paying, and which resentment is doing more work than the agreement.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Chiron is in {{signTitle}} from {{entryDate}} to {{exitDate}}. A generation carries its tender spot here: the subject people overprepare for, go quiet around, or answer as if the person asking were someone from years ago.",
+      "body_they": "Chiron is in {{signTitle}} from {{entryDate}} to {{exitDate}}. A generation carries its tender spot here: the subject people overprepare for, go quiet around, or answer as if the person asking were someone from years ago.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The North Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's head: the hunger arrives before the plan does, and eclipses land their beginnings in this sign until it moves on.",
+      "body_they": "The North Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's head: the hunger arrives before the plan does, and eclipses land their beginnings in this sign until it moves on.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The South Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's tail: what is finished in this sign's territory gets set down, willingly or otherwise, and eclipses close those chapters.",
+      "body_they": "The South Node is in {{signTitle}} from {{entryDate}} to {{exitDate}}. Astrologers call it the dragon's tail: what is finished in this sign's territory gets set down, willingly or otherwise, and eclipses close those chapters.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Lilith, the far edge of the Moon's orbit, is in {{signTitle}} from {{entryDate}} to {{exitDate}}. While she is here, the refusals turn {{signStyle}}: what people are done apologizing for, the no that stops explaining itself.",
+      "body_they": "Lilith, the far edge of the Moon's orbit, is in {{signTitle}} from {{entryDate}} to {{exitDate}}. While she is here, the refusals turn {{signStyle}}: what people are done apologizing for, the no that stops explaining itself.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "One decision keeps getting moved to next week, and it lives in the part of your life the Sun is lighting now. Through {{exitDate}} the coasting there is visible to everyone, including you. Use the light; it moves.",
+      "body_they": "One decision keeps getting moved to next week, and it lives in the part of your life the Sun is lighting now. Through {{exitDate}} the coasting there is visible to everyone, including you. Use the light; it moves.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The tone of the day changed before anyone said why. Through {{exitDate}} reactions run {{signStyle}}, including the ones aimed at you. Read the tone first. Take it personally later, if it survives the reading.",
+      "body_they": "The tone of the day changed before anyone said why. Through {{exitDate}} reactions run {{signStyle}}, including the ones aimed at you. Read the tone first. Take it personally later, if it survives the reading.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You already know which conversation you have been avoiding. Through {{exitDate}} words run {{signStyle}}, and what refused to surface may come easily. Say it while the channel is open.",
+      "body_they": "You already know which conversation you have been avoiding. Through {{exitDate}} words run {{signStyle}}, and what refused to surface may come easily. Say it while the channel is open.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "What you want has been getting more specific, and pretending otherwise has a price you pay in small installments. Through {{exitDate}} attraction runs {{signStyle}} across love, beauty, and money alike. Want what you actually want. It is cheaper.",
+      "body_they": "What you want has been getting more specific, and pretending otherwise has a price you pay in small installments. Through {{exitDate}} attraction runs {{signStyle}} across love, beauty, and money alike. Want what you actually want. It is cheaper.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The restlessness is fuel, not a flaw. Through {{exitDate}} everyone's drive carries a {{signStyle}} edge, and unspent anger picks its own target, usually whoever is closest. Choose the fight, the project, or the run before it chooses for you.",
+      "body_they": "The restlessness is fuel, not a flaw. Through {{exitDate}} everyone's drive carries a {{signStyle}} edge, and unspent anger picks its own target, usually whoever is closest. Choose the fight, the project, or the run before it chooses for you.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The ceiling you have been living under is not load-bearing. Through {{exitDate}} the bigger request gets easier: the application, the pitch, the ask you assumed was reserved for other people. Ask where you have been settling.",
+      "body_they": "The ceiling you have been living under is not load-bearing. Through {{exitDate}} the bigger request gets easier: the application, the pitch, the ask you assumed was reserved for other people. Ask where you have been settling.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The permission you are waiting for is not in the mail. Through {{exitDate}} this sign's territory runs on evidence instead of approval: the practice kept, the limit stated, the work that shows. Start before conditions are ideal; they were never going to be.",
+      "body_they": "The permission you are waiting for is not in the mail. Through {{exitDate}} this sign's territory runs on evidence instead of approval: the practice kept, the limit stated, the work that shows. Start before conditions are ideal; they were never going to be.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Wherever {{signTitle}} falls in your chart, arrangements that looked permanent are negotiable through {{exitDate}}. The swerve is information. The routine that ended may be the one you were already done with and had not admitted.",
+      "body_they": "Wherever {{signTitle}} falls in your chart, arrangements that looked permanent are negotiable through {{exitDate}}. The swerve is information. The routine that ended may be the one you were already done with and had not admitted.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Not everything blurry is lost; some of it is dissolving on purpose. Through {{exitDate}} this sign's certainties soften, including yours. Check the price and the timeline, then keep the dream. A real one survives arithmetic.",
+      "body_they": "Not everything blurry is lost; some of it is dissolving on purpose. Through {{exitDate}} this sign's certainties soften, including yours. Check the price and the timeline, then keep the dream. A real one survives arithmetic.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Some arrangements do not reform; they end. Through {{exitDate}} the ones in this sign's territory that run on pressure get heavier to hold. Stop rebuilding what is coming down.",
+      "body_they": "Some arrangements do not reform; they end. Through {{exitDate}} the ones in this sign's territory that run on pressure get heavier to hold. Stop rebuilding what is coming down.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The sore spot you route around is asking for attention, not avoidance. Through {{exitDate}} the old workaround shows its age: the overpreparing, the going quiet, the answer rehearsed for a person who is not in the current conversation. Separate the present person from the older fear; they only share a subject.",
+      "body_they": "The sore spot you route around is asking for attention, not avoidance. Through {{exitDate}} the old workaround shows its age: the overpreparing, the going quiet, the answer rehearsed for a person who is not in the current conversation. Separate the present person from the older fear; they only share a subject.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "One part of your life just got hungrier. Wherever {{signTitle}} falls in your chart, the appetite arrives before the plan through {{exitDate}}, and eclipses land their beginnings there. Feed it on purpose. Awkward is the tell that it is new.",
+      "body_they": "One part of your life just got hungrier. Wherever {{signTitle}} falls in your chart, the appetite arrives before the plan through {{exitDate}}, and eclipses land their beginnings there. Feed it on purpose. Awkward is the tell that it is new.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "One part of your life is due for a release. The habits of {{signTitle}} that once protected you now mostly send you the bill. Through {{exitDate}}, set down what is finished. It is not losing; it is finishing.",
+      "body_they": "One part of your life is due for a release. The habits of {{signTitle}} that once protected you now mostly send you the bill. Through {{exitDate}}, set down what is finished. It is not losing; it is finishing.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-you/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The part of you that got exiled for being too much did not die; it waited. Through {{exitDate}} its {{signTitle}} version stirs in everyone. Notice what you swallow to stay acceptable, and what the swallowing has been costing.",
+      "body_they": "The part of you that got exiled for being too much did not die; it waited. Through {{exitDate}} its {{signTitle}} version stirs in everyone. Notice what you swallow to stay acceptable, and what the swallowing has been costing.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/sun",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Do one visible act before {{exitDate}} that matches who you are now instead of who you were when people formed their opinion. Vitality follows honesty here.",
+      "body_they": "Do one visible act before {{exitDate}} that matches who you are now instead of who you were when people formed their opinion. Vitality follows honesty here.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/moon",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Keep plans light where you can and let the mood pass without a verdict. By {{exitDate}} it is a different sky.",
+      "body_they": "Keep plans light where you can and let the mood pass without a verdict. By {{exitDate}} it is a different sky.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/mercury",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Send the clear version: the message, the booked conversation, the written page. Precision is a form of kindness.",
+      "body_they": "Send the clear version: the message, the booked conversation, the written page. Precision is a form of kindness.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/venus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give your taste a vote: upgrade one object you touch daily, and stop paying for what you no longer enjoy.",
+      "body_they": "Give your taste a vote: upgrade one object you touch daily, and stop paying for what you no longer enjoy.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/mars",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give the energy a job before it finds one: the workout, the honest confrontation, the project that gets your full push before {{exitDate}}.",
+      "body_they": "Give the energy a job before it finds one: the workout, the honest confrontation, the project that gets your full push before {{exitDate}}.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/jupiter",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Make one ask bigger than feels polite before {{exitDate}}. Growth favors the request actually made, and the no costs less than the wondering.",
+      "body_they": "Make one ask bigger than feels polite before {{exitDate}}. Growth favors the request actually made, and the no costs less than the wondering.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Keep the commitments you make to yourself first: one limit said plainly, one practice kept daily. Nobody grants this kind of freedom; it accumulates.",
+      "body_they": "Keep the commitments you make to yourself first: one limit said plainly, one practice kept daily. Nobody grants this kind of freedom; it accumulates.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/uranus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Change one arrangement on purpose while it is still a choice. Give the experiment a budget, a timeline, and a reason.",
+      "body_they": "Change one arrangement on purpose while it is still a choice. Give the experiment a budget, a timeline, and a reason.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Pair the dream with one concrete anchor: a practice, a budget, a date. Imagination does its best work with one foot on the floor.",
+      "body_they": "Pair the dream with one concrete anchor: a practice, a budget, a date. Imagination does its best work with one foot on the floor.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/pluto",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Tell the truth about what is over. Power comes back one honest ending at a time.",
+      "body_they": "Tell the truth about what is over. Power comes back one honest ending at a time.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/chiron",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Tend the tender spot gently, regularly, and without a finish line. Consistent small care beats the dramatic cure.",
+      "body_they": "Tend the tender spot gently, regularly, and without a finish line. Consistent small care beats the dramatic cure.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/north-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Take one step toward the unfamiliar direction every time the familiar one gets tempting. Awkward progress in the right direction beats fluent progress in the wrong one.",
+      "body_they": "Take one step toward the unfamiliar direction every time the familiar one gets tempting. Awkward progress in the right direction beats fluent progress in the wrong one.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/south-node",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Use your easiest skills in service of the new direction instead of hiding inside them. Mastery is a launchpad, not a bed.",
+      "body_they": "Use your easiest skills in service of the new direction instead of hiding inside them. Mastery is a launchpad, not a bed.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-practice/lilith",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give the banned feeling one honest outlet: say it to a safe person or put it into the work. What gets named does not have to erupt.",
+      "body_they": "Give the banned feeling one honest outlet: say it to a safe person or put it into the work. What gets named does not have to erupt.",
+      "review_status": "needs_review",
+      "source_keys": [
+        "TLDR-Sky-Placement-Inventories-VoicePass-REVIEW.md"
+      ],
+      "notes": "Review-gated Sky placement slot-tier voice pass; supersedes the approved V3 row only after owner approval."
+    }
+  ]
+}

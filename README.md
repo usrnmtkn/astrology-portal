@@ -50,19 +50,36 @@ Horizons is deliberately not called during reader requests. Houses, angles,
 nodes, stations, shadow boundaries, and exact-hit searches remain outside the
 current Horizons adapter's coverage and continue to use the primary engine.
 
-## Content Precedence
+## Content Management and Precedence
 
-Fallback copy is a floor, not a competing source. Reader-facing app surfaces should resolve copy in this order:
+Start with the [content-management README](docs/content-management/README.md).
+The detailed [content architecture](docs/content-management/ARCHITECTURE.md)
+maps facts, package rows, resolver selection, review state, dashboard hydration,
+and every reader surface.
 
-1. Personalized/generated content for the exact user/event.
-2. Exact live generated rows for the requested content key.
-3. Authored or approved knowledge-bank copy for the same placement, aspect, transit, or relationship contact.
-4. Template fallback rows such as `fallback-hook/...`, only to fill blank fields.
-5. Emergency copy from local composition helpers, only when no specific copy exists.
+Two subsystems inside this monorepo share content ownership:
 
-Async content and registry loading must not downgrade visible copy. If a card already has specific authored or approved reader-facing text, a later-loading broad `fallback-hook/...` template should not replace it. UI code should prefer shared copy resolvers over ad hoc fallback chains, and any new fallback path should preserve this monotonic rule. In the web app, `liveGeneratedContentByKeys` treats `afterContentFallback` as the floor by default, so template fallback rows cannot overwrite better caller-provided copy after the registry finishes loading.
+- `packages/astro-knowledge` owns astrology meaning, schemas, voice contracts,
+  and timing/ranking helpers.
+- `apps/web/src/content/fallbackArchitectureV3` owns most deterministic
+  reader-facing prose and its authored-or-assembled resolvers.
 
-Cards should also never render blank. When no specific reader-facing copy exists, show the neutral review state instead of hiding text or inventing broad placeholder interpretation.
+The calculation API and ephemeris own facts. Content rows explain those facts.
+React must not invent either.
+
+Within the V3 package, resolution is:
+
+1. exact approved authored unit;
+2. approved hook/template/vocabulary assembly;
+3. `SOURCE_GAP`.
+
+Some surfaces first request an exact live generated row by content key and use
+the package or a knowledge bundle as their fallback floor. Trace the call site
+before changing precedence. Missing interpretation copy must omit the unit and
+log the source gap; it must not be replaced by emergency prose in UI code.
+Async registry loading must also be monotonic: a broad fallback may fill a blank
+field, but it must never replace more specific personalized, generated,
+authored, or approved copy that is already visible.
 
 ## Social Friends Architecture
 
