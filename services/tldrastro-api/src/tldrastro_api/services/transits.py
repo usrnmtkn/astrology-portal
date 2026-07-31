@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import List, Optional
 
+import swisseph as swe
+
 from tldrastro_api.models import (
     ChartMetadata,
     ChartSubject,
@@ -19,6 +21,10 @@ from tldrastro_api.services.chart import (
     julian_day_for,
     normalize_degrees,
     transit_aspect_conditions,
+)
+from tldrastro_api.services.ephemeris import (
+    ephemeris_provenance,
+    merge_ephemeris_provenance,
 )
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.sky import calculate_current_sky
@@ -234,6 +240,10 @@ def calculate_transits(request: TransitChartRequest) -> TransitChartResponse:
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,
+            ephemeris=merge_ephemeris_provenance(
+                natal_chart.metadata.ephemeris,
+                ephemeris_provenance(swe),
+            ),
         ),
         natal=natal_chart,
         transitChart=transit_chart,

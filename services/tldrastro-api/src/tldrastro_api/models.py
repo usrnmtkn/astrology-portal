@@ -139,11 +139,24 @@ class NatalChartRequest(BaseModel):
     includeContentFacts: bool = True
 
 
+class EphemerisProvenance(BaseModel):
+    library: str
+    libraryVersion: Optional[str] = None
+    requestedEngine: str
+    actualEngine: str
+    actualEngines: List[str] = Field(default_factory=list)
+    fallback: bool
+    dataPath: Optional[str] = None
+    returnedFlags: List[int] = Field(default_factory=list)
+    calculations: int = 0
+
+
 class ChartMetadata(BaseModel):
     houseSystem: HouseSystem
     zodiac: Zodiac
     calculatedAt: str
     inputWarnings: List[str] = Field(default_factory=list)
+    ephemeris: Optional[EphemerisProvenance] = None
 
 
 class NatalChartResponse(BaseModel):
