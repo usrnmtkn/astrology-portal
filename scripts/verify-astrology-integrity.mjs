@@ -377,6 +377,7 @@ async function main() {
     logLevel: "error"
   });
   const results = [];
+  const independentProviders = new Map();
   let blocked = false;
 
   try {
@@ -404,6 +405,13 @@ async function main() {
           provenance: sky.calculationProvenance
         });
         continue;
+      }
+
+      if (referencePayload.provider?.id) {
+        independentProviders.set(
+          referencePayload.provider.id,
+          referencePayload.provider.label ?? referencePayload.provider.id
+        );
       }
 
       const comparisonFixture = {
@@ -444,7 +452,9 @@ async function main() {
   const report = {
     ok: !blocked,
     generatedAt: new Date().toISOString(),
-    independentProvider: providerCommand ? "configured" : "missing",
+    independentProvider: providerCommand
+      ? [...independentProviders.values()].join(", ") || "configured"
+      : "missing",
     referenceGapsAllowed: allowReferenceGaps,
     referenceSources: sourceRegistry,
     tolerances: fixturesConfig.tolerances,

@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2026-07-31: Daily NASA/JPL Calculation Verification
+
+- TLDR Astro now documents Swiss Ephemeris as its real-time calculation engine
+  and NASA/JPL Horizons as its independent verification layer.
+- The Horizons comparison runs daily, retains its report artifacts for 90
+  days, and persists the latest result plus dated history in a GitHub monitor
+  issue.
+- Pull requests receive a `nasa-jpl-freshness` release check that fails when
+  the latest main-branch comparison failed or is older than 36 hours.
+- NASA/JPL Horizons remains outside reader request paths; it verifies supported
+  planetary positions, motion, and aspects without becoming a public-API
+  runtime dependency.
+
 ## 2026-07-26: Beta Social Friends
 
 ### Friends Experience

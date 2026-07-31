@@ -2,11 +2,12 @@ name: Ephemeris integrity
 
 on:
   schedule:
-    - cron: "17 9 * * 4"
+    - cron: "17 9 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: ephemeris-integrity
@@ -30,6 +31,7 @@ jobs:
       - run: npm ci
       - run: mkdir -p artifacts
       - name: Compare TLDR Astro with NASA/JPL Horizons
+        id: comparison
         run: npm run qa:ephemeris:horizons
       - name: Upload verification report
         if: always()
@@ -39,3 +41,60 @@ jobs:
           path: artifacts/
           if-no-files-found: error
           retention-days: 90
+      - name: Persist status and history in GitHub
+        if: always() && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v8
+        env:
+          COMPARISON_OUTCOME: ${{ steps.comparison.outcome }}
+          SUMMARY_PATH: artifacts/ephemeris-integrity-summary.md
+        with:
+          script: |
+            const fs = require("fs");
+            const title = "NASA/JPL ephemeris integrity status";
+            const passed = process.env.COMPARISON_OUTCOME === "success";
+            const status = passed ? "PASS" : "FAIL";
+            const summary = fs.existsSync(process.env.SUMMARY_PATH)
+              ? fs.readFileSync(process.env.SUMMARY_PATH, "utf8").trim()
+              : "The comparison ended before a structured summary was written.";
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              "# NASA/JPL ephemeris integrity monitor",
+              "",
+              "TLDR Astro uses Swiss Ephemeris for real-time calculations and NASA/JPL Horizons as an independent verification layer.",
+              "",
+              `Latest result: **${status}**`,
+              `Latest run: [${context.runId}](${runUrl})`,
+              "",
+              summary,
+              "",
+              "This issue is updated daily. Each run also leaves a dated comment below, preserving the verification history outside short-lived workflow artifacts."
+            ].join("\n");
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "all",
+              per_page: 100
+            });
+            let issue = issues.find((candidate) => !candidate.pull_request && candidate.title === title);
+            if (!issue) {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body
+              });
+              issue = created.data;
+            }
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+              state: passed ? "closed" : "open"
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `## ${status} — run ${context.runId}\n\n[Open workflow run](${runUrl})\n\n${summary}`
+            });
