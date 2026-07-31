@@ -6240,24 +6240,35 @@ function skyPlacementWritingSection(
     && !isArchiveArticle
     && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
   const transitEndpoints = placementTransitEndpoints(position, generatedAt);
-  const rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
-    planet,
-    sign,
-    events,
-    asOfDate: generatedAt,
-    articleMode: articleOptions?.articleMode ?? "current",
-    articleKey: articleOptions?.articleKey ?? null,
-    entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
-    exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
-    hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
-    risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
-      normalizeContentIdPart(risingSign),
-      wholeSignHouseForSign(position.sign, risingSign) ?? 0
-    ])),
-    egressDate: skyPlacementEgressDateLabel(position, generatedAt),
-    isRetrograde: hasRetrogradeGuidance,
-    isShadowPhase: !isArchiveArticle && skyPlacementShadowPhaseActive(position, generatedAt)
-  });
+  let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
+
+  try {
+    rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
+      planet,
+      sign,
+      events,
+      asOfDate: generatedAt,
+      articleMode: articleOptions?.articleMode ?? "current",
+      articleKey: articleOptions?.articleKey ?? null,
+      entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
+      exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
+      hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
+      risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
+        normalizeContentIdPart(risingSign),
+        wholeSignHouseForSign(position.sign, risingSign) ?? 0
+      ])),
+      egressDate: skyPlacementEgressDateLabel(position, generatedAt),
+      isRetrograde: hasRetrogradeGuidance,
+      isShadowPhase: !isArchiveArticle && skyPlacementShadowPhaseActive(position, generatedAt)
+    });
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+
+    console.warn("Sky placement source gap; omitting unavailable sign copy.", error);
+    return null;
+  }
   const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
   const renderedParagraphs = rendered.closingCharge
     && allRenderedParagraphs.at(-1) === rendered.closingCharge

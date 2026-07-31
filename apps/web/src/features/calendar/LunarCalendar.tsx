@@ -1557,7 +1557,7 @@ function locationFromLabel(label: string): LocationInput {
 
 export function LunarCalendar({ location, onLocationChange, generatedContent, onOpenTransit }: LunarCalendarProps) {
   const initialRouteState = useMemo(() => calendarRouteStateFromUrl(), []);
-  const initialDateKey = initialRouteState?.date ?? dateKeyFromDate(new Date());
+  const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
   const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(initialDateKey));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");

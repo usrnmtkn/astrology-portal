@@ -3159,8 +3159,8 @@
   }
 
   .app-shell.mode-friends .friend-view-more-menu {
-    right: 0;
-    left: auto;
+    right: auto;
+    left: 0;
     width: min(360px, calc(100vw - var(--mobile-page-gutter) * 2));
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
   }

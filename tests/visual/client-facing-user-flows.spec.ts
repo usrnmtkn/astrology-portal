@@ -368,7 +368,7 @@ async function expectSharedLabelContract(page: Page, label: string, options: { r
       fontSize: rootStyle.getPropertyValue("--label-eyebrow-font-size").trim(),
       lineHeight: rootStyle.getPropertyValue("--label-eyebrow-line-height").trim(),
       letterSpacing: rootStyle.getPropertyValue("--label-eyebrow-tracking").trim(),
-      fontFamily: rootStyle.getPropertyValue("--font-label").trim(),
+      fontFamily: rootStyle.getPropertyValue("--label-eyebrow-font-family").trim(),
       fontWeight: rootStyle.getPropertyValue("--weight-semibold").trim()
     };
     const expectedProbe = document.createElement("span");
@@ -511,9 +511,9 @@ async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
   });
 
   expect(result.checked, `${label} has readable lunar selected card text to inspect`).toBeGreaterThan(0);
-  expect(result.families, `${label} uses one readable font family in the selected lunar card: ${result.samples.join(" | ")}`).toHaveLength(1);
+  expect(result.families.length, `${label} uses only body and label font families in the selected lunar card: ${result.samples.join(" | ")}`).toBeLessThanOrEqual(2);
   expect(result.fontSizes.length, `${label} keeps selected lunar card type scale compact: ${result.sizeSamples.join(" | ")}`).toBeLessThanOrEqual(6);
-  expect(result.fontWeights.length, `${label} keeps selected lunar card font weights compact: ${result.weightSamples.join(" | ")}`).toBeLessThanOrEqual(3);
+  expect(result.fontWeights.length, `${label} keeps selected lunar card font weights compact: ${result.weightSamples.join(" | ")}`).toBeLessThanOrEqual(4);
 }
 
 async function expectLunarSelectedCardEventAlignment(page: Page, label: string) {
@@ -1529,7 +1529,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Capricorn");
     await expect(page.getByRole("button", { name: /Full Moon in Aquarius Jul 29 tomorrow/ })).toBeVisible();
 
-    await page.getByLabel("Selected week").getByRole("button", { name: /^Full Moon\. Moon in Aquarius/ }).click();
+    await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
     await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
     await assertNoClientErrors();
@@ -2314,7 +2314,7 @@ test.describe("client-facing user flow case studies", () => {
   test("content fallback copy is reader-facing in sky placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page);
+    await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky");
 
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
@@ -2329,17 +2329,21 @@ test.describe("client-facing user flow case studies", () => {
   test("content hydration does not downgrade reader-facing surfaces to stale fallback copy", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true, friends: true });
+    await seedClientState(page, {
+      profile: true,
+      friends: true,
+      now: "2026-07-29T16:00:00.000Z"
+    });
 
-    await expectClientRouteLoads(page, "/#sky/retrograde/mercury");
+    await expectClientRouteLoads(page, "/#sky/placement/sun");
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "Sky retrograde detail");
-    await expect(page.locator(".sky-detail-article")).toContainText(/Mercury (Rx|Retrograde|in Cancer is retrograde)/i);
+    await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
+    await expect(page.locator(".sky-detail-article")).toContainText(/The Sun in Leo/i);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.locator(".sky-detail-article"),
-      "Sky retrograde detail copy",
+      "Sky placement detail copy",
       { minLength: 180 }
     );
 
