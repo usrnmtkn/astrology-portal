@@ -1,5 +1,14 @@
 # Release Notes
 
+## 2026-07-31: Current-Sky Aspect Availability
+
+- Current-sky aspect rows now remain visible when an approved interpretation is
+  unavailable or the live content service cannot be reached.
+- The factual fallback shows only the calculated planets, aspect, timing, and
+  orb. It does not invent interpretive copy or enable an empty detail page.
+- Approved, auto-published aspect interpretations still replace the factual row
+  with the existing reader-facing card and detail link.
+
 ## 2026-07-31: Web Bundle Cache Boundaries
 
 - Moved the two largest reviewed fallback-content snapshots out of the main
