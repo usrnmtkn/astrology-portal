@@ -1,0 +1,84 @@
+{
+  "schema": "tldrastro-sky-placement-continuous-import-manifest-v1",
+  "render_schema": "../contracts/SKY-PLACEMENT-CONTINUOUS-V2.schema.json",
+  "canonical_template": "../../../../../../packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md",
+  "review_gate": "Do not add rows from a source file to the reader-eligible hook set until the owner approves that file.",
+  "slot_contract": [
+    "{{entryDate}}",
+    "{{exitDate}}",
+    "{{aspectInsert}}"
+  ],
+  "retired_module_rows": {
+    "review_status": "superseded",
+    "render_eligible": false,
+    "history_retained_in_source_files": true,
+    "planets": [
+      "sun",
+      "mercury",
+      "venus",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+      "chiron",
+      "north-node",
+      "south-node"
+    ],
+    "key_families": [
+      "fallback-hook/sky-placement/{planet}",
+      "fallback-hook/sky-placement-frame/{planet}",
+      "fallback-hook/sky-placement-retro-frame/{planet}",
+      "fallback-hook/sky-placement-you/{planet}",
+      "fallback-hook/sky-placement-practice/{planet}",
+      "fallback-hook/sky-placement-hook/{planet}/{sign}",
+      "fallback-hook/sky-placement-lived/{planet}/{sign}",
+      "fallback-hook/sky-placement-turn/{planet}/{sign}",
+      "fallback-hook/sky-placement-tagline/{planet}/{sign}",
+      "fallback-hook/sky-placement-moves/{planet}/{sign}",
+      "fallback-hook/sky-placement-opening/{planet}",
+      "fallback-hook/sky-placement-meaning/{planet}",
+      "fallback-hook/sky-placement-confrontation/{planet}",
+      "fallback-hook/sky-placement-aspect/{planet}/{rest}",
+      "fallback-hook/sky-placement-lore/{sign}"
+    ]
+  },
+  "sources": [
+    {
+      "file": "TLDR-Sky-SignCopy-Sun-AllSigns-V2-REVIEW.md",
+      "expected_units": 11,
+      "planets": ["sun"],
+      "review_status": "needs_review",
+      "imported": false
+    },
+    {
+      "file": "TLDR-Sky-SignCopy-Mercury-AllSigns-V2-REVIEW.md",
+      "expected_units": 12,
+      "planets": ["mercury"],
+      "review_status": "needs_review",
+      "imported": false
+    },
+    {
+      "file": "TLDR-Sky-SignCopy-Venus-AllSigns-V2-REVIEW.md",
+      "expected_units": 12,
+      "planets": ["venus"],
+      "review_status": "needs_review",
+      "imported": false
+    },
+    {
+      "file": "TLDR-Sky-SignCopy-Mars-AllSigns-V2-REVIEW.md",
+      "expected_units": 12,
+      "planets": ["mars"],
+      "review_status": "needs_review",
+      "imported": false
+    },
+    {
+      "file": "TLDR-Sky-SignCopy-SlowMovers-Current-V2-REVIEW.md",
+      "expected_units": 7,
+      "planets": ["jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"],
+      "review_status": "needs_review",
+      "imported": false
+    }
+  ]
+}

@@ -45,7 +45,12 @@ const EXAMPLES = {
   "Transits: effect lines + variants": para(renderTransitAspect({ transiting: "saturn", natal: "mercury", aspect: "square", window: "Until November 13" })),
   "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "trine", otherName: "Sofia" })),
   "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", endpointPlanet: "mercury", endpointOwner: "friend", activatedPlanets: ["moon"], otherName: "Jose", window: "This month" })),
-  "Sky page: placements + articles": para(renderSkyPlacement({ planet: "saturn", sign: "aries" })),
+  "Sky page: placements + articles": para(renderSkyPlacement({
+    planet: "sun",
+    sign: "leo",
+    entryDate: "July 22, 2026",
+    exitDate: "August 23, 2026"
+  })),
   "Sky page: seasons, lunations, eclipses": para(renderSkyLunation({ kind: "full-moon", sign: "aquarius", dateLine: "On July 29" })),
   "Calendar: phases, void, markers": para(renderCalendarPhase({ phase: "full-moon", sign: "cancer" })),
   "Friends Circle feed": para(renderCircleStory({ trigger: "profection", house: 12, names: ["Alisa P", "Jose"], includesReader: true })),

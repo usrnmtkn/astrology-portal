@@ -333,7 +333,7 @@ var serialList = (items) => {
 var FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
 var FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
 var FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
-var FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
+var FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|cheer|cheers|cheered|cheering|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
 function possessiveDisplayName(name) {
   return `${name}'s`;
 }
@@ -1044,6 +1044,140 @@ ${fogNote}`;
     if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
+  const SKY_PLACEMENT_MAJOR_ASPECTS = /* @__PURE__ */ new Set(["conjunction", "square", "opposition", "trine", "sextile"]);
+  const SKY_PLACEMENT_CONTINUOUS_PLANETS = /* @__PURE__ */ new Set([
+    "sun",
+    "mercury",
+    "venus",
+    "mars",
+    "jupiter",
+    "saturn",
+    "uranus",
+    "neptune",
+    "pluto",
+    "chiron",
+    "north-node",
+    "south-node"
+  ]);
+  const RETIRED_SUN_IDENTITY_HOOKS = [
+    "Somewhere along the way, you switched to autopilot.",
+    "You keep rescheduling a decision.",
+    "A version of yourself needs updating."
+  ];
+  const SKY_PLACEMENT_MONTHS = {
+    jan: "January",
+    january: "January",
+    feb: "February",
+    february: "February",
+    mar: "March",
+    march: "March",
+    apr: "April",
+    april: "April",
+    may: "May",
+    jun: "June",
+    june: "June",
+    jul: "July",
+    july: "July",
+    aug: "August",
+    august: "August",
+    sep: "September",
+    sept: "September",
+    september: "September",
+    oct: "October",
+    october: "October",
+    nov: "November",
+    november: "November",
+    dec: "December",
+    december: "December"
+  };
+  function continuousSkyPlacementDate(value, label) {
+    const match = value.trim().match(/^([A-Za-z]+)\s+(\d{1,2})(?:,\s*(\d{4}))?$/u);
+    const month = match ? SKY_PLACEMENT_MONTHS[match[1].toLowerCase()] : null;
+    if (!match || !month) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement ${label} date ${value}`);
+    }
+    return {
+      body: `${month} ${Number(match[2])}`,
+      year: match[3] ?? null
+    };
+  }
+  function continuousSkyPlacementDateContext(entryDate, exitDate) {
+    const entry = continuousSkyPlacementDate(entryDate, "entry");
+    const exit = continuousSkyPlacementDate(exitDate, "exit");
+    const factLine = entry.year && exit.year ? entry.year === exit.year ? `${entry.body} to ${exit.body}, ${exit.year}` : `${entry.body}, ${entry.year} to ${exit.body}, ${exit.year}` : `${entry.body} to ${exit.body}`;
+    return { entry, exit, factLine };
+  }
+  function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDate, exitDate }) {
+    if (!entryDate || !exitDate) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
+    }
+    const requiredFields = ["fact_line", "opening", "tension", "development", "close"];
+    if (requiredFields.some((field) => typeof signCopy[field] !== "string" || !signCopy[field]?.trim())) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement structure ${planet}/${sign}`);
+    }
+    const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
+    const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title2(sign) };
+    const factLine = dates.factLine;
+    const collective = [signCopy.opening, signCopy.tension, signCopy.development].map((part) => fillKeep(part, ctx));
+    const close = fillKeep(signCopy.close, ctx);
+    const activeAspectMatch = (events ?? []).filter((event) => event.type === "aspect" && Boolean(event.exactDate) && Boolean(event.a) && Boolean(event.b) && [event.a, event.b].includes(planet) && typeof event.aspect === "string" && SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect)).map((event) => {
+      const planets = /* @__PURE__ */ new Set([event.a, event.b]);
+      const unit = (signCopy.aspect_units ?? []).find((candidate) => candidate.aspect === event.aspect && candidate.planets.length === 2 && candidate.planets.every((planetName) => planets.has(planetName)));
+      return unit ? { event, unit } : null;
+    }).find((match) => Boolean(match));
+    let aspectSection = null;
+    let aspectParts = [];
+    if (activeAspectMatch?.event.exactDate) {
+      const exactDate = continuousSkyPlacementDate(activeAspectMatch.event.exactDate, "aspect").body;
+      const aspectCtx = { ...ctx, exactDate };
+      aspectParts = [activeAspectMatch.unit.opportunity, activeAspectMatch.unit.check].map((part) => fillKeep(part, aspectCtx));
+      aspectSection = {
+        kind: "dated-aspect",
+        heading: fillKeep(activeAspectMatch.unit.heading, aspectCtx),
+        body: aspectParts.join("\n\n")
+      };
+    }
+    const moves = Array.isArray(signCopy.try_this) ? signCopy.try_this.map((move) => fillKeep(move, ctx)).slice(0, 3) : [];
+    const parts = [factLine, ...collective, ...aspectParts, close];
+    const articleSections = [
+      { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
+      ...aspectSection ? [aspectSection] : [],
+      { kind: "exit-tone-shift", heading: "", body: close }
+    ];
+    const renderedText = [
+      `${title2(planet)} in ${title2(sign)}`,
+      ...parts,
+      ...moves,
+      ...articleSections.map((section) => section.heading)
+    ].join("\n");
+    if (/\{\{/u.test(renderedText)) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement slots ${planet}/${sign}`);
+    }
+    if (/[\u2013\u2014]/u.test(renderedText)) {
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement dash ${planet}/${sign}`);
+    }
+    if (RETIRED_SUN_IDENTITY_HOOKS.some((hook) => renderedText.includes(hook))) {
+      throw new SourceGapError(`SOURCE_GAP: retired Sun identity hook ${planet}/${sign}`);
+    }
+    for (const transitDate of [dates.entry.body, dates.exit.body]) {
+      if (renderedText.split(transitDate).length - 1 > 2) {
+        throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
+      }
+    }
+    return {
+      headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
+      tagline: null,
+      moves,
+      movesPresentation: "plain",
+      closingCharge: null,
+      keyDates: [],
+      body: parts.join("\n\n"),
+      parts,
+      articleSections,
+      templateKey: "sky-placement-continuous-v2",
+      contentKey: signCopy.contentKey
+    };
+  }
   function renderSkyPlacement({
     planet,
     sign,
@@ -1062,7 +1196,6 @@ ${fogNote}`;
     isRetrograde = false,
     isShadowPhase = false
   }) {
-    const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const retrogradeGuidance = isRetrograde ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you : null;
     if (isRetrograde && !retrogradeGuidance) {
       throw new SourceGapError(`SOURCE_GAP: sky placement retrograde guidance ${planet}/${sign}`);
@@ -1166,12 +1299,27 @@ ${fogNote}`;
         contentKey: authoredArticle.contentKey
       };
     }
+    const signCopyKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
+    const signCopyRow = hooks.get(signCopyKey);
+    const continuousSignCopy = signCopyRow?.render_policy === "sky-placement-continuous-v2" ? signCopyRow : null;
+    if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+      if (!continuousSignCopy) {
+        throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      }
+      return renderContinuousSkyPlacement(continuousSignCopy, {
+        planet,
+        sign,
+        events,
+        entryDate,
+        exitDate
+      });
+    }
+    const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
     const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
     const pairHook = hooks.get(pairKey)?.body_you;
     const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
     const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
-    const signCopyKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
-    const signCopy = hooks.get(signCopyKey)?.body_you;
+    const signCopy = continuousSignCopy?.body_you;
     const signParts = signCopy ? [signCopy] : pairHook && pairLived && pairTurn ? [pairHook, pairLived, pairTurn] : [];
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
     const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
@@ -1543,7 +1691,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-31a";
+var PACKAGE_VERSION = "v3-2026-07-31c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

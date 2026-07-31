@@ -13,6 +13,7 @@ const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architect
 const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
 const placementSentencePositiveTest = "passed-jul29-criteria";
 let packageManifest;
+let continuousFallbackImportManifest;
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -185,11 +186,40 @@ function blockTypeForPackageRecord(contentRole, contentKey) {
   return null;
 }
 
+function isRetiredPlanetInSignModule(contentKey) {
+  const retirement = continuousFallbackImportManifest?.retired_module_rows;
+
+  if (!retirement || !Array.isArray(retirement.key_families)) {
+    return false;
+  }
+
+  const planets = new Set(retirement.planets ?? []);
+
+  return retirement.key_families.some((family) => {
+    const escaped = family.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    const pattern = escaped
+      .replace("\\{planet\\}", `(?:${[...planets].join("|")})`)
+      .replace("\\{sign\\}", "[^/]+")
+      .replace("\\{rest\\}", ".+");
+
+    return new RegExp(`^${pattern}$`, "u").test(contentKey);
+  });
+}
+
 function mapPackageRecord(record, bucket) {
   const contentKey = String(record.contentKey ?? record.content_key ?? "").trim();
 
   if (!contentKey) {
     throw new Error(`V3 ${bucket} row is missing contentKey.`);
+  }
+
+  if (isRetiredPlanetInSignModule(contentKey)) {
+    record = {
+      ...record,
+      review_status: "superseded",
+      render_eligible: false,
+      superseded_by: "sky-placement-continuous-v2"
+    };
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
@@ -325,6 +355,7 @@ function readPackageSources() {
   const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
+  continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
 
   return {
     sourceRows,
@@ -411,6 +442,7 @@ function materializeRows(sources) {
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...(sources.skySignCopySun.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skySignCopySun.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
