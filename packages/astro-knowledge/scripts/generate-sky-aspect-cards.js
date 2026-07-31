@@ -651,12 +651,21 @@ function loadLocalEnv() {
   }
 }
 
-const { resolveActiveRelease } = require("./editorial-model-registry.js");
+const { resolveActiveRelease, resolveCandidateRelease } = require("./editorial-model-registry.js");
+
+function registeredRelease(role, surface) {
+  const candidateReleaseId = String(process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID || "").trim();
+  if (!candidateReleaseId) return resolveActiveRelease({ role, surface });
+  if (role !== "judge" || process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION !== "1") {
+    throw new Error("Candidate model selection is allowed only for an explicitly authorized judge calibration.");
+  }
+  return resolveCandidateRelease({ role, surface, releaseId: candidateReleaseId });
+}
 
 function modelConfig(role = "generation", surface = "default") {
   loadLocalEnv();
   const isJudge = role === "judge";
-  const release = resolveActiveRelease({ role, surface });
+  const release = registeredRelease(role, surface);
   const requested = (isJudge
     ? (
         process.env.CONTENT_JUDGE_PROVIDER
