@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
 import { readdir, readFile, stat } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
+const require = createRequire(import.meta.url);
 
 const scanRoots = [
   "packages/astro-knowledge/data/angles",
@@ -251,6 +253,14 @@ function checkSourceForKnownLeaks({ filePath, source }) {
   return findings;
 }
 
+try {
+  const handledSurface = await runSurfaceVoiceQa(process.argv.slice(2));
+  if (handledSurface) process.exit(process.exitCode ?? 0);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
+
 const allFiles = (await Promise.all(scanRoots.map(collectFiles))).flat().filter(shouldScanFile);
 const allFindings = [];
 let scannedStrings = 0;
@@ -334,4 +344,35 @@ console.log("- Warnings: directional/moralizing phrasing, generic boilerplate, m
 
 if (blockers.length > 0) {
   process.exitCode = 1;
+}
+
+function argumentValue(args, name) {
+  const index = args.indexOf(name);
+  return index >= 0 ? args[index + 1] : null;
+}
+
+async function runSurfaceVoiceQa(args) {
+  const surface = argumentValue(args, "--surface");
+  const contentKey = argumentValue(args, "--content-key");
+  if (!surface && !contentKey) return false;
+
+  const file = argumentValue(args, "--file");
+  if (!file) throw new Error("surface voice QA requires --file <article.md|trio.json>");
+  const filePath = path.resolve(root, file);
+  const source = await readFile(filePath, "utf8");
+  const planet = argumentValue(args, "--planet") || "";
+  const samples = Number(argumentValue(args, "--samples") || 1);
+  const { LONGFORM_SURFACE, resolveSurface, runEditorialVoiceQa } = require("../packages/astro-knowledge/scripts/editorial-voice-router.js");
+  const resolvedSurface = resolveSurface({ surface, contentKey });
+  const input = resolvedSurface === LONGFORM_SURFACE
+    ? { surface: resolvedSurface, contentKey, articleText: source, planet, edition: argumentValue(args, "--edition") || "" }
+    : { surface: resolvedSurface, contentKey, article: JSON.parse(source), planet, sign: argumentValue(args, "--sign") || "" };
+  const result = await runEditorialVoiceQa(input, {
+    withJudge: !args.includes("--lint-only"),
+    ownerVerbatim: args.includes("--owner-verbatim"),
+    samples: Number.isFinite(samples) && samples > 0 ? samples : 1
+  });
+  console.log(JSON.stringify(result, null, 2));
+  process.exitCode = result.gate === "regenerate" ? 2 : result.gate === "human-review" ? 1 : 0;
+  return true;
 }
