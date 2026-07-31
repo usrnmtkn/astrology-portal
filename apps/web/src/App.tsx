@@ -16212,24 +16212,14 @@ function ActiveAspects({
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
             const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
-
-            if (normalized.sections.length === 0) {
-              return null;
-            }
+            const hasInterpretation = normalized.sections.length > 0;
 
             const displaySummary = stripSkyAspectTimingPrefix(
               normalizedSurfacePreview(normalized),
               timing
             );
-
-            return (
-              <button
-                type="button"
-                className="sky-card aspect-row aspect-row-button"
-                key={`${aspect.from}-${aspect.to}`}
-                aria-label={`Read more about ${title}`}
-                onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
-              >
+            const rowContent = (
+              <>
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                 <div className="aspect-row-copy">
                   <h3>{title}</h3>
@@ -16245,7 +16235,27 @@ function ActiveAspects({
                   <span className="aspect-row-dot" aria-hidden="true" />
                   <span>{wholeDegreeOrb(aspect.orb)}</span>
                 </span>
+              </>
+            );
+
+            return hasInterpretation ? (
+              <button
+                type="button"
+                className="sky-card aspect-row aspect-row-button"
+                key={`${aspect.from}-${aspect.to}`}
+                aria-label={`Read more about ${title}`}
+                onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
+              >
+                {rowContent}
               </button>
+            ) : (
+              <article
+                className="sky-card aspect-row aspect-row-static"
+                key={`${aspect.from}-${aspect.to}`}
+                aria-label={`${title}, ${timing.label}, ${wholeDegreeOrb(aspect.orb)} orb`}
+              >
+                {rowContent}
+              </article>
             );
           })}
         </SkyAspectGroup>

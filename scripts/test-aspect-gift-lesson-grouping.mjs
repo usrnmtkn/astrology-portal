@@ -39,6 +39,11 @@ assert.match(appSource, /selectedSynastryAspectGroups = groupAspectsByGiftLesson
 assert.match(appSource, /selectedCompositeAspectGroups = groupAspectsByGiftLesson/);
 assert.match(appSource, /groupFriendNatalAspects[\s\S]*?return groupAspectsByGiftLesson/);
 assert.match(appSource, /function ActiveAspects[\s\S]*?groupAspectsByGiftLesson/);
+const activeAspectsSource = appSource.match(/function ActiveAspects[\s\S]*?(?=\nfunction PlacementTable)/)?.[0] ?? "";
+assert.match(activeAspectsSource, /const hasInterpretation = normalized\.sections\.length > 0/);
+assert.match(activeAspectsSource, /hasInterpretation \? \([\s\S]*?<button[\s\S]*?: \([\s\S]*?<article/);
+assert.match(activeAspectsSource, /className="sky-card aspect-row aspect-row-static"/);
+assert.doesNotMatch(activeAspectsSource, /normalized\.sections\.length === 0[\s\S]*?return null/);
 assert.match(youPageSource, /natalAspectGroups\.map/);
 
 console.log("Aspect gift/lesson grouping contract passed.");
