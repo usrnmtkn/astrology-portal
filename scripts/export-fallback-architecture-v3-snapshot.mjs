@@ -12,8 +12,11 @@ const contentPrefix = process.argv
 
 const outFiles = {
   authored: path.join(packageDir, "source-rows/transit-synastry-rows-v1.json"),
+  lunation: path.join(packageDir, "source-rows/lunation-blend-units-v1.json"),
+  placement: path.join(packageDir, "source-rows/placement-interim-fixes-v1.json"),
   source: path.join(packageDir, "source-rows/fallback-source-rows-v3.json"),
-  templates: path.join(packageDir, "templates/fallback-templates-v3.json")
+  templates: path.join(packageDir, "templates/fallback-templates-v3.json"),
+  weekly: path.join(packageDir, "source-rows/station-cards-week-openers-v1.json")
 };
 
 function unquoteEnvValue(value) {
@@ -139,17 +142,23 @@ function recordWithDashboardEdits(row) {
 
   record.contentKey = row.content_key;
   record.content_role = role || record.content_role;
-  record.review_status = reviewStatus || record.review_status;
+  if (Object.hasOwn(record, "review_status") || role !== "template") {
+    record.review_status = reviewStatus || record.review_status;
+  }
 
-  if (Object.hasOwn(record, "headline") && typeof row.headline === "string" && row.headline.trim()) {
+  if (typeof record.headline === "string" && typeof row.headline === "string" && row.headline.trim()) {
     record.headline = row.headline.trim();
   }
 
   if (role === "fallback_hook") {
     record.body_you = stringFrom(row.body, sections.body_you, record.body_you, record.body);
-    record.body_they = stringFrom(sections.body_they, record.body_they, record.body_you);
+    if (typeof sections.body_they === "string" || typeof record.body_they === "string") {
+      record.body_they = stringFrom(sections.body_they, record.body_they, record.body_you);
+    }
   } else if (role === "template") {
-    record.body = stringFrom(row.body, record.body);
+    if (typeof record.body_you !== "string") {
+      record.body = stringFrom(row.body, record.body);
+    }
     if (typeof sections.body_you === "string" || typeof record.body_you === "string") {
       record.body_you = stringFrom(sections.body_you, record.body_you);
     }
@@ -157,7 +166,9 @@ function recordWithDashboardEdits(row) {
       record.body_they = stringFrom(sections.body_they, record.body_they);
     }
   } else {
-    record.body = stringFrom(row.body, record.body);
+    if (typeof record.body === "string") {
+      record.body = stringFrom(row.body, record.body);
+    }
   }
 
   return record;
@@ -223,11 +234,18 @@ function isInExportScope(row) {
   return !contentPrefix || String(row.contentKey ?? "").startsWith(contentPrefix);
 }
 
-function mergeRowsInExistingOrder(existingRows, exportedRows) {
+function mergeRowsInExistingOrder(existingRows, exportedRows, preservedOverrideKeys = new Set()) {
   const exportedByKey = new Map(exportedRows.map((row) => [row.contentKey, row]));
+  const lastExistingIndexByKey = new Map(existingRows.map((row, index) => [row.contentKey, index]));
   const merged = [];
 
-  for (const existingRow of existingRows) {
+  for (const [index, existingRow] of existingRows.entries()) {
+    if (preservedOverrideKeys.has(existingRow.contentKey)) {
+      merged.push(existingRow);
+      exportedByKey.delete(existingRow.contentKey);
+      continue;
+    }
+
     if (!isInExportScope(existingRow)) {
       merged.push(existingRow);
       exportedByKey.delete(existingRow.contentKey);
@@ -237,6 +255,11 @@ function mergeRowsInExistingOrder(existingRows, exportedRows) {
     const exportedRow = exportedByKey.get(existingRow.contentKey);
 
     if (!exportedRow) {
+      continue;
+    }
+
+    if (lastExistingIndexByKey.get(existingRow.contentKey) !== index) {
+      merged.push(existingRow);
       continue;
     }
 
@@ -251,6 +274,19 @@ function mergeRowsInExistingOrder(existingRows, exportedRows) {
   return [...merged, ...newRows];
 }
 
+function reconcileExistingOverrideRows(existingRows, exportedRows) {
+  const exportedByKey = new Map(exportedRows.map((row) => [row.contentKey, row]));
+
+  return existingRows.flatMap((existingRow) => {
+    if (!isInExportScope(existingRow)) {
+      return [existingRow];
+    }
+
+    const exportedRow = exportedByKey.get(existingRow.contentKey);
+    return exportedRow ? [orderLike(existingRow, exportedRow)] : [];
+  });
+}
+
 function snapshotNote(note, exportedAt) {
   const base = String(note ?? "")
     .replace(/\n\nExported from dashboard\/Supabase on [^;]+; this file is the emergency local snapshot, not the source of truth\.$/u, "")
@@ -262,8 +298,18 @@ function snapshotNote(note, exportedAt) {
 loadLocalWebEnv();
 
 const existingAuthored = readJson(outFiles.authored);
+const existingLunation = readJson(outFiles.lunation);
+const existingPlacement = readJson(outFiles.placement);
 const existingSource = readJson(outFiles.source);
 const existingTemplates = readJson(outFiles.templates);
+const existingWeekly = readJson(outFiles.weekly);
+const authoredOverrideKeys = new Set([
+  ...existingLunation.authoredCards,
+  ...existingWeekly
+].map((row) => row.contentKey));
+const hookOverrideKeys = new Set(existingLunation.hookRows.map((row) => row.contentKey));
+const vocabularyOverrideKeys = new Set(existingPlacement.vocabularyRows.map((row) => row.contentKey));
+const templateOverrideKeys = new Set(existingPlacement.templates.map((row) => row.contentKey));
 const rows = await readDashboardRows();
 const exportedAt = new Date().toISOString();
 
@@ -280,7 +326,7 @@ for (const row of rows) {
 
   if (!record.contentKey || !role) continue;
 
-  if (bucket === "authored-content" && role === "full_copy") {
+  if (bucket === "authored-content") {
     authoredCards.push(record);
   } else if (bucket === "fallback-system" && role === "vocabulary") {
     vocabularyRows.push(record);
@@ -304,23 +350,34 @@ if (!contentPrefix || authoredCards.some(isInExportScope)) {
   writeJson(outFiles.authored, {
     ...existingAuthored,
     note: snapshotNote(existingAuthored.note, exportedAt),
-    authoredCards: mergeRowsInExistingOrder(existingAuthored.authoredCards, authoredCards)
+    authoredCards: mergeRowsInExistingOrder(existingAuthored.authoredCards, authoredCards, authoredOverrideKeys)
   });
 }
+writeJson(outFiles.lunation, {
+  ...existingLunation,
+  authoredCards: reconcileExistingOverrideRows(existingLunation.authoredCards, authoredCards),
+  hookRows: reconcileExistingOverrideRows(existingLunation.hookRows, hookRows)
+});
+writeJson(outFiles.placement, {
+  ...existingPlacement,
+  vocabularyRows: reconcileExistingOverrideRows(existingPlacement.vocabularyRows, vocabularyRows),
+  templates: reconcileExistingOverrideRows(existingPlacement.templates, templates)
+});
 writeJson(outFiles.source, {
   ...existingSource,
   note: snapshotNote(existingSource.note, exportedAt),
-  vocabularyRows: mergeRowsInExistingOrder(existingSource.vocabularyRows, vocabularyRows),
+  vocabularyRows: mergeRowsInExistingOrder(existingSource.vocabularyRows, vocabularyRows, vocabularyOverrideKeys),
   fallbackSourceRows: mergeRowsInExistingOrder(existingSource.fallbackSourceRows, fallbackSourceRows),
-  hookRows: mergeRowsInExistingOrder(existingSource.hookRows, hookRows)
+  hookRows: mergeRowsInExistingOrder(existingSource.hookRows, hookRows, hookOverrideKeys)
 });
 if (!contentPrefix || templates.some(isInExportScope)) {
   writeJson(outFiles.templates, {
     ...existingTemplates,
     note: snapshotNote(existingTemplates.note, exportedAt),
-    templates: mergeRowsInExistingOrder(existingTemplates.templates, templates)
+    templates: mergeRowsInExistingOrder(existingTemplates.templates, templates, templateOverrideKeys)
   });
 }
+writeJson(outFiles.weekly, reconcileExistingOverrideRows(existingWeekly, authoredCards));
 
 console.log(`exported ${rows.length} V3 dashboard rows into local emergency snapshot JSON`);
 console.log(JSON.stringify({
