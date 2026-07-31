@@ -151,6 +151,7 @@ def calculate_profections(request: ProfectionsRequest) -> ProfectionsResponse:
             zodiac=natal_chart.metadata.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,
+            ephemeris=natal_chart.metadata.ephemeris,
         ),
         natal=natal_chart,
         age=age,

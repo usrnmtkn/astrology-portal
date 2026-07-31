@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import List
 
+import swisseph as swe
+
 from tldrastro_api.models import ChartMetadata, NatalChartRequest, NatalChartResponse, Zodiac
 from tldrastro_api.services.chart import (
     CANONICAL_HOUSE_SYSTEM,
@@ -13,6 +15,7 @@ from tldrastro_api.services.chart import (
     julian_day_for,
     resolve_datetime,
 )
+from tldrastro_api.services.ephemeris import ephemeris_provenance
 
 
 def calculate_natal_chart(request: NatalChartRequest) -> NatalChartResponse:
@@ -40,6 +43,7 @@ def calculate_natal_chart(request: NatalChartRequest) -> NatalChartResponse:
             zodiac=subject.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,
+            ephemeris=ephemeris_provenance(swe),
         ),
         subjectName=subject.name,
         positions=positions,
