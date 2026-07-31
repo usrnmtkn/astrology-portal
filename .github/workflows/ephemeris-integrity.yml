@@ -47,12 +47,22 @@ jobs:
         env:
           COMPARISON_OUTCOME: ${{ steps.comparison.outcome }}
           SUMMARY_PATH: artifacts/ephemeris-integrity-summary.md
+          ALERT_LOGINS: ${{ vars.EPHEMERIS_ALERT_LOGINS || github.repository_owner }}
         with:
           script: |
             const fs = require("fs");
             const title = "NASA/JPL ephemeris integrity status";
             const passed = process.env.COMPARISON_OUTCOME === "success";
             const status = passed ? "PASS" : "FAIL";
+            const alertLogins = String(process.env.ALERT_LOGINS || "")
+              .split(/[\s,]+/)
+              .map((login) => login.replace(/^@/, "").trim())
+              .filter(Boolean)
+              .slice(0, 10);
+            const alertMentions = alertLogins.map((login) => `@${login}`).join(" ");
+            const alertMessage = passed || !alertMentions
+              ? ""
+              : `Action required: ${alertMentions} review the failed comparison before the next release.`;
             const summary = fs.existsSync(process.env.SUMMARY_PATH)
               ? fs.readFileSync(process.env.SUMMARY_PATH, "utf8").trim()
               : "The comparison ended before a structured summary was written.";
@@ -64,6 +74,7 @@ jobs:
               "",
               `Latest result: **${status}**`,
               `Latest run: [${context.runId}](${runUrl})`,
+              alertMessage,
               "",
               summary,
               "",
@@ -81,20 +92,23 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title,
-                body
+                body,
+                assignees: passed ? [] : alertLogins
               });
               issue = created.data;
             }
-            await github.rest.issues.update({
+            const update = {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
               body,
               state: passed ? "closed" : "open"
-            });
+            };
+            if (!passed && alertLogins.length) update.assignees = alertLogins;
+            await github.rest.issues.update(update);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: `## ${status} — run ${context.runId}\n\n[Open workflow run](${runUrl})\n\n${summary}`
+              body: `## ${status} — run ${context.runId}\n\n[Open workflow run](${runUrl})\n\n${alertMessage ? `${alertMessage}\n\n` : ""}${summary}`
             });
