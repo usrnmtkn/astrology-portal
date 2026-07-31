@@ -106,6 +106,12 @@ export default defineConfig(({ mode }) => {
             if (id.includes("vite/preload-helper")) {
               return "vendor";
             }
+            if (id.includes("fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json")) {
+              return "fallback-v3-core-content";
+            }
+            if (id.includes("fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json")) {
+              return "fallback-v3-transit-relationships";
+            }
             if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
               if (id.includes("sky-web.json")) {
                 return "astro-knowledge-sky";

@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2026-07-31: Web Bundle Cache Boundaries
+
+- Moved the two largest reviewed fallback-content snapshots out of the main
+  application bundle and into separate core and transit/relationship chunks.
+- Reduced the production application entry from 7.27 MB to 606 KB raw and from
+  1.09 MB to 161 KB gzip, without changing content resolution or synchronous
+  fallback behavior.
+- Added a build-time performance budget that verifies the application entry
+  remains below 800 KB and that both content chunk boundaries remain intact.
+- This release improves browser caching and deployment invalidation. It does
+  not claim a comparable reduction in total first-page bytes because the
+  synchronous fallback resolver still loads both content datasets at startup.
+
 ## 2026-07-31: Station-Boundary Monitoring and Failure Alerts
 
 - Added Mercury fixtures immediately before and after the July 23, 2026 direct
