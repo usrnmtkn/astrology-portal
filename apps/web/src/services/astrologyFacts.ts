@@ -72,8 +72,8 @@ export const ASTROLOGY_CALCULATION_PROVENANCE: AstrologyCalculationProvenance = 
   frame: "geocentric",
   houseSystem: "whole_sign",
   planetHouseSystem: "whole_sign",
-  nodeType: "mean",
-  calculationVersion: "tldrastro-calculation-v1"
+  nodeType: "true",
+  calculationVersion: "tldrastro-calculation-v2"
 };
 
 export function slugFactPart(value: string | number | null | undefined) {
