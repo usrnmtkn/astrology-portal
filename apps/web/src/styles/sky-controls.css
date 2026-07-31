@@ -13,6 +13,28 @@
   min-width: 0;
 }
 
+.sky-cache-notice {
+  grid-column: 2;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  border-radius: var(--button-radius);
+  background: color-mix(in srgb, var(--surface) 88%, var(--ink) 12%);
+  color: var(--ink-2);
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
+.sky-cache-notice strong {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+}
+
+.sky-cache-notice[data-cache-state="stale"] {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
 .sky-intro {
   max-width: var(--container-form);
 }

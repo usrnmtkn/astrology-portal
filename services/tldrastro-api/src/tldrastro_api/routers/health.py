@@ -64,7 +64,7 @@ def ready():
     settings = get_settings()
     status = ephemeris_status(settings.ephemeris_path)
     payload = {
-        "ok": bool(status.get("available")),
+        "ok": bool(status.get("ready")),
         "service": settings.service_name,
         "checkedAt": _checked_at(),
         "ephemeris": status,
@@ -81,7 +81,7 @@ def meta_status():
     settings = get_settings()
     status = ephemeris_status(settings.ephemeris_path)
     return {
-        "ok": bool(status.get("available")),
+        "ok": bool(status.get("ready")),
         **_platform_payload(),
         "ephemeris": status,
         "features": FEATURES,

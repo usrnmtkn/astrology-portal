@@ -110,7 +110,11 @@ If fact validation fails, the endpoint returns `422` with diagnostics and an emp
 - Cache read/write validation failure: structured console diagnostic `[astrology-fact-validation]`; invalid cached snapshot is ignored and invalid fresh snapshot is not written.
 - API validation failure: `422` with structured diagnostics.
 - Content resolver: current retrograde/station resolver requires exact fact/provenance match for supported station/retrograde rows.
-- Last verified fact preservation: not complete. A versioned/timestamped persistence layer for last verified facts still needs implementation before release.
+- Last verified fact preservation: implemented for browser current-sky snapshots
+  only. The cache is schema-versioned, timestamped, fact-validated, isolated by
+  date/location/timezone, capped at 24 entries, and expires after 30 minutes.
+  Natal and relationship calculations still fail closed. Durable server-side
+  fact persistence is not implemented.
 
 ## Developer Diagnostics
 
@@ -143,10 +147,15 @@ node scripts/verify-astrology-integrity.mjs
 
 Latest Horizons-backed run:
 
-- Status: blocked, `PARTIAL_WITH_GAPS` for all seven fixtures.
+- Status: monitoring pass, `PARTIAL_WITH_GAPS` for all ten fixtures.
 - Discrepancies in Horizons-verifiable facts: `0`.
-- Verified facts: 63 planetary positions, 7 Moon positions, 7 Chiron positions, 102 aspects among supported bodies.
-- Unverified facts/gaps: 201, covering nodes, Lilith, angles, house cusps, aspects involving unsupported points, stations, shadow boundaries, and exact hits.
+- Verified facts: 90 planetary positions, 10 Moon positions, 10 Chiron
+  positions, and 134 aspects among supported bodies.
+- Unverified facts/gaps: 351, covering nodes, Lilith, angles, house cusps,
+  aspects involving unsupported points or unsupported aspect types, stations,
+  shadow boundaries, and exact hits.
+- Boundary coverage includes the Sun immediately before and after its 2026
+  Aries ingress and the near-exact 2026 Saturn-Neptune conjunction.
 
 Default behavior:
 

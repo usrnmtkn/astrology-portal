@@ -1,0 +1,41 @@
+name: Ephemeris integrity
+
+on:
+  schedule:
+    - cron: "17 9 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ephemeris-integrity
+  cancel-in-progress: false
+
+jobs:
+  horizons-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TLDR_ASTRO_VERIFY_PROVIDER_COMMAND: node scripts/providers/nasa-horizons-provider.mjs
+      TLDR_ASTRO_VERIFY_REPORT_PATH: artifacts/ephemeris-integrity-report.json
+      TLDR_ASTRO_VERIFY_SUMMARY_PATH: artifacts/ephemeris-integrity-summary.md
+      TLDR_ASTRO_HORIZONS_CACHE: artifacts/horizons-response-cache.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p artifacts
+      - name: Compare TLDR Astro with NASA/JPL Horizons
+        run: npm run qa:ephemeris:horizons
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ephemeris-integrity-report
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
