@@ -189,7 +189,7 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 826, "The package must include 161 approved five-slot articles plus the seven canonical three-slot articles.");
+assert.equal(approvedSkyPlacementRows.length, 840, "The package must include all 168 approved five-slot placement articles.");
 assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
 for (const row of approvedSkyPlacementRows) {
   assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
@@ -278,7 +278,7 @@ assert.match(
 assert.equal(sunLeo.headline, "The Sun in Leo", "Package Sun-in-Leo headline must remain factual.");
 assert.match(
   sunLeo.body,
-  /^You've been running on autopilot through a version of yourself that needs updating\./u,
+  /^Somewhere along the way, you switched to autopilot on a version of yourself that needs updating\./u,
   "Package Sun-in-Leo copy must lead with the memorable voice-first hook."
 );
 assert.doesNotMatch(
@@ -298,8 +298,8 @@ assert.match(
 );
 assert.match(
   sunLeo.body,
-  /That confidence becomes concrete action\. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished\./u,
-  "The computed Sun-conjunction-Jupiter layer must use the approved concrete action copy."
+  /Confidence opens doors hesitation kept locked, and the wins land larger\./u,
+  "The computed Sun-conjunction-Jupiter layer must use the reconciled live copy."
 );
 assert.deepEqual(
   jupiterLeo.parts,
@@ -307,7 +307,7 @@ assert.deepEqual(
     "Jupiter in Leo makes it easier to admit that we want more. Ambition, creativity, and the desire to be recognized step forward instead of staying in the background.",
     "For about a year, we take up more space in the work and choices that carry our name. Creative projects grow, leadership becomes more visible, and recognition matters more openly. Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
     "Ambition is not the problem. Needing an audience to prove the work matters is. When every win needs applause and every response gets measured by enthusiasm, confidence starts promising more than reality can carry. Recognition can confirm the work. It cannot give the work its substance.",
-    "Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum. That confidence becomes concrete action. Pitch the larger project, ask for the title that matches the work you are already doing, or show your work before every edge is polished. Say the ambitious part out loud, then check the budget, timeline, and actual capacity before promising delivery."
+    "Building toward an exact conjunction on July 29, the Sun in Leo and Jupiter in Leo amplify momentum. Confidence opens doors hesitation kept locked, and the wins land larger. Just don't let enthusiasm write checks your execution can't cash. Confidence gets you into the room; substance is what keeps you in it."
   ],
   "Jupiter-in-Leo must preserve the approved three-beat hybrid and append only the computed Sun-conjunction-Jupiter layer."
 );
@@ -323,19 +323,19 @@ assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement arti
 assert.deepEqual(
   lilithSagittarius.parts,
   [
-    "Someone keeps making the same point, louder each time, as though volume can turn belief into proof. Lilith in Sagittarius can bring old shame around belief and being taken seriously into public view. What was once kept quiet may now come out as a speech, a long post, a lecture, or an argument nobody else wanted to have.",
-    "For about nine months, beliefs may become harder to separate from identity. The same opinion keeps returning in meetings, family dinners, classrooms, and public debates. Some people make expensive or risky decisions because they are certain they are right, even when the facts do not support the choice.",
-    "Belief can give someone the courage to speak after years of silence. It can also make them stop listening. Once every question feels disrespectful and every disagreement feels personal, certainty replaces evidence. The more someone needs to be right, the harder it becomes to notice what is happening directly in front of them.",
-    "Building toward an exact square on August 1, Venus in Virgo and Lilith in Sagittarius push against each other. A preference, purchase, or agreement may get pulled into someone else’s moral argument. You may spend too much to make a point, take on more than you can manage, or say yes because saying no feels like choosing a side. Check the price, the timing, and whether you actually want it before agreeing."
+    "Someone won’t shut up about their truth, louder and louder. Lilith in Sagittarius pushes wounded beliefs into the spotlight, like a shout that refuses to be ignored.",
+    "For about nine months, we watch conviction sharpen into a weapon or a banner. Ideas once whispered in shame become the story you hear over and over in meetings, online rants, or at the dinner table. Risky bets get made on faith, not facts, and the louder the certainty, the more fragile the ground beneath it feels.",
+    "The fire that fuels belief can blind us to what’s right in front of us. When the wound owns the message, listening shuts down and arguments replace understanding. The louder the preaching, the less real the healing - and that’s when conviction becomes a cage.",
+    "Building toward an exact square on August 1, Venus in Virgo and Lilith in Sagittarius push against each other. The untamed side and its refusals tug at your wants, and it is easy to overspend, overindulge, or say yes just to keep the peace. Check what you actually want before agreeing."
   ],
   "Lilith-in-Sagittarius must preserve the approved three-beat hybrid and append only the computed Venus-square-Lilith layer."
 );
 assert.deepEqual(
   lilithSagittarius.moves,
   [
-    "Ask someone what changed their mind most recently.",
-    "Write down one belief you defend strongly, then list the evidence that would make you reconsider it.",
-    "When a confident claim gets repeated as fact, ask: “How do you know?”"
+    "Host a debate where every side must state why they changed their mind.",
+    "Write down one belief you defend fiercely - then list what could prove you wrong.",
+    "Challenge a confident claim with a simple question: 'How do you know?'"
   ],
   "Lilith-in-Sagittarius must expose the approved practical moves."
 );
