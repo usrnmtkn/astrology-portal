@@ -171,7 +171,7 @@ async function main() {
   const gaps = [
     {
       category: "nodes",
-      reason: "NASA/JPL Horizons does not return the app's mean lunar node as a target body through this adapter."
+      reason: "NASA/JPL Horizons does not return the app's true lunar node as a target body through this adapter."
     },
     {
       category: "angles",
