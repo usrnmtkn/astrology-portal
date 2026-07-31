@@ -83,7 +83,7 @@ type StoredCalendarPayload = {
   calendar: LunarCalendarMonthData;
 };
 
-function calendarRouteStateFromUrl() {
+function calendarRouteStateFromUrl(fallbackDate: string) {
   try {
     const cleanHash = window.location.hash.replace(/^#\/?/, "");
     const [path = "", query = ""] = cleanHash.split("?");
@@ -98,7 +98,7 @@ function calendarRouteStateFromUrl() {
       : "week";
     const date = rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
       ? rawDate
-      : dateKeyFromDate(new Date());
+      : fallbackDate;
 
     return { view, date };
   } catch {
@@ -1556,7 +1556,10 @@ function locationFromLabel(label: string): LocationInput {
 }
 
 export function LunarCalendar({ location, onLocationChange, generatedContent, onOpenTransit }: LunarCalendarProps) {
-  const initialRouteState = useMemo(() => calendarRouteStateFromUrl(), []);
+  const initialRouteState = useMemo(
+    () => calendarRouteStateFromUrl(todayKey(location.timeZone || "UTC")),
+    [location.timeZone]
+  );
   const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
   const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(initialDateKey));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
@@ -1658,7 +1661,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
 
   useEffect(() => {
     function syncCalendarRoute() {
-      const routeState = calendarRouteStateFromUrl();
+      const routeState = calendarRouteStateFromUrl(todayKey(location.timeZone || "UTC"));
 
       if (!routeState) return;
       setViewMode(routeState.view);
@@ -1674,7 +1677,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
       window.removeEventListener("popstate", syncCalendarRoute);
       window.removeEventListener("hashchange", syncCalendarRoute);
     };
-  }, []);
+  }, [location.timeZone]);
 
   useEffect(() => {
     if (!selectedDateKey) return;
