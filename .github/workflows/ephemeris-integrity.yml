@@ -22,8 +22,8 @@ jobs:
       TLDR_ASTRO_VERIFY_SUMMARY_PATH: artifacts/ephemeris-integrity-summary.md
       TLDR_ASTRO_HORIZONS_CACHE: artifacts/horizons-response-cache.json
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -33,7 +33,7 @@ jobs:
         run: npm run qa:ephemeris:horizons
       - name: Upload verification report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ephemeris-integrity-report
           path: artifacts/

@@ -44,8 +44,8 @@ jobs:
       OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
       ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
