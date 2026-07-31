@@ -2663,10 +2663,12 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               <p>Day by day</p>
             </div>
             <nav className="lunar-weekly-jump" aria-label="Jump to a day">
-              {weeklyDayWriteups.map(({ day }) => (
+              {weeklyDayWriteups.map(({ day, events }) => (
                 <button
                   type="button"
                   key={day.dateKey}
+                  aria-current={day.dateKey === currentDateKey ? "date" : undefined}
+                  data-has-events={events.length > 0 ? "true" : "false"}
                   onClick={() => document.getElementById(`lunar-weekly-${day.dateKey}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
                 >
                   {new Intl.DateTimeFormat("en-US", { timeZone: zone, weekday: "short" }).format(new Date(day.date))}
@@ -2719,7 +2721,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
                             return next;
                           })}
                         >
-                          {isExpanded ? "Hide details" : "Read this day"}
+                          {isExpanded ? "Hide day theme" : "Show day theme"}
                         </button>
                       )}
 
@@ -2744,7 +2746,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
 
                           {showGuidance && guidance?.body && (
                             <section className="lunar-weekly-day__guidance" data-guidance-source={guidance.source}>
-                              <p>{guidance.headline}</p>
+                              <p>Day theme</p>
                               <div>{guidance.body}</div>
                             </section>
                           )}

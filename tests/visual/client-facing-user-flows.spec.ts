@@ -1368,6 +1368,10 @@ test.describe("client-facing user flow case studies", () => {
     expect(overlappingCards, "Weekly event write-ups and Moon guidance do not overlap").toBe(0);
     const moonGuidanceBlocks = weeklyView.locator(".lunar-weekly-day__guidance");
     expect(await moonGuidanceBlocks.count()).toBeGreaterThan(1);
+    await expect(moonGuidanceBlocks.locator(":scope > p")).toHaveText(
+      Array(await moonGuidanceBlocks.count()).fill("Day theme")
+    );
+    await expect(weeklyView.getByText(/Weekly Moon:/i)).toHaveCount(0);
     const moonGuidance = await moonGuidanceBlocks.locator("div").allTextContents();
     expect(new Set(moonGuidance).size, "Weekly guidance does not repeat").toBe(moonGuidance.length);
     await captureResponsiveSurface(page, "desktop", "calendar-week");
@@ -1497,7 +1501,7 @@ test.describe("client-facing user flow case studies", () => {
 
     const selectedDay = page.getByLabel("Selected lunar day");
     const aspectDay = page.getByLabel("Selected week").getByRole("button", {
-      name: /^Full Moon\. Moon in Aquarius\. Venus square Mars/
+      name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
     });
     await aspectDay.click();
     await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
