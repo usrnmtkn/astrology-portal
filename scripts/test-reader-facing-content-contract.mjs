@@ -61,6 +61,28 @@ const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const lunarDayResolver = read("apps/web/src/features/calendar/lunarDayResolver.ts");
 const fallbackHookRows = fallbackSourceRowsV3.hookRows ?? [];
 
+const relationshipRows = [
+  ...(fallbackSourceRowsV3.hookRows ?? []),
+  ...(fallbackSourceRowsV3.vocabularyRows ?? []),
+  ...(transitSynastryRowsV1.authoredCards ?? [])
+].filter((row) => (
+  /(?:synastry|compat|bond|circle)/iu.test(`${row.surface ?? ""} ${row.contentKey ?? ""}`)
+));
+for (const row of relationshipRows) {
+  for (const field of ["body", "body_you", "body_they", "body_sky"]) {
+    const body = String(row[field] ?? "");
+    const withoutLicensedRolodexSense = body.replaceAll(
+      "Shortcuts, contacts, been-there calm",
+      ""
+    );
+    assert.doesNotMatch(
+      withoutLicensedRolodexSense,
+      /\bcontacts?\b/iu,
+      `${row.contentKey}.${field} must say connection, not contact, on relationship surfaces.`
+    );
+  }
+}
+
 const readerServingFiles = {
   "apps/web/src/App.tsx": app,
   "apps/web/src/features/you/YouPage.tsx": youPage,

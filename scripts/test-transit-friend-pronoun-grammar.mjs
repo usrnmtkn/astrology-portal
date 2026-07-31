@@ -36,6 +36,11 @@ assert.ok(
   ),
   "Pronoun grammar review must retain teeth for object-position `they`."
 );
+assert.equal(
+  friendVoiceFromReaderCopy("Someone keeps cheering you up.", "Sofia"),
+  "Someone keeps cheering Sofia up.",
+  "Object-position reader references in phrasal verbs must use the friend object form."
+);
 
 for (const row of transitAspectRows) {
   const friendBody = friendVoiceFromReaderCopy(row.body_you ?? row.body, "Sofia");
