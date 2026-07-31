@@ -5,6 +5,18 @@ trios are authored and approved; the rest render generic fallback. This
 pipeline authors the remaining cells the same way the sky-aspect cards scale:
 generate -> lint -> judge -> gate, with the seven owner trios as ground truth.
 
+## Two-judge Sky voice split
+
+The Sky pipeline has two deliberately separate placement judges, and both run
+only after their mechanical linter. `judge-placement-voice.js` with
+`sky-placement.json` owns only slot-tier placement pages assembled from the
+hook/lived/turn trio (plus their optional tagline and moves); it never scores
+long-form prose. `judge-article-voice.js` with `sky-article-longform.json` owns
+only `sky-article-template/*`, `sky-article/*`, and nodes-article editions; it
+never scores cards or placement trios. `editorial-voice-router.js` enforces
+that boundary and passes the article planet through to the long-form judge so
+its per-planet furniture check is active.
+
 ## Article structure (owner's CHANI models, 2026-07-27)
 
 The owner supplied two CHANI pages as STRUCTURAL models (Sun-in-Leo horoscopes,

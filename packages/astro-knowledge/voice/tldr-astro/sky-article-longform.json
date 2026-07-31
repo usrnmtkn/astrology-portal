@@ -1,0 +1,58 @@
+{
+  "id": "sky-article-longform-v1",
+  "surface": "sky-article-longform",
+  "mode": "judge",
+  "purpose": "The second judge. Scores the long-form sky placement articles (ingress editions, station editions, nodes articles): the authored layer that serves above the slot-tier placement pages. The slot-tier judge (sky-placement.json + judge-placement-voice.js) never scores these; this judge never scores cards or hook/lived/turn trios.",
+  "voiceDescription": "Marie Satori's article voice: a wise, direct friend who has done her homework. Opens on the reader's felt experience before any astronomy, speaks in second person, cashes every abstraction into concrete daily life (mold in the house, the text getting misread), corrects one common confusion plainly, and closes on a benediction or a warm handoff, never a summary. Never corporate, never academic, never mystical for effect.",
+  "person": "second",
+  "secondPersonAllowed": true,
+  "questionsAllowed": true,
+  "firstPersonAsideAllowed": "one per article at most, in the owner's register (\"Look, I'll be honest with you\")",
+  "licensedOnThisSurface": [
+    "second person throughout",
+    "real questions",
+    "contractions",
+    "length: a block can run ten sentences if every one earns its place",
+    "challenge/opportunity block closes (owner's own construction)"
+  ],
+  "checks": [
+    { "id": "empathy-first", "rule": "Opens on the reader's felt experience before any astronomy. The owner spends a paragraph to a page on the feeling before a single planet is named. Model sentence: 'It's tiring to keep up with a world that changes the rules mid-sentence.' If the body opens with the cosmos, fail this check. The seasonOpener slot does not count." },
+    { "id": "spoken-not-written", "rule": "The middle third read aloud sounds like her across a table. Think-tank, consultancy, or seminar phrasing fails ('the credentialing of knowledge contested' was a real failure)." },
+    { "id": "maybe-lists", "rule": "At least one concrete Maybe-list or scene-run cashing the abstractions into real life: 'Maybe it was a job loss or a company re-org. Maybe your living situation no longer fit... even something like mold in the house, or flood.'" },
+    { "id": "command-runs", "rule": "Two or three imperatives in a row, then release ('Stop saying yes before you've thought it through. Stop filling every silence with your voice.'). Expected in Mars, Uranus, and Saturn territory; optional elsewhere." },
+    { "id": "per-planet-furniture", "rule": "Each planet's articles inherit the structure of THAT planet's published piece, never another's. See perPlanetFurniture." },
+    { "id": "teaching-correction", "rule": "At least one plain correction of a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An article that never corrects anything is describing, not teaching." },
+    { "id": "benediction-close", "rule": "The body ends warm and forward: a benediction ('May we each find the courage...'), an affirmation with the owner's label, or the next-sign handoff. Never a summary paragraph." },
+    { "id": "block-shape", "rule": "Rising blocks run situation-permission: house in life terms, the reader's pattern named kindly, the concrete instruction, the permission, stop. No aphorism after the permission." },
+    { "id": "dates-in-prose", "rule": "Dates read as sentences in body copy (Key Dates lists are the licensed exception). Degrees appear at stations. History claims are checkable and marked pending engine confirmation until confirmed." },
+    { "id": "lint-clean", "rule": "Lexicon fails and warns plus House ban list trade vocabulary (audit, ledger, compound, colonize) all clear. Owner-verbatim text outranks any hit. Mechanical; run the linter, not the judge." }
+  ],
+  "perPlanetFurniture": {
+    "jupiter": "titled Collective Themes subsections, a practice section in the witchcraft register, Key Dates with month + exact date + consequence, the closing year-character pair",
+    "saturn": "first-person aside, co-transit section with history, dated aspect hits placed per house inside blocks, mythology closes in blocks, the inheritance formula",
+    "uranus": "flowing prose without titled subsections, look-back questions, Previous Transits date lists, journal prompts, both-houses blocks when a retrograde spans two signs",
+    "neptune": "provisional: flowing prose until an owner piece exists",
+    "pluto": "provisional: flowing prose until an owner piece exists",
+    "chiron": "provisional: flowing prose until an owner piece exists",
+    "nodes": "the nodes template's fixed prose and owner-authored close, twelve NN/SN house-pair blocks with the eighteen-month eclipse arc",
+    "sun|mercury|venus|mars": "the fast-mover template: seasonContext, ingress, trap, gift with the permission run, mantra ('It may help to say this part out loud'), dated aspect sections, exit handoff, twelve blocks"
+  },
+  "scores": {
+    "3": "in voice: yes across all ten checks. Gate: auto-publish.",
+    "2": "minor drift: one or two checks soft (a stiff paragraph, a missing Maybe-list, genre furniture in one section). Gate: human-review.",
+    "1": "out of voice: empathy-first missing, think-tank register in the body, wrong planet's furniture, or any unaddressed fail-word. Gate: regenerate."
+  },
+  "calibration": {
+    "note": "The owner's published pieces score 3 by definition. If a change to this spec makes an owner piece score below 3, the change is wrong, not the piece.",
+    "ownerPieces": [
+      "Mercury Enters Virgo",
+      "Venus in Cancer 2025",
+      "Venus in Virgo 2025",
+      "Relationship Year: Venus in Libra 2025 to Venus Rx 2026",
+      "Saturn enters Aries 2025",
+      "What Jupiter in Cancer Means for Your Sign",
+      "Uranus direct in Taurus 2025",
+      "Uranus Rx in Gemini"
+    ]
+  }
+}
