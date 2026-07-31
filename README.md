@@ -35,6 +35,11 @@ Horizons. Its latest status and dated history are persisted in a GitHub monitor
 issue, and the `nasa-jpl-freshness` release check rejects a pull request when
 the newest main-branch comparison failed or is more than 36 hours old.
 
+The daily monitor assigns and mentions the configured GitHub alert recipients
+when a comparison fails. Set the repository Actions variable
+`EPHEMERIS_ALERT_LOGINS` to a comma-separated list of GitHub usernames; when it
+is unset, the repository owner receives the alert.
+
 The Settings screen repeats the calculation-method statement for readers. In
 development, or when `VITE_ASTRO_DIAGNOSTICS=true`, the Sky screen also exposes
 a collapsed diagnostic with the calculation timestamp, timezone, engine and
