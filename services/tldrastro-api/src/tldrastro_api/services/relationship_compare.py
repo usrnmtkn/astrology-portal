@@ -13,6 +13,7 @@ from tldrastro_api.models import (
 )
 from tldrastro_api.services.chart import CANONICAL_HOUSE_SYSTEM
 from tldrastro_api.services.composite import calculate_composite
+from tldrastro_api.services.ephemeris import merge_ephemeris_provenance
 from tldrastro_api.services.relationship_facts import relationship_facts
 from tldrastro_api.services.synastry import calculate_synastry
 
@@ -109,6 +110,10 @@ def calculate_relationship_compare(request: RelationshipCompareRequest) -> Relat
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
+            ephemeris=merge_ephemeris_provenance(
+                synastry.metadata.ephemeris,
+                composite.metadata.ephemeris,
+            ),
         ),
         app=_app_contract(themes, facts),
         synastry=synastry,

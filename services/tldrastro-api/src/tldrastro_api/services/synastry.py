@@ -19,6 +19,7 @@ from tldrastro_api.services.chart import (
     aspect_orbs,
     house_for_longitude,
 )
+from tldrastro_api.services.ephemeris import merge_ephemeris_provenance
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.relationship_facts import house_overlay_fact, synastry_contact_fact
 
@@ -259,6 +260,10 @@ def calculate_synastry(request: SynastryRequest) -> SynastryResponse:
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
+            ephemeris=merge_ephemeris_provenance(
+                person_a.metadata.ephemeris,
+                person_b.metadata.ephemeris,
+            ),
         ),
         app=_app_contract(contacts, overlays, content_facts),
         personA=person_a,
