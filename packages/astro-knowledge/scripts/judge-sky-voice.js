@@ -154,12 +154,16 @@ const { runJudgeSamples } = require("./editorial-judge-runtime.js");
 const JUDGE_TEMPERATURE = 0.1;
 
 function judgeConfig() {
-  const config = configuredJudge();
+  const config = configuredJudge("sky-aspect");
 
   return {
     provider: config.provider,
     model: config.model,
-    temperature: JUDGE_TEMPERATURE
+    temperature: JUDGE_TEMPERATURE,
+    releaseId: config.releaseId,
+    registryVersion: config.registryVersion,
+    laneId: config.laneId,
+    registryOverride: config.registryOverride
   };
 }
 

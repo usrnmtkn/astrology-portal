@@ -19,6 +19,41 @@ variables remain supported.
 | Judging | `CONTENT_JUDGE_PROVIDER` | `OPENAI_JUDGE_MODEL`, `OPENAI_JUDGE_API_KEY` | `ANTHROPIC_JUDGE_MODEL`, `ANTHROPIC_JUDGE_API_KEY` |
 
 The older `OPENAI_MODEL` and `ANTHROPIC_MODEL` variables remain fallbacks.
+When these variables override a registered release, the audit record sets
+`registryOverride: true`; the experiment is not silently treated as promoted.
+
+## Model registry and promotion
+
+Active runtime defaults come from
+[`config/editorial-model-registry.json`](../config/editorial-model-registry.json).
+The registry keeps separate lanes by role and editorial surface. Each lane has
+one active release and optional candidate and rollback releases.
+
+```sh
+npm run model-registry:validate
+npm run model-registry:status
+npm run test:model-registry
+```
+
+Staging a candidate never changes the active release. Promotion requires a
+passing calibration report that identifies the staged release, meets the
+minimum approved-versus-weak separation, and contains no disagreement:
+
+```sh
+node scripts/manage-editorial-model-registry.js stage \
+  --lane judge:sky-article-longform \
+  --release-file /approved/admin/candidate-release.json
+
+TLDR_ALLOW_MODEL_PROMOTION=1 \
+node scripts/manage-editorial-model-registry.js promote \
+  --lane judge:sky-article-longform \
+  --calibration-report /approved/admin/calibration-report.json \
+  --approved-by editor@example
+```
+
+Promotion moves the prior active release to the rollback slot and records the
+approver plus a SHA-256 of the calibration report. Rollback is also an explicit
+human-authorized action and uses the same environment gate.
 
 ## Authorization and privacy
 
@@ -79,10 +114,12 @@ the calibration to human review.
 
 Each live verdict appends a local JSONL audit record under
 `out/editorial-judge-audit/`. Records include the model/provider, temperature,
-prompt version and SHA-256, rubric version and SHA-256, content SHA-256, sample
-scores and verdict labels, privacy mode, redaction count, and disagreement
-status. Raw prompts, raw model outputs, and proprietary content are deliberately
-excluded from the audit log; their hashes provide traceability.
+registry release/lane/version, evaluation-set version, policy version, override
+status, prompt version and SHA-256, rubric version and SHA-256, content SHA-256,
+sample scores and verdict labels, privacy mode, redaction count, and
+disagreement status. Raw prompts, raw model outputs, and proprietary content
+are deliberately excluded from the audit log; their hashes provide
+traceability.
 
 ## Publication policy
 

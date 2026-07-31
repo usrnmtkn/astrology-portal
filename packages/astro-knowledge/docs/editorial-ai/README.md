@@ -76,7 +76,7 @@ Model-independent does not mean pretending every model responds identically to
 one prompt. Models differ in instruction following, verbosity, style, factual
 discipline, latency, and cost.
 
-The recommended structure is:
+The implemented structure is:
 
 1. An owned canonical prompt and rubric define the product contract.
 2. A small model-specific overlay may adjust formatting or instruction order.
@@ -157,21 +157,31 @@ environment variables, commands, and audit fields.
 Do not replace a production model by editing one default and hoping the writing
 still works.
 
-1. Choose a candidate generator or judge model.
-2. Give it a candidate configuration without changing the active production
-   configuration.
+1. Choose a candidate generator or judge model and create a complete release
+   JSON file.
+2. Stage it in the appropriate registry lane without changing the active
+   release.
 3. Run the offline contract and fixture-integrity tests.
 4. Run the explicitly authorized live calibration against approved examples,
    weak controls, and held-out examples.
 5. Compare factual additions, voice scores, disagreement rate, latency, and
    cost with the current model.
 6. Have a human review representative outputs and approve or reject promotion.
-7. Promote the complete release unit, not only the model string.
+7. Promote the complete release unit using an explicitly authorized admin or
+   CI action and a passing calibration report.
 8. Keep the previous release unit available for rollback.
 
-The recommended next infrastructure step is a versioned model registry and
-promotion manifest. It should record candidate, active, and rollback releases.
-That registry is not yet implemented.
+The versioned registry is
+[`config/editorial-model-registry.json`](../../config/editorial-model-registry.json).
+Each surface lane records active, candidate, rollback, and promotion history.
+The active release supplies runtime defaults; protected environment variables
+may override it for an experiment, and the verdict audit marks that override.
+
+Promotion is deliberately stronger than editing a model string. It requires a
+staged candidate, a passing calibration report for that release, no sample
+disagreement, the minimum approved-versus-weak separation, a named approver,
+and `TLDR_ALLOW_MODEL_PROMOTION=1`. The previous active release becomes the
+rollback release automatically.
 
 ## Rules for coding agents
 
@@ -202,6 +212,9 @@ Agents working in this repository must follow these rules:
 | Generator and model adapters | `scripts/generate-sky-aspect-cards.js` |
 | Shared judge authorization/audit runtime | `scripts/editorial-judge-runtime.js` |
 | Publication recommendation policy | `scripts/editorial-judge-policy.js` |
+| Model registry and release manifest | `config/editorial-model-registry.json` |
+| Registry administration | `scripts/manage-editorial-model-registry.js` |
+| Registry contracts | `scripts/test-editorial-model-registry.js` |
 | Surface-specific judges | `scripts/judge-*-voice.js` |
 | Approved long-form examples | `voice/tldr-astro/fixtures/sky-article-longform/` |
 | Weak long-form controls | `voice/tldr-astro/fixtures/sky-article-longform/weak-controls/` |
@@ -216,8 +229,44 @@ Run offline verification without sending content to a provider:
 cd packages/astro-knowledge
 npm run test:article-voice-routing
 npm run test:article-judge-calibration
+npm run test:model-registry
+npm run model-registry:validate
 npm run test:private-model-data
 npm run validate
+```
+
+Inspect active, candidate, and rollback releases:
+
+```sh
+npm run model-registry:status
+```
+
+Stage a complete candidate release without changing live behavior:
+
+```sh
+node scripts/manage-editorial-model-registry.js stage \
+  --lane judge:sky-article-longform \
+  --release-file /approved/admin/candidate-release.json
+```
+
+After live calibration and human review, promotion is an explicitly authorized
+admin/CI operation:
+
+```sh
+TLDR_ALLOW_MODEL_PROMOTION=1 \
+node scripts/manage-editorial-model-registry.js promote \
+  --lane judge:sky-article-longform \
+  --calibration-report /approved/admin/calibration-report.json \
+  --approved-by editor@example
+```
+
+Rollback uses the same authorization requirement:
+
+```sh
+TLDR_ALLOW_MODEL_PROMOTION=1 \
+node scripts/manage-editorial-model-registry.js rollback \
+  --lane judge:sky-article-longform \
+  --approved-by editor@example
 ```
 
 Run live calibration only from an authorized private CI/admin environment:
@@ -233,9 +282,10 @@ The other authorized calibration commands are documented in
 
 ## Current status
 
-The model-swappable judge boundary, authorization gate, audit metadata,
-approved/weak calibration controls, disagreement routing, privacy controls, and
-human publication gate are implemented.
+The model-swappable judge boundary, versioned registry, candidate/promotion/
+rollback workflow, authorization gates, audit metadata, approved/weak
+calibration controls, disagreement routing, privacy controls, and human
+publication gate are implemented.
 
 The private fine-tuning dataset pipeline is also scaffolded, but the current
 long-form dataset is not large enough to train. Its validator requires at least
