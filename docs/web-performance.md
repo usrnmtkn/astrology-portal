@@ -17,6 +17,10 @@ installed when You, Calendar, Friends, or another non-Sky route activates it.
 A dashboard-installed full package always wins a race with the local deferred
 bundle.
 
+The Lunar Calendar stylesheet follows its lazy route instead of blocking the
+initial Sky render. Route-owned CSS must be imported by the route module so its
+styles arrive before the feature is revealed from `Suspense`.
+
 The generated manifest retains all 7,175 governed package keys, hashes, and the
 package version without importing the 3.2 MB transit source snapshot. Run
 `npm run build:fallback-manifest` after an intentional fallback-package content
@@ -46,14 +50,15 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 879.7 kB |
+| Reader boot, including awaited CSS | 870.6 kB |
 | Static App JavaScript graph | 815.5 kB |
-| Reader startup CSS | 64.3 kB |
+| Reader startup CSS | 55.1 kB |
 | App code chunk | 159.3 kB |
 
-The governed domain split reduced reader boot from 1.34 MB to 879.7 kB gzip,
-about 34%. The 488 kB transit/relationship chunk remains available on demand
-but is prohibited from re-entering the static App graph by the budget check.
+The governed domain split and Calendar CSS boundary reduced reader boot from
+1.34 MB to 870.6 kB gzip, about 35%. The 488 kB transit/relationship chunk
+remains available on demand but is prohibited from re-entering the static App
+graph by the budget check.
 
 Budgets live in `scripts/web-bundle-budgets.json` and run in the visual-smoke
 workflow. Raise a budget only with an intentional, documented product change.

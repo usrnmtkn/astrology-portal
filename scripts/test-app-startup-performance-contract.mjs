@@ -8,6 +8,8 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
+const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
+const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
   "utf8"
@@ -27,6 +29,16 @@ assert.match(
   fallbackRuntimeSource,
   /import\("\.\/fallbackArchitectureV3DeferredBundle"\)/u,
   "Transit and relationship content must remain behind a dynamic runtime boundary."
+);
+assert.doesNotMatch(
+  readerStylesSource,
+  /lunar-calendar\.css/u,
+  "Calendar-only CSS must not remain in the reader startup stylesheet."
+);
+assert.match(
+  calendarRouteSource,
+  /import "\.\.\/styles\/lunar-calendar\.css";/u,
+  "The lazy Calendar route must own its stylesheet."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
