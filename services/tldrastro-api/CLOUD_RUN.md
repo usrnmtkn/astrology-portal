@@ -100,6 +100,9 @@ The build will:
 - deploy Cloud Run with `/ready` as its startup probe
 - set the Cloud Run container port to `8000`
 - mount the Swiss Ephemeris bucket read-only at `/opt/swisseph`
+- reuse the stable `swisseph-data` volume and mount names on every deployment,
+  so repeated deploys update the existing mount instead of accumulating
+  anonymous orphan volumes
 - set `TLDR_ASTRO_EPHEMERIS_PATH=/opt/swisseph`
 
 After the first deploy, attach the Google Time Zone API key secret to Cloud Run:
