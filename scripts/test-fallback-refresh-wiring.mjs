@@ -26,6 +26,7 @@ const templates = readPackageJson("templates/fallback-templates-v3.json");
 const placementInterimRows = readPackageJson("source-rows/placement-interim-fixes-v1.json");
 const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.json");
 const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
+const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
@@ -41,7 +42,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-07-31c");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-01a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -675,6 +676,7 @@ try {
         ...lunationBlendRows.hookRows,
         ...bondLanguagePass2.rows,
         ...skyArticleRows.hookRows,
+        ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows
       ],
