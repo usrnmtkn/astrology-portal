@@ -205,7 +205,10 @@ import {
   listCachedManualCharts,
   listLocalManualChartUserIds,
   listManualCharts,
+  manualChartNeedsBirthTime,
+  manualChartNeedsNatalRepair,
   migrateLocalManualChartsToRemote,
+  resolvedManualChartBirthLocationForRepair,
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
@@ -266,7 +269,6 @@ import {
   compareRelationship,
   getPersonalTiming,
   isTldrAstroApiConfigured,
-  resolveTimezone,
   type RelationshipCompareResponse,
   type TldrAstroChartSettings,
   type TldrAstroSubject,
@@ -3671,39 +3673,6 @@ function manualChartBigThree(chart: ManualChart) {
   return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
 }
 
-async function resolvedManualChartBirthLocationForRepair(chart: ManualChart) {
-  if (isTldrAstroApiConfigured) {
-    try {
-      const response = await resolveTimezone({
-        latitude: chart.birthLocation.latitude,
-        longitude: chart.birthLocation.longitude,
-        date: chart.birthDate,
-        time: chart.birthTime ?? "12:00"
-      });
-
-      if (response.source !== "fallback" && response.timeZone) {
-        return {
-          ...chart.birthLocation,
-          timeZone: response.timeZone
-        };
-      }
-    } catch {
-      // If the API cannot resolve coordinates, do not guess a birth-chart timezone locally.
-    }
-  }
-
-  return chart.birthLocation.timeZone ? chart.birthLocation : null;
-}
-
-function manualChartNeedsNatalRepair(chart: ManualChart) {
-  if (chart.birthTimeUnknown || !chart.birthTime || !chart.birthDate || !chart.birthLocation) {
-    return false;
-  }
-
-  // Complete charts should not trigger background timezone/natal API repair on page load.
-  return !chart.natalChart || !chart.birthLocation.timeZone;
-}
-
 const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
 
 function isSocialBigThreeRow(row: SocialPlacementRow) {
@@ -3741,10 +3710,6 @@ function manualChartSubtitle(chart: ManualChart) {
   const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
 
   return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
-}
-
-function manualChartNeedsBirthTime(chart: ManualChart) {
-  return chart.chartType !== "event" && (chart.birthTimeUnknown || !chart.birthTime);
 }
 
 function nextManualChartBirthday(chart: ManualChart, currentDateValue: string) {
