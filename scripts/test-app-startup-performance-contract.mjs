@@ -10,6 +10,7 @@ const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"),
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
+const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -74,6 +75,16 @@ assert.match(
   calendarRouteSource,
   /import "\.\.\/styles\/lunar-calendar\.css";/u,
   "The lazy Calendar route must own its stylesheet."
+);
+assert.doesNotMatch(
+  readerStylesSource,
+  /friends-route\.css/u,
+  "Friends-only CSS must not remain in the reader startup stylesheet."
+);
+assert.match(
+  friendsRouteSource,
+  /import "\.\.\/styles\/friends-route\.css";/u,
+  "The lazy Friends route must own its production layout stylesheet."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,

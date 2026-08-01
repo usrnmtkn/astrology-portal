@@ -1,8 +1,8 @@
 {
   "appBootGzipBytes": 535000,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 590000,
-  "readerInitialCssGzipBytes": 58000,
+  "readerBootGzipBytes": 585000,
+  "readerInitialCssGzipBytes": 53000,
   "largestJavaScriptGzipBytes": 520000,
   "totalCssGzipBytes": 105000,
   "totalJavaScriptGzipBytes": 2600000
