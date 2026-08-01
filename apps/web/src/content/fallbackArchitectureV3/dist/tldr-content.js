@@ -898,6 +898,27 @@ ${fogNote}`;
     const eff = fill(raw, { natalArea: area });
     return eff.charAt(0).toLowerCase() + eff.slice(1) + ".";
   }
+  function reviewedSkyAspectRow({ a, b, aspect, aSign, bSign }) {
+    const group = GROUP[aspect] ?? aspect;
+    const candidates = [];
+    if (aSign && bSign) {
+      candidates.push(
+        `fallback-hook/sky-aspect-sign/${a}/${aSign}/${aspect}/${b}/${bSign}`,
+        `fallback-hook/sky-aspect-sign/${b}/${bSign}/${aspect}/${a}/${aSign}`
+      );
+    }
+    candidates.push(
+      `fallback-hook/sky-aspect-exact/${a}/${aspect}/${b}`,
+      `fallback-hook/sky-aspect-exact/${b}/${aspect}/${a}`,
+      `fallback-hook/sky-aspect-pair/${a}/${b}/${group}`,
+      `fallback-hook/sky-aspect-pair/${b}/${a}/${group}`
+    );
+    for (const key of candidates) {
+      const row = hooks.get(key);
+      if (row?.body_you) return row;
+    }
+    return null;
+  }
   function eventCtx(ev) {
     return {
       dateLine: ev.dateLine,
@@ -1034,13 +1055,20 @@ ${fogNote}`;
       return fullMoonBody;
     }
     const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
+    const reviewed = reviewedSkyAspectRow({
+      a: ev.a,
+      b: ev.b,
+      aspect: ev.aspect,
+      aSign: ev.aSign,
+      bSign: ev.bSign
+    })?.body_you;
     const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
     const bRef = transitRef(ev.b, ev.bSign);
     const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
     const timing = ev.exactDate ? { exact: true, label: ev.exactDate } : ev.dateLine ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) } : null;
     if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
     const fact = frame(aRef, bRef, timing);
-    const effect = specific ?? pairEffectOf(ev);
+    const effect = reviewed ?? specific ?? pairEffectOf(ev);
     if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
@@ -1506,6 +1534,16 @@ ${fogNote}`;
     return { headline: `Weekly Moon: ${title2(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
   }
   function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
+    const reviewed = reviewedSkyAspectRow({ a, b, aspect, aSign, bSign });
+    if (reviewed) {
+      return {
+        headline: `${title2(a)} ${title2(aspect)} ${title2(b)}`,
+        body: reviewed.body_you,
+        parts: [reviewed.body_you],
+        templateKey: reviewed.contentKey,
+        contentKey: reviewed.contentKey
+      };
+    }
     const g = GROUP[aspect] ?? aspect;
     const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
     if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
@@ -1691,7 +1729,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-07-31c";
+var PACKAGE_VERSION = "v3-2026-08-01a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
