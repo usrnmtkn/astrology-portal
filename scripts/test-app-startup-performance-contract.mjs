@@ -9,6 +9,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
+const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
@@ -95,6 +96,11 @@ assert.match(
   friendsRouteSource,
   /import "\.\.\/styles\/friends-compare-picker\.css";/u,
   "The lazy Friends route must own its comparison picker stylesheet."
+);
+assert.doesNotMatch(
+  friendsStylesSource,
+  /\.social-(?:friends-panel|finder-card|people-list|person-row|friend-row|invite-form|search-skeleton)\b/u,
+  "Retired social-card selectors must not return to the eager Friends/profile stylesheet."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
