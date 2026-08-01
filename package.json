@@ -61,6 +61,7 @@
     "test:natal-aspect-pattern-unknown-time": "node scripts/test-natal-aspect-pattern-unknown-time.mjs",
     "test:phone-auth": "node --experimental-strip-types scripts/test-phone-auth-normalization.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
+    "content:materialize-moon-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs --planet=moon --status=LIVE",
     "content:materialize-fallback-v3": "node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs",
     "content:import-sky-placement-v2": "node scripts/import-sky-placement-continuous-v2.mjs",
     "content:verify-fallback-v3": "node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs --verify",
