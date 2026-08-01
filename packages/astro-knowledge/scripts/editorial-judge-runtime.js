@@ -91,7 +91,8 @@ async function runJudgeSamples({
     }
   }
 
-  const fn = judgeFn || ((value) => generateJudge(value, { temperature }));
+  const modelSurface = context.modelSurface || context.surface || "default";
+  const fn = judgeFn || ((value) => generateJudge(value, { temperature, surface: modelSurface }));
   const count = Math.max(1, Number(samples) || 1);
   const verdicts = [];
   for (let i = 0; i < count; i += 1) {
@@ -119,6 +120,7 @@ async function runJudgeSamples({
     registryOverride: Boolean(config.registryOverride),
     evaluationSetVersion: config.evaluationSetVersion || null,
     policyVersion: config.policyVersion || null,
+    reasoningEffort: config.reasoningEffort || null,
     temperature,
     samples: count,
     scores,

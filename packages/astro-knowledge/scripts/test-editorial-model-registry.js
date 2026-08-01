@@ -20,6 +20,10 @@ const originalJudgeProvider = process.env.CONTENT_JUDGE_PROVIDER;
 const originalJudgeModel = process.env.OPENAI_JUDGE_MODEL;
 const originalCandidateReleaseId = process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID;
 const originalCalibrationAuth = process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION;
+const originalJudgeReasoningEffort = process.env.OPENAI_JUDGE_REASONING_EFFORT;
+const originalGenerationModel = process.env.OPENAI_GENERATION_MODEL;
+const originalGenerationReasoningEffort = process.env.OPENAI_GENERATION_REASONING_EFFORT;
+const originalGenerationCalibrationAuth = process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION;
 
 function restoreEnv(name, value) {
   if (value === undefined) delete process.env[name];
@@ -40,14 +44,19 @@ try {
   assert.strictEqual(release.model, "gpt-4.1-mini");
 
   const laneId = "judge:sky-article-longform";
+  assert.strictEqual(registry.lanes["generation:default"].candidate.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes[laneId].candidate.model, "gpt-5.6-sol");
+  assert.strictEqual(registry.lanes[laneId].candidate.reasoningEffort, "low");
   const candidate = {
     ...registry.lanes[laneId].active,
     releaseId: "sky-article-judge-test-candidate-v2",
     model: "test-private-model-v2",
     evaluationSetVersion: "sky-article-longform-heldout-v2"
   };
-  const staged = stageCandidate(registry, laneId, candidate);
-  assert.deepStrictEqual(registry.lanes[laneId].candidate, null, "staging must not mutate its input");
+  const stageInput = JSON.parse(JSON.stringify(registry));
+  stageInput.lanes[laneId].candidate = null;
+  const staged = stageCandidate(stageInput, laneId, candidate);
+  assert.deepStrictEqual(stageInput.lanes[laneId].candidate, null, "staging must not mutate its input");
   assert.strictEqual(staged.lanes[laneId].active.releaseId, release.releaseId);
   assert.strictEqual(staged.lanes[laneId].candidate.releaseId, candidate.releaseId);
   assert.strictEqual(resolveCandidateRelease({
@@ -65,9 +74,16 @@ try {
     }),
     /does not match/
   );
+  assert.throws(
+    () => stageCandidate(stageInput, laneId, { ...candidate, reasoningEffort: "automatic" }),
+    /reasoningEffort/
+  );
 
   const report = {
     status: "passed",
+    reportKind: "calibration",
+    sampleCount: 5,
+    promotionEligible: true,
     disagreement: false,
     separation: 1.4,
     minimumSeparation: 1,
@@ -143,9 +159,10 @@ try {
 
   delete process.env.CONTENT_JUDGE_PROVIDER;
   delete process.env.OPENAI_JUDGE_MODEL;
+  delete process.env.OPENAI_JUDGE_REASONING_EFFORT;
   delete process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID;
   delete process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION;
-  const { judgeConfig } = require("./generate-sky-aspect-cards.js");
+  const { generationConfig, judgeConfig, judgeConfigForOptions, openAiRequestSettings } = require("./generate-sky-aspect-cards.js");
   const configured = judgeConfig("sky-article-longform");
   assert.strictEqual(configured.laneId, laneId);
   assert.strictEqual(configured.releaseId, release.releaseId);
@@ -156,6 +173,46 @@ try {
   assert.strictEqual(overridden.model, "temporary-evaluation-model");
   assert.strictEqual(overridden.releaseId, release.releaseId);
   assert.strictEqual(overridden.registryOverride, true);
+
+  process.env.OPENAI_JUDGE_MODEL = registry.lanes[laneId].candidate.model;
+  process.env.OPENAI_JUDGE_REASONING_EFFORT = registry.lanes[laneId].candidate.reasoningEffort;
+  process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID = registry.lanes[laneId].candidate.releaseId;
+  process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION = "1";
+  const candidateConfig = judgeConfig("sky-article-longform");
+  assert.strictEqual(candidateConfig.model, "gpt-5.6-sol");
+  assert.strictEqual(candidateConfig.reasoningEffort, "low");
+  assert.strictEqual(candidateConfig.registryState, "candidate");
+  assert.strictEqual(
+    judgeConfigForOptions({ surface: "sky-article-longform" }).releaseId,
+    registry.lanes[laneId].candidate.releaseId,
+    "the request helper must preserve the long-form surface instead of falling back to sky-aspect"
+  );
+  assert.deepStrictEqual(
+    openAiRequestSettings(candidateConfig),
+    { reasoning: { effort: "low" } }
+  );
+
+  delete process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID;
+  delete process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION;
+  delete process.env.OPENAI_JUDGE_REASONING_EFFORT;
+  process.env.OPENAI_JUDGE_MODEL = "gpt-5.6-terra";
+  const temporaryGpt56 = judgeConfig("sky-article-longform");
+  assert.strictEqual(temporaryGpt56.reasoningEffort, "none");
+  assert.strictEqual(temporaryGpt56.registryOverride, true);
+
+  delete process.env.OPENAI_JUDGE_MODEL;
+  process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID = registry.lanes["generation:default"].candidate.releaseId;
+  assert.throws(
+    () => generationConfig(),
+    /explicitly authorized generation calibration/
+  );
+  process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION = "1";
+  process.env.OPENAI_GENERATION_MODEL = registry.lanes["generation:default"].candidate.model;
+  process.env.OPENAI_GENERATION_REASONING_EFFORT = registry.lanes["generation:default"].candidate.reasoningEffort;
+  const generationCandidate = generationConfig();
+  assert.strictEqual(generationCandidate.model, "gpt-5.6-terra");
+  assert.strictEqual(generationCandidate.reasoningEffort, "none");
+  assert.strictEqual(generationCandidate.registryState, "candidate");
 
   process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID = "unapproved-candidate";
   assert.throws(
@@ -168,6 +225,10 @@ try {
   restoreEnv("TLDR_ALLOW_MODEL_PROMOTION", originalPromotionAuth);
   restoreEnv("CONTENT_JUDGE_PROVIDER", originalJudgeProvider);
   restoreEnv("OPENAI_JUDGE_MODEL", originalJudgeModel);
+  restoreEnv("OPENAI_JUDGE_REASONING_EFFORT", originalJudgeReasoningEffort);
+  restoreEnv("OPENAI_GENERATION_MODEL", originalGenerationModel);
+  restoreEnv("OPENAI_GENERATION_REASONING_EFFORT", originalGenerationReasoningEffort);
+  restoreEnv("TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION", originalGenerationCalibrationAuth);
   restoreEnv("EDITORIAL_MODEL_CANDIDATE_RELEASE_ID", originalCandidateReleaseId);
   restoreEnv("TLDR_ALLOW_LIVE_LLM_CALIBRATION", originalCalibrationAuth);
 }
