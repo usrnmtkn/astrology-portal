@@ -5,10 +5,13 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
+import SwissEph from "swisseph-wasm";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-content-hydration.bundle.mjs");
 const lunarBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-lunar-content-hydration.bundle.mjs");
+const ephemerisBundleDir = path.join(repoRoot, "node_modules/.cache/tldrastro");
+const ephemerisBundleFile = path.join(ephemerisBundleDir, "calendar-ingress-ephemeris.bundle.mjs");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 
 await build({
@@ -57,7 +60,9 @@ const ingressEvent = {
   dateKey: "2026-06-30",
   planet: "Jupiter",
   sign: "Leo",
-  toSign: "Leo"
+  toSign: "Leo",
+  longitude: 120,
+  direction: "direct"
 };
 const retrogradeEvent = {
   id: "uranus-retrograde",
@@ -106,6 +111,67 @@ assert.ok(
   calendarTransitDetailContentKeys(ingressEvent).includes("sky.placement.base.jupiter.leo"),
   "On-demand Calendar detail must include its placement article key."
 );
+
+fs.mkdirSync(ephemerisBundleDir, { recursive: true });
+await build({
+  bundle: true,
+  define: { "import.meta.env": "{}" },
+  entryPoints: [path.join(repoRoot, "apps/web/src/services/ephemeris.ts")],
+  external: ["swisseph-wasm"],
+  format: "esm",
+  logLevel: "silent",
+  outfile: ephemerisBundleFile,
+  platform: "node"
+});
+
+const { getLunarCalendarMonth } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
+const ingressCalendar = await getLunarCalendarMonth({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-07-15T12:00:00.000Z"), { detail: "full" });
+const directEphemeris = new SwissEph();
+await directEphemeris.initSwissEph();
+
+function directIngressFacts(event, planetId) {
+  const date = new Date(event.startsAt);
+  const utcHour = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+  const julianDay = directEphemeris.julday(
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate(),
+    utcHour
+  );
+  const result = directEphemeris.calc_ut(
+    julianDay,
+    planetId,
+    directEphemeris.SEFLG_SWIEPH | directEphemeris.SEFLG_SPEED
+  );
+
+  return {
+    direction: result[3] < 0 ? "retrograde" : "direct",
+    longitude: ((result[0] % 360) + 360) % 360
+  };
+}
+
+for (const expected of [
+  { title: "Jupiter enters Leo", planetId: directEphemeris.SE_JUPITER },
+  { title: "Venus enters Virgo", planetId: directEphemeris.SE_VENUS }
+]) {
+  const event = ingressCalendar.events.find((candidate) => candidate.title === expected.title);
+
+  assert.ok(event, `${expected.title} must exist in the July 2026 Calendar calculation.`);
+  const direct = directIngressFacts(event, expected.planetId);
+
+  assert.equal(event.direction, direct.direction, `${expected.title} motion must match direct Swiss Ephemeris.`);
+  assert.ok(
+    Math.abs(event.longitude - direct.longitude) < 0.0001,
+    `${expected.title} longitude must match direct Swiss Ephemeris.`
+  );
+}
+
+fs.rmSync(ephemerisBundleFile, { force: true });
 
 const newMoonEvent = {
   id: "new-moon-leo",
@@ -167,18 +233,33 @@ assert.match(
 );
 assert.match(
   appSource,
-  /function calendarStationDetailBody[\s\S]*?calendarEventGeneratedContentKeys\(event\)[\s\S]*?readerFacingParagraphs\(generatedContentParagraphs\(content\)\)[\s\S]*?readerFacingParagraphs\(\[description\]\)/u,
-  "Station details must reuse the exact approved Calendar event copy when no placement article is available."
+  /function calendarEventDetailBody[\s\S]*?calendarEventGeneratedContentKeys\(event\)[\s\S]*?readerFacingParagraphs\(generatedContentParagraphs\(content\)\)[\s\S]*?readerFacingParagraphs\(\[description\]\)/u,
+  "Calendar details must reuse exact approved event copy before the rendered-card fallback."
 );
 assert.match(
   appSource,
-  /stationBody\.length > 0 && !hasPlacementBody[\s\S]*?body: stationBody[\s\S]*?plainBody: true/u,
-  "Approved station copy must fill an otherwise empty factual detail without replacing a long-form article."
+  /eventBody\.length > 0 && !hasPlacementBody[\s\S]*?body: eventBody[\s\S]*?plainBody: true/u,
+  "Approved ingress and station copy must fill an empty placement detail without replacing a long-form article."
+);
+assert.match(
+  appSource,
+  /eventBody\.length > 0 && !hasAspectBody[\s\S]*?body: eventBody[\s\S]*?plainBody: true/u,
+  "Approved aspect copy must fill an empty aspect detail."
+);
+assert.match(
+  appSource,
+  /function skyDetailHasReaderFacingMainBody[\s\S]*?section\.role !== "aspect"[\s\S]*?isReaderFacingCopy\(section\.body\)/u,
+  "Related-aspect furniture must not make an otherwise empty placement article look complete."
+);
+assert.match(
+  appSource,
+  /const detailAspect: SkySnapshot\["aspects"\]\[number\] = \{[\s\S]*?orb: 0[\s\S]*?currentSkyAspectDetailArticle\(detailAspect, generatedAt, new Map\(\)\)/u,
+  "Calendar aspect details must not borrow current-sky aspect or degree facts for a different event date."
 );
 assert.match(
   appSource,
   /selectedCalendarTransitEventRef\.current[\s\S]*?calendarTransitDetailWithContent\([\s\S]*?calendarEvent\.event,[\s\S]*?skyGeneratedContent,[\s\S]*?calendarEvent\.description/u,
-  "An open station detail must retain event context while exact content hydrates."
+  "An open Calendar detail must retain event context while exact content hydrates."
 );
 assert.match(
   appSource,
@@ -197,6 +278,16 @@ assert.match(
   calendarSource,
   /fallback-hook\/sky-event\/ingress[\s\S]*?fallback-vocab\/sign-need/u,
   "Ingress gaps must resolve through approved package hooks and vocabulary."
+);
+assert.match(
+  calendarSource,
+  /selectedDayTransits\.map[\s\S]*?calendarEventDescription\([\s\S]*?onOpenTransit\?\.\(event, description\)/u,
+  "Selected-day ingress, station, and aspect buttons must carry their approved rendered copy into detail."
+);
+assert.match(
+  calendarSource,
+  /function calendarStationDirectPackageDescription\(event: LunarCalendarEvent, dateLine: string\)[\s\S]*?replaceAll\("\{\{dateLine\}\}", dateLine\)/u,
+  "Direct-station copy must use the event date line instead of claiming every event happens this week."
 );
 assert.match(calendarCss, /\.tx-body--loading/u, "Calendar cards must reserve prose space while content hydrates.");
 

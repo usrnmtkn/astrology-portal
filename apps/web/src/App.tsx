@@ -670,6 +670,16 @@ function isSkyDetail(value: unknown): value is SkyDetail {
   return Boolean(value && typeof value === "object" && "title" in value && "body" in value);
 }
 
+function skyDetailHasReaderFacingMainBody(detail: SkyDetail) {
+  return detail.body.some((paragraph) => (
+    typeof paragraph === "string" && isReaderFacingCopy(paragraph)
+  )) || Boolean(detail.sections?.some((section) => (
+    section.role !== "aspect"
+    && typeof section.body === "string"
+    && isReaderFacingCopy(section.body)
+  )));
+}
+
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 type SkyAspectContentStatus = "idle" | "loading" | "ready";
 type CalendarContentStatus = "idle" | "loading" | "ready";
@@ -12441,15 +12451,11 @@ export function App() {
     selectedCalendarTransitEventRef.current = { event, description };
   }
 
-  function calendarStationDetailBody(
+  function calendarEventDetailBody(
     event: LunarCalendarEvent,
     generatedContent: GeneratedContentMap,
     description?: string
   ) {
-    if (event.type !== "station") {
-      return [];
-    }
-
     for (const contentKey of calendarEventGeneratedContentKeys(event)) {
       const content = liveGeneratedContent(generatedContent, contentKey);
       const paragraphs = content
@@ -12477,24 +12483,24 @@ export function App() {
 
     if (event.type === "aspect" && event.planets && event.aspect) {
       const [planetA, planetB] = event.planets;
-      const eventAspect = event.aspect.toLowerCase();
-      const matchingAspect = sky.aspects.find((aspect) => (
-        aspect.from === planetA
-        && aspect.to === planetB
-        && aspect.type.toLowerCase() === eventAspect
-      )) ?? sky.aspects.find((aspect) => (
-        aspect.from === planetB
-        && aspect.to === planetA
-        && aspect.type.toLowerCase() === eventAspect
-      ));
-      const detailAspect: SkySnapshot["aspects"][number] = matchingAspect ?? {
+      const detailAspect: SkySnapshot["aspects"][number] = {
         from: planetA,
         to: planetB,
         type: event.aspect,
         orb: 0
       };
 
-      return currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, sky.positions);
+      const detail = currentSkyAspectDetailArticle(detailAspect, generatedAt, new Map());
+      const eventBody = calendarEventDetailBody(event, generatedContent, description);
+      const hasAspectBody = skyDetailHasReaderFacingMainBody(detail);
+
+      return eventBody.length > 0 && !hasAspectBody
+        ? {
+            ...detail,
+            body: eventBody,
+            plainBody: true
+          }
+        : detail;
     }
 
     if (!event.planet) {
@@ -12508,7 +12514,8 @@ export function App() {
     }
 
     const eventSign = event.toSign ?? event.sign;
-    const isRetrogradeEvent = event.title.toLowerCase().includes("retrograde");
+    const isRetrogradeEvent = event.direction === "retrograde"
+      || event.title.toLowerCase().includes("retrograde");
     const eventDegree = typeof event.longitude === "number"
       ? normalizedAngle(event.longitude) % 30
       : eventSign && eventSign !== position.sign
@@ -12532,15 +12539,13 @@ export function App() {
       position: eventPosition,
       positions: sky.positions
     });
-    const stationBody = calendarStationDetailBody(event, generatedContent, description);
-    const hasPlacementBody = detail.body.some((paragraph) => (
-      typeof paragraph === "string" && isReaderFacingCopy(paragraph)
-    )) || Boolean(detail.sections?.length);
+    const eventBody = calendarEventDetailBody(event, generatedContent, description);
+    const hasPlacementBody = skyDetailHasReaderFacingMainBody(detail);
 
-    return stationBody.length > 0 && !hasPlacementBody
+    return eventBody.length > 0 && !hasPlacementBody
       ? {
           ...detail,
-          body: stationBody,
+          body: eventBody,
           plainBody: true
         }
       : detail;
