@@ -56,16 +56,17 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 551.3 kB |
+| Reader boot, including awaited CSS | 549.9 kB |
 | Static App JavaScript graph | 501.9 kB |
-| Reader startup CSS | 49.3 kB |
+| Reader startup CSS | 48.0 kB |
 | App code chunk | 158.8 kB |
 
 The governed domain split, Calendar CSS boundary, deferred full manifest, and
-complementary source partitions reduced reader boot from 1.34 MB to 551.3 kB
+complementary source partitions reduced reader boot from 1.34 MB to 549.9 kB
 gzip, about 59%. The Friends production-layout and comparison-picker layers
 follow their lazy route, moving 6.67 kB gzip out of startup without duplicating
-their rules. Friend/natal
+their rules. Removing 46 unreferenced selectors from the retired social-card
+interface saves another 1.3 kB gzip of startup CSS. Friend/natal
 placement sentences follow the non-Sky domain loader instead of shipping with
 the current-sky package. Phone fields use
 dependency-free formatting and a fast US
@@ -95,6 +96,6 @@ True route/domain deferral must preserve these contracts:
 5. The reader-boot budget must decrease by a measured amount; moving bytes to an
    immediately requested chunk does not count as a first-visit improvement.
 
-The next candidates are splitting shared profile/Friends CSS by actual ownership
+The next candidates are moving remaining Friends detail styles behind the route
 and making App-level vocabulary constants route-local. Either change must pass
 the same eager/deferred parity and content-precedence requirements.
