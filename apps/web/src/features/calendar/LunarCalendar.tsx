@@ -14,20 +14,18 @@ import { generatedContentParagraphs, type LiveGeneratedContent } from "../../ser
 import {
   fallbackV3HookBody,
   fallbackV3PlanetTopic,
+  fallbackV3VocabularyBody,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
-import {
-  skyIngressContentKey,
-  skyIngressInstanceContentKey,
-  slugContentPart
-} from "../../services/generatedContentKeys";
+import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
 import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
 import type { LocationInput } from "../../types";
-import { resolveLunarDay } from "./lunarDayResolver";
+import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
 import {
@@ -60,6 +58,8 @@ type LunarCalendarProps = {
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   generatedContent?: Map<string, LiveGeneratedContent>;
+  generatedContentStatus?: "idle" | "loading" | "ready";
+  onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent) => void;
   showJournalPrompts?: boolean;
 };
@@ -899,62 +899,6 @@ function transitCardStatusTag(event: LunarCalendarEvent) {
   return "Transit";
 }
 
-function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
-  const dateKey = event.dateKey || event.startsAt.slice(0, 10);
-
-  if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
-    const sign = event.toSign ?? event.sign ?? "";
-    const planetPart = slugContentPart(event.planet);
-    const signPart = slugContentPart(sign);
-    const ingressKeys = [
-      skyIngressInstanceContentKey(event.planet, sign, { targetDate: dateKey }),
-      skyIngressContentKey(event.planet, sign),
-      `sky-ingress-${planetPart}-${signPart}-${dateKey}`,
-      `sky-ingress-${planetPart}-${signPart}`,
-      `sky-${planetPart}-enters-${signPart}`,
-      `sky-${planetPart}-in-${signPart}`,
-      `ms/ingress/${planetPart}`,
-      `fallback-hook/sky.ingress.${planetPart}`,
-      `fallback-hook/sky.ingress/${planetPart}`
-    ];
-
-    return event.planet === "Sun"
-      ? [...ingressKeys, `sky-season-${signPart}-${dateKey}`]
-      : ingressKeys;
-  }
-
-  if (event.type === "station" && event.planet) {
-    const planetPart = slugContentPart(event.planet);
-    const motion = event.direction ?? (event.title.toLowerCase().includes("direct") ? "direct" : "retrograde");
-    const signPart = event.sign ? slugContentPart(event.sign) : "";
-    const phasePart = event.phase ? event.phase.replace(/-/g, "_") : "";
-    const exactRetrogradeKeys = event.sign && event.phase === "retrograde-passage"
-      ? [
-          `sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
-          `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`,
-          `sky-retrograde-${planetPart}`,
-          `ms/retrograde/${planetPart}`,
-          `fallback-hook/sky.retrograde/${planetPart}`
-        ]
-      : [];
-    const exactStationKeys = event.sign && event.phase && event.phase !== "retrograde-passage"
-      ? [
-          `sky.station.${planetPart}.${signPart}.${motion}`,
-          `sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
-          `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`,
-          `fallback-hook/sky.station/${planetPart}/${motion}`
-        ]
-      : [];
-
-    return [
-      ...exactRetrogradeKeys,
-      ...exactStationKeys
-    ];
-  }
-
-  return [];
-}
-
 function normalizedContentSlots(content: LiveGeneratedContent | null) {
   const sections = content?.sections;
 
@@ -971,6 +915,15 @@ function normalizedContentSlots(content: LiveGeneratedContent | null) {
 
 function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
   if (!content) {
+    return false;
+  }
+
+  const headline = content.headline?.trim() ?? "";
+  const body = content.body.trim();
+  const containsEditorialMetadata = /^(?:ms|fallback-hook)\s*\//i.test(headline)
+    || /\b(?:REVIEWED|DRAFT)\s*·\s*[a-z-]+\s*·\s*(?:transit|ingress|station)\s*·/u.test(body);
+
+  if (containsEditorialMetadata) {
     return false;
   }
 
@@ -1103,6 +1056,36 @@ function calendarStationDirectPackageDescription(event: LunarCalendarEvent) {
   return isReaderFacingCopy(body) ? body : "";
 }
 
+function calendarIngressPackageDescription(event: LunarCalendarEvent, dateLine: string) {
+  const sign = event.toSign ?? event.sign;
+
+  if (!event.planet || !sign) {
+    return "";
+  }
+
+  const signPart = slugContentPart(sign);
+  const frame = fallbackV3HookBody("fallback-hook/sky-event/ingress");
+  const planetTopic = fallbackV3PlanetTopic(event.planet);
+  const signNeed = fallbackV3VocabularyBody(`fallback-vocab/sign-need/${signPart}`);
+  const signTrap = fallbackV3HookBody(`fallback-hook/sky-sign-trap/${signPart}`);
+
+  if (!frame || !planetTopic || !signNeed || !signTrap) {
+    return "";
+  }
+
+  const body = frame
+    .replaceAll("{{dateLine}}", dateLine)
+    .replaceAll("{{aRef}}", event.planet)
+    .replaceAll("{{signTitle}}", sign)
+    .replaceAll("{{signNeed}}", signNeed)
+    .replaceAll("{{aTopic}}", planetTopic)
+    .replaceAll("{{signTrap}}", signTrap)
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return isReaderFacingCopy(body) ? body : "";
+}
+
 function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today") {
   if (event.type === "lunation" && event.sign) {
     try {
@@ -1126,9 +1109,11 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
         sign: slugContentPart(sign ?? "")
       });
 
-      return firstReaderFacingCopy(rendered.parts);
+      return firstReaderFacingCopy(rendered.parts)
+        || calendarIngressPackageDescription(event, dateLine);
     } catch (error) {
-      return calendarEventPackageFailure(event, error);
+      calendarEventPackageFailure(event, error);
+      return calendarIngressPackageDescription(event, dateLine);
     }
   }
 
@@ -1555,7 +1540,14 @@ function locationFromLabel(label: string): LocationInput {
   };
 }
 
-export function LunarCalendar({ location, onLocationChange, generatedContent, onOpenTransit }: LunarCalendarProps) {
+export function LunarCalendar({
+  location,
+  onLocationChange,
+  generatedContent,
+  generatedContentStatus = "idle",
+  onGeneratedContentRequest,
+  onOpenTransit
+}: LunarCalendarProps) {
   const initialRouteState = useMemo(
     () => calendarRouteStateFromUrl(todayKey(location.timeZone || "UTC")),
     [location.timeZone]
@@ -1785,6 +1777,48 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
   const selectedWeekDays = visibleWeekAnchorIndex >= 0 && calendar
     ? calendar.days.slice(visibleWeekAnchorIndex - (visibleWeekAnchorIndex % 7), visibleWeekAnchorIndex - (visibleWeekAnchorIndex % 7) + 7)
     : [];
+  const generatedContentRequest = useMemo(() => {
+    if (!calendar) {
+      return null;
+    }
+
+    const visibleDays = viewMode === "month"
+      ? calendar.days.filter((day) => day.inMonth)
+      : selectedWeekDays;
+    const visibleEvents = viewMode === "weekly"
+      ? selectedWeekDays.flatMap(weeklyWriteupEvents)
+      : viewMode === "month"
+        ? monthTransitCardEvents(calendar.days)
+        : weekTransitCardEvents(selectedWeekDays);
+    const selectedEvents = selectedDay?.events ?? [];
+    const editorialEvents = Array.from(new Map([
+      ...calendar.events,
+      ...(selectedCalendar?.events ?? [])
+    ].map((event) => [event.id, event])).values());
+    const contentKeys = [
+      ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
+      ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
+      ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : [])
+    ];
+    const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
+    const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;
+    const locationKey = `${location.latitude.toFixed(3)},${location.longitude.toFixed(3)},${calendar.timeZone}`;
+
+    return {
+      cacheKey: `${locationKey}:${viewMode}:${firstDate}:${lastDate}`,
+      contentKeys: Array.from(new Set(contentKeys.filter(Boolean))).sort()
+    };
+  }, [calendar, location.latitude, location.longitude, selectedCalendar, selectedDateKey, selectedDay, selectedWeekDays, viewMode]);
+  const generatedContentRequestSignature = generatedContentRequest
+    ? `${generatedContentRequest.cacheKey}:${generatedContentRequest.contentKeys.join("|")}`
+    : "";
+
+  useEffect(() => {
+    if (generatedContentRequest) {
+      onGeneratedContentRequest?.(generatedContentRequest);
+    }
+  }, [generatedContentRequestSignature, onGeneratedContentRequest]);
+
   const weeklyDayWriteups = useMemo(() => {
     if (!calendar) {
       return [];
@@ -2635,7 +2669,14 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               <span className="lunar-calendar-upcoming__label">This week</span>
               <div className="lunar-week-transits__list">
                 {visibleWeekTransitEvents.map((event) => (
-                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} onOpenTransit={onOpenTransit} timeZone={zone} />
+                  <TransitCard
+                    contentStatus={generatedContentStatus}
+                    event={event}
+                    generatedContent={generatedContent}
+                    key={event.id}
+                    onOpenTransit={onOpenTransit}
+                    timeZone={zone}
+                  />
                 ))}
               </div>
             </section>
@@ -2894,7 +2935,14 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
               <span className="lunar-calendar-upcoming__label">This month</span>
               <div className="lunar-month-transits__list">
                 {monthTransitEvents.map((event) => (
-                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} onOpenTransit={onOpenTransit} timeZone={zone} />
+                  <TransitCard
+                    contentStatus={generatedContentStatus}
+                    event={event}
+                    generatedContent={generatedContent}
+                    key={event.id}
+                    onOpenTransit={onOpenTransit}
+                    timeZone={zone}
+                  />
                 ))}
               </div>
             </section>
@@ -2908,11 +2956,13 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
 }
 
 function TransitCard({
+  contentStatus,
   event,
   generatedContent,
   onOpenTransit,
   timeZone
 }: {
+  contentStatus: "idle" | "loading" | "ready";
   event: LunarCalendarEvent;
   generatedContent?: Map<string, LiveGeneratedContent>;
   onOpenTransit?: (event: LunarCalendarEvent) => void;
@@ -2923,6 +2973,7 @@ function TransitCard({
   const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
   const normalizedEvent = normalizeCalendarEventSurface(event, content);
   const description = normalizedEvent.sections[0]?.body ?? "";
+  const isContentLoading = contentStatus === "loading" && !content;
   const cardContent = (
     <>
       <span className="tx-glyphs" aria-hidden="true">
@@ -2935,13 +2986,16 @@ function TransitCard({
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
       </div>
-      {description ? <p className="tx-body">{description}</p> : null}
+      {isContentLoading ? (
+        <span className="tx-body tx-body--loading" aria-label="Loading interpretation" role="status" />
+      ) : description ? <p className="tx-body">{description}</p> : null}
     </>
   );
 
   if (onOpenTransit) {
     return (
       <button
+        aria-busy={isContentLoading}
         className={`aspect-card tx-card lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
         onClick={() => onOpenTransit(event)}
         type="button"
@@ -2952,7 +3006,7 @@ function TransitCard({
   }
 
   return (
-    <article className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}>
+    <article aria-busy={isContentLoading} className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}>
       {cardContent}
     </article>
   );

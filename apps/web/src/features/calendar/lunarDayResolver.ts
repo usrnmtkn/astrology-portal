@@ -905,6 +905,88 @@ function editorialFor(
   };
 }
 
+export function lunarDayGeneratedContentKeys(
+  day: LunarCalendarDay,
+  events: LunarCalendarEvent[]
+) {
+  const selectedTime = dayKeyToUtcTime(day.dateKey);
+  const season = sunIngressSeasonWindow(day.dateKey, events);
+  const currentLunation = previousLunation(events, selectedTime, "New Moon")
+    ?? previousLunation(events, selectedTime, "Full Moon")
+    ?? null;
+  const transits = dayModifiers(day, events, selectedTime);
+  const phasePart = slugContentPart(day.moonPhase);
+  const lunationSignPart = slugContentPart(currentLunation?.sign ?? day.moonSign);
+  const initialPhaseType = phaseTypeForMoonPhase(day.moonPhase);
+  const exactLunation = exactLunationForDay(day, initialPhaseType);
+  const calendarSunSign = exactLunation?.sunSign ?? season.sign;
+  const calendarMoonSign = exactLunation?.sign || day.moonSign;
+  const seasonPart = slugContentPart(calendarSunSign);
+  const signPart = slugContentPart(calendarMoonSign);
+  const phaseContentKeys = exactLunation
+    ? initialPhaseType === "new-moon"
+      ? [`lunation/new-moon/${signPart}`]
+      : initialPhaseType === "full-moon"
+        ? [`lunation/full-moon/${signPart}`]
+        : initialPhaseType === "first-quarter"
+          ? [`lunation/first-quarter/${signPart}`]
+          : initialPhaseType === "last-quarter"
+            ? [`lunation/last-quarter/${signPart}`]
+            : []
+    : [];
+  const baseKeys = [
+    `lunar.day.${day.dateKey}`,
+    `lunar.day.${phasePart}.${signPart}`,
+    `lunar.season.${seasonPart}.day.${phasePart}.${signPart}`
+  ];
+  const arcKeys = [
+    `lunar.arc.${lunationSignPart}.${seasonPart}.${phasePart}`,
+    `lunar.arc.${currentLunation?.id ?? ""}`.replace(/\.$/, "")
+  ];
+  const eclipseKeys = [
+    `lunar.eclipse.${day.dateKey}.witness`,
+    `lunar.eclipse.${lunationSignPart}.${seasonPart}.witness`
+  ];
+  const newBodyKeys = [
+    `lunar.day.${day.dateKey}.body`,
+    ...(exactLunation && isEclipseLunation(exactLunation) ? ["lunation/eclipse"] : []),
+    ...phaseContentKeys
+  ];
+  const keys = [
+    ...newBodyKeys,
+    ...phaseContentKeys.map((key) => `fallback-hook/${key}`),
+    ...baseKeys.flatMap((key) => [
+      `${key}.body`,
+      `${key}.practice`,
+      `${key}.reflect`,
+      `${key}.ritual`,
+      `${key}.callback`
+    ]),
+    ...eclipseKeys,
+    ...arcKeys.flatMap((key) => [`${key}.lesson`, `${key}.seeded`]),
+    "fallback-hook/lunar-calendar/day",
+    "fallback-hook/sky.lunar-calendar-day",
+    "fallback-hook/lunar-calendar/arc-full-moon",
+    "fallback-hook/sky.lunar-arc-full-moon",
+    "fallback-hook/lunar-calendar/arc-new-moon",
+    "fallback-hook/sky.lunar-arc-new-moon",
+    `season/${seasonPart}`,
+    ...transits.map((transit) => (
+      `${slugContentPart(transit.title)}__${lunationSignPart}_lunation_${seasonPart}_season`
+    )),
+    ...significantActiveAspects(day).flatMap((aspect) => {
+      const title = `${aspect.planetA} ${aspect.aspectType} ${aspect.planetB}`;
+
+      return [
+        `${slugContentPart(title)}__${lunationSignPart}_lunation_${seasonPart}_season`,
+        `transit-fallback/${slugContentPart(aspect.aspectType)}`
+      ];
+    })
+  ];
+
+  return Array.from(new Set(keys.filter(Boolean)));
+}
+
 export function resolveLunarDay({
   day,
   events,
