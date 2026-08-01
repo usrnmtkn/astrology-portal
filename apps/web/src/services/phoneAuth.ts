@@ -1,4 +1,4 @@
-import { AsYouType, parsePhoneNumberFromString } from "libphonenumber-js/max";
+import { AsYouType, parsePhoneNumberFromString } from "libphonenumber-js/min";
 
 const usCountryCallingCode = "+1";
 const usNationalNumberLength = 10;
