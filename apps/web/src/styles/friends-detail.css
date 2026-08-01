@@ -283,3 +283,360 @@
   gap: var(--friend-composite-row-gap);
   padding: var(--friend-composite-row-padding);
 }
+
+.friend-chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 10px 24px;
+  flex-wrap: wrap;
+  width: min(100%, var(--relationship-wheel-size));
+  max-width: var(--shared-chart-size);
+  margin: 0 auto;
+  color: var(--ink);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-meta);
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.friend-chart-legend span,
+.friend-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 0.58em;
+  white-space: normal;
+}
+
+.friend-chart-legend b {
+  flex: 0 0 auto;
+  margin-right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-circle);
+  border: 3px solid currentColor;
+  color: var(--ink);
+}
+
+.friend-chart-legend-item-inner b {
+  border-color: var(--synastry-accent);
+  background: color-mix(in srgb, var(--synastry-accent) 28%, transparent);
+}
+
+.friend-chart-legend-item > span {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  color: var(--ink);
+  font-weight: var(--weight-regular);
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.friend-chart-legend em {
+  color: var(--muted);
+  font-style: normal;
+  letter-spacing: var(--tracking-pill);
+}
+
+.synastry-placements-comparison,
+.synastry-placement-rows {
+  display: grid;
+  gap: 14px;
+}
+
+.synastry-placement-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.synastry-placement-column,
+.synastry-placement-panel {
+  display: grid;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.synastry-placement-column {
+  align-self: start;
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+
+.synastry-placement-column-inner {
+  border-color: transparent;
+}
+
+.synastry-placement-column-header,
+.synastry-placement-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 0 0 calc(var(--space-3) - var(--space-1) / 4);
+  border-bottom: 1px solid var(--line);
+}
+
+.synastry-placement-column-header h3 {
+  margin: 0;
+}
+
+.synastry-placement-column-header {
+  border-bottom: 0;
+}
+
+.synastry-placement-panel-title {
+  color: var(--muted);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-section-label-size);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.synastry-placement-table {
+  display: grid;
+  position: relative;
+  overflow: visible;
+  grid-template-columns: 1fr;
+  gap: var(--friend-placement-row-gap);
+  margin-top: 0;
+  border: 0;
+  border-radius: var(--card-radius);
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+.synastry-placement-column-inner .synastry-placement-table {
+  background: transparent;
+}
+
+.synastry-placement-row {
+  --row-bg: var(--card-bg);
+  --synastry-placement-meta-width: 104px;
+
+  display: grid;
+  grid-template-columns: minmax(58px, max-content) 34px var(--synastry-placement-meta-width);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
+  border: 1px solid var(--card-border);
+  border-bottom: 0;
+  border-radius: 0;
+  box-shadow: var(--shadow-flat);
+  overflow: visible;
+}
+
+.synastry-placement-column-inner .synastry-placement-row {
+  border-color: var(--card-border);
+  background: var(--synastry-row-bg);
+}
+
+.synastry-placement-table > .synastry-placement-row {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.synastry-placement-table > .synastry-placement-row-inner {
+  background: var(--synastry-row-bg);
+}
+
+.synastry-placement-row-empty {
+  visibility: hidden;
+}
+
+.friend-chart-page .synastry-placement-degree,
+.friend-chart-page .synastry-placement-house,
+.friend-chart-page .synastry-placement-meta {
+  color: var(--card-meta-color);
+  font-size: var(--type-meta-size);
+}
+
+.synastry-placement-lead {
+  display: inline-grid;
+  grid-template-columns: 34px auto;
+  align-items: center;
+  justify-content: center;
+  justify-items: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.synastry-placement-glyph {
+  position: relative;
+  display: inline-flex;
+  place-items: center;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  transform: translateY(-1px);
+  color: var(--wheel-glyph);
+  font-family: var(--font-glyph);
+  font-size: var(--text-glyph);
+  line-height: var(--leading-label);
+}
+
+.synastry-rx-glyph-svg {
+  display: block;
+  width: 23px;
+  height: auto;
+  filter: var(--filter-synastry-outer-glyph);
+  overflow: visible;
+  object-fit: contain;
+}
+
+.synastry-placement-rx-mark {
+  color: var(--wheel-glyph);
+  font-family: var(--font-display);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.synastry-placement-column-inner .synastry-rx-glyph-svg,
+.synastry-placement-row-inner .synastry-rx-glyph-svg {
+  filter: var(--filter-synastry-inner-glyph);
+}
+
+.synastry-placement-column-inner .synastry-placement-rx-mark,
+.synastry-placement-row-inner .synastry-placement-rx-mark {
+  color: var(--synastry-accent);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .synastry-rx-glyph-svg,
+:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-rx-glyph-svg {
+  opacity: 1;
+}
+
+.synastry-placement-sign {
+  min-width: 0;
+}
+
+.synastry-placement-sign {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  line-height: var(--leading-label);
+  max-width: 100%;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.synastry-placement-chip b {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+.synastry-placement-sign-svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  filter: var(--filter-glyph-current);
+  object-fit: contain;
+}
+
+.synastry-placement-sign {
+  color: var(--ink);
+}
+
+.synastry-placement-column-inner .synastry-placement-glyph,
+.synastry-placement-column-inner .synastry-placement-sign,
+.synastry-placement-row-inner .synastry-placement-glyph,
+.synastry-placement-row-inner .synastry-placement-sign {
+  color: var(--synastry-accent);
+}
+
+.synastry-placement-column-inner .synastry-placement-sign-svg,
+.synastry-placement-row-inner .synastry-placement-sign-svg {
+  filter: var(--filter-synastry-inner-glyph);
+}
+
+.synastry-placement-degree,
+.synastry-placement-house {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1em;
+  color: var(--muted);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.synastry-placement-degree {
+  justify-content: flex-end;
+}
+
+.synastry-placement-house {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.synastry-placement-meta {
+  display: grid;
+  grid-template-columns: minmax(52px, 1fr) 4px 28px;
+  align-items: center;
+  justify-self: end;
+  justify-content: end;
+  column-gap: var(--space-2);
+  width: var(--synastry-placement-meta-width);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.synastry-placement-meta-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-meta-color);
+  line-height: var(--leading-label);
+}
+
+.synastry-placement-chip small,
+.synastry-placement-empty {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 8px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.synastry-placement-empty {
+  padding: 0 calc(var(--space-7) - var(--space-1)) var(--space-6);
+}

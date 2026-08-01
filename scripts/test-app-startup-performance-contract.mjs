@@ -125,6 +125,16 @@ assert.match(
   "The lazy FriendDetail stylesheet must own relationship explainer CSS."
 );
 assert.doesNotMatch(
+  friendsStylesSource,
+  /(?:^|\n)\.friend-chart-legend\s*\{/u,
+  "Synastry legend and placement CSS must not remain in the eager Friends/profile stylesheet."
+);
+assert.match(
+  friendDetailStylesSource,
+  /(?:^|\n)\.friend-chart-legend\s*\{/u,
+  "The lazy FriendDetail stylesheet must own synastry legend and placement CSS."
+);
+assert.doesNotMatch(
   fallbackRuntimeSource,
   /function createApp(?:Transit|Fallback)Renderer\([^)]*\) \{\s*const readerBundle = readerEligibleBundle/u,
   "Pre-filtered reader bundles must not be filtered again while constructing startup renderers."
