@@ -104,6 +104,7 @@ const appItem = filesByName.get(manifest[appKey].file);
 const deferredFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
+const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes("phone-auth-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const measurements = {
   appBootGzipBytes: sum(bootItems, "gzipBytes"),
@@ -130,6 +131,9 @@ if (deferredManifestItem && bootFiles.has(deferredManifestItem.file)) {
 }
 if (deferredCoreItem && bootFiles.has(deferredCoreItem.file)) {
   failures.push("The natal/relationship fallback core re-entered the static App boot graph.");
+}
+if (deferredPhoneAuthItem && bootFiles.has(deferredPhoneAuthItem.file)) {
+  failures.push("Phone validation metadata re-entered the static App boot graph.");
 }
 
 console.log("# Web bundle budget");

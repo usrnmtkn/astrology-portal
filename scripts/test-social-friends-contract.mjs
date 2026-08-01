@@ -75,6 +75,7 @@ const readableInviteCodesMigrationPath = path.join(
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuth.ts");
+const phoneAuthValidationServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuthValidation.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
 const youPagePath = path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx");
@@ -110,6 +111,7 @@ const readableInviteCodesMigration = fs.readFileSync(readableInviteCodesMigratio
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
+const phoneAuthValidationService = fs.readFileSync(phoneAuthValidationServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
@@ -851,13 +853,13 @@ assert.match(
   "Disabled SMS providers must render actionable member-facing copy instead of a backend error."
 );
 assert.match(
-  phoneAuthService,
-  /libphonenumber-js\/max[\s\S]*new AsYouType\("US"\)[\s\S]*parsePhoneNumberFromString[\s\S]*parsedPhone\.isValid\(\)[\s\S]*parsedPhone\.country !== "US"[\s\S]*return parsedPhone\.number/,
-  "Phone input must use established metadata-backed formatting and strict US E.164 validation."
+  phoneAuthValidationService,
+  /libphonenumber-js\/min[\s\S]*parsePhoneNumberFromString[\s\S]*parsedPhone\.isValid\(\)[\s\S]*parsedPhone\.country !== "US"[\s\S]*return parsedPhone\.number/,
+  "Phone submission must use metadata-backed strict US E.164 validation."
 );
 assert.match(
   authService,
-  /shouldCreateUser = true[\s\S]*signInWithOtp\(\{[\s\S]*phone: normalizedPhone[\s\S]*options: \{[\s\S]*shouldCreateUser[\s\S]*verifyOtp\(\{[\s\S]*phone: normalizeUsPhoneNumber\(phone\)/,
+  /shouldCreateUser = true[\s\S]*signInWithOtp\(\{[\s\S]*phone: normalizedPhone[\s\S]*options: \{[\s\S]*shouldCreateUser[\s\S]*verifyOtp\(\{[\s\S]*phone: await normalizeUsPhoneNumber\(phone\)/,
   "Phone login must not create a new account, while signup must reuse the same validated E.164 number."
 );
 assert.match(
@@ -866,7 +868,7 @@ assert.match(
   "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
 );
 assert.doesNotMatch(
-  `${app}\n${phoneAuthService}`,
+  `${app}\n${phoneAuthService}\n${phoneAuthValidationService}`,
   /Australia|\+61/,
   "Phone signup must not advertise unsupported Australian phone numbers."
 );

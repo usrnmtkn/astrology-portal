@@ -10,6 +10,8 @@ const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"),
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
+const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
+const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
   "utf8"
@@ -31,6 +33,13 @@ assert.match(viteSource, /fallback-content-relationships/u, "Relationship fallba
 assert.match(viteSource, /fallback-content-sky/u, "Sky fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
+assert.match(viteSource, /phone-auth/u, "Phone metadata must have a stable deferred cache chunk.");
+assert.doesNotMatch(phoneAuthSource, /libphonenumber-js/u, "Reader boot phone helpers must not import global phone metadata.");
+assert.match(
+  authSource,
+  /import\("\.\/phoneAuthValidation"\)/u,
+  "Strict phone validation must load only when a phone auth action begins."
+);
 assert.match(
   fallbackRuntimeSource,
   /import\("\.\/fallbackArchitectureV3DeferredBundle"\)/u,
