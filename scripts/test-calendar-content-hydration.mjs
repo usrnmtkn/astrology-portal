@@ -157,13 +157,28 @@ assert.match(
 );
 assert.match(
   appSource,
-  /function openCalendarTransitDetail[\s\S]*?openCalendarTransitDetailWithContent\(event, skyGeneratedContent\);[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
+  /function openCalendarTransitDetail[\s\S]*?openCalendarTransitDetailWithContent\(event, skyGeneratedContent, description\);[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
   "Calendar transit details must open immediately before exact content hydrates."
 );
 assert.match(
   appSource,
   /selectedSkyDetailRefreshContentRef\.current === skyGeneratedContent[\s\S]*?selectedSkyDetailRefreshContentRef\.current = skyGeneratedContent/u,
   "An open Calendar detail must refresh when its exact content arrives."
+);
+assert.match(
+  appSource,
+  /function calendarStationDetailBody[\s\S]*?calendarEventGeneratedContentKeys\(event\)[\s\S]*?readerFacingParagraphs\(generatedContentParagraphs\(content\)\)[\s\S]*?readerFacingParagraphs\(\[description\]\)/u,
+  "Station details must reuse the exact approved Calendar event copy when no placement article is available."
+);
+assert.match(
+  appSource,
+  /stationBody\.length > 0 && !hasPlacementBody[\s\S]*?body: stationBody[\s\S]*?plainBody: true/u,
+  "Approved station copy must fill an otherwise empty factual detail without replacing a long-form article."
+);
+assert.match(
+  appSource,
+  /selectedCalendarTransitEventRef\.current[\s\S]*?calendarTransitDetailWithContent\([\s\S]*?calendarEvent\.event,[\s\S]*?skyGeneratedContent,[\s\S]*?calendarEvent\.description/u,
+  "An open station detail must retain event context while exact content hydrates."
 );
 assert.match(
   appSource,

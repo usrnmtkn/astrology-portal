@@ -60,7 +60,7 @@ type LunarCalendarProps = {
   generatedContent?: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
-  onOpenTransit?: (event: LunarCalendarEvent) => void;
+  onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   showJournalPrompts?: boolean;
 };
 
@@ -2965,7 +2965,7 @@ function TransitCard({
   contentStatus: "idle" | "loading" | "ready";
   event: LunarCalendarEvent;
   generatedContent?: Map<string, LiveGeneratedContent>;
-  onOpenTransit?: (event: LunarCalendarEvent) => void;
+  onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   timeZone: string;
 }) {
   const glyphParts = transitCardGlyphParts(event);
@@ -2997,7 +2997,7 @@ function TransitCard({
       <button
         aria-busy={isContentLoading}
         className={`aspect-card tx-card lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
-        onClick={() => onOpenTransit(event)}
+        onClick={() => onOpenTransit(event, description)}
         type="button"
       >
         {cardContent}
