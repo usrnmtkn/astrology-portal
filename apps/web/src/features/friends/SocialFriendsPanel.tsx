@@ -1,4 +1,4 @@
-import { ChevronRight, MoreHorizontal, Search, X } from "lucide-react";
+import { Check, ChevronRight, Copy, Link2, MoreHorizontal, Search, X } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -123,10 +123,14 @@ function inviteExpiryLabel(value: string) {
   });
 }
 
-function createdInvitationCode(invitation: SocialInvitation) {
-  return invitation.token.includes("-")
-    ? invitation.token.toUpperCase()
-    : invitation.token;
+function recognizableInvitationLink(urlValue: string, token: string) {
+  const url = new URL(urlValue);
+  const normalizedToken = token.trim();
+  const visibleToken = normalizedToken.length > 20
+    ? `${normalizedToken.slice(0, 6)}…${normalizedToken.slice(-4)}`
+    : normalizedToken.toUpperCase();
+
+  return `TLDR Astro · ${url.host}/i/${visibleToken}`;
 }
 
 function levenshtein(firstInput: string, secondInput: string) {
@@ -241,7 +245,6 @@ export function SocialFriendsPanel({
   const [invitePending, setInvitePending] = useState(false);
   const [inviteError, setInviteError] = useState("");
   const [inviteCopied, setInviteCopied] = useState(false);
-  const [inviteCodeCopied, setInviteCodeCopied] = useState(false);
   const [inviteHistoryOpen, setInviteHistoryOpen] = useState(false);
   const [searchState, setSearchState] = useState<"idle" | "loading">("idle");
   const [showSearchSkeleton, setShowSearchSkeleton] = useState(false);
@@ -280,6 +283,9 @@ export function SocialFriendsPanel({
   const queryIsSearchable = trimmedQuery.replace(/^@/, "").length >= 2;
   const createdInvitationLink = createdInvitation
     ? socialInvitationUrl(createdInvitation.token)
+    : "";
+  const recognizableCreatedInvitationLink = createdInvitation
+    ? recognizableInvitationLink(createdInvitationLink, createdInvitation.token)
     : "";
 
   const publishFriends = useCallback((nextFriends: ConnectedSocialFriend[]) => {
@@ -607,7 +613,6 @@ export function SocialFriendsPanel({
     setInvitePending(true);
     setInviteError("");
     setInviteCopied(false);
-    setInviteCodeCopied(false);
 
     try {
       const invitation = await createSocialShareInvitation();
@@ -653,23 +658,14 @@ export function SocialFriendsPanel({
     }
   }
 
-  async function copyInvitationCode() {
-    if (!createdInvitation) {
-      return;
-    }
+  function invitationMessage() {
+    const senderName = profile?.displayName.trim() || "A friend";
 
-    try {
-      await navigator.clipboard.writeText(createdInvitation.token);
-      setInviteCodeCopied(true);
-    } catch {
-      setInviteError("Copy is unavailable. Select the code and copy it manually.");
-    }
+    return `Your friend ${senderName} wants you to join their circle on TLDR Astro.`;
   }
 
   function invitationText(invitation: SocialInvitation) {
-    const senderName = profile?.displayName.trim() || "A friend";
-
-    return `${senderName} invited you to join their circle on TLDR Astro.\n${socialInvitationUrl(invitation.token)}\nCode: ${createdInvitationCode(invitation)}`;
+    return `${invitationMessage()}\n${socialInvitationUrl(invitation.token)}`;
   }
 
   function textInvitation(invitation: SocialInvitation) {
@@ -680,7 +676,6 @@ export function SocialFriendsPanel({
     setInvitePending(true);
     setInviteError("");
     setInviteCopied(false);
-    setInviteCodeCopied(false);
 
     try {
       const invitation = await createSocialShareInvitation();
@@ -709,8 +704,8 @@ export function SocialFriendsPanel({
 
     try {
       await navigator.share({
-        title: "Join my circle on TLDR Astro",
-        text: "I invited you to connect with me on TLDR Astro.",
+        title: "Join a friend on TLDR Astro",
+        text: invitationMessage(),
         url
       });
     } catch (error) {
@@ -726,7 +721,6 @@ export function SocialFriendsPanel({
     setCreatedInvitation(null);
     setInviteError("");
     setInviteCopied(false);
-    setInviteCodeCopied(false);
     setInviteHistoryOpen(false);
   }
 
@@ -1629,10 +1623,6 @@ export function SocialFriendsPanel({
               <div className="friends-invite-heading">
                 <span className="eyebrow section-label">Invite a friend</span>
                 <h2 id="friends-invite-title">Bring someone into your circle.</h2>
-                <p>
-                  Each link works once, for one person. After they join and accept,
-                  you can see each other&apos;s shared charts.
-                </p>
               </div>
               <form
                 className="friends-invite-form"
@@ -1660,7 +1650,7 @@ export function SocialFriendsPanel({
               <p className="friends-invite-link-note">
                 Invite links expire in 30 days and work once. Share them privately.
               </p>
-              {invitations.length > 0 && (
+              {pendingInvitations.length > 0 && (
                 <div className="friends-invite-manage-row">
                   <span>{pendingInvitations.length} {pendingInvitations.length === 1 ? "invite" : "invites"} open</span>
                   <button
@@ -1670,7 +1660,7 @@ export function SocialFriendsPanel({
                     aria-expanded={inviteHistoryOpen}
                     aria-controls="friends-invite-history"
                   >
-                    {inviteHistoryOpen ? "Hide" : "Manage"}
+                    {inviteHistoryOpen ? "Close" : "Manage"}
                   </button>
                 </div>
               )}
@@ -1679,8 +1669,25 @@ export function SocialFriendsPanel({
             <div className="friends-invite-ready" role="status">
               <h2 id="friends-invite-title">Your invite is ready.</h2>
               <div className="friends-invite-link-card">
-                <span className="eyebrow section-label">Invite link</span>
-                <span className="friends-invite-visible-link">{createdInvitationLink}</span>
+                <span className="eyebrow section-label friends-invite-link-label">
+                  <Link2 size={14} aria-hidden="true" />
+                  TLDR Astro invite link
+                </span>
+                <span className="friends-invite-link-value">
+                  <span className="friends-invite-visible-link" title={createdInvitationLink}>
+                    {recognizableCreatedInvitationLink}
+                  </span>
+                  <button
+                    className={`friends-invite-link-copy${inviteCopied ? " is-copied" : ""}`}
+                    type="button"
+                    aria-label={inviteCopied ? "Invite link copied" : "Copy invite link"}
+                    onClick={() => void copyInvitationLink()}
+                  >
+                    {inviteCopied
+                      ? <Check size={18} aria-hidden="true" />
+                      : <Copy size={18} aria-hidden="true" />}
+                  </button>
+                </span>
                 <small>Expires {inviteExpiryLabel(createdInvitation.expiresAt)} · one use</small>
               </div>
               <div className="friends-invite-send-actions">
@@ -1694,45 +1701,17 @@ export function SocialFriendsPanel({
                 <button
                   className="social-secondary-button"
                   type="button"
-                  onClick={() => void copyInvitationLink()}
-                >
-                  {inviteCopied ? "Copied" : "Copy"}
-                </button>
-                <button
-                  className="social-secondary-button"
-                  type="button"
                   onClick={() => textInvitation(createdInvitation)}
                 >
                   Text
                 </button>
               </div>
-              <div className="friends-invite-code-section">
-                <span className="eyebrow section-label">No link? Give them a code</span>
-                <div className="friends-invite-code">
-                  <code>{createdInvitationCode(createdInvitation)}</code>
-                  <button
-                    className="friends-row-text-action"
-                    type="button"
-                    onClick={() => void copyInvitationCode()}
-                  >
-                    {inviteCodeCopied ? "Copied" : "Copy"}
-                  </button>
-                </div>
-                <p>They can enter this under Friends → Join with a code.</p>
-              </div>
-              <button
-                className="friends-row-text-action friends-invite-another"
-                type="button"
-                onClick={resetInvitationComposer}
-              >
-                Create another invite
-              </button>
             </div>
           )}
 
           {inviteError && <p className="friends-invite-error" role="alert">{inviteError}</p>}
 
-          {(createdInvitation || inviteHistoryOpen) && invitations.length > 0 && (
+          {!createdInvitation && inviteHistoryOpen && pendingInvitations.length > 0 && (
             <section
               className="friends-invite-history"
               id="friends-invite-history"
@@ -1740,7 +1719,7 @@ export function SocialFriendsPanel({
             >
               <h3 id="friends-invite-history-title">Open invitations</h3>
               <div>
-                {invitations.slice(0, 8).map((invitation) => {
+                {pendingInvitations.slice(0, 8).map((invitation) => {
                   const code = invitationDisplayCode(invitation);
                   const invitationUrl = code ? socialInvitationUrl(code) : "";
 
