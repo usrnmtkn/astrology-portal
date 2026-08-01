@@ -56,20 +56,20 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 624.0 kB |
-| Static App JavaScript graph | 568.9 kB |
+| Reader boot, including awaited CSS | 588.6 kB |
+| Static App JavaScript graph | 533.5 kB |
 | Reader startup CSS | 55.1 kB |
-| App code chunk | 159.6 kB |
+| App code chunk | 159.7 kB |
 
 The governed domain split, Calendar CSS boundary, deferred full manifest, and
-complementary source partitions reduced reader boot from 1.34 MB to 624.0 kB
-gzip, about 53%. Using libphonenumber's compact metadata tier keeps US phone
-formatting and validation intact without placing its extended global metadata
-on the reader boot path. The 488 kB transit/relationship chunk, 195.5 kB deferred core,
-and 27.1 kB full manifest remain available on demand but are prohibited from
-re-entering the static App graph by the budget check. Total production
-JavaScript remains 2.55 MB gzip, so the split does not duplicate the canonical
-source snapshot.
+complementary source partitions reduced reader boot from 1.34 MB to 588.6 kB
+gzip, about 56%. Phone fields use dependency-free formatting and a fast US
+numbering-shape check; the compact 29.6 kB metadata chunk then performs strict
+validation before an OTP request reaches Supabase. The 488 kB transit/relationship
+chunk, 195.5 kB deferred core, 29.6 kB phone validator, and 27.1 kB full manifest
+remain available on demand but are prohibited from re-entering the static App
+graph by the budget check. Total production JavaScript remains 2.54 MB gzip, so
+the split does not duplicate the canonical source snapshot.
 
 Budgets live in `scripts/web-bundle-budgets.json` and run in the visual-smoke
 workflow. Raise a budget only with an intentional, documented product change.

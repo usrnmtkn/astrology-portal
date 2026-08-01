@@ -1,5 +1,4 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { normalizeUsPhoneNumber } from "./phoneAuth";
 
 export type AuthProvider = "google";
 
@@ -28,6 +27,12 @@ export const isPhoneAuthEnabled = (
 );
 
 let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
+
+async function normalizeUsPhoneNumber(value: string) {
+  const { normalizeUsPhoneNumber: normalizePhone } = await import("./phoneAuthValidation");
+
+  return normalizePhone(value);
+}
 
 export async function getSupabaseClient() {
   if (!isAuthConfigured) {
@@ -236,7 +241,7 @@ export async function sendPhoneSignInCode(
     throw new Error("Supabase auth is not configured.");
   }
 
-  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const normalizedPhone = await normalizeUsPhoneNumber(phone);
   const { error } = await supabase.auth.signInWithOtp({
     phone: normalizedPhone,
     options: {
@@ -269,7 +274,7 @@ export async function verifyPhoneSignInCode({
   }
 
   const { data, error } = await supabase.auth.verifyOtp({
-    phone: normalizeUsPhoneNumber(phone),
+    phone: await normalizeUsPhoneNumber(phone),
     token: code.trim(),
     type: "sms"
   });
@@ -288,7 +293,7 @@ export async function startPhoneNumberChange(phone: string) {
     throw new Error("Supabase auth is not configured.");
   }
 
-  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const normalizedPhone = await normalizeUsPhoneNumber(phone);
   const { error } = await supabase.auth.updateUser({
     phone: normalizedPhone
   });
@@ -307,7 +312,7 @@ export async function resendPhoneNumberChangeCode(phone: string) {
     throw new Error("Supabase auth is not configured.");
   }
 
-  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const normalizedPhone = await normalizeUsPhoneNumber(phone);
   const { error } = await supabase.auth.resend({
     type: "phone_change",
     phone: normalizedPhone
@@ -333,7 +338,7 @@ export async function verifyPhoneNumberChange({
     throw new Error("Supabase auth is not configured.");
   }
 
-  const normalizedPhone = normalizeUsPhoneNumber(phone);
+  const normalizedPhone = await normalizeUsPhoneNumber(phone);
   const { data, error } = await supabase.auth.verifyOtp({
     phone: normalizedPhone,
     token: code.trim(),
