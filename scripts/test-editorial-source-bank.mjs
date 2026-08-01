@@ -12,12 +12,17 @@ const require = createRequire(import.meta.url);
 const judge = require("../packages/astro-knowledge/scripts/judge-editorial-source-bank.js");
 const bank = JSON.parse(fs.readFileSync(judge.bankPath, "utf8"));
 const entries = judge.flattenBank(bank);
+const referenceFacts = judge.flattenReferenceFacts(bank);
 
 assert.equal(bank.authoring.origin, "owner-authored");
 assert.equal(bank.authoring.review_status, "approved");
 assert.equal(bank.authoring.approved_via, "owner-authored");
 assert.equal(bank.authoring.preserve_exact_wording, true);
 assert.equal(bank.authoring.reader_serving, false);
+assert.equal(bank.facts.lane, "reference");
+assert.equal(bank.facts.reader_serving, false);
+assert.equal(referenceFacts.length, 13);
+assert.ok(referenceFacts.every((fact) => fact.reader_serving === false));
 
 assert.equal(bank.collections.length, 7);
 assert.equal(entries.length, 102);
@@ -53,7 +58,20 @@ assert.ok(exactBodies.has("Where structure will set you free."));
 
 const lint = judge.lintBank(bank);
 assert.equal(lint.entryCount, 102);
+assert.equal(lint.referenceFactCount, 13);
 assert.deepEqual(lint.errors, []);
+
+const cazimiFacts = judge.queryReferenceFacts("cazimi within one degree");
+assert.equal(cazimiFacts[0].id, "solar-proximity-ladder");
+assert.equal(cazimiFacts[0].values.cazimi_primary_arcminutes, 17);
+const cazimiConflict = judge.checkReferenceClaim("Cazimi is within 1 degree of the Sun.");
+assert.equal(cazimiConflict.length, 1);
+assert.equal(cazimiConflict[0].factId, "solar-proximity-ladder");
+assert.equal(cazimiConflict[0].severity, "warn");
+const traditionalCazimiConflict = judge.checkReferenceClaim("The traditional cazimi orb is 1 degree.");
+assert.equal(traditionalCazimiConflict[0].severity, "fail");
+const barbaultConflict = judge.checkReferenceClaim("Barbault called it the most benefic configuration of the century.");
+assert.equal(barbaultConflict[0].status, "blocked-unverified");
 
 const sample = entries.find((entry) => entry.id === "boundaries-energy-protection-01");
 const prompt = judge.buildJudgePrompt(sample);

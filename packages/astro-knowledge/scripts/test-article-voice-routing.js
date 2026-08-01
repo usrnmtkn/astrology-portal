@@ -84,14 +84,14 @@ async function main() {
   );
   console.log("OK  lint runs first, planet furniture is passed, and neither judge crosses surfaces");
 
-  assert.strictEqual(spec.checks.length, 10, "long-form contract must retain all ten checks");
+  assert.strictEqual(spec.checks.length, 11, "long-form contract must retain all eleven checks");
   const prompt = buildJudgePrompt(cleanArticle, { planet: "jupiter" });
   for (const check of spec.checks.filter((entry) => entry.id !== "lint-clean")) {
     assert.ok(prompt.includes(`[${check.id}]`), `judge prompt must include ${check.id}`);
   }
-  assert.ok(!prompt.includes("[lint-clean]"), "the tenth check is mechanical and must stay in the pre-judge linter");
+  assert.ok(!prompt.includes("[lint-clean]"), "the eleventh check is mechanical and must stay in the pre-judge linter");
   assert.ok(prompt.includes(furnitureFor("jupiter")));
-  console.log("OK  ten-check contract = mechanical lint-clean + nine semantic prompt checks; Jupiter furniture present");
+  console.log("OK  eleven-check contract = mechanical lint-clean + ten semantic prompt checks; Jupiter furniture present");
 
   let calibrationCalls = 0;
   const calibration = await runArticleJudgeCalibration({

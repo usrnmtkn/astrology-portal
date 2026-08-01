@@ -21,7 +21,9 @@ const {
   PLANETS, SIGNS, generateArticle, buildPrompt, parseArticle, gridReport, runBatch
 } = require("./generate-sky-placement-articles.js");
 const { buildJudgePrompt, TIER_OF } = require("./judge-placement-voice.js");
+const { findBannedConstructions } = require("./banned-construction-matcher.js");
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
+const bannedConstructions = require(path.join("..", "voice", "banned-constructions.json")).bannedConstructions;
 const pointSignColors = require(path.join("..", "voice", "tldr-astro", "sign-colors-v2-points.json"));
 
 const good = {
@@ -100,6 +102,35 @@ async function main() {
     quoteWithoutMeaning.findings.some((finding) => finding.term === "missing-meaning-after-quote"),
     "a standalone quote without a remaining meaning paragraph must fail"
   );
+  const ccSdLiteral = lintArticle({
+    ...good,
+    hook: "Welcome to another powerful week. Mars in Scorpio does not raise its voice; it waits.",
+    planet: "mars"
+  });
+  assert.ok(
+    ccSdLiteral.findings.some((finding) => finding.severity === "fail" && finding.term === "Welcome to another powerful week"),
+    "a verbatim CC/SD tic must fail mechanically"
+  );
+  for (const literal of [
+    "Great question.",
+    "Welcome to another powerful week",
+    "Let's dive into what the stars have in store",
+    "You got this"
+  ]) {
+    assert.ok(
+      findBannedConstructions(literal, bannedConstructions).some((finding) => finding.severity === "fail"),
+      `verbatim CC/SD tic must fail mechanically: ${literal}`
+    );
+  }
+  const ccSdFamily = lintArticle({
+    ...good,
+    hook: "Scorpio reminds us that patience can hold its nerve. Mars in Scorpio does not raise its voice; it waits.",
+    planet: "mars"
+  });
+  assert.ok(
+    !ccSdFamily.findings.some((finding) => finding.term === "[Sign] reminds us that [lesson]"),
+    "bracketed CC/SD pattern families must remain judge-only"
+  );
   console.log("OK  tagline, hook-quote, meaning-paragraph, and moves rules enforced");
 
   // 3. failing draft retried with lint feedback, then accepted
@@ -177,6 +208,7 @@ async function main() {
     const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
     assert.ok(jp.includes("GOLD STANDARD"), `judge prompt must include gold standard for tier ${tier}`);
     assert.ok(/\[2\]/.test(jp), `tier ${tier} must get two gold exemplars (social falls back cross-tier)`);
+    assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");

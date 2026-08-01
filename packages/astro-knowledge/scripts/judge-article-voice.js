@@ -26,6 +26,7 @@ const path = require("path");
 const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-article-longform.json"));
+const { buildReferenceFactContext } = require("./reference-fact-bank.js");
 
 function furnitureFor(planet) {
   const key = String(planet || "").toLowerCase();
@@ -39,6 +40,7 @@ function furnitureFor(planet) {
 function buildJudgePrompt(articleText, { planet = "", edition = "" } = {}) {
   const furniture = furnitureFor(planet);
   const judged = spec.checks.filter((c) => c.id !== "lint-clean");
+  const referenceFactContext = buildReferenceFactContext(articleText);
   return [
     `You are the editor for Marie Satori, an astrologer. You are strict. Most drafts are "borderline" until proven otherwise.`,
     ``,
@@ -48,6 +50,7 @@ function buildJudgePrompt(articleText, { planet = "", edition = "" } = {}) {
     ``,
     `Licensed on this surface (do NOT penalize): ${spec.licensedOnThisSurface.join("; ")}.`,
     furniture ? `This planet's required furniture: ${furniture}` : ``,
+    referenceFactContext,
     ``,
     `Score 1-3 against these checks:`,
     ...judged.map((c, i) => `  ${i + 1}. [${c.id}] ${c.rule}`),
