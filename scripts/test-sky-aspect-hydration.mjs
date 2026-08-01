@@ -37,8 +37,18 @@ assert.match(
 );
 assert.match(
   appSource,
-  /loadLiveGeneratedContentForKeys\(aspectContentKeys\)[\s\S]*?setSkyAspectContentStatus\("ready"\)/u,
-  "The Sky page must hydrate current aspect keys before revealing the aspect hierarchy."
+  /const currentSkyContentKeys = \[\.\.\.aspectContentKeys, \.\.\.placementContentKeys\];[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyAspectContentStatus\("ready"\)/u,
+  "The Sky page must hydrate only current aspect and placement keys before revealing the aspect hierarchy."
+);
+assert.match(
+  appSource,
+  /if \(mode === "calendar"\)[\s\S]*?loadLiveGeneratedContent\("sky", skyDate\)[\s\S]*?return \(\) =>/u,
+  "The broad Sky loader may remain only on the Calendar path, which needs event-detail content beyond the current sky."
+);
+assert.doesNotMatch(
+  appSource,
+  /loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?loadLiveGeneratedContent\("sky", skyDate\)/u,
+  "The current Sky route must not continue the broad surface scan after its exact-key request."
 );
 assert.match(
   appSource,
