@@ -49,7 +49,8 @@ steps:
       - --max-instances=${_MAX_INSTANCES}
       - --set-env-vars=^::^TLDR_ASTRO_ALLOWED_ORIGINS=${_ALLOWED_ORIGINS}::TLDR_ASTRO_EPHEMERIS_PATH=${_EPHEMERIS_PATH}
       - --set-secrets=GOOGLE_MAPS_TIMEZONE_API_KEY=${_GOOGLE_TIMEZONE_SECRET}:latest
-      - --add-volume=mount-path=${_EPHEMERIS_PATH},type=cloud-storage,bucket=${_EPHEMERIS_BUCKET},readonly=true
+      - --add-volume=name=swisseph-data,type=cloud-storage,bucket=${_EPHEMERIS_BUCKET},readonly=true
+      - --add-volume-mount=volume=swisseph-data,mount-path=${_EPHEMERIS_PATH}
       - --startup-probe=httpGet.path=/ready,httpGet.port=8000,initialDelaySeconds=0,failureThreshold=3,timeoutSeconds=10,periodSeconds=10
 
 images:
