@@ -12641,6 +12641,26 @@ export function App() {
       };
     }
 
+    if (mode === "calendar") {
+      setSkyAspectContentStatus("idle");
+      loadLiveGeneratedContent("sky", skyDate)
+        .then((content) => {
+          if (!cancelled) {
+            setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          }
+        })
+        .catch((error) => {
+          console.warn("Live Calendar interpretations failed to load; unpublished content will remain hidden.", error);
+          if (!cancelled) {
+            setSkyGeneratedContent(normalizedSkySnapshotContent);
+          }
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
     setSkyGeneratedContent(normalizedSkySnapshotContent);
     setSkyAspectContentStatus("loading");
 
@@ -12661,11 +12681,23 @@ export function App() {
         targetDate: sky.generatedAt.slice(0, 10)
       });
     });
+    const placementContentKeys = sky.positions.flatMap((position) => {
+      const expected = normalizedCollectiveSkyPlacementFacts(position);
+      const topper = tightestSkyPlacementTopperAspect(position, sky.aspects, sky.positions);
 
-    loadLiveGeneratedContentForKeys(aspectContentKeys)
+      return [
+        expected ? skyPlacementBaseContentKey(expected.planet, expected.sign) : "",
+        topper
+          ? skyPlacementTopperContentKey(topper.planet, topper.sign, topper.aspect, topper.other)
+          : ""
+      ].filter(Boolean);
+    });
+    const currentSkyContentKeys = [...aspectContentKeys, ...placementContentKeys];
+
+    loadLiveGeneratedContentForKeys(currentSkyContentKeys)
       .then((content) => {
         if (!cancelled) {
-          setSkyGeneratedContent((current) => mergeGeneratedContentMaps(content, current, normalizedSkySnapshotContent));
+          setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
           setSkyAspectContentStatus("ready");
         }
       })
@@ -12673,19 +12705,6 @@ export function App() {
         console.warn("Current Sky aspect interpretations failed to load; factual aspects remain available.", error);
         if (!cancelled) {
           setSkyAspectContentStatus("ready");
-        }
-      });
-
-    loadLiveGeneratedContent("sky", skyDate)
-      .then((content) => {
-        if (!cancelled) {
-          setSkyGeneratedContent((current) => mergeGeneratedContentMaps(content, current, normalizedSkySnapshotContent));
-        }
-      })
-      .catch((error) => {
-        console.warn("Live Sky interpretations failed to load; unpublished content will remain hidden.", error);
-        if (!cancelled) {
-          setSkyGeneratedContent((current) => current === normalizedSkySnapshotContent ? normalizedSkySnapshotContent : current);
         }
       });
 
