@@ -64,12 +64,15 @@ assert.deepEqual(lint.errors, []);
 const cazimiFacts = judge.queryReferenceFacts("cazimi within one degree");
 assert.equal(cazimiFacts[0].id, "solar-proximity-ladder");
 assert.equal(cazimiFacts[0].values.cazimi_primary_arcminutes, 17);
+assert.equal(cazimiFacts[0].status, "quarantined-source-claim");
 const cazimiConflict = judge.checkReferenceClaim("Cazimi is within 1 degree of the Sun.");
-assert.equal(cazimiConflict.length, 1);
-assert.equal(cazimiConflict[0].factId, "solar-proximity-ladder");
-assert.equal(cazimiConflict[0].severity, "warn");
+assert.deepEqual(cazimiConflict, []);
 const traditionalCazimiConflict = judge.checkReferenceClaim("The traditional cazimi orb is 1 degree.");
-assert.equal(traditionalCazimiConflict[0].severity, "fail");
+assert.deepEqual(traditionalCazimiConflict, []);
+assert.ok(referenceFacts
+  .filter((fact) => fact.source_tags.some((tag) => tag === "CC" || tag === "SD"))
+  .filter((fact) => !fact.source_tags.includes("independently-verified"))
+  .every((fact) => fact.status !== "verified-reference"));
 const barbaultFacts = judge.queryReferenceFacts("Barbault Saturn Neptune configuration");
 assert.equal(barbaultFacts[0].id, "barbault-cyclic-index");
 assert.equal(barbaultFacts[0].status, "verified-reference");

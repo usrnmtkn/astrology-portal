@@ -36,14 +36,15 @@ const enginePath = path.join(tempDir, "engine.json");
 fs.writeFileSync(enginePath, JSON.stringify({
   schema: "tldrastro-engine-confirmed-date-slots-v1",
   generatedBy: "test",
-  ephemeris: "test ephemeris",
+  calculationAuthority: {
+    engine: "test ephemeris",
+    independentPositionVerification: "test reference"
+  },
   timePolicy: {},
   dateSlots: {
     testEdition: {
       entryDate: {
-        instantUtc: "2026-06-30T05:52:21.690Z",
-        sourcePacificDate: "2026-06-29",
-        canonicalDate: "2026-06-30"
+        instantUtc: "2026-06-30T05:52:21.690Z"
       }
     }
   }
@@ -64,12 +65,15 @@ assert.equal(staged.serving, false);
 assert.equal(staged.review_status, "needs_review");
 assert.equal(staged.editions[0].sourceMarkdown, sourceMarkdown, "Importer must preserve source prose exactly.");
 assert.deepEqual(staged.editions[0].unresolvedPlaceholders, ["unresolvedThing"]);
-assert.deepEqual(staged.editions[0].timeZoneDateDifferences, [{
-  slot: "entryDate",
-  sourcePacificDate: "2026-06-29",
-  canonicalDate: "2026-06-30",
-  instantUtc: "2026-06-30T05:52:21.690Z"
-}]);
+assert.deepEqual(staged.editions[0].dateRendering, {
+  authority: "instantUtc",
+  displayTimeZone: "user-location",
+  status: "derive-at-render"
+});
+assert.doesNotMatch(
+  JSON.stringify(staged),
+  /America\/(?:Los_Angeles|New_York)|sourcePacificDate|canonicalDate|canonicalNoonUtc/u
+);
 
 const changedSource = `${sourceMarkdown}changed\n`;
 fs.writeFileSync(path.join(sourceDir, sourceName), changedSource);
@@ -82,4 +86,4 @@ const refusal = spawnSync(process.execPath, [
 assert.notEqual(refusal.status, 0, "Importer must refuse modified review prose.");
 assert.match(refusal.stderr, /byte length changed|prose changed/u);
 
-console.log("Sky article staged import preserves prose and surfaces canonical-date differences.");
+console.log("Sky article staged import preserves prose and defers dates to the user's timezone.");
