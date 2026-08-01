@@ -1,6 +1,6 @@
 import fallbackSourceRowsV3 from "./fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-templates-v3.json";
-import bundledManifestV3 from "./fallbackArchitectureV3/bundled-manifest-v3.json";
+import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
 import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
@@ -120,6 +120,11 @@ export type FallbackArchitectureV3PackageManifest = {
   keyCount: number;
   keys: string[];
 };
+
+export type FallbackArchitectureV3PackageManifestSummary = Omit<
+  FallbackArchitectureV3PackageManifest,
+  "keys"
+>;
 
 export type SkyEvent = {
   type: string;
@@ -406,7 +411,19 @@ export function fallbackArchitectureV3ManifestForBundle(
   return createPackageManifest(readerEligibleBundle(bundle), packageVersion);
 }
 
-export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest;
+export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary;
+let bundledManifestPromise: Promise<FallbackArchitectureV3PackageManifest> | null = null;
+
+export function loadFallbackArchitectureV3BundledManifest() {
+  bundledManifestPromise ??= import("./fallbackArchitectureV3/bundled-manifest-v3.json")
+    .then((module) => module.default as FallbackArchitectureV3PackageManifest)
+    .catch((error) => {
+      bundledManifestPromise = null;
+      throw error;
+    });
+
+  return bundledManifestPromise;
+}
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let activeReaderBundle = initialReaderBundle;

@@ -22,9 +22,12 @@ initial Sky render. Route-owned CSS must be imported by the route module so its
 styles arrive before the feature is revealed from `Suspense`.
 
 The generated manifest retains all 7,175 governed package keys, hashes, and the
-package version without importing the 3.2 MB transit source snapshot. Run
-`npm run build:fallback-manifest` after an intentional fallback-package content
-change; the performance contract fails when this artifact is stale.
+package version without importing the 3.2 MB transit source snapshot. A small
+summary containing the version and hashes remains synchronous for cache
+invalidation; the full key list loads only when a cached or fetched dashboard
+package needs completeness validation. Run `npm run build:fallback-manifest`
+after an intentional fallback-package content change; the performance contract
+fails when either generated artifact is stale.
 
 The fallback runtime receives a reader-eligible bundle before it creates its
 renderers. Renderer construction must not repeat the full review-state filtering
@@ -50,15 +53,15 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 870.6 kB |
-| Static App JavaScript graph | 815.5 kB |
+| Reader boot, including awaited CSS | 844.3 kB |
+| Static App JavaScript graph | 789.2 kB |
 | Reader startup CSS | 55.1 kB |
 | App code chunk | 159.3 kB |
 
-The governed domain split and Calendar CSS boundary reduced reader boot from
-1.34 MB to 870.6 kB gzip, about 35%. The 488 kB transit/relationship chunk
-remains available on demand but is prohibited from re-entering the static App
-graph by the budget check.
+The governed domain split, Calendar CSS boundary, and deferred full manifest
+reduced reader boot from 1.34 MB to 844.3 kB gzip, about 37%. The 488 kB
+transit/relationship chunk and 27.1 kB full manifest remain available on demand
+but are prohibited from re-entering the static App graph by the budget check.
 
 Budgets live in `scripts/web-bundle-budgets.json` and run in the visual-smoke
 workflow. Raise a budget only with an intentional, documented product change.

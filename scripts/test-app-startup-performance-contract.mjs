@@ -31,6 +31,16 @@ assert.match(
   "Transit and relationship content must remain behind a dynamic runtime boundary."
 );
 assert.doesNotMatch(
+  fallbackRuntimeSource,
+  /^import .*bundled-manifest-v3\.json/mu,
+  "The full package key list must not be a static reader dependency."
+);
+assert.match(
+  fallbackRuntimeSource,
+  /import\("\.\/fallbackArchitectureV3\/bundled-manifest-v3\.json"\)/u,
+  "The full package key list must remain available to dashboard validation on demand."
+);
+assert.doesNotMatch(
   readerStylesSource,
   /lunar-calendar\.css/u,
   "Calendar-only CSS must not remain in the reader startup stylesheet."

@@ -12,6 +12,7 @@ import {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const outputPath = path.join(packageRoot, "bundled-manifest-v3.json");
+const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.json");
 const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
@@ -89,11 +90,19 @@ function fullReaderBundle() {
 
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
 const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
+const summary = {
+  packageVersion: manifest.packageVersion,
+  contentHash: manifest.contentHash,
+  keyManifestHash: manifest.keyManifestHash,
+  keyCount: manifest.keyCount
+};
+const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
+  const existingSummary = fs.existsSync(summaryOutputPath) ? fs.readFileSync(summaryOutputPath, "utf8") : "";
 
-  if (existing !== serialized) {
+  if (existing !== serialized || existingSummary !== serializedSummary) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
   }
@@ -101,5 +110,7 @@ if (checkOnly) {
   console.log(`Bundled fallback manifest is current (${manifest.keyCount} keys).`);
 } else {
   fs.writeFileSync(outputPath, serialized);
+  fs.writeFileSync(summaryOutputPath, serializedSummary);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
+  console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
 }

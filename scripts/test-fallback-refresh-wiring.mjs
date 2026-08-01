@@ -586,8 +586,8 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest/u,
-  "Runtime must expose the bundled key manifest and content hash."
+  /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
+  "Runtime must expose the bundled manifest summary without eagerly importing its key list."
 );
 assert.match(
   generatedContentSource,
@@ -596,7 +596,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifest\.contentHash/u,
+  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
   "Dashboard cache payloads must be rejected when the bundled content hash changes."
 );
 assert.match(
