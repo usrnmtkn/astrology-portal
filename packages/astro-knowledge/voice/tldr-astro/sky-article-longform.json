@@ -16,16 +16,50 @@
     "challenge/opportunity block closes (owner's own construction)"
   ],
   "checks": [
-    { "id": "empathy-first", "rule": "Opens on the reader's felt experience before any astronomy. The owner spends a paragraph to a page on the feeling before a single planet is named. Model sentence: 'It's tiring to keep up with a world that changes the rules mid-sentence.' If the body opens with the cosmos, fail this check. The seasonOpener slot does not count." },
-    { "id": "spoken-not-written", "rule": "The middle third read aloud sounds like her across a table. Think-tank, consultancy, or seminar phrasing fails ('the credentialing of knowledge contested' was a real failure)." },
-    { "id": "maybe-lists", "rule": "At least one concrete Maybe-list or scene-run cashing the abstractions into real life: 'Maybe it was a job loss or a company re-org. Maybe your living situation no longer fit... even something like mold in the house, or flood.'" },
-    { "id": "command-runs", "rule": "Two or three imperatives in a row, then release ('Stop saying yes before you've thought it through. Stop filling every silence with your voice.'). Expected in Mars, Uranus, and Saturn territory; optional elsewhere." },
-    { "id": "per-planet-furniture", "rule": "Each planet's articles inherit the structure of THAT planet's published piece, never another's. See perPlanetFurniture." },
-    { "id": "teaching-correction", "rule": "At least one plain correction of a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An article that never corrects anything is describing, not teaching." },
-    { "id": "benediction-close", "rule": "The body ends warm and forward: a benediction ('May we each find the courage...'), an affirmation with the owner's label, or the next-sign handoff. Never a summary paragraph." },
-    { "id": "block-shape", "rule": "Rising blocks run situation-permission: house in life terms, the reader's pattern named kindly, the concrete instruction, the permission, stop. No aphorism after the permission." },
-    { "id": "dates-in-prose", "rule": "Dates read as sentences in body copy (Key Dates lists are the licensed exception). Degrees appear at stations. History claims are checkable and marked pending engine confirmation until confirmed." },
-    { "id": "lint-clean", "rule": "Lexicon fails and warns plus House ban list trade vocabulary (audit, ledger, compound, colonize) all clear. Owner-verbatim text outranks any hit. Mechanical; run the linter, not the judge." }
+    {
+      "id": "empathy-first",
+      "rule": "Opens on the reader's felt experience before any astronomy. The owner spends a paragraph to a page on the feeling before a single planet is named. Model sentence: 'It's tiring to keep up with a world that changes the rules mid-sentence.' If the body opens with the cosmos, fail this check. The seasonOpener slot does not count."
+    },
+    {
+      "id": "spoken-not-written",
+      "rule": "The middle third read aloud sounds like her across a table. Think-tank, consultancy, or seminar phrasing fails ('the credentialing of knowledge contested' was a real failure)."
+    },
+    {
+      "id": "maybe-lists",
+      "rule": "At least one concrete Maybe-list or scene-run cashing the abstractions into real life: 'Maybe it was a job loss or a company re-org. Maybe your living situation no longer fit... even something like mold in the house, or flood.'"
+    },
+    {
+      "id": "command-runs",
+      "rule": "Two or three imperatives in a row, then release ('Stop saying yes before you've thought it through. Stop filling every silence with your voice.'). Expected in Mars, Uranus, and Saturn territory; optional elsewhere."
+    },
+    {
+      "id": "per-planet-furniture",
+      "rule": "Each planet's articles inherit the structure of THAT planet's published piece, never another's. See perPlanetFurniture."
+    },
+    {
+      "id": "teaching-correction",
+      "rule": "At least one plain correction of a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An article that never corrects anything is describing, not teaching."
+    },
+    {
+      "id": "benediction-close",
+      "rule": "The body ends warm and forward: a benediction ('May we each find the courage...'), an affirmation with the owner's label, or the next-sign handoff. Never a summary paragraph."
+    },
+    {
+      "id": "block-shape",
+      "rule": "Rising blocks run situation-permission: house in life terms, the reader's pattern named kindly, the concrete instruction, the permission, stop. No aphorism after the permission."
+    },
+    {
+      "id": "dates-in-prose",
+      "rule": "Dates read as sentences in body copy (Key Dates lists are the licensed exception). Degrees appear at stations. History claims are checkable and marked pending engine confirmation until confirmed."
+    },
+    {
+      "id": "recognizability",
+      "rule": "Would any sentence be identifiable as CHANI or Spirit Daughter? The 32 documented tics (voice/banned-constructions.json, source CC/SD; full research in the owner's TLDR-Source-Patterns-CC-SD.md) are the fingerprints of the genre's two dominant voices, and the generator drifts toward them by default. Flag any construction on the list. Owner-verbatim text is exempt. The sharpest boundary: Marie's permission lines are specific and falsifiable (allowed to do a nameable thing); SD's are affirmational (deserve to feel good). Flag drift from the first toward the second."
+    },
+    {
+      "id": "lint-clean",
+      "rule": "Lexicon fails and warns plus House ban list trade vocabulary (audit, ledger, compound, colonize) all clear. Owner-verbatim text outranks any hit. Mechanical; run the linter, not the judge."
+    }
   ],
   "perPlanetFurniture": {
     "jupiter": "titled Collective Themes subsections, a practice section in the witchcraft register, Key Dates with month + exact date + consequence, the closing year-character pair",
