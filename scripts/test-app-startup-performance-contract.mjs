@@ -81,10 +81,20 @@ assert.doesNotMatch(
   /friends-route\.css/u,
   "Friends-only CSS must not remain in the reader startup stylesheet."
 );
+assert.doesNotMatch(
+  readerStylesSource,
+  /friends-compare-picker\.css/u,
+  "Friends comparison CSS must not remain in the reader startup stylesheet."
+);
 assert.match(
   friendsRouteSource,
   /import "\.\.\/styles\/friends-route\.css";/u,
   "The lazy Friends route must own its production layout stylesheet."
+);
+assert.match(
+  friendsRouteSource,
+  /import "\.\.\/styles\/friends-compare-picker\.css";/u,
+  "The lazy Friends route must own its comparison picker stylesheet."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
