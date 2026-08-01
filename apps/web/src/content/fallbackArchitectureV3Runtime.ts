@@ -1,6 +1,6 @@
 import fallbackSourceRowsV3 from "./fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-templates-v3.json";
-import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-language-pass-2.json";
+import bundledManifestV3 from "./fallbackArchitectureV3/bundled-manifest-v3.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
 import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
@@ -8,7 +8,6 @@ import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspe
 import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
 import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
 import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
-import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
@@ -150,136 +149,6 @@ export type AspectFacts = {
   voice?: "you" | string;
   [key: string]: unknown;
 };
-
-const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
-const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
-
-function assertLunationBlendImport(
-  blend: typeof lunationBlendUnitsV1,
-  primaryTransitRows: typeof transitSynastryRowsV1,
-  primarySourceRows: typeof fallbackSourceRowsV3
-) {
-  const allAuthoredCards = [...primaryTransitRows.authoredCards, ...blend.authoredCards];
-  const allHookRows = [...primarySourceRows.hookRows, ...blend.hookRows];
-  const allRows = [...allAuthoredCards, ...allHookRows];
-  const fallbackSetSource = "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores";
-  const fixedFrameMacros = allAuthoredCards.filter(
-    (row) => row.contentKey.startsWith("authored/sky-lunation-macro/")
-      && (
-        row.review_status === "approved"
-        || row.source_keys?.includes(fallbackSetSource)
-      )
-  );
-  for (const macro of fixedFrameMacros) {
-    const expectedOpen = macro.contentKey.includes("/new-moon/")
-      ? NEW_MOON_MACRO_OPEN
-      : FULL_MOON_MACRO_OPEN;
-    if (!macro.body.startsWith(expectedOpen)) {
-      throw new Error(`Lunation macro frame mismatch: ${macro.contentKey}`);
-    }
-  }
-
-  const stagedRulerRows = blend.hookRows.filter((row) =>
-    row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-  );
-  const primaryHooksByKey = new Map(primarySourceRows.hookRows.map((row) => [row.contentKey, row]));
-  if (
-    stagedRulerRows.length !== 12
-    || stagedRulerRows.filter((row) => row.review_status === "needs_review").length !== 11
-    || stagedRulerRows.filter((row) => row.review_status === "approved").length !== 1
-  ) {
-    throw new Error("Lunation ruler staging must contain one approved row and 11 review-gated rows.");
-  }
-  for (const row of stagedRulerRows) {
-    const mirrored = primaryHooksByKey.get(row.contentKey);
-    if (!mirrored || mirrored.review_status !== row.review_status || mirrored.body_you !== row.body_you) {
-      throw new Error(`Lunation ruler mirror mismatch: ${row.contentKey}`);
-    }
-  }
-
-  const batchThree = allRows.filter((row) => row.source_keys?.includes(
-    "Lunation sign packages batch 3 — the next three events"
-  ));
-  if (batchThree.length !== 9 || batchThree.some((row) => row.review_status !== "approved")) {
-    throw new Error("Batch 3 lunation import must contain exactly nine approved rows.");
-  }
-
-  const fallbackSet = allRows.filter((row) => row.source_keys?.includes(fallbackSetSource));
-  if (
-    fallbackSet.length !== 39
-    || fallbackSet.some((row) => row.review_status !== "approved")
-  ) {
-    throw new Error("Lunation fallback set must contain exactly 39 approved rows.");
-  }
-  const fallbackCompacts = fallbackSet.filter(
-    (row) => row.contentKey.startsWith("fallback-hook/lunation-sign-compact/")
-  );
-  if (
-    fallbackCompacts.length !== 20
-    || fallbackCompacts.some((row) => !("body_you" in row)
-      || row.body_you.trim().split(/\s+/u).length <= 10)
-  ) {
-    throw new Error("Lunation fallback compact rows must contain the authored prose.");
-  }
-  const macroKeys = new Set(allAuthoredCards
-    .filter((row) => row.contentKey.startsWith("authored/sky-lunation-macro/"))
-    .map((row) => row.contentKey));
-  const compactKeys = new Set(allHookRows
-    .filter((row) => row.contentKey.startsWith("fallback-hook/lunation-sign-compact/"))
-    .map((row) => row.contentKey));
-  if (macroKeys.size !== 24 || compactKeys.size !== 24) {
-    throw new Error(
-      `Lunation sign coverage incomplete: ${macroKeys.size}/24 macros, ${compactKeys.size}/24 compacts.`
-    );
-  }
-}
-
-assertLunationBlendImport(lunationBlendUnitsV1, transitSynastryRowsV1, fallbackSourceRowsV3);
-
-function assertBondLanguagePass2Import(
-  base: typeof fallbackSourceRowsV3,
-  pass: typeof bondLanguagePass2
-) {
-  const rows = pass.rows;
-  const keys = new Set(rows.map((row) => row.contentKey));
-  const baseByKey = new Map(base.hookRows.map((row) => [row.contentKey, row]));
-  const readerEligible = new Set(["approved", "approved_reuse", "reviewed"]);
-
-  if (rows.length !== 139 || keys.size !== 139) {
-    throw new Error(`Bond language pass 2 must contain 139 unique rows; found ${rows.length}/${keys.size}.`);
-  }
-
-  for (const row of rows) {
-    const servingTwin = baseByKey.get(row.contentKey);
-    if (
-      row.review_status !== "reviewed"
-      || row.content_role !== "fallback_hook"
-      || row.grammar_frame !== "complete_sentence"
-      || row.body_you !== row.body_they
-      || !row.source_keys?.includes("owner/bond-language-pass-2")
-    ) {
-      throw new Error(`Invalid bond language pass 2 row: ${row.contentKey}`);
-    }
-    if (!servingTwin || !readerEligible.has(String(servingTwin.review_status))) {
-      throw new Error(`Bond language pass 2 is missing an approved serving twin: ${row.contentKey}`);
-    }
-  }
-
-  const byKey = new Map(rows.map((row) => [row.contentKey, row]));
-  const lintSwaps = [
-    ["fallback-hook/bond-effect-conjunction/uranus", "Let the change finish speaking before you decide it is a problem."],
-    ["fallback-hook/bond-effect-trine/pluto", "uses the truth as a weapon"],
-    ["fallback-hook/bond-effect-soft/pluto/variant-3", "without holding it over them later"],
-    ["fallback-hook/bond-effect-hard/pluto/variant-2", "Name the actual power imbalance"]
-  ] as const;
-  for (const [contentKey, expected] of lintSwaps) {
-    if (!byKey.get(contentKey)?.body_you.includes(expected)) {
-      throw new Error(`Bond language pass 2 lint swap mismatch: ${contentKey}`);
-    }
-  }
-}
-
-assertBondLanguagePass2Import(fallbackSourceRowsV3, bondLanguagePass2);
 
 function assertSkyArticleV1Import(
   registry: typeof skyArticleV1
@@ -439,7 +308,6 @@ assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: [
-      ...(transitSynastryRowsV1.authoredCards as AuthoredCard[]),
       ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
       ...(skyArticleV1.authoredCards as AuthoredCard[]),
       ...(weeklySourceRowsV1 as AuthoredCard[])
@@ -456,7 +324,6 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
     hookRows: [
       ...((fallbackSourceRowsV3 as RowsFile).hookRows ?? []),
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
-      ...(bondLanguagePass2.rows as HookRow[]),
       ...(skyArticleV1.hookRows as HookRow[]),
       ...(skyAspectPhrasebookV1.hookRows as HookRow[]),
       ...(skyPlanetFramesV1.rows as HookRow[]),
@@ -515,8 +382,7 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
   };
 }
 
-function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
-  const readerBundle = readerEligibleBundle(bundle);
+function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
   return createTransitSynastryRenderer(
     readerBundle.transitLib,
     readerBundle.templatesFile,
@@ -524,9 +390,7 @@ function createAppTransitRenderer(bundle: FallbackArchitectureV3Bundle) {
   );
 }
 
-function createAppFallbackRenderer(bundle: FallbackArchitectureV3Bundle) {
-  const readerBundle = readerEligibleBundle(bundle);
-
+function createAppFallbackRenderer(readerBundle: FallbackArchitectureV3Bundle) {
   return createFallbackRenderer({
     templates: readerBundle.templatesFile.templates
   }, {
@@ -542,14 +406,26 @@ export function fallbackArchitectureV3ManifestForBundle(
   return createPackageManifest(readerEligibleBundle(bundle), packageVersion);
 }
 
-export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle(snapshotBundle);
+export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest;
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
+let activeReaderBundle = initialReaderBundle;
+let fullFallbackBundleInstalled = false;
+let deferredFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
 let vocabularyRowsByKey = vocabularyRowsByContentKey(initialReaderBundle.rowsFile);
 let hookRowsByKey = hookRowsByContentKey(initialReaderBundle.rowsFile);
 let transitAuthoredCardsByKey = authoredCardsByContentKey(initialReaderBundle.transitLib);
+
+function activateReaderBundle(readerBundle: FallbackArchitectureV3Bundle) {
+  activeReaderBundle = readerBundle;
+  fallbackRendererV3 = createAppFallbackRenderer(readerBundle);
+  transitSynastryFallbackRendererV3 = createAppTransitRenderer(readerBundle);
+  vocabularyRowsByKey = vocabularyRowsByContentKey(readerBundle.rowsFile);
+  hookRowsByKey = hookRowsByContentKey(readerBundle.rowsFile);
+  transitAuthoredCardsByKey = authoredCardsByContentKey(readerBundle.transitLib);
+}
 
 const signRulers: Record<string, string> = {
   aries: "Mars",
@@ -687,11 +563,54 @@ export function installFallbackArchitectureV3Bundle(
 ) {
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
-  fallbackRendererV3 = createAppFallbackRenderer(readerBundle);
-  transitSynastryFallbackRendererV3 = createAppTransitRenderer(readerBundle);
-  vocabularyRowsByKey = vocabularyRowsByContentKey(readerBundle.rowsFile);
-  hookRowsByKey = hookRowsByContentKey(readerBundle.rowsFile);
-  transitAuthoredCardsByKey = authoredCardsByContentKey(readerBundle.transitLib);
+  fullFallbackBundleInstalled = true;
+  activateReaderBundle(readerBundle);
 
   return manifest;
+}
+
+export function isDeferredFallbackArchitectureV3BundleLoaded() {
+  return fullFallbackBundleInstalled;
+}
+
+export async function loadDeferredFallbackArchitectureV3Bundle() {
+  if (fullFallbackBundleInstalled) {
+    return false;
+  }
+
+  deferredFallbackBundlePromise ??= import("./fallbackArchitectureV3DeferredBundle")
+    .then(({ deferredFallbackArchitectureV3Bundle }) => {
+      if (fullFallbackBundleInstalled) {
+        return false;
+      }
+
+      const readerBundle = readerEligibleBundle({
+        transitLib: {
+          // The original package order places transit rows before the smaller
+          // Sky/weekly overrides that are already active.
+          authoredCards: [
+            ...deferredFallbackArchitectureV3Bundle.transitLib.authoredCards,
+            ...activeReaderBundle.transitLib.authoredCards
+          ]
+        },
+        templatesFile: activeReaderBundle.templatesFile,
+        rowsFile: {
+          hookRows: [
+            ...(activeReaderBundle.rowsFile.hookRows ?? []),
+            ...(deferredFallbackArchitectureV3Bundle.rowsFile.hookRows ?? [])
+          ],
+          vocabularyRows: activeReaderBundle.rowsFile.vocabularyRows
+        }
+      });
+
+      fullFallbackBundleInstalled = true;
+      activateReaderBundle(readerBundle);
+      return true;
+    })
+    .catch((error) => {
+      deferredFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return deferredFallbackBundlePromise;
 }

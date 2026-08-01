@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timezone
+from functools import lru_cache
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from zoneinfo import ZoneInfo
@@ -10,10 +11,16 @@ from tldrastro_api.models import TimezoneRequest, TimezoneResponse
 GOOGLE_TIMEZONE_ENDPOINT = "https://maps.googleapis.com/maps/api/timezone/json"
 
 
-def timezone_at(latitude: float, longitude: float) -> str:
+@lru_cache(maxsize=1)
+def _timezone_finder():
     from timezonefinder import TimezoneFinder
 
-    finder = TimezoneFinder()
+    return TimezoneFinder()
+
+
+@lru_cache(maxsize=2048)
+def timezone_at(latitude: float, longitude: float) -> str:
+    finder = _timezone_finder()
     time_zone = finder.timezone_at(lat=latitude, lng=longitude)
     if not time_zone:
         time_zone = finder.closest_timezone_at(lat=latitude, lng=longitude)
