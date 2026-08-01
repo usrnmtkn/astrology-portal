@@ -9,6 +9,15 @@ selection, or content-package distribution, read
 Keep computed facts in the calculation layer, approved prose in content rows,
 and presentation in React/CSS.
 
+### Sky aspect surface
+
+Before changing Sky aspect selection, fallback behavior, loading state, card
+visibility, grouping, or interaction, read
+[`docs/content-management/SKY-ASPECT-SURFACE-CONTRACT.md`](docs/content-management/SKY-ASPECT-SURFACE-CONTRACT.md).
+Editorial review state controls which prose may serve; it does not authorize a
+new UI treatment. Do not add disclosures, collapsed lists, facts-only buckets,
+or alternate aspect-card classes without explicit product approval.
+
 ## Calculation integrity
 
 - Never hardcode planetary, lunar-node, angle, house, sign, degree, motion, or

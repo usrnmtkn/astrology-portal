@@ -18,6 +18,9 @@ The short version:
   rules for complete fields, author-final copy, and refusal behavior.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface
   wiring, dashboard hydration, and worked examples.
+- [Sky aspect surface contract](./SKY-ASPECT-SURFACE-CONTRACT.md): required
+  fallback precedence, card behavior, and regression checks for the Sky aspect
+  list.
 - [Fallback architecture](../../apps/web/src/content/fallbackArchitectureV3/FALLBACK-ARCHITECTURE.md):
   row roles and authored-versus-assembled resolution.
 - [Resolver specification](../../apps/web/src/content/fallbackArchitectureV3/resolver/RESOLVER-SPEC.md):
