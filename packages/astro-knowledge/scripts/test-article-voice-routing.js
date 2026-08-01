@@ -55,7 +55,7 @@ async function main() {
       samples: 5,
       judgeFn: async (prompt) => {
         calls += 1;
-        assert.ok(prompt.includes(furnitureFor("jupiter")), "router must pass planet into the furniture-aware judge");
+        assert.ok(prompt.includes(furnitureFor("jupiter")), "router must pass planet into the structure-aware judge");
         return JSON.stringify({ score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "calibration stub" });
       }
     }
@@ -82,16 +82,24 @@ async function main() {
     () => runEditorialVoiceQa({ surface: PLACEMENT_SURFACE, articleText: cleanArticle }),
     /never accepts long-form text/
   );
-  console.log("OK  lint runs first, planet furniture is passed, and neither judge crosses surfaces");
+  console.log("OK  lint runs first, planet-specific structure is passed, and neither judge crosses surfaces");
 
   assert.strictEqual(spec.checks.length, 11, "long-form contract must retain all eleven checks");
   const prompt = buildJudgePrompt(cleanArticle, { planet: "jupiter" });
-  for (const check of spec.checks.filter((entry) => entry.id !== "lint-clean")) {
+  const semanticChecks = spec.checks.filter((entry) => entry.id !== "lint-clean" && entry.judge !== false);
+  assert.strictEqual(semanticChecks.length, 9, "date mechanics belong to engine QA, leaving nine semantic voice checks");
+  for (const check of semanticChecks) {
     assert.ok(prompt.includes(`[${check.id}]`), `judge prompt must include ${check.id}`);
   }
   assert.ok(!prompt.includes("[lint-clean]"), "the eleventh check is mechanical and must stay in the pre-judge linter");
+  assert.ok(!prompt.includes("[dates-in-prose]"), "ephemeris and user-local date QA must stay out of voice scoring");
+  assert.strictEqual(spec.checks.find((entry) => entry.id === "dates-in-prose").qaLayer, "engine");
   assert.ok(prompt.includes(furnitureFor("jupiter")));
-  console.log("OK  eleven-check contract = mechanical lint-clean + ten semantic prompt checks; Jupiter furniture present");
+  assert.ok(prompt.includes("Interpretation rules (mandatory)"));
+  assert.ok(prompt.includes("Judge family resemblance, not a quota"));
+  assert.ok(prompt.includes("Never assign 1 solely for a licensed transit-first opening"));
+  assert.ok(prompt.includes(spec.scores["1"]));
+  console.log("OK  eleven-check contract = nine semantic checks + lint and engine-date QA; Jupiter structure present");
 
   let calibrationCalls = 0;
   const calibration = await runArticleJudgeCalibration({
@@ -108,8 +116,24 @@ async function main() {
   assert.ok(calibration.approved.every(({ result }) => result.samples === 5 && result.score === 3));
   assert.ok(calibration.weak.every(({ result }) => result.samples === 5 && result.score === 1));
   assert.strictEqual(calibration.status, "passed");
+  assert.strictEqual(calibration.sampleCount, 5);
   assert.ok(calibration.separation >= 1);
   console.log("OK  approved examples separate from weak controls under median-of-5 calibration");
+
+  let smokeCalls = 0;
+  const smoke = await runArticleJudgeCalibration({
+    samples: 1,
+    judgeFn: async (_prompt, { cohort }) => {
+      smokeCalls += 1;
+      return JSON.stringify(cohort === "approved"
+        ? { score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "smoke owner" }
+        : { score: 1, verdict: "off-voice", failedChecks: ["spoken-not-written"], weakest: [], rewrites: [], why: "smoke weak" });
+    }
+  });
+  assert.strictEqual(smokeCalls, 6);
+  assert.strictEqual(smoke.sampleCount, 1);
+  assert.strictEqual(smoke.status, "passed");
+  console.log("OK  one-sample smoke uses exactly six verdicts and remains distinguishable from calibration");
 
   let splitCall = 0;
   const disagreement = await runArticleJudgeCalibration({

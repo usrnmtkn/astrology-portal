@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-07-31.1",
+  "registryVersion": "2026-08-01.1",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -15,7 +15,16 @@
         "evaluationSetVersion": "sky-generation-contracts-v1",
         "policyVersion": "editorial-generation-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "generation-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "none",
+        "promptVersion": "sky-generation-prompts-v1",
+        "rubricVersion": "not-applicable",
+        "evaluationSetVersion": "sky-generation-contracts-v1",
+        "policyVersion": "editorial-generation-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -31,7 +40,16 @@
         "evaluationSetVersion": "sky-aspect-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "sky-aspect-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "sky-aspect-voice-v1",
+        "evaluationSetVersion": "sky-aspect-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -47,7 +65,16 @@
         "evaluationSetVersion": "sky-placement-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-placement-voice-v1:prompt-v1",
+        "rubricVersion": "sky-placement-voice-v1",
+        "evaluationSetVersion": "sky-placement-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -63,7 +90,16 @@
         "evaluationSetVersion": "sky-article-longform-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "sky-article-judge-openai-gpt-5.6-sol-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-article-longform-v2:prompt-v1",
+        "rubricVersion": "sky-article-longform-v2",
+        "evaluationSetVersion": "sky-article-longform-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -79,7 +115,16 @@
         "evaluationSetVersion": "pattern-aspect-approved-gold-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "natal-pattern-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "pattern-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "pattern-aspect-voice-v1",
+        "evaluationSetVersion": "pattern-aspect-approved-gold-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -95,7 +140,16 @@
         "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "editorial-source-bank-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "editorial-source-bank-v1:prompt-v1",
+        "rubricVersion": "editorial-source-bank-v1",
+        "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     }
