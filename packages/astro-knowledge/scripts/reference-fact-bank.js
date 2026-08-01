@@ -49,6 +49,7 @@ function checkReferenceClaim(claim, bank = readBank()) {
   const text = String(claim || "");
   const findings = [];
   for (const fact of flattenReferenceFacts(bank)) {
+    if (fact.status === "quarantined-source-claim") continue;
     let hasConflict = false;
     for (const source of fact.conflictPatterns || []) {
       const pattern = new RegExp(source, "i");
@@ -87,7 +88,9 @@ function checkReferenceClaim(claim, bank = readBank()) {
 }
 
 function buildReferenceFactContext(text, { limit = 12 } = {}) {
-  const facts = queryReferenceFacts(text).slice(0, limit);
+  const facts = queryReferenceFacts(text)
+    .filter((fact) => fact.status !== "quarantined-source-claim")
+    .slice(0, limit);
   if (!facts.length) return "";
   return [
     "REFERENCE FACTS (non-serving QA lane):",
@@ -95,7 +98,7 @@ function buildReferenceFactContext(text, { limit = 12 } = {}) {
       `- [${fact.status}] ${fact.id}: ${fact.statement}`
       + (fact.values ? ` Values: ${JSON.stringify(fact.values)}` : "")
     )),
-    "Use verified-reference entries to check numerical and doctrinal claims. Treat prohibited-error and blocked-unverified entries as unusable."
+    "Use verified-reference entries to check numerical and doctrinal claims. Treat prohibited-error and blocked-unverified entries as unusable. Quarantined source claims are excluded from judge context until independently sourced."
   ].join("\n");
 }
 

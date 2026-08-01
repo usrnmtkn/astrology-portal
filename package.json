@@ -35,7 +35,7 @@
     "qa:admin-boundary": "node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
     "qa:ephemeris:horizons": "node scripts/verify-astrology-integrity.mjs --allow-reference-gaps --summary",
     "qa:ephemeris:release-gate": "node scripts/check-ephemeris-release-gate.mjs",
-    "qa:2026-engine-claims": "node scripts/verify-2026-cc-sd-engine-claims.mjs",
+    "qa:2026-engine-facts": "node scripts/verify-2026-engine-facts.mjs",
     "qa:database-friends": "node scripts/test-friends-chart-database-loading-contract.mjs && node scripts/test-friends-chart-data-retention-contract.mjs && node scripts/test-manual-chart-pronouns-contract.mjs && node scripts/test-friends-chart-performance-contract.mjs && node scripts/test-social-friends-contract.mjs && npm run test:phone-auth",
     "qa:friends-performance": "node scripts/test-friends-chart-performance-contract.mjs",
     "qa:friends-data-retention": "node scripts/test-friends-chart-data-retention-contract.mjs",

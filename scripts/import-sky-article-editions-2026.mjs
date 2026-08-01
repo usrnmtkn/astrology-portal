@@ -32,31 +32,6 @@ function placeholderNames(markdown) {
     .map((match) => match[1].trim()))].sort();
 }
 
-function timeZoneDateDifferences(value, currentPath = "", differences = []) {
-  if (Array.isArray(value)) {
-    value.forEach((item, index) => timeZoneDateDifferences(item, `${currentPath}[${index}]`, differences));
-    return differences;
-  }
-  if (!value || typeof value !== "object") return differences;
-
-  if (
-    typeof value.sourcePacificDate === "string"
-    && typeof value.canonicalDate === "string"
-    && value.sourcePacificDate !== value.canonicalDate
-  ) {
-    differences.push({
-      slot: currentPath,
-      sourcePacificDate: value.sourcePacificDate,
-      canonicalDate: value.canonicalDate,
-      instantUtc: value.instantUtc
-    });
-  }
-  for (const [key, child] of Object.entries(value)) {
-    timeZoneDateDifferences(child, currentPath ? `${currentPath}.${key}` : key, differences);
-  }
-  return differences;
-}
-
 const sourceDir = option("--source-dir");
 const outPath = option("--out");
 const manifestPath = option("--manifest") ?? defaultManifestPath;
@@ -106,7 +81,11 @@ const editions = manifest.sources.map((source) => {
       bytes: source.bytes
     },
     engineSlots,
-    timeZoneDateDifferences: timeZoneDateDifferences(engineSlots),
+    dateRendering: {
+      authority: "instantUtc",
+      displayTimeZone: "user-location",
+      status: "derive-at-render"
+    },
     unresolvedPlaceholders: placeholderNames(sourceMarkdown).filter((name) => !mappedPlaceholders.has(name)),
     sourceMarkdown
   };
@@ -119,7 +98,7 @@ const staged = {
   engineSource: {
     schema: engineFixture.schema,
     generatedBy: engineFixture.generatedBy,
-    ephemeris: engineFixture.ephemeris,
+    calculationAuthority: engineFixture.calculationAuthority,
     timePolicy: engineFixture.timePolicy
   },
   editions

@@ -109,7 +109,12 @@ function lintBank(bank = readJson(bankPath)) {
   const duplicateKeys = keys.filter((key, index) => keys.indexOf(key) !== index);
   const factKeys = referenceFacts.map((fact) => fact.factKey);
   const duplicateFactKeys = factKeys.filter((key, index) => factKeys.indexOf(key) !== index);
-  const allowedFactStatuses = new Set(["verified-reference", "prohibited-error", "blocked-unverified"]);
+  const allowedFactStatuses = new Set([
+    "verified-reference",
+    "prohibited-error",
+    "blocked-unverified",
+    "quarantined-source-claim"
+  ]);
   const factErrors = referenceFacts.flatMap((fact) => {
     const errors = [];
     if (!fact.id || !String(fact.statement || "").trim()) errors.push(`${fact.factKey}: missing id or statement`);
