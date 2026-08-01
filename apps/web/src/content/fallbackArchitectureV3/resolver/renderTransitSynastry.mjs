@@ -13,6 +13,7 @@ const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
+const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
@@ -21,6 +22,7 @@ lib.authoredCards.push(...skyArticleV1.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
 rowsFile.hookRows.push(...bondLanguagePass2.rows);
 rowsFile.hookRows.push(...skyArticleV1.hookRows);
+rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
@@ -664,6 +666,32 @@ function pairEffect(ev, areaOverride) {
   return eff.charAt(0).toLowerCase() + eff.slice(1) + ".";
 }
 
+function reviewedSkyAspectRow({ a, b, aspect, aSign, bSign }) {
+  const group = GROUP[aspect] ?? aspect;
+  const candidates = [];
+
+  if (aSign && bSign) {
+    candidates.push(
+      `fallback-hook/sky-aspect-sign/${a}/${aSign}/${aspect}/${b}/${bSign}`,
+      `fallback-hook/sky-aspect-sign/${b}/${bSign}/${aspect}/${a}/${aSign}`
+    );
+  }
+
+  candidates.push(
+    `fallback-hook/sky-aspect-exact/${a}/${aspect}/${b}`,
+    `fallback-hook/sky-aspect-exact/${b}/${aspect}/${a}`,
+    `fallback-hook/sky-aspect-pair/${a}/${b}/${group}`,
+    `fallback-hook/sky-aspect-pair/${b}/${a}/${group}`
+  );
+
+  for (const key of candidates) {
+    const row = hooks.get(key);
+    if (row?.body_you) return row;
+  }
+
+  return null;
+}
+
 function eventCtx(ev) {
   const g = ev.aspect ? (GROUP[ev.aspect] ?? ev.aspect) : null;
   return {
@@ -995,6 +1023,13 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
   }
   const specific = hooks.get(`fallback-hook/sky-placement-aspect/${placementPlanet}/${otherPlanet}/${ev.aspect}`)?.body_you
     ?? hooks.get(`fallback-hook/sky-placement-aspect/${otherPlanet}/${placementPlanet}/${ev.aspect}`)?.body_you;
+  const reviewed = reviewedSkyAspectRow({
+    a: ev.a,
+    b: ev.b,
+    aspect: ev.aspect,
+    aSign: ev.aSign,
+    bSign: ev.bSign
+  })?.body_you;
   const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
   const bRef = transitRef(ev.b, ev.bSign);
   const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
@@ -1005,7 +1040,7 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
       : null;
   if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
   const fact = frame(aRef, bRef, timing);
-  const effect = specific ?? pairEffect(ev);
+  const effect = reviewed ?? specific ?? pairEffect(ev);
   if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
   return `${fact} ${capitalizeSentence(effect)}`.trim();
 }
@@ -1495,6 +1530,17 @@ export function renderWeeklyMoon({ sign, variant }) {
 // between two transiting bodies, written for everyone at once. NEVER serve transit-to-natal
 // cards ("your natal Neptune") on sky pages; those belong to the You page. ----
 export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
+  const reviewed = reviewedSkyAspectRow({ a, b, aspect, aSign, bSign });
+  if (reviewed) {
+    return {
+      headline: `${title(a)} ${title(aspect)} ${title(b)}`,
+      body: reviewed.body_you,
+      parts: [reviewed.body_you],
+      templateKey: reviewed.contentKey,
+      contentKey: reviewed.contentKey
+    };
+  }
+
   const g = GROUP[aspect] ?? aspect;
   const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
   if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);

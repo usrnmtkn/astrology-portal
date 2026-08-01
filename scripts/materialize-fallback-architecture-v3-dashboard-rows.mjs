@@ -350,6 +350,7 @@ function readPackageSources() {
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
   const skyArticleRows = readJson("source-rows/sky-article-v1.json");
+  const skyAspectPhrasebook = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
   const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
@@ -365,6 +366,7 @@ function readPackageSources() {
     lunationBlendRows,
     placementInterimRows,
     skyArticleRows,
+    skyAspectPhrasebook,
     skyPlacementVoicePass,
     skyPlanetFrames,
     skySignCopySun,
@@ -411,6 +413,7 @@ function readerPackageBundle(sources) {
         ...sources.lunationBlendRows.hookRows,
         ...sources.bondLanguagePass2.rows,
         ...sources.skyArticleRows.hookRows,
+        ...sources.skyAspectPhrasebook.hookRows,
         ...sources.skyPlanetFrames.rows,
         ...sources.skyPlacementVoicePass.rows,
         ...sources.skySignCopySun.rows
@@ -440,6 +443,7 @@ function materializeRows(sources) {
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...(sources.skySignCopySun.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),

@@ -5,6 +5,7 @@ const here = path.dirname(url.fileURLToPath(import.meta.url));
 const rows = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
 const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
+const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
 const skyPlacementVoicePassV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-inventories-voice-pass-v1.json"), "utf8"));
 const skyPlanetFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-planet-frames-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
@@ -24,6 +25,7 @@ const SECTIONS = [
   ["Transits: retrogrades", k => k.startsWith("fallback-hook/transit-retro")],
   ["Synastry + compatibility", k => k.startsWith("fallback-hook/synastry-") || k.startsWith("fallback-hook/planet-mode/") || k.startsWith("fallback-hook/planet-grates/") || k.startsWith("fallback-hook/compat-") || k.startsWith("fallback-hook/element-pattern/")],
   ["Connection transits (bonds)", k => k.startsWith("fallback-hook/bond-") || k.startsWith("fallback-vocab/bond-")],
+  ["Sky page: reviewed aspect phrasebook", k => k.startsWith("fallback-hook/sky-aspect-")],
   ["Sky page: placements + articles", k => k.startsWith("fallback-hook/sky-placement") || k.startsWith("fallback-hook/sky-element-close/") || /^fallback-vocab\/(planet-blessing|sign-blessing|sign-does|sign-style|sign-need|sign-adverb)\//.test(k)],
   ["Sky page: seasons, lunations, eclipses", k => /^fallback-hook\/sky-(season|lunation|axis|fullmoon|newmoon|eclipse|sign-trap|event|horoscope)/.test(k)],
   ["Calendar: phases, void, markers", k => k.startsWith("fallback-hook/moon-") || k.startsWith("fallback-hook/season-marker/")],
@@ -31,7 +33,7 @@ const SECTIONS = [
   ["Everything else (labels, houses, misc.)", () => true],
 ];
 import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear } from "../resolver/renderFallback.mjs";
-import { renderTransitAspect, renderSynastryAspect, renderBondTransit, renderSkyPlacement, renderSkyLunation, renderCalendarPhase, renderCircleStory } from "../resolver/renderTransitSynastry.mjs";
+import { renderTransitAspect, renderSynastryAspect, renderBondTransit, renderSkyPlacement, renderSkyAspectCard, renderSkyLunation, renderCalendarPhase, renderCircleStory } from "../resolver/renderTransitSynastry.mjs";
 const esc0 = s => (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const para = r => (r.parts ?? [r.body]).map(x => `<p>${esc0(x)}</p>`).join("");
 const O = { allowUnreviewed: true };
@@ -45,6 +47,7 @@ const EXAMPLES = {
   "Transits: effect lines + variants": para(renderTransitAspect({ transiting: "saturn", natal: "mercury", aspect: "square", window: "Until November 13" })),
   "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "trine", otherName: "Sofia" })),
   "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", endpointPlanet: "mercury", endpointOwner: "friend", activatedPlanets: ["moon"], otherName: "Jose", window: "This month" })),
+  "Sky page: reviewed aspect phrasebook": para(renderSkyAspectCard({ a: "venus", b: "saturn", aspect: "square", aSign: "aries", bSign: "cancer" })),
   "Sky page: placements + articles": para(renderSkyPlacement({
     planet: "sun",
     sign: "leo",
@@ -63,6 +66,7 @@ const named = (obj, fields) => fields.map((f) => [f, obj[f]]).filter(([, v]) => 
 for (const r of rows.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["title", "question", "headline"]) });
 for (const r of bondLanguagePass2.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skyArticleV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
+for (const r of skyAspectPhrasebookV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
 for (const r of skyPlanetFramesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skyPlacementVoicePassV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skySignCopySunV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });

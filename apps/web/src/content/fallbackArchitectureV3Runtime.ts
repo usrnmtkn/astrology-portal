@@ -4,6 +4,7 @@ import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-languag
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
 import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
+import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json";
 import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
 import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
 import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
@@ -411,6 +412,30 @@ function assertSkySignCopySunV1Import(
 
 assertSkySignCopySunV1Import(skySignCopySunV1);
 
+function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhrasebookV1) {
+  const rows = phrasebook.hookRows;
+  const expectedFamilies = new Map([
+    ["fallback-hook/sky-aspect-pair/", 30],
+    ["fallback-hook/sky-aspect-exact/", 3],
+    ["fallback-hook/sky-placement-sign/", 36],
+    ["fallback-hook/sky-aspect-sign/", 72]
+  ]);
+
+  if (rows.length !== 141 || rows.some((row) => row.review_status !== "reviewed")) {
+    throw new Error("Sky aspect phrasebook must contain exactly 141 reviewed rows.");
+  }
+
+  for (const [prefix, expected] of expectedFamilies) {
+    const count = rows.filter((row) => row.contentKey.startsWith(prefix)).length;
+
+    if (count !== expected) {
+      throw new Error(`Sky aspect phrasebook ${prefix} coverage mismatch: ${count}/${expected}.`);
+    }
+  }
+}
+
+assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
+
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: [
@@ -433,6 +458,7 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
       ...(bondLanguagePass2.rows as HookRow[]),
       ...(skyArticleV1.hookRows as HookRow[]),
+      ...(skyAspectPhrasebookV1.hookRows as HookRow[]),
       ...(skyPlanetFramesV1.rows as HookRow[]),
       ...(skyPlacementVoicePassV1.rows as HookRow[]),
       ...(skySignCopySunV1.rows as HookRow[])
