@@ -233,7 +233,9 @@ const judged = await generator.generateCard({
 
 assert.match(judgeGenerationPrompt, /previous draft reached the editorial judge/i);
 assert.equal(judged.judge.score, 3);
-assert.equal(judged.gate, "auto-publish");
+assert.equal(judged.gate, "human-review", "A model-only score 3 may recommend approval but cannot publish.");
+assert.equal(judged.judge.recommendation, "approve");
+assert.equal(judged.judge.approvalSource, "llm-advisory");
 
 let repairJudgeCalls = 0;
 let repairReason = "";
@@ -270,7 +272,9 @@ const repairedToThree = await generator.generateCard({
 assert.equal(repairReason, "The ending adds a second aphorism.");
 assert.equal(repairedToThree.text, repairedExample);
 assert.equal(repairedToThree.judge.score, 3);
-assert.equal(repairedToThree.gate, "auto-publish");
+assert.equal(repairedToThree.gate, "human-review", "A repaired model-only score 3 still requires human review.");
+assert.equal(repairedToThree.judge.recommendation, "approve");
+assert.equal(repairedToThree.judge.approvalSource, "llm-advisory");
 assert.deepEqual(repairedToThree.repair, {
   fired: true,
   result: "2→3",
