@@ -13803,64 +13803,64 @@ export function App() {
                         What is up there today, and what it means down here.
                       </p>
                     </div>
-                    {datePickerOpen && (
-                      <SkyDatePicker
-                        value={skyDate}
-                        pickerRef={datePickerRef}
-                        onClose={() => {
-                          setDatePickerOpen(false);
-                          (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                        }}
-                        onSelect={(nextDate) => {
-                          setSkyDate(nextDate);
-                          setDatePickerOpen(false);
-                          (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                        }}
-                      />
-                    )}
-                    {cityPickerOpen && (
-                      <form
-                        className={`city-picker hero-city-picker${cityPickerOpenedFromMobileControls ? " hero-city-picker--mobile" : ""}`}
-                        id="city-picker"
-                        ref={cityPickerRef}
-                        onSubmit={(event) => {
-                          event.preventDefault();
-                          applyManualLocation();
-                        }}
-                      >
-                        <label>
-                          <span>City</span>
-                          <input
-                            ref={cityPickerInputRef}
-                            value={manualLocation}
-                            onChange={(event) => setManualLocation(event.target.value)}
-                            aria-label="City"
-                            placeholder="Search for a city"
-                            autoFocus
-                          />
-                        </label>
-                        <CitySuggestions
-                          suggestions={citySuggestions}
-                          status={citySearchStatus}
-                          mapboxEnabled={hasMapboxToken()}
-                          onSelect={applyCitySuggestion}
-                        />
-                        <div className="city-picker-actions">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCityPickerOpen(false);
-                              setCityPickerOpenedFromMobileControls(false);
-                              (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
-                            }}
-                          >
-                            Cancel
-                          </button>
-                          <button type="submit">Update</button>
-                        </div>
-                      </form>
-                    )}
                   </section>
+                  {datePickerOpen && (
+                    <SkyDatePicker
+                      value={skyDate}
+                      pickerRef={datePickerRef}
+                      onClose={() => {
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                      onSelect={(nextDate) => {
+                        setSkyDate(nextDate);
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                    />
+                  )}
+                  {cityPickerOpen && (
+                    <form
+                      className={`city-picker hero-city-picker${cityPickerOpenedFromMobileControls ? " hero-city-picker--mobile" : ""}`}
+                      id="city-picker"
+                      ref={cityPickerRef}
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        applyManualLocation();
+                      }}
+                    >
+                      <label>
+                        <span>City</span>
+                        <input
+                          ref={cityPickerInputRef}
+                          value={manualLocation}
+                          onChange={(event) => setManualLocation(event.target.value)}
+                          aria-label="City"
+                          placeholder="Search for a city"
+                          autoFocus
+                        />
+                      </label>
+                      <CitySuggestions
+                        suggestions={citySuggestions}
+                        status={citySearchStatus}
+                        mapboxEnabled={hasMapboxToken()}
+                        onSelect={applyCitySuggestion}
+                      />
+                      <div className="city-picker-actions">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCityPickerOpen(false);
+                            setCityPickerOpenedFromMobileControls(false);
+                            (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit">Update</button>
+                      </div>
+                    </form>
+                  )}
                   <section className="today-summary-cards" aria-label="Sky summary">
                     {isSkyLoading ? (
                       <SkyLoadingCards compact />

@@ -1153,6 +1153,19 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls.getByRole("button", { name: "Date" })).toBeVisible();
     await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeVisible();
 
+    await skyControls.getByRole("button", { name: "Date" }).click();
+    const datePicker = page.getByRole("region", { name: "Select sky date" });
+    await expect(datePicker).toBeVisible();
+    await datePicker.getByRole("button", { name: "Close date picker" }).click();
+
+    await dateControl.click();
+    await skyControls.getByRole("button", { name: /Portsmouth/ }).click();
+    const cityPicker = page.locator("#city-picker");
+    await expect(cityPicker).toBeVisible();
+    await expect(cityPicker.getByLabel("City")).toBeVisible();
+    await cityPicker.getByRole("button", { name: "Cancel" }).click();
+
+    await dateControl.click();
     await skyControls.getByRole("button", { name: "Tomorrow" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
 
