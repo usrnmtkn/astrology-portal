@@ -49,7 +49,6 @@ function isSkyCoreHook(row) {
     "fallback-hook/transit-retro/",
     "fallback-hook/transit-effect-soft/",
     "fallback-hook/transit-effect-hard/",
-    "fallback-hook/placement-sentence/",
     "fallback-hook/dignity-line/"
   ].some((prefix) => row.contentKey.startsWith(prefix));
 }
