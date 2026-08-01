@@ -17,7 +17,7 @@ type CalendarRouteProps = {
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
-  onOpenTransit?: (event: LunarCalendarEvent) => void;
+  onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   showJournalPrompts?: boolean;
 };
 

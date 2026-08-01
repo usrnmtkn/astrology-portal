@@ -1310,6 +1310,7 @@ test.describe("client-facing user flow case studies", () => {
     if (await transitCard.isVisible()) {
       await transitCard.click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await expect(page.locator(".sky-detail-body p").first()).toBeVisible();
     }
 
     await assertNoClientErrors();
