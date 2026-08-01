@@ -5620,6 +5620,50 @@ function generatedSkyAspectWritingSection(
   };
 }
 
+function reviewedSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+): NormalizedSkyAspectSection | null {
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
+      aspect: normalizeContentIdPart(aspect.type),
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
+    });
+
+    if (!rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
+      return null;
+    }
+
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "reviewed-sky-aspect-phrasebook-v1",
+      sourceKeys: [rendered.contentKey],
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -5640,11 +5684,12 @@ function normalizeSkyAspectSurface(
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const sections = generatedSection ? [generatedSection] : [];
+  const reviewedSection = generatedSection ? null : reviewedSkyAspectWritingSection(aspect, positions);
+  const sections = generatedSection ? [generatedSection] : reviewedSection ? [reviewedSection] : [];
 
   return {
     surface: "sky-aspect",
-    status: generatedSection ? "servable" : "not-servable",
+    status: sections.length > 0 ? "servable" : "not-servable",
     sections
   };
 }
