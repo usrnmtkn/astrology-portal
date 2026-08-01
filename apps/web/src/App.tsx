@@ -98,7 +98,10 @@ import {
   resolvedNatalAspectPatternSectionLabel
 } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
-import { calendarTransitDetailContentKeys } from "./features/calendar/calendarContentKeys";
+import {
+  calendarEventGeneratedContentKeys,
+  calendarTransitDetailContentKeys
+} from "./features/calendar/calendarContentKeys";
 import {
   assertLunationBodyMatchesEventSky,
   buildWeeklyHoroscope,
@@ -12293,6 +12296,10 @@ export function App() {
   const [, setContentRegistryVersion] = useState(0);
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
+  const selectedCalendarTransitEventRef = useRef<{
+    event: LunarCalendarEvent;
+    description?: string;
+  } | null>(null);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
   const activeHouseSignLabelStyle = userProfile
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
@@ -12376,6 +12383,7 @@ export function App() {
   }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   function openSkyDetail(detail: SkyDetail) {
+    selectedCalendarTransitEventRef.current = null;
     setSelectedSkyDetail(detail);
 
     if (detail.routePath) {
@@ -12384,11 +12392,11 @@ export function App() {
     }
   }
 
-  function openCalendarTransitDetail(event: LunarCalendarEvent) {
+  function openCalendarTransitDetail(event: LunarCalendarEvent, description?: string) {
     const contentKeys = calendarTransitDetailContentKeys(event);
     const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
 
-    openCalendarTransitDetailWithContent(event, skyGeneratedContent);
+    openCalendarTransitDetailWithContent(event, skyGeneratedContent, description);
 
     if (missingKeys.length === 0) {
       return;
@@ -12420,10 +12428,49 @@ export function App() {
 
   function openCalendarTransitDetailWithContent(
     event: LunarCalendarEvent,
-    generatedContent: GeneratedContentMap
+    generatedContent: GeneratedContentMap,
+    description?: string
   ) {
-    if (!sky || event.type === "lunation") {
+    const detail = calendarTransitDetailWithContent(event, generatedContent, description);
+
+    if (!detail) {
       return;
+    }
+
+    openSkyDetail(detail);
+    selectedCalendarTransitEventRef.current = { event, description };
+  }
+
+  function calendarStationDetailBody(
+    event: LunarCalendarEvent,
+    generatedContent: GeneratedContentMap,
+    description?: string
+  ) {
+    if (event.type !== "station") {
+      return [];
+    }
+
+    for (const contentKey of calendarEventGeneratedContentKeys(event)) {
+      const content = liveGeneratedContent(generatedContent, contentKey);
+      const paragraphs = content
+        ? readerFacingParagraphs(generatedContentParagraphs(content))
+        : [];
+
+      if (paragraphs.length > 0) {
+        return paragraphs;
+      }
+    }
+
+    return readerFacingParagraphs([description]);
+  }
+
+  function calendarTransitDetailWithContent(
+    event: LunarCalendarEvent,
+    generatedContent: GeneratedContentMap,
+    description?: string
+  ): SkyDetail | null {
+    if (!sky || event.type === "lunation") {
+      return null;
     }
 
     const generatedAt = event.startsAt || sky.generatedAt;
@@ -12447,18 +12494,17 @@ export function App() {
         orb: 0
       };
 
-      openSkyDetail(currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, sky.positions));
-      return;
+      return currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, sky.positions);
     }
 
     if (!event.planet) {
-      return;
+      return null;
     }
 
     const position = sky.positions.find((candidate) => candidate.planet === event.planet);
 
     if (!position) {
-      return;
+      return null;
     }
 
     const eventSign = event.toSign ?? event.sign;
@@ -12478,31 +12524,32 @@ export function App() {
       transitEnd: event.type === "ingress" ? event.endsAt ?? null : position.transitEnd
     };
 
-    if (event.type === "station" && isRetrogradeEvent) {
-      openSkyDetail(currentSkyPlacementDetailArticle({
-        aspects: sky.aspects,
-        generatedAt,
-        generatedContent,
-        onOpenDetail: openSkyDetail,
-        position: eventPosition,
-        positions: sky.positions
-      }));
-      return;
-    }
-
-    openSkyDetail(currentSkyPlacementDetailArticle({
+    const detail = currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
       generatedAt,
       generatedContent,
       onOpenDetail: openSkyDetail,
       position: eventPosition,
       positions: sky.positions
-    }));
+    });
+    const stationBody = calendarStationDetailBody(event, generatedContent, description);
+    const hasPlacementBody = detail.body.some((paragraph) => (
+      typeof paragraph === "string" && isReaderFacingCopy(paragraph)
+    )) || Boolean(detail.sections?.length);
+
+    return stationBody.length > 0 && !hasPlacementBody
+      ? {
+          ...detail,
+          body: stationBody,
+          plainBody: true
+        }
+      : detail;
   }
 
   function closeSkyDetail() {
     const routePath = selectedSkyDetail?.routePath;
 
+    selectedCalendarTransitEventRef.current = null;
     setSelectedSkyDetail(null);
     setSkyDetailRoutePath(null);
     if (routePath?.startsWith("friends?")) {
@@ -12612,7 +12659,14 @@ export function App() {
       return;
     }
 
-    const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
+    const calendarEvent = selectedCalendarTransitEventRef.current;
+    const detail = calendarEvent
+      ? calendarTransitDetailWithContent(
+          calendarEvent.event,
+          skyGeneratedContent,
+          calendarEvent.description
+        )
+      : skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
     selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
