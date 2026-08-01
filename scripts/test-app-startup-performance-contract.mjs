@@ -12,6 +12,7 @@ const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/sty
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
+const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -101,6 +102,16 @@ assert.doesNotMatch(
   friendsStylesSource,
   /\.social-(?:friends-panel|finder-card|people-list|person-row|friend-row|invite-form|search-skeleton)\b/u,
   "Retired social-card selectors must not return to the eager Friends/profile stylesheet."
+);
+assert.doesNotMatch(
+  friendsStylesSource,
+  /(?:^|\n)\.friend-detail-page\s*\{/u,
+  "Friends detail layout CSS must not remain in the eager Friends/profile stylesheet."
+);
+assert.match(
+  friendDetailSource,
+  /import "\.\.\/\.\.\/styles\/friends-detail\.css";/u,
+  "The lazy FriendDetail component must own its layout stylesheet."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
