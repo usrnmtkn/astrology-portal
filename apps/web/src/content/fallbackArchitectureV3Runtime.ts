@@ -1,4 +1,5 @@
-import fallbackSourceRowsV3 from "./fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
+import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
+import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
 import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-templates-v3.json";
 import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
@@ -313,6 +314,7 @@ assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: [
+      ...(bundledSkyAuthoredCardsV3.authoredCards as AuthoredCard[]),
       ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
       ...(skyArticleV1.authoredCards as AuthoredCard[]),
       ...(weeklySourceRowsV1 as AuthoredCard[])
@@ -325,9 +327,8 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
     ]
   },
   rowsFile: {
-    ...(fallbackSourceRowsV3 as RowsFile),
     hookRows: [
-      ...((fallbackSourceRowsV3 as RowsFile).hookRows ?? []),
+      ...((bundledSkyCoreRowsV3 as RowsFile).hookRows ?? []),
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
       ...(skyArticleV1.hookRows as HookRow[]),
       ...(skyAspectPhrasebookV1.hookRows as HookRow[]),
@@ -336,7 +337,7 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
       ...(skySignCopySunV1.rows as HookRow[])
     ],
     vocabularyRows: [
-      ...((fallbackSourceRowsV3 as RowsFile).vocabularyRows ?? []),
+      ...((bundledSkyCoreRowsV3 as RowsFile).vocabularyRows ?? []),
       ...(placementInterimFixesV1.vocabularyRows as VocabRow[]),
       ...(skyArticleV1.vocabularyRows as VocabRow[])
     ]
@@ -616,7 +617,10 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
             ...(activeReaderBundle.rowsFile.hookRows ?? []),
             ...(deferredFallbackArchitectureV3Bundle.rowsFile.hookRows ?? [])
           ],
-          vocabularyRows: activeReaderBundle.rowsFile.vocabularyRows
+          vocabularyRows: [
+            ...(activeReaderBundle.rowsFile.vocabularyRows ?? []),
+            ...(deferredFallbackArchitectureV3Bundle.rowsFile.vocabularyRows ?? [])
+          ]
         }
       });
 
