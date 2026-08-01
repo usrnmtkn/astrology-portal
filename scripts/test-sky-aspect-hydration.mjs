@@ -42,13 +42,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /if \(mode === "calendar"\)[\s\S]*?loadLiveGeneratedContent\("sky", skyDate\)[\s\S]*?return \(\) =>/u,
-  "The broad Sky loader may remain only on the Calendar path, which needs event-detail content beyond the current sky."
+  /if \(mode === "calendar"\)[\s\S]*?calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
+  "Calendar must use its own exact-key request instead of scanning the Sky surface."
 );
 assert.doesNotMatch(
   appSource,
-  /loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?loadLiveGeneratedContent\("sky", skyDate\)/u,
-  "The current Sky route must not continue the broad surface scan after its exact-key request."
+  /loadLiveGeneratedContent\("sky"/u,
+  "Neither Sky nor Calendar may scan the broad Sky content surface."
 );
 assert.match(
   appSource,
