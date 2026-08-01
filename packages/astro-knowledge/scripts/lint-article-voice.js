@@ -16,6 +16,8 @@ const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
 const bannedConfig = readJson(path.join(voiceRoot, "banned-words.json"));
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const skyVoice = readJson(path.join(voiceRoot, "tldr-astro", "sky-aspect.json"));
+const { findBannedConstructions } = require("./banned-construction-matcher.js");
+const { checkReferenceClaim } = require("./reference-fact-bank.js");
 
 const SURFACE = "sky-article-longform";
 const SECOND_PERSON_TERM = "(?<!-)\\byou\\b|(?<!-)\\byour\\b";
@@ -64,16 +66,8 @@ function lintLongformArticle(articleText, { ownerVerbatim = false } = {}) {
     addTermFinding(findings, text, entry, "warn", "voice-lexicon");
   }
 
-  for (const construction of bannedConstructions) {
-    const probe = String(construction.pattern || "").replace(/\[[^\]]*\]/g, "").trim();
-    if (probe && text.toLowerCase().includes(probe.toLowerCase().slice(0, 24))) {
-      findings.push({
-        severity: "warn",
-        source: "banned-constructions",
-        term: construction.pattern
-      });
-    }
-  }
+  findings.push(...findBannedConstructions(text, bannedConstructions));
+  findings.push(...checkReferenceClaim(text));
 
   if (!text.trim()) {
     findings.push({

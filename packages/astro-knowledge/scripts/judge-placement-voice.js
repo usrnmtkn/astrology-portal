@@ -83,6 +83,7 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
     `  - Coverage sentences that exist only to be complete.`,
     `  - If a TAGLINE is present: it must be sharp and sendable, not a label ("Leo season begins" is a label; a claim or imperative is a tagline).`,
     `  - If MOVES are present: each must be a specific doable action that only fits this placement. "Journal about your feelings" or "trust the process" fails; the moves are held to the same swap test as the body.`,
+    `  - Flag any sentence matching the CC/SD constructions in voice/banned-constructions.json; the tic list identifies copy that reads as CHANI or Spirit Daughter rather than the house voice. Owner-verbatim text is exempt. Treat nearby cases as a judged consideration, not an automatic fail: specific, falsifiable permission to do a nameable thing is house voice; generic affirmational permission is not.`,
     ``,
     `GOLD STANDARD for this register (these are 3s):`,
     ...goldStandard(tier).map((e, i) => `  [${i + 1}] ${e.planet} in ${e.sign}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`),

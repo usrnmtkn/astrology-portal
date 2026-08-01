@@ -1,0 +1,1041 @@
+{
+  "schema": "tldrastro-engine-confirmed-date-slots-v1",
+  "generatedBy": "scripts/verify-2026-cc-sd-engine-claims.mjs",
+  "ephemeris": "Swiss Ephemeris via swisseph-wasm",
+  "sourceChecklist": "owner-resources:TLDR-Engine-Verification-Checklist-2026.md",
+  "timePolicy": {
+    "sourceTimeZone": "America/Los_Angeles",
+    "canonicalTimeZone": "America/New_York",
+    "canonicalEvaluationLocalTime": "12:00",
+    "note": "Exact instants are retained in UTC. Editorial date slots use the America/New_York date and its fixed local-noon evaluation instant; Pacific dates are recorded only for source reconciliation."
+  },
+  "dateSlots": {
+    "neptuneAries": {
+      "entryDate": {
+        "instantUtc": "2026-01-26T17:34:28.954Z",
+        "sourcePacificDate": "2026-01-26",
+        "canonicalDate": "2026-01-26",
+        "canonicalNoonUtc": "2026-01-26T17:00:00.000Z",
+        "body": "neptune",
+        "toSign": "Aries"
+      }
+    },
+    "saturnAries": {
+      "aspectHits": [
+        {
+          "instantUtc": "2026-02-20T16:54:02.191Z",
+          "sourcePacificDate": "2026-02-20",
+          "canonicalDate": "2026-02-20",
+          "canonicalNoonUtc": "2026-02-20T17:00:00.000Z",
+          "first": "saturn",
+          "aspect": "conjunction",
+          "second": "neptune",
+          "firstSign": "Aries",
+          "firstDegree": 0.75,
+          "secondSign": "Aries",
+          "secondDegree": 0.75,
+          "residualOrbDegrees": 0
+        }
+      ]
+    },
+    "uranusGemini": {
+      "entryDate": {
+        "instantUtc": "2026-04-26T00:51:32.547Z",
+        "sourcePacificDate": "2026-04-25",
+        "canonicalDate": "2026-04-25",
+        "canonicalNoonUtc": "2026-04-25T16:00:00.000Z",
+        "body": "uranus",
+        "toSign": "Gemini"
+      },
+      "shadowClearDate": {
+        "instantUtc": "2026-05-21T16:42:13.779Z",
+        "sourcePacificDate": "2026-05-21",
+        "canonicalDate": "2026-05-21",
+        "canonicalNoonUtc": "2026-05-21T16:00:00.000Z",
+        "body": "uranus",
+        "phase": "post-shadow-clear",
+        "sign": "Gemini",
+        "degree": 1.46
+      },
+      "exitDate": {
+        "instantUtc": "2033-05-22T13:16:44.341Z",
+        "sourcePacificDate": "2033-05-22",
+        "canonicalDate": "2033-05-22",
+        "canonicalNoonUtc": "2033-05-22T16:00:00.000Z",
+        "body": "uranus",
+        "toSign": "Cancer",
+        "passage": "final"
+      }
+    },
+    "jupiterLeo": {
+      "entryDate": {
+        "instantUtc": "2026-06-30T05:52:21.690Z",
+        "sourcePacificDate": "2026-06-29",
+        "canonicalDate": "2026-06-30",
+        "canonicalNoonUtc": "2026-06-30T16:00:00.000Z",
+        "body": "jupiter",
+        "toSign": "Leo"
+      },
+      "exitDate": {
+        "instantUtc": "2027-07-26T04:49:10.961Z",
+        "sourcePacificDate": "2027-07-25",
+        "canonicalDate": "2027-07-26",
+        "canonicalNoonUtc": "2027-07-26T16:00:00.000Z",
+        "body": "jupiter",
+        "toSign": "Virgo"
+      },
+      "cazimi": {
+        "instantUtc": "2026-07-29T12:17:52.567Z",
+        "sourcePacificDate": "2026-07-29",
+        "canonicalDate": "2026-07-29",
+        "canonicalNoonUtc": "2026-07-29T16:00:00.000Z",
+        "first": "jupiter",
+        "aspect": "conjunction",
+        "second": "sun",
+        "firstSign": "Leo",
+        "firstDegree": 6.41,
+        "secondSign": "Leo",
+        "secondDegree": 6.41,
+        "residualOrbDegrees": 0
+      }
+    },
+    "nodesAquariusLeo": {
+      "entryDate": {
+        "instantUtc": "2026-07-27T00:47:41.748Z",
+        "sourcePacificDate": "2026-07-26",
+        "canonicalDate": "2026-07-26",
+        "canonicalNoonUtc": "2026-07-26T16:00:00.000Z",
+        "body": "true-node",
+        "toSign": "Aquarius",
+        "southNodeSign": "Leo"
+      },
+      "exitDate": {
+        "instantUtc": "2028-03-26T16:03:26.789Z",
+        "sourcePacificDate": "2028-03-26",
+        "canonicalDate": "2028-03-26",
+        "canonicalNoonUtc": "2028-03-26T16:00:00.000Z",
+        "body": "true-node",
+        "toSign": "Capricorn",
+        "southNodeSign": "Cancer"
+      },
+      "firstEclipseDate": {
+        "instantUtc": "2026-08-12T17:45:59.221Z",
+        "sourcePacificDate": "2026-08-12",
+        "canonicalDate": "2026-08-12",
+        "canonicalNoonUtc": "2026-08-12T16:00:00.000Z",
+        "kind": "total-solar-eclipse",
+        "sign": "Leo",
+        "degree": 20.04,
+        "swissEphReturnFlag": 5
+      },
+      "oldAxisEclipses": [
+        {
+          "instantUtc": "2026-08-28T04:12:57.974Z",
+          "sourcePacificDate": "2026-08-27",
+          "canonicalDate": "2026-08-28",
+          "canonicalNoonUtc": "2026-08-28T16:00:00.000Z",
+          "kind": "partial-lunar-eclipse",
+          "sign": "Pisces",
+          "degree": 4.85,
+          "swissEphReturnFlag": 16
+        },
+        {
+          "instantUtc": "2027-02-20T23:12:52.845Z",
+          "sourcePacificDate": "2027-02-20",
+          "canonicalDate": "2027-02-20",
+          "canonicalNoonUtc": "2027-02-20T17:00:00.000Z",
+          "kind": "penumbral-lunar-eclipse",
+          "sign": "Virgo",
+          "degree": 1.98,
+          "swissEphReturnFlag": 64
+        }
+      ],
+      "conflictResolution": "There is no date conflict: March 3, 2026 is a total Virgo lunar eclipse before the Aquarius/Leo node-axis entry, while February 20, 2027 is a separate penumbral Virgo lunar eclipse during that chapter. The latter belongs in oldAxisEclipses."
+    },
+    "mercuryRetrogrades": [
+      {
+        "sign": "Pisces",
+        "start": {
+          "instantUtc": "2026-02-26T06:48:09.997Z",
+          "sourcePacificDate": "2026-02-25",
+          "canonicalDate": "2026-02-26",
+          "canonicalNoonUtc": "2026-02-26T17:00:00.000Z",
+          "body": "mercury",
+          "direction": "retrograde",
+          "sign": "Pisces",
+          "degree": 22.57
+        },
+        "end": {
+          "instantUtc": "2026-03-20T19:32:50.070Z",
+          "sourcePacificDate": "2026-03-20",
+          "canonicalDate": "2026-03-20",
+          "canonicalNoonUtc": "2026-03-20T16:00:00.000Z",
+          "body": "mercury",
+          "direction": "direct",
+          "sign": "Pisces",
+          "degree": 8.49
+        },
+        "cazimi": {
+          "instantUtc": "2026-03-07T11:01:43.710Z",
+          "sourcePacificDate": "2026-03-07",
+          "canonicalDate": "2026-03-07",
+          "canonicalNoonUtc": "2026-03-07T17:00:00.000Z",
+          "first": "mercury",
+          "aspect": "conjunction",
+          "second": "sun",
+          "firstSign": "Pisces",
+          "firstDegree": 16.88,
+          "secondSign": "Pisces",
+          "secondDegree": 16.88,
+          "residualOrbDegrees": 0
+        }
+      },
+      {
+        "sign": "Cancer",
+        "start": {
+          "instantUtc": "2026-06-29T17:35:55.280Z",
+          "sourcePacificDate": "2026-06-29",
+          "canonicalDate": "2026-06-29",
+          "canonicalNoonUtc": "2026-06-29T16:00:00.000Z",
+          "body": "mercury",
+          "direction": "retrograde",
+          "sign": "Cancer",
+          "degree": 26.26
+        },
+        "end": {
+          "instantUtc": "2026-07-23T22:57:51.682Z",
+          "sourcePacificDate": "2026-07-23",
+          "canonicalDate": "2026-07-23",
+          "canonicalNoonUtc": "2026-07-23T16:00:00.000Z",
+          "body": "mercury",
+          "direction": "direct",
+          "sign": "Cancer",
+          "degree": 16.32
+        }
+      },
+      {
+        "sign": "Scorpio",
+        "start": {
+          "instantUtc": "2026-10-24T07:12:42.923Z",
+          "sourcePacificDate": "2026-10-24",
+          "canonicalDate": "2026-10-24",
+          "canonicalNoonUtc": "2026-10-24T16:00:00.000Z",
+          "body": "mercury",
+          "direction": "retrograde",
+          "sign": "Scorpio",
+          "degree": 20.98
+        },
+        "end": {
+          "instantUtc": "2026-11-13T15:53:52.755Z",
+          "sourcePacificDate": "2026-11-13",
+          "canonicalDate": "2026-11-13",
+          "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+          "body": "mercury",
+          "direction": "direct",
+          "sign": "Scorpio",
+          "degree": 5.03
+        }
+      }
+    ],
+    "venusRetrograde": {
+      "shadowStart": {
+        "instantUtc": "2026-08-31T14:45:38.693Z",
+        "sourcePacificDate": "2026-08-31",
+        "canonicalDate": "2026-08-31",
+        "canonicalNoonUtc": "2026-08-31T16:00:00.000Z",
+        "body": "venus",
+        "phase": "pre-shadow",
+        "sign": "Libra",
+        "degree": 22.86
+      },
+      "start": {
+        "instantUtc": "2026-10-03T07:15:54.062Z",
+        "sourcePacificDate": "2026-10-03",
+        "canonicalDate": "2026-10-03",
+        "canonicalNoonUtc": "2026-10-03T16:00:00.000Z",
+        "body": "venus",
+        "direction": "retrograde",
+        "sign": "Scorpio",
+        "degree": 8.49
+      },
+      "end": {
+        "instantUtc": "2026-11-14T00:27:27.739Z",
+        "sourcePacificDate": "2026-11-13",
+        "canonicalDate": "2026-11-13",
+        "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+        "body": "venus",
+        "direction": "direct",
+        "sign": "Libra",
+        "degree": 22.86
+      }
+    },
+    "lunations": {
+      "scorpioFullMoon": {
+        "instantUtc": "2026-05-01T17:23:11.027Z",
+        "sourcePacificDate": "2026-05-01",
+        "canonicalDate": "2026-05-01",
+        "canonicalNoonUtc": "2026-05-01T16:00:00.000Z",
+        "kind": "full-moon",
+        "sign": "Scorpio",
+        "degree": 11.35,
+        "residualOrbDegrees": 0
+      },
+      "geminiNewMoon": {
+        "instantUtc": "2026-06-15T02:54:10.452Z",
+        "sourcePacificDate": "2026-06-14",
+        "canonicalDate": "2026-06-14",
+        "canonicalNoonUtc": "2026-06-14T16:00:00.000Z",
+        "kind": "new-moon",
+        "sign": "Gemini",
+        "degree": 24.05,
+        "residualOrbDegrees": 0
+      },
+      "capricornFullMoon": {
+        "instantUtc": "2026-06-29T23:56:41.537Z",
+        "sourcePacificDate": "2026-06-29",
+        "canonicalDate": "2026-06-29",
+        "canonicalNoonUtc": "2026-06-29T16:00:00.000Z",
+        "kind": "full-moon",
+        "sign": "Capricorn",
+        "degree": 8.25,
+        "residualOrbDegrees": 0
+      },
+      "cancerNewMoon": {
+        "instantUtc": "2026-07-14T09:43:37.277Z",
+        "sourcePacificDate": "2026-07-14",
+        "canonicalDate": "2026-07-14",
+        "canonicalNoonUtc": "2026-07-14T16:00:00.000Z",
+        "kind": "new-moon",
+        "sign": "Cancer",
+        "degree": 21.99,
+        "residualOrbDegrees": 0
+      }
+    },
+    "eclipses": {
+      "aquariusSolar": {
+        "instantUtc": "2026-02-17T12:11:53.272Z",
+        "sourcePacificDate": "2026-02-17",
+        "canonicalDate": "2026-02-17",
+        "canonicalNoonUtc": "2026-02-17T17:00:00.000Z",
+        "kind": "annular-solar-eclipse",
+        "sign": "Aquarius",
+        "degree": 28.84,
+        "swissEphReturnFlag": 9
+      },
+      "virgoLunar2026": {
+        "instantUtc": "2026-03-03T11:33:41.218Z",
+        "sourcePacificDate": "2026-03-03",
+        "canonicalDate": "2026-03-03",
+        "canonicalNoonUtc": "2026-03-03T17:00:00.000Z",
+        "kind": "total-lunar-eclipse",
+        "sign": "Virgo",
+        "degree": 12.86,
+        "swissEphReturnFlag": 4
+      },
+      "leoSolar": {
+        "instantUtc": "2026-08-12T17:45:59.221Z",
+        "sourcePacificDate": "2026-08-12",
+        "canonicalDate": "2026-08-12",
+        "canonicalNoonUtc": "2026-08-12T16:00:00.000Z",
+        "kind": "total-solar-eclipse",
+        "sign": "Leo",
+        "degree": 20.04,
+        "swissEphReturnFlag": 5
+      },
+      "piscesLunar2026": {
+        "instantUtc": "2026-08-28T04:12:57.974Z",
+        "sourcePacificDate": "2026-08-27",
+        "canonicalDate": "2026-08-28",
+        "canonicalNoonUtc": "2026-08-28T16:00:00.000Z",
+        "kind": "partial-lunar-eclipse",
+        "sign": "Pisces",
+        "degree": 4.85,
+        "swissEphReturnFlag": 16
+      },
+      "virgoLunar2027": {
+        "instantUtc": "2027-02-20T23:12:52.845Z",
+        "sourcePacificDate": "2027-02-20",
+        "canonicalDate": "2027-02-20",
+        "canonicalNoonUtc": "2027-02-20T17:00:00.000Z",
+        "kind": "penumbral-lunar-eclipse",
+        "sign": "Virgo",
+        "degree": 1.98,
+        "swissEphReturnFlag": 64
+      }
+    },
+    "stations": {
+      "mercuryPiscesRetrograde": {
+        "instantUtc": "2026-02-26T06:48:09.997Z",
+        "sourcePacificDate": "2026-02-25",
+        "canonicalDate": "2026-02-26",
+        "canonicalNoonUtc": "2026-02-26T17:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Pisces",
+        "degree": 22.57
+      },
+      "mercuryPiscesDirect": {
+        "instantUtc": "2026-03-20T19:32:50.070Z",
+        "sourcePacificDate": "2026-03-20",
+        "canonicalDate": "2026-03-20",
+        "canonicalNoonUtc": "2026-03-20T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Pisces",
+        "degree": 8.49
+      },
+      "mercuryCancerRetrograde": {
+        "instantUtc": "2026-06-29T17:35:55.280Z",
+        "sourcePacificDate": "2026-06-29",
+        "canonicalDate": "2026-06-29",
+        "canonicalNoonUtc": "2026-06-29T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Cancer",
+        "degree": 26.26
+      },
+      "mercuryCancerDirect": {
+        "instantUtc": "2026-07-23T22:57:51.682Z",
+        "sourcePacificDate": "2026-07-23",
+        "canonicalDate": "2026-07-23",
+        "canonicalNoonUtc": "2026-07-23T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Cancer",
+        "degree": 16.32
+      },
+      "jupiterCancerDirect": {
+        "instantUtc": "2026-03-11T03:29:51.148Z",
+        "sourcePacificDate": "2026-03-10",
+        "canonicalDate": "2026-03-10",
+        "canonicalNoonUtc": "2026-03-10T16:00:00.000Z",
+        "body": "jupiter",
+        "direction": "direct",
+        "sign": "Cancer",
+        "degree": 15.09
+      },
+      "plutoAquariusRetrograde": {
+        "instantUtc": "2026-05-06T15:34:24.513Z",
+        "sourcePacificDate": "2026-05-06",
+        "canonicalDate": "2026-05-06",
+        "canonicalNoonUtc": "2026-05-06T16:00:00.000Z",
+        "body": "pluto",
+        "direction": "retrograde",
+        "sign": "Aquarius",
+        "degree": 5.51
+      },
+      "plutoAquariusDirect": {
+        "instantUtc": "2026-10-16T02:40:18.931Z",
+        "sourcePacificDate": "2026-10-15",
+        "canonicalDate": "2026-10-15",
+        "canonicalNoonUtc": "2026-10-15T16:00:00.000Z",
+        "body": "pluto",
+        "direction": "direct",
+        "sign": "Aquarius",
+        "degree": 3.07
+      },
+      "venusScorpioRetrograde": {
+        "instantUtc": "2026-10-03T07:15:54.062Z",
+        "sourcePacificDate": "2026-10-03",
+        "canonicalDate": "2026-10-03",
+        "canonicalNoonUtc": "2026-10-03T16:00:00.000Z",
+        "body": "venus",
+        "direction": "retrograde",
+        "sign": "Scorpio",
+        "degree": 8.49
+      },
+      "venusLibraDirect": {
+        "instantUtc": "2026-11-14T00:27:27.739Z",
+        "sourcePacificDate": "2026-11-13",
+        "canonicalDate": "2026-11-13",
+        "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+        "body": "venus",
+        "direction": "direct",
+        "sign": "Libra",
+        "degree": 22.86
+      },
+      "mercuryScorpioRetrograde": {
+        "instantUtc": "2026-10-24T07:12:42.923Z",
+        "sourcePacificDate": "2026-10-24",
+        "canonicalDate": "2026-10-24",
+        "canonicalNoonUtc": "2026-10-24T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Scorpio",
+        "degree": 20.98
+      },
+      "mercuryScorpioDirect": {
+        "instantUtc": "2026-11-13T15:53:52.755Z",
+        "sourcePacificDate": "2026-11-13",
+        "canonicalDate": "2026-11-13",
+        "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Scorpio",
+        "degree": 5.03
+      }
+    },
+    "cazimis": {
+      "mercuryPisces": {
+        "instantUtc": "2026-03-07T11:01:43.710Z",
+        "sourcePacificDate": "2026-03-07",
+        "canonicalDate": "2026-03-07",
+        "canonicalNoonUtc": "2026-03-07T17:00:00.000Z",
+        "first": "mercury",
+        "aspect": "conjunction",
+        "second": "sun",
+        "firstSign": "Pisces",
+        "firstDegree": 16.88,
+        "secondSign": "Pisces",
+        "secondDegree": 16.88,
+        "residualOrbDegrees": 0
+      },
+      "neptuneAries": {
+        "instantUtc": "2026-03-22T11:18:37.274Z",
+        "sourcePacificDate": "2026-03-22",
+        "canonicalDate": "2026-03-22",
+        "canonicalNoonUtc": "2026-03-22T16:00:00.000Z",
+        "first": "neptune",
+        "aspect": "conjunction",
+        "second": "sun",
+        "firstSign": "Aries",
+        "firstDegree": 1.84,
+        "secondSign": "Aries",
+        "secondDegree": 1.84,
+        "residualOrbDegrees": 0
+      },
+      "saturnAries": {
+        "instantUtc": "2026-03-25T08:55:14.206Z",
+        "sourcePacificDate": "2026-03-25",
+        "canonicalDate": "2026-03-25",
+        "canonicalNoonUtc": "2026-03-25T16:00:00.000Z",
+        "first": "saturn",
+        "aspect": "conjunction",
+        "second": "sun",
+        "firstSign": "Aries",
+        "firstDegree": 4.72,
+        "secondSign": "Aries",
+        "secondDegree": 4.72,
+        "residualOrbDegrees": 0
+      },
+      "jupiterLeo": {
+        "instantUtc": "2026-07-29T12:17:52.567Z",
+        "sourcePacificDate": "2026-07-29",
+        "canonicalDate": "2026-07-29",
+        "canonicalNoonUtc": "2026-07-29T16:00:00.000Z",
+        "first": "jupiter",
+        "aspect": "conjunction",
+        "second": "sun",
+        "firstSign": "Leo",
+        "firstDegree": 6.41,
+        "secondSign": "Leo",
+        "secondDegree": 6.41,
+        "residualOrbDegrees": 0
+      }
+    }
+  },
+  "sourceClaims": {
+    "Neptune enters Aries, January 2026": {
+      "instantUtc": "2026-01-26T17:34:28.954Z",
+      "sourcePacificDate": "2026-01-26",
+      "canonicalDate": "2026-01-26",
+      "canonicalNoonUtc": "2026-01-26T17:00:00.000Z",
+      "body": "neptune",
+      "toSign": "Aries"
+    },
+    "Saturn-Neptune conjunction Feb 20, 2026 at 0 degrees 44 Aries": {
+      "instantUtc": "2026-02-20T16:54:02.191Z",
+      "sourcePacificDate": "2026-02-20",
+      "canonicalDate": "2026-02-20",
+      "canonicalNoonUtc": "2026-02-20T17:00:00.000Z",
+      "first": "saturn",
+      "aspect": "conjunction",
+      "second": "neptune",
+      "firstSign": "Aries",
+      "firstDegree": 0.75,
+      "secondSign": "Aries",
+      "secondDegree": 0.75,
+      "residualOrbDegrees": 0
+    },
+    "Uranus enters Gemini April 25, 2026; through 2033; shadow clear May 21": {
+      "entry": {
+        "instantUtc": "2026-04-26T00:51:32.547Z",
+        "sourcePacificDate": "2026-04-25",
+        "canonicalDate": "2026-04-25",
+        "canonicalNoonUtc": "2026-04-25T16:00:00.000Z",
+        "body": "uranus",
+        "toSign": "Gemini"
+      },
+      "shadowClear": {
+        "instantUtc": "2026-05-21T16:42:13.779Z",
+        "sourcePacificDate": "2026-05-21",
+        "canonicalDate": "2026-05-21",
+        "canonicalNoonUtc": "2026-05-21T16:00:00.000Z",
+        "body": "uranus",
+        "phase": "post-shadow-clear",
+        "sign": "Gemini",
+        "degree": 1.46
+      },
+      "finalExit": {
+        "instantUtc": "2033-05-22T13:16:44.341Z",
+        "sourcePacificDate": "2033-05-22",
+        "canonicalDate": "2033-05-22",
+        "canonicalNoonUtc": "2033-05-22T16:00:00.000Z",
+        "body": "uranus",
+        "toSign": "Cancer",
+        "passage": "final"
+      }
+    },
+    "Jupiter enters Leo June 29, 2026": {
+      "instantUtc": "2026-06-30T05:52:21.690Z",
+      "sourcePacificDate": "2026-06-29",
+      "canonicalDate": "2026-06-30",
+      "canonicalNoonUtc": "2026-06-30T16:00:00.000Z",
+      "body": "jupiter",
+      "toSign": "Leo"
+    },
+    "True Nodes enter Aquarius/Leo July 26, 2026": {
+      "instantUtc": "2026-07-27T00:47:41.748Z",
+      "sourcePacificDate": "2026-07-26",
+      "canonicalDate": "2026-07-26",
+      "canonicalNoonUtc": "2026-07-26T16:00:00.000Z",
+      "body": "true-node",
+      "toSign": "Aquarius",
+      "southNodeSign": "Leo"
+    },
+    "Total Solar Eclipse Aug 12, 2026 at 20 Leo": {
+      "instantUtc": "2026-08-12T17:45:59.221Z",
+      "sourcePacificDate": "2026-08-12",
+      "canonicalDate": "2026-08-12",
+      "canonicalNoonUtc": "2026-08-12T16:00:00.000Z",
+      "kind": "total-solar-eclipse",
+      "sign": "Leo",
+      "degree": 20.04,
+      "swissEphReturnFlag": 5
+    },
+    "Virgo Total Lunar Eclipse Mar 3, 2026": {
+      "instantUtc": "2026-03-03T11:33:41.218Z",
+      "sourcePacificDate": "2026-03-03",
+      "canonicalDate": "2026-03-03",
+      "canonicalNoonUtc": "2026-03-03T17:00:00.000Z",
+      "kind": "total-lunar-eclipse",
+      "sign": "Virgo",
+      "degree": 12.86,
+      "swissEphReturnFlag": 4
+    },
+    "Aquarius Solar Eclipse Feb 2026": {
+      "instantUtc": "2026-02-17T12:11:53.272Z",
+      "sourcePacificDate": "2026-02-17",
+      "canonicalDate": "2026-02-17",
+      "canonicalNoonUtc": "2026-02-17T17:00:00.000Z",
+      "kind": "annular-solar-eclipse",
+      "sign": "Aquarius",
+      "degree": 28.84,
+      "swissEphReturnFlag": 9
+    },
+    "New Moon Gemini Jun 14, 2026": {
+      "instantUtc": "2026-06-15T02:54:10.452Z",
+      "sourcePacificDate": "2026-06-14",
+      "canonicalDate": "2026-06-14",
+      "canonicalNoonUtc": "2026-06-14T16:00:00.000Z",
+      "kind": "new-moon",
+      "sign": "Gemini",
+      "degree": 24.05,
+      "residualOrbDegrees": 0
+    },
+    "New Moon Cancer Jul 14, 2026 at 21 Cancer": {
+      "instantUtc": "2026-07-14T09:43:37.277Z",
+      "sourcePacificDate": "2026-07-14",
+      "canonicalDate": "2026-07-14",
+      "canonicalNoonUtc": "2026-07-14T16:00:00.000Z",
+      "kind": "new-moon",
+      "sign": "Cancer",
+      "degree": 21.99,
+      "residualOrbDegrees": 0
+    },
+    "Full Moon Capricorn Jun 29, 2026": {
+      "instantUtc": "2026-06-29T23:56:41.537Z",
+      "sourcePacificDate": "2026-06-29",
+      "canonicalDate": "2026-06-29",
+      "canonicalNoonUtc": "2026-06-29T16:00:00.000Z",
+      "kind": "full-moon",
+      "sign": "Capricorn",
+      "degree": 8.25,
+      "residualOrbDegrees": 0
+    },
+    "Full Moon Scorpio May 1, 2026": {
+      "instantUtc": "2026-05-01T17:23:11.027Z",
+      "sourcePacificDate": "2026-05-01",
+      "canonicalDate": "2026-05-01",
+      "canonicalNoonUtc": "2026-05-01T16:00:00.000Z",
+      "kind": "full-moon",
+      "sign": "Scorpio",
+      "degree": 11.35,
+      "residualOrbDegrees": 0
+    },
+    "Mercury retrograde Pisces Feb 25 to Mar 20, 2026": {
+      "start": {
+        "instantUtc": "2026-02-26T06:48:09.997Z",
+        "sourcePacificDate": "2026-02-25",
+        "canonicalDate": "2026-02-26",
+        "canonicalNoonUtc": "2026-02-26T17:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Pisces",
+        "degree": 22.57
+      },
+      "end": {
+        "instantUtc": "2026-03-20T19:32:50.070Z",
+        "sourcePacificDate": "2026-03-20",
+        "canonicalDate": "2026-03-20",
+        "canonicalNoonUtc": "2026-03-20T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Pisces",
+        "degree": 8.49
+      }
+    },
+    "Mercury retrograde Cancer Jun 29 to Jul 23, 2026": {
+      "start": {
+        "instantUtc": "2026-06-29T17:35:55.280Z",
+        "sourcePacificDate": "2026-06-29",
+        "canonicalDate": "2026-06-29",
+        "canonicalNoonUtc": "2026-06-29T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Cancer",
+        "degree": 26.26
+      },
+      "end": {
+        "instantUtc": "2026-07-23T22:57:51.682Z",
+        "sourcePacificDate": "2026-07-23",
+        "canonicalDate": "2026-07-23",
+        "canonicalNoonUtc": "2026-07-23T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Cancer",
+        "degree": 16.32
+      }
+    },
+    "Jupiter stations direct in Cancer Mar 10, 2026": {
+      "instantUtc": "2026-03-11T03:29:51.148Z",
+      "sourcePacificDate": "2026-03-10",
+      "canonicalDate": "2026-03-10",
+      "canonicalNoonUtc": "2026-03-10T16:00:00.000Z",
+      "body": "jupiter",
+      "direction": "direct",
+      "sign": "Cancer",
+      "degree": 15.09
+    },
+    "Pluto stations retrograde early May 2026": {
+      "start": {
+        "instantUtc": "2026-05-06T15:34:24.513Z",
+        "sourcePacificDate": "2026-05-06",
+        "canonicalDate": "2026-05-06",
+        "canonicalNoonUtc": "2026-05-06T16:00:00.000Z",
+        "body": "pluto",
+        "direction": "retrograde",
+        "sign": "Aquarius",
+        "degree": 5.51
+      },
+      "end": {
+        "instantUtc": "2026-10-16T02:40:18.931Z",
+        "sourcePacificDate": "2026-10-15",
+        "canonicalDate": "2026-10-15",
+        "canonicalNoonUtc": "2026-10-15T16:00:00.000Z",
+        "body": "pluto",
+        "direction": "direct",
+        "sign": "Aquarius",
+        "degree": 3.07
+      }
+    },
+    "Venus retrograde Oct 3 to Nov 13, 2026; shadow Aug 31": {
+      "shadowStart": {
+        "instantUtc": "2026-08-31T14:45:38.693Z",
+        "sourcePacificDate": "2026-08-31",
+        "canonicalDate": "2026-08-31",
+        "canonicalNoonUtc": "2026-08-31T16:00:00.000Z",
+        "body": "venus",
+        "phase": "pre-shadow",
+        "sign": "Libra",
+        "degree": 22.86
+      },
+      "start": {
+        "instantUtc": "2026-10-03T07:15:54.062Z",
+        "sourcePacificDate": "2026-10-03",
+        "canonicalDate": "2026-10-03",
+        "canonicalNoonUtc": "2026-10-03T16:00:00.000Z",
+        "body": "venus",
+        "direction": "retrograde",
+        "sign": "Scorpio",
+        "degree": 8.49
+      },
+      "end": {
+        "instantUtc": "2026-11-14T00:27:27.739Z",
+        "sourcePacificDate": "2026-11-13",
+        "canonicalDate": "2026-11-13",
+        "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+        "body": "venus",
+        "direction": "direct",
+        "sign": "Libra",
+        "degree": 22.86
+      }
+    },
+    "Mercury retrograde Oct 24 to Nov 13, 2026": {
+      "start": {
+        "instantUtc": "2026-10-24T07:12:42.923Z",
+        "sourcePacificDate": "2026-10-24",
+        "canonicalDate": "2026-10-24",
+        "canonicalNoonUtc": "2026-10-24T16:00:00.000Z",
+        "body": "mercury",
+        "direction": "retrograde",
+        "sign": "Scorpio",
+        "degree": 20.98
+      },
+      "end": {
+        "instantUtc": "2026-11-13T15:53:52.755Z",
+        "sourcePacificDate": "2026-11-13",
+        "canonicalDate": "2026-11-13",
+        "canonicalNoonUtc": "2026-11-13T17:00:00.000Z",
+        "body": "mercury",
+        "direction": "direct",
+        "sign": "Scorpio",
+        "degree": 5.03
+      }
+    },
+    "Mercury cazimi Mar 7, 2026 at 16 degrees 52 Pisces": {
+      "instantUtc": "2026-03-07T11:01:43.710Z",
+      "sourcePacificDate": "2026-03-07",
+      "canonicalDate": "2026-03-07",
+      "canonicalNoonUtc": "2026-03-07T17:00:00.000Z",
+      "first": "mercury",
+      "aspect": "conjunction",
+      "second": "sun",
+      "firstSign": "Pisces",
+      "firstDegree": 16.88,
+      "secondSign": "Pisces",
+      "secondDegree": 16.88,
+      "residualOrbDegrees": 0
+    },
+    "Neptune cazimi Mar 22, 2026 at 1 degree 50 Aries": {
+      "instantUtc": "2026-03-22T11:18:37.274Z",
+      "sourcePacificDate": "2026-03-22",
+      "canonicalDate": "2026-03-22",
+      "canonicalNoonUtc": "2026-03-22T16:00:00.000Z",
+      "first": "neptune",
+      "aspect": "conjunction",
+      "second": "sun",
+      "firstSign": "Aries",
+      "firstDegree": 1.84,
+      "secondSign": "Aries",
+      "secondDegree": 1.84,
+      "residualOrbDegrees": 0
+    },
+    "Saturn cazimi Mar 25, 2026 at 4 degrees 43 Aries": {
+      "instantUtc": "2026-03-25T08:55:14.206Z",
+      "sourcePacificDate": "2026-03-25",
+      "canonicalDate": "2026-03-25",
+      "canonicalNoonUtc": "2026-03-25T16:00:00.000Z",
+      "first": "saturn",
+      "aspect": "conjunction",
+      "second": "sun",
+      "firstSign": "Aries",
+      "firstDegree": 4.72,
+      "secondSign": "Aries",
+      "secondDegree": 4.72,
+      "residualOrbDegrees": 0
+    },
+    "Jupiter cazimi in Leo late Jul/Aug 2026": {
+      "instantUtc": "2026-07-29T12:17:52.567Z",
+      "sourcePacificDate": "2026-07-29",
+      "canonicalDate": "2026-07-29",
+      "canonicalNoonUtc": "2026-07-29T16:00:00.000Z",
+      "first": "jupiter",
+      "aspect": "conjunction",
+      "second": "sun",
+      "firstSign": "Leo",
+      "firstDegree": 6.41,
+      "secondSign": "Leo",
+      "secondDegree": 6.41,
+      "residualOrbDegrees": 0
+    },
+    "July 2026 basket exact Jul 19 to 21, repeating Nov 29": {
+      "canonicalNoonMatrix": {
+        "evaluatedAt": "2026-07-20T16:00:00.000Z",
+        "aspects": {
+          "jupiterPluto": {
+            "instantUtc": "2026-07-20T16:00:00.000Z",
+            "sourcePacificDate": "2026-07-20",
+            "canonicalDate": "2026-07-20",
+            "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+            "first": "jupiter",
+            "aspect": "opposition",
+            "second": "pluto",
+            "firstSign": "Leo",
+            "firstDegree": 4.45,
+            "secondSign": "Aquarius",
+            "secondDegree": 4.44,
+            "orbDegrees": 0.01
+          },
+          "jupiterNeptune": {
+            "instantUtc": "2026-07-20T16:00:00.000Z",
+            "sourcePacificDate": "2026-07-20",
+            "canonicalDate": "2026-07-20",
+            "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+            "first": "jupiter",
+            "aspect": "trine",
+            "second": "neptune",
+            "firstSign": "Leo",
+            "firstDegree": 4.45,
+            "secondSign": "Aries",
+            "secondDegree": 4.37,
+            "orbDegrees": 0.08
+          },
+          "neptunePluto": {
+            "instantUtc": "2026-07-20T16:00:00.000Z",
+            "sourcePacificDate": "2026-07-20",
+            "canonicalDate": "2026-07-20",
+            "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+            "first": "neptune",
+            "aspect": "sextile",
+            "second": "pluto",
+            "firstSign": "Aries",
+            "firstDegree": 4.37,
+            "secondSign": "Aquarius",
+            "secondDegree": 4.44,
+            "orbDegrees": 0.07
+          },
+          "uranusPluto": {
+            "instantUtc": "2026-07-20T16:00:00.000Z",
+            "sourcePacificDate": "2026-07-20",
+            "canonicalDate": "2026-07-20",
+            "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+            "first": "uranus",
+            "aspect": "trine",
+            "second": "pluto",
+            "firstSign": "Gemini",
+            "firstDegree": 4.6,
+            "secondSign": "Aquarius",
+            "secondDegree": 4.44,
+            "orbDegrees": 0.16
+          }
+        }
+      },
+      "exactHits": {
+        "saturnNeptune": {
+          "instantUtc": "2026-02-20T16:54:02.191Z",
+          "sourcePacificDate": "2026-02-20",
+          "canonicalDate": "2026-02-20",
+          "canonicalNoonUtc": "2026-02-20T17:00:00.000Z",
+          "first": "saturn",
+          "aspect": "conjunction",
+          "second": "neptune",
+          "firstSign": "Aries",
+          "firstDegree": 0.75,
+          "secondSign": "Aries",
+          "secondDegree": 0.75,
+          "residualOrbDegrees": 0
+        },
+        "venusJupiter": {
+          "instantUtc": "2026-06-09T19:59:12.913Z",
+          "sourcePacificDate": "2026-06-09",
+          "canonicalDate": "2026-06-09",
+          "canonicalNoonUtc": "2026-06-09T16:00:00.000Z",
+          "first": "venus",
+          "aspect": "conjunction",
+          "second": "jupiter",
+          "firstSign": "Cancer",
+          "firstDegree": 25.78,
+          "secondSign": "Cancer",
+          "secondDegree": 25.78,
+          "residualOrbDegrees": 0
+        },
+        "jupiterPlutoJuly": {
+          "instantUtc": "2026-07-20T14:44:40.792Z",
+          "sourcePacificDate": "2026-07-20",
+          "canonicalDate": "2026-07-20",
+          "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+          "first": "jupiter",
+          "aspect": "opposition",
+          "second": "pluto",
+          "firstSign": "Leo",
+          "firstDegree": 4.44,
+          "secondSign": "Aquarius",
+          "secondDegree": 4.44,
+          "residualOrbDegrees": 0
+        },
+        "jupiterNeptuneJuly": {
+          "instantUtc": "2026-07-20T07:23:28.273Z",
+          "sourcePacificDate": "2026-07-20",
+          "canonicalDate": "2026-07-20",
+          "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+          "first": "jupiter",
+          "aspect": "trine",
+          "second": "neptune",
+          "firstSign": "Leo",
+          "firstDegree": 4.37,
+          "secondSign": "Aries",
+          "secondDegree": 4.37,
+          "residualOrbDegrees": 0
+        },
+        "uranusPlutoJuly": {
+          "instantUtc": "2026-07-18T04:43:21.909Z",
+          "sourcePacificDate": "2026-07-17",
+          "canonicalDate": "2026-07-18",
+          "canonicalNoonUtc": "2026-07-18T16:00:00.000Z",
+          "first": "uranus",
+          "aspect": "trine",
+          "second": "pluto",
+          "firstSign": "Gemini",
+          "firstDegree": 4.5,
+          "secondSign": "Aquarius",
+          "secondDegree": 4.5,
+          "residualOrbDegrees": 0
+        },
+        "neptunePlutoSeptember": {
+          "instantUtc": "2026-09-16T02:08:50.485Z",
+          "sourcePacificDate": "2026-09-15",
+          "canonicalDate": "2026-09-15",
+          "canonicalNoonUtc": "2026-09-15T16:00:00.000Z",
+          "first": "neptune",
+          "aspect": "sextile",
+          "second": "pluto",
+          "firstSign": "Aries",
+          "firstDegree": 3.27,
+          "secondSign": "Aquarius",
+          "secondDegree": 3.27,
+          "residualOrbDegrees": 0
+        },
+        "uranusPlutoNovember": {
+          "instantUtc": "2026-11-29T11:23:04.684Z",
+          "sourcePacificDate": "2026-11-29",
+          "canonicalDate": "2026-11-29",
+          "canonicalNoonUtc": "2026-11-29T17:00:00.000Z",
+          "first": "uranus",
+          "aspect": "trine",
+          "second": "pluto",
+          "firstSign": "Gemini",
+          "firstDegree": 3.53,
+          "secondSign": "Aquarius",
+          "secondDegree": 3.53,
+          "residualOrbDegrees": 0
+        }
+      },
+      "assessment": "Jupiter-Pluto and Jupiter-Neptune perfect on July 20. Uranus-Pluto perfects on July 18 canonical time (July 17 PT) and again November 29. Neptune-Pluto is active in the July basket but does not perfect until September 16. The full four-aspect basket does not repeat on November 29."
+    },
+    "Venus-Jupiter conjunction 25 Cancer Jun 9, 2026": {
+      "instantUtc": "2026-06-09T19:59:12.913Z",
+      "sourcePacificDate": "2026-06-09",
+      "canonicalDate": "2026-06-09",
+      "canonicalNoonUtc": "2026-06-09T16:00:00.000Z",
+      "first": "venus",
+      "aspect": "conjunction",
+      "second": "jupiter",
+      "firstSign": "Cancer",
+      "firstDegree": 25.78,
+      "secondSign": "Cancer",
+      "secondDegree": 25.78,
+      "residualOrbDegrees": 0
+    }
+  }
+}
