@@ -34,7 +34,17 @@ declare module "@tldr/astro-knowledge/sky-aspect-engine" {
     applying: boolean;
   };
 
+  export const SKY_ASPECT_DEFINITIONS: ReadonlyArray<Readonly<{
+    type: CalculatedSkyAspect["type"];
+    exactAngle: number;
+    maxOrb: number;
+  }>>;
   export const SKY_ASPECT_POINT_ORDER: readonly string[];
+  export function canonicalizeNodeAxisAspects<T extends {
+    from: string;
+    to: string;
+    orb: number;
+  }>(aspects: T[]): T[];
   export function calculateSkyAspects(positions: SkyAspectPosition[]): CalculatedSkyAspect[];
 }
 

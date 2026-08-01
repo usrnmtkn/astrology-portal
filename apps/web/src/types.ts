@@ -111,6 +111,7 @@ export type SkySnapshot = {
     exactAngle?: number;
     separation?: number;
     orb: number;
+    exactAt?: string | null;
     applying?: boolean;
     series?: {
       index: number;

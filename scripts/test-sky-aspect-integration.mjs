@@ -233,7 +233,11 @@ const judged = await generator.generateCard({
 
 assert.match(judgeGenerationPrompt, /previous draft reached the editorial judge/i);
 assert.equal(judged.judge.score, 3);
-assert.equal(judged.gate, "auto-publish");
+assert.equal(
+  judged.gate,
+  "human-review",
+  "A single LLM verdict stays advisory until an explicitly approved exact match is published."
+);
 
 let repairJudgeCalls = 0;
 let repairReason = "";
@@ -270,7 +274,7 @@ const repairedToThree = await generator.generateCard({
 assert.equal(repairReason, "The ending adds a second aphorism.");
 assert.equal(repairedToThree.text, repairedExample);
 assert.equal(repairedToThree.judge.score, 3);
-assert.equal(repairedToThree.gate, "auto-publish");
+assert.equal(repairedToThree.gate, "human-review");
 assert.deepEqual(repairedToThree.repair, {
   fired: true,
   result: "2→3",
@@ -324,5 +328,49 @@ const review = await generator.generateCard({
 assert.equal(review.status, "needs-review");
 assert.ok((review.lint?.fails ?? 0) > 0);
 assert.match(review.text, /2°/);
+
+assert.equal(
+  generator.reviewPairSources().size,
+  33,
+  "The staged Chiron/Lilith/node review bank must retain all 33 owner-review rows."
+);
+
+const gatedNodeSource = await generator.generateCard({
+  a: "moon",
+  b: "north-node",
+  aspect: "conjunction",
+  signA: "pisces",
+  signB: "aquarius"
+}, {
+  generateFn: async () => {
+    throw new Error("A needs_review pair source must not reach production generation.");
+  }
+});
+
+assert.equal(gatedNodeSource.status, "skipped");
+assert.equal(gatedNodeSource.reason, "missing-source");
+
+const reviewNodePrompt = generator.buildPrompt({
+  a: "moon",
+  b: "south-node",
+  aspect: "conjunction",
+  signA: "pisces",
+  signB: "leo"
+}, { allowReviewSources: true });
+
+assert.match(reviewNodePrompt, /Lunar Nodes/);
+assert.match(reviewNodePrompt, /SOURCE MEANING/);
+assert.match(reviewNodePrompt, /south node/i);
+assert.equal(
+  generator.normalizeCardArgs({
+    a: "moon",
+    b: "south-node",
+    aspect: "conjunction",
+    signA: "pisces",
+    signB: "leo"
+  }, { allowReviewSources: true }).pairKey,
+  "moon-nodes",
+  "North- and South-Node contacts must resolve to one axis-level source."
+);
 
 console.log("Sky-aspect integration contract passed.");

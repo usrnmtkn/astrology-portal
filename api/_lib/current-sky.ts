@@ -1,4 +1,7 @@
-import { calculateSkyAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
+import {
+  calculateSkyAspects,
+  canonicalizeNodeAxisAspects
+} from "@tldr/astro-knowledge/sky-aspect-engine";
 
 export type LocationInput = {
   label: string;
@@ -289,7 +292,7 @@ export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
   const positions = northNode && Number.isFinite(northNode.longitude)
     ? [...normalizedPositions, southNodePositionFromNorthNode(northNode, sky.ascendant ?? "")]
     : normalizedPositions;
-  const aspects = calculateSkyAspects(positions).map((aspect) => ({
+  const aspects = canonicalizeNodeAxisAspects(calculateSkyAspects(positions)).map((aspect) => ({
     ...aspect,
     meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`,
     series: null

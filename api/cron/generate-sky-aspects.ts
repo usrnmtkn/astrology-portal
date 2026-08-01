@@ -2,11 +2,13 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
 import { currentSkyFacts, type PlanetPosition, type SkyAspect } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { canonicalizeNodeAxisAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
+import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
 
 loadLocalWebEnv();
 
 const { generateCard, normalizeCardArgs } = skyAspectGenerator;
-const supportedAspects = new Set(["conjunction", "sextile", "square", "trine", "opposition"]);
+const supportedAspects = new Set(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
@@ -435,7 +437,7 @@ async function generateCurrentMatrix() {
     }>
   };
 
-  for (const aspect of sky.aspects) {
+  for (const aspect of canonicalizeNodeAxisAspects(sky.aspects)) {
     const normalizedAspect = pointSlug(aspect.type);
     const first = positionFor(aspect.from, sky.positions);
     const second = positionFor(aspect.to, sky.positions);

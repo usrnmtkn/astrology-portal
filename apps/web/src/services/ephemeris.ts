@@ -1,7 +1,13 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
-import { calculateSkyAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
+import {
+  calculateSkyAspects,
+  canonicalizeNodeAxisAspects,
+  SKY_ASPECT_DEFINITIONS,
+  SKY_ASPECT_POINT_ORDER
+} from "@tldr/astro-knowledge/sky-aspect-engine";
 import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts.js";
 import { debugInfoForZonedDateTime } from "./timezones.js";
+import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 
 const signs = [
   ["Aries", "♈"],
@@ -33,6 +39,9 @@ const planets = [
   ["Lilith", "⚸"],
   ["North Node", "☊"]
 ] as const;
+
+assertCanonicalSkyPoints([...planets.map(([planet]) => planet), "South Node"]);
+assertCanonicalSkyPoints([...SKY_ASPECT_POINT_ORDER]);
 
 const SE_CHIRON = 15;
 const SE_MEAN_BLACK_MOON_LILITH = 12;
@@ -125,13 +134,9 @@ type LunarCalendarMonthOptions = {
   detail?: LunarCalendarDetailLevel;
 };
 
-const calendarAspectDefinitions = [
-  ["conjunction", 0],
-  ["sextile", 60],
-  ["square", 90],
-  ["trine", 120],
-  ["opposition", 180]
-] as const;
+const calendarAspectDefinitions = SKY_ASPECT_DEFINITIONS
+  .filter(({ type }) => type !== "quincunx")
+  .map(({ type, exactAngle }) => [type, exactAngle] as const);
 const cazimiOrbDegrees = 1;
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
@@ -2212,7 +2217,7 @@ export async function getAstrodienstSky(
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
     positions: displayPositions.map((position) => ({ ...position })),
-    aspects: calculateSkyAspects(displayPositions)
+    aspects: canonicalizeNodeAxisAspects(calculateSkyAspects(displayPositions))
   };
 
   return {
