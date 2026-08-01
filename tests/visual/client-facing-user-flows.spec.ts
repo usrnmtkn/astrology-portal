@@ -1316,6 +1316,35 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("calendar ingress, station, and aspect details always open with approved prose", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    const cases = [
+      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo" },
+      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct" },
+      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus" }
+    ];
+
+    await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
+
+    for (const eventCase of cases) {
+      await expectClientRouteLoads(page, `/#calendar?view=week&date=${eventCase.date}`);
+      const selectedDay = page.getByLabel("Selected lunar day");
+      const eventButton = selectedDay
+        .locator(`.lunar-selected-card__daily-event.event-${eventCase.eventType}`)
+        .filter({ hasText: eventCase.title });
+
+      await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
+      await eventButton.click();
+      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      const detailParagraph = page.locator(".sky-detail-body p").first();
+
+      await expect(detailParagraph, `${eventCase.title} detail includes reader-facing prose`).toBeVisible();
+      expect((await detailParagraph.innerText()).trim().length).toBeGreaterThan(20);
+    }
+
+    await assertNoClientErrors();
+  });
+
   test("calendar Week view presents seven API-backed day write-ups without mobile overflow", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
