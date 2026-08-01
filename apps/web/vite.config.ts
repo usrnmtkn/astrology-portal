@@ -110,6 +110,15 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-manifest-v3.json")) {
               return "fallback-content-manifest";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
+              return "fallback-content-deferred-core";
+            }
+            if (
+              id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
+              || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
+            ) {
+              return "fallback-content-sky-core";
+            }
             if (id.includes("fallbackArchitectureV3/source-rows/transit-synastry") || id.includes("fallbackArchitectureV3/source-rows/bond-language")) {
               return "fallback-content-relationships";
             }

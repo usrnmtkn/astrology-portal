@@ -23,7 +23,8 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import { AspectPatternWriteups } from "./AspectPatternWriteups";
 import { fallbackArchitectureV3PackageVersion } from "../../web/src/content/fallbackArchitectureV3Runtime";
-import fallbackSourceRowsV3 from "../../web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
+import bundledDeferredCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
+import bundledSkyCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import "./admin.css";
 
@@ -971,7 +972,10 @@ function packageHookBody(row: Record<string, unknown>) {
   return "";
 }
 
-const fallbackHookDefinitions: FallbackHookDefinition[] = ((fallbackSourceRowsV3 as { hookRows?: Array<Record<string, unknown>> }).hookRows ?? [])
+const fallbackHookDefinitions: FallbackHookDefinition[] = ([
+  ...bundledSkyCoreRowsV3.hookRows,
+  ...bundledDeferredCoreRowsV3.hookRows
+] as Array<Record<string, unknown>>)
   .map((row) => {
     const key = typeof row.contentKey === "string" ? row.contentKey : "";
     const label = titleFromKey(key);

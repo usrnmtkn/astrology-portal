@@ -13,6 +13,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const outputPath = path.join(packageRoot, "bundled-manifest-v3.json");
 const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.json");
+const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
+const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
+const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
 const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
@@ -37,6 +40,18 @@ function latestReaderEligible(rows, allowBlank = false) {
   return [...candidates.values()]
     .map((keyed) => [...keyed].reverse().find((row) => isReaderEligible(row, allowBlank)))
     .filter(Boolean);
+}
+
+function isSkyCoreHook(row) {
+  return [
+    "fallback-hook/sky-",
+    "fallback-hook/lunation-",
+    "fallback-hook/transit-retro/",
+    "fallback-hook/transit-effect-soft/",
+    "fallback-hook/transit-effect-hard/",
+    "fallback-hook/placement-sentence/",
+    "fallback-hook/dignity-line/"
+  ].some((prefix) => row.contentKey.startsWith(prefix));
 }
 
 function fullReaderBundle() {
@@ -89,6 +104,22 @@ function fullReaderBundle() {
 }
 
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
+const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
+const skyCoreRows = {
+  hookRows: sourceRows.hookRows.filter(isSkyCoreHook),
+  // Several reader modules construct shared vocabulary constants at module
+  // evaluation time. Keep this relatively small bank eager until those
+  // constants become route-local.
+  vocabularyRows: sourceRows.vocabularyRows
+};
+const deferredCoreRows = {
+  hookRows: sourceRows.hookRows.filter((row) => !isSkyCoreHook(row)),
+  vocabularyRows: []
+};
+const skyAuthoredCards = {
+  authoredCards: transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
+};
 const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
 const summary = {
   packageVersion: manifest.packageVersion,
@@ -97,12 +128,24 @@ const summary = {
   keyCount: manifest.keyCount
 };
 const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
+const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
+const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
+const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
   const existingSummary = fs.existsSync(summaryOutputPath) ? fs.readFileSync(summaryOutputPath, "utf8") : "";
+  const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
+  const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
+  const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
 
-  if (existing !== serialized || existingSummary !== serializedSummary) {
+  if (
+    existing !== serialized
+    || existingSummary !== serializedSummary
+    || existingSkyCore !== serializedSkyCore
+    || existingDeferredCore !== serializedDeferredCore
+    || existingSkyAuthored !== serializedSkyAuthored
+  ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
   }
@@ -111,6 +154,12 @@ if (checkOnly) {
 } else {
   fs.writeFileSync(outputPath, serialized);
   fs.writeFileSync(summaryOutputPath, serializedSummary);
+  fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
+  fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
+  fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
+  console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
+  console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
 }
