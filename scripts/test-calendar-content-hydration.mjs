@@ -157,6 +157,16 @@ assert.match(
 );
 assert.match(
   appSource,
+  /function openCalendarTransitDetail[\s\S]*?openCalendarTransitDetailWithContent\(event, skyGeneratedContent\);[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
+  "Calendar transit details must open immediately before exact content hydrates."
+);
+assert.match(
+  appSource,
+  /selectedSkyDetailRefreshContentRef\.current === skyGeneratedContent[\s\S]*?selectedSkyDetailRefreshContentRef\.current = skyGeneratedContent/u,
+  "An open Calendar detail must refresh when its exact content arrives."
+);
+assert.match(
+  appSource,
   /calendarContentCacheRef[\s\S]*?size > 12/u,
   "Calendar date-range hydration must use a bounded cache."
 );
