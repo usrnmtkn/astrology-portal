@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
+import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
 
 loadLocalWebEnv();
 
@@ -140,13 +141,11 @@ type CalculatedAspect = {
   meaning: string;
 };
 
-const aspectDefinitions = [
-  { type: "conjunction", exact: 0, orb: 6 },
-  { type: "sextile", exact: 60, orb: 4 },
-  { type: "square", exact: 90, orb: 5 },
-  { type: "trine", exact: 120, orb: 5 },
-  { type: "opposition", exact: 180, orb: 6 }
-];
+const aspectDefinitions = canonicalSkyAspectProfile.aspects.map((aspect) => ({
+  type: aspect.id,
+  exact: aspect.angle,
+  orb: aspect.orb
+}));
 
 const zodiacSigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 

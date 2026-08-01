@@ -36,4 +36,9 @@ export const SKY_ASPECT_POINT_ORDER: readonly string[];
 export function normalizeDegrees(degrees: number): number;
 export function shortestAngleDistance(degrees: number): number;
 export function angularSeparation(first: number, second: number): number;
+export function canonicalizeNodeAxisAspects<T extends {
+  from: string;
+  to: string;
+  orb: number;
+}>(aspects: T[]): T[];
 export function calculateSkyAspects(positions: SkyAspectPosition[]): CalculatedSkyAspect[];

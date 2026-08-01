@@ -750,13 +750,16 @@ def calculate_aspects(
     positions: List[Position],
     settings: ChartSettings,
     julian_day: Optional[float] = None,
+    definitions: Optional[List[Tuple[str, float]]] = None,
+    orb_limits: Optional[Dict[str, float]] = None,
 ) -> List[Aspect]:
-    orbs = aspect_orbs(settings)
+    orbs = orb_limits or aspect_orbs(settings)
+    active_definitions = definitions or ASPECT_DEFINITIONS
     aspects: List[Aspect] = []
     for first_index, first in enumerate(positions):
         for second in positions[first_index + 1 :]:
             separation = angular_separation(first.longitude, second.longitude)
-            for aspect_type, exact in ASPECT_DEFINITIONS:
+            for aspect_type, exact in active_definitions:
                 orb = abs(separation - exact)
                 max_orb = orbs[aspect_type]
                 if orb <= max_orb:
