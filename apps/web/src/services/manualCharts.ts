@@ -1,6 +1,7 @@
 import { getSupabaseClient } from "./auth";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
+import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -45,6 +46,43 @@ export type ManualChartInput = {
   natalChart?: SkySnapshot | null;
   notes?: string | null;
 };
+
+export async function resolvedManualChartBirthLocationForRepair(chart: ManualChart) {
+  if (isTldrAstroApiConfigured) {
+    try {
+      const response = await resolveTimezone({
+        latitude: chart.birthLocation.latitude,
+        longitude: chart.birthLocation.longitude,
+        date: chart.birthDate,
+        time: chart.birthTime ?? "12:00"
+      });
+
+      if (response.source !== "fallback" && response.timeZone) {
+        return {
+          ...chart.birthLocation,
+          timeZone: response.timeZone
+        };
+      }
+    } catch {
+      // If the API cannot resolve coordinates, do not guess a birth-chart timezone locally.
+    }
+  }
+
+  return chart.birthLocation.timeZone ? chart.birthLocation : null;
+}
+
+export function manualChartNeedsNatalRepair(chart: ManualChart) {
+  if (chart.birthTimeUnknown || !chart.birthTime || !chart.birthDate || !chart.birthLocation) {
+    return false;
+  }
+
+  // Complete charts should not trigger background timezone/natal API repair on page load.
+  return !chart.natalChart || !chart.birthLocation.timeZone;
+}
+
+export function manualChartNeedsBirthTime(chart: ManualChart) {
+  return chart.chartType !== "event" && (chart.birthTimeUnknown || !chart.birthTime);
+}
 
 type ManualChartRow = {
   id: string;

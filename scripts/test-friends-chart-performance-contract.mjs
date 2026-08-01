@@ -64,8 +64,8 @@ assert.match(
   "A failed remote chart write must keep the chart in local storage with retryable sync state."
 );
 
-const repairFunctionMatch = appSource.match(
-  /function manualChartNeedsNatalRepair\(chart: ManualChart\) \{(?<body>[\s\S]*?)\n\}/
+const repairFunctionMatch = manualChartsSource.match(
+  /export function manualChartNeedsNatalRepair\(chart: ManualChart\) \{(?<body>[\s\S]*?)\n\}/
 );
 
 assert.ok(
