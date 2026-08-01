@@ -155,6 +155,7 @@ import {
   generatedContentPreviewModeChangeEvent,
   loadFallbackArchitectureV3DashboardBundle,
   loadLiveGeneratedContent,
+  loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
   renderGeneratedContentTemplate,
@@ -162,7 +163,7 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
-import { resolveSkyAspectGeneratedContent } from "./services/skyAspectContent";
+import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   readCachedSkySnapshot,
@@ -667,6 +668,7 @@ function isSkyDetail(value: unknown): value is SkyDetail {
 }
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
+type SkyAspectContentStatus = "idle" | "loading" | "ready";
 
 type SkyHistoricalLookback = {
   heading: string;
@@ -12270,6 +12272,7 @@ export function App() {
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
+  const [skyAspectContentStatus, setSkyAspectContentStatus] = useState<SkyAspectContentStatus>(initialCachedSky ? "loading" : "idle");
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
@@ -12630,30 +12633,85 @@ export function App() {
     let cancelled = false;
     const shouldLoadSkyGenerated = mode === "guest" || mode === "member" || mode === "calendar";
 
-    if (!shouldLoadSkyGenerated) {
+    if (!shouldLoadSkyGenerated || !sky) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
+      setSkyAspectContentStatus("idle");
       return () => {
         cancelled = true;
       };
     }
 
-    loadLiveGeneratedContent("sky", skyDate)
+    if (mode === "calendar") {
+      setSkyAspectContentStatus("idle");
+      loadLiveGeneratedContent("sky", skyDate)
+        .then((content) => {
+          if (!cancelled) {
+            setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          }
+        })
+        .catch((error) => {
+          console.warn("Live Calendar interpretations failed to load; unpublished content will remain hidden.", error);
+          if (!cancelled) {
+            setSkyGeneratedContent(normalizedSkySnapshotContent);
+          }
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setSkyGeneratedContent(normalizedSkySnapshotContent);
+    setSkyAspectContentStatus("loading");
+
+    const aspectContentKeys = sky.aspects.flatMap((aspect) => {
+      const firstSign = skyAspectPosition(aspect.from, sky.positions)?.sign;
+      const secondSign = skyAspectPosition(aspect.to, sky.positions)?.sign;
+
+      if (!firstSign || !secondSign) {
+        return [];
+      }
+
+      return skyAspectGeneratedContentKeys({
+        first: aspect.from,
+        second: aspect.to,
+        aspect: aspect.type,
+        firstSign,
+        secondSign,
+        targetDate: sky.generatedAt.slice(0, 10)
+      });
+    });
+    const placementContentKeys = sky.positions.flatMap((position) => {
+      const expected = normalizedCollectiveSkyPlacementFacts(position);
+      const topper = tightestSkyPlacementTopperAspect(position, sky.aspects, sky.positions);
+
+      return [
+        expected ? skyPlacementBaseContentKey(expected.planet, expected.sign) : "",
+        topper
+          ? skyPlacementTopperContentKey(topper.planet, topper.sign, topper.aspect, topper.other)
+          : ""
+      ].filter(Boolean);
+    });
+    const currentSkyContentKeys = [...aspectContentKeys, ...placementContentKeys];
+
+    loadLiveGeneratedContentForKeys(currentSkyContentKeys)
       .then((content) => {
         if (!cancelled) {
           setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          setSkyAspectContentStatus("ready");
         }
       })
       .catch((error) => {
-        console.warn("Live Sky interpretations failed to load; unpublished content will remain hidden.", error);
+        console.warn("Current Sky aspect interpretations failed to load; factual aspects remain available.", error);
         if (!cancelled) {
-          setSkyGeneratedContent(normalizedSkySnapshotContent);
+          setSkyAspectContentStatus("ready");
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [generatedContentPreviewMode, mode, skyDate]);
+  }, [generatedContentPreviewMode, mode, sky, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -14621,6 +14679,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={[]}
                       onOpenDetail={openSkyDetail}
                     />
@@ -14631,6 +14690,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={userLifeAreaFocus}
                       onOpenDetail={openSkyDetail}
                     />
@@ -16382,6 +16442,7 @@ function TodayView({
   aspects,
   generatedAt,
   generatedContent,
+  aspectContentStatus,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -16389,6 +16450,7 @@ function TodayView({
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  aspectContentStatus: SkyAspectContentStatus;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -16410,6 +16472,7 @@ function TodayView({
           positions={positions}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
+          contentStatus={aspectContentStatus}
           onOpenDetail={onOpenDetail}
         />
       )}
@@ -16433,18 +16496,32 @@ function ActiveAspects({
   positions,
   generatedAt,
   generatedContent,
+  contentStatus,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  contentStatus: SkyAspectContentStatus;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const aspectGroups = useMemo(
     () => groupAspectsByGiftLesson(aspects, (aspect) => aspect.type, (aspect) => aspect.orb),
     [aspects]
   );
+
+  if (contentStatus === "loading") {
+    return (
+      <SkyAspectsSection>
+        <div className="sky-aspect-content-loading" role="status" aria-label="Loading aspect write-ups">
+          <SkyLoadingCard compact />
+          <SkyLoadingCard compact />
+        </div>
+      </SkyAspectsSection>
+    );
+  }
+
   const visibleAspectGroups = aspectGroups
     .map((group) => ({
       ...group,
