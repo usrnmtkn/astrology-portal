@@ -400,9 +400,9 @@
   }
 
   html[data-scrolled] .nav-pill {
-    border-color: transparent;
-    background: transparent;
-    box-shadow: var(--shadow-flat);
+    border-color: var(--nav-border);
+    background: var(--nav-surface);
+    box-shadow: var(--nav-rest-shadow);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
