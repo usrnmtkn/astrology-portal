@@ -13,8 +13,10 @@ const LunarCalendar = lazy(() =>
 type CalendarRouteProps = {
   fallback: ReactNode;
   generatedContent: Map<string, LiveGeneratedContent>;
+  generatedContentStatus?: "idle" | "loading" | "ready";
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
+  onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent) => void;
   showJournalPrompts?: boolean;
 };
@@ -22,8 +24,10 @@ type CalendarRouteProps = {
 export function CalendarRoute({
   fallback,
   generatedContent,
+  generatedContentStatus,
   location,
   onLocationChange,
+  onGeneratedContentRequest,
   onOpenTransit,
   showJournalPrompts = true
 }: CalendarRouteProps) {
@@ -31,8 +35,10 @@ export function CalendarRoute({
     <Suspense fallback={fallback}>
       <LunarCalendar
         generatedContent={generatedContent}
+        generatedContentStatus={generatedContentStatus}
         location={location}
         onLocationChange={onLocationChange}
+        onGeneratedContentRequest={onGeneratedContentRequest}
         onOpenTransit={onOpenTransit}
         showJournalPrompts={showJournalPrompts}
       />

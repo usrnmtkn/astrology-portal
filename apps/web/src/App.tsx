@@ -98,6 +98,7 @@ import {
   resolvedNatalAspectPatternSectionLabel
 } from "./features/you/NatalAspectPatternsSection";
 import type { LunarCalendarEvent } from "./services/ephemeris";
+import { calendarTransitDetailContentKeys } from "./features/calendar/calendarContentKeys";
 import {
   assertLunationBodyMatchesEventSky,
   buildWeeklyHoroscope,
@@ -154,7 +155,6 @@ import {
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
   loadFallbackArchitectureV3DashboardBundle,
-  loadLiveGeneratedContent,
   loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
@@ -669,6 +669,12 @@ function isSkyDetail(value: unknown): value is SkyDetail {
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 type SkyAspectContentStatus = "idle" | "loading" | "ready";
+type CalendarContentStatus = "idle" | "loading" | "ready";
+type CalendarContentRequest = { cacheKey: string; contentKeys: string[] };
+type CalendarContentCacheEntry = {
+  content: GeneratedContentMap;
+  requestedKeys: Set<string>;
+};
 
 type SkyHistoricalLookback = {
   heading: string;
@@ -12273,6 +12279,9 @@ export function App() {
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [skyAspectContentStatus, setSkyAspectContentStatus] = useState<SkyAspectContentStatus>(initialCachedSky ? "loading" : "idle");
+  const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
+  const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
+  const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
@@ -12283,6 +12292,7 @@ export function App() {
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
   const [, setContentRegistryVersion] = useState(0);
   const selectedSkyDetailRefreshKeyRef = useRef("");
+  const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
   const activeHouseSignLabelStyle = userProfile
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
@@ -12297,6 +12307,14 @@ export function App() {
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
+  const requestCalendarContent = useCallback((request: CalendarContentRequest) => {
+    setCalendarContentRequest((current) => (
+      current?.cacheKey === request.cacheKey
+      && current.contentKeys.join("|") === request.contentKeys.join("|")
+        ? current
+        : request
+    ));
+  }, []);
 
   useEffect(() => {
     const capturedInvitation = captureSocialInvitationFromUrl();
@@ -12367,6 +12385,43 @@ export function App() {
   }
 
   function openCalendarTransitDetail(event: LunarCalendarEvent) {
+    const contentKeys = calendarTransitDetailContentKeys(event);
+    const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
+
+    openCalendarTransitDetailWithContent(event, skyGeneratedContent);
+
+    if (missingKeys.length === 0) {
+      return;
+    }
+
+    void loadLiveGeneratedContentForKeys(missingKeys)
+      .then((content) => {
+        const hydratedContent = mergeGeneratedContentMaps(content, skyGeneratedContent);
+
+        setSkyGeneratedContent(hydratedContent);
+
+        if (calendarContentRequest) {
+          const cacheKey = `${generatedContentPreviewMode}:${calendarContentRequest.cacheKey}`;
+          const cached = calendarContentCacheRef.current.get(cacheKey) ?? {
+            content: new Map<string, LiveGeneratedContent>(),
+            requestedKeys: new Set<string>()
+          };
+
+          calendarContentCacheRef.current.set(cacheKey, {
+            content: mergeGeneratedContentMaps(content, cached.content),
+            requestedKeys: new Set([...cached.requestedKeys, ...missingKeys])
+          });
+        }
+      })
+      .catch((error) => {
+        console.warn("Calendar detail interpretation failed to load; keeping the factual detail.", error);
+      });
+  }
+
+  function openCalendarTransitDetailWithContent(
+    event: LunarCalendarEvent,
+    generatedContent: GeneratedContentMap
+  ) {
     if (!sky || event.type === "lunation") {
       return;
     }
@@ -12392,7 +12447,7 @@ export function App() {
         orb: 0
       };
 
-      openSkyDetail(currentSkyAspectDetailArticle(detailAspect, generatedAt, skyGeneratedContent, sky.positions));
+      openSkyDetail(currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, sky.positions));
       return;
     }
 
@@ -12427,7 +12482,7 @@ export function App() {
       openSkyDetail(currentSkyPlacementDetailArticle({
         aspects: sky.aspects,
         generatedAt,
-        generatedContent: skyGeneratedContent,
+        generatedContent,
         onOpenDetail: openSkyDetail,
         position: eventPosition,
         positions: sky.positions
@@ -12438,7 +12493,7 @@ export function App() {
     openSkyDetail(currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
       generatedAt,
-      generatedContent: skyGeneratedContent,
+      generatedContent,
       onOpenDetail: openSkyDetail,
       position: eventPosition,
       positions: sky.positions
@@ -12552,6 +12607,7 @@ export function App() {
     if (
       selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
+      && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
     ) {
       return;
     }
@@ -12559,6 +12615,7 @@ export function App() {
     const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
+    selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
     setSelectedSkyDetail(detail);
   }, [fallbackArchitectureV3Version, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
 
@@ -12633,6 +12690,11 @@ export function App() {
     let cancelled = false;
     const shouldLoadSkyGenerated = mode === "guest" || mode === "member" || mode === "calendar";
 
+    if (mode !== "calendar") {
+      setCalendarContentStatus("idle");
+      setCalendarContentRequest(null);
+    }
+
     if (!shouldLoadSkyGenerated || !sky) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
       setSkyAspectContentStatus("idle");
@@ -12643,16 +12705,56 @@ export function App() {
 
     if (mode === "calendar") {
       setSkyAspectContentStatus("idle");
-      loadLiveGeneratedContent("sky", skyDate)
+      setCalendarContentStatus("loading");
+
+      if (!calendarContentRequest) {
+        setSkyGeneratedContent(normalizedSkySnapshotContent);
+        return () => {
+          cancelled = true;
+        };
+      }
+
+      const cacheKey = `${generatedContentPreviewMode}:${calendarContentRequest.cacheKey}`;
+      const cached = calendarContentCacheRef.current.get(cacheKey) ?? {
+        content: new Map<string, LiveGeneratedContent>(),
+        requestedKeys: new Set<string>()
+      };
+      const missingKeys = calendarContentRequest.contentKeys.filter((key) => !cached.requestedKeys.has(key));
+
+      setSkyGeneratedContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent));
+
+      if (missingKeys.length === 0) {
+        setCalendarContentStatus("ready");
+        return () => {
+          cancelled = true;
+        };
+      }
+
+      loadLiveGeneratedContentForKeys(missingKeys)
         .then((content) => {
-          if (!cancelled) {
-            setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          if (cancelled) return;
+
+          const nextEntry: CalendarContentCacheEntry = {
+            content: mergeGeneratedContentMaps(content, cached.content),
+            requestedKeys: new Set([...cached.requestedKeys, ...missingKeys])
+          };
+
+          calendarContentCacheRef.current.delete(cacheKey);
+          calendarContentCacheRef.current.set(cacheKey, nextEntry);
+          while (calendarContentCacheRef.current.size > 12) {
+            const oldestKey = calendarContentCacheRef.current.keys().next().value;
+
+            if (!oldestKey) break;
+            calendarContentCacheRef.current.delete(oldestKey);
           }
+
+          setSkyGeneratedContent(mergeGeneratedContentMaps(nextEntry.content, normalizedSkySnapshotContent));
+          setCalendarContentStatus("ready");
         })
         .catch((error) => {
           console.warn("Live Calendar interpretations failed to load; unpublished content will remain hidden.", error);
           if (!cancelled) {
-            setSkyGeneratedContent(normalizedSkySnapshotContent);
+            setCalendarContentStatus("ready");
           }
         });
 
@@ -12711,7 +12813,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [generatedContentPreviewMode, mode, sky, skyDate]);
+  }, [calendarContentRequest, generatedContentPreviewMode, mode, sky, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -14708,12 +14810,14 @@ export function App() {
                 <CalendarRoute
                   fallback={<FeatureLoadingFallback />}
                   generatedContent={skyGeneratedContent}
+                  generatedContentStatus={calendarContentStatus}
                   location={location}
                   onLocationChange={(nextLocation) => {
                     setLocation(nextLocation);
                     setManualLocation(nextLocation.label);
                     setHasLocationPreference(true);
                   }}
+                  onGeneratedContentRequest={requestCalendarContent}
                   onOpenTransit={openCalendarTransitDetail}
                   showJournalPrompts={journalPromptsEnabled}
                 />
