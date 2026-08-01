@@ -56,15 +56,17 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 558.0 kB |
-| Static App JavaScript graph | 502.9 kB |
-| Reader startup CSS | 55.1 kB |
-| App code chunk | 159.7 kB |
+| Reader boot, including awaited CSS | 551.8 kB |
+| Static App JavaScript graph | 501.9 kB |
+| Reader startup CSS | 49.9 kB |
+| App code chunk | 158.8 kB |
 
 The governed domain split, Calendar CSS boundary, deferred full manifest, and
-complementary source partitions reduced reader boot from 1.34 MB to 558.0 kB
-gzip, about 58%. Friend/natal placement sentences now follow the non-Sky domain
-loader instead of shipping with the current-sky package. Phone fields use
+complementary source partitions reduced reader boot from 1.34 MB to 551.8 kB
+gzip, about 59%. The Friends production-layout layer follows its lazy route,
+moving 6.05 kB gzip out of startup without duplicating its rules. Friend/natal
+placement sentences follow the non-Sky domain loader instead of shipping with
+the current-sky package. Phone fields use
 dependency-free formatting and a fast US
 numbering-shape check; the compact 29.6 kB metadata chunk then performs strict
 validation before an OTP request reaches Supabase. The 488 kB transit/relationship
