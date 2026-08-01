@@ -1198,6 +1198,8 @@ function findIngresses(
 
       if (currentSign !== previousSign) {
         const occursAt = refineSignIngress(swe, planetId, previousSign, previousDate, currentDate);
+        const longitude = exactPlanetLongitude(swe, planetId, occursAt);
+        const direction = exactPlanetSpeed(swe, planetId, occursAt) < 0 ? "retrograde" : "direct";
         const toSign = exactPlanetSign(swe, planetId, occursAt);
         const dateKey = localDateKey(occursAt, timeZone);
 
@@ -1212,7 +1214,9 @@ function findIngresses(
           planet,
           fromSign: previousSign,
           toSign,
-          sign: toSign
+          sign: toSign,
+          longitude,
+          direction
         });
       }
 
