@@ -205,6 +205,11 @@
   gap: var(--card-list-gap);
 }
 
+.sky-aspect-content-loading {
+  display: grid;
+  gap: var(--card-list-gap);
+}
+
 .aspect-row-group {
   display: grid;
   gap: var(--card-list-gap);
