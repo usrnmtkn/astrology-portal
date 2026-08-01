@@ -1041,6 +1041,20 @@ a.tx-card.has-article:hover {
   text-wrap: pretty;
 }
 
+.tx-body--loading {
+  display: block;
+  min-height: calc(3 * var(--aspect-card-body-line) * 1em);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--line) 55%, transparent) 20%,
+    color-mix(in srgb, var(--surface-2) 88%, var(--line)) 50%,
+    color-mix(in srgb, var(--line) 55%, transparent) 80%
+  );
+  background-size: 220% 100%;
+  animation: summary-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
 .tx-foot {
   display: flex;
   grid-column: 1;
