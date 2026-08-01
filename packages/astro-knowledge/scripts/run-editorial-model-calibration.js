@@ -38,6 +38,8 @@ function summarizeSamples(samples) {
 }
 
 function buildCalibrationReport({ laneId, release, result, recordedAt = new Date().toISOString(), sourceRevision = "" }) {
+  const sampleCount = Number(result.sampleCount) || 0;
+  const promotionEligible = sampleCount >= 5;
   return {
     schemaVersion: 1,
     recordedAt,
@@ -47,10 +49,14 @@ function buildCalibrationReport({ laneId, release, result, recordedAt = new Date
     releaseId: release.releaseId,
     provider: release.provider,
     model: release.model,
+    reasoningEffort: release.reasoningEffort || null,
     promptVersion: release.promptVersion,
     rubricVersion: release.rubricVersion,
     evaluationSetVersion: release.evaluationSetVersion,
     policyVersion: release.policyVersion,
+    reportKind: promotionEligible ? "calibration" : "smoke",
+    sampleCount,
+    promotionEligible,
     status: result.status,
     approvedMean: result.approvedMean,
     weakMean: result.weakMean,
@@ -70,7 +76,19 @@ function writeJsonAtomic(filePath, value) {
   fs.renameSync(temporaryPath, resolved);
 }
 
-async function runCandidateCalibration({ laneId, outPath, registry = readRegistry(), judgeFn } = {}) {
+function assertResolvedCandidate(resolved, release) {
+  if (
+    resolved.releaseId !== release.releaseId
+    || resolved.registryState !== "candidate"
+    || resolved.provider !== release.provider
+    || resolved.model !== release.model
+    || resolved.reasoningEffort !== release.reasoningEffort
+  ) {
+    throw new Error("Judge runtime did not resolve the staged candidate release.");
+  }
+}
+
+async function runCandidateCalibration({ laneId, outPath, registry = readRegistry(), judgeFn, samples = 5 } = {}) {
   if (laneId !== SUPPORTED_LANE) {
     throw new Error(`This runner currently supports only ${SUPPORTED_LANE}.`);
   }
@@ -85,18 +103,16 @@ async function runCandidateCalibration({ laneId, outPath, registry = readRegistr
   process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID = release.releaseId;
   try {
     const resolved = judgeConfig("sky-article-longform");
-    if (resolved.releaseId !== release.releaseId || resolved.registryState !== "candidate") {
-      throw new Error("Judge runtime did not resolve the staged candidate release.");
-    }
+    assertResolvedCandidate(resolved, release);
 
-    const result = await runArticleJudgeCalibration({ judgeFn, minimumSeparation: 1 });
+    const result = await runArticleJudgeCalibration({ judgeFn, minimumSeparation: 1, samples });
     const report = buildCalibrationReport({
       laneId,
       release,
       result,
       sourceRevision: process.env.GITHUB_SHA || ""
     });
-    if (report.status === "passed") validateCalibrationReport(report, release);
+    if (report.status === "passed" && report.promotionEligible) validateCalibrationReport(report, release);
     if (outPath) writeJsonAtomic(outPath, report);
     return report;
   } finally {
@@ -112,9 +128,10 @@ async function main(argv = process.argv.slice(2)) {
   }
   const report = await runCandidateCalibration({
     laneId: options.lane,
-    outPath: options.out || path.join("out", "editorial-calibration", "report.json")
+    outPath: options.out || path.join("out", "editorial-calibration", "report.json"),
+    samples: options.samples === undefined ? 5 : Number(options.samples)
   });
-  console.log(`Candidate ${report.releaseId}: ${report.status}; separation ${report.separation.toFixed(2)} (minimum ${report.minimumSeparation.toFixed(2)}).`);
+  console.log(`${report.reportKind === "smoke" ? "Smoke" : "Candidate"} ${report.releaseId}: ${report.status}; separation ${report.separation.toFixed(2)} (minimum ${report.minimumSeparation.toFixed(2)}).`);
   if (report.status === "needs-human-review") process.exitCode = 2;
   if (report.status === "failed") process.exitCode = 1;
 }
@@ -128,6 +145,7 @@ if (require.main === module) {
 
 module.exports = {
   SUPPORTED_LANE,
+  assertResolvedCandidate,
   buildCalibrationReport,
   parseArgs,
   runCandidateCalibration,

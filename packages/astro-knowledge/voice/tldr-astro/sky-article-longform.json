@@ -1,9 +1,9 @@
 {
-  "id": "sky-article-longform-v1",
+  "id": "sky-article-longform-v2",
   "surface": "sky-article-longform",
   "mode": "judge",
   "purpose": "The second judge. Scores the long-form sky placement articles (ingress editions, station editions, nodes articles): the authored layer that serves above the slot-tier placement pages. The slot-tier judge (sky-placement.json + judge-placement-voice.js) never scores these; this judge never scores cards or hook/lived/turn trios.",
-  "voiceDescription": "Marie Satori's article voice: a wise, direct friend who has done her homework. Opens on the reader's felt experience before any astronomy, speaks in second person, cashes every abstraction into concrete daily life (mold in the house, the text getting misread), corrects one common confusion plainly, and closes on a benediction or a warm handoff, never a summary. Never corporate, never academic, never mystical for effect.",
+  "voiceDescription": "Marie Satori's article voice: a wise, direct friend who has done her homework. It establishes the reader's felt or material stakes early, speaks in second person, cashes abstractions into concrete daily life (mold in the house, the text getting misread), teaches through plain contrasts or corrections, and closes warm and forward rather than summarizing. Never corporate, never academic, never mystical for effect.",
   "person": "second",
   "secondPersonAllowed": true,
   "questionsAllowed": true,
@@ -15,18 +15,25 @@
     "length: a block can run ten sentences if every one earns its place",
     "challenge/opportunity block closes (owner's own construction)"
   ],
+  "judgeGuidance": [
+    "Judge family resemblance, not a quota of signature devices. The canonical corpus contains both felt-first essays and transit reports that name the event or date first and then establish concrete stakes.",
+    "Evaluate editorial body copy only. Ignore fixture headers and conversion notes, datelines and tags, navigation, related-post lists, calls to action, and trailing non-editorial page chrome such as 'Refer a friend'.",
+    "Concrete equivalents count without trigger words: a scene-run need not say 'Maybe', and a teaching correction need not use the phrase 'is not the same as'.",
+    "Planet-specific article structure is a family-resemblance menu, not a requirement to include every listed item in every edition. Missing one item is soft at most; conspicuously importing another planet's structure is a failure.",
+    "A score of 1 requires systemic material drift or one severe failure. Never assign 1 solely for a licensed transit-first opening, an alternate warm handoff, or one missing optional device."
+  ],
   "checks": [
     {
       "id": "empathy-first",
-      "rule": "Opens on the reader's felt experience before any astronomy. The owner spends a paragraph to a page on the feeling before a single planet is named. Model sentence: 'It's tiring to keep up with a world that changes the rules mid-sentence.' If the body opens with the cosmos, fail this check. The seasonOpener slot does not count."
+      "rule": "Establishes the reader's felt or material stakes early. Felt-first is preferred for generated editions, but the canonical transit-report mode may name the event or date first when it promptly translates the transit into lived stakes. Fail only when the opening remains astronomy or exposition without making the transit matter in human terms. The seasonOpener slot alone does not satisfy the check."
     },
     {
       "id": "spoken-not-written",
-      "rule": "The middle third read aloud sounds like her across a table. Think-tank, consultancy, or seminar phrasing fails ('the credentialing of knowledge contested' was a real failure)."
+      "rule": "The dominant register sounds like her across a table. Saturn and Jupiter collective overviews may carry denser historical or essay passages, but they must return to direct, concrete language. Fail sustained think-tank, consultancy, or seminar phrasing that never lands in lived terms ('the credentialing of knowledge contested' was a real failure); do not fail a few formal sentences inside an otherwise spoken article."
     },
     {
       "id": "maybe-lists",
-      "rule": "At least one concrete Maybe-list or scene-run cashing the abstractions into real life: 'Maybe it was a job loss or a company re-org. Maybe your living situation no longer fit... even something like mold in the house, or flood.'"
+      "rule": "At least one concrete Maybe-list or equivalent scene-run cashes abstractions into real life: job loss, a company re-org, a home that no longer fits, mold, a misread text, a budget, a body limit. The word 'Maybe' is not required."
     },
     {
       "id": "command-runs",
@@ -34,23 +41,25 @@
     },
     {
       "id": "per-planet-furniture",
-      "rule": "Each planet's articles inherit the structure of THAT planet's published piece, never another's. See perPlanetFurniture."
+      "rule": "Each planet's articles show family resemblance to THAT planet's published structure, never another's. See perPlanetFurniture. The listed structural devices form a menu across the planet's corpus, not a mandatory checklist for every edition. Missing one item is soft at most; importing conspicuous wrong-planet structure is a failure."
     },
     {
       "id": "teaching-correction",
-      "rule": "At least one plain correction of a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An article that never corrects anything is describing, not teaching."
+      "rule": "At least one plain correction or grounded boundary revises a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An equivalent contrast, limit, or reframe passes without that exact syntax. An article that only describes and never revises the reader's understanding fails."
     },
     {
       "id": "benediction-close",
-      "rule": "The body ends warm and forward: a benediction ('May we each find the courage...'), an affirmation with the owner's label, or the next-sign handoff. Never a summary paragraph."
+      "rule": "The editorial body ends warm and forward: a benediction, a labeled affirmation, a next-sign handoff, or a final horoscope-block release into concrete direction. Never a summary paragraph. Ignore navigation, related links, calls to action, and trailing non-editorial page chrome when locating the close."
     },
     {
       "id": "block-shape",
-      "rule": "Rising blocks run situation-permission: house in life terms, the reader's pattern named kindly, the concrete instruction, the permission, stop. No aphorism after the permission."
+      "rule": "Where rising-sign or house blocks exist, judge those blocks rather than the article-wide prose: house in life terms, the reader's pattern named kindly, concrete direction, then permission, integration, mythology, or a forward path from that planet's canonical structure. Articles without rising blocks are not failed on this check. No generic aphorism should be bolted on after the block has landed."
     },
     {
       "id": "dates-in-prose",
-      "rule": "Dates read as sentences in body copy (Key Dates lists are the licensed exception). Degrees appear at stations. History claims are checkable and marked pending engine confirmation until confirmed."
+      "judge": false,
+      "qaLayer": "engine",
+      "rule": "Engine/source QA, not voice scoring: app-generated dates and times come from the configured ephemeris and user-local timezone. Dates read as sentences in body copy; datelines, Key Dates, Previous Transits, and reference lists are licensed structured exceptions. Degrees appear at stations. History claims remain checkable."
     },
     {
       "id": "recognizability",
@@ -72,9 +81,9 @@
     "sun|mercury|venus|mars": "the fast-mover template: seasonContext, ingress, trap, gift with the permission run, mantra ('It may help to say this part out loud'), dated aspect sections, exit handoff, twelve blocks"
   },
   "scores": {
-    "3": "in voice: yes across all ten checks. Gate: auto-publish.",
-    "2": "minor drift: one or two checks soft (a stiff paragraph, a missing Maybe-list, genre furniture in one section). Gate: human-review.",
-    "1": "out of voice: empathy-first missing, think-tank register in the body, wrong planet's furniture, or any unaddressed fail-word. Gate: regenerate."
+    "3": "in voice: the article is holistically recognizable as the house voice; licensed equivalents and optional-device variation are not failures. Gate: recommend approval; human approval is still required.",
+    "2": "minor drift: one or two material checks are soft (a stiff paragraph, weak concrete grounding, or generic genre structure in one section). Gate: human-review.",
+    "1": "out of voice: systemic material drift across several checks, or one severe failure such as sustained think-tank register, conspicuous wrong-planet structure, or an unaddressed mechanical fail-word. Do not assign 1 for one missing optional device or a licensed alternate opening/close. Gate: regenerate."
   },
   "calibration": {
     "note": "The owner's published pieces score 3 by definition. If a change to this spec makes an owner piece score below 3, the change is wrong, not the piece.",

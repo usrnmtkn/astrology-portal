@@ -720,10 +720,37 @@ const { resolveActiveRelease, resolveCandidateRelease } = require("./editorial-m
 function registeredRelease(role, surface) {
   const candidateReleaseId = String(process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID || "").trim();
   if (!candidateReleaseId) return resolveActiveRelease({ role, surface });
-  if (role !== "judge" || process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION !== "1") {
-    throw new Error("Candidate model selection is allowed only for an explicitly authorized judge calibration.");
+  const authorized = role === "judge"
+    ? process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION === "1"
+    : process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION === "1";
+  if (!authorized) {
+    throw new Error(
+      `Candidate model selection for ${role} requires an explicitly authorized ${role} calibration.`
+    );
   }
   return resolveCandidateRelease({ role, surface, releaseId: candidateReleaseId });
+}
+
+const OPENAI_REASONING_EFFORTS = new Set(["none", "low", "medium", "high", "xhigh", "max"]);
+
+function openAiReasoningEffort({ isJudge, model, release }) {
+  const configured = String(
+    (isJudge
+      ? process.env.OPENAI_JUDGE_REASONING_EFFORT
+      : process.env.OPENAI_GENERATION_REASONING_EFFORT)
+    || process.env.OPENAI_REASONING_EFFORT
+    || ""
+  ).trim().toLowerCase();
+  const registered = release.provider === "openai" && release.model === model
+    ? release.reasoningEffort
+    : null;
+  const effort = configured || registered || (/^gpt-5\.6(?:-|$)/.test(model) ? "none" : null);
+  if (effort && !OPENAI_REASONING_EFFORTS.has(effort)) {
+    throw new Error(
+      "OpenAI reasoning effort must be none, low, medium, high, xhigh, or max."
+    );
+  }
+  return effort;
 }
 
 function modelConfig(role = "generation", surface = "default") {
@@ -759,6 +786,7 @@ function modelConfig(role = "generation", surface = "default") {
         ? (process.env.ANTHROPIC_JUDGE_API_KEY || process.env.ANTHROPIC_API_KEY)
         : process.env.ANTHROPIC_API_KEY,
       temperature: isJudge ? 0.1 : 0.7,
+      reasoningEffort: null,
       role,
       surface,
       registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
@@ -769,17 +797,22 @@ function modelConfig(role = "generation", surface = "default") {
     const configuredModel = isJudge
       ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL)
       : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
+    const model = configuredModel || registryModel || "gpt-4.1-mini";
+    const reasoningEffort = openAiReasoningEffort({ isJudge, model, release });
     return {
       ...release,
       provider,
-      model: configuredModel || registryModel || "gpt-4.1-mini",
+      model,
       apiKey: isJudge
         ? (process.env.OPENAI_JUDGE_API_KEY || process.env.OPENAI_API_KEY)
         : process.env.OPENAI_API_KEY,
       temperature: isJudge ? 0.1 : 0.7,
+      reasoningEffort,
       role,
       surface,
-      registryOverride: registryOverride || Boolean(configuredModel && configuredModel !== release.model)
+      registryOverride: registryOverride
+        || Boolean(configuredModel && configuredModel !== release.model)
+        || Boolean(reasoningEffort && reasoningEffort !== release.reasoningEffort)
     };
   }
 
@@ -801,6 +834,17 @@ function openAiOutputText(payload) {
     .map((content) => content.text)
     .filter(Boolean)
     .join("\n");
+}
+
+function openAiRequestSettings(config, { temperature } = {}) {
+  const settings = {};
+  if (!/^gpt-5\.6(?:-|$)/.test(config.model)) {
+    settings.temperature = temperature ?? config.temperature;
+  }
+  if (config.reasoningEffort) {
+    settings.reasoning = { effort: config.reasoningEffort };
+  }
+  return settings;
 }
 
 function cleanCardText(value) {
@@ -871,7 +915,7 @@ async function generateWithConfig(prompt, config, { temperature } = {}) {
     body: JSON.stringify({
       model: config.model,
       input: prompt,
-      temperature: temp,
+      ...openAiRequestSettings(config, { temperature: temp }),
       max_output_tokens: 1500
     })
   });
@@ -890,8 +934,12 @@ async function generate(prompt, options = {}) {
   return generateWithConfig(prompt, generationConfig(), options);
 }
 
+function judgeConfigForOptions(options = {}) {
+  return judgeConfig(options.surface || "sky-aspect");
+}
+
 async function generateJudge(prompt, options = {}) {
-  return generateWithConfig(prompt, judgeConfig(), options);
+  return generateWithConfig(prompt, judgeConfigForOptions(options), options);
 }
 
 async function repairCard(text, reason, { generateFn = generate } = {}) {
@@ -959,6 +1007,7 @@ async function runCardPipeline({
         provider: config?.provider ?? "test",
         model: config?.model ?? "injected",
         temperature: config?.temperature ?? null,
+        reasoningEffort: config?.reasoningEffort ?? null,
         repair: { ...repair },
         lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
         facts: { ...facts }
@@ -1037,6 +1086,7 @@ async function runCardPipeline({
     provider: config?.provider ?? "test",
     model: config?.model ?? "injected",
     temperature: config?.temperature ?? null,
+    reasoningEffort: config?.reasoningEffort ?? null,
     repair: { ...repair },
     lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
     text: lastAttempt?.text ?? "",
@@ -1209,9 +1259,12 @@ module.exports = {
   generatePlacementTopper,
   generationConfig,
   judgeConfig,
+  judgeConfigForOptions,
   normalizeCardArgs,
   normalizePlacementArgs,
   normalizePlacementTopperArgs,
+  openAiReasoningEffort,
+  openAiRequestSettings,
   placementCloseBank,
   repairCard,
   repairPlacementTopper,

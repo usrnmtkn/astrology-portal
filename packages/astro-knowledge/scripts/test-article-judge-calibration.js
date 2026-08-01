@@ -37,13 +37,17 @@ function loadWeakControls() {
 
 const mean = (values) => values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length);
 
-async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1 } = {}) {
+async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1, samples = 5 } = {}) {
+  const sampleCount = Number(samples);
+  if (!Number.isInteger(sampleCount) || sampleCount < 1) {
+    throw new Error("Calibration samples must be a positive integer.");
+  }
   const approved = [];
   for (const fixture of loadOwnerFixtures()) {
     const result = await judgeLongformArticle(fixture.text, {
       planet: fixture.planet,
       edition: fixture.edition,
-      samples: 5,
+      samples: sampleCount,
       judgeFn: judgeFn ? (prompt) => judgeFn(prompt, { cohort: "approved", fixture }) : undefined,
       calibration: true
     });
@@ -56,7 +60,7 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1 } = {
     const result = await judgeLongformArticle(fixture.text, {
       planet: fixture.planet,
       edition: fixture.edition,
-      samples: 5,
+      samples: sampleCount,
       judgeFn: judgeFn ? (prompt) => judgeFn(prompt, { cohort: "weak", fixture }) : undefined,
       calibration: true
     });
@@ -81,7 +85,8 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1 } = {
     weakMean,
     separation,
     minimumSeparation,
-    disagreement
+    disagreement,
+    sampleCount
   };
 }
 

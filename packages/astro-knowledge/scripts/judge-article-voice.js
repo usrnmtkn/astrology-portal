@@ -8,12 +8,12 @@
 //   - THIS judge scores the authored article layer: ingress editions,
 //     station editions, and nodes articles. It never scores cards or trios.
 //
-// The spec (checks, per-planet furniture, calibration set) lives in
+// The spec (checks, planet-specific article structure, calibration set) lives in
 // voice/tldr-astro/sky-article-longform.json. The linter still runs first
 // for the mechanical floor (lexicon + trade vocabulary); this judge covers
 // what a regex cannot: empathy-first opening, spoken register, Maybe-lists,
 // the teaching correction, the benediction close, and whether the article
-// wears its own planet's furniture.
+// uses its own planet's structural family.
 //
 // The judge is advisory: even a 3 requires human approval. Live calls are
 // explicitly authorized and audited by editorial-judge-runtime.js.
@@ -39,7 +39,7 @@ function furnitureFor(planet) {
 
 function buildJudgePrompt(articleText, { planet = "", edition = "" } = {}) {
   const furniture = furnitureFor(planet);
-  const judged = spec.checks.filter((c) => c.id !== "lint-clean");
+  const judged = spec.checks.filter((c) => c.id !== "lint-clean" && c.judge !== false);
   const referenceFactContext = buildReferenceFactContext(articleText);
   return [
     `You are the editor for Marie Satori, an astrologer. You are strict. Most drafts are "borderline" until proven otherwise.`,
@@ -49,15 +49,17 @@ function buildJudgePrompt(articleText, { planet = "", edition = "" } = {}) {
     `The voice: ${spec.voiceDescription}`,
     ``,
     `Licensed on this surface (do NOT penalize): ${spec.licensedOnThisSurface.join("; ")}.`,
-    furniture ? `This planet's required furniture: ${furniture}` : ``,
+    furniture ? `This planet's structural family (a menu across its corpus, not a checklist for every edition): ${furniture}` : ``,
+    `Interpretation rules (mandatory):`,
+    ...spec.judgeGuidance.map((rule) => `  - ${rule}`),
     referenceFactContext,
     ``,
     `Score 1-3 against these checks:`,
     ...judged.map((c, i) => `  ${i + 1}. [${c.id}] ${c.rule}`),
     ``,
-    `  3 = in voice: yes across the board.`,
-    `  2 = minor drift: one or two checks soft (a stiff paragraph, a missing Maybe-list, genre furniture in one section).`,
-    `  1 = out of voice: empathy-first missing, think-tank register in the body, or the wrong planet's furniture.`,
+    `  3 = ${spec.scores["3"]}`,
+    `  2 = ${spec.scores["2"]}`,
+    `  1 = ${spec.scores["1"]}`,
     ``,
     `ARTICLE TO SCORE:`,
     articleText,
@@ -83,7 +85,7 @@ async function judgeLongformArticle(articleText, opts = {}) {
     content: articleText,
     prompt,
     rubric: JSON.stringify(spec),
-    rubricVersion: spec.id || "sky-article-longform-v1",
+    rubricVersion: spec.id || "sky-article-longform-v2",
     samples: opts.samples,
     temperature: JUDGE_TEMPERATURE,
     judgeFn: opts.judgeFn,
