@@ -95,6 +95,7 @@ export default defineConfig(({ mode }) => {
     plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
     assetsInclude: ["**/*.wasm"],
     build: {
+      manifest: true,
       modulePreload: {
         resolveDependencies(_url, deps) {
           return deps.filter((dep) => !dep.includes("swisseph-"));
@@ -105,6 +106,22 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (id.includes("vite/preload-helper")) {
               return "vendor";
+            }
+            if (id.includes("fallbackArchitectureV3/bundled-manifest-v3.json")) {
+              return "fallback-content-manifest";
+            }
+            if (id.includes("fallbackArchitectureV3/source-rows/transit-synastry") || id.includes("fallbackArchitectureV3/source-rows/bond-language")) {
+              return "fallback-content-relationships";
+            }
+            if (
+              id.includes("fallbackArchitectureV3/source-rows/sky-")
+              || id.includes("fallbackArchitectureV3/source-rows/lunation-")
+              || id.includes("fallbackArchitectureV3/source-rows/station-cards-")
+            ) {
+              return "fallback-content-sky";
+            }
+            if (id.includes("fallbackArchitectureV3/source-rows/") || id.includes("fallbackArchitectureV3/templates/")) {
+              return "fallback-content-core";
             }
             if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
               if (id.includes("sky-web.json")) {

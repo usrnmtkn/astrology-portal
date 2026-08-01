@@ -48,15 +48,17 @@ async function startApp() {
     return;
   }
 
+  const appModulePromise = import("./App");
+
   if (!isAdminContentPath()) {
-    await import("./styles.css");
     await Promise.all([
+      import("./styles.css"),
       import("./styles/responsive.css"),
       import("./styles/card-systems.css")
     ]);
   }
 
-  const { App } = await import("./App");
+  const { App } = await appModulePromise;
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
@@ -159,11 +161,16 @@ function setupBlankRestoreRecovery() {
       checkSoon({ requireVisible: true });
     }
   });
-  window.setInterval(() => {
-    if (shouldReload()) {
-      reloadOnce({ resetState: true });
-    }
-  }, 1000);
+  // Focus, visibility, and bfcache restoration cover the known blank-restore
+  // cases. A few bounded startup checks catch a failed initial mount without
+  // keeping a layout-reading timer alive for the lifetime of the page.
+  for (const delay of [1000, 5000, 15000]) {
+    window.setTimeout(() => {
+      if (document.visibilityState === "visible" && shouldReload()) {
+        reloadOnce({ resetState: true });
+      }
+    }, delay);
+  }
 }
 
 void startApp();

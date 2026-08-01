@@ -33,6 +33,12 @@ jobs:
           VITE_SUPABASE_URL: https://visual-smoke.supabase.test
           VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
 
+      - name: Enforce web bundle budgets
+        run: npm run qa:bundle
+
+      - name: Verify startup performance contracts
+        run: npm run test:performance-contracts
+
       - name: Run admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts
 

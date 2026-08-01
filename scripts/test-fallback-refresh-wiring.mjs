@@ -586,7 +586,7 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
+  /export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest/u,
   "Runtime must expose the bundled key manifest and content hash."
 );
 assert.match(

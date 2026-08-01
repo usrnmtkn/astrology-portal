@@ -22,6 +22,39 @@ class _MockGoogleResponse:
         return self.payload
 
 
+def test_timezonefinder_instance_is_reused():
+    timezone_service._timezone_finder.cache_clear()
+
+    first = timezone_service._timezone_finder()
+    second = timezone_service._timezone_finder()
+
+    assert second is first
+    assert timezone_service._timezone_finder.cache_info().hits == 1
+
+
+def test_coordinate_results_are_reused(monkeypatch):
+    calls = {"lookup": 0}
+
+    class _MockFinder:
+        def timezone_at(self, *, lat, lng):
+            calls["lookup"] += 1
+            assert lat == 40.7128
+            assert lng == -74.006
+            return "America/New_York"
+
+        def closest_timezone_at(self, *, lat, lng):
+            raise AssertionError(f"Unexpected closest lookup for {lat}, {lng}")
+
+    timezone_service.timezone_at.cache_clear()
+    monkeypatch.setattr(timezone_service, "_timezone_finder", lambda: _MockFinder())
+
+    assert timezone_service.timezone_at(40.7128, -74.006) == "America/New_York"
+    assert timezone_service.timezone_at(40.7128, -74.006) == "America/New_York"
+    assert calls == {"lookup": 1}
+
+    timezone_service.timezone_at.cache_clear()
+
+
 def test_timezone_lookup_new_york_dst():
     response = client.post(
         "/utils/timezone",

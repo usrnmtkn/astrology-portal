@@ -67,6 +67,7 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
+  loadDeferredFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
@@ -12632,6 +12633,30 @@ export function App() {
     storePortalMode(nextMode);
     setMode(nextMode);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (mode === "guest" || mode === "member") {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadDeferredFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Deferred transit and relationship fallbacks failed to load; core fallbacks remain active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   useEffect(() => {
     let cancelled = false;
