@@ -21,8 +21,13 @@ const appSource = read("apps/web/src/App.tsx");
 assert.equal(PACKAGE_VERSION, "v3-2026-08-01a");
 assert.match(
   runtimeSource,
-  /export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest/u,
-  "Runtime must expose the generated full-package version, content hash, and key manifest without eagerly importing deferred rows."
+  /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
+  "Runtime must expose the generated full-package version and hashes without eagerly importing the key list."
+);
+assert.match(
+  runtimeSource,
+  /import\("\.\/fallbackArchitectureV3\/bundled-manifest-v3\.json"\)/u,
+  "The full bundled key list must load only when dashboard validation needs it."
 );
 assert.match(
   runtimeSource,
@@ -36,7 +41,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifest\.contentHash/u,
+  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
   "A bundled-content hash change must invalidate browser cache."
 );
 assert.match(

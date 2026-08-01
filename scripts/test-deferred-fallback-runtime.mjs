@@ -21,8 +21,9 @@ await build({
     resolveDir: repoRoot,
     contents: `
       export {
-        fallbackArchitectureV3BundledManifest,
+        fallbackArchitectureV3BundledManifestSummary,
         isDeferredFallbackArchitectureV3BundleLoaded,
+        loadFallbackArchitectureV3BundledManifest,
         loadDeferredFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
@@ -47,7 +48,8 @@ const transitFacts = {
 const skyBefore = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
 const transitBefore = runtime.transitSynastryFallbackRendererV3.renderTransitAspect(transitFacts);
 
-assert.equal(runtime.fallbackArchitectureV3BundledManifest.keyCount, 7175);
+assert.equal(runtime.fallbackArchitectureV3BundledManifestSummary.keyCount, 7175);
+assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, 7175);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.notEqual(

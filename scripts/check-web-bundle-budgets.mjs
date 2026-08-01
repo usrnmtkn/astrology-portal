@@ -102,6 +102,7 @@ const readerBootItems = [...new Set([...bootFiles, ...readerStyleFiles])]
   .filter(Boolean);
 const appItem = filesByName.get(manifest[appKey].file);
 const deferredFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
+const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const measurements = {
   appBootGzipBytes: sum(bootItems, "gzipBytes"),
@@ -122,6 +123,9 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
 
 if (deferredFallbackItem && bootFiles.has(deferredFallbackItem.file)) {
   failures.push("The transit/relationship fallback chunk re-entered the static App boot graph.");
+}
+if (deferredManifestItem && bootFiles.has(deferredManifestItem.file)) {
+  failures.push("The full fallback key manifest re-entered the static App boot graph.");
 }
 
 console.log("# Web bundle budget");
