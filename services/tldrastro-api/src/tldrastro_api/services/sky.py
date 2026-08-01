@@ -13,6 +13,12 @@ from tldrastro_api.models import (
     SkyCurrentResponse,
     Zodiac,
 )
+from tldrastro_api.services.aspect_profile import (
+    canonical_sky_aspect_definitions,
+    canonical_sky_aspect_orbs,
+    canonical_sky_point_names,
+    canonicalize_node_axis_aspects,
+)
 from tldrastro_api.services.chart import (
     CANONICAL_HOUSE_SYSTEM,
     angle_positions,
@@ -20,7 +26,9 @@ from tldrastro_api.services.chart import (
     calculate_positions,
     configure_ephemeris,
     house_cusps,
+    house_for_longitude,
     julian_day_for,
+    make_position,
     normalize_degrees,
     resolve_datetime,
     sign_for_longitude,
@@ -40,6 +48,35 @@ MAJOR_PLANETS = [
 ]
 
 MOON_ASPECT_TARGETS = [0.0, 60.0, 90.0, 120.0, 180.0, 240.0, 270.0, 300.0]
+
+
+def _canonical_sky_positions(positions, cusps):
+    canonical_positions = list(positions)
+    north_node = next(
+        (position for position in canonical_positions if position.point == "North Node"),
+        None,
+    )
+    if north_node is not None:
+        south_node_longitude = normalize_degrees(north_node.longitude + 180.0)
+        canonical_positions.append(
+            make_position(
+                point="South Node",
+                glyph="☋",
+                theme="release",
+                longitude=south_node_longitude,
+                house=house_for_longitude(south_node_longitude, cusps),
+                speed=north_node.speed,
+            )
+        )
+
+    point_order = {
+        point_name: index
+        for index, point_name in enumerate(canonical_sky_point_names())
+    }
+    return sorted(
+        canonical_positions,
+        key=lambda position: point_order.get(position.point, len(point_order)),
+    )
 
 
 def _sky_subject(request: SkyCurrentRequest) -> ChartSubject:
@@ -238,7 +275,10 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
     )
     julian_day = julian_day_for(utc_datetime)
     cusps, ascmc = house_cusps(julian_day, subject)
-    positions = calculate_positions(julian_day, subject.settings, cusps, warnings)
+    positions = _canonical_sky_positions(
+        calculate_positions(julian_day, subject.settings, cusps, warnings),
+        cusps,
+    )
     angles = angle_positions(ascmc, cusps)
     ascendant = angles.get("Ascendant")
     midheaven = angles.get("Midheaven")
@@ -256,7 +296,15 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
         location=subject.location,
         generatedAt=utc_datetime.isoformat(),
         positions=positions,
-        aspects=calculate_aspects(positions, subject.settings, julian_day),
+        aspects=canonicalize_node_axis_aspects(
+            calculate_aspects(
+                positions,
+                subject.settings,
+                julian_day,
+                definitions=canonical_sky_aspect_definitions(),
+                orb_limits=canonical_sky_aspect_orbs(),
+            )
+        ),
         angles=angles,
         houseCusps=[round(cusp, 6) for cusp in cusps],
         ascendant=ascendant.sign if ascendant else "",

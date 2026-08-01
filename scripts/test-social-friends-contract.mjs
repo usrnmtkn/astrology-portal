@@ -697,8 +697,13 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /const bigThree = friendBigThree\(friend\)[\s\S]*aria-label=\{chartAvailable \? `Open \$\{friend\.displayName\}'s chart`[\s\S]*bigThree\.sun[\s\S]*bigThree\.moon[\s\S]*bigThree\.rising[\s\S]*ChevronRight[\s\S]*friendMenu\(friend\)/,
-  "Circle rows must carry only the friend's Big Three and open through the row with an arrow affordance."
+  /const bigThree = friendBigThree\(friend\)[\s\S]*aria-label=\{chartAvailable \? `Open \$\{friend\.displayName\}'s chart`[\s\S]*bigThree\.sun[\s\S]*bigThree\.moon[\s\S]*bigThree\.rising[\s\S]*friendMenu\(friend\)/,
+  "Circle rows must carry only the friend's Big Three and open through the row."
+);
+assert.doesNotMatch(
+  socialFriendsPanel.match(/const bigThree = friendBigThree\(friend\)[\s\S]*?friendMenu\(friend\)/)?.[0] ?? "",
+  /ChevronRight/,
+  "Circle rows must not render a redundant chevron before the overflow menu."
 );
 assert.match(
   socialFriendsPanel,

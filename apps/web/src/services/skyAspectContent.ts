@@ -12,8 +12,20 @@ const collectiveSkyAspectBodyOrder = [
   "saturn",
   "uranus",
   "neptune",
-  "pluto"
+  "pluto",
+  "chiron",
+  "lilith",
+  "nodes"
 ];
+
+function canonicalCollectiveSkyPoint(value: string) {
+  const point = slugContentPart(value);
+  return ["north-node", "south-node", "true-node", "node", "nodes", "lunar-nodes"].includes(point)
+    ? "nodes"
+    : point === "black-moon-lilith"
+      ? "lilith"
+      : point;
+}
 
 type ResolveSkyAspectContentOptions = {
   generatedContent: Map<string, LiveGeneratedContent>;
@@ -56,8 +68,8 @@ function normalizedCollectiveSkyAspectFacts({
   firstSign,
   secondSign
 }: Omit<ResolveSkyAspectContentOptions, "generatedContent" | "targetDate">): ExpectedSkyAspectFacts | null {
-  const normalizedFirst = slugContentPart(first);
-  const normalizedSecond = slugContentPart(second);
+  const normalizedFirst = canonicalCollectiveSkyPoint(first);
+  const normalizedSecond = canonicalCollectiveSkyPoint(second);
   const normalizedAspect = slugContentPart(aspect);
   const normalizedFirstSign = slugContentPart(firstSign);
   const normalizedSecondSign = slugContentPart(secondSign);
@@ -68,7 +80,7 @@ function normalizedCollectiveSkyAspectFacts({
     firstIndex < 0
     || secondIndex < 0
     || firstIndex === secondIndex
-    || !["conjunction", "sextile", "square", "trine", "opposition"].includes(normalizedAspect)
+    || !["conjunction", "sextile", "square", "trine", "quincunx", "opposition"].includes(normalizedAspect)
     || !normalizedFirstSign
     || !normalizedSecondSign
   ) {
@@ -129,14 +141,14 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
     return null;
   }
 
-  const evergreenKey = skyAspectInstanceContentKey(options.first, options.aspect, options.second, {
-    firstSign: options.firstSign,
-    secondSign: options.secondSign
+  const evergreenKey = skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
+    firstSign: expected.signA,
+    secondSign: expected.signB
   });
   const datedKey = options.targetDate
-    ? skyAspectInstanceContentKey(options.first, options.aspect, options.second, {
-        firstSign: options.firstSign,
-        secondSign: options.secondSign,
+    ? skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
+        firstSign: expected.signA,
+        secondSign: expected.signB,
         targetDate: options.targetDate
       })
     : "";

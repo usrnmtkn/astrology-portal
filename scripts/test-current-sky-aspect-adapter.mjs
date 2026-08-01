@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
-import { calculateSkyAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
+import {
+  calculateSkyAspects,
+  canonicalizeNodeAxisAspects
+} from "@tldr/astro-knowledge/sky-aspect-engine";
 import { currentSkyFacts } from "../api/_lib/current-sky.ts";
 
 const requestedAt = new Date("2026-07-31T19:02:48.000Z");
@@ -39,7 +42,8 @@ assert.ok(!sky.aspects.some(({ from, type, to }) => from === "Sun" && type === "
 
 assert.deepEqual(
   sky.aspects.map(({ id, from, type, to, orb, applying }) => ({ id, from, type, to, orb, applying })),
-  calculateSkyAspects(sky.positions).map(({ id, from, type, to, orb, applying }) => ({ id, from, type, to, orb, applying })),
+  canonicalizeNodeAxisAspects(calculateSkyAspects(sky.positions))
+    .map(({ id, from, type, to, orb, applying }) => ({ id, from, type, to, orb, applying })),
   "The content adapter and reader engine must return the same aspect matrix."
 );
 

@@ -3001,11 +3001,11 @@ function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
   return `${hour}:${minute} ${meridiem}`;
 }
 
-function skyDateTimeFromInput(value: string, location: LocationInput, now: Date = new Date()) {
+function skyDateTimeFromInput(value: string, location: LocationInput) {
   const resolvedLocation = withTimeZone(location);
-  const localTime = timeInZoneForInput(now, resolvedLocation.timeZone);
 
-  return zonedDateTimeToUtc(value, localTime, resolvedLocation.timeZone);
+  // Editorial Sky is deterministic: both the page and daily generator use local noon.
+  return zonedDateTimeToUtc(value, "12:00 PM", resolvedLocation.timeZone);
 }
 
 function skyFactValidation(snapshot: SkySnapshot) {
@@ -12970,7 +12970,7 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation);
     const cacheKey = skySnapshotCacheKey(skyLocation, skyDate);
     const cachedSky = readCachedSkySnapshot(cacheKey);
 
@@ -16456,6 +16456,12 @@ function ActiveAspects({
         .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
+  const editorialAspectIds = new Set(
+    visibleAspectGroups.flatMap((group) => group.aspects.map(({ aspect }) => aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`))
+  );
+  const calculatedOnlyAspects = aspects.filter((aspect) => (
+    !editorialAspectIds.has(aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`)
+  ));
 
   return (
     <SkyAspectsSection>
@@ -16498,6 +16504,43 @@ function ActiveAspects({
           })}
         </SkyAspectGroup>
       ))}
+      {calculatedOnlyAspects.length > 0 ? (
+        <details className="calculated-aspects-disclosure">
+          <summary>
+            <span>All calculated aspects ({calculatedOnlyAspects.length})</span>
+            <span className="calculated-aspects-disclosure__hint">Facts only</span>
+          </summary>
+          <div className="aspects-card aspect-row-card calculated-aspects-card">
+            <div className="aspect-row-list">
+              {calculatedOnlyAspects.map((aspect) => {
+                const first = skyAspectPosition(aspect.from, positions);
+                const second = skyAspectPosition(aspect.to, positions);
+                const exactDate = skyPlacementAspectExactDate(aspect, generatedAt, positions);
+
+                return (
+                  <div
+                    className="aspect-row aspect-row-static calculated-aspect-row"
+                    key={aspect.id ?? `${aspect.from}-${aspect.type}-${aspect.to}`}
+                  >
+                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                    <div className="aspect-row-copy">
+                      <h3>{`${aspect.from} ${aspect.type} ${aspect.to}`}</h3>
+                      <span className="calculated-aspect-row__facts">
+                        {first && second
+                          ? `${first.planet} in ${first.sign} · ${second.planet} in ${second.sign}`
+                          : `${aspect.from} · ${aspect.to}`}
+                      </span>
+                      <span className="calculated-aspect-row__facts">
+                        {`${wholeDegreeOrb(aspect.orb)} orb · Exact ${exactDate}`}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </details>
+      ) : null}
     </SkyAspectsSection>
   );
 }
