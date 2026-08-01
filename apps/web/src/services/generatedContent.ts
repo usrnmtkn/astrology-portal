@@ -1375,6 +1375,8 @@ export async function loadLiveGeneratedContent(
   return loadLiveGeneratedContentForSurfaces([surface], targetDate);
 }
 
+const generatedContentSelect = "id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at";
+
 type GeneratedContentReaderBoundaryRow = Pick<
   GeneratedContentRow,
   "content_key" | "event_type" | "source_snapshot" | "surface"
@@ -1426,7 +1428,7 @@ export async function loadLiveGeneratedContentForSurfaces(
     const to = from + pageSize - 1;
     let query = supabase
       .from("generated_interpretations")
-      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
+      .select(generatedContentSelect)
       .in("surface", surfaces)
       .eq("status", "LIVE")
       .eq("lane", "serving")
@@ -1452,6 +1454,49 @@ export async function loadLiveGeneratedContentForSurfaces(
     }
   }
 
+  return generatedContentMapFromRows(rows);
+}
+
+export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
+  const keys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
+
+  if (keys.length === 0) {
+    return new Map<string, LiveGeneratedContent>();
+  }
+
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    return new Map<string, LiveGeneratedContent>();
+  }
+
+  const rows: GeneratedContentRow[] = [];
+  const batchSize = 50;
+
+  for (let index = 0; index < keys.length; index += batchSize) {
+    const batch = keys.slice(index, index + batchSize);
+    const { data, error } = await supabase
+      .from("generated_interpretations")
+      .select(generatedContentSelect)
+      .in("content_key", batch)
+      .eq("status", "LIVE")
+      .eq("lane", "serving")
+      .is("review_state", null)
+      .order("updated_at", { ascending: false })
+      .returns<GeneratedContentRow[]>();
+
+    if (error) {
+      console.warn("Targeted generated content failed to load; unpublished content will remain hidden.", error);
+      return new Map<string, LiveGeneratedContent>();
+    }
+
+    rows.push(...(data ?? []));
+  }
+
+  return generatedContentMapFromRows(rows);
+}
+
+function generatedContentMapFromRows(rows: GeneratedContentRow[]) {
   const byKey = new Map<string, LiveGeneratedContent>();
   const previewMode = readGeneratedContentPreviewMode();
 
