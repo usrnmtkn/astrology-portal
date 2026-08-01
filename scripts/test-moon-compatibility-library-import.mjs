@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
@@ -39,7 +41,29 @@ function compatibilityKey(readerSign, otherSign) {
 }
 
 const library = readJson("tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json");
-const generatedRows = readJson("scripts/generated/compatibility-dashboard-rows.json");
+const generatedFixtureDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "tldrastro-moon-compatibility-"));
+const generatedFixturePath = path.join(generatedFixtureDirectory, "compatibility-dashboard-rows.json");
+const materializer = spawnSync(process.execPath, [
+  path.join(repoRoot, "scripts", "materialize-compatibility-dashboard-rows.mjs"),
+  "--planet=moon",
+  "--status=LIVE",
+  `--out=${generatedFixturePath}`
+], {
+  cwd: repoRoot,
+  encoding: "utf8"
+});
+
+process.on("exit", () => {
+  fs.rmSync(generatedFixtureDirectory, { recursive: true, force: true });
+});
+
+assert.equal(
+  materializer.status,
+  0,
+  `Moon compatibility materialization must succeed.\n${materializer.stderr || materializer.stdout}`
+);
+
+const generatedRows = JSON.parse(fs.readFileSync(generatedFixturePath, "utf8"));
 const fallbackV3Rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 
