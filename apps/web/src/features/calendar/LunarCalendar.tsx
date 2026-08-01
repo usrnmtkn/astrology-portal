@@ -1033,7 +1033,7 @@ function calendarEventPackageFailure(event: LunarCalendarEvent, error: unknown) 
   return "";
 }
 
-function calendarStationDirectPackageDescription(event: LunarCalendarEvent) {
+function calendarStationDirectPackageDescription(event: LunarCalendarEvent, dateLine: string) {
   if (!event.planet) {
     return "";
   }
@@ -1047,7 +1047,7 @@ function calendarStationDirectPackageDescription(event: LunarCalendarEvent) {
 
   const planetReference = `${event.planet}${event.sign ? ` in ${event.sign}` : ""}`;
   const body = frame
-    .replaceAll("{{dateLine}}", "This week")
+    .replaceAll("{{dateLine}}", dateLine)
     .replaceAll("{{aRef}}", planetReference)
     .replaceAll("{{aTopic}}", planetTopic)
     .replace(/\s{2,}/g, " ")
@@ -1133,7 +1133,7 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
   }
 
   if (event.type === "station" && event.planet && event.direction === "direct") {
-    return calendarStationDirectPackageDescription(event);
+    return calendarStationDirectPackageDescription(event, dateLine);
   }
 
   if (event.type === "aspect" && event.planets && event.aspect) {
@@ -1236,6 +1236,16 @@ function normalizeCalendarEventSurface(
       body: packageDescription
     }]
   };
+}
+
+function calendarEventDescription(
+  event: LunarCalendarEvent,
+  generatedContent?: Map<string, LiveGeneratedContent>,
+  dateLine = "Today"
+) {
+  const content = liveCalendarEventContent(generatedContent, event);
+
+  return normalizeCalendarEventSurface(event, content, dateLine).sections[0]?.body ?? "";
 }
 
 function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
@@ -2272,7 +2282,13 @@ export function LunarCalendar({
                   {selectedDayTransits.every(isActiveRetrogradeEvent) ? "Longer background" : "Sky movements"}
                 </span>
                 {selectedDayTransits.map((event) => {
-                  const eventTitle = calendarEventTitleWithSign(event, event.title);
+                  const content = liveCalendarEventContent(generatedContent, event);
+                  const eventTitle = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
+                  const description = calendarEventDescription(
+                    event,
+                    generatedContent,
+                    `On ${formatEventDateMonthDay(event.startsAt, zone)}`
+                  );
 
                   return (
                     <button
@@ -2280,7 +2296,7 @@ export function LunarCalendar({
                       type="button"
                       key={event.id}
                       aria-label={eventTitle}
-                      onClick={() => onOpenTransit?.(event)}
+                      onClick={() => onOpenTransit?.(event, description)}
                     >
                       <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
                       <strong>{eventTitle}</strong>
@@ -2971,8 +2987,11 @@ function TransitCard({
   const glyphParts = transitCardGlyphParts(event);
   const content = liveCalendarEventContent(generatedContent, event);
   const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
-  const normalizedEvent = normalizeCalendarEventSurface(event, content);
-  const description = normalizedEvent.sections[0]?.body ?? "";
+  const description = calendarEventDescription(
+    event,
+    generatedContent,
+    `On ${formatEventDateMonthDay(event.startsAt, timeZone)}`
+  );
   const isContentLoading = contentStatus === "loading" && !content;
   const cardContent = (
     <>
