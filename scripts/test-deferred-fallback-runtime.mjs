@@ -77,18 +77,19 @@ assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.le
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
-assert.ok(dignityBefore && placementBefore, "Sky chart inspector copy must remain in the eager core.");
+assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
+assert.equal(placementBefore, "", "Natal and friend placement prose must remain deferred.");
 assert.ok(
   [...skyCoreKeys].some((key) => key.startsWith("fallback-hook/sky-event/"))
     && [...skyCoreKeys].some((key) => key.startsWith("fallback-hook/transit-effect-hard/"))
     && [...skyCoreKeys].some((key) => key.startsWith("fallback-hook/transit-retro/"))
-    && [...skyCoreKeys].some((key) => key.startsWith("fallback-hook/placement-sentence/"))
     && [...skyCoreKeys].some((key) => key.startsWith("fallback-hook/dignity-line/")),
   "The eager source slice must retain every generic dependency used by Sky."
 );
 assert.ok(
-  ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/synastry-pair/")),
-  "Relationship-only base rows must not remain in the eager Sky source slice."
+  ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/synastry-pair/"))
+    && ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/placement-sentence/")),
+  "Natal and relationship base rows must not remain in the eager Sky source slice."
 );
 assert.throws(
   () => runtime.transitSynastryFallbackRendererV3.renderTransitAspect(transitFacts),
@@ -136,7 +137,11 @@ assert.deepEqual(skyPlacementAfter, skyPlacementBefore, "Deferred rows must not 
 assert.deepEqual(skySeasonAfter, skySeasonBefore, "Deferred rows must not change Sky season copy.");
 assert.deepEqual(skyLunationAfter, skyLunationBefore, "Deferred rows must not change Sky lunation copy.");
 assert.equal(runtime.fallbackV3DignityLine("fall", "moon", "you"), dignityBefore);
-assert.equal(runtime.fallbackV3PlacementSentence("moon", "scorpio", "they"), placementBefore);
+assert.match(
+  runtime.fallbackV3PlacementSentence("moon", "scorpio", "they"),
+  /guard up until they know where they stand/u,
+  "Friend placement prose must become available after its domain bundle loads."
+);
 assert.equal(transitAfter.contentKey, "authored/transit-aspect/pluto/chiron/square");
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), false);
 
