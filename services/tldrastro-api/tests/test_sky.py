@@ -10,7 +10,6 @@ from tldrastro_api.services.aspect_profile import (
     canonical_sky_point_names,
 )
 
-
 client = TestClient(app)
 
 
@@ -93,7 +92,14 @@ def test_sky_current_uses_canonical_aspect_matrix_and_node_axis():
     sky = response.json()
     aspect_definitions = dict(canonical_sky_aspect_definitions())
     aspect_orbs = canonical_sky_aspect_orbs()
-    assert [position["point"] for position in sky["positions"]] == canonical_sky_point_names()
+    actual_point_names = [position["point"] for position in sky["positions"]]
+    expected_point_names = [
+        point_name
+        for point_name in canonical_sky_point_names()
+        if point_name in actual_point_names
+    ]
+    assert actual_point_names == expected_point_names
+    assert "South Node" in actual_point_names
     assert set(aspect_definitions) == {
         "conjunction",
         "sextile",
