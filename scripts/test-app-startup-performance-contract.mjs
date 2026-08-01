@@ -10,6 +10,7 @@ const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"),
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
+const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
@@ -112,6 +113,16 @@ assert.match(
   friendDetailSource,
   /import "\.\.\/\.\.\/styles\/friends-detail\.css";/u,
   "The lazy FriendDetail component must own its layout stylesheet."
+);
+assert.doesNotMatch(
+  friendsStylesSource,
+  /(?:^|\n)\.relationship-explainer-card\s*\{/u,
+  "Relationship explainer CSS must not remain in the eager Friends/profile stylesheet."
+);
+assert.match(
+  friendDetailStylesSource,
+  /(?:^|\n)\.relationship-explainer-card\s*\{/u,
+  "The lazy FriendDetail stylesheet must own relationship explainer CSS."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
