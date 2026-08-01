@@ -1319,11 +1319,7 @@ export function SocialFriendsPanel({
                         </small>
                       </span>
                       <span className="friends-person-actions">
-                        {chartAvailable ? (
-                          <span className="friends-row-arrow" aria-hidden="true">
-                            <ChevronRight size={18} />
-                          </span>
-                        ) : (
+                        {!chartAvailable && (
                           <span className="friends-requested-label">
                             {friend.friendSharesChart ? "Chart pending" : "Chart paused"}
                           </span>
