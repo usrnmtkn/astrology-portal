@@ -21,8 +21,8 @@ const appSource = read("apps/web/src/App.tsx");
 assert.equal(PACKAGE_VERSION, "v3-2026-08-01a");
 assert.match(
   runtimeSource,
-  /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
-  "Runtime must expose the bundled package version, content hash, and key manifest."
+  /export const fallbackArchitectureV3BundledManifest = bundledManifestV3 as FallbackArchitectureV3PackageManifest/u,
+  "Runtime must expose the generated full-package version, content hash, and key manifest without eagerly importing deferred rows."
 );
 assert.match(
   runtimeSource,

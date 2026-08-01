@@ -20,6 +20,7 @@ await build({
     loader: "tsx",
     contents: `
       export {
+        loadDeferredFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3,
         transitV3SameBeatKeyForContentKey
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
@@ -27,7 +28,9 @@ await build({
   }
 });
 
-const { transitSynastryFallbackRendererV3, transitV3SameBeatKeyForContentKey } = await import(pathToFileURL(outFile));
+const runtime = await import(pathToFileURL(outFile));
+await runtime.loadDeferredFallbackArchitectureV3Bundle();
+const { transitSynastryFallbackRendererV3, transitV3SameBeatKeyForContentKey } = runtime;
 
 function render(transiting, aspect, natal) {
   return transitSynastryFallbackRendererV3.renderTransitAspect({
@@ -161,7 +164,10 @@ const friendBond = transitSynastryFallbackRendererV3.renderBondTransit({
   sign: "sagittarius",
   window: "Until August 1"
 });
-assert.match(renderedParts(friendBond), /^The unfiltered versions of you two get along right now/u);
+assert.match(
+  renderedParts(friendBond),
+  /^It is easier to say the opinion, preference, or refusal you usually soften around each other/u
+);
 assert.match(
   renderedParts(friendBond),
   /Lilith in Sagittarius is trine Chris's Ascendant through August 1, activating the connection it makes with your Ascendant\.$/u
