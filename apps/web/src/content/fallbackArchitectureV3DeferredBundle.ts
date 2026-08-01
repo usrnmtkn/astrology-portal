@@ -1,4 +1,5 @@
-import fallbackSourceRowsV3 from "./fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
+import bundledDeferredCoreRowsV3 from "./fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
+import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-language-pass-2.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
@@ -10,6 +11,13 @@ import type {
 
 const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
 const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
+const fallbackSourceRowsV3 = {
+  hookRows: [
+    ...bundledSkyCoreRowsV3.hookRows,
+    ...bundledDeferredCoreRowsV3.hookRows
+  ],
+  vocabularyRows: bundledSkyCoreRowsV3.vocabularyRows
+};
 
 function assertLunationBlendImport() {
   const allAuthoredCards = [...transitSynastryRowsV1.authoredCards, ...lunationBlendUnitsV1.authoredCards];
@@ -149,7 +157,10 @@ export const deferredFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle 
     templates: []
   },
   rowsFile: {
-    hookRows: bondLanguagePass2.rows as HookRow[],
-    vocabularyRows: []
+    hookRows: [
+      ...(bundledDeferredCoreRowsV3.hookRows as HookRow[]),
+      ...(bondLanguagePass2.rows as HookRow[])
+    ],
+    vocabularyRows: bundledDeferredCoreRowsV3.vocabularyRows
   }
 };

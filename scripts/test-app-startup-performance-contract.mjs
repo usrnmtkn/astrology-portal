@@ -14,6 +14,10 @@ const fallbackRuntimeSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"),
   "utf8"
 );
+const deferredFallbackSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3DeferredBundle.ts"),
+  "utf8"
+);
 const appImportIndex = mainSource.indexOf('const appModulePromise = import("./App")');
 const styleWaitIndex = mainSource.indexOf("await Promise.all([");
 
@@ -25,10 +29,22 @@ assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Start
 assert.match(viteSource, /fallback-content-core/u, "Core fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-relationships/u, "Relationship fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky/u, "Sky fallback content must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source partition must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
 assert.match(
   fallbackRuntimeSource,
   /import\("\.\/fallbackArchitectureV3DeferredBundle"\)/u,
   "Transit and relationship content must remain behind a dynamic runtime boundary."
+);
+assert.doesNotMatch(
+  fallbackRuntimeSource,
+  /source-rows\/fallback-source-rows-v3\.json/u,
+  "The canonical all-domain source snapshot must not re-enter the reader runtime."
+);
+assert.doesNotMatch(
+  deferredFallbackSource,
+  /source-rows\/fallback-source-rows-v3\.json/u,
+  "The deferred runtime must use the generated complementary partition instead of duplicating the canonical snapshot."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
