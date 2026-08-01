@@ -14,6 +14,11 @@ from tldrastro_api.models import (
     Position,
     Zodiac,
 )
+from tldrastro_api.services.aspect_profile import (
+    canonical_sky_aspect_definitions,
+    canonical_sky_aspect_orbs,
+    canonical_sky_point_names,
+)
 from tldrastro_api.services.ephemeris import start_ephemeris_trace, tracked_calc_ut
 from tldrastro_api.services.timezone import resolve_timezone_name
 
@@ -43,10 +48,14 @@ BODIES: List[Tuple[str, str, str, int]] = [
     ("Uranus", "♅", "change", swe.URANUS),
     ("Neptune", "♆", "imagination", swe.NEPTUNE),
     ("Pluto", "♇", "depth", swe.PLUTO),
-    ("North Node", "☊", "direction", swe.TRUE_NODE),
     ("Chiron", "⚷", "integration", swe.CHIRON),
     ("Lilith", "⚸", "shadow", swe.MEAN_APOG),
+    ("North Node", "☊", "direction", swe.TRUE_NODE),
 ]
+
+CANONICAL_SKY_POINT_NAMES = canonical_sky_point_names()
+if [point for point, _, _, _ in BODIES] + ["South Node"] != CANONICAL_SKY_POINT_NAMES:
+    raise RuntimeError("The calculation body's order has drifted from canonical-sky-aspect-v1.")
 
 BODY_IDS: Dict[str, int] = {point: body_id for point, _, _, body_id in BODIES}
 
@@ -63,21 +72,9 @@ FAVOR_CASES = {
 CANONICAL_HOUSE_SYSTEM = HouseSystem.whole_sign
 WHOLE_SIGN_HOUSE_SYSTEM_CODE = b"W"
 
-ASPECT_DEFINITIONS: List[Tuple[str, float]] = [
-    ("conjunction", 0.0),
-    ("sextile", 60.0),
-    ("square", 90.0),
-    ("trine", 120.0),
-    ("opposition", 180.0),
-]
+ASPECT_DEFINITIONS: List[Tuple[str, float]] = canonical_sky_aspect_definitions()
 
-STANDARD_ORBS = {
-    "conjunction": 8.0,
-    "opposition": 8.0,
-    "square": 7.0,
-    "trine": 7.0,
-    "sextile": 5.0,
-}
+STANDARD_ORBS = canonical_sky_aspect_orbs()
 
 TIGHT_ORBS = {
     "conjunction": 5.0,
@@ -85,6 +82,7 @@ TIGHT_ORBS = {
     "square": 4.0,
     "trine": 4.0,
     "sextile": 3.0,
+    "quincunx": 3.0,
 }
 
 SIGN_RULERS = {
@@ -298,6 +296,19 @@ def calculate_positions(
             positions.append(body_position(julian_day, body_id, point, glyph, theme, flags, cusps))
         except Exception as error:
             warnings.append(f"{point} could not be calculated: {error}")
+    north_node = next((position for position in positions if position.point == "North Node"), None)
+    if north_node is not None:
+        south_node_longitude = normalize_degrees(north_node.longitude + 180.0)
+        positions.append(
+            make_position(
+                point="South Node",
+                glyph="☋",
+                theme="release",
+                longitude=south_node_longitude,
+                house=house_for_longitude(south_node_longitude, cusps),
+                speed=north_node.speed,
+            )
+        )
     return positions
 
 

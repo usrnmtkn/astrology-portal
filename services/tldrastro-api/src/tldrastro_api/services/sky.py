@@ -13,6 +13,7 @@ from tldrastro_api.models import (
     SkyCurrentResponse,
     Zodiac,
 )
+from tldrastro_api.services.aspect_profile import canonicalize_node_axis_aspects
 from tldrastro_api.services.chart import (
     CANONICAL_HOUSE_SYSTEM,
     angle_positions,
@@ -256,7 +257,9 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
         location=subject.location,
         generatedAt=utc_datetime.isoformat(),
         positions=positions,
-        aspects=calculate_aspects(positions, subject.settings, julian_day),
+        aspects=canonicalize_node_axis_aspects(
+            calculate_aspects(positions, subject.settings, julian_day)
+        ),
         angles=angles,
         houseCusps=[round(cusp, 6) for cusp in cusps],
         ascendant=ascendant.sign if ascendant else "",

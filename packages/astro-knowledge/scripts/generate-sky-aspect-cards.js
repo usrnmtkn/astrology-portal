@@ -22,6 +22,17 @@ const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-aspect.json"));
 const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"));
+const canonicalAspectProfile = readJson(path.join(
+  root,
+  "..",
+  "..",
+  "services",
+  "tldrastro-api",
+  "src",
+  "tldrastro_api",
+  "data",
+  "sky_aspect_profile.json"
+));
 
 const TITLE = {
   sun: "Sun",
@@ -37,15 +48,17 @@ const TITLE = {
   chiron: "Chiron",
   "north-node": "North Node",
   "south-node": "South Node",
+  nodes: "Lunar Nodes",
   lilith: "Lilith"
 };
-const PLANET_ORDER = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
+const PLANET_ORDER = canonicalAspectProfile.points.map((point) => point.id);
+const PAIR_ORDER = [...PLANET_ORDER.filter((point) => !["north-node", "south-node"].includes(point)), "nodes"];
 const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
-const UNSOURCED_POINTS = new Set(["chiron", "lilith", "black-moon-lilith", "north-node", "south-node", "true-node", "node"]);
+const REVIEW_PAIR_SOURCE_PATH = path.join(root, "review", "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md");
 const PLACEMENT_MODE = "collective-placement-card";
 const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
 const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
-const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER);
+const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER.slice(0, 10));
 const POINT_PLACEMENT_BODIES = new Set(["chiron", "north-node", "lilith"]);
 const PLACEMENT_BODIES = new Set([...TRADITIONAL_PLACEMENT_BODIES, ...POINT_PLACEMENT_BODIES, "south-node"]);
 const OPPOSITE_SIGN = {
@@ -97,7 +110,10 @@ const PLACEMENT_PACE = {
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // aspect -> which data/pairs field carries its meaning
-const ASPECT_FIELD = { conjunction:"blend", sextile:"harmonious", trine:"harmonious", square:"hard", opposition:"hard" };
+const ASPECT_FIELD = Object.fromEntries(canonicalAspectProfile.aspects.map(({ id }) => [
+  id,
+  id === "conjunction" ? "blend" : ["sextile", "trine"].includes(id) ? "harmonious" : "hard"
+]));
 
 // element of a planet or sign, from the metaphor guidance in the spec
 function elementOf(token) {
@@ -106,7 +122,68 @@ function elementOf(token) {
   return null;
 }
 
-function loadPair(pairKey) {
+function canonicalPairPoint(value) {
+  const point = normalizeToken(value);
+  if (["north-node", "south-node", "true-node", "node", "nodes", "lunar-nodes"].includes(point)) return "nodes";
+  if (point === "black-moon-lilith") return "lilith";
+  return point;
+}
+
+let reviewPairSourceCache = null;
+
+function reviewPairSources() {
+  if (reviewPairSourceCache) return reviewPairSourceCache;
+  if (!fs.existsSync(REVIEW_PAIR_SOURCE_PATH)) return new Map();
+
+  const sourceText = fs.readFileSync(REVIEW_PAIR_SOURCE_PATH, "utf8");
+  const rows = new Map();
+  const entryPattern = /\*\*([A-Za-z]+)-([A-Za-z]+)\.\*\*\s+([\s\S]*?)(?=\n\n\*\*|\n## |\n---)/g;
+
+  for (const match of sourceText.matchAll(entryPattern)) {
+    const first = canonicalPairPoint(match[1]);
+    const second = canonicalPairPoint(match[2]);
+    const firstOrder = PAIR_ORDER.indexOf(first);
+    const secondOrder = PAIR_ORDER.indexOf(second);
+
+    if (firstOrder < 0 || secondOrder < 0 || first === second) continue;
+
+    const [a, b] = firstOrder < secondOrder ? [first, second] : [second, first];
+    const pairKey = `${a}-${b}`;
+    const body = match[3].trim();
+
+    rows.set(pairKey, {
+      id: pairKey,
+      planetA: a,
+      planetB: b,
+      status: "needs_review",
+      sourceText: body,
+      blend: body,
+      harmonious: body,
+      hard: body,
+      provenance: {
+        source: path.relative(root, REVIEW_PAIR_SOURCE_PATH).replaceAll(path.sep, "/"),
+        reviewState: "needs_review"
+      }
+    });
+  }
+
+  if (rows.size !== 33) {
+    throw new Error(`Expected 33 staged Chiron/Lilith/node pair sources; found ${rows.size}.`);
+  }
+
+  reviewPairSourceCache = rows;
+  return reviewPairSourceCache;
+}
+
+function loadPair(pairKey, { allowReviewSources = false } = {}) {
+  if (allowReviewSources) {
+    const reviewPair = reviewPairSources().get(pairKey);
+
+    if (reviewPair) {
+      return { path: REVIEW_PAIR_SOURCE_PATH, value: reviewPair };
+    }
+  }
+
   const p = path.join(root, "data", "pairs", `${pairKey}.json`);
   if (!fs.existsSync(p)) return null;
   return { path: p, value: readJson(p) };
@@ -216,9 +293,9 @@ function normalizeToken(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[\s_]+/g, "-");
 }
 
-function normalizeCardArgs({ a, b, aspect, signA, signB }) {
-  const first = normalizeToken(a);
-  const second = normalizeToken(b);
+function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources = false } = {}) {
+  const first = canonicalPairPoint(a);
+  const second = canonicalPairPoint(b);
   const normalizedAspect = normalizeToken(aspect);
   const firstSign = normalizeToken(signA);
   const secondSign = normalizeToken(signB);
@@ -231,24 +308,8 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }) {
     throw new SourceGapError("invalid-sign", "Both sky-aspect signs must be zodiac signs.", { signA: firstSign, signB: secondSign });
   }
 
-  if (new Set([first, second]).size === 2 && [first, second].includes("sun") && [first, second].includes("chiron")) {
-    throw new SourceGapError(
-      "source-review-required",
-      "data/pairs/sun-chiron.json is a draft stub and requires owner review before generation.",
-      { a: first, b: second, pairKey: "sun-chiron" }
-    );
-  }
-
-  if (UNSOURCED_POINTS.has(first) || UNSOURCED_POINTS.has(second)) {
-    throw new SourceGapError(
-      "missing-source",
-      `No approved pair meaning exists for ${first}-${second}; author the meaning before generation.`,
-      { a: first, b: second }
-    );
-  }
-
-  const firstOrder = PLANET_ORDER.indexOf(first);
-  const secondOrder = PLANET_ORDER.indexOf(second);
+  const firstOrder = PAIR_ORDER.indexOf(first);
+  const secondOrder = PAIR_ORDER.indexOf(second);
 
   if (firstOrder < 0 || secondOrder < 0 || first === second) {
     throw new SourceGapError("missing-source", `No source-backed pair is available for ${first}-${second}.`, { a: first, b: second });
@@ -259,7 +320,7 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }) {
     ? { a: second, b: first, aspect: normalizedAspect, signA: secondSign, signB: firstSign }
     : { a: first, b: second, aspect: normalizedAspect, signA: firstSign, signB: secondSign };
   const pairKey = `${normalized.a}-${normalized.b}`;
-  const pair = loadPair(pairKey);
+  const pair = loadPair(pairKey, { allowReviewSources });
 
   if (!pair) {
     throw new SourceGapError(
@@ -271,7 +332,7 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }) {
 
   // This is the one explicitly documented stub. Its existence on disk is not
   // approval to generate or serve it.
-  if (pairKey === "sun-chiron" || /\bSTUB\b/i.test(JSON.stringify(pair.value.provenance ?? {}))) {
+  if (/\bSTUB\b/i.test(JSON.stringify(pair.value.provenance ?? {}))) {
     throw new SourceGapError(
       "source-review-required",
       `data/pairs/${pairKey}.json is a draft stub and requires owner review before generation.`,
@@ -554,8 +615,11 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
   ].join("\n");
 }
 
-function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [] } = {}) {
-  const normalized = normalizeCardArgs({ a, b, aspect, signA, signB });
+function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowReviewSources = false } = {}) {
+  const normalized = normalizeCardArgs(
+    { a, b, aspect, signA, signB },
+    { allowReviewSources }
+  );
   const { pair } = normalized;
   const field = ASPECT_FIELD[normalized.aspect];
   const meaning = { blend: pair.blend, active: pair[field], harmonious: pair.harmonious, hard: pair.hard, traditional: pair.traditional };
@@ -985,7 +1049,9 @@ async function generateCard(args, options = {}) {
   let normalized;
 
   try {
-    normalized = normalizeCardArgs(args);
+    normalized = normalizeCardArgs(args, {
+      allowReviewSources: options.allowReviewSources === true
+    });
   } catch (error) {
     if (error instanceof SourceGapError) {
       return { status: "skipped", reason: error.code, note: error.message, facts: error.details };
@@ -1000,7 +1066,10 @@ async function generateCard(args, options = {}) {
       : "outer";
 
   return runCardPipeline({
-    buildPromptFor: (avoidTerms) => buildPrompt(normalized, { avoidTerms }),
+    buildPromptFor: (avoidTerms) => buildPrompt(normalized, {
+      avoidTerms,
+      allowReviewSources: options.allowReviewSources === true
+    }),
     facts: {
       a: normalized.a,
       b: normalized.b,
@@ -1008,7 +1077,8 @@ async function generateCard(args, options = {}) {
       signA: normalized.signA,
       signB: normalized.signB,
       pairKey: normalized.pairKey,
-      pairSource: normalized.pairSource
+      pairSource: normalized.pairSource,
+      pairStatus: normalized.pair.status ?? null
     },
     judgeMode: "collective-aspect-card",
     judgeTier: aspectTier,
@@ -1085,13 +1155,24 @@ async function generatePlacementTopper(args, options = {}) {
 if (require.main === module) {
   const [mode, pairKey, aspect, signA, signB] = process.argv.slice(2);
   if (!pairKey || !aspect || !signA || !signB) {
-    console.error("usage: --dry-run|--run <a-b> <aspect> <signA> <signB>");
+    console.error("usage: --dry-run|--dry-run-review|--run <a-b> <aspect> <signA> <signB>");
     process.exit(1);
   }
-  const [a, b] = pairKey.split("-");
-  if (mode === "--dry-run") {
+  const pairTokens = [...PAIR_ORDER, "north-node", "south-node"]
+    .sort((first, second) => second.length - first.length);
+  const a = pairTokens.find((token) => pairKey.startsWith(`${token}-`));
+  const b = a ? pairKey.slice(a.length + 1) : "";
+
+  if (!a || !b) {
+    console.error(`Could not parse pair key '${pairKey}'.`);
+    process.exit(1);
+  }
+  if (mode === "--dry-run" || mode === "--dry-run-review") {
     try {
-      console.log(buildPrompt({ a, b, aspect, signA, signB }));
+      console.log(buildPrompt(
+        { a, b, aspect, signA, signB },
+        { allowReviewSources: mode === "--dry-run-review" }
+      ));
     } catch (error) {
       console.error(error instanceof Error ? error.message : error);
       process.exit(2);
@@ -1107,7 +1188,7 @@ if (require.main === module) {
         process.exitCode = 1;
       });
   } else {
-    console.error("first arg must be --dry-run or --run");
+    console.error("first arg must be --dry-run, --dry-run-review, or --run");
     process.exit(1);
   }
 }
@@ -1133,5 +1214,6 @@ module.exports = {
   normalizePlacementTopperArgs,
   placementCloseBank,
   repairCard,
-  repairPlacementTopper
+  repairPlacementTopper,
+  reviewPairSources
 };

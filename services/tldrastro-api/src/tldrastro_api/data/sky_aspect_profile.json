@@ -1,0 +1,37 @@
+{
+  "id": "canonical-sky-aspect-v1",
+  "evaluationTime": {
+    "kind": "fixed-local-time",
+    "time": "12:00",
+    "description": "Editorial sky aspects are calculated at local noon for deterministic daily output."
+  },
+  "points": [
+    { "id": "sun", "name": "Sun" },
+    { "id": "moon", "name": "Moon" },
+    { "id": "mercury", "name": "Mercury" },
+    { "id": "venus", "name": "Venus" },
+    { "id": "mars", "name": "Mars" },
+    { "id": "jupiter", "name": "Jupiter" },
+    { "id": "saturn", "name": "Saturn" },
+    { "id": "uranus", "name": "Uranus" },
+    { "id": "neptune", "name": "Neptune" },
+    { "id": "pluto", "name": "Pluto" },
+    { "id": "chiron", "name": "Chiron" },
+    { "id": "lilith", "name": "Lilith" },
+    { "id": "north-node", "name": "North Node", "axis": "lunar-nodes" },
+    { "id": "south-node", "name": "South Node", "axis": "lunar-nodes", "derivedFrom": "north-node", "offsetDegrees": 180 }
+  ],
+  "aspects": [
+    { "id": "conjunction", "angle": 0, "orb": 5 },
+    { "id": "sextile", "angle": 60, "orb": 5 },
+    { "id": "square", "angle": 90, "orb": 5 },
+    { "id": "trine", "angle": 120, "orb": 5 },
+    { "id": "quincunx", "angle": 150, "orb": 3 },
+    { "id": "opposition", "angle": 180, "orb": 5 }
+  ],
+  "nodeAxis": {
+    "deduplicate": true,
+    "canonicalPoint": "north-node",
+    "description": "A contact with either node is one lunar-node-axis editorial event."
+  }
+}
