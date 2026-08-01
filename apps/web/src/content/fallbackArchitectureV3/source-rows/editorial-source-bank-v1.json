@@ -222,5 +222,128 @@
         {"id": "health-creativity-02", "category": "health-creativity", "body": "Creativity needs space, not constant productivity."}
       ]
     }
-  ]
+  ],
+  "facts": {
+    "lane": "reference",
+    "reader_serving": false,
+    "purpose": "Numerical and doctrinal claim verification only; source prose never renders.",
+    "source_document": "owner-resources:TLDR-Reference-Facts-CC-SD.md",
+    "entries": [
+      {
+        "id": "essential-dignities",
+        "topic": "dignities",
+        "status": "verified-reference",
+        "source_tags": ["CC", "Hellenistic"],
+        "statement": "Traditional essential dignities use the domicile, exaltation, detriment, and fall tables below. Mercury in Pisces is both detriment and fall.",
+        "values": {
+          "domicile": {"sun": ["leo"], "moon": ["cancer"], "mercury": ["gemini", "virgo"], "venus": ["taurus", "libra"], "mars": ["aries", "scorpio"], "jupiter": ["sagittarius", "pisces"], "saturn": ["capricorn", "aquarius"]},
+          "exaltation": {"sun": ["aries"], "moon": ["taurus"], "mercury": ["virgo"], "venus": ["pisces"], "mars": ["capricorn"], "jupiter": ["cancer"], "saturn": ["libra"]},
+          "detriment": {"sun": ["aquarius"], "moon": ["capricorn"], "mercury": ["sagittarius", "pisces"], "venus": ["aries", "scorpio"], "mars": ["taurus", "libra"], "jupiter": ["gemini", "virgo"], "saturn": ["cancer", "leo"]},
+          "fall": {"sun": ["libra"], "moon": ["scorpio"], "mercury": ["pisces"], "venus": ["virgo"], "mars": ["cancer"], "jupiter": ["capricorn"], "saturn": ["aries"]}
+        }
+      },
+      {
+        "id": "traditional-doctrine-basics",
+        "topic": "traditional doctrine",
+        "status": "verified-reference",
+        "source_tags": ["CC", "Hellenistic"],
+        "statement": "The luminaries take the summer signs and the five planets are assigned outward by distance from the Sun, with Saturn ruling the signs farthest from the lights. Traditional doctrine uses Ptolemy's five aspects and treats aversion as meaningful. Mars and Saturn are malefics; Venus and Jupiter are benefics. Sex and music belong to the fifth house, not the eighth."
+      },
+      {
+        "id": "solar-proximity-ladder",
+        "topic": "solar proximity cazimi combust under beams",
+        "status": "verified-reference",
+        "source_tags": ["CC", "SD", "traditional"],
+        "statement": "Under the beams is within 15 degrees of the Sun. Combust is within 8 degrees. The traditional primary cazimi orb is 17 arcminutes; CC's app uses 1 degree but that must not be presented as the traditional figure.",
+        "values": {"under_beams_degrees": 15, "combust_degrees": 8, "cazimi_primary_arcminutes": 17},
+        "reviewPatterns": [
+          "\\bcazimi\\b[^.]{0,48}\\bwithin\\s+(?:one|1)\\s+degree\\b"
+        ],
+        "conflictPatterns": [
+          "\\btraditional\\b[^.]{0,48}\\bcazimi\\b[^.]{0,48}\\b(?:one|1)[ -]?degree\\b",
+          "\\bcazimi\\b[^.]{0,48}\\btraditional\\b[^.]{0,48}\\b(?:one|1)[ -]?degree\\b"
+        ]
+      },
+      {
+        "id": "cazimi-rhythms",
+        "topic": "cazimi rhythms",
+        "status": "verified-reference",
+        "source_tags": ["CC", "SD"],
+        "statement": "A New Moon is a Moon cazimi. Mercury and Venus cazimi occur at the retrograde midpoint. Mars cazimi occurs roughly every two years and never during Mars retrograde. Jupiter and Saturn cazimis occur roughly annually."
+      },
+      {
+        "id": "retrograde-rhythms",
+        "topic": "retrograde rhythms",
+        "status": "verified-reference",
+        "source_tags": ["CC"],
+        "statement": "Mercury retrogrades three to four times yearly and shadow plus retrograde lasts roughly two months per cycle. Venus retrogrades every 18 months for about 40 days and repeats in the same sign every eight years, tracing a five-petaled rose. Mars retrogrades every two years for eight to ten weeks, usually across two signs. Outer planets retrograde nearly half of each year and matter most when stationing on a natal degree.",
+        "values": {"mercury_yearly_count": "3-4", "mercury_cycle_with_shadow_months": 2, "venus_interval_months": 18, "venus_duration_days": 40, "venus_sign_repeat_years": 8, "mars_interval_years": 2, "mars_duration_weeks": "8-10"}
+      },
+      {
+        "id": "nodes-cycle-and-names",
+        "topic": "lunar nodes",
+        "status": "verified-reference",
+        "source_tags": ["CC"],
+        "statement": "The North Node is caput draconis or Rahu, a point of increase. The South Node is cauda draconis or Ketu, a point of decrease. They remain 180 degrees apart. Mean nodes are always retrograde. A nodal axis lasts about 18 months and the full cycle is 18.6 years. True and mean nodes can differ by up to 1 degree 45 arcminutes.",
+        "values": {"separation_degrees": 180, "axis_months": 18, "cycle_years": 18.6, "true_mean_max_gap": "1 degree 45 arcminutes"}
+      },
+      {
+        "id": "eclipse-orbs-and-season",
+        "topic": "eclipses nodes orbs season",
+        "status": "verified-reference",
+        "source_tags": ["CC", "SD"],
+        "statement": "A lunar eclipse occurs when a Full Moon is within 11 degrees 38 arcminutes of a node; a solar eclipse occurs when a New Moon is within 17 degrees 25 arcminutes. Eclipse season begins when the Sun is within about 17 degrees of a node, recurs roughly every six months, and lasts about 34 days. Use the precise eclipse orbs instead of CC's later shorthand of about 15 degrees.",
+        "values": {"lunar_eclipse_orb": "11 degrees 38 arcminutes", "solar_eclipse_orb": "17 degrees 25 arcminutes", "eclipse_season_sun_orb_degrees": 17, "eclipse_season_days": 34}
+      },
+      {
+        "id": "saturn-return-ages",
+        "topic": "Saturn returns orbital period sect",
+        "status": "verified-reference",
+        "source_tags": ["CC"],
+        "statement": "The first Saturn return is ages 27 to 30, the second 57 to 60, and the third in the late 80s. Each return spans roughly three years from ingress to final exit of the natal Saturn sign and is traditionally harder for night charts. Saturn's orbital period is about 29.4 years; 27 to 30 is an age range, not its period.",
+        "values": {"first_return_ages": "27-30", "second_return_ages": "57-60", "third_return_ages": "late 80s", "return_span_years": 3, "orbital_period_years": 29.4},
+        "conflictPatterns": ["\\bSaturn(?:'s)?\\s+(?:orbital\\s+)?period\\b[^.]{0,36}\\b27\\s*(?:to|-|–)\\s*30\\s+years\\b"]
+      },
+      {
+        "id": "black-moon-lilith-astronomy",
+        "topic": "Black Moon Lilith astronomy lineage",
+        "status": "verified-reference",
+        "source_tags": ["CC"],
+        "statement": "Black Moon Lilith is the empty second focus of the Moon's elliptical orbit near lunar apogee. It spends roughly nine months per sign and nine years per zodiac; true Lilith stations retrograde roughly monthly. It is distinct from the Waldemath Dark Moon and asteroid Lilith. Its cited lineage runs through the Sumerian huluppu-tree tale, Akkadian lilitu ('of the night'), and the Alphabet of Ben Sira.",
+        "values": {"months_per_sign": 9, "years_per_zodiac": 9, "true_lilith_station_frequency": "roughly monthly"}
+      },
+      {
+        "id": "ophiuchus-rebuttal",
+        "topic": "Ophiuchus zodiac signs constellations precession",
+        "status": "verified-reference",
+        "source_tags": ["CC"],
+        "statement": "Astrological signs are twelve 30-degree divisions of ecliptic longitude, not constellations. Precession moves the equinox about one degree per 72 years. Ancient astrologers knew Ophiuchus and deliberately retained twelve signs; sidereal traditions also use twelve. Twelve preserves four-element, three-modality, and seven-planet rulership symmetry.",
+        "values": {"sign_degrees": 30, "precession_years_per_degree": 72, "sign_count": 12}
+      },
+      {
+        "id": "never-repeat-babylonian-equinox",
+        "topic": "never repeat zodiac history",
+        "status": "prohibited-error",
+        "source_tags": ["CC-error"],
+        "statement": "Do not claim that Babylonians started the zodiac at the spring equinox; that conflates sidereal Babylonian practice with the Hellenistic tropical zodiac.",
+        "conflictPatterns": ["\\bBabylonians?\\b[^.]{0,64}\\bstarted?\\b[^.]{0,48}\\bzodiac\\b[^.]{0,48}\\bspring equinox\\b"]
+      },
+      {
+        "id": "never-repeat-constellation-focus",
+        "topic": "never repeat tropical constellations",
+        "status": "prohibited-error",
+        "source_tags": ["CC-error"],
+        "statement": "Do not claim that traditional astrology focuses on the constellations; tropical astrology is not constellation-based.",
+        "conflictPatterns": ["\\btraditional astrology\\b[^.]{0,48}\\bfocus(?:es|ed)? on\\b[^.]{0,24}\\bconstellations?\\b"]
+      },
+      {
+        "id": "barbault-cyclic-index",
+        "topic": "Andre Barbault Cyclic Index Saturn Neptune",
+        "status": "blocked-unverified",
+        "source_tags": ["SD", "UNVERIFIED"],
+        "statement": "The supplied summary describes Barbault's Cyclic Index as concentration versus dispersion of Jupiter through Pluto, but it is not cleared for public use. The attributed description of the 2026 Saturn-Neptune conjunction as 'the most benefic configuration of the century' is unverified and must not be cited until independently confirmed.",
+        "conflictPatterns": ["\\bmost benefic configuration of the century\\b"]
+      }
+    ]
+  }
 }

@@ -1,0 +1,171 @@
+{
+  "schema": "canonical-sky-aspect-2026-confirmed-hits-v1",
+  "profile": "canonical-sky-aspect-v1",
+  "generatedBy": "scripts/verify-2026-cc-sd-engine-claims.mjs",
+  "evaluationPolicy": "Exact hits are ephemeris instants; each record also carries the canonical America/New_York noon instant for its editorial date.",
+  "hits": {
+    "saturnNeptune": {
+      "instantUtc": "2026-02-20T16:54:02.191Z",
+      "sourcePacificDate": "2026-02-20",
+      "canonicalDate": "2026-02-20",
+      "canonicalNoonUtc": "2026-02-20T17:00:00.000Z",
+      "first": "saturn",
+      "aspect": "conjunction",
+      "second": "neptune",
+      "firstSign": "Aries",
+      "firstDegree": 0.75,
+      "secondSign": "Aries",
+      "secondDegree": 0.75,
+      "residualOrbDegrees": 0
+    },
+    "venusJupiter": {
+      "instantUtc": "2026-06-09T19:59:12.913Z",
+      "sourcePacificDate": "2026-06-09",
+      "canonicalDate": "2026-06-09",
+      "canonicalNoonUtc": "2026-06-09T16:00:00.000Z",
+      "first": "venus",
+      "aspect": "conjunction",
+      "second": "jupiter",
+      "firstSign": "Cancer",
+      "firstDegree": 25.78,
+      "secondSign": "Cancer",
+      "secondDegree": 25.78,
+      "residualOrbDegrees": 0
+    },
+    "jupiterPlutoJuly": {
+      "instantUtc": "2026-07-20T14:44:40.792Z",
+      "sourcePacificDate": "2026-07-20",
+      "canonicalDate": "2026-07-20",
+      "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+      "first": "jupiter",
+      "aspect": "opposition",
+      "second": "pluto",
+      "firstSign": "Leo",
+      "firstDegree": 4.44,
+      "secondSign": "Aquarius",
+      "secondDegree": 4.44,
+      "residualOrbDegrees": 0
+    },
+    "jupiterNeptuneJuly": {
+      "instantUtc": "2026-07-20T07:23:28.273Z",
+      "sourcePacificDate": "2026-07-20",
+      "canonicalDate": "2026-07-20",
+      "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+      "first": "jupiter",
+      "aspect": "trine",
+      "second": "neptune",
+      "firstSign": "Leo",
+      "firstDegree": 4.37,
+      "secondSign": "Aries",
+      "secondDegree": 4.37,
+      "residualOrbDegrees": 0
+    },
+    "uranusPlutoJuly": {
+      "instantUtc": "2026-07-18T04:43:21.909Z",
+      "sourcePacificDate": "2026-07-17",
+      "canonicalDate": "2026-07-18",
+      "canonicalNoonUtc": "2026-07-18T16:00:00.000Z",
+      "first": "uranus",
+      "aspect": "trine",
+      "second": "pluto",
+      "firstSign": "Gemini",
+      "firstDegree": 4.5,
+      "secondSign": "Aquarius",
+      "secondDegree": 4.5,
+      "residualOrbDegrees": 0
+    },
+    "neptunePlutoSeptember": {
+      "instantUtc": "2026-09-16T02:08:50.485Z",
+      "sourcePacificDate": "2026-09-15",
+      "canonicalDate": "2026-09-15",
+      "canonicalNoonUtc": "2026-09-15T16:00:00.000Z",
+      "first": "neptune",
+      "aspect": "sextile",
+      "second": "pluto",
+      "firstSign": "Aries",
+      "firstDegree": 3.27,
+      "secondSign": "Aquarius",
+      "secondDegree": 3.27,
+      "residualOrbDegrees": 0
+    },
+    "uranusPlutoNovember": {
+      "instantUtc": "2026-11-29T11:23:04.684Z",
+      "sourcePacificDate": "2026-11-29",
+      "canonicalDate": "2026-11-29",
+      "canonicalNoonUtc": "2026-11-29T17:00:00.000Z",
+      "first": "uranus",
+      "aspect": "trine",
+      "second": "pluto",
+      "firstSign": "Gemini",
+      "firstDegree": 3.53,
+      "secondSign": "Aquarius",
+      "secondDegree": 3.53,
+      "residualOrbDegrees": 0
+    }
+  },
+  "julyBasketMatrix": {
+    "evaluatedAt": "2026-07-20T16:00:00.000Z",
+    "aspects": {
+      "jupiterPluto": {
+        "instantUtc": "2026-07-20T16:00:00.000Z",
+        "sourcePacificDate": "2026-07-20",
+        "canonicalDate": "2026-07-20",
+        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+        "first": "jupiter",
+        "aspect": "opposition",
+        "second": "pluto",
+        "firstSign": "Leo",
+        "firstDegree": 4.45,
+        "secondSign": "Aquarius",
+        "secondDegree": 4.44,
+        "orbDegrees": 0.01
+      },
+      "jupiterNeptune": {
+        "instantUtc": "2026-07-20T16:00:00.000Z",
+        "sourcePacificDate": "2026-07-20",
+        "canonicalDate": "2026-07-20",
+        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+        "first": "jupiter",
+        "aspect": "trine",
+        "second": "neptune",
+        "firstSign": "Leo",
+        "firstDegree": 4.45,
+        "secondSign": "Aries",
+        "secondDegree": 4.37,
+        "orbDegrees": 0.08
+      },
+      "neptunePluto": {
+        "instantUtc": "2026-07-20T16:00:00.000Z",
+        "sourcePacificDate": "2026-07-20",
+        "canonicalDate": "2026-07-20",
+        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+        "first": "neptune",
+        "aspect": "sextile",
+        "second": "pluto",
+        "firstSign": "Aries",
+        "firstDegree": 4.37,
+        "secondSign": "Aquarius",
+        "secondDegree": 4.44,
+        "orbDegrees": 0.07
+      },
+      "uranusPluto": {
+        "instantUtc": "2026-07-20T16:00:00.000Z",
+        "sourcePacificDate": "2026-07-20",
+        "canonicalDate": "2026-07-20",
+        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
+        "first": "uranus",
+        "aspect": "trine",
+        "second": "pluto",
+        "firstSign": "Gemini",
+        "firstDegree": 4.6,
+        "secondSign": "Aquarius",
+        "secondDegree": 4.44,
+        "orbDegrees": 0.16
+      }
+    }
+  },
+  "excluded": {
+    "barbaultQuote": "UNVERIFIED; not imported into any serving or aspect-article field.",
+    "historicalFirstSince1922": "Not established by this 2026 calculation and therefore not confirmed."
+  }
+}
