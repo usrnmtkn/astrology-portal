@@ -46,6 +46,47 @@ function pointSlug(point) {
   return point.toLowerCase().replaceAll(" ", "_");
 }
 
+const LUNAR_NODE_POINTS = new Set(["North Node", "South Node"]);
+
+/** Collapse both lunar-node contacts into one North-Node-keyed editorial event. */
+export function canonicalizeNodeAxisAspects(aspects) {
+  const canonical = [];
+  const nodeContactIndex = new Map();
+
+  for (const aspect of aspects) {
+    const fromIsNode = LUNAR_NODE_POINTS.has(aspect.from);
+    const toIsNode = LUNAR_NODE_POINTS.has(aspect.to);
+
+    if (fromIsNode && toIsNode) {
+      continue;
+    }
+
+    if (!fromIsNode && !toIsNode) {
+      canonical.push(aspect);
+      continue;
+    }
+
+    const otherPoint = fromIsNode ? aspect.to : aspect.from;
+    const nodePoint = fromIsNode ? aspect.from : aspect.to;
+    const existingIndex = nodeContactIndex.get(otherPoint);
+
+    if (existingIndex === undefined) {
+      nodeContactIndex.set(otherPoint, canonical.length);
+      canonical.push(aspect);
+      continue;
+    }
+
+    const existing = canonical[existingIndex];
+    const existingNode = LUNAR_NODE_POINTS.has(existing.from) ? existing.from : existing.to;
+
+    if (nodePoint === "North Node" && existingNode !== "North Node") {
+      canonical[existingIndex] = aspect;
+    }
+  }
+
+  return canonical.sort((first, second) => first.orb - second.orb);
+}
+
 function aspectForSeparation(separation) {
   return SKY_ASPECT_DEFINITIONS
     .map((definition) => ({

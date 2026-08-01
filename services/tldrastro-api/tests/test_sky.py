@@ -4,6 +4,11 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from tldrastro_api.main import app
+from tldrastro_api.services.aspect_profile import (
+    canonical_sky_aspect_definitions,
+    canonical_sky_aspect_orbs,
+    canonical_sky_point_names,
+)
 
 
 client = TestClient(app)
@@ -74,3 +79,48 @@ def test_sky_current_uses_true_node_after_2026_aquarius_ingress():
     )
     assert north_node["sign"] == "Aquarius"
     assert 329 <= north_node["longitude"] < 330
+
+
+def test_sky_current_uses_canonical_aspect_matrix_and_node_axis():
+    fixture_path = Path(__file__).parent / "fixtures" / "sky_current_new_york_2026_06_16.json"
+    request = json.loads(fixture_path.read_text())["request"]
+    request["datetime"]["date"] = "2026-07-31"
+    request["datetime"]["time"] = "12:00"
+
+    response = client.post("/sky/current", json=request)
+
+    assert response.status_code == 200
+    sky = response.json()
+    aspect_definitions = dict(canonical_sky_aspect_definitions())
+    aspect_orbs = canonical_sky_aspect_orbs()
+    assert [position["point"] for position in sky["positions"]] == canonical_sky_point_names()
+    assert set(aspect_definitions) == {
+        "conjunction",
+        "sextile",
+        "square",
+        "trine",
+        "quincunx",
+        "opposition",
+    }
+    assert aspect_orbs == {
+        "conjunction": 5.0,
+        "sextile": 5.0,
+        "square": 5.0,
+        "trine": 5.0,
+        "quincunx": 3.0,
+        "opposition": 5.0,
+    }
+
+    node_names = {"North Node", "South Node"}
+    node_contacts = {}
+    for aspect in sky["aspects"]:
+        assert aspect["type"] in aspect_definitions
+        assert aspect["orb"] <= aspect_orbs[aspect["type"]]
+        assert not ({aspect["from"], aspect["to"]} <= node_names)
+
+        nodes = {aspect["from"], aspect["to"]} & node_names
+        if nodes:
+            other = aspect["to"] if aspect["from"] in node_names else aspect["from"]
+            key = (other, aspect["type"])
+            assert key not in node_contacts
+            node_contacts[key] = next(iter(nodes))
