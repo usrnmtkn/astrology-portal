@@ -1,0 +1,281 @@
+.add-chart-field,
+.add-chart-city-search {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.add-chart-field > span,
+.add-chart-field > label > span,
+.add-chart-city-search label > span {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.add-chart-field > div,
+.add-chart-field > label,
+.add-chart-city-search label {
+  display: grid;
+  gap: 6px;
+}
+
+.add-chart-field input:not([type="checkbox"]),
+.add-chart-field select,
+.add-chart-city-search .city-search-control,
+.add-chart-city-search .city-search-control input {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  border: 1px solid var(--control-border);
+  border-radius: var(--control-radius);
+  background: var(--control-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-button-size);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
+  text-transform: none;
+}
+
+.add-chart-field input[type="date"],
+.add-chart-field input[type="time"],
+.add-chart-field select {
+  color-scheme: light;
+}
+
+.add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
+.add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0.72;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
+  border-color: var(--friend-add-chart-modal-dark-border);
+  background: var(--friend-add-chart-modal-dark-bg);
+  color-scheme: dark;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
+  color: var(--ink);
+  stroke: currentColor;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal__close {
+  border-color: var(--friend-add-chart-close-dark-border);
+  background: var(--friend-add-chart-close-dark-bg);
+  color: var(--ink);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"],
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"],
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field select {
+  color-scheme: dark;
+}
+
+.add-chart-pronouns {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: calc(var(--space-4) + var(--space-1) / 2) 0 0;
+}
+
+.add-chart-pronouns legend {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.add-chart-pronoun-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: var(--space-3);
+}
+
+.add-chart-pronoun-option {
+  align-items: center;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  gap: 8px;
+}
+
+.add-chart-pronoun-option input {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  height: 18px;
+  margin: 0;
+  width: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-circle);
+  background: var(--control-bg);
+}
+
+.add-chart-pronoun-option input::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-circle);
+  background: var(--ink);
+  transform: scale(0);
+  transition: transform 120ms ease;
+}
+
+.add-chart-pronoun-option input:checked {
+  border-color: var(--ink);
+}
+
+.add-chart-pronoun-option input:checked::before {
+  transform: scale(1);
+}
+
+.add-chart-pronoun-option input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.9;
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .add-chart-field > span,
+  .add-chart-field > label > span,
+  .add-chart-city-search label > span,
+  .add-chart-pronouns legend,
+  .add-chart-form .checkbox-row,
+  .add-chart-form .checkbox-row span
+) {
+  color: var(--ink-2);
+}
+
+.add-chart-field select {
+  min-height: 46px;
+  padding-right: calc(var(--space-8) + var(--space-1) / 2);
+}
+
+.add-chart-field input:not([type="checkbox"])::placeholder,
+.add-chart-city-search .city-search-control input::placeholder {
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.add-chart-field input:not([type="checkbox"]):focus,
+.add-chart-field select:focus,
+.add-chart-city-search .city-search-control input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--surface-2);
+}
+
+.add-chart-birth-grid {
+  gap: 12px;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.birth-time-field .checkbox-row {
+  margin-top: calc(var(--space-1) / 2);
+}
+
+.add-chart-form .checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+  text-transform: none;
+}
+
+.add-chart-form .checkbox-row input {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.add-chart-form .checkbox-row input:checked {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.add-chart-form .checkbox-row input:checked::before {
+  --add-chart-checkmark-offset-y: -1px;
+
+  content: "";
+  width: 8px;
+  height: 5px;
+  border-bottom: 2px solid var(--surface);
+  border-left: 2px solid var(--surface);
+  transform: rotate(-45deg) translateY(var(--add-chart-checkmark-offset-y));
+}
+
+.add-chart-form .checkbox-row span {
+  color: var(--card-meta-color);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+  text-transform: none;
+}
+
+.add-chart-submit {
+  width: 100%;
+  min-height: 47px;
+  margin-top: calc(var(--space-1) + var(--space-1) / 2);
+  border: 0;
+  border-radius: var(--card-radius);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-family: var(--font-body);
+  font-size: var(--text-button-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+  padding: calc(var(--space-3) + var(--space-1) / 2);
+  cursor: pointer;
+}
+
+.add-chart-submit:hover {
+  opacity: 0.92;
+}
+

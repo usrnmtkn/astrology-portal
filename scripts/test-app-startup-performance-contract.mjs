@@ -11,9 +11,11 @@ const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
+const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-chart-modal.css"), "utf8");
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
+const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -143,6 +145,21 @@ assert.match(
   friendDetailStylesSource,
   /(?:^|\n)\.friend-placement-column\s*\{/u,
   "The lazy FriendDetail stylesheet must own Friends placement and aspect-row CSS."
+);
+assert.doesNotMatch(
+  friendsStylesSource,
+  /(?:^|\n)\.add-chart-field,/u,
+  "Add/edit chart field CSS must not remain in the eager Friends/profile stylesheet."
+);
+assert.match(
+  friendChartModalSource,
+  /import "\.\.\/\.\.\/styles\/friends-chart-modal\.css";/u,
+  "The lazy FriendChartModal component must own its form-control stylesheet."
+);
+assert.match(
+  friendChartModalStylesSource,
+  /(?:^|\n)\.add-chart-field,/u,
+  "The lazy FriendChartModal stylesheet must contain add/edit chart field CSS."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,

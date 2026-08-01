@@ -56,20 +56,22 @@ The August 1, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 547.3 kB |
+| Reader boot, including awaited CSS | 546.4 kB |
 | Static App JavaScript graph | 501.9 kB |
-| Reader startup CSS | 45.3 kB |
+| Reader startup CSS | 44.5 kB |
 | App code chunk | 158.8 kB |
 
 The governed domain split, Calendar CSS boundary, deferred full manifest, and
-complementary source partitions reduced reader boot from 1.34 MB to 547.3 kB
+complementary source partitions reduced reader boot from 1.34 MB to 546.4 kB
 gzip, about 59%. The Friends production-layout and comparison-picker layers
 follow their lazy route, moving 6.67 kB gzip out of startup without duplicating
 their rules. Removing 46 unreferenced selectors from the retired social-card
-interface saves another 1.3 kB gzip of startup CSS. The 3.45 kB Friends detail
+interface saves another 1.3 kB gzip of startup CSS. The 3.47 kB Friends detail
 layout, relationship explainer, composite/synastry placement, and aspect-row
 stylesheet follows the lazy detail component, so opening the Circle or Charts
-tabs does not request it. Friend/natal
+tabs does not request it. The 1.38 kB add/edit chart form-control stylesheet
+loads with the lazy modal; the shared delete-confirmation shell remains eager.
+Friend/natal
 placement sentences follow the non-Sky domain loader instead of shipping with
 the current-sky package. Phone fields use
 dependency-free formatting and a fast US
