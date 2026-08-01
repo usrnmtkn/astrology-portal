@@ -12292,6 +12292,7 @@ export function App() {
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
   const [, setContentRegistryVersion] = useState(0);
   const selectedSkyDetailRefreshKeyRef = useRef("");
+  const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
   const activeHouseSignLabelStyle = userProfile
     ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
@@ -12387,8 +12388,9 @@ export function App() {
     const contentKeys = calendarTransitDetailContentKeys(event);
     const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
 
+    openCalendarTransitDetailWithContent(event, skyGeneratedContent);
+
     if (missingKeys.length === 0) {
-      openCalendarTransitDetailWithContent(event, skyGeneratedContent);
       return;
     }
 
@@ -12410,12 +12412,9 @@ export function App() {
             requestedKeys: new Set([...cached.requestedKeys, ...missingKeys])
           });
         }
-
-        openCalendarTransitDetailWithContent(event, hydratedContent);
       })
       .catch((error) => {
-        console.warn("Calendar detail interpretation failed to load; opening the factual detail.", error);
-        openCalendarTransitDetailWithContent(event, skyGeneratedContent);
+        console.warn("Calendar detail interpretation failed to load; keeping the factual detail.", error);
       });
   }
 
@@ -12608,6 +12607,7 @@ export function App() {
     if (
       selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
+      && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
     ) {
       return;
     }
@@ -12615,6 +12615,7 @@ export function App() {
     const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
+    selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
     setSelectedSkyDetail(detail);
   }, [fallbackArchitectureV3Version, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
 
