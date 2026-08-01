@@ -9,8 +9,6 @@ import SwissEph from "swisseph-wasm";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const slotOutput = path.join(repoRoot, "packages/astro-knowledge/review/engine-confirmed-2026-date-slots.json");
 const aspectOutput = path.join(repoRoot, "docs/content-review/sky-aspects/2026-engine-confirmed-aspect-hits.json");
-const appTimeZone = "America/New_York";
-const sourceTimeZone = "America/Los_Angeles";
 const flags = { write: process.argv.includes("--write") };
 
 const swe = new SwissEph();
@@ -59,52 +57,13 @@ function separation(first, second, date) {
   return Math.min(raw, 360 - raw);
 }
 
-function dateParts(date, timeZone) {
-  return Object.fromEntries(new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
-}
-
-function dateKey(date, timeZone) {
-  const parts = dateParts(date, timeZone);
-  return `${parts.year}-${parts.month}-${parts.day}`;
-}
-
-function zonedNoonUtc(localDate, timeZone) {
-  const [year, month, day] = localDate.split("-").map(Number);
-  let guess = new Date(Date.UTC(year, month - 1, day, 12));
-  for (let index = 0; index < 3; index += 1) {
-    const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23"
-    }).formatToParts(guess).filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
-    const observed = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute), Number(parts.second));
-    const desired = Date.UTC(year, month - 1, day, 12);
-    guess = new Date(guess.getTime() + desired - observed);
-  }
-  return guess.toISOString();
-}
-
 function rounded(value, places = 2) {
   return Number(value.toFixed(places));
 }
 
 function eventRecord(date, extra = {}) {
-  const canonicalDate = dateKey(date, appTimeZone);
   return {
     instantUtc: date.toISOString(),
-    sourcePacificDate: dateKey(date, sourceTimeZone),
-    canonicalDate,
-    canonicalNoonUtc: zonedNoonUtc(canonicalDate, appTimeZone),
     ...extra
   };
 }
@@ -367,51 +326,54 @@ const julyBasketMatrix = {
   }
 };
 
-const sourceClaims = {
-  "Neptune enters Aries, January 2026": ingresses.neptuneAries,
-  "Saturn-Neptune conjunction Feb 20, 2026 at 0 degrees 44 Aries": aspectHits.saturnNeptune,
-  "Uranus enters Gemini April 25, 2026; through 2033; shadow clear May 21": {
+const verifiedFacts = {
+  neptuneAriesIngress: ingresses.neptuneAries,
+  saturnNeptuneConjunction: aspectHits.saturnNeptune,
+  uranusGeminiPassage: {
     entry: ingresses.uranusGemini,
     shadowClear: uranusShadowClear,
     finalExit: ingresses.uranusCancerExit
   },
-  "Jupiter enters Leo June 29, 2026": ingresses.jupiterLeo,
-  "True Nodes enter Aquarius/Leo July 26, 2026": ingresses.trueNodeAquarius,
-  "Total Solar Eclipse Aug 12, 2026 at 20 Leo": eclipses.leoSolar,
-  "Virgo Total Lunar Eclipse Mar 3, 2026": eclipses.virgoLunar2026,
-  "Aquarius Solar Eclipse Feb 2026": eclipses.aquariusSolar,
-  "New Moon Gemini Jun 14, 2026": lunations.geminiNewMoon,
-  "New Moon Cancer Jul 14, 2026 at 21 Cancer": lunations.cancerNewMoon,
-  "Full Moon Capricorn Jun 29, 2026": lunations.capricornFullMoon,
-  "Full Moon Scorpio May 1, 2026": lunations.scorpioFullMoon,
-  "Mercury retrograde Pisces Feb 25 to Mar 20, 2026": { start: stations.mercuryPiscesRetrograde, end: stations.mercuryPiscesDirect },
-  "Mercury retrograde Cancer Jun 29 to Jul 23, 2026": { start: stations.mercuryCancerRetrograde, end: stations.mercuryCancerDirect },
-  "Jupiter stations direct in Cancer Mar 10, 2026": stations.jupiterCancerDirect,
-  "Pluto stations retrograde early May 2026": { start: stations.plutoAquariusRetrograde, end: stations.plutoAquariusDirect },
-  "Venus retrograde Oct 3 to Nov 13, 2026; shadow Aug 31": { shadowStart: venusShadowStart, start: stations.venusScorpioRetrograde, end: stations.venusLibraDirect },
-  "Mercury retrograde Oct 24 to Nov 13, 2026": { start: stations.mercuryScorpioRetrograde, end: stations.mercuryScorpioDirect },
-  "Mercury cazimi Mar 7, 2026 at 16 degrees 52 Pisces": cazimis.mercuryPisces,
-  "Neptune cazimi Mar 22, 2026 at 1 degree 50 Aries": cazimis.neptuneAries,
-  "Saturn cazimi Mar 25, 2026 at 4 degrees 43 Aries": cazimis.saturnAries,
-  "Jupiter cazimi in Leo late Jul/Aug 2026": cazimis.jupiterLeo,
-  "July 2026 basket exact Jul 19 to 21, repeating Nov 29": {
-    canonicalNoonMatrix: julyBasketMatrix,
+  jupiterLeoPassage: { entry: ingresses.jupiterLeo, finalExit: ingresses.jupiterVirgoExit },
+  trueNodeAquariusLeoPassage: { entry: ingresses.trueNodeAquarius, finalExit: ingresses.trueNodeCapricornExit },
+  leoTotalSolarEclipse: eclipses.leoSolar,
+  virgoTotalLunarEclipse: eclipses.virgoLunar2026,
+  aquariusSolarEclipse: eclipses.aquariusSolar,
+  geminiNewMoon: lunations.geminiNewMoon,
+  cancerNewMoon: lunations.cancerNewMoon,
+  capricornFullMoon: lunations.capricornFullMoon,
+  scorpioFullMoon: lunations.scorpioFullMoon,
+  mercuryPiscesRetrograde: { start: stations.mercuryPiscesRetrograde, end: stations.mercuryPiscesDirect },
+  mercuryCancerRetrograde: { start: stations.mercuryCancerRetrograde, end: stations.mercuryCancerDirect },
+  jupiterCancerDirectStation: stations.jupiterCancerDirect,
+  plutoAquariusRetrograde: { start: stations.plutoAquariusRetrograde, end: stations.plutoAquariusDirect },
+  venusRetrograde: { shadowStart: venusShadowStart, start: stations.venusScorpioRetrograde, end: stations.venusLibraDirect },
+  mercuryScorpioRetrograde: { start: stations.mercuryScorpioRetrograde, end: stations.mercuryScorpioDirect },
+  mercuryPiscesCazimi: cazimis.mercuryPisces,
+  neptuneAriesCazimi: cazimis.neptuneAries,
+  saturnAriesCazimi: cazimis.saturnAries,
+  jupiterLeoCazimi: cazimis.jupiterLeo,
+  julyOuterPlanetConfiguration: {
+    evaluationMatrix: julyBasketMatrix,
     exactHits: aspectHits,
-    assessment: "Jupiter-Pluto and Jupiter-Neptune perfect on July 20. Uranus-Pluto perfects on July 18 canonical time (July 17 PT) and again November 29. Neptune-Pluto is active in the July basket but does not perfect until September 16. The full four-aspect basket does not repeat on November 29."
+    assessment: "Exact instants are retained in exactHits and must be rendered in the user's timezone. Jupiter-Pluto and Jupiter-Neptune perfect during the July window. Uranus-Pluto perfects immediately before it and again in November. Neptune-Pluto is active in the July basket but perfects later. The full four-aspect basket does not repeat at the later Uranus-Pluto hit."
   },
-  "Venus-Jupiter conjunction 25 Cancer Jun 9, 2026": aspectHits.venusJupiter
+  venusJupiterConjunction: aspectHits.venusJupiter
 };
 
 const slots = {
   schema: "tldrastro-engine-confirmed-date-slots-v1",
-  generatedBy: "scripts/verify-2026-cc-sd-engine-claims.mjs",
-  ephemeris: "Swiss Ephemeris via swisseph-wasm",
-  sourceChecklist: "owner-resources:TLDR-Engine-Verification-Checklist-2026.md",
+  generatedBy: "scripts/verify-2026-engine-facts.mjs",
+  calculationAuthority: {
+    engine: "Swiss Ephemeris via swisseph-wasm",
+    independentPositionVerification: "NASA/JPL Horizons via the repository ephemeris integrity harness",
+    sourceRegistry: "scripts/fixtures/ephemeris-source-registry.json",
+    limitations: "NASA/JPL Horizons independently checks supported planetary positions. The app's Swiss Ephemeris remains authoritative for true node, eclipses, stations, retrograde shadows, and exact astrological event detection not supplied by the Horizons adapter."
+  },
   timePolicy: {
-    sourceTimeZone,
-    canonicalTimeZone: appTimeZone,
-    canonicalEvaluationLocalTime: "12:00",
-    note: "Exact instants are retained in UTC. Editorial date slots use the America/New_York date and its fixed local-noon evaluation instant; Pacific dates are recorded only for source reconciliation."
+    authority: "instantUtc",
+    displayTimeZone: "user-location",
+    note: "Engine facts retain exact UTC instants. Reader-facing dates and times must be derived at render time using the user's resolved IANA timezone; no source or canonical display timezone is persisted."
   },
   dateSlots: {
     neptuneAries: { entryDate: ingresses.neptuneAries },
@@ -423,7 +385,7 @@ const slots = {
       exitDate: ingresses.trueNodeCapricornExit,
       firstEclipseDate: eclipses.leoSolar,
       oldAxisEclipses: [eclipses.piscesLunar2026, eclipses.virgoLunar2027],
-      conflictResolution: "There is no date conflict: March 3, 2026 is a total Virgo lunar eclipse before the Aquarius/Leo node-axis entry, while February 20, 2027 is a separate penumbral Virgo lunar eclipse during that chapter. The latter belongs in oldAxisEclipses."
+      conflictResolution: "There is no event conflict: the total Virgo lunar eclipse before the Aquarius/Leo node-axis entry and the later penumbral Virgo lunar eclipse are distinct UTC instants. The later event belongs in oldAxisEclipses; render both dates in the user's timezone."
     },
     mercuryRetrogrades: [
       { sign: "Pisces", start: stations.mercuryPiscesRetrograde, end: stations.mercuryPiscesDirect, cazimi: cazimis.mercuryPisces },
@@ -436,18 +398,17 @@ const slots = {
     stations,
     cazimis
   },
-  sourceClaims
+  verifiedFacts
 };
 
 const aspectMatrixBackfill = {
   schema: "canonical-sky-aspect-2026-confirmed-hits-v1",
   profile: "canonical-sky-aspect-v1",
-  generatedBy: "scripts/verify-2026-cc-sd-engine-claims.mjs",
-  evaluationPolicy: "Exact hits are ephemeris instants; each record also carries the canonical America/New_York noon instant for its editorial date.",
+  generatedBy: "scripts/verify-2026-engine-facts.mjs",
+  evaluationPolicy: "Exact hits are UTC ephemeris instants. Reader-facing dates and times are derived in the user's resolved IANA timezone.",
   hits: aspectHits,
   julyBasketMatrix,
   excluded: {
-    barbaultQuote: "UNVERIFIED; not imported into any serving or aspect-article field.",
     historicalFirstSince1922: "Not established by this 2026 calculation and therefore not confirmed."
   }
 };
@@ -460,6 +421,11 @@ assert.equal(eclipses.virgoLunar2027.sign, "Virgo");
 assert.equal(ingresses.trueNodeAquarius.body, "true-node");
 assert.ok(cazimis.mercuryPisces.residualOrbDegrees < 0.001);
 assert.ok(aspectHits.saturnNeptune.residualOrbDegrees < 0.001);
+assert.doesNotMatch(
+  JSON.stringify({ slots, aspectMatrixBackfill }),
+  /America\/(?:Los_Angeles|New_York)|sourcePacificDate|canonicalDate|canonicalNoonUtc/u,
+  "Engine review fixtures must retain UTC instants and defer display dates to the user's timezone."
+);
 
 function stableJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
@@ -475,7 +441,7 @@ if (flags.write) {
 } else {
   assert.deepEqual(JSON.parse(fs.readFileSync(slotOutput, "utf8")), slots, "Engine-confirmed date-slot fixture is stale; run with --write after reviewing calculated changes.");
   assert.deepEqual(JSON.parse(fs.readFileSync(aspectOutput, "utf8")), aspectMatrixBackfill, "Canonical aspect-hit fixture is stale; run with --write after reviewing calculated changes.");
-  console.log(`2026 CC/SD engine claims verified: ${Object.keys(sourceClaims).length} claim groups, ${Object.keys(aspectHits).length} canonical aspect hits.`);
+  console.log(`2026 engine facts verified: ${Object.keys(verifiedFacts).length} fact groups, ${Object.keys(aspectHits).length} exact aspect hits.`);
 }
 
 swe.close();

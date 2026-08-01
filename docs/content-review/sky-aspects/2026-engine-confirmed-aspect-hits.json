@@ -1,14 +1,11 @@
 {
   "schema": "canonical-sky-aspect-2026-confirmed-hits-v1",
   "profile": "canonical-sky-aspect-v1",
-  "generatedBy": "scripts/verify-2026-cc-sd-engine-claims.mjs",
-  "evaluationPolicy": "Exact hits are ephemeris instants; each record also carries the canonical America/New_York noon instant for its editorial date.",
+  "generatedBy": "scripts/verify-2026-engine-facts.mjs",
+  "evaluationPolicy": "Exact hits are UTC ephemeris instants. Reader-facing dates and times are derived in the user's resolved IANA timezone.",
   "hits": {
     "saturnNeptune": {
       "instantUtc": "2026-02-20T16:54:02.191Z",
-      "sourcePacificDate": "2026-02-20",
-      "canonicalDate": "2026-02-20",
-      "canonicalNoonUtc": "2026-02-20T17:00:00.000Z",
       "first": "saturn",
       "aspect": "conjunction",
       "second": "neptune",
@@ -20,9 +17,6 @@
     },
     "venusJupiter": {
       "instantUtc": "2026-06-09T19:59:12.913Z",
-      "sourcePacificDate": "2026-06-09",
-      "canonicalDate": "2026-06-09",
-      "canonicalNoonUtc": "2026-06-09T16:00:00.000Z",
       "first": "venus",
       "aspect": "conjunction",
       "second": "jupiter",
@@ -34,9 +28,6 @@
     },
     "jupiterPlutoJuly": {
       "instantUtc": "2026-07-20T14:44:40.792Z",
-      "sourcePacificDate": "2026-07-20",
-      "canonicalDate": "2026-07-20",
-      "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
       "first": "jupiter",
       "aspect": "opposition",
       "second": "pluto",
@@ -48,9 +39,6 @@
     },
     "jupiterNeptuneJuly": {
       "instantUtc": "2026-07-20T07:23:28.273Z",
-      "sourcePacificDate": "2026-07-20",
-      "canonicalDate": "2026-07-20",
-      "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
       "first": "jupiter",
       "aspect": "trine",
       "second": "neptune",
@@ -62,9 +50,6 @@
     },
     "uranusPlutoJuly": {
       "instantUtc": "2026-07-18T04:43:21.909Z",
-      "sourcePacificDate": "2026-07-17",
-      "canonicalDate": "2026-07-18",
-      "canonicalNoonUtc": "2026-07-18T16:00:00.000Z",
       "first": "uranus",
       "aspect": "trine",
       "second": "pluto",
@@ -76,9 +61,6 @@
     },
     "neptunePlutoSeptember": {
       "instantUtc": "2026-09-16T02:08:50.485Z",
-      "sourcePacificDate": "2026-09-15",
-      "canonicalDate": "2026-09-15",
-      "canonicalNoonUtc": "2026-09-15T16:00:00.000Z",
       "first": "neptune",
       "aspect": "sextile",
       "second": "pluto",
@@ -90,9 +72,6 @@
     },
     "uranusPlutoNovember": {
       "instantUtc": "2026-11-29T11:23:04.684Z",
-      "sourcePacificDate": "2026-11-29",
-      "canonicalDate": "2026-11-29",
-      "canonicalNoonUtc": "2026-11-29T17:00:00.000Z",
       "first": "uranus",
       "aspect": "trine",
       "second": "pluto",
@@ -108,9 +87,6 @@
     "aspects": {
       "jupiterPluto": {
         "instantUtc": "2026-07-20T16:00:00.000Z",
-        "sourcePacificDate": "2026-07-20",
-        "canonicalDate": "2026-07-20",
-        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
         "first": "jupiter",
         "aspect": "opposition",
         "second": "pluto",
@@ -122,9 +98,6 @@
       },
       "jupiterNeptune": {
         "instantUtc": "2026-07-20T16:00:00.000Z",
-        "sourcePacificDate": "2026-07-20",
-        "canonicalDate": "2026-07-20",
-        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
         "first": "jupiter",
         "aspect": "trine",
         "second": "neptune",
@@ -136,9 +109,6 @@
       },
       "neptunePluto": {
         "instantUtc": "2026-07-20T16:00:00.000Z",
-        "sourcePacificDate": "2026-07-20",
-        "canonicalDate": "2026-07-20",
-        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
         "first": "neptune",
         "aspect": "sextile",
         "second": "pluto",
@@ -150,9 +120,6 @@
       },
       "uranusPluto": {
         "instantUtc": "2026-07-20T16:00:00.000Z",
-        "sourcePacificDate": "2026-07-20",
-        "canonicalDate": "2026-07-20",
-        "canonicalNoonUtc": "2026-07-20T16:00:00.000Z",
         "first": "uranus",
         "aspect": "trine",
         "second": "pluto",
@@ -165,7 +132,6 @@
     }
   },
   "excluded": {
-    "barbaultQuote": "UNVERIFIED; not imported into any serving or aspect-article field.",
     "historicalFirstSince1922": "Not established by this 2026 calculation and therefore not confirmed."
   }
 }
