@@ -1,5 +1,13 @@
 # Release Notes
 
+## 2026-07-31: Idempotent Cloud Run Ephemeris Mount
+
+- Assigned the production Swiss Ephemeris bucket a stable `swisseph-data`
+  Cloud Run volume and mount name.
+- Prevented repeat API deployments from creating anonymous orphan volumes.
+- Added a deployment-contract regression test that rejects anonymous
+  `mount-path` volume declarations.
+
 ## 2026-07-31: Unified Current-Sky Aspect Matrix
 
 - Replaced the separate reader and content-writer aspect rules with one shared
