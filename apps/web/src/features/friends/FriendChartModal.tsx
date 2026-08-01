@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import type { FormEvent, ReactNode } from "react";
 import { ModalPortal } from "../../components/ModalPortal";
+import "../../styles/friends-chart-modal.css";
 import type { LocationInput } from "../../types";
 import type { ManualChartType } from "../../services/manualCharts";
 import {
