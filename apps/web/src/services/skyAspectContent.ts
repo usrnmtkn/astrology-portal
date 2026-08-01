@@ -37,6 +37,8 @@ type ResolveSkyAspectContentOptions = {
   targetDate?: string | null;
 };
 
+type SkyAspectContentKeyOptions = Omit<ResolveSkyAspectContentOptions, "generatedContent">;
+
 type ExpectedSkyAspectFacts = {
   a: string;
   b: string;
@@ -134,6 +136,28 @@ function generatedSkyAspectCardPassesBoundary(
   );
 }
 
+function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targetDate?: string | null) {
+  const evergreenKey = skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
+    firstSign: expected.signA,
+    secondSign: expected.signB
+  });
+  const datedKey = targetDate
+    ? skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
+        firstSign: expected.signA,
+        secondSign: expected.signB,
+        targetDate
+      })
+    : "";
+
+  return [evergreenKey, datedKey].filter(Boolean);
+}
+
+export function skyAspectGeneratedContentKeys(options: SkyAspectContentKeyOptions) {
+  const expected = normalizedCollectiveSkyAspectFacts(options);
+
+  return expected ? skyAspectContentKeysFromExpected(expected, options.targetDate) : [];
+}
+
 export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectContentOptions) {
   const expected = normalizedCollectiveSkyAspectFacts(options);
 
@@ -141,19 +165,7 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
     return null;
   }
 
-  const evergreenKey = skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
-    firstSign: expected.signA,
-    secondSign: expected.signB
-  });
-  const datedKey = options.targetDate
-    ? skyAspectInstanceContentKey(expected.a, expected.aspect, expected.b, {
-        firstSign: expected.signA,
-        secondSign: expected.signB,
-        targetDate: options.targetDate
-      })
-    : "";
-  const content = [evergreenKey, datedKey]
-    .filter(Boolean)
+  const content = skyAspectContentKeysFromExpected(expected, options.targetDate)
     .map((key) => options.generatedContent.get(key))
     .find((candidate): candidate is LiveGeneratedContent => Boolean(
       candidate && generatedSkyAspectCardPassesBoundary(candidate, expected)
