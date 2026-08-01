@@ -15106,7 +15106,7 @@ export function App() {
                 <span>
                   <span className="eyebrow section-label">Friend invitation</span>
                   <h2 id="social-invitation-accept-title">
-                    {pendingSocialInvitation.inviterDisplayName} invited you.
+                    Your friend {pendingSocialInvitation.inviterDisplayName} wants you to join their circle.
                   </h2>
                   <small>@{pendingSocialInvitation.inviterHandle}</small>
                 </span>

@@ -752,8 +752,28 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /createSocialShareInvitation[\s\S]*Create invite link[\s\S]*Text it to a contact[\s\S]*Invite link[\s\S]*createdInvitationLink[\s\S]*Give them a code[\s\S]*Open invitations/,
-  "Non-member invitations must expose the full link and readable code alongside native share, text, copy, and history actions."
+  /createSocialShareInvitation[\s\S]*recognizableInvitationLink[\s\S]*TLDR Astro invite link[\s\S]*friends-invite-link-copy[\s\S]*Copy invite link[\s\S]*Share[\s\S]*Text/,
+  "Non-member invitations must expose a recognizable TLDR Astro link with an embedded copy action alongside native share and text actions."
+);
+assert.match(
+  socialFriendsPanel,
+  /Your friend \$\{senderName\} wants you to join their circle on TLDR Astro\./,
+  "Shared invitation messages must identify the inviter as the recipient's friend."
+);
+assert.match(
+  app,
+  /Your friend \{pendingSocialInvitation\.inviterDisplayName\} wants you to join their circle\./,
+  "The invitation acceptance modal must identify the friend who sent the invitation."
+);
+assert.doesNotMatch(
+  socialFriendsPanel,
+  /No link\? Give them a code|friends-invite-code-section|Code: \$\{createdInvitationCode/,
+  "The ready state must not repeat the invite token as a separate code."
+);
+assert.doesNotMatch(
+  socialFriendsPanel,
+  /Create another invite|friends-invite-another/,
+  "The ready state must handle one invite link at a time without offering another link inline."
 );
 assert.match(
   socialFriendsPanel,
@@ -764,6 +784,16 @@ assert.match(
   socialFriendsPanel,
   /Invite links expire in 30 days and work once\.[\s\S]*Share them privately\./,
   "The invitation composer must explain the single-use link's expiry and bearer-link privacy."
+);
+assert.doesNotMatch(
+  socialFriendsPanel,
+  /Each link works once, for one person/,
+  "The invitation composer must not repeat unnecessary acceptance and chart-sharing copy."
+);
+assert.match(
+  socialFriendsPanel,
+  /pendingInvitations\.length > 0[\s\S]*\{inviteHistoryOpen \? "Close" : "Manage"\}[\s\S]*!createdInvitation && inviteHistoryOpen[\s\S]*pendingInvitations\.slice\(0, 8\)\.map/,
+  "The invitation manager must show only open invitations, use Close when expanded, and stay hidden behind the ready state."
 );
 assert.match(
   shareLinksMigration,
