@@ -6,7 +6,8 @@ loadLocalWebEnv();
 export type AspectPatternWriteupKind = "natal" | "activation";
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type AuthoredStatus = "draft" | "reviewed" | "approved" | "deprecated";
-type PatternType = "t_square" | "grand_square" | "grand_trine" | "kite" | "yod" | "mystic_rectangle";
+type AuthoredNatalRecord = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AuthoredAspectPatternRecord;
+type AuthoredActivationRecord = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AuthoredAspectPatternActivationRecord;
 
 type GeneratedContentRow = {
   id: string;
@@ -15,35 +16,6 @@ type GeneratedContentRow = {
   source_snapshot?: Record<string, unknown> | null;
   updated_at?: string | null;
   created_at?: string | null;
-};
-
-type AuthoredNatalRecord = {
-  id: string;
-  version: string;
-  patternType: PatternType;
-  status: AuthoredStatus;
-  eligibility: { confidence: string[]; houseMode: string; variants?: string[] };
-  content: {
-    eyebrow?: string;
-    headline: string;
-    overview: string;
-    sections: Array<{ id: string; template: string; required: boolean; conditions?: unknown[] }>;
-  };
-  languageRules: { certainty: string; prohibitedClaims: string[]; prohibitedTerms?: string[] };
-  provenance: { sourceIds: string[]; editorialStatus: string; reviewedBy?: string; reviewedAt?: string };
-  persistence?: { generatedContentId: string; contentKey: string; updatedAt?: string | null; createdAt?: string | null };
-};
-
-type AuthoredActivationRecord = Omit<AuthoredNatalRecord, "eligibility" | "languageRules"> & {
-  priority?: number;
-  authoredPriority?: number;
-  eligibility: {
-    targetRoles: string[];
-    timingStates?: string[];
-    patternConfidence?: string[];
-    triggerModes?: string[];
-  };
-  languageRules: { certainty?: string; prohibitedClaims: string[]; prohibitedTerms?: string[] };
 };
 
 const require = createRequire(import.meta.url);
