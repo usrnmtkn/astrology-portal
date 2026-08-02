@@ -11,6 +11,10 @@ const manualChartsControllerPath = path.join(
   "apps/web/src/features/friends/useManualChartsController.ts"
 );
 const manualChartsControllerSource = fs.readFileSync(manualChartsControllerPath, "utf8");
+const relationshipCompareHookSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/useRelationshipCompare.ts"),
+  "utf8"
+);
 const manualChartsSourcePath = path.join(repoRoot, "apps/web/src/services/manualCharts.ts");
 const manualChartsSource = fs.readFileSync(manualChartsSourcePath, "utf8");
 const authSourcePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
@@ -267,9 +271,14 @@ assert.match(
   "Relationship comparison requests must accept cancellation options."
 );
 assert.match(
-  appSource,
+  relationshipCompareHookSource,
   /const controller = new AbortController\(\);[\s\S]*compareRelationship\([\s\S]*signal: controller\.signal[\s\S]*return \(\) => \{\s*cancelled = true;\s*controller\.abort\(\);/,
   "Leaving Composite or changing charts must abort obsolete relationship comparison work."
+);
+assert.doesNotMatch(
+  appSource,
+  /setRelationshipCompareStatus|compareRelationship\(\{/,
+  "ManualChartsPanel must not re-embed relationship request state or cancellation."
 );
 assert.match(
   manualChartsControllerSource,

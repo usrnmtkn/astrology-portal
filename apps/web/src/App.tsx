@@ -96,7 +96,6 @@ import {
   type SignupTimeParts
 } from "./features/auth/signupModel";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
-import type { RelationshipCompareStatus } from "./features/friends/RelationshipApiSummary";
 import type { FriendNatalChartViewMode } from "./features/friends/FriendNatalViewControl";
 import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
@@ -128,6 +127,7 @@ import {
   planetPositionFromSocialRow
 } from "./features/friends/friendChartModel";
 import { useManualChartsController } from "./features/friends/useManualChartsController";
+import { useRelationshipCompare } from "./features/friends/useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
@@ -267,7 +267,7 @@ import {
   skyWithNatalAspectPatternCopy
 } from "./services/natalAspectPatterns";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "./services/natalAspectPatterns";
-import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
+import { relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
   genericPersonReferenceSlots,
@@ -288,10 +288,8 @@ import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import { natalBigThreeFromSky, zodiacFromBirthDate } from "./services/chartProfile";
 import {
-  compareRelationship,
   getPersonalTiming,
   isTldrAstroApiConfigured,
-  type RelationshipCompareResponse,
   type TldrAstroChartSettings,
   type TldrAstroSubject,
   type PersonalTimingResponse
@@ -16281,8 +16279,6 @@ function ManualChartsPanel({
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
-  const [relationshipCompare, setRelationshipCompare] = useState<RelationshipCompareResponse | null>(null);
-  const [relationshipCompareStatus, setRelationshipCompareStatus] = useState<RelationshipCompareStatus>("idle");
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
@@ -16327,6 +16323,30 @@ function ManualChartsPanel({
   const selectedRelationshipRomantic = selectedRelationshipContextType
     ? isExplicitRomanticRelationship(selectedRelationshipContextType)
     : false;
+  const relationshipApiSettings = useMemo(
+    () => apiSettingsFromChartSettings(profile.settings),
+    [profile.settings]
+  );
+  const relationshipPersonA = useMemo(
+    () => apiSubjectFromManualChart(selectedChart, relationshipApiSettings),
+    [relationshipApiSettings, selectedChart]
+  );
+  const relationshipPersonB = useMemo(
+    () => relationshipComparisonChartId === "self"
+      ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
+      : apiSubjectFromManualChart(relationshipComparisonManualChart, relationshipApiSettings),
+    [profile, relationshipApiSettings, relationshipComparisonChartId, relationshipComparisonManualChart]
+  );
+  const {
+    response: relationshipCompare,
+    status: relationshipCompareStatus
+  } = useRelationshipCompare({
+    enabled: friendProfileTab === "composite" && Boolean(selectedChart) && !selectedChartIsEvent,
+    personA: relationshipPersonA,
+    personB: relationshipPersonB,
+    relationshipType: selectedRelationshipContextType,
+    settings: relationshipApiSettings
+  });
   const friendProfileWork = friendProfileWorkForTab(friendProfileTab);
   const selectedSynastryContacts = useMemo(() => {
     if (!friendProfileWork.synastryContacts || !selectedChart || selectedChartIsEvent) {
@@ -17204,84 +17224,6 @@ function ManualChartsPanel({
     }
   }, [friendProfileTab, selectedChartIsEvent]);
 
-  useEffect(() => {
-    const shouldLoadRelationshipCompare = friendProfileTab === "composite";
-
-    if (!shouldLoadRelationshipCompare || !isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
-      setRelationshipCompare(null);
-      setRelationshipCompareStatus("idle");
-      return;
-    }
-
-    const relationshipApiSettings = apiSettingsFromChartSettings(profile.settings);
-    const personA = apiSubjectFromManualChart(selectedChart, relationshipApiSettings);
-    const personB = relationshipComparisonChartId === "self"
-      ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
-      : apiSubjectFromManualChart(relationshipComparisonManualChart, relationshipApiSettings);
-
-    if (!personA || !personB) {
-      setRelationshipCompare(null);
-      setRelationshipCompareStatus("idle");
-      return;
-    }
-
-    let cancelled = false;
-    const controller = new AbortController();
-    setRelationshipCompareStatus("loading");
-
-    compareRelationship({
-      personA,
-      personB,
-      relationshipContext: relationshipContextFromRole(selectedRelationshipContextType),
-      settings: apiSettingsFromChartSettings(profile.settings),
-      includeContentFacts: true
-    }, {
-      signal: controller.signal
-    })
-      .then((response) => {
-        if (!cancelled) {
-          setRelationshipCompare(response);
-          setRelationshipCompareStatus("ready");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          console.warn("TLDR Astro relationship compare API failed; using local relationship rows.", error);
-          setRelationshipCompare(null);
-          setRelationshipCompareStatus("error");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [
-    selectedChart?.id,
-    selectedChart?.birthDate,
-    selectedChart?.birthTime,
-    selectedChart?.birthTimeUnknown,
-    selectedChart?.birthLocation?.label,
-    selectedChart?.birthLocation?.timeZone,
-    selectedRelationshipContextType,
-    selectedChartIsEvent,
-    relationshipComparisonChartId,
-    relationshipComparisonManualChart?.id,
-    relationshipComparisonManualChart?.birthDate,
-    relationshipComparisonManualChart?.birthTime,
-    relationshipComparisonManualChart?.birthTimeUnknown,
-    relationshipComparisonManualChart?.birthLocation?.label,
-    relationshipComparisonManualChart?.birthLocation?.timeZone,
-    friendProfileTab,
-    profile.id,
-    profile.name,
-    profile.settings,
-    profile.charts[0]?.birthDate,
-    profile.charts[0]?.birthTime,
-    profile.charts[0]?.birthCity,
-    profile.charts[0]?.birthLocation?.label,
-    profile.charts[0]?.birthLocation?.timeZone
-  ]);
   const isLoadingCharts = status === "loading";
   const friendChartListItems = useMemo(
     () => buildFriendChartListItems(
