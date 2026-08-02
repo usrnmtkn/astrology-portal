@@ -30,6 +30,7 @@ import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
+import { CitySearchField, CitySuggestions } from "./components/CitySearchField";
 import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
 import type { NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
@@ -109,6 +110,7 @@ import {
   type ManualChartForm
 } from "./features/friends/manualChartForm";
 import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
+import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import {
   calendarEventGeneratedContentKeys,
@@ -253,7 +255,6 @@ import {
   normalizeSocialHandle,
   previewPendingSocialInvitation,
   saveSocialHandle,
-  saveSocialPrivacy,
   socialHandleIsValid,
   socialFriendToChart,
   subscribeToSocialChanges,
@@ -291,7 +292,7 @@ import {
   contactsForBondTransitGroup,
   groupBondTransitActivations
 } from "./services/bondTransitGrouping";
-import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
+import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import {
@@ -432,7 +433,6 @@ type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
 type NatalChartViewMode = "circle" | "table";
-type SettingsSubpage = "root" | "blocked-accounts";
 
 type FriendTimingContext = {
   age: number | null;
@@ -601,7 +601,6 @@ type HouseOverlay = {
   contentKeys: string[];
 };
 
-type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 type SignupTimeParts = {
   hour: string;
   minute: string;
@@ -2193,42 +2192,11 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
-const settingsRouteChangeEvent = "tldr:settings-route-change";
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
 }
 
-function settingsSubpageFromUrl(): SettingsSubpage {
-  try {
-    const url = new URL(window.location.href);
-    const { path, params } = friendsHashParts(url.hash);
-
-    return path === "settings" && params.get("view") === "blocked-accounts"
-      ? "blocked-accounts"
-      : "root";
-  } catch {
-    return "root";
-  }
-}
-
-function updateSettingsSubpageUrl(
-  subpage: SettingsSubpage,
-  mode: "push" | "replace" = "push"
-) {
-  try {
-    const url = new URL(window.location.href);
-
-    url.hash = subpage === "blocked-accounts"
-      ? "settings?view=blocked-accounts"
-      : "settings";
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-    window.dispatchEvent(new Event(settingsRouteChangeEvent));
-  } catch {
-    // Nested Settings routing is an enhancement; local navigation still works.
-  }
-}
 
 function portalModeFromHashPath(path: string): PortalMode | null {
   switch (path) {
@@ -11393,39 +11361,15 @@ const SettingsRoute = lazy(() =>
   }))
 );
 
-const BlockedAccountsSettings = lazy(() =>
-  import("./features/settings/BlockedAccountsSettings").then((module) => ({
-    default: module.BlockedAccountsSettings
-  }))
-);
-
-const AppearanceToggle = lazy(() =>
-  import("./components/SettingsControls").then((module) => ({
-    default: module.AppearanceToggle
-  }))
-);
-
-const HouseSignLabelToggle = lazy(() =>
-  import("./components/SettingsControls").then((module) => ({
-    default: module.HouseSignLabelToggle
-  }))
-);
-
-const SwitchControl = lazy(() =>
-  import("./components/SettingsControls").then((module) => ({
-    default: module.SwitchControl
-  }))
-);
-
-const CalculationMethodSettingsGroup = lazy(() =>
-  import("./components/SettingsControls").then((module) => ({
-    default: module.CalculationMethodSettingsGroup
-  }))
-);
-
 const GuestSettingsView = lazy(() =>
   import("./features/settings/GuestSettingsView").then((module) => ({
     default: module.GuestSettingsView
+  }))
+);
+
+const MemberSettingsView = lazy(() =>
+  import("./features/settings/MemberSettingsView").then((module) => ({
+    default: module.MemberSettingsView
   }))
 );
 
@@ -14384,10 +14328,13 @@ export function App() {
               {mode === "settings" && (
                 <SettingsRoute>
                   {userProfile ? (
-                    <SettingsView
-                      profile={userProfile}
+                    <MemberSettingsView
+                      currentLocation={userProfile.currentLocation}
+                      currentLocationData={userProfile.currentLocationData}
+                      currentCityDisplay={compactCityLabel(userProfile.currentLocation || defaultLocation.label)}
+                      defaultLocation={withTimeZone(defaultLocation)}
+                      houseSignLabelStyle={normalizeChartSettings(userProfile.settings).houseSignLabelStyle}
                       socialProfile={ownSocialProfile}
-                      onUpdateProfile={setUserProfile}
                       onSocialProfileChange={setOwnSocialProfile}
                       theme={theme}
                       sunriseOrbEnabled={sunriseOrbEnabled}
@@ -14395,7 +14342,24 @@ export function App() {
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                      onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
+                      onCurrentLocationChange={(nextLocation) => {
+                        setUserProfile({
+                          ...userProfile,
+                          currentLocation: nextLocation.label,
+                          currentLocationData: nextLocation
+                        });
+                      }}
+                      onHouseSignLabelStyleChange={(houseSignLabelStyle) => {
+                        setGuestHouseSignLabelStyle(houseSignLabelStyle);
+                        setUserProfile({
+                          ...userProfile,
+                          settings: {
+                            ...normalizeChartSettings(userProfile.settings),
+                            houseSignLabelStyle
+                          }
+                        });
+                      }}
+                      resolveLocationLabel={locationFromLabel}
                     />
                   ) : (
                     <GuestSettingsView
@@ -14666,58 +14630,6 @@ function SkyDatePicker({
         </button>
       </div>
     </section>
-  );
-}
-
-function CitySuggestions({
-  suggestions,
-  status,
-  mapboxEnabled,
-  onSelect
-}: {
-  suggestions: CitySuggestion[];
-  status: "idle" | "loading" | "ready" | "empty" | "error";
-  mapboxEnabled: boolean;
-  onSelect: (suggestion: CitySuggestion) => void;
-}) {
-  if (!mapboxEnabled) {
-    return (
-      <p className="city-picker-note">
-        Add VITE_MAPBOX_ACCESS_TOKEN to enable suggested city search.
-      </p>
-    );
-  }
-
-  if (status === "idle") {
-    return <p className="city-picker-note">Start typing to see suggested cities.</p>;
-  }
-
-  if (status === "loading") {
-    return <p className="city-picker-note">Searching cities...</p>;
-  }
-
-  if (status === "error") {
-    return <p className="city-picker-note">City suggestions are unavailable right now.</p>;
-  }
-
-  if (status === "empty") {
-    return <p className="city-picker-note">No city suggestions found.</p>;
-  }
-
-  return (
-    <div className="city-suggestions" role="listbox" aria-label="Suggested cities">
-      {suggestions.map((suggestion) => (
-        <button
-          key={suggestion.id}
-          type="button"
-          role="option"
-          onClick={() => onSelect(suggestion)}
-        >
-          <strong>{suggestion.label}</strong>
-          {suggestion.region && <span>{suggestion.region}</span>}
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -15830,150 +15742,6 @@ function RetrogradeCallout({
         </>
       )}
     </section>
-  );
-}
-
-function CitySearchField({
-  label,
-  value,
-  onChange,
-  onSelect,
-  placeholder,
-  optional = false,
-  optionalLabel = "Optional",
-  icon,
-  className = ""
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  onSelect?: (suggestion: CitySuggestion) => void;
-  placeholder: string;
-  optional?: boolean;
-  optionalLabel?: string;
-  icon?: ReactNode;
-  className?: string;
-}) {
-  const fieldRef = useRef<HTMLDivElement | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
-  const query = value.trim();
-
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
-
-    function handlePointerDown(event: PointerEvent) {
-      const target = event.target as Node | null;
-
-      if (!target || fieldRef.current?.contains(target)) {
-        return;
-      }
-
-      setIsActive(false);
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsActive(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isActive]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (!isActive || !hasMapboxToken() || query.length < 2) {
-      setSuggestions([]);
-      setStatus("idle");
-      return;
-    }
-
-    setStatus("loading");
-    const searchTimer = window.setTimeout(() => {
-      searchCities(query)
-        .then((nextSuggestions) => {
-          if (cancelled) {
-            return;
-          }
-
-          setSuggestions(nextSuggestions);
-          setStatus(nextSuggestions.length > 0 ? "ready" : "empty");
-        })
-        .catch(() => {
-          if (cancelled) {
-            return;
-          }
-
-          setSuggestions([]);
-          setStatus("error");
-        });
-    }, 260);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(searchTimer);
-    };
-  }, [isActive, query]);
-
-  function chooseSuggestion(suggestion: CitySuggestion) {
-    if (onSelect) {
-      onSelect(suggestion);
-    } else {
-      onChange(suggestion.label);
-    }
-    setSuggestions([]);
-    setStatus("idle");
-    setIsActive(false);
-  }
-
-  const input = (
-    <input
-      aria-label={label}
-      value={value}
-      onChange={(event) => {
-        onChange(event.target.value);
-        setIsActive(true);
-      }}
-      onFocus={() => setIsActive(true)}
-      placeholder={placeholder}
-    />
-  );
-
-  return (
-    <div ref={fieldRef} className={`field-line city-search-field ${className}`}>
-      <label>
-        <span>
-          {label}
-          {optional && <em>{optionalLabel}</em>}
-        </span>
-        {icon ? (
-          <div className="city-search-control">
-            {icon}
-            {input}
-          </div>
-        ) : input}
-      </label>
-
-      {isActive && (
-        <CitySuggestions
-          suggestions={suggestions}
-          status={status}
-          mapboxEnabled={hasMapboxToken()}
-          onSelect={chooseSuggestion}
-        />
-      )}
-    </div>
   );
 }
 
@@ -17248,298 +17016,6 @@ function SignupView({
           </>
         )}
         </form>
-      </div>
-    </section>
-  );
-}
-
-function SettingsView({
-  profile,
-  socialProfile,
-  onUpdateProfile,
-  onSocialProfileChange,
-  theme,
-  sunriseOrbEnabled,
-  dyslexiaFriendlyFont,
-  onThemeChange,
-  onSunriseOrbChange,
-  onDyslexiaFontChange,
-  onHouseSignLabelStyleChange
-}: {
-  profile: UserProfile;
-  socialProfile: SocialProfile | null;
-  onUpdateProfile: (profile: UserProfile) => void;
-  onSocialProfileChange: (socialProfile: SocialProfile) => void;
-  theme: UiTheme;
-  sunriseOrbEnabled: boolean;
-  dyslexiaFriendlyFont: boolean;
-  onThemeChange: (theme: UiTheme) => void;
-  onSunriseOrbChange: (enabled: boolean) => void;
-  onDyslexiaFontChange: (enabled: boolean) => void;
-  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
-}) {
-  const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
-  const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
-  const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
-  const [settingsSubpage, setSettingsSubpage] = useState<SettingsSubpage>(settingsSubpageFromUrl);
-  const [accountPrivate, setAccountPrivate] = useState(socialProfile?.isPrivate ?? false);
-  const [privacyStatus, setPrivacyStatus] = useState<"ready" | "saving">("ready");
-  const [privacyMessage, setPrivacyMessage] = useState("");
-  const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
-  const chartSettings = normalizeChartSettings(profile.settings);
-
-  useEffect(() => {
-    function syncSettingsRoute() {
-      setSettingsSubpage(settingsSubpageFromUrl());
-    }
-
-    window.addEventListener("popstate", syncSettingsRoute);
-    window.addEventListener("hashchange", syncSettingsRoute);
-    window.addEventListener(settingsRouteChangeEvent, syncSettingsRoute);
-
-    return () => {
-      window.removeEventListener("popstate", syncSettingsRoute);
-      window.removeEventListener("hashchange", syncSettingsRoute);
-      window.removeEventListener(settingsRouteChangeEvent, syncSettingsRoute);
-    };
-  }, []);
-
-  useEffect(() => {
-    setAccountPrivate(socialProfile?.isPrivate ?? false);
-  }, [socialProfile?.isPrivate]);
-
-  function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
-    onHouseSignLabelStyleChange(houseSignLabelStyle);
-    onUpdateProfile({
-      ...profile,
-      settings: {
-        ...chartSettings,
-        houseSignLabelStyle
-      }
-    });
-  }
-
-  function startCurrentLocationEdit() {
-    setCurrentCity(profile.currentLocation || defaultLocation.label);
-    setCurrentLocationData(profile.currentLocationData ?? withTimeZone(defaultLocation));
-    setCurrentLocationEditing(true);
-  }
-
-  function cancelCurrentLocationEdit() {
-    setCurrentCity(profile.currentLocation ?? "");
-    setCurrentLocationData(profile.currentLocationData ?? null);
-    setCurrentLocationEditing(false);
-  }
-
-  function saveCurrentLocation() {
-    const trimmed = currentCity.trim();
-    const nextLocation = trimmed
-      ? currentLocationData?.label === trimmed
-        ? withTimeZone(currentLocationData)
-        : locationFromLabel(trimmed)
-      : withTimeZone(defaultLocation);
-
-    onUpdateProfile({
-      ...profile,
-      currentLocation: nextLocation.label,
-      currentLocationData: nextLocation
-    });
-    setCurrentCity(nextLocation.label);
-    setCurrentLocationData(nextLocation);
-    setCurrentLocationEditing(false);
-  }
-
-  async function updateAccountPrivacy(nextPrivate: boolean) {
-    setPrivacyStatus("saving");
-    setPrivacyMessage("");
-
-    try {
-      const savedProfile = await saveSocialPrivacy(nextPrivate);
-      setAccountPrivate(savedProfile.isPrivate);
-      setPrivacyMessage(
-        savedProfile.isPrivate
-          ? "Your account is hidden from search. Existing friends keep their current access."
-          : "People can now find you by name or @handle."
-      );
-      onSocialProfileChange(savedProfile);
-    } catch (error) {
-      setPrivacyMessage(error instanceof Error ? error.message : "Could not update your Social privacy.");
-    } finally {
-      setPrivacyStatus("ready");
-    }
-  }
-
-  if (settingsSubpage === "blocked-accounts") {
-    return (
-      <BlockedAccountsSettings
-        onBack={() => {
-          updateSettingsSubpageUrl("root", "replace");
-          setSettingsSubpage("root");
-        }}
-      />
-    );
-  }
-
-  return (
-    <section className="settings-page page-shell--narrow" aria-label="Settings">
-      <div className="settings-header">
-        <h1>settings.</h1>
-      </div>
-
-      <div className="settings-panel">
-        <section className="settings-group" aria-label="Personalization settings">
-          <span className="settings-group-label">Account</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Account settings">
-              {currentLocationEditing ? (
-                <div className="settings-row settings-location-editor">
-                  <CitySearchField
-                    label="Current location"
-                    value={currentCity}
-                    onChange={(value) => {
-                      setCurrentCity(value);
-                      setCurrentLocationData(null);
-                    }}
-                    onSelect={(suggestion) => {
-                      setCurrentCity(suggestion.label);
-                      setCurrentLocationData(suggestion);
-                    }}
-                    placeholder={defaultLocation.label}
-                    className="settings-city-search"
-                  />
-                  <div className="settings-location-actions">
-                    <button className="settings-location-cancel" type="button" onClick={cancelCurrentLocationEdit}>
-                      Cancel
-                    </button>
-                    <button className="settings-location-save" type="button" onClick={saveCurrentLocation}>
-                      Save location
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button className="settings-row settings-row-button" type="button" onClick={startCurrentLocationEdit}>
-                  <span className="settings-row__label">Current location</span>
-                  <span className="settings-row__field">
-                    <span className="settings-row__value">{currentCityDisplay}</span>
-                    <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-                  </span>
-                </button>
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Social settings">
-          <span className="settings-group-label">Social</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Social settings">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Private account</span>
-                  <small className="settings-row-description">
-                    Hide your profile from Find Friends. People you already accepted can still view your shared chart.
-                  </small>
-                </div>
-                <SwitchControl
-                  checked={accountPrivate}
-                  disabled={privacyStatus === "saving"}
-                  label="Make account private"
-                  onChange={(nextPrivate) => void updateAccountPrivacy(nextPrivate)}
-                />
-              </div>
-              {privacyMessage && (
-                <p className="settings-social-message" role="status" aria-live="polite">
-                  {privacyMessage}
-                </p>
-              )}
-              <button
-                className="settings-row settings-row-button"
-                type="button"
-                onClick={() => {
-                  updateSettingsSubpageUrl("blocked-accounts");
-                  setSettingsSubpage("blocked-accounts");
-                }}
-              >
-                <span className="settings-row-copy">
-                  <span className="settings-row-title">Blocked accounts</span>
-                  <small className="settings-row-description">
-                    Review and manage people you have blocked.
-                  </small>
-                </span>
-                <span className="settings-row__field">
-                  <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-                </span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Display settings">
-          <span className="settings-group-label">Display</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Display settings">
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Theme</span>
-                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Gradient</span>
-                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle gradient background"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Dyslexia-friendly font</span>
-                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
-                </div>
-                <SwitchControl
-                  checked={dyslexiaFriendlyFont}
-                  label="Toggle dyslexia-friendly font"
-                  onChange={onDyslexiaFontChange}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Astrology settings">
-          <span className="settings-group-label">Astrology settings</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Astrology settings">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">House sign labels</span>
-                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
-                </div>
-                <HouseSignLabelToggle
-                  value={chartSettings.houseSignLabelStyle}
-                  onChange={updateHouseSignLabelStyle}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Chart defaults">
-          <span className="settings-group-label">Birth chart</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Birth chart settings">
-              <div className="settings-row">
-                <span className="settings-row__label">House system</span>
-                <span className="settings-row__value">Whole Sign</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <CalculationMethodSettingsGroup />
-
       </div>
     </section>
   );
