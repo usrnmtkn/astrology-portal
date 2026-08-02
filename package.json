@@ -63,6 +63,7 @@
     "test:natal-aspect-pattern-reader": "node scripts/test-natal-aspect-pattern-reader-contract.mjs && node scripts/test-natal-aspect-pattern-reader-activation.mjs && node scripts/test-natal-aspect-pattern-unknown-time.mjs && npm run test:aspect-patterns-writeups-fallback",
     "test:natal-aspect-pattern-unknown-time": "node scripts/test-natal-aspect-pattern-unknown-time.mjs",
     "test:phone-auth": "node --experimental-strip-types scripts/test-phone-auth-normalization.mjs",
+    "test:relationship-composite": "node --experimental-strip-types scripts/test-relationship-composite.mjs",
     "test:performance-contracts": "node scripts/test-app-startup-performance-contract.mjs && node scripts/generate-fallback-package-manifest.mjs --check && node scripts/test-deferred-fallback-runtime.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "content:materialize-moon-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs --planet=moon --status=LIVE",
