@@ -11099,14 +11099,24 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
+const loadFriendsPageShell = () => import("./components/FriendsPageShell");
+const loadSocialFriendsPanel = () => import("./features/friends/SocialFriendsPanel");
+const loadFriendChartsList = () => import("./features/friends/FriendChartsList");
+const preloadFriendsLanding = () => Promise.all([
+  loadFriendsPageShell(),
+  loadSocialFriendsPanel(),
+  loadFriendChartsList()
+]);
+
 const FriendsRoute = lazy(() =>
-  import("./routes/FriendsRoute").then((module) => ({
-    default: module.FriendsRoute
-  }))
+  Promise.all([
+    import("./routes/FriendsRoute"),
+    preloadFriendsLanding()
+  ]).then(([module]) => ({ default: module.FriendsRoute }))
 );
 
 const FriendsPageShell = lazy(() =>
-  import("./components/FriendsPageShell").then((module) => ({
+  loadFriendsPageShell().then((module) => ({
     default: module.FriendsPageShell
   }))
 );
@@ -11160,13 +11170,13 @@ const SkyRoute = lazy(() =>
 );
 
 const FriendChartsList = lazy(() =>
-  import("./features/friends/FriendChartsList").then((module) => ({
+  loadFriendChartsList().then((module) => ({
     default: module.FriendChartsList
   }))
 );
 
 const SocialFriendsPanel = lazy(() =>
-  import("./features/friends/SocialFriendsPanel").then((module) => ({
+  loadSocialFriendsPanel().then((module) => ({
     default: module.SocialFriendsPanel
   }))
 );
