@@ -33,6 +33,10 @@ const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
 );
+const friendProfileWorkSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/friendProfileWork.ts"),
+  "utf8"
+);
 const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/SettingsControls.tsx"), "utf8");
 const citySearchSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/CitySearchField.tsx"), "utf8");
 const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
@@ -320,6 +324,21 @@ assert.match(
   manualChartFormSource,
   /export const manualChartFormCopy/u,
   "The Friends form model must own its chart-type copy."
+);
+assert.match(
+  appSource,
+  /if \(!friendProfileWork\.synastryContacts/u,
+  "Inactive Friends tabs must skip synastry contact calculation."
+);
+assert.match(
+  appSource,
+  /friendProfileWork\.composite && selectedChart/u,
+  "Composite chart calculation must remain scoped to its active Friends tab."
+);
+assert.match(
+  friendProfileWorkSource,
+  /export function friendProfileWorkForTab/u,
+  "Friends tab calculation policy must remain independently testable."
 );
 assert.doesNotMatch(
   friendsStylesSource,
