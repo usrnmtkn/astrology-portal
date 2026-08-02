@@ -41,7 +41,7 @@ The placement system now carries the rule in four places:
 
 The judge calibration set also includes the rejected Uranus-in-Cancer paragraph as a known-weak control. The placement-pipeline contract asserts that both generator and judge prompts carry the rule.
 
-The owner's approved replacement paragraph is stored separately in the voice specification as beat-level evidence. It teaches hidden rule → changed behavior → rupture → consequence without approving the unfinished article or licensing the generator to copy its wording.
+The owner's approved replacement paragraph is stored separately in the voice specification as beat-level evidence. Its final refinement teaches duration → baseline rupture → concrete changes → relational reclassification → cost. It stays with the disruption instead of jumping ahead to rebuilding, names physical changes instead of broad metaphors, and avoids generic `people` as a stand-in for a specific actor. This does not approve the unfinished article or license the generator to copy its wording.
 
 ## Release gate
 
