@@ -92,6 +92,7 @@ const comparisonPointRoles: Record<string, string> = {
 const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
 const synastryAngles = new Set(["ascendant", "midheaven"]);
 const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
+const compatibilityHighlightPoints = new Set(["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"]);
 
 export function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
@@ -367,6 +368,60 @@ export function calculatedSynastryContacts(
   const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
 
   return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
+}
+
+export function compatibilityHighlightContact(
+  profileNatalSky: SkySnapshot | null,
+  chart: Pick<ManualChart, "id" | "natalChart">
+): CalculatedSynastryContact | null {
+  const friendSky = chart.natalChart;
+
+  if (!profileNatalSky || !friendSky) {
+    return null;
+  }
+
+  const contacts = profileNatalSky.positions.flatMap((yourPosition) => (
+    friendSky.positions.flatMap((friendPosition) => {
+      if (!compatibilityHighlightPoints.has(yourPosition.planet) || !compatibilityHighlightPoints.has(friendPosition.planet)) {
+        return [];
+      }
+
+      const separation = angularDistance(zodiacLongitude(yourPosition), zodiacLongitude(friendPosition));
+      const aspect = transitAspectDefinitions
+        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, friendPosition.planet, yourPosition.planet))
+        .sort((first, second) => first.orbValue - second.orbValue)[0];
+
+      if (!aspect) {
+        return [];
+      }
+
+      return [{
+        id: `${chart.id}-${friendPosition.planet}-${aspect.type}-${yourPosition.planet}`.toLowerCase().replace(/\s+/g, "-"),
+        friendPoint: {
+          name: friendPosition.planet,
+          glyph: friendPosition.glyph,
+          longitude: zodiacLongitude(friendPosition),
+          role: comparisonPointRole(friendPosition.planet)
+        },
+        yourPoint: {
+          name: yourPosition.planet,
+          glyph: yourPosition.glyph,
+          longitude: zodiacLongitude(yourPosition),
+          role: comparisonPointRole(yourPosition.planet)
+        },
+        aspect: aspect.type,
+        orb: aspect.orbValue,
+        score: synastryContactScore(friendPosition.planet, yourPosition.planet, aspect.type, aspect.orbValue),
+        tone: synastryTone(aspect.type)
+      }];
+    })
+  ))
+    .sort((first, second) => second.score - first.score || first.orb - second.orb);
+
+  return contacts.find((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) !== "background")
+    ?? contacts[0]
+    ?? null;
 }
 
 export function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {

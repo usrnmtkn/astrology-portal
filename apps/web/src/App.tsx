@@ -172,15 +172,12 @@ import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
   calculatedSynastryContacts,
+  compatibilityHighlightContact,
   comparisonPointRole,
   natalElementBalance,
   normalizedAngle,
   relationshipCompositeSky,
   samePlanetExactAspect,
-  synastryAspectOrbLimit,
-  synastryContactScore,
-  synastryContactSignalTier,
-  synastryTone,
   synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
@@ -9538,48 +9535,12 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
     return highlights;
   }
 
-  const synastryHits = profileNatalSky.positions.flatMap((yourPosition) => (
-    friendSky.positions.flatMap((theirPosition) => {
-      const separation = angularDistance(zodiacLongitude(yourPosition), zodiacLongitude(theirPosition));
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, theirPosition.planet, yourPosition.planet))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      return aspect ? [{
-        yourPosition,
-        theirPosition,
-        aspect,
-        score: synastryContactScore(theirPosition.planet, yourPosition.planet, aspect.type, aspect.orbValue)
-      }] : [];
-    })
-  ))
-    .filter((hit) => ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.yourPosition.planet) && ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.theirPosition.planet))
-    .sort((first, second) => second.score - first.score || first.aspect.orbValue - second.aspect.orbValue);
-
-  const topHit = synastryHits.find((hit) => synastryContactSignalTier(hit.theirPosition.planet, hit.yourPosition.planet) !== "background")
-    ?? synastryHits[0];
+  const topHit = compatibilityHighlightContact(profileNatalSky, chart);
   if (topHit) {
-    const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
+    const title = relationshipThemeTitle(topHit.friendPoint.name, topHit.yourPoint.name, topHit.aspect);
     const contact = {
-      id: `${chart.id}-${topHit.theirPosition.planet}-${topHit.aspect.type}-${topHit.yourPosition.planet}`.toLowerCase().replace(/\s+/g, "-"),
-      friendPoint: {
-        name: topHit.theirPosition.planet,
-        glyph: topHit.theirPosition.glyph,
-        longitude: zodiacLongitude(topHit.theirPosition),
-        role: comparisonPointRole(topHit.theirPosition.planet)
-      },
-      yourPoint: {
-        name: topHit.yourPosition.planet,
-        glyph: topHit.yourPosition.glyph,
-        longitude: zodiacLongitude(topHit.yourPosition),
-        role: comparisonPointRole(topHit.yourPosition.planet)
-      },
-      aspect: topHit.aspect.type,
-      orb: topHit.aspect.orbValue,
-      score: topHit.score,
-      tone: synastryTone(topHit.aspect.type),
-      contentKeys: synastryContactContentKeys(topHit.theirPosition.planet, topHit.aspect.type, topHit.yourPosition.planet)
+      ...topHit,
+      contentKeys: synastryContactContentKeys(topHit.friendPoint.name, topHit.aspect, topHit.yourPoint.name)
     };
     const normalized = normalizeSynastryContactSurface(
       chart.displayName,
@@ -9600,9 +9561,9 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
         primaryName: chart.displayName,
         comparisonName: "You",
         comparisonIsSelf: true,
-        primaryPoint: topHit.theirPosition.planet,
-        comparisonPoint: topHit.yourPosition.planet,
-        aspect: topHit.aspect.type,
+        primaryPoint: topHit.friendPoint.name,
+        comparisonPoint: topHit.yourPoint.name,
+        aspect: topHit.aspect,
         romanticAllowed: false
       }
     );

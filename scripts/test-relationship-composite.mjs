@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   calculatedSynastryContacts,
+  compatibilityHighlightContact,
   comparisonPointsFromSky,
   relationshipCompositeSky,
   relationshipMidpointLongitude,
@@ -179,6 +180,24 @@ assert.equal(
   samePlanetExactAspect(position("Sun", 0, "☉"), position("Sun", 3.75, "☉"))?.type,
   "conjunction",
   "Same-planet compatibility must retain personal-point orb expansion."
+);
+const highlightProfileSky = sky({
+  positions: [position("Sun", 0, "☉"), position("Jupiter", 0, "♃")]
+});
+const highlightFriendSky = sky({
+  positions: [position("Sun", 2, "☉"), position("Jupiter", 0, "♃")]
+});
+const highlightContact = compatibilityHighlightContact(highlightProfileSky, {
+  id: "highlight-friend",
+  natalChart: highlightFriendSky
+});
+
+assert.equal(highlightContact?.friendPoint.name, "Sun");
+assert.equal(highlightContact?.yourPoint.name, "Sun");
+assert.equal(highlightContact?.aspect, "conjunction");
+assert.ok(
+  highlightContact?.friendPoint.name !== "Jupiter" && highlightContact?.yourPoint.name !== "Jupiter",
+  "Compatibility highlights must retain the six-point personal/Saturn filter."
 );
 
 console.log("Relationship composite calculation tests passed.");
