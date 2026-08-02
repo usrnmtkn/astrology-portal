@@ -12,6 +12,8 @@ const authSourcePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const authSource = fs.readFileSync(authSourcePath, "utf8");
 const socialFriendsSourcePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const socialFriendsSource = fs.readFileSync(socialFriendsSourcePath, "utf8");
+const tldrAstroApiSourcePath = path.join(repoRoot, "apps/web/src/services/tldrastroApi.ts");
+const tldrAstroApiSource = fs.readFileSync(tldrAstroApiSourcePath, "utf8");
 const socialFriendsPanelSourcePath = path.join(
   repoRoot,
   "apps/web/src/features/friends/SocialFriendsPanel.tsx"
@@ -253,6 +255,16 @@ assert.match(
   socialFriendsPanelSource,
   /onPendingRequestCountChange\?\.\([\s\S]*request\.direction === "incoming"/,
   "The Friends panel must keep publishing its pending-request count while the app-wide monitor is paused."
+);
+assert.match(
+  tldrAstroApiSource,
+  /export function compareRelationship\([\s\S]*options\?: TldrAstroRequestOptions[\s\S]*postTldrAstro<RelationshipCompareResponse>\("\/relationship\/compare", request, options\)/,
+  "Relationship comparison requests must accept cancellation options."
+);
+assert.match(
+  appSource,
+  /const controller = new AbortController\(\);[\s\S]*compareRelationship\([\s\S]*signal: controller\.signal[\s\S]*return \(\) => \{\s*cancelled = true;\s*controller\.abort\(\);/,
+  "Leaving Composite or changing charts must abort obsolete relationship comparison work."
 );
 assert.match(
   appSource,

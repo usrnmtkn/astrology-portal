@@ -55,6 +55,10 @@ type ApiEnvelope = {
   contentFacts: TldrAstroContentFact[];
 };
 
+type TldrAstroRequestOptions = {
+  signal?: AbortSignal;
+};
+
 export type TldrAstroApiHealth = {
   ok: boolean;
   service: string;
@@ -136,7 +140,11 @@ const tldrAstroApiBaseUrl = configuredBaseUrl?.replace(/\/$/, "") ?? "";
 export const isTldrAstroApiConfigured = Boolean(tldrAstroApiBaseUrl);
 export const tldrAstroApiStatusUrl = tldrAstroApiBaseUrl;
 
-async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
+async function postTldrAstro<TResponse>(
+  path: string,
+  body: unknown,
+  options: TldrAstroRequestOptions = {}
+): Promise<TResponse> {
   if (!tldrAstroApiBaseUrl) {
     throw new Error("VITE_TLDRASTRO_API_URL is required to call the TLDR Astro API.");
   }
@@ -146,7 +154,8 @@ async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TR
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
+    signal: options.signal
   });
 
   if (!response.ok) {
@@ -178,8 +187,11 @@ export async function getTldrAstroApiHealth() {
   return response.json() as Promise<TldrAstroApiHealth>;
 }
 
-export function compareRelationship(request: RelationshipRequest) {
-  return postTldrAstro<RelationshipCompareResponse>("/relationship/compare", request);
+export function compareRelationship(
+  request: RelationshipRequest,
+  options?: TldrAstroRequestOptions
+) {
+  return postTldrAstro<RelationshipCompareResponse>("/relationship/compare", request, options);
 }
 
 export function resolveTimezone(request: TimezoneLookupRequest) {
