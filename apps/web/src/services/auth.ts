@@ -27,6 +27,10 @@ export const isPhoneAuthEnabled = (
 );
 
 let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
+let verifiedAuthUserRequest: {
+  accessToken: string;
+  promise: Promise<User | null>;
+} | null = null;
 
 async function normalizeUsPhoneNumber(value: string) {
   const { normalizeUsPhoneNumber: normalizePhone } = await import("./phoneAuthValidation");
@@ -44,6 +48,30 @@ export async function getSupabaseClient() {
   ));
 
   return supabaseClientPromise;
+}
+
+export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
+  const supabase = client ?? await getSupabaseClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
+
+  if (!accessToken) {
+    return null;
+  }
+
+  if (verifiedAuthUserRequest?.accessToken !== accessToken) {
+    verifiedAuthUserRequest = {
+      accessToken,
+      promise: supabase.auth.getUser().then(({ data }) => data.user ?? null)
+    };
+  }
+
+  return verifiedAuthUserRequest.promise;
 }
 
 function redirectTo() {

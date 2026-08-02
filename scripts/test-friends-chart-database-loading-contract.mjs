@@ -6,8 +6,10 @@ import assert from "node:assert/strict";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
 const manualChartsPath = path.join(repoRoot, "apps/web/src/services/manualCharts.ts");
+const authPath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const appSource = fs.readFileSync(appSourcePath, "utf8");
 const manualChartsSource = fs.readFileSync(manualChartsPath, "utf8");
+const authSource = fs.readFileSync(authPath, "utf8");
 
 assert.match(
   manualChartsSource,
@@ -15,9 +17,14 @@ assert.match(
   "Friend chart database QA must cover the Supabase manual_charts table."
 );
 assert.match(
-  manualChartsSource,
+  authSource,
   /supabase\.auth\.getUser\(\)/,
   "Friend chart database QA must cover the signed-in remote-user branch."
+);
+assert.match(
+  manualChartsSource,
+  /getVerifiedAuthUser\(supabase\)/,
+  "Friend chart database QA must reuse the shared remote-user verification."
 );
 assert.match(
   appSource,
@@ -31,8 +38,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured\}/,
-  "Friends chart UI must hide stale local cached charts while configured Supabase auth is still resolving."
+  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
+  "Friends chart UI must hide cached charts until configured Supabase auth resolves."
+);
+assert.doesNotMatch(
+  appSource,
+  /const cachedCharts = listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id,\s*\.\.\.listLocalManualChartUserIds\(\)/,
+  "Friends chart UI must not paint cached rows owned by unrelated local accounts."
 );
 assert.match(
   appSource,
