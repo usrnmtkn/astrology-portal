@@ -166,8 +166,11 @@ async function postTldrAstro<TResponse>(
   return response.json() as Promise<TResponse>;
 }
 
-export function getPersonalTiming(request: PersonalTimingRequest) {
-  return postTldrAstro<PersonalTimingResponse>("/timing/personal", request);
+export function getPersonalTiming(
+  request: PersonalTimingRequest,
+  options?: TldrAstroRequestOptions
+) {
+  return postTldrAstro<PersonalTimingResponse>("/timing/personal", request, options);
 }
 
 export async function getTldrAstroApiHealth() {

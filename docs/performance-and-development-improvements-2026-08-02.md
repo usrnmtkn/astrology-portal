@@ -21,6 +21,7 @@ Content editors can continue updating and reviewing astrology copy independently
 - Pure Friends chart-list rows, Big Three fallbacks, and comparison-picker options now live in the Friends chart model; obsolete birthday helpers were removed from the application shell.
 - Composite relationship API state, fallback handling, and stale-request cancellation now live in a focused Friends hook.
 - Shared birth-date/time validation and API subject mapping now live in the chart-profile service instead of the application shell.
+- Personal-timing API state now lives in a focused profile hook, and obsolete requests are aborted when the profile, date, or location changes.
 
 ## 2. Startup and code-loading boundaries
 
@@ -39,7 +40,7 @@ Measured from the final production build:
 | App JavaScript boot graph | 485.8 kB gzip |
 | Reader boot including awaited CSS | 530.3 kB gzip |
 | Reader startup CSS | 44.5 kB gzip |
-| App code chunk | 140.5 kB gzip |
+| App code chunk | 140.6 kB gzip |
 | Deferred Friends workspace | 9.7 kB gzip |
 | Deferred Sky detail article | 4.0 kB gzip |
 | Deferred signup | 3.0 kB gzip |
