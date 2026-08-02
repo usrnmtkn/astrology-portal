@@ -24,6 +24,10 @@ const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/rou
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
 const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 const friendsPageShellSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/FriendsPageShell.tsx"), "utf8");
+const friendsWorkspaceShellSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceShell.tsx"),
+  "utf8"
+);
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
 const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
@@ -170,8 +174,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const loadFriendsPageShell = \(\) => import\("\.\/components\/FriendsPageShell"\)[\s\S]*const FriendsPageShell = lazy\(\(\) =>\s*loadFriendsPageShell\(\)/u,
-  "The Friends page shell must load only when its route renders."
+  /const loadFriendsWorkspaceShell = \(\) => import\("\.\/features\/friends\/FriendsWorkspaceShell"\)[\s\S]*const FriendsWorkspaceShell = lazy\(\(\) =>\s*loadFriendsWorkspaceShell\(\)/u,
+  "The Friends workspace shell must load only when its route renders."
+);
+assert.match(
+  friendsWorkspaceShellSource,
+  /import \{[\s\S]*FriendsPageShell[\s\S]*from "\.\.\/\.\.\/components\/FriendsPageShell";[\s\S]*FriendChartsList[\s\S]*SocialFriendsPanel/u,
+  "The deferred Friends workspace must own the landing shell, social panel, and chart list."
 );
 assert.match(
   appSource,
@@ -558,8 +567,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const preloadFriendsLanding = \(\) => Promise\.all\(\[\s*loadFriendsPageShell\(\),\s*loadSocialFriendsPanel\(\),\s*loadFriendChartsList\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*preloadFriendsLanding\(\)/u,
-  "The Friends route, shell, social panel, and chart list must load in parallel instead of forming a lazy-module waterfall."
+  /const FriendsRoute = lazy\(\(\) =>\s*Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadFriendsWorkspaceShell\(\)/u,
+  "The Friends route and consolidated landing workspace must load in parallel instead of forming a lazy-module waterfall."
 );
 
 console.log("App startup performance contracts passed.");
