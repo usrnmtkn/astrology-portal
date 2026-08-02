@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft-only. No live Sky Placement row was changed. Four candidates cleared the mechanical and editorial gates for owner review; two Uranus candidates remain on hold.
+Draft-only. No live Sky Placement row was changed. Four GPT-5.6 candidates cleared the mechanical and editorial gates, then received owner-directed line edits during review. The revised articles remain mechanically clean and await final owner approval; two Uranus candidates remain on hold.
 
 Nothing in this report is approved for serving until the owner approves the individual placement.
 
@@ -21,14 +21,14 @@ The local repairs addressed batch repetition or a watchlist phrase. They did not
 
 | Placement | Linter | Batch audit | Judge | Decision |
 | --- | ---: | --- | ---: | --- |
-| Mars in Capricorn | 3 | Clean | 3 before owner edit | Owner-edited turn remains in review |
-| Saturn in Capricorn | 3 | Clean | 3 | Advance to owner review |
-| Neptune in Libra | 3 | Clean | 3 | Advance to owner review |
-| Venus in Aries | 3 | Clean | 3 | Advance to owner review |
+| Mars in Capricorn | 3 | Clean | 3 before owner edits | Owner-directed revision remains in review |
+| Saturn in Capricorn | 3 | Clean | 3 before owner edits | Owner-directed revision remains in review |
+| Neptune in Libra | 3 | Clean | 3 before owner edits | Owner-directed revision remains in review |
+| Venus in Aries | 3 | Clean | 3 before owner edits | Owner-directed revision remains in review |
 | Uranus in Cancer | 3 | Clean | 2 | Hold; closing advice loses specificity |
 | Uranus in Pisces | 3 | Clean | 2 | Hold; Uranus function fades into generic Pisces language |
 
-All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. A clean mechanical result is necessary but not sufficient: the two judge-2 Uranus drafts do not advance. After the pilot, the owner replaced the Mars turn verbatim; that revision remains lint 3, but the saved judge score belongs to the pre-edit draft.
+All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. A clean mechanical result is necessary but not sufficient: the two judge-2 Uranus drafts do not advance. After the pilot, the owner supplied a line review for all four advancing candidates. Those revisions remain lint 3, but every saved judge score belongs to the pre-edit draft.
 
 ## What changed after V1
 
@@ -44,15 +44,15 @@ These changes remove prompt leakage while preserving legitimate shared facts suc
 
 ## Owner-review candidates
 
-### Mars in Capricorn — judge 3
+### Mars in Capricorn — judge 3 before owner-directed edits
 
 **Tagline:** Finish what matters
 
-**Hook:** Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops spending force on noise and puts it toward the result. The work may be slow, but the aim gets sharper.
+**Hook — owner-directed edit:** Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops wasting energy on distractions and puts that force into work we can measure. The work may be slow, but the aim gets sharper.
 
-**Lived:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the same useful job after the novelty is gone. You may feel most alive when there is a clear finish line and a solid way to reach it.
+**Lived — owner-directed edit:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the daily work after the novelty has worn off. You may feel most alive when there is a clear finish line and a solid way to reach it.
 
-**Turn — owner edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
+**Turn — owner-directed edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into sheer stubbornness, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
 
 **Moves:**
 
@@ -60,17 +60,17 @@ These changes remove prompt leakage while preserving legitimate shared facts suc
 - Write the next three steps for a goal that has been living only in your head.
 - Cancel one obligation that makes you look productive but does not move your real work forward.
 
-Pre-edit judge summary: The GPT-5.6 draft distinguished Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and an observable shadow. Its least distinctive sentence was: “You may feel most alive when there is a clear finish line and a solid way to reach it.” The owner-verbatim turn above was added afterward and has not been rejudged.
+Pre-edit judge summary: The GPT-5.6 draft distinguished Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and an observable shadow. Its least distinctive sentence was: “You may feel most alive when there is a clear finish line and a solid way to reach it.” The owner-directed edits above were added afterward and have not been rejudged.
 
-### Saturn in Capricorn — judge 3
+### Saturn in Capricorn — judge 3 before owner-directed edits
 
 **Tagline:** Build it without disappearing
 
 **Hook:** Your life is not a performance review. Saturn deals in limits, commitments, and the kind of work that proves itself over time; in Capricorn, it asks us to take the long route on purpose. This is the transit that turns ambition into a structure you can stand inside.
 
-**Lived:** Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for it, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.
+**Lived — owner-directed edit:** Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.
 
-**Turn:** But competence can become a hiding place. We answer affection with productivity, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.
+**Turn — owner-directed edit:** But competence can become a hiding place. We finish one more chore instead of sitting down for the conversation, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.
 
 **Moves:**
 
@@ -78,15 +78,15 @@ Pre-edit judge summary: The GPT-5.6 draft distinguished Mars's drive from Capric
 - Write down one responsibility you have been carrying alone, then ask a specific person to take a defined part of it.
 - Leave work at the time you said you would once this week, even if there is still more you could do.
 
-Judge summary: The draft gives a clear Saturn function and Capricorn expression, with lived behavior, an observable shadow, and a sharp closing line. Its least distinctive sentence is: “Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment.”
+Pre-edit judge summary: The draft gave a clear Saturn function and Capricorn expression, with lived behavior, an observable shadow, and a sharp closing line. Its least distinctive sentence was: “Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment.” The owner-directed edits above have not been rejudged.
 
-### Neptune in Libra — judge 3
+### Neptune in Libra — judge 3 before owner-directed edits
 
 **Tagline:** Stop calling silence peace
 
 **Hook:** A relationship can look calm while one person disappears inside it. Neptune blurs edges between people, and in Libra it makes fairness, beauty, and mutual understanding feel like needs we cannot live without. This transit can make the ideal partnership, workplace, or public agreement feel close enough to reach for.
 
-**Lived:** Neptune stays in one sign for about fourteen years, giving this question time to shape a generation: what does a fair relationship actually ask of us? We may see it in the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, negotiate, and make room for another person.
+**Lived — owner-directed edit:** Neptune stays in one sign for about fourteen years, giving ideas about fairness and relationship time to shape a generation. That long shift shows up in ordinary rooms: the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, negotiate, and make room for another person.
 
 **Turn:** The blur arrives when keeping both sides comfortable becomes more important than telling the truth. We edit our needs into something harmless, agree to terms we do not understand, or call a beautiful compromise fair because nobody raised their voice. A relationship that needs your silence to stay peaceful is not peaceful.
 
@@ -94,19 +94,19 @@ Judge summary: The draft gives a clear Saturn function and Capricorn expression,
 
 - Name one decision you have been softening, then state your actual preference in a single sentence.
 - Before agreeing to a compromise, write down what each person is giving up and what each person is getting.
-- Make one shared space more beautiful with a choice everyone involved can plainly consent to.
+- Make one shared space more beautiful with a choice everyone involved explicitly agrees on.
 
-Judge summary: The draft is sharply specific, behaviorally observable, and unmistakably Neptune in Libra. Its least distinctive sentence is: “The gift is real: more imagination in how we work, love, negotiate, and make room for another person.”
+Pre-edit judge summary: The draft was sharply specific, behaviorally observable, and unmistakably Neptune in Libra. Its least distinctive sentence was: “The gift is real: more imagination in how we work, love, negotiate, and make room for another person.” The owner-directed edits above have not been rejudged.
 
-### Venus in Aries — judge 3
+### Venus in Aries — judge 3 before owner-directed edits
 
 **Tagline:** Want it out loud
 
-**Hook:** Attraction should not need a decoding key. Venus handles love, pleasure, taste, and money; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.
+**Hook — owner-directed edit:** Attraction should not require a translator. Venus handles love, pleasure, taste, and money; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.
 
-**Lived:** For about four weeks, we may dress for the plan we want, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.
+**Lived — owner-directed edit:** For about four weeks, we may wear the thing we usually save for a better invitation, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.
 
-**Turn:** The fast yes can become a performance of winning. We may chase the person who resists us, lose interest once they are available, or treat every difference in taste like a contest to win. Wanting the spark is real; confusing pursuit with love is how we burn through it.
+**Turn — owner-directed edit:** Chasing the thrill can make attraction feel like something to win. We may pursue the person who resists us, lose interest once they are available, or keep score over every difference in taste. Wanting the spark is real; confusing pursuit with love is how we burn through it.
 
 **Moves:**
 
@@ -114,7 +114,7 @@ Judge summary: The draft is sharply specific, behaviorally observable, and unmis
 - Wear or make one thing that feels too bold for your usual taste.
 - Before a quick purchase, name whether you want the object or the rush of choosing it.
 
-Judge summary: The draft is sharply Venus-in-Aries specific, clears the swap test, and closes with real bite. Its least distinctive sentence is: “A small risk can feel strangely life-giving when it lets us move toward what we actually like.”
+Pre-edit judge summary: The draft was sharply Venus-in-Aries specific, cleared the swap test, and closed with real bite. Its least distinctive sentence was: “A small risk can feel strangely life-giving when it lets us move toward what we actually like.” The owner-directed edits above have not been rejudged.
 
 ## Held candidates
 
