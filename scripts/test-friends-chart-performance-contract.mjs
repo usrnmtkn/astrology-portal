@@ -193,12 +193,17 @@ assert.ok(
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /Promise\.all\(\[\s*loadOwnSocialProfile\(\),\s*listSocialFriends\(\)\s*\]\)/,
-  "The visible Friends list must wait only for profile and friend rows."
+  /const profileRequest = loadOwnSocialProfile\(\)[\s\S]*const loadedFriends = await listSocialFriends\(\);/,
+  "Own-profile hydration must start in parallel without blocking visible friend rows."
+);
+assert.doesNotMatch(
+  socialCoreRefreshMatch.groups.body,
+  /await Promise\.all\(\[\s*loadOwnSocialProfile\(\),\s*listSocialFriends\(\)/,
+  "The visible Friends list must not wait for the own-profile query."
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /publishFriends\(nextFriends\);[\s\S]*void Promise\.all\(\[[\s\S]*listSocialFriendRequests[\s\S]*listSocialNotifications[\s\S]*listSocialInvitations/,
+  /publishFriends\(nextFriends\);\s*void profileRequest;[\s\S]*void Promise\.all\(\[[\s\S]*listSocialFriendRequests[\s\S]*listSocialNotifications[\s\S]*listSocialInvitations/,
   "Requests, notifications, and invitations must start only after the visible Friends list is published."
 );
 assert.match(
