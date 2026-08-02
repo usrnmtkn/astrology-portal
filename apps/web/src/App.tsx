@@ -101,6 +101,7 @@ import {
   type FriendsMainView,
   type FriendsTab
 } from "./features/friends/friendsRouting";
+import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
 import {
   defaultManualChartForm,
   manualChartFormCopy,
@@ -18807,10 +18808,13 @@ function ManualChartsPanel({
   const selectedRelationshipRomantic = selectedRelationshipContextType
     ? isExplicitRomanticRelationship(selectedRelationshipContextType)
     : false;
-  const selectedSynastryContacts = selectedChart
-    ? selectedChartIsEvent
-      ? []
-      : rankSynastryContactsByLifeAreaFocus(
+  const friendProfileWork = friendProfileWorkForTab(friendProfileTab);
+  const selectedSynastryContacts = useMemo(() => {
+    if (!friendProfileWork.synastryContacts || !selectedChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return rankSynastryContactsByLifeAreaFocus(
         synastryContacts(
           relationshipComparisonSky,
           selectedChart,
@@ -18822,40 +18826,91 @@ function ManualChartsPanel({
           selectedRelationshipContextType
         ),
         lifeAreaFocus
-      )
-    : [];
-  const selectedSynastryAspectGroups = groupAspectsByGiftLesson(
-    selectedSynastryContacts,
-    (contact) => contact.aspect,
-    (contact) => contact.orb
-  );
-  const selectedCompatibilityCards = selectedChart && !selectedChartIsEvent
-    ? compatibilityPlanetCards(
+      );
+  }, [
+    friendProfileWork.synastryContacts,
+    lifeAreaFocus,
+    relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonPronouns,
+    relationshipComparisonSky,
+    relationshipGeneratedContent,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedRelationshipContextType,
+    selectedRelationshipRomantic
+  ]);
+  const selectedSynastryAspectGroups = useMemo(() => (
+    friendProfileWork.synastry
+      ? groupAspectsByGiftLesson(
+          selectedSynastryContacts,
+          (contact) => contact.aspect,
+          (contact) => contact.orb
+        )
+      : []
+  ), [friendProfileWork.synastry, selectedSynastryContacts]);
+  const selectedCompatibilityCards = useMemo(() => {
+    if (!friendProfileWork.compatibility || !selectedChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return compatibilityPlanetCards(
         relationshipComparisonSky,
         selectedChart,
         relationshipGeneratedContent,
         selectedRelationshipContextType,
         relationshipComparisonName,
         relationshipComparisonIsSelf
-      )
-    : [];
-  const selectedCompatibilityDynamics = compatibilityDynamicsFromContacts(
-    selectedSynastryContacts,
-    selectedChart?.displayName ?? "Friend",
-    relationshipComparisonName,
+      );
+  }, [
+    friendProfileWork.compatibility,
     relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonSky,
+    relationshipGeneratedContent,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedRelationshipContextType
+  ]);
+  const selectedCompatibilityDynamics = useMemo(() => (
+    friendProfileWork.compatibility
+      ? compatibilityDynamicsFromContacts(
+          selectedSynastryContacts,
+          selectedChart?.displayName ?? "Friend",
+          relationshipComparisonName,
+          relationshipComparisonIsSelf,
+          selectedChart?.pronouns,
+          relationshipComparisonPronouns
+        )
+      : []
+  ), [
+    friendProfileWork.compatibility,
+    relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonPronouns,
+    selectedChart?.displayName,
     selectedChart?.pronouns,
-    relationshipComparisonPronouns
-  );
-  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedChart && !selectedChartIsEvent
-    ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
-    : [];
-  const selectedCompositeSky = selectedChart && !selectedChartIsEvent ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
-  const selectedCompositeAspectGroups = groupAspectsByGiftLesson(
-    selectedCompositeSky?.aspects ?? [],
-    (aspect) => aspect.type,
-    (aspect) => aspect.orb
-  );
+    selectedSynastryContacts
+  ]);
+  const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
+    friendProfileWork.synastry && selectedChart && !selectedChartIsEvent
+      ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
+      : []
+  ), [friendProfileWork.synastry, relationshipComparisonSky, selectedChart, selectedChartIsEvent]);
+  const selectedCompositeSky = useMemo(() => (
+    friendProfileWork.composite && selectedChart && !selectedChartIsEvent
+      ? relationshipCompositeSky(relationshipComparisonSky, selectedChart)
+      : null
+  ), [friendProfileWork.composite, relationshipComparisonSky, selectedChart, selectedChartIsEvent]);
+  const selectedCompositeAspectGroups = useMemo(() => (
+    friendProfileWork.composite
+      ? groupAspectsByGiftLesson(
+          selectedCompositeSky?.aspects ?? [],
+          (aspect) => aspect.type,
+          (aspect) => aspect.orb
+        )
+      : []
+  ), [friendProfileWork.composite, selectedCompositeSky]);
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
