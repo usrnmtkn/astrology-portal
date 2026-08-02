@@ -49,7 +49,8 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1, samp
       edition: fixture.edition,
       samples: sampleCount,
       judgeFn: judgeFn ? (prompt) => judgeFn(prompt, { cohort: "approved", fixture }) : undefined,
-      calibration: true
+      calibration: true,
+      ownerVerbatim: true
     });
     approved.push({ fixture, result });
     console.log(`${result.score === 3 ? "OK " : "!! "} owner fixture ${fixture.title} -> ${result.score} (${result.verdict})`);
@@ -62,7 +63,8 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1, samp
       edition: fixture.edition,
       samples: sampleCount,
       judgeFn: judgeFn ? (prompt) => judgeFn(prompt, { cohort: "weak", fixture }) : undefined,
-      calibration: true
+      calibration: true,
+      ownerVerbatim: false
     });
     weak.push({ fixture, result });
     console.log(`${result.score <= 2 ? "OK " : "!! "} weak control ${fixture.title} -> ${result.score} (${result.verdict})`);
@@ -72,10 +74,11 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1, samp
   const weakMean = mean(weak.map(({ result }) => result.score));
   const separation = approvedMean - weakMean;
   const disagreement = [...approved, ...weak].some(({ result }) => result.disagreement);
+  const contractViolation = [...approved, ...weak].some(({ result }) => result.contractViolation);
   const scoreFailure = approved.some(({ result }) => result.score !== 3)
     || weak.some(({ result }) => result.score > 2)
     || separation < minimumSeparation;
-  const status = disagreement ? "needs-human-review" : scoreFailure ? "failed" : "passed";
+  const status = disagreement || contractViolation ? "needs-human-review" : scoreFailure ? "failed" : "passed";
 
   return {
     status,
@@ -86,6 +89,7 @@ async function runArticleJudgeCalibration({ judgeFn, minimumSeparation = 1, samp
     separation,
     minimumSeparation,
     disagreement,
+    contractViolation,
     sampleCount
   };
 }

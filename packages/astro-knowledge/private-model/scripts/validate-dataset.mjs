@@ -57,6 +57,25 @@ function validateRow(row, split, hashes) {
   assert(unsupported.length === 0, `${row.id}: target contains unsupported fact tokens: ${unsupported.join(", ")}`);
 }
 
+function countBy(values) {
+  return Object.fromEntries(
+    [...values.reduce((counts, value) => {
+      const key = String(value || "unknown").trim().toLowerCase() || "unknown";
+      counts.set(key, (counts.get(key) || 0) + 1);
+      return counts;
+    }, new Map()).entries()].sort(([left], [right]) => left.localeCompare(right)),
+  );
+}
+
+function datasetCoverage(rows) {
+  const events = rows.map((row) => JSON.parse(row.messages[1].content).event || {});
+  return {
+    planets: countBy(events.map((event) => event.planet)),
+    signs: countBy(events.map((event) => event.sign)),
+    article_variants: countBy(events.map((event) => event.article_variant || "direct")),
+  };
+}
+
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const train = readJsonl(trainPath);
 const evalRows = readJsonl(evalPath);
@@ -67,6 +86,21 @@ evalRows.forEach((row) => validateRow(row, "eval", hashes));
 assert(train.length === manifest.train_examples, "Train count differs from manifest");
 assert(evalRows.length === manifest.eval_examples, "Eval count differs from manifest");
 assert(evalRows.length > 0, "A held-out evaluation set is required");
+assert(
+  JSON.stringify(datasetCoverage([...train, ...evalRows])) === JSON.stringify(manifest.coverage),
+  "Dataset coverage differs from manifest",
+);
+
+const readinessReasons = [
+  ...(train.length < manifest.minimum_train_examples
+    ? [`${manifest.minimum_train_examples - train.length} more approved training examples required`]
+    : []),
+  ...(evalRows.length === 0 ? ["a distinct held-out evaluation split is required"] : []),
+];
+assert(
+  JSON.stringify(readinessReasons) === JSON.stringify(manifest.readiness_reasons),
+  "Readiness reasons differ from manifest",
+);
 
 if (!allowInsufficient) {
   assert(
@@ -77,9 +111,12 @@ if (!allowInsufficient) {
 
 console.log(JSON.stringify({
   valid: true,
-  ready_to_train: train.length >= manifest.minimum_train_examples,
+  ready_to_train: readinessReasons.length === 0,
   train_examples: train.length,
   eval_examples: evalRows.length,
   minimum_train_examples: manifest.minimum_train_examples,
+  recommended_train_examples: manifest.recommended_train_examples,
+  readiness_reasons: readinessReasons,
+  coverage: manifest.coverage,
   insufficient_allowed: allowInsufficient,
 }, null, 2));
