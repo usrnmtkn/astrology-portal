@@ -9,6 +9,16 @@ export type ComparisonPoint = {
   role: string;
 };
 
+export type CalculatedSynastryContact = {
+  id: string;
+  friendPoint: ComparisonPoint;
+  yourPoint: ComparisonPoint;
+  aspect: string;
+  orb: number;
+  score: number;
+  tone: string;
+};
+
 export const zodiacSigns = [
   "Aries",
   "Taurus",
@@ -277,6 +287,18 @@ export function synastryContactScore(friendPoint: string, yourPoint: string, asp
     - generationalContextPenalty;
 }
 
+export function synastryTone(aspect: string) {
+  if (["square", "opposition"].includes(aspect)) {
+    return "Friction";
+  }
+
+  if (["trine", "sextile"].includes(aspect)) {
+    return "Flow";
+  }
+
+  return "Fusion";
+}
+
 export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
   if (!sky) {
     return [];
@@ -310,6 +332,50 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
   }
 
   return points;
+}
+
+export function calculatedSynastryContacts(
+  profileNatalSky: SkySnapshot | null,
+  chart: Pick<ManualChart, "id" | "natalChart">
+): CalculatedSynastryContact[] {
+  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
+  const yourPoints = comparisonPointsFromSky(profileNatalSky);
+  const contacts = friendPoints.flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+    const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
+    const aspect = transitAspectDefinitions
+      .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+      .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
+      .sort((first, second) => first.orbValue - second.orbValue)[0];
+
+    if (!aspect) {
+      return [];
+    }
+
+    return [{
+      id: `${chart.id}-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
+      friendPoint,
+      yourPoint,
+      aspect: aspect.type,
+      orb: aspect.orbValue,
+      score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
+      tone: synastryTone(aspect.type)
+    }];
+  }));
+  const orderedContacts = contacts.sort((first, second) => second.score - first.score || first.orb - second.orb);
+  const primaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "primary");
+  const secondaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "secondary");
+  const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
+
+  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
+}
+
+export function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
+  const separation = angularDistance(zodiacLongitude(personAPosition), zodiacLongitude(personBPosition));
+
+  return transitAspectDefinitions
+    .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+    .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, personBPosition.planet, personAPosition.planet))
+    .sort((first, second) => first.orbValue - second.orbValue)[0] ?? null;
 }
 
 export function synastryWheelAspectLines(

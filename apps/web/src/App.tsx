@@ -171,14 +171,16 @@ import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from 
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
-  comparisonPointsFromSky,
+  calculatedSynastryContacts,
   comparisonPointRole,
   natalElementBalance,
   normalizedAngle,
   relationshipCompositeSky,
+  samePlanetExactAspect,
   synastryAspectOrbLimit,
   synastryContactScore,
   synastryContactSignalTier,
+  synastryTone,
   synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
@@ -186,7 +188,7 @@ import {
   zodiacSignForLongitude,
   zodiacSignGlyphs,
   zodiacSigns,
-  type ComparisonPoint
+  type CalculatedSynastryContact
 } from "./services/chartMath";
 import {
   readCachedSkySnapshot,
@@ -448,14 +450,7 @@ type FriendTimingContext = {
   activeNatalPlanetsInProfectedSign?: string[];
 };
 
-type SynastryContact = {
-  id: string;
-  friendPoint: ComparisonPoint;
-  yourPoint: ComparisonPoint;
-  aspect: string;
-  orb: number;
-  score: number;
-  tone: string;
+type SynastryContact = CalculatedSynastryContact & {
   summary: string;
   contentKeys: string[];
 };
@@ -9893,18 +9888,6 @@ function richSynastryContactContentKeys(
   ));
 }
 
-function synastryTone(aspect: string) {
-  if (["square", "opposition"].includes(aspect)) {
-    return "Friction";
-  }
-
-  if (["trine", "sextile"].includes(aspect)) {
-    return "Flow";
-  }
-
-  return "Fusion";
-}
-
 function possessiveLabel(name: string) {
   return possessiveName(name);
 }
@@ -10669,65 +10652,30 @@ function synastryContacts(
   romanticAllowed = false,
   relationshipType?: string | null
 ): SynastryContact[] {
-  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
-  const yourPoints = comparisonPointsFromSky(profileNatalSky);
+  return calculatedSynastryContacts(profileNatalSky, chart).map((contact) => {
+    const baseContact = {
+      ...contact,
+      contentKeys: synastryContactContentKeys(contact.friendPoint.name, contact.aspect, contact.yourPoint.name, relationshipType)
+    };
 
-  const contacts = friendPoints
-    .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
-      const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      if (!aspect) {
-        return [];
-      }
-
-      const baseContact = {
-        id: `${chart.id}-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
-        friendPoint,
-        yourPoint,
-        aspect: aspect.type,
-        orb: aspect.orbValue,
-        score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
-        tone: synastryTone(aspect.type),
-        contentKeys: synastryContactContentKeys(friendPoint.name, aspect.type, yourPoint.name, relationshipType)
-      };
-
-      return [{
-        ...baseContact,
-        summary: synastryContactSummary(
-          chart.displayName,
-          comparisonName,
-          comparisonIsSelf,
-          baseContact,
-          generatedContent,
-          chart.pronouns,
-          comparisonPronouns,
-          romanticAllowed,
-          relationshipType
-        )
-      }];
-    }));
-  const orderedContacts = contacts.sort((first, second) => second.score - first.score || first.orb - second.orb);
-  const primaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "primary");
-  const secondaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "secondary");
-  const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
-
-  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
+    return {
+      ...baseContact,
+      summary: synastryContactSummary(
+        chart.displayName,
+        comparisonName,
+        comparisonIsSelf,
+        baseContact,
+        generatedContent,
+        chart.pronouns,
+        comparisonPronouns,
+        romanticAllowed,
+        relationshipType
+      )
+    };
+  });
 }
 
 const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
-
-function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
-  const separation = angularDistance(zodiacLongitude(personAPosition), zodiacLongitude(personBPosition));
-
-  return transitAspectDefinitions
-    .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-    .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, personBPosition.planet, personAPosition.planet))
-    .sort((first, second) => first.orbValue - second.orbValue)[0] ?? null;
-}
 
 function compatibilityPlanetCards(
   profileNatalSky: SkySnapshot | null,
