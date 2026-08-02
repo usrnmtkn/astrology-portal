@@ -28,3 +28,31 @@ export function isDisplayableNatalAspect(aspect: NatalAspectDisplayCandidate) {
 
   return !(points.has("north node") && points.has("south node"));
 }
+
+function natalAspectDisplayKey(aspect: NatalAspectDisplayCandidate) {
+  const normalizeKeyPart = (value: string) => value.trim().toLowerCase().replace(/\s+/g, "-");
+  const points = [normalizeKeyPart(aspect.from), normalizeKeyPart(aspect.to)].sort();
+
+  return `${points[0]}-${normalizeKeyPart(aspect.type)}-${points[1]}`;
+}
+
+export function uniqueDisplayableNatalAspects<T extends NatalAspectDisplayCandidate>(
+  aspects: readonly T[]
+) {
+  const seen = new Set<string>();
+
+  return aspects.filter((aspect) => {
+    if (!isDisplayableNatalAspect(aspect)) {
+      return false;
+    }
+
+    const key = natalAspectDisplayKey(aspect);
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
