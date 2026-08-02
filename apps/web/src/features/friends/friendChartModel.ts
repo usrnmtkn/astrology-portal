@@ -1,11 +1,16 @@
 import { pointGlyph, signGlyph } from "../../components/charts/chartAssets";
+import { profileInitials } from "../../components/ProfileAvatar";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
+import { natalBigThreeFromSky, zodiacFromBirthDate } from "../../services/chartProfile";
 import {
   displayTimeToTwentyFourHour,
   twentyFourHourTimeToDisplay
 } from "../../services/chartTime";
 import { isSocialFriendChart } from "../../services/socialFriends";
+import { manualChartNeedsBirthTime } from "../../services/manualCharts";
 import type { ManualChart } from "../../services/manualCharts";
+import { natalAspectPatternPillSummary } from "../../services/natalAspectPatterns";
+import type { NatalAspectPatternPillSummary } from "../../services/natalAspectPatterns";
 import type {
   TldrAstroChartSettings,
   TldrAstroSubject
@@ -14,6 +19,18 @@ import { groupAspectsByGiftLesson } from "../../services/aspectGiftLesson";
 import { uniqueDisplayableNatalAspects } from "../../services/natalAspectDisplay";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { compactCityLabel } from "../../utils/locationLabels";
+import type { RelationshipComparisonOption } from "./RelationshipComparePicker";
+
+export type FriendChartListItem = {
+  chart: ManualChart;
+  initials: string;
+  sun: string;
+  moon: string;
+  rising: string;
+  needsBirthTime: boolean;
+  active: boolean;
+  patternSummary: NatalAspectPatternPillSummary | null;
+};
 
 const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
 
@@ -79,6 +96,76 @@ export function manualChartSubtitle(chart: ManualChart) {
   ].join(" · ");
 
   return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
+}
+
+export function manualChartBigThree(chart: ManualChart) {
+  if (!chart.natalChart) {
+    return {
+      sun: zodiacFromBirthDate(chart.birthDate),
+      moon: "Moon pending",
+      rising: "Rising pending"
+    };
+  }
+
+  return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
+}
+
+export function buildFriendChartListItems(
+  charts: ManualChart[],
+  selectedChartId: string | null,
+  showNatalAspectPatterns: boolean
+): FriendChartListItem[] {
+  return charts.map((chart) => {
+    const bigThree = manualChartBigThree(chart);
+
+    return {
+      chart,
+      initials: profileInitials(chart.displayName, chart.displayName),
+      sun: bigThree.sun,
+      moon: bigThree.moon,
+      rising: bigThree.rising,
+      needsBirthTime: manualChartNeedsBirthTime(chart),
+      active: selectedChartId === chart.id,
+      patternSummary: showNatalAspectPatterns && chart.chartType === "person"
+        ? natalAspectPatternPillSummary(chart.natalChart)
+        : null
+    };
+  });
+}
+
+export function buildRelationshipComparisonOptions({
+  allFriendCharts,
+  profileEmail,
+  profileName,
+  profileNatalSky,
+  selectedChartId
+}: {
+  allFriendCharts: ManualChart[];
+  profileEmail: string;
+  profileName: string;
+  profileNatalSky: SkySnapshot | null;
+  selectedChartId: string | null;
+}): RelationshipComparisonOption[] {
+  const selfOption: RelationshipComparisonOption = {
+    id: "self",
+    displayName: "You",
+    initials: profileInitials(profileName, profileEmail),
+    subtitle: profileNatalSky ? "Your birth chart" : "Birth chart pending",
+    natalChart: profileNatalSky,
+    isSelf: true
+  };
+  const chartOptions = allFriendCharts
+    .filter((chart) => chart.id !== selectedChartId && chart.chartType !== "event")
+    .map((chart) => ({
+      id: chart.id,
+      displayName: chart.displayName,
+      initials: profileInitials(chart.displayName, chart.displayName),
+      subtitle: manualChartSubtitle(chart),
+      natalChart: chart.natalChart ?? null,
+      isSelf: false
+    }));
+
+  return [selfOption, ...chartOptions];
 }
 
 export function apiSubjectFromManualChart(

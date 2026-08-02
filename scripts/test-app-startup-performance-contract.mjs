@@ -628,13 +628,13 @@ assert.equal(
 );
 assert.doesNotMatch(
   appSource,
-  /function (?:apiSubjectFromManualChart|groupFriendNatalAspects|isSocialBigThreeRow|manualChartSubtitle|planetPositionFromSocialRow)/u,
-  "Friends-only chart normalization must not remain embedded in the startup App module."
+  /function (?:apiSubjectFromManualChart|buildFriendChartListItems|buildRelationshipComparisonOptions|groupFriendNatalAspects|isSocialBigThreeRow|manualChartBigThree|manualChartSubtitle|planetPositionFromSocialRow)/u,
+  "Friends-only chart normalization and view-model assembly must not remain embedded in the startup App module."
 );
 assert.match(
   friendChartModelSource,
-  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle[\s\S]*export function apiSubjectFromManualChart[\s\S]*export function groupFriendNatalAspects/u,
-  "The Friends chart model must own social-placement normalization, chart-list subtitles, API subject construction, and natal aspect grouping."
+  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle[\s\S]*export function manualChartBigThree[\s\S]*export function buildFriendChartListItems[\s\S]*export function buildRelationshipComparisonOptions[\s\S]*export function apiSubjectFromManualChart[\s\S]*export function groupFriendNatalAspects/u,
+  "The Friends chart model must own placement normalization, chart-list and comparison view models, API subjects, and natal aspect grouping."
 );
 assert.doesNotMatch(
   appSource,
