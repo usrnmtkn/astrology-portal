@@ -146,6 +146,16 @@ assert.match(
 );
 assert.doesNotMatch(
   appSource,
+  /import\s+\{[^}]*(?:AppearanceToggle|HouseSignLabelToggle|SwitchControl)[^}]*\}\s+from\s+"\.\/components\/SettingsControls"/u,
+  "Settings-only controls must not remain static application-shell dependencies."
+);
+assert.equal(
+  [...appSource.matchAll(/import\("\.\/components\/SettingsControls"\)/gu)].length,
+  3,
+  "All three Settings controls must load through their deferred route boundary."
+);
+assert.doesNotMatch(
+  appSource,
   /import\s+\{[^}]*(?:NatalAspectPatternsSection|NatalAspectPatternActivationsSection)[^}]*\}\s+from\s+"\.\/features\/you\/NatalAspectPatternsSection"/u,
   "Natal aspect-pattern rendering must not remain a static application-shell dependency."
 );
