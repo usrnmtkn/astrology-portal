@@ -146,7 +146,7 @@ export type SkySnapshot = {
     };
   }>;
   aspectPatterns?: import("@tldr/astro-knowledge/aspect-pattern-engine").AspectPatternDetectionResult;
-  facts?: import("./services/astrologyFacts").AstrologyFact[];
+  facts?: import("./services/astrologyFacts.js").AstrologyFact[];
 };
 
 export type AspectConditions = {
