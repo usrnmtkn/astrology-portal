@@ -135,13 +135,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const shouldLoadRelationships = mode === "friends" && friendProfileContentRequested;/,
-  "Friends relationship and composite content must wait until a chart profile requests it."
+  /const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;/,
+  "Friends relationship and composite content must wait until a relationship-oriented profile tab requests it."
 );
 assert.match(
   appSource,
-  /const shouldLoadNatal = \["guest", "member", "profile"\]\.includes\(mode\)\s*\|\| \(mode === "friends" && friendProfileContentRequested\);/,
-  "Friends natal and You content must also wait until a chart profile requests it."
+  /const shouldLoadNatal = \["guest", "member", "profile"\]\.includes\(mode\)\s*\|\| \(mode === "friends" && friendNatalContentRequested\);/,
+  "Friends natal and You content must wait until the Natal profile tab requests it."
 );
 assert.doesNotMatch(
   appSource,
@@ -150,13 +150,18 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onFriendProfileContentRequest\(\);/,
-  "Opening a Friends chart profile must request deferred natal and relationship content after the landing view is usable."
+  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onFriendProfileContentRequest\(friendProfileTab\);/,
+  "A Friends chart profile must request only the active tab's deferred content after the landing view is usable."
 );
 assert.match(
   appSource,
-  /\|\| \(mode === "friends" && !friendProfileContentRequested\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
-  "Bare Friends landing views must not download the deferred transit and relationship fallback bundle."
+  /\|\| \(mode === "friends" && !friendRelationshipContentRequested\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  "Bare Friends and Natal-only views must not download the deferred transit and relationship fallback bundle."
+);
+assert.match(
+  appSource,
+  /const requestFriendProfileContent = useCallback\(\(tab: FriendProfileTab\) => \{\s*if \(tab === "natal"\) \{\s*setFriendNatalContentRequested\(true\);\s*return;\s*\}\s*setFriendRelationshipContentRequested\(true\);/,
+  "Friends must request natal and relationship interpretation payloads independently by active profile tab."
 );
 assert.match(
   appSource,
