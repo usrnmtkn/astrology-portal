@@ -18,6 +18,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
 
 const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
@@ -65,6 +66,13 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
     ``,
     `You are scoring a sky placement article${placementLabel}. Slots: an optional TAGLINE (2-5 word imperative under the title), HOOK, LIVED, TURN, and optional MOVES (2-3 concrete ways to work with the transit), rendered top to bottom as one article. The first sentence of HOOK is promoted by the reader into a standalone bold quote and removed from the body; the remaining hook sentences are the planet-plus-sign meaning paragraph. The date range and dated sky events are computed by the app; they are not part of what you score.`,
     `The voice: ${spec.voiceDescription}`,
+    buildOwnerVocabularyPrompt({
+      surface: "planet-article",
+      maxCore: 14,
+      maxShared: 10,
+      maxAcShared: 8,
+      maxSdAdditions: 6
+    }),
     tier ? `This article's register is ${TIER_HINT[tier] || tier}` : ``,
     ``,
     `Score the article 1-3:`,
