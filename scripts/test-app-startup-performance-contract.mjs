@@ -587,6 +587,11 @@ assert.match(
   /(?:^|\n)\.relationship-explainer-card\s*\{/u,
   "The lazy FriendDetail stylesheet must own relationship explainer CSS."
 );
+assert.match(
+  friendDetailStylesSource,
+  /@media \(max-width: 800px\)[\s\S]*\.app-shell\.mode-friends \.friend-profile-panel\.friend-chart-page[\s\S]*grid-template-columns: minmax\(0, 1fr\)/u,
+  "The lazy FriendDetail stylesheet must preserve the mobile one-column layout after its CSS chunk loads."
+);
 assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.friend-chart-legend\s*\{/u,
