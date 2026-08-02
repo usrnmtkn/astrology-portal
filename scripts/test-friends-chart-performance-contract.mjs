@@ -8,6 +8,15 @@ const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
 const appSource = fs.readFileSync(appSourcePath, "utf8");
 const manualChartsSourcePath = path.join(repoRoot, "apps/web/src/services/manualCharts.ts");
 const manualChartsSource = fs.readFileSync(manualChartsSourcePath, "utf8");
+const authSourcePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
+const authSource = fs.readFileSync(authSourcePath, "utf8");
+const socialFriendsSourcePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
+const socialFriendsSource = fs.readFileSync(socialFriendsSourcePath, "utf8");
+const socialFriendsPanelSourcePath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/SocialFriendsPanel.tsx"
+);
+const socialFriendsPanelSource = fs.readFileSync(socialFriendsPanelSourcePath, "utf8");
 
 const createManualChartStart = manualChartsSource.indexOf(
   "export async function createManualChart"
@@ -104,8 +113,8 @@ assert.ok(
 
 assert.match(
   readyCacheHydrationMatch.groups.body,
-  /listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\)/,
-  "Friends chart ready-load path must include all locally cached manual chart owners before remote refresh."
+  /listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id\s*\]\)/,
+  "Friends chart ready-load path must paint only the resolved profile's local chart cache before remote refresh."
 );
 
 assert.ok(
@@ -114,8 +123,62 @@ assert.ok(
   "Friends chart cache hydration must run before the Supabase manual chart fetch."
 );
 
+assert.match(
+  appSource,
+  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
+  "Friends charts must paint their account-scoped cache after authentication resolves."
+);
+
+const verifiedAuthUserMatch = authSource.match(
+  /export async function getVerifiedAuthUser[\s\S]*?\n\}/
+);
+
+assert.ok(
+  verifiedAuthUserMatch,
+  "Friends data loading must expose a shared verified-user request."
+);
+assert.match(
+  verifiedAuthUserMatch[0],
+  /verifiedAuthUserRequest\?\.accessToken !== accessToken/,
+  "Friends data loading must reuse authentication verification for the active access token."
+);
+assert.match(
+  manualChartsSource,
+  /const user = await getVerifiedAuthUser\(supabase\);/,
+  "Manual charts must share the verified-user request instead of starting another auth network call."
+);
+assert.match(
+  socialFriendsSource,
+  /const user = await getVerifiedAuthUser\(client\);/,
+  "Social friends must share the verified-user request across its parallel data queries."
+);
+
+const socialCoreRefreshMatch = socialFriendsPanelSource.match(
+  /const refreshSocialData = useCallback\(async \(\) => \{(?<body>[\s\S]*?)\n  \}, \[onPendingRequestCountChange, publishFriends\]\);/
+);
+
+assert.ok(
+  socialCoreRefreshMatch?.groups?.body,
+  "Friends performance QA must be able to inspect the core social refresh."
+);
+assert.match(
+  socialCoreRefreshMatch.groups.body,
+  /Promise\.all\(\[\s*loadOwnSocialProfile\(\),\s*listSocialFriends\(\)\s*\]\)/,
+  "The visible Friends list must wait only for profile and friend rows."
+);
+assert.match(
+  socialCoreRefreshMatch.groups.body,
+  /publishFriends\(nextFriends\);[\s\S]*void Promise\.all\(\[[\s\S]*listSocialFriendRequests[\s\S]*listSocialNotifications[\s\S]*listSocialInvitations/,
+  "Requests, notifications, and invitations must start only after the visible Friends list is published."
+);
+assert.match(
+  appSource,
+  /const repairTimer = window\.setTimeout\(\(\) => \{\s*void repairCharts\(\);\s*\}, 1_500\);/,
+  "Incomplete chart repair must wait until after initial interaction instead of competing with first paint."
+);
+
 console.log(JSON.stringify({
   status: "PASS",
   surface: "friends chart performance",
-  contract: "Complete friend charts do not trigger background natal/timezone repair, and chart rows hydrate from local cache before remote refresh."
+  contract: "Friends and chart rows paint from cache/core data first, share auth verification, and defer incomplete-chart repair."
 }, null, 2));
