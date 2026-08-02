@@ -6,6 +6,11 @@ import assert from "node:assert/strict";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
 const appSource = fs.readFileSync(appSourcePath, "utf8");
+const manualChartsControllerPath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/useManualChartsController.ts"
+);
+const manualChartsControllerSource = fs.readFileSync(manualChartsControllerPath, "utf8");
 const manualChartsSourcePath = path.join(repoRoot, "apps/web/src/services/manualCharts.ts");
 const manualChartsSource = fs.readFileSync(manualChartsSourcePath, "utf8");
 const authSourcePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
@@ -39,10 +44,10 @@ const markPendingEnd = manualChartsSource.indexOf(
   markPendingStart
 );
 const markPendingSource = manualChartsSource.slice(markPendingStart, markPendingEnd);
-const cachedHydrationIndex = appSource.indexOf(
+const cachedHydrationIndex = manualChartsControllerSource.indexOf(
   "const cachedCharts = listCachedManualCharts"
 );
-const remoteListIndex = appSource.indexOf(
+const remoteListIndex = manualChartsControllerSource.indexOf(
   "listManualCharts(chartOwnerUserId)",
   cachedHydrationIndex
 );
@@ -99,12 +104,12 @@ assert.match(
 );
 
 assert.match(
-  appSource,
+  manualChartsControllerSource,
   /const chartsToRepair = charts\.filter\(manualChartNeedsNatalRepair\);/,
   "Friends chart repair must filter incomplete charts before starting async repair work."
 );
 
-const readyCacheHydrationMatch = appSource.match(
+const readyCacheHydrationMatch = manualChartsControllerSource.match(
   /if \(allowCachedChartsWhileLoading && !chartsLoadedRef\.current\) \{(?<body>[\s\S]*?)\n    \}\n\n    if \(!chartsLoadedRef\.current\)/
 );
 
@@ -115,13 +120,13 @@ assert.ok(
 
 assert.match(
   readyCacheHydrationMatch.groups.body,
-  /listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id\s*\]\)/,
+  /listCachedManualCharts\(\[chartOwnerUserId, profileId\]\)/,
   "Friends chart ready-load path must paint only the resolved profile's local chart cache before remote refresh."
 );
 
 assert.ok(
-  appSource.indexOf("if (allowCachedChartsWhileLoading && !chartsLoadedRef.current)") <
-    appSource.indexOf("listManualCharts(chartOwnerUserId)"),
+  manualChartsControllerSource.indexOf("if (allowCachedChartsWhileLoading && !chartsLoadedRef.current)") <
+    manualChartsControllerSource.indexOf("listManualCharts(chartOwnerUserId)"),
   "Friends chart cache hydration must run before the Supabase manual chart fetch."
 );
 
@@ -267,7 +272,7 @@ assert.match(
   "Leaving Composite or changing charts must abort obsolete relationship comparison work."
 );
 assert.match(
-  appSource,
+  manualChartsControllerSource,
   /const repairTimer = window\.setTimeout\(\(\) => \{\s*void repairCharts\(\);\s*\}, 1_500\);/,
   "Incomplete chart repair must wait until after initial interaction instead of competing with first paint."
 );
