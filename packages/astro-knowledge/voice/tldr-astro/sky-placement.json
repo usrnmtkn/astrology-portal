@@ -164,6 +164,7 @@
     "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
     "Scene, not inventory: a lived paragraph needs pressure, movement, and consequence. Three parallel examples from different life categories read like generated coverage even when every noun is concrete. One charged sequence is better than a representative list.",
+    "Do not use generic plural 'people' as a placeholder when a specific actor, relationship, group, or institution can be named. This is a judgment rule, not a blind regex ban; existing owner-approved uses remain valid when 'people' is the actual subject.",
     "One close with bite. A directive is allowed when specific; motivational recap never.",
     "Vague 'things' as filler is off; idiomatic use ('handle the thing', 'get things done') is fine.",
     "'heal' language is earned only where the placement is literally about a wound (Chiron); elsewhere it is coaching register. Judge concern, not regex.",
@@ -177,8 +178,8 @@
       "planet": "uranus",
       "sign": "cancer",
       "status": "owner-approved",
-      "text": "Uranus spends about seven years in a sign, long enough to pry open the private rules nobody admits are rules. The person who has always held the family together stops answering every call; the spare room changes purpose; the emergency contact is no longer a blood relative. A family scatters, and another one forms around a spare key, a couch, and the people who actually show up. What looked like stability turns out to be obligation, and home changes shape because the old version asked one person to carry too much.",
-      "use": "Voice and movement evidence for the lived beat: hidden rule, changed behavior, rupture, consequence. Do not copy its wording into another placement. This approves the paragraph only, not the surrounding Uranus-in-Cancer article."
+      "text": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
+      "use": "Voice and movement evidence for the lived beat: duration, baseline rupture, concrete changes, relational reclassification, cost. Specific physical changes beat broad metaphor; stay with the disruption instead of rushing into rebuilding. Do not copy its wording into another placement. This approves the paragraph only, not the surrounding Uranus-in-Cancer article."
     }
   ],
 
