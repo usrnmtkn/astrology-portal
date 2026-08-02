@@ -30,7 +30,6 @@ import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
-import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
 import type { NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
@@ -11397,6 +11396,24 @@ const SettingsRoute = lazy(() =>
 const BlockedAccountsSettings = lazy(() =>
   import("./features/settings/BlockedAccountsSettings").then((module) => ({
     default: module.BlockedAccountsSettings
+  }))
+);
+
+const AppearanceToggle = lazy(() =>
+  import("./components/SettingsControls").then((module) => ({
+    default: module.AppearanceToggle
+  }))
+);
+
+const HouseSignLabelToggle = lazy(() =>
+  import("./components/SettingsControls").then((module) => ({
+    default: module.HouseSignLabelToggle
+  }))
+);
+
+const SwitchControl = lazy(() =>
+  import("./components/SettingsControls").then((module) => ({
+    default: module.SwitchControl
   }))
 );
 
