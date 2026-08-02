@@ -294,6 +294,16 @@ export function SocialFriendsPanel({
     onFriendsChange(nextFriends);
   }, [onFriendsChange]);
 
+  const refreshSocialActivity = useCallback(async () => {
+    const [nextNotifications, nextInvitations] = await Promise.all([
+      listSocialNotifications(),
+      listSocialInvitations()
+    ]);
+
+    setNotifications(nextNotifications);
+    setInvitations(nextInvitations);
+  }, []);
+
   const refreshSocialData = useCallback(async () => {
     const profileRequest = loadOwnSocialProfile()
       .then(setProfile)
@@ -306,19 +316,27 @@ export function SocialFriendsPanel({
 
     publishFriends(nextFriends);
     void profileRequest;
-    void Promise.all([
-      listSocialFriendRequests().then((nextRequests) => {
+    void listSocialFriendRequests()
+      .then((nextRequests) => {
         setRequests(nextRequests);
         onPendingRequestCountChange?.(
           nextRequests.filter((request) => request.direction === "incoming").length
         );
-      }),
-      listSocialNotifications().then(setNotifications),
-      listSocialInvitations().then(setInvitations)
-    ]).catch(() => undefined);
+      })
+      .catch(() => undefined);
 
     return nextFriends;
   }, [onPendingRequestCountChange, publishFriends]);
+
+  useEffect(() => {
+    if (!available || activeView === "charts") {
+      return;
+    }
+
+    void refreshSocialActivity().catch(() => {
+      // Activity history can hydrate after the core Friends view is usable.
+    });
+  }, [activeView, available, refreshSocialActivity]);
 
   useEffect(() => {
     let cancelled = false;
@@ -357,6 +375,11 @@ export function SocialFriendsPanel({
       void refreshSocialData().catch(() => {
         // Keep the last authorized snapshot while the connection recovers.
       });
+      if (activeViewRef.current !== "charts") {
+        void refreshSocialActivity().catch(() => {
+          // Keep the last activity snapshot while the connection recovers.
+        });
+      }
     };
     const unsubscribe = subscribeToSocialChanges(() => {
       window.clearTimeout(refreshTimer);
@@ -370,7 +393,7 @@ export function SocialFriendsPanel({
       window.removeEventListener("focus", refreshOnFocus);
       unsubscribe();
     };
-  }, [refreshSocialData]);
+  }, [refreshSocialActivity, refreshSocialData]);
 
   useEffect(() => {
     return () => {
