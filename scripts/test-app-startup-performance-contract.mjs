@@ -128,6 +128,16 @@ assert.match(
   "CompatibilityTab must load only when its Friends profile surface renders."
 );
 assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*\bBlockedAccountsSettings\b[^}]*\}\s+from\s+"\.\/features\/settings\/BlockedAccountsSettings"/u,
+  "BlockedAccountsSettings must not remain a static application-shell dependency."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/BlockedAccountsSettings"\)/u,
+  "BlockedAccountsSettings must load only when its nested Settings page renders."
+);
+assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.relationship-explainer-card\s*\{/u,
   "Relationship explainer CSS must not remain in the eager Friends/profile stylesheet."

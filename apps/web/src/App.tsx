@@ -111,7 +111,6 @@ import {
   manualChartFormFromChart,
   type ManualChartForm
 } from "./features/friends/manualChartForm";
-import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import {
   NatalAspectPatternActivationsSection,
   NatalAspectPatternsSection,
@@ -11386,6 +11385,12 @@ const FriendsRoute = lazy(() =>
 const SettingsRoute = lazy(() =>
   import("./routes/SettingsRoute").then((module) => ({
     default: module.SettingsRoute
+  }))
+);
+
+const BlockedAccountsSettings = lazy(() =>
+  import("./features/settings/BlockedAccountsSettings").then((module) => ({
+    default: module.BlockedAccountsSettings
   }))
 );
 
