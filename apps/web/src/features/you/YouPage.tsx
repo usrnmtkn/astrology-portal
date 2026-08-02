@@ -5,6 +5,8 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
+import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
@@ -95,12 +97,14 @@ export type YouPageProps = {
   emptyHouseRows: ReactNode[];
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
-  natalChart: ReactNode;
+  natalSky: SkySnapshot | null;
   natalChartPending: boolean;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
-  updatesChart?: ReactNode;
+  currentSky: SkySnapshot | null;
+  houseSignLabelStyle: HouseSignLabelStyle;
+  updateTransitAspectLines: InterChartAspectLine[];
   natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
@@ -1070,9 +1074,11 @@ export function YouPage({
   natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
   natalTableRows,
-  natalChart,
+  natalSky,
   natalChartPending,
-  updatesChart,
+  currentSky,
+  houseSignLabelStyle,
+  updateTransitAspectLines,
   onCreateChart,
   onRequestWeeklyHoroscope,
   onCloseTransitArticle,
@@ -1093,6 +1099,41 @@ export function YouPage({
   const [profileTab, setProfileTab] = useState<YouTab>("transits");
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
+  const natalChart = natalSky ? (
+    <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
+      <div className="chart-frame">
+        <SkyWheel
+          positions={natalSky.positions}
+          aspects={natalSky.aspects}
+          ascendant={natalSky.ascendant}
+          ascendantLongitude={natalSky.ascendantLongitude}
+          midheavenLongitude={natalSky.midheavenLongitude}
+          showHouses
+          houseSignLabelStyle={houseSignLabelStyle}
+          variant="natal"
+          aspectInspector
+        />
+      </div>
+    </div>
+  ) : null;
+  const updatesChart = natalSky && currentSky ? (
+    <div className="wheel natal-wheel chart-shell" id="wheel-updates-transits" aria-label="Transit chart wheel">
+      <div className="chart-frame">
+        <SkyWheel
+          positions={natalSky.positions}
+          aspects={[]}
+          transitPositions={currentSky.positions}
+          transitAspects={updateTransitAspectLines}
+          ascendant={natalSky.ascendant}
+          ascendantLongitude={natalSky.ascendantLongitude}
+          midheavenLongitude={natalSky.midheavenLongitude}
+          showHouses
+          houseSignLabelStyle={houseSignLabelStyle}
+          variant="natal"
+        />
+      </div>
+    </div>
+  ) : null;
   const activeChart = profileTab === "transits" && updatesChart ? updatesChart : natalChart;
   const activeChartLabel = profileTab === "transits" && updatesChart ? "Transit chart" : "Natal chart";
   const natalTableContent = natalTableRows.length > 0 ? (

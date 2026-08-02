@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
+const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
@@ -17,6 +18,7 @@ const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/w
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
+const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 const friendsPageShellSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/FriendsPageShell.tsx"), "utf8");
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
@@ -271,6 +273,16 @@ assert.match(
   accountViewSource,
   /export function AccountView/u,
   "The deferred Account module must own account state and presentation."
+);
+assert.doesNotMatch(
+  profileViewSource,
+  /id="wheel-(?:natal|updates-transits)"/u,
+  "ProfileView must pass chart data instead of owning You-page wheel presentation."
+);
+assert.match(
+  youPageSource,
+  /id="wheel-natal"[\s\S]*id="wheel-updates-transits"/u,
+  "The deferred You page must own natal and transit wheel presentation."
 );
 assert.doesNotMatch(
   appSource,

@@ -17730,42 +17730,6 @@ function ProfileView({
           status: personalTimingStatus
         }
       : null;
-  const natalChart = natalSky ? (
-    <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
-      <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={natalSky.aspects}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-          aspectInspector
-        />
-      </div>
-    </div>
-  ) : null;
-  const updatesChart = natalSky && currentSky ? (
-    <div className="wheel natal-wheel chart-shell" id="wheel-updates-transits" aria-label="Transit chart wheel">
-      <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={[]}
-          transitPositions={currentSky.positions}
-          transitAspects={updateTransitAspectLines}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-        />
-      </div>
-    </div>
-  ) : null;
-
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
@@ -17782,14 +17746,16 @@ function ProfileView({
         emptyHouseRows={emptyHouseRows}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
+        currentSky={currentSky}
+        houseSignLabelStyle={houseSignLabelStyle}
         natalAspectGroups={natalAspectGroups}
         natalAspectPatternItems={natalAspectPatternItems}
         natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}
-        natalChart={natalChart}
+        natalSky={natalSky}
         natalChartPending={!natalSky}
         natalTableRows={natalChartTableRows}
-        updatesChart={updatesChart}
+        updateTransitAspectLines={updateTransitAspectLines}
         onCreateChart={onCreateChart}
         onCloseTransitArticle={() => {
           setActivePlacementRouteId(null);
