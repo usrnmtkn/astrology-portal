@@ -34,6 +34,10 @@ const relationshipApiSummarySource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/RelationshipApiSummary.tsx"),
   "utf8"
 );
+const friendCompositeTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendCompositeTab.tsx"),
+  "utf8"
+);
 const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
@@ -312,13 +316,23 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/RelationshipApiSummary"\)/u,
-  "Relationship API presentation must load only when its Friends surface renders."
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendCompositeTab"\)/u,
+  "Composite presentation must load only when its Friends tab renders."
 );
 assert.match(
   relationshipApiSummarySource,
   /export function RelationshipApiSummary/u,
   "The deferred Friends module must own relationship API presentation."
+);
+assert.doesNotMatch(
+  appSource,
+  /import\("\.\/features\/friends\/RelationshipApiSummary"\)/u,
+  "The relationship summary must load through the Composite tab boundary."
+);
+assert.match(
+  friendCompositeTabSource,
+  /import \{ RelationshipApiSummary/u,
+  "The deferred Composite tab must own its relationship summary."
 );
 assert.doesNotMatch(
   appSource,
