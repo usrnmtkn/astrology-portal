@@ -1,4 +1,4 @@
-import profile from "../../../../services/tldrastro-api/src/tldrastro_api/data/sky_aspect_profile.json";
+import profile from "../../../../services/tldrastro-api/src/tldrastro_api/data/sky_aspect_profile.json" with { type: "json" };
 
 export type CanonicalSkyAspectType =
   | "conjunction"
