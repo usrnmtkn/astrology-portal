@@ -25,7 +25,10 @@ const friendPlacementTablesSource = fs.readFileSync(
   "utf8"
 );
 const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/SettingsControls.tsx"), "utf8");
+const citySearchSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/CitySearchField.tsx"), "utf8");
 const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
+const memberSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/MemberSettingsView.tsx"), "utf8");
+const settingsRoutingSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/settingsRouting.ts"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -138,33 +141,33 @@ assert.match(
 );
 assert.doesNotMatch(
   appSource,
-  /import\s+\{[^}]*\bBlockedAccountsSettings\b[^}]*\}\s+from\s+"\.\/features\/settings\/BlockedAccountsSettings"/u,
-  "BlockedAccountsSettings must not remain a static application-shell dependency."
+  /BlockedAccountsSettings/u,
+  "Blocked account rendering must not remain in the application shell."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/BlockedAccountsSettings"\)/u,
+  memberSettingsSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/BlockedAccountsSettings"\)/u,
   "BlockedAccountsSettings must load only when its nested Settings page renders."
 );
 assert.doesNotMatch(
   appSource,
-  /import\s+\{[^}]*(?:AppearanceToggle|HouseSignLabelToggle|SwitchControl)[^}]*\}\s+from\s+"\.\/components\/SettingsControls"/u,
+  /(?:AppearanceToggle|HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup)/u,
   "Settings-only controls must not remain static application-shell dependencies."
-);
-assert.equal(
-  [...appSource.matchAll(/import\("\.\/components\/SettingsControls"\)/gu)].length,
-  4,
-  "All Settings controls must load through their deferred route boundary."
 );
 assert.doesNotMatch(
   appSource,
-  /function GuestSettingsView/u,
-  "The guest Settings page must not remain in the application shell."
+  /function (?:GuestSettingsView|SettingsView|MemberSettingsView)/u,
+  "Settings page implementations must not remain in the application shell."
 );
 assert.match(
   appSource,
   /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/GuestSettingsView"\)/u,
   "The guest Settings page must load only when its route renders."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/MemberSettingsView"\)/u,
+  "The member Settings page must load only when its route renders."
 );
 assert.match(
   settingsControlsSource,
@@ -176,6 +179,24 @@ assert.match(
   /export function GuestSettingsView/u,
   "The deferred Settings module must own the guest page renderer."
 );
+assert.match(
+  memberSettingsSource,
+  /export function MemberSettingsView/u,
+  "The deferred Settings module must own the member page renderer."
+);
+assert.doesNotMatch(
+  appSource,
+  /function (?:CitySearchField|CitySuggestions)/u,
+  "Shared city-search renderers must not be embedded in the application shell."
+);
+assert.match(citySearchSource, /export function CitySearchField/u, "The shared city-search module must own its field renderer.");
+assert.match(citySearchSource, /export function CitySuggestions/u, "The shared city-search module must own suggestion rendering.");
+assert.doesNotMatch(
+  appSource,
+  /function (?:settingsSubpageFromUrl|updateSettingsSubpageUrl)/u,
+  "Nested Settings routing must not be embedded in the application shell."
+);
+assert.match(settingsRoutingSource, /export function settingsSubpageFromHref/u, "Settings routing must expose a testable href parser.");
 assert.doesNotMatch(
   appSource,
   /import\s+\{[^}]*(?:NatalAspectPatternsSection|NatalAspectPatternActivationsSection)[^}]*\}\s+from\s+"\.\/features\/you\/NatalAspectPatternsSection"/u,
