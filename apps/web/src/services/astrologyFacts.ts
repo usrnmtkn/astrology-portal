@@ -1,4 +1,4 @@
-import type { LocationInput, SkySnapshot } from "../types";
+import type { LocationInput, SkySnapshot } from "../types.js";
 
 export type AstrologyFactKind = "position" | "angle" | "house-cusp" | "aspect" | "event";
 export type AstrologyTargetType = "planet" | "node" | "angle" | "cusp" | "other-point";

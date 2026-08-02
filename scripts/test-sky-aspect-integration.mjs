@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
@@ -248,6 +249,18 @@ assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "human-review", "A model-only score 3 may recommend approval but cannot publish.");
 assert.equal(judged.judge.recommendation, "approve");
 assert.equal(judged.judge.approvalSource, "llm-advisory");
+
+const cronSource = fs.readFileSync(new URL("../api/cron/generate-sky-aspects.ts", import.meta.url), "utf8");
+assert.match(cronSource, /status: "DRAFT"/u, "New sky-aspect cards must remain drafts until dashboard approval.");
+assert.match(cronSource, /sky-owner-approval-required/u);
+assert.match(cronSource, /approvedReviewPairKeys/u);
+assert.match(cronSource, /allowReviewSources: options\.allowReviewSources === true/u);
+assert.match(cronSource, /owner-authored-review-pending/u, "The cron must not overwrite an owner-authored review draft.");
+
+const adminSource = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
+assert.match(adminSource, /judgeScore !== 3/u);
+assert.match(adminSource, /judge\?\.recommendation === "approve"/u);
+assert.match(adminSource, /judge\.approvalSource === "llm-advisory"/u);
 
 let repairJudgeCalls = 0;
 let repairReason = "";
