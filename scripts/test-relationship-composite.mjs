@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import {
+  calculatedSynastryContacts,
   comparisonPointsFromSky,
   relationshipCompositeSky,
   relationshipMidpointLongitude,
+  samePlanetExactAspect,
   synastryAspectOrbLimit,
   synastryContactScore,
   synastryContactSignalTier,
@@ -148,6 +150,35 @@ assert.ok(
 assert.ok(
   !wheelLines.some((line) => line.fromPointId === "outer:Jupiter" && line.toPointId === "inner:Jupiter"),
   "Same-planet generational contacts outside 1.25° must stay off the wheel."
+);
+
+const personalPlanets = [
+  ["Sun", "☉"],
+  ["Moon", "☽"],
+  ["Mercury", "☿"],
+  ["Venus", "♀"],
+  ["Mars", "♂"]
+];
+const denseProfileSky = sky({
+  positions: personalPlanets.map(([planet, glyph]) => position(planet, 0, glyph))
+});
+const denseFriendSky = sky({
+  positions: personalPlanets.map(([planet, glyph]) => position(planet, 0, glyph))
+});
+const cappedContacts = calculatedSynastryContacts(denseProfileSky, {
+  id: "dense-friend",
+  natalChart: denseFriendSky
+});
+
+assert.equal(cappedContacts.length, 16, "Calculated contact ordering must retain the 16-contact cap.");
+assert.ok(
+  cappedContacts.every((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "primary"),
+  "Dense personal contacts must remain in the primary tier."
+);
+assert.equal(
+  samePlanetExactAspect(position("Sun", 0, "☉"), position("Sun", 3.75, "☉"))?.type,
+  "conjunction",
+  "Same-planet compatibility must retain personal-point orb expansion."
 );
 
 console.log("Relationship composite calculation tests passed.");
