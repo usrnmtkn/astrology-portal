@@ -298,6 +298,22 @@ const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultOpenAiModel = "gpt-4.1-mini";
 const defaultClaudeModel = "claude-sonnet-4-6";
+const openAiReasoningEfforts = new Set(["none", "low", "medium", "high", "xhigh", "max"] as const);
+type OpenAiReasoningEffort = "none" | "low" | "medium" | "high" | "xhigh" | "max";
+
+function configuredOpenAiReasoningEffort(model: string): OpenAiReasoningEffort | undefined {
+  const configured = String(
+    process.env.OPENAI_GENERATION_REASONING_EFFORT
+    ?? process.env.OPENAI_REASONING_EFFORT
+    ?? ""
+  ).trim().toLowerCase();
+  const effort = configured || (/^gpt-5\.6(?:-|$)/.test(model) ? "none" : "");
+  if (!effort) return undefined;
+  if (!openAiReasoningEfforts.has(effort as OpenAiReasoningEffort)) {
+    throw new Error("OpenAI reasoning effort must be none, low, medium, high, xhigh, or max.");
+  }
+  return effort as OpenAiReasoningEffort;
+}
 const generatedContentSchema = {
   type: "object",
   additionalProperties: false,
@@ -5123,7 +5139,8 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   }
 
   const apiKey = requireEnv("OPENAI_API_KEY");
-  const model = process.env.OPENAI_MODEL ?? defaultOpenAiModel;
+  const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
+  const reasoningEffort = configuredOpenAiReasoningEffort(model);
   const lockedHeadline = factualHeadlineFor(input);
   const approvedExamples = await loadApprovedExamples(input);
   let qualityFeedback = "";
@@ -5139,6 +5156,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       },
       body: JSON.stringify({
         model,
+        ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
         input: buildPrompt(input, approvedExamples, qualityFeedback),
         text: {
           format: {
