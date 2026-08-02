@@ -263,6 +263,7 @@ function buildPrompt(args) {
     `  - Do not use the word "steady" AT ALL - it burned five drafts in the last sweep. Use grounded, solid, sure, calm, or unhurried. Em dash is banned; use a spaced hyphen " - ".`,
     `  - ${spec.loreBoundary}`,
     `  - No absolute dates, degrees, or ephemeris facts; the app appends the computed current-aspect line separately.`,
+    `  - CURRENT SKY IS COLLECTIVE: never use "you", "your", or "part of you". Use "we", "someone", or a concrete collective scene. Second person belongs to transit-to-natal copy.`,
     `  - HOOK SENTENCE 1 is a standalone recognition quote. The reader renders it separately in bold and removes it from the body. It must make sense on its own.`,
     `  - The rest of HOOK is the meaning paragraph: explain what ${TITLE[planet]} governs and how ${cap(sign)} changes its method, pace, or priorities. Translate the source layer into natural prose and behavior; never recite a keyword list.`,
     ``,
@@ -271,6 +272,10 @@ function buildPrompt(args) {
     `  - The turn ends on the line with the most bite. Nothing after it: no blessing, no "wishing you", no motivational recap, no soft summary.`,
     `  - Do not stack closing aphorisms; one truth, one catch at most.`,
     `  - The shadow is observable behavior (what someone does), never an abstract warning.`,
+    `  - LITERAL-ENGLISH PASS: every sentence must make literal sense on the first read. Do not make an arrangement, desire, structure, fear, plan, or feeling perform an unnatural human action. Conventional astrology language such as "Mars governs action" is allowed; decorative personification is not.`,
+    `  - OBSERVATION BEFORE POLISH: begin with recognizable pressure, behavior, or a decision. Do not substitute a slogan, dressed-up abstraction, or metaphor that has to be decoded.`,
+    `  - NAME THE COST: the turn must name the actual consequence and stop at the strongest plain sentence. No dramatic metaphor and no second aphorism after the point has landed.`,
+    `  - Do not infer employment or career from a sign alone. Taurus covers money, resources, possessions, food, housing, the body, comfort, values, and self-worth; work language needs support from the planet or supplied source.`,
     `  - No "the [sign] trap" framing, no "for everyone at once" wrapper, no coverage checklist. If a sentence exists only to satisfy coverage, cut it.`,
     `  - SCENE, NOT INVENTORY: do not line up three peer examples from work, family, relationships, or public life to prove coverage. Concrete nouns do not make an administrative list feel lived. Build pressure -> choice -> consequence. One charged sequence beats three representative scenarios.`,
     `  - Do not use generic plural "people" as a placeholder when you can name the actor, relationship, group, or institution. This is not a blind word ban; use "people" only when people collectively are the actual subject.`,
@@ -377,7 +382,7 @@ async function generateArticle(args, {
       lastAttempt = { raw, article: null, lint: null };
       continue;
     }
-    const lint = lintArticle({ ...article, planet: normalized.planet });
+    const lint = lintArticle({ ...article, planet: normalized.planet, sign: normalized.sign });
     lastAttempt = { raw, article, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const result = {

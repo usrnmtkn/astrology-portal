@@ -34,9 +34,9 @@ const good = {
   tagline: "Play the long game",
   moves: [
     "Pick the one problem worth this much focus and put the grudge work into that instead.",
-    "Ask the direct question you have been gathering evidence to avoid asking."
+    "Ask the direct question before gathering one more piece of evidence."
   ],
-  hook: "The argument you keep rehearsing in the shower finally has somewhere to go. Mars in Scorpio does not raise its voice; it waits.",
+  hook: "The argument rehearsed in the shower finally has somewhere to go. Mars in Scorpio does not raise its voice; it waits.",
   lived: "For about six or seven weeks, effort goes underground: the quiet fix nobody announces, the grudge worked like a project, the text drafted four times and sent once. We stop pushing in the open and start playing the long game.",
   turn: "The trap is strategy curdling into surveillance, testing people instead of asking them. Held heat does not disappear; it compounds until somebody pays the interest. Aim it at the problem and the problem finally moves. Aim it at people and it always comes back around."
 };
@@ -55,7 +55,9 @@ async function main() {
       lived: e.lived,
       turn: e.turn,
       moves: e.moves,
-      planet: e.planet
+      planet: e.planet,
+      sign: e.sign,
+      allowLegacySecondPerson: true
     });
     assert.strictEqual(r.score, 3, `${e.sourceId} should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
     assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} should have no findings`);
@@ -135,6 +137,26 @@ async function main() {
     !ccSdFamily.findings.some((finding) => finding.term === "[Sign] reminds us that [lesson]"),
     "bracketed CC/SD pattern families must remain judge-only"
   );
+  const secondPersonSky = lintArticle({
+    ...good,
+    hook: "You already know the argument. Mars in Scorpio does not raise its voice; it waits.",
+    planet: "mars",
+    sign: "scorpio"
+  });
+  assert.ok(
+    secondPersonSky.findings.some((finding) => finding.severity === "fail" && finding.term === "second-person"),
+    "new Current Sky placement copy must reject second person"
+  );
+  const performanceSky = lintArticle({
+    ...good,
+    hook: "Urgency becomes a performance. Mars in Scorpio does not raise its voice; it waits.",
+    planet: "mars",
+    sign: "scorpio"
+  });
+  assert.ok(
+    performanceSky.findings.some((finding) => finding.severity === "fail" && /perform/.test(finding.term)),
+    "placement copy must reject performance framing"
+  );
   console.log("OK  tagline, hook-quote, meaning-paragraph, and moves rules enforced");
 
   // 3. failing draft retried with lint feedback, then accepted
@@ -195,6 +217,10 @@ async function main() {
     assert.match(prompt, /SCENE, NOT INVENTORY/);
     assert.match(prompt, /Build pressure -> choice -> consequence/);
     assert.match(prompt, /generic plural "people" as a placeholder/);
+    assert.match(prompt, /CURRENT SKY IS COLLECTIVE/);
+    assert.match(prompt, /LITERAL-ENGLISH PASS/);
+    assert.match(prompt, /OBSERVATION BEFORE POLISH/);
+    assert.match(prompt, /NAME THE COST/);
     assert.match(prompt, /owner-review-uranus-cancer-lived-2026-08-02/);
     assert.match(prompt, /duration, baseline rupture, concrete changes, relational reclassification, cost/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
@@ -227,6 +253,10 @@ async function main() {
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
     assert.ok(jp.includes("Generic plural \"people\" used as a substitute"), `judge prompt must reject people as a vague actor placeholder for tier ${tier}`);
+    assert.ok(jp.includes("CURRENT SKY IS COLLECTIVE"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
+    assert.ok(jp.includes("LITERAL ENGLISH"), `judge prompt must run a literal-English review for tier ${tier}`);
+    assert.ok(jp.includes("OBSERVATION BEFORE POLISH"), `judge prompt must reject slogan-first hooks for tier ${tier}`);
+    assert.ok(jp.includes("NAME THE COST"), `judge prompt must reject dramatic or doubled turns for tier ${tier}`);
     assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry owner-approved lived-beat evidence for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");

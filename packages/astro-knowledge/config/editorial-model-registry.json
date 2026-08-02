@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-08-01.12",
+  "registryVersion": "2026-08-02.1",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -116,13 +116,13 @@
         "policyVersion": "editorial-judge-policy-v1"
       },
       "candidate": {
-        "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-candidate-v1",
+        "releaseId": "sky-placement-judge-openai-gpt-5.6-sol-candidate-v2",
         "provider": "openai",
-        "model": "gpt-5.6-terra",
-        "reasoningEffort": "low",
-        "promptVersion": "sky-placement-voice-v1:prompt-v1",
-        "rubricVersion": "sky-placement-voice-v1",
-        "evaluationSetVersion": "sky-placement-approved-weak-v1",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "promptVersion": "sky-placement-voice-v2:literal-english+collective-sky-v1",
+        "rubricVersion": "sky-placement-voice-v2",
+        "evaluationSetVersion": "sky-placement-approved-weak-v2",
         "policyVersion": "editorial-judge-policy-v1"
       },
       "rollback": null,

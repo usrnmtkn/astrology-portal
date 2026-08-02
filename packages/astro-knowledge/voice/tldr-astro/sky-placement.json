@@ -1,15 +1,15 @@
 {
-  "id": "tldr-astro.voice.sky-placement.v1",
+  "id": "tldr-astro.voice.sky-placement.v2",
   "surface": "sky",
   "mode": "placement-article",
   "purpose": "Output-level voice contract for the sky placement (planet-in-sign) articles on /#sky/placement. Implements apps/web/src/content/sky-writing/TLDR-Sky-Article-Spec.md as machine-usable rules. Applies to RENDERED article copy in the three slots (hook / lived / turn), not to source meaning in data/. Enforced by scripts/lint-placement-voice.js; taste enforced by scripts/judge-placement-voice.js.",
 
-  "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. It is allowed to sound written: a strange, exact phrase beats a complete but forgettable explanation.",
+  "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. Prefer a clear observation over a polished abstraction. A memorable phrase earns its place only when it makes literal sense on the first read.",
 
-  "person": "mixed-collective-and-direct",
-  "secondPersonAllowed": true,
+  "person": "collective-current-sky",
+  "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,
-  "personNote": "This surface mixes collective 'we' with a direct 'you' when the line earns it (unlike the collective aspect cards, where 'you' is banned). The hook often addresses 'you' directly; the lived beat usually widens to 'we'; the turn may do either. Never a floating two-person vignette.",
+  "personNote": "Current Sky describes shared weather. New sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', or 'part of you'. Second person belongs to transit-to-natal copy. Older owner-approved calibration examples remain evidence and are not silently rewritten, but their second-person phrasing is not reusable precedent.",
 
   "punctuation": {
     "emDash": "The em dash is banned. Use a spaced hyphen ' - ' or restructure.",
@@ -31,7 +31,7 @@
         "n": 1,
         "slot": "sky-placement-hook/{planet}/{sign}",
         "beat": "hook",
-        "does": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible.",
+        "does": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. Begin with a lived premise, not a slogan or abstract placement summary. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible.",
         "example": "You've been running on autopilot through a version of yourself that needs updating. The Sun describes identity, vitality, and the need to be fully seen; in Leo, that attention becomes warmer, more expressive, and harder to keep in the background."
       },
       {
@@ -45,7 +45,7 @@
         "n": 3,
         "slot": "sky-placement-turn/{planet}/{sign}",
         "beat": "turn",
-        "does": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. A directive is allowed when it is specific. End on the line with the most bite; no blessing or soft summary after it.",
+        "does": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. Name the exact cost: the delayed conversation, cancelled plan, overspending, overwork, one-sided agreement, or other source-supported consequence. A directive is allowed when it is specific. End on the strongest plain sentence; no dramatic metaphor, second aphorism, blessing, or soft summary after it.",
         "example": "Try to be needed instead of loved and you'll end up neither."
       }
     ],
@@ -147,6 +147,7 @@
       {"term": "you find yourself", "reason": "crutch hook opener; vary the hook form"},
       {"term": "group chat", "reason": "overused modern object (also removed from the aspect phrase bank)"},
       {"term": "embrace the", "reason": "generic coaching verb; name the actual action"},
+      {"term": "\\bperform(ance|ing|s|ed)?\\b", "reason": "owner voice rule for this surface; name the exact behavior instead of framing it as performance"},
       {"term": "\\bmanifest(s|ing|ation)?\\b", "reason": "manifestation register banned on this surface"}
     ],
     "warn": [
@@ -165,6 +166,11 @@
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
     "Scene, not inventory: a lived paragraph needs pressure, movement, and consequence. Three parallel examples from different life categories read like generated coverage even when every noun is concrete. One charged sequence is better than a representative list.",
     "Do not use generic plural 'people' as a placeholder when a specific actor, relationship, group, or institution can be named. This is a judgment rule, not a blind regex ban; existing owner-approved uses remain valid when 'people' is the actual subject.",
+    "Literal-English pass: read every sentence literally. An abstract noun may not perform an unnatural human action, and a metaphor may not require decoding. Conventional astrology language such as 'Mars governs action' is allowed; decorative personification is not.",
+    "Observation before polish: hooks begin with recognizable pressure, behavior, or a decision before explaining the placement. A slogan that merely sounds sharp is not a lived premise.",
+    "Turns name the actual cost and stop there. Do not leave behavior for a dramatic image, a manufactured aphorism, or a second conclusion.",
+    "Do not infer employment or career from a sign alone. Taurus concerns money, resources, possessions, food, housing, the body, physical comfort, values, and self-worth; work language requires support from the planet, house, aspect, or supplied source.",
+    "Preserve strong owner-written lines. Do not replace a clear sentence merely to make it sound more polished.",
     "One close with bite. A directive is allowed when specific; motivational recap never.",
     "Vague 'things' as filler is off; idiomatic use ('handle the thing', 'get things done') is fine.",
     "'heal' language is earned only where the placement is literally about a wound (Chiron); elsewhere it is coaching register. Judge concern, not regex.",

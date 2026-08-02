@@ -47,6 +47,8 @@ try {
   assert.strictEqual(registry.lanes["generation:default"].candidate.model, "gpt-5.6-terra");
   assert.strictEqual(registry.lanes["generation:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["judge:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.model, "gpt-5.6-sol");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.reasoningEffort, "xhigh");
   assert.strictEqual(registry.lanes[laneId].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes[laneId].candidate.reasoningEffort, "low");
   const candidate = {

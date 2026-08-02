@@ -27,6 +27,7 @@ function auditBundle(value) {
   let currentJudge3 = 0;
   let ownerEdited = 0;
   let voicePassDrafts = 0;
+  const allowLegacySecondPerson = Number.parseInt(String(value.version || "0"), 10) < 4;
   for (const candidate of value.candidates) {
     const key = `${candidate.planet}/${candidate.sign}`;
     if (seen.has(key)) fail(`duplicate candidate ${key}`);
@@ -57,7 +58,12 @@ function auditBundle(value) {
       currentJudge3++;
     }
 
-    const lint = lintArticle({ ...candidate.article, planet: candidate.planet });
+    const lint = lintArticle({
+      ...candidate.article,
+      planet: candidate.planet,
+      sign: candidate.sign,
+      allowLegacySecondPerson
+    });
     if (lint.score !== 3 || lint.fails !== 0 || lint.warns !== 0) {
       fail(`${key} does not lint 3: ${JSON.stringify(lint.findings)}`);
     }
