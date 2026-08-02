@@ -60,9 +60,9 @@ Passing checks:
 
 Some Vite-based Node checks log an `EPERM` warning when their optional HMR WebSocket tries to bind in the sandbox; the checks themselves complete and pass.
 
-## Separate content-maintenance item
+## Content-maintenance follow-up
 
-`node scripts/generate-fallback-package-manifest.mjs --check` currently reports a stale generated manifest after the concurrent astrology-content commit `449ac1ab`. Runtime parity passes with the current 7,182-key bundle. Regenerate and review that manifest through the content workflow after active content edits settle; it was intentionally not overwritten as part of this performance work.
+The fallback manifest was regenerated after the concurrent astrology-content commit `449ac1ab`. Its package version, key-manifest hash, and 7,182-key inventory remain unchanged; only the content hash changed. The generator check and runtime parity checks pass against the synchronized artifact.
 
 ## Optional future work
 
