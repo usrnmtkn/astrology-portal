@@ -1,60 +1,123 @@
-# Voice rubric — sky placement articles (the second judge)
+# Voice rubric — sky placement long-form articles (the second judge)
 
-**Repo copy is canonical for Codex:** `packages/astro-knowledge/voice/tldr-astro/sky-article-longform.json` (machine spec), `sky-article-longform-rubric.md` (this document), and `scripts/judge-article-voice.js` (the runnable judge). Edits here must be mirrored there.
+The machine-readable source is
+`packages/astro-knowledge/voice/tldr-astro/sky-article-longform.json`.
+This document explains candidate `sky-article-longform-v6`; the runnable prompt
+is `scripts/judge-article-voice.js`.
 
-The card rubric (`RUBRIC.md`) judges daily-copy surfaces: compressed, collective, no "you," every sentence quotable. Articles are a different instrument and get judged here. Same lexicon, same ban list, different rules for what "in voice" means. Derived from the owner's published pieces: Mercury Enters Virgo, Venus in Cancer, Venus in Virgo, the Relationship Year, Saturn enters Aries, Jupiter in Cancer, and both Uranus station pieces.
+The placement/card judge owns only hook/lived/turn trios. This judge owns the
+authored long-form layer: planet ingress and station editions plus nodes
+articles. It never judges cards or trios. Lunation, season, overview, and
+weekly articles remain reference corpora for separate future surfaces.
 
-## What is licensed on articles that cards forbid
+## House register
 
-- **Second person.** Articles talk TO the reader. "You" is the register, not a violation.
-- **Questions.** Owner's articles ask real ones: "What deserves your most careful attention?"
-- **Contractions and first person.** "Look, I'll be honest with you" is a signature move, one per article at most.
-- **Length.** Articles breathe. A block can run ten sentences if every one earns its place.
+Marie Satori's long-form voice is a wise, direct friend who has done her
+homework. It establishes felt or material stakes early, teaches through plain
+corrections, speaks in second person, and repeatedly lands astrology in a body,
+an ordinary scene, a relationship, a budget, a home, or a practical choice.
 
-## The ten checks
+The register may be lyrical, polished, incantatory, and structurally dense.
+Long paragraphs, careful metaphors, dated sections, and extended horoscope
+blocks are canonical. “Direct and lived” does not mean casual, improvised, or
+transcribed. The failure is sustained institutional, academic, consultative,
+or generic abstraction that never returns to the reader's life.
 
-1. **Human stakes early.** Does it establish the reader's felt or material stakes early? Felt-first is preferred for generated editions. The canonical corpus also contains transit reports that name the event or date first, then promptly translate it into lived stakes. Fail only when the opening stays in astronomy or exposition without making the transit matter in human terms. The {{seasonOpener}} alone does not satisfy this check.
-2. **Spoken, not written.** Judge the dominant register. Saturn and Jupiter collective overviews may carry denser historical or essay passages, but they must return to direct, concrete language. Fail sustained think-tank, consultancy, or cultural-studies phrasing that never lands in lived terms ("the credentialing of knowledge contested" was a real failure); do not fail a few formal sentences inside an otherwise spoken article.
-3. **Maybe-lists or concrete scene-runs.** Are the abstractions cashed into real life somewhere? The owner's move includes job loss, a company re-org, a home that no longer fits, mold, a misread text, a budget, or a body limit. The word "Maybe" is not required.
-4. **Command runs where the planet is kinetic.** "Stop saying yes before you've thought it through. Stop filling every silence with your voice." Two or three imperatives in a row, then release. Expected in Mars, Uranus, and Saturn territory; optional elsewhere.
-5. **Planet-specific article structure, not generic genre structure.** Each planet's articles show family resemblance to THAT planet's published structure. Jupiter may carry titled Collective Themes subsections and a practice section. Uranus may carry flowing prose, look-back questions, and previous-transit date lists. Saturn may carry the first-person aside and mythology closes in blocks. These structural devices form a menu across each planet's corpus, not a mandatory checklist for every edition. Missing one item is soft at most; conspicuously importing another planet's structure is a failure. Where no published piece exists (Neptune, Pluto, Chiron), default to flowing prose and mark the structure provisional.
-6. **The teaching correction.** Every article revises the reader's understanding somewhere. A plain contrast ("Love isn't the same as comfort"), grounded boundary, limit, or reframe qualifies; the exact "isn't the same as" syntax is not required. If the article only describes and never corrects or reframes, it is not teaching.
-7. **Benediction or handoff close.** The editorial body ends warm and forward: a benediction, labeled affirmation, next-sign handoff, or final horoscope-block release into concrete direction. Never a summary paragraph. Ignore navigation, related links, calls to action, and trailing non-editorial page chrome such as "Refer a friend" when locating the close.
-8. **Blocks land in the planet's canonical shape.** Where rising-sign or house blocks exist, judge those blocks rather than the whole article: house in life terms, the reader's pattern named kindly, concrete direction, then permission, integration, mythology, or a forward path from that planet's canonical structure. Articles without rising blocks are not failed here. Do not bolt a generic aphorism onto a block after it has landed. Challenge/opportunity closes are licensed; they are hers.
-9. **Engine/date QA—not voice-scored.** App-generated dates and times come from the configured ephemeris and user-local timezone. Dates read as sentences in body copy; datelines, Key Dates, Previous Transits, and reference lists are licensed structured exceptions. Degrees appear at stations. Claims about history remain checkable. This check stays in the shared QA contract but is not sent to the voice model.
-10. **Lexicon and ban list clean.** The linter covers the lexicon fails and warns PLUS the House ban list trade vocabulary (audit, ledger, compound, colonize). Owner-verbatim text outranks any hit.
+Licensed forms include second person, real questions, contractions, one
+owner-register first-person aside, and long blocks whose sentences earn their
+place.
 
-## Judge interpretation
+## Nine semantic checks
 
-- Judge family resemblance, not a quota of signature devices. The canonical corpus contains both felt-first essays and transit-first reports.
-- Evaluate editorial body copy only. Ignore fixture/conversion wrappers, datelines and tags, navigation, related-post lists, calls to action, and trailing non-editorial page chrome.
-- Concrete equivalents count without trigger words.
-- Missing one optional structural device is soft at most; wrong-planet structure is the failure.
-- A 1 requires systemic material drift or one severe failure. A licensed opening or close, or one missing optional device, cannot produce a 1 by itself.
+1. **Empathy first.** Establish the reader's felt or material stakes early.
+   Felt-first is preferred for generated editions, but a date-led or
+   transit-led opening passes when its first thematic paragraphs promptly make
+   the event matter in human terms.
+2. **Direct-lived register.** Judge the dominant register, not whether prose
+   sounds improvised. Lyrical or formal passages pass when they return to
+   direct address, the body, ordinary scenes, or material stakes.
+3. **Concrete scene-runs.** Cash abstraction into real life somewhere. The
+   word “Maybe” is not required.
+4. **Command runs.** Commands are an optional source of momentum on every
+   planet, including Mars, Uranus, and Saturn. Their absence is never a failure;
+   questions, contrasts, short declarations, and direct choices can do the
+   same work. Fail commands only when they become scolding, generic, or
+   unsupported.
+5. **Per-planet furniture.** Judge family resemblance, not a quota. Missing one
+   optional device is soft at most; conspicuously importing another planet's
+   structure is a failure. Generated fast-mover slots and owner narrative or
+   retrograde editions are two canonical modes, not one required sequence.
+6. **Teaching correction.** Include a grounded boundary, contrast, limit, or
+   reframe that revises the reader's understanding. Exact trigger syntax is not
+   required.
+7. **Warm, forward close.** The editorial body may end with a benediction,
+   affirmation, next-sign handoff, or final horoscope-block boundary, choice,
+   permission, or forward-facing declaration. The last sign does not need a
+   separate blessing. Ignore trailing page chrome.
+8. **Horoscope-block function.** Judge the set holistically rather than forcing
+   every block through a generated-template order. Across the set, look for
+   house or life-area specificity, lived patterns, and usable movement. Those
+   elements may occur in any order and need not all appear in every block.
+9. **Recognizability.** Generated prose must not reproduce documented CHANI or
+   Spirit Daughter constructions. Owner-verbatim text is exempt from this one
+   anti-imitation check only; provenance does not confer a score.
 
-## Scores
+## Two non-semantic checks
 
-- **3 — in voice.** Holistically recognizable as the house voice. Licensed equivalents and optional-device variation are not failures. Recommend approval; human approval is still required.
-- **2 — minor drift.** One or two material checks soft: a stiff paragraph, weak concrete grounding, or generic genre structure in one section.
-- **1 — out of voice.** Systemic material drift across several checks, or one severe failure such as sustained think-tank register, conspicuous wrong-planet structure, or an unaddressed mechanical fail-word. Never a 1 for one optional omission or a licensed alternate opening/close.
+10. **Engine/date QA.** Runtime dates and times come from the configured
+    ephemeris and the user's local timezone. Historical dates, degrees, and
+    timezone labels in owner articles are evaluation text only. This check is
+    not sent to the voice model.
+11. **Mechanical lint.** The long-form linter owns banned words, trade
+    vocabulary, and literal CC/SD tics. It runs before semantic judging.
 
-## LLM-as-judge prompt (semantic checks)
+## Interpretation rules
 
-> You are the editor for Marie Satori, an astrologer whose articles read like a wise, direct friend who has done her homework. Her articles establish human stakes early, speak in second person, cash every abstraction into concrete daily life ("mold in the house," "the text getting misread"), revise one common confusion plainly, and close warm and forward rather than summarizing. She is never corporate, never academic, never mystical for effect.
->
-> Treat the checks as diagnostic evidence, not equal quotas. A transit-first opening passes if it promptly establishes lived stakes. Planet-specific article structure is a family resemblance, not a requirement to include every device. Ignore non-editorial page chrome when locating the close. A score of 1 requires systemic drift or one severe failure.
->
-> Score the article below 1 to 3 on: (a) establishes human stakes early; (b) middle third sounds spoken, not written; (c) abstractions are cashed into concrete scenes; (d) it teaches through a correction, boundary, contrast, or reframe; (e) its editorial body ends warm and forward, not summarized; and (f) it uses its own planet's structural family rather than another's.
->
-> Return the score, the three weakest sentences, and one rewrite of each. Do not rewrite the whole article.
->
-> ARTICLE:
-> {article}
+- Judge the editorial body, not conversion headers, navigation, related posts,
+  calls to action, or Shopify chrome.
+- Treat devices as diagnostic evidence, not equal quotas.
+- A concrete equivalent passes without a signature phrase.
+- Do not impose the generated fast-mover slot order on owner narrative or
+  retrograde editions.
+- A score of 1 requires systemic material drift or one severe failure. One
+  optional omission or licensed alternate opening/close cannot produce a 1.
+- Owner-published pieces score 3 by definition. A false negative means the
+  rubric or judge application is wrong, not the published piece.
 
-## Calibration set
+## Verdict contract
 
-The owner's published pieces are the calibration set: `TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md`, `TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER.md`, both Uranus OWNER files, and the Mercury Enters Virgo and Venus conversions. Every one of them scores 3 by definition. If a change to this rubric makes an owner piece score below 3, the change is wrong, not the piece.
+- **3 — in voice:** no failed semantic checks; recommend approval, with human
+  approval still required.
+- **2 — borderline:** one or two named material checks are soft; route to human
+  review.
+- **1 — off voice:** at least one named failure and systemic drift or one severe
+  failure; regenerate.
+
+A score/verdict mismatch, unknown check ID, score 3 with failed checks, or score
+2 without one or two named failures is a response-contract violation and
+routes to human review.
+
+V6 also requires exactly one evidence object for every failed check. Each
+object carries the matching check ID, an exact sentence from the article, a
+check-specific reason, and a concrete rewrite. The parser verifies that the
+sentence exists in the submitted article and that evidence IDs exactly equal
+the failed-check IDs. Missing, extra, duplicated, or unsupported evidence is a
+contract violation. Shared evaluation reports retain only evidence hashes so
+owner copy is not duplicated into portable artifacts.
+
+## Calibration and corpus policy
+
+The four active Saturn, Jupiter, and Uranus fixtures remain the production
+calibration baseline. The expanded owner corpus adds Mercury, Venus, Mars, and
+Chiron same-surface diagnostics plus adjacent-format references. Articles used
+to diagnose v2–v5 are not blind promotion evidence.
+
+CHANI and Spirit Daughter research is an anti-imitation boundary only. It does
+not supply dates, doctrine, or generated copy. Runtime astrology continues to
+come from the app's ephemeris and user-local timezone.
 
 ## Standing practice
 
-Every article-tier write-up runs BOTH judges' mechanical layer (lexicon plus trade vocabulary) and THIS rubric's ten checks before presenting. The card rubric never judges articles; this rubric never judges cards.
+Run the mechanical linter before this judge. Even a semantic 3 remains
+advisory and cannot publish content. The placement/card judge never scores
+long-form articles, and this judge never scores placement trios.

@@ -102,6 +102,16 @@ function splitExamples(examples) {
   };
 }
 
+function countBy(values) {
+  return Object.fromEntries(
+    [...values.reduce((counts, value) => {
+      const key = String(value || "unknown").trim().toLowerCase() || "unknown";
+      counts.set(key, (counts.get(key) || 0) + 1);
+      return counts;
+    }, new Map()).entries()].sort(([left], [right]) => left.localeCompare(right)),
+  );
+}
+
 const source = readJson(sourcePath);
 const approved = (source.authoredCards || []).filter((card) => card.review_status === "approved");
 const seen = new Set();
@@ -111,6 +121,20 @@ const examples = approved.map(buildExample).filter((example) => {
   return true;
 });
 const { train, evalRows } = splitExamples(examples);
+const exampleEvents = examples.map((example) => JSON.parse(example.messages[1].content).event || {});
+const coverage = {
+  planets: countBy(exampleEvents.map((event) => event.planet)),
+  signs: countBy(exampleEvents.map((event) => event.sign)),
+  article_variants: countBy(exampleEvents.map((event) => event.article_variant || "direct")),
+};
+const minimumTrainExamples = 50;
+const recommendedTrainExamples = 75;
+const readinessReasons = [
+  ...(train.length < minimumTrainExamples
+    ? [`${minimumTrainExamples - train.length} more approved training examples required`]
+    : []),
+  ...(evalRows.length === 0 ? ["a distinct held-out evaluation split is required"] : []),
+];
 
 fs.mkdirSync(outputDir, { recursive: true });
 writeJsonl(trainPath, train);
@@ -126,8 +150,11 @@ const manifest = {
   unique_examples: examples.length,
   train_examples: train.length,
   eval_examples: evalRows.length,
-  minimum_train_examples: 50,
-  ready_to_train: train.length >= 50 && evalRows.length > 0,
+  minimum_train_examples: minimumTrainExamples,
+  recommended_train_examples: recommendedTrainExamples,
+  ready_to_train: readinessReasons.length === 0,
+  readiness_reasons: readinessReasons,
+  coverage,
   train_sha256: sha256(fs.readFileSync(trainPath)),
   eval_sha256: sha256(fs.readFileSync(evalPath)),
   excluded_calibration_fixtures:

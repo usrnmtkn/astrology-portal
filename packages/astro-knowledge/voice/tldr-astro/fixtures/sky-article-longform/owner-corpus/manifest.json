@@ -1,0 +1,463 @@
+{
+  "schemaVersion": 1,
+  "surface": "sky-article-longform",
+  "evaluationProfileVersion": "sky-article-longform-owner-corpus-diagnostic-v1",
+  "provenance": "owner-published Marie Satori article bodies extracted from the owner-provided SiteSucker mirror",
+  "extractionPolicy": "Authored div.rte body only; HTML/page chrome removed; words and punctuation otherwise preserved.",
+  "factualPolicy": "Historical article dates and timezone labels are evaluation text only and must never supply runtime astrology facts.",
+  "activationPolicy": "This corpus is isolated from the active calibration manifest. The same-surface articles have been exposed during rubric diagnosis and are not a blind held-out set. Adjacent-format and additional-surface references must not enter the planet-article evaluator. Moving an eligible entry into active calibration requires owner review and an explicit evaluation-set version change.",
+  "activeCalibrationSourceSlugs": [
+    "saturn-enters-aries",
+    "jupiter-in-cancer-horoscopes-by-sign-2025",
+    "uranus-direct-in-taurus-2025",
+    "uranu-retrograde-in-gemini"
+  ],
+  "cohorts": {
+    "calibrationCandidates": [
+      {
+        "file": "calibration-candidates/mercury-in-taurus-2025.md",
+        "title": "Mercury in Taurus 2025",
+        "sourceSlug": "mercury-in-taurus-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/mercury-in-taurus-2025",
+        "planet": "mercury",
+        "edition": "ingress",
+        "wordCount": 6284,
+        "sha256": "bd8438f78be675ecb2ad56689d465f278f069a6b8c92672e50216586c3b3eb71",
+        "sourceBodyHtmlSha256": "0579206cec278143e294bda46e15fca2b0acf3345b8cfcc0bd56bae5c9395214"
+      },
+      {
+        "file": "calibration-candidates/venus-in-cancer.md",
+        "title": "Venus in Cancer 2025",
+        "sourceSlug": "venus-in-cancer",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/venus-in-cancer",
+        "planet": "venus",
+        "edition": "ingress",
+        "wordCount": 3868,
+        "sha256": "78dac12bf3160c7b7582381f9c13d51119aa481497430dc9d6ebffb927ce70b5",
+        "sourceBodyHtmlSha256": "e49ebea3c65ac15dd1e7b7433fa868e7a8ffb8ffc75c144a1ba7af3154cbada9"
+      },
+      {
+        "file": "calibration-candidates/mars-direct-in-cancer.md",
+        "title": "Mars Direct in Cancer",
+        "sourceSlug": "mars-direct-in-cancer",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/mars-direct-in-cancer",
+        "planet": "mars",
+        "edition": "station-direct",
+        "wordCount": 3886,
+        "sha256": "e89d05df8ab4382559e0328f2515bb9359b61de182aa436dc49659e2eea7e918",
+        "sourceBodyHtmlSha256": "5f9268089b38d2e2f91e6ab7c761aed7031d85e0365f92ad51d5418ad946206d"
+      },
+      {
+        "file": "calibration-candidates/chiron-retrograde-in-aries.md",
+        "title": "Chiron Retrograde in Aries",
+        "sourceSlug": "chiron-retrograde-in-aries",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/chiron-retrograde-in-aries",
+        "planet": "chiron",
+        "edition": "station-retrograde",
+        "wordCount": 1783,
+        "sha256": "7ed17f15eeeca375d5c5dfcdf805da068293124bc9108ed2f00e1f966b67753f",
+        "sourceBodyHtmlSha256": "cb3c528c479334907a10d389afab21ba6cc9d1387928facef3ace4851cf91d9c"
+      }
+    ],
+    "diagnosticSameSurface": [
+      {
+        "file": "diagnostic-same-surface/mercury-in-virgo-2025.md",
+        "title": "Mercury Enters Virgo",
+        "sourceSlug": "mercury-in-virgo-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/mercury-in-virgo-2025",
+        "planet": "mercury",
+        "edition": "ingress",
+        "wordCount": 1782,
+        "sha256": "7dd16935aef8340e20cb8e0f1ec5e6c5665f67d2aabb839cd4de67ceea446da2",
+        "sourceBodyHtmlSha256": "37df82c12fe6b1d6637e6125217e73d2ada58a67eb6d54a581edf3159b694d21"
+      },
+      {
+        "file": "diagnostic-same-surface/mercury-retrograde-in-leo.md",
+        "title": "Mercury Retrograde in Leo 2025",
+        "sourceSlug": "mercury-retrograde-in-leo",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/mercury-retrograde-in-leo",
+        "planet": "mercury",
+        "edition": "station-retrograde",
+        "wordCount": 2527,
+        "sha256": "6983270dbfdd942f591a3cd2a69c903bc7e06fd0853e0957d554deeaea04e1fc",
+        "sourceBodyHtmlSha256": "a13870bddaa1058f41ccbefe5aa067eed6c84de7b958b90925fc435ec1aa7ca9"
+      },
+      {
+        "file": "diagnostic-same-surface/venus-in-virgo-2025.md",
+        "title": "Venus in Virgo 2025",
+        "sourceSlug": "venus-in-virgo-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/venus-in-virgo-2025",
+        "planet": "venus",
+        "edition": "ingress",
+        "wordCount": 4186,
+        "sha256": "d94de91ed33731c825733ff6fd9440c0a0e61ee058ee19fe509d178ddbbfa505",
+        "sourceBodyHtmlSha256": "73bbd00f9b7379cc37f52d290cee7b12ccc179e164220e7070ce898ac7ab728a"
+      },
+      {
+        "file": "diagnostic-same-surface/venus-retrograde-2025.md",
+        "title": "Venus Retrograde in Aries and Pisces 2025",
+        "sourceSlug": "venus-retrograde-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/venus-retrograde-2025",
+        "planet": "venus",
+        "edition": "station-retrograde",
+        "wordCount": 4930,
+        "sha256": "e685071fc451d211b5929f3ba5016d80f8107019cbe8674d1ec73b9c32473b91",
+        "sourceBodyHtmlSha256": "6878b18c01a82aae8748e81e16309645bd332480827745835320443b80b2b574"
+      }
+    ],
+    "adjacentFormats": [
+      {
+        "file": "adjacent-formats/2025-mercury-retrogrades.md",
+        "title": "2025 Mercury Retrogrades and Horoscopes",
+        "sourceSlug": "2025-mercury-retrogrades",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/2025-mercury-retrogrades",
+        "format": "planet-year-overview",
+        "wordCount": 4187,
+        "sha256": "f902759a0cdc8555ef7459e47a7e3e5ef9ad5f19ada3ea2f72f8658568ac4b18",
+        "sourceBodyHtmlSha256": "39dabfa17095a8f839b2dc0bf9f523820eeb64ba06e584436066b1df9ab68560"
+      },
+      {
+        "file": "adjacent-formats/2025-2026-lunar-nodes-in-pisces-and-virgo-overview-eclipses-and-your-rising-sign-horoscopes.md",
+        "title": "2025–2026 Lunar Nodes in Pisces and Virgo: Overview, Eclipses, and You",
+        "sourceSlug": "2025-2026-lunar-nodes-in-pisces-and-virgo-overview-eclipses-and-your-rising-sign-horoscopes",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/2025-2026-lunar-nodes-in-pisces-and-virgo-overview-eclipses-and-your-rising-sign-horoscopes",
+        "format": "nodes-cycle",
+        "wordCount": 9970,
+        "sha256": "077117e6bc24b1c6ff645303bec5da29e2f9a86ecd53de7afb5f967a3afce26a",
+        "sourceBodyHtmlSha256": "07c688be030548a42c1a8a29e08174449f13ec3689a7cf90a3a0fc7555bb040d"
+      },
+      {
+        "file": "adjacent-formats/relationship-year-libra-2025-to-venus-rx-2026.md",
+        "title": "Relationship Year: Venus in Libra 2025 to Venus Rx 2026",
+        "sourceSlug": "relationship-year-libra-2025-to-venus-rx-2026",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/relationship-year-libra-2025-to-venus-rx-2026",
+        "format": "relationship-year",
+        "wordCount": 2702,
+        "sha256": "cc890cf9649f8a95f90c075a3ce2ee1b481e4ca9d2f2ae15c340c644510ac684",
+        "sourceBodyHtmlSha256": "d54e39956204258781163b0129d810b5a1d4d2a9cc80ad35a0cbe9ae66cd9556"
+      },
+      {
+        "file": "adjacent-formats/august-3rd-9th-2025.md",
+        "title": "Astrological Overview: August 3–9, 2025",
+        "sourceSlug": "august-3rd-9th-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/august-3rd-9th-2025",
+        "format": "weekly-overview",
+        "wordCount": 1824,
+        "sha256": "0fde2444e604fe57b0147e964a53b1b34e7fe077028f732da2b8bb98896174f3",
+        "sourceBodyHtmlSha256": "41732da6efacbcc8be28a5ad80f18200b56e2e060d5d9e470d5f4ff5ddb61619"
+      },
+      {
+        "file": "adjacent-formats/leo-season-2025.md",
+        "title": "August & Leo Season Horoscopes 2025",
+        "sourceSlug": "leo-season-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/leo-season-2025",
+        "format": "season",
+        "wordCount": 9601,
+        "sha256": "18919d8f51d8ee86e0edf6695be9c0aa4a30c616f338f5544535381a91f9e5c1",
+        "sourceBodyHtmlSha256": "510976c51bce7a94c15a02ff86563df0f721921a1f09a88a365c49a589d596c3"
+      },
+      {
+        "file": "adjacent-formats/your-2025-yearly-horoscopes.md",
+        "title": "Your 2025 Yearly Horoscopes",
+        "sourceSlug": "your-2025-yearly-horoscopes",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/your-2025-yearly-horoscopes",
+        "format": "yearly-horoscopes",
+        "wordCount": 4888,
+        "sha256": "fb9df60f0b925cfff53b04196ccdd82127b5c9279ed61d2267a20b1f955d7726",
+        "sourceBodyHtmlSha256": "88cbc0c7d023b65dee1a073b696cb2054e46e7c05e9b1c7afb2c8eec20793f74"
+      },
+      {
+        "file": "adjacent-formats/pisces-total-lunar-eclipse.md",
+        "title": "Pisces Total Lunar Eclipse 2025",
+        "sourceSlug": "pisces-total-lunar-eclipse",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/pisces-total-lunar-eclipse",
+        "format": "lunation-eclipse",
+        "wordCount": 3412,
+        "sha256": "4f43f7ad850736b02d2085409b45eeb8765620c8cfcb7c875f0b7649615f118a",
+        "sourceBodyHtmlSha256": "d410fcc6b6529db91e924fc588d2420a57a7c2c3456258b6296f02452590afdd"
+      }
+    ],
+    "additionalSurfaceReferences": [
+      {
+        "file": "reference-surfaces/2025-new-and-full-moons.md",
+        "title": "2025 New and Full Moons",
+        "sourceSlug": "2025-new-and-full-moons",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/2025-new-and-full-moons",
+        "format": "annual-lunation-calendar",
+        "wordCount": 6665,
+        "sha256": "cd9f7943c2c6e6f173d8119dee6fd719cc75f064c9aab52a96aab5b6b4b59ec9",
+        "sourceBodyHtmlSha256": "66ec1e1d7b83c247e6bbb2756c0a9cfeaf7c8d7976dd79a8f3744f002f898ede"
+      },
+      {
+        "file": "reference-surfaces/2025-overview.md",
+        "title": "2025 Overview and Horoscopes for All Zodiac Signs",
+        "sourceSlug": "2025-overview",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/2025-overview",
+        "format": "annual-overview",
+        "wordCount": 10591,
+        "sha256": "79f8e746934fe4829c653484677edb61e9f79a859dfb93347a2237b9c203728e",
+        "sourceBodyHtmlSha256": "041d85636b8f82c5a3cec02aacdd661fd8b00925106ba01803cf0dbe6e8577e9"
+      },
+      {
+        "file": "reference-surfaces/aquarius-full-moon-2025.md",
+        "title": "Aquarius Full Moon 2025",
+        "sourceSlug": "aquarius-full-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/aquarius-full-moon-2025",
+        "format": "lunation-full-moon",
+        "wordCount": 2864,
+        "sha256": "c9618e51e2dcd9333750ccdf8b868a04f1d12aff5bf5ad8e21ff7df13132dd28",
+        "sourceBodyHtmlSha256": "fff1622587233200bcd0147c70ea055e032c00321fe8291d22b016e0e9f48420"
+      },
+      {
+        "file": "reference-surfaces/aquarius-season-2025.md",
+        "title": "Aquarius Season 2025",
+        "sourceSlug": "aquarius-season-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/aquarius-season-2025",
+        "format": "season",
+        "wordCount": 3649,
+        "sha256": "a44c7b55e0b4a729f221e5330792ec143dc2f14f983a860697b3e1434a975b46",
+        "sourceBodyHtmlSha256": "ee1cfbfa775c2a208365a575e7e2dc74d2e94b4681aedd60e147445be05052f0"
+      },
+      {
+        "file": "reference-surfaces/cancer-full-moon-horoscopes-january-2025.md",
+        "title": "Cancer Full Moon and Horoscopes - January 2025",
+        "sourceSlug": "cancer-full-moon-horoscopes-january-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/cancer-full-moon-horoscopes-january-2025",
+        "format": "lunation-full-moon",
+        "wordCount": 4000,
+        "sha256": "88a351adef1cfbdb69d2125770363c5d8ffb4144b45d44838fe0574b621d44a9",
+        "sourceBodyHtmlSha256": "ab7cbeb1addb35c0458ad7ab7625a375c3cbbd99353c165add48d9880779cbfa"
+      },
+      {
+        "file": "reference-surfaces/cancer-new-moon-2025.md",
+        "title": "Cancer New Moon 2025",
+        "sourceSlug": "cancer-new-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/cancer-new-moon-2025",
+        "format": "lunation-new-moon",
+        "wordCount": 3960,
+        "sha256": "5d11ea39770b616e0a22137b107de41ea82f2b318a49831e0c6ba501d3c1271d",
+        "sourceBodyHtmlSha256": "41ac5d22b1d4466528776139c93e8d91ead77e7b1b17b029fb77b765edceec7d"
+      },
+      {
+        "file": "reference-surfaces/first-new-moon-of-2025-aquarius-new-moon.md",
+        "title": "First New Moon of 2025: Aquarius New Moon",
+        "sourceSlug": "first-new-moon-of-2025-aquarius-new-moon",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/first-new-moon-of-2025-aquarius-new-moon",
+        "format": "lunation-new-moon",
+        "wordCount": 4733,
+        "sha256": "e448bc2b2c753d982304c8b2dd634925302e54e83b9e0f2594a3e392256ead3d",
+        "sourceBodyHtmlSha256": "dc5c4274f292549de5b89543bedb18a4018400c9e170742d8f9152f226d5a4ff"
+      },
+      {
+        "file": "reference-surfaces/full-moon-eclipse-in-pisces-2025.md",
+        "title": "Full Moon Eclipse in Pisces 2025",
+        "sourceSlug": "full-moon-eclipse-in-pisces-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/full-moon-eclipse-in-pisces-2025",
+        "format": "lunation-eclipse",
+        "wordCount": 2487,
+        "sha256": "4e53319050d57ccd3cd72c060ca685b21abba0257ad7f538f92d79b2081618a5",
+        "sourceBodyHtmlSha256": "b7190be752a20b03949aea33b6f6a14ebfcaa605b8931cbf034187477dabf3ab"
+      },
+      {
+        "file": "reference-surfaces/full-moon-in-aries.md",
+        "title": "Full Moon in Aries",
+        "sourceSlug": "full-moon-in-aries",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/full-moon-in-aries",
+        "format": "lunation-full-moon",
+        "wordCount": 4259,
+        "sha256": "2952591ed898244466185fa70ea003b6acc825261ad3a14dc83151c691cb96c3",
+        "sourceBodyHtmlSha256": "ba03e57c64c96d2a318be377d35031136f7c0223200b1fa251565e12f274c240"
+      },
+      {
+        "file": "reference-surfaces/full-moon-in-taurus.md",
+        "title": "Full Moon in Taurus 2025",
+        "sourceSlug": "full-moon-in-taurus",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus",
+        "format": "lunation-full-moon",
+        "wordCount": 3791,
+        "sha256": "843e6a5a2dde919e3a9cd91787c5a92a9054cc29834002b0075c347e46a03728",
+        "sourceBodyHtmlSha256": "d1097cd412081232bba557f7e7ff672ad7d8b024100b15855f2250416ecd6d5e"
+      },
+      {
+        "file": "reference-surfaces/gemini-new-moon-2025.md",
+        "title": "Gemini New Moon 2025",
+        "sourceSlug": "gemini-new-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/gemini-new-moon-2025",
+        "format": "lunation-new-moon",
+        "wordCount": 2406,
+        "sha256": "eb3f7012ba7fb014e79e72d0440fed256e51e9b3973c40fd2e1fda43d05a0b5c",
+        "sourceBodyHtmlSha256": "916ded646d5387e6b2c771cba0bb06fe15e153226786d895904f53e0e4c029be"
+      },
+      {
+        "file": "reference-surfaces/gemini-season-2025.md",
+        "title": "Gemini Season 2025",
+        "sourceSlug": "gemini-season-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/gemini-season-2025",
+        "format": "season",
+        "wordCount": 3307,
+        "sha256": "1e31142628b75f39ef58e6681bd38d5ba682cdea5f89ee20cb4189ebea96061f",
+        "sourceBodyHtmlSha256": "134bebda9b307e1e8854c359bb7ff0929d6a8126eb76f96144762685c25a79d4"
+      },
+      {
+        "file": "reference-surfaces/leo-full-moon-2025.md",
+        "title": "Leo Full Moon 2025: The Breaking Point",
+        "sourceSlug": "leo-full-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/leo-full-moon-2025",
+        "format": "lunation-full-moon",
+        "wordCount": 4396,
+        "sha256": "54764cd28c18f6a8b38ea3ce470733d042a66b787ccc2c643f08564fc5a17bc5",
+        "sourceBodyHtmlSha256": "7832987fa632d46da4ef11baccc95833aca599928a2e47bbdf516c8c736dd62e"
+      },
+      {
+        "file": "reference-surfaces/leo-new-moon-2025.md",
+        "title": "Leo New Moon 2025",
+        "sourceSlug": "leo-new-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/leo-new-moon-2025",
+        "format": "lunation-new-moon",
+        "wordCount": 3270,
+        "sha256": "adbab0f3cc3701b85bc62e3eac49cdeb04dbdf268c71c2864a1dc6b9064f7240",
+        "sourceBodyHtmlSha256": "46b80d28e5e8611f8f300988af1a6463e9e1766d432e2c81d05f2235ce298bfc"
+      },
+      {
+        "file": "reference-surfaces/libra-new-moon.md",
+        "title": "Libra New Moon",
+        "sourceSlug": "libra-new-moon",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/libra-new-moon",
+        "format": "lunation-new-moon",
+        "wordCount": 4365,
+        "sha256": "4ad8550d2c4414feb3262db477cbffc1e85d8da254c5c5e2dd17382c2f94fb3d",
+        "sourceBodyHtmlSha256": "d16b6b81438c12be0f5212c4645f22ae23ffee5c8cf9dc395097e2daa003cc4a"
+      },
+      {
+        "file": "reference-surfaces/libra-season-autumn-equinox.md",
+        "title": "Libra Season & Autumn Equinox",
+        "sourceSlug": "libra-season-autumn-equinox",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/libra-season-autumn-equinox",
+        "format": "season",
+        "wordCount": 6445,
+        "sha256": "06799fcd54ced45d7299389b33b7b47653ba3457a0f61d41755dc32c11d7cc09",
+        "sourceBodyHtmlSha256": "b9e32f334ed061dfea1dd0be5afa32a82a624012805c0be1874ba44b90d22904"
+      },
+      {
+        "file": "reference-surfaces/monthly-overview-june-2025.md",
+        "title": "Monthly Horoscopes June 2025",
+        "sourceSlug": "monthly-overview-june-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/monthly-overview-june-2025",
+        "format": "monthly-overview",
+        "wordCount": 2504,
+        "sha256": "a350bedc4432776801f3402f02732a262c66d7f8e0f563418120485bb8074e9e",
+        "sourceBodyHtmlSha256": "f1ca1e391cbd6e050105140c7596c0b9576290af8ab859924d0c365629d9c443"
+      },
+      {
+        "file": "reference-surfaces/new-moon-solar-eclipse-in-virgo.md",
+        "title": "New Moon Solar Eclipse in Virgo",
+        "sourceSlug": "new-moon-solar-eclipse-in-virgo",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/new-moon-solar-eclipse-in-virgo",
+        "format": "lunation-eclipse",
+        "wordCount": 4214,
+        "sha256": "6f3205394f64f327b667614a967c6741a8e424714ca732ecb0ac46dc2ea79283",
+        "sourceBodyHtmlSha256": "7e430845ac0de5fd8685f66fcd04505f9bf35b75769b0ce62c49e3d081fd840f"
+      },
+      {
+        "file": "reference-surfaces/pisces-new-moon-2025.md",
+        "title": "Pisces New Moon 2025",
+        "sourceSlug": "pisces-new-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/pisces-new-moon-2025",
+        "format": "lunation-new-moon",
+        "wordCount": 5356,
+        "sha256": "e07189d568f84adb5902a5fc27ee452998a158d29f28671a49fbf2c7dbe7ee5e",
+        "sourceBodyHtmlSha256": "5d55f4afa67f6fbeec49911eb41a634f5fc0300b67886282cfa7621163451b9a"
+      },
+      {
+        "file": "reference-surfaces/pisces-season-2025.md",
+        "title": "Pisces Season 2025",
+        "sourceSlug": "pisces-season-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/pisces-season-2025",
+        "format": "season",
+        "wordCount": 7418,
+        "sha256": "64d7e9fe491c0d5a03e2b8573b4489e253727290baa5971f0e3356160aa56be7",
+        "sourceBodyHtmlSha256": "409940605757a3a8ca528bebd86df64453baa924352a58e4939007f442cc72b6"
+      },
+      {
+        "file": "reference-surfaces/sagittarius-full-moon-2025.md",
+        "title": "Sagittarius Full Moon 2025",
+        "sourceSlug": "sagittarius-full-moon-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/sagittarius-full-moon-2025",
+        "format": "lunation-full-moon",
+        "wordCount": 3282,
+        "sha256": "3502848689597e9bc67ddf1a812b63b1495a3212704c41dfe3fe6c12995bb261",
+        "sourceBodyHtmlSha256": "b86123037154669298222c5fed2d70dbf632bb08d4ba490780a411835e1fd660"
+      },
+      {
+        "file": "reference-surfaces/summer-solstice.md",
+        "title": "Summer Solstice",
+        "sourceSlug": "summer-solstice",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/summer-solstice",
+        "format": "solstice-season",
+        "wordCount": 2868,
+        "sha256": "044d0b0a555256f3ac8ecf5ed5d2f2525e2659737359b4fb2155e2325556b0d2",
+        "sourceBodyHtmlSha256": "91c74348260136ed366e080ab2bf99b86a2bde91179fc9f56f83caf88bf4e579"
+      },
+      {
+        "file": "reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+        "title": "This Week's Astrology: August 24th-31st",
+        "sourceSlug": "this-weeks-astrology-august-24th-31st",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/this-weeks-astrology-august-24th-31st",
+        "format": "weekly-overview",
+        "wordCount": 3733,
+        "sha256": "d207849ef4b4813c98fbbc1dd98abca627d3a0d54bc6574d6a31826860d3ee41",
+        "sourceBodyHtmlSha256": "b1bd077025c63929d503c7f35e62f0703cae6fc323057db009679fa3c62d07f7"
+      },
+      {
+        "file": "reference-surfaces/this-weeks-astrology-august-30-september-7-2025.md",
+        "title": "This Week's Astrology: August 30 – September 7, 2025",
+        "sourceSlug": "this-weeks-astrology-august-30-september-7-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/this-weeks-astrology-august-30-september-7-2025",
+        "format": "weekly-overview",
+        "wordCount": 2123,
+        "sha256": "5a665750c32b90f6ac9f2ac94fece1eeb10f2aa53c1eb85f71691881b296b716",
+        "sourceBodyHtmlSha256": "5904dd6f10f877ecb2c229f1cc4cedc85c3cdaac069996f1ca4024486bf3ea58"
+      },
+      {
+        "file": "reference-surfaces/total-lunar-eclipse-in-virgo.md",
+        "title": "Total Lunar Eclipse in Virgo 2025",
+        "sourceSlug": "total-lunar-eclipse-in-virgo",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/total-lunar-eclipse-in-virgo",
+        "format": "lunation-eclipse",
+        "wordCount": 2955,
+        "sha256": "f01964ae6cb22d1a6e88a0f1f726eb022f9ef6b882e81b76507ab8b163181947",
+        "sourceBodyHtmlSha256": "6f5c2b951fb1483ddeb6dace90d81c1ecb75677d42906655265c3b1a88c7d0a2"
+      },
+      {
+        "file": "reference-surfaces/virgo-new-moon-august-23rd-2025.md",
+        "title": "Virgo New Moon August 23rd 2025",
+        "sourceSlug": "virgo-new-moon-august-23rd-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/virgo-new-moon-august-23rd-2025",
+        "format": "lunation-new-moon",
+        "wordCount": 3144,
+        "sha256": "9bafc3d0b87b1f8e99b403d4dc517d7e94856f10a92a28111d6c3f3c009c039b",
+        "sourceBodyHtmlSha256": "e803f624ca39091ce9436d9b9ca079ac1511a7a57265b727d297a078b0d3df57"
+      },
+      {
+        "file": "reference-surfaces/virgo-season-2025.md",
+        "title": "Virgo Season 2025",
+        "sourceSlug": "virgo-season-2025",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/virgo-season-2025",
+        "format": "season",
+        "wordCount": 4310,
+        "sha256": "66d2ef42a2e306fb95c774aeb52a74395b1a626b5417a5b5d08f91b033487ae1",
+        "sourceBodyHtmlSha256": "48f44dae6b9c3dddf9af6f69b7b375590e5ab68ee84df75fd5a6aaadec544935"
+      },
+      {
+        "file": "reference-surfaces/weekly-horoscopes-sept-7-14-2020.md",
+        "title": "Weekly Horoscopes - Sept 7th - 14th 2025",
+        "sourceSlug": "weekly-horoscopes-sept-7-14-2020",
+        "sourceUrl": "https://mariesatori.com/blogs/astrology/weekly-horoscopes-sept-7-14-2020",
+        "format": "weekly-overview",
+        "wordCount": 2765,
+        "sha256": "1224f6c7b3c8dfa87e03067d1575f11d14819150c9961e36a26b07d8feaeeda7",
+        "sourceBodyHtmlSha256": "959721974f9df9f3b23febb96858f8337d6928636b206b397f4c06105875daad"
+      }
+    ]
+  }
+}
