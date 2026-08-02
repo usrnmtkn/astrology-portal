@@ -52,12 +52,12 @@ Inspect the no-call plan:
 npm run plan:sky-placement-judge-ab
 ```
 
-Run the authorized evaluation:
+The v1 live command is archived and intentionally refuses to rerun because the frozen set contained the perspective conflict. Use the targeted v2 command instead:
 
 ```sh
 TLDR_ALLOW_LIVE_LLM_JUDGE=1 \
 TLDR_ALLOW_LIVE_LLM_CALIBRATION=1 \
-npm run evaluate:sky-placement-judge-ab:live
+npm run evaluate:sky-placement-judge-targeted:live
 ```
 
 The untracked output directory contains:
@@ -77,7 +77,7 @@ The first blinded run completed on 2026-08-02:
 - 28 successful paired API calls.
 - Byte-identical prompts within every pair.
 - Combined estimated API cost: `$0.4062`.
-- Owner review status: pending.
+- Owner review status: complete; B preferred in 5 cases, A in 0, with 9 ties.
 - Promotion eligibility: false.
 
-The anonymous owner packet is in the untracked evaluation output directory. The model key remains separate until owner scoring is complete.
+The owner found that the v1 approved set contradicted the Current Sky perspective rule because several gold fixtures contained second person. The model key remains sealed. This run is retained as evidence about natural-language and abstraction detection, not as sufficient rule-enforcement or promotion evidence. The blind vote is checked in at `review/sky-placement-judge-ab-v1-owner-blind-review.json`.

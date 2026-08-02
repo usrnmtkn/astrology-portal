@@ -124,7 +124,7 @@ async function defaultRequest({ treatment, prompt, apiKey }) {
   return { payload, latencyMs: Date.now() - startedAt };
 }
 
-function normalizeResult({ treatmentKey, treatment, fixture, prompt, response }) {
+function normalizeResult({ treatmentKey, treatment, fixture, prompt, response, pricing = manifest.pricing }) {
   const raw = openAiOutputText(response.payload);
   if (!raw) throw new Error(`${treatment.model} returned no judge text for ${fixture.caseId}.`);
   const verdict = parseVerdict(raw);
@@ -140,7 +140,7 @@ function normalizeResult({ treatmentKey, treatment, fixture, prompt, response })
     promptSha256: sha256(prompt),
     latencyMs: response.latencyMs,
     usage,
-    estimatedCostUsd: estimateCost(treatment.model, usage),
+    estimatedCostUsd: estimateCost(treatment.model, usage, pricing),
     verdict: {
       score: Number(verdict.score),
       verdict: verdict.verdict || "",
@@ -269,16 +269,30 @@ function atomicWrite(filePath, value) {
   fs.renameSync(temporaryPath, filePath);
 }
 
-async function runEvaluation({ requestFn = defaultRequest, apiKey, outDir = defaultOutDir, blindSeed, now = () => new Date() } = {}) {
-  const fixtures = buildFixtures();
-  const treatments = manifest.treatments;
+async function runEvaluation({
+  requestFn = defaultRequest,
+  apiKey,
+  outDir = defaultOutDir,
+  blindSeed,
+  now = () => new Date(),
+  fixtures = buildFixtures(),
+  evaluationManifest = manifest
+} = {}) {
+  const treatments = evaluationManifest.treatments;
   const runId = `sky-placement-blind-${now().toISOString().replace(/[:.]/g, "-")}`;
   const results = [];
   for (const fixture of fixtures) {
     const prompt = buildJudgePrompt(fixture.article, fixture);
     const pair = await Promise.all(Object.entries(treatments).map(async ([treatmentKey, treatment]) => {
       const response = await requestFn({ treatmentKey, treatment, fixture, prompt, apiKey });
-      return normalizeResult({ treatmentKey, treatment, fixture, prompt, response });
+      return normalizeResult({
+        treatmentKey,
+        treatment,
+        fixture,
+        prompt,
+        response,
+        pricing: evaluationManifest.pricing
+      });
     }));
     results.push(...pair);
   }
@@ -287,14 +301,14 @@ async function runEvaluation({ requestFn = defaultRequest, apiKey, outDir = defa
   const internal = {
     schemaVersion: 1,
     reportKind: "candidate-evaluation",
-    evaluationId: manifest.evaluationId,
+    evaluationId: evaluationManifest.evaluationId,
     runId,
     recordedAt: now().toISOString(),
     promotionAuthorized: false,
     promotionEligible: false,
     ownerReviewStatus: "pending",
     runtimeChanged: false,
-    samplesPerFixture: manifest.samplesPerFixture,
+    samplesPerFixture: evaluationManifest.samplesPerFixture,
     fixtureCount: fixtures.length,
     requestCount: results.length,
     fixtureManifest: fixtures.map(({ article, ...fixture }) => ({ ...fixture, articleSha256: sha256(JSON.stringify(article)) })),
@@ -343,6 +357,9 @@ async function main() {
   if (!options.authorizeLive) {
     printPlan();
     return;
+  }
+  if (manifest.liveRerunAllowed === false) {
+    throw new Error(`Evaluation ${manifest.evaluationId} is archived and may not be rerun; use sky-placement-judge-targeted-rules-v2.`);
   }
   assertLiveJudgeAuthorized({ calibration: true });
   const config = judgeConfig("sky-placement");

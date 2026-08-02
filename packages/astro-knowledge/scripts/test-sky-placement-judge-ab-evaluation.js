@@ -19,6 +19,9 @@ async function main() {
   const lane = registry.lanes["judge:sky-placement"];
   assert.strictEqual(lane.active.model, "gpt-4.1-mini", "the experiment must not replace the active runtime");
   assert.strictEqual(manifest.runtime.activeReleaseId, lane.active.releaseId);
+  assert.strictEqual(manifest.status, "completed-superseded");
+  assert.strictEqual(manifest.liveRerunAllowed, false);
+  assert.strictEqual(manifest.promotionAuthorized, false);
   assert.strictEqual(manifest.treatments.baseline.model, "gpt-5.6-terra");
   assert.strictEqual(manifest.treatments.baseline.reasoningEffort, "low");
   assert.strictEqual(manifest.treatments.candidate.model, "gpt-5.6-sol");

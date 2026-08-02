@@ -2,7 +2,10 @@
   "schemaVersion": 1,
   "evaluationId": "sky-placement-judge-terra-low-vs-sol-xhigh-v1",
   "surface": "sky-placement",
-  "status": "candidate-evaluation",
+  "status": "completed-superseded",
+  "liveRerunAllowed": false,
+  "supersededBy": "sky-placement-judge-targeted-rules-v2",
+  "validityNote": "Retained as evidence about natural-language and abstraction detection. Do not rerun or use for promotion because its approved fixture set conflicted with the Current Sky no-second-person rule.",
   "promotionAuthorized": false,
   "runtime": {
     "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",

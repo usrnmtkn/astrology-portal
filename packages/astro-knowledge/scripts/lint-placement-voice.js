@@ -55,10 +55,9 @@ function lintArticle(article) {
   ].filter(Boolean).join("\n\n");
   const planet = article?.planet ? String(article.planet).toLowerCase() : null;
 
-  // Current Sky is collective. Historical owner-approved calibration copy is
-  // preserved verbatim and may opt into the legacy perspective while it is
-  // being linted, but newly generated or reviewed copy may not use second
-  // person. Transit-to-natal copy belongs to a different surface and linter.
+  // Current Sky is collective. Historical originals live in a separate fixture
+  // file and never enter this active linter path. Transit-to-natal copy belongs
+  // to a different surface and linter.
   if (!article?.allowLegacySecondPerson) {
     const secondPerson = full.match(/\b(?:you|your|yours|yourself|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/i);
     if (secondPerson) {
@@ -201,7 +200,7 @@ if (require.main === module) {
   if (arg === "--exemplars") {
     let bad = 0;
     for (const e of spec.exemplars) {
-      const r = lintArticle({ hook: e.hook, lived: e.lived, turn: e.turn, planet: e.planet, sign: e.sign, allowLegacySecondPerson: true });
+      const r = lintArticle({ tagline: e.tagline, hook: e.hook, lived: e.lived, turn: e.turn, moves: e.moves, planet: e.planet, sign: e.sign });
       if (r.fails || r.warns) bad++;
       const flag = r.score === 3 ? "OK " : "!! ";
       console.log(`${flag} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}${r.notes.length ? "  [" + r.notes.join("; ") + "]" : ""}`);

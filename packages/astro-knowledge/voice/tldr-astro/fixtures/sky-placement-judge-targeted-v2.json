@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "fixtureSetId": "sky-placement-targeted-rules-v2",
+  "surface": "sky-placement",
+  "status": "frozen-evaluation",
+  "note": "Targeted post-v1 set. It tests Current Sky perspective, doctrinal scope, literal English, one-close restraint, preservation, and proportional diagnosis after removing contradictory second-person golds.",
+  "fixtures": [
+    {
+      "caseId": "target-001",
+      "label": "corrected collective Current Sky gold",
+      "expectedClass": "approved",
+      "expectedScore": 3,
+      "ruleUnderTest": "collective-current-sky-positive-control",
+      "planet": "sun",
+      "sign": "leo",
+      "tier": "luminary",
+      "article": {
+        "tagline": "Show the work",
+        "hook": "Nobody claps for the thing we never show them. The Sun's move into Leo turns the lights on: a month of wanting to be seen doing it, not just having done it.",
+        "lived": "For about a month, warmth, nerve, and the urge to make something with our name on it run hotter. We want to be looked at doing the thing we are proud of, not just to have done it. Confidence comes cleanest when it has something generous to point at: a project, a person, or a cause worth making visible.",
+        "turn": "The catch is that Leo measures by applause, and applause is a fickle ruler. The same heat that makes us bold can make us touchy about credit, quick to put on a show, and slow to stay when somebody else has the spotlight. Build from the inside out and people notice. Chase the clout directly and watch it land on somebody else.",
+        "moves": [
+          "Put one piece of work worth showing where other people can see it.",
+          "Give credit out loud before asking for our own.",
+          "Choose one project worth the spotlight and finish its visible version."
+        ]
+      }
+    },
+    {
+      "caseId": "target-002",
+      "label": "clear owner-written line should be preserved",
+      "expectedClass": "approved",
+      "expectedScore": 3,
+      "ruleUnderTest": "preserve-clear-owner-writing",
+      "planet": "uranus",
+      "sign": "cancer",
+      "tier": "generational",
+      "article": {
+        "tagline": "Change who carries it",
+        "hook": "Home changes when the old arrangement asks one person to carry too much. Uranus handles rupture and reinvention; in Cancer, it changes the rules around home, family, care, and belonging.",
+        "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
+        "turn": "Change becomes another burden when the same person has to organize every new arrangement. A boundary has not done its job if one exhausted person still carries the transition alone.",
+        "moves": [
+          "Rewrite one household responsibility so the same person is no longer the automatic backup.",
+          "Name the emergency contact who actually shows up.",
+          "Give one room a purpose that fits the life happening now."
+        ]
+      }
+    },
+    {
+      "caseId": "target-003",
+      "label": "otherwise excellent copy with one second-person pronoun in moves",
+      "expectedClass": "known-weak",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-move",
+      "planet": "moon",
+      "sign": "capricorn",
+      "tier": "luminary",
+      "article": {
+        "tagline": "Feel it off the clock",
+        "hook": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
+        "lived": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
+        "turn": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is ours to do, then leave room to be human off the clock.",
+        "moves": [
+          "Name the feeling before turning it into another task.",
+          "Leave one nonessential item unfinished and ask what the pressure was protecting.",
+          "Ask for help with one responsibility you keep treating as proof of competence."
+        ]
+      }
+    },
+    {
+      "caseId": "target-004",
+      "label": "otherwise excellent copy with one second-person pronoun in hook",
+      "expectedClass": "known-weak",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-hook",
+      "planet": "mercury",
+      "sign": "cancer",
+      "tier": "personal",
+      "article": {
+        "tagline": "Say it without hints",
+        "hook": "You already know the conversation we have been avoiding. Mercury's move into Cancer changes the voice in the room: thinking and talking turn protective, intuitive, and feeling-led, and words that would not come before may come easier now. Say the thing while the channel is open.",
+        "lived": "For the next few weeks, memory sits in on every conversation. We hear the tone behind the words, remember how the last version went, and decide what feels true before we can explain why. The right sentence can reach somebody here because it sounds like a person, not a press release.",
+        "turn": "The catch is speaking in hints and resenting people for missing them. Sensitivity can make the message kinder, or it can make the message impossible to find. Say what happened, name what is needed, and leave the scavenger hunt out of it.",
+        "moves": [
+          "State what happened before explaining what we think the other person meant.",
+          "Ask for the response we need instead of hoping someone reads the tone.",
+          "Revisit one family conversation with the missing sentence written down first."
+        ]
+      }
+    },
+    {
+      "caseId": "target-005",
+      "label": "unsupported Chiron-in-Taurus work framing",
+      "expectedClass": "known-weak",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "astrological-domain-drift",
+      "planet": "chiron",
+      "sign": "taurus",
+      "tier": "generational",
+      "article": {
+        "tagline": "Prove less at work",
+        "hook": "Work exposes the old wound. Chiron in Taurus makes career, productivity, and professional success the center of the transit.",
+        "lived": "The office becomes the proving ground. A promotion restores confidence, a better title repairs old insecurity, and steady output becomes evidence that the wound is finally healing.",
+        "turn": "The trouble starts when the next achievement does not hold. Productivity cannot repair every injury, no matter how impressive the record becomes.",
+        "moves": [
+          "Ask for the promotion that proves professional value.",
+          "Track output until confidence returns."
+        ]
+      }
+    },
+    {
+      "caseId": "target-006",
+      "label": "unnatural personification",
+      "expectedClass": "known-weak",
+      "expectedMaximumScore": 1,
+      "ruleUnderTest": "literal-english",
+      "planet": "venus",
+      "sign": "virgo",
+      "tier": "personal",
+      "article": {
+        "tagline": "Name what works",
+        "hook": "The banished want refuses to stay reasonable. Venus handles attraction, worth, and relationship; in Virgo, desire becomes exacting about what works and what does not.",
+        "lived": "A plan gets revised, a boundary becomes specific, and affection is measured through the details that can actually be maintained. The placement notices what care costs and where the exchange has stopped being mutual.",
+        "turn": "Discernment turns against itself when every preference has to justify its existence. The result is a life edited so thoroughly that nothing unplanned is allowed to matter.",
+        "moves": [
+          "Name one preference without building a case for it.",
+          "Ask whether the useful gesture is also wanted."
+        ]
+      }
+    },
+    {
+      "caseId": "target-007",
+      "label": "strong paragraph with an unnecessary second conclusion",
+      "expectedClass": "known-weak",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "one-close-restraint",
+      "planet": "mars",
+      "sign": "capricorn",
+      "tier": "personal",
+      "article": {
+        "tagline": "Cut the empty climb",
+        "hook": "Determination is useful until stopping starts to look like failure. Mars handles action, conflict, and drive; in Capricorn, effort becomes strategic, disciplined, and fixed on the result.",
+        "lived": "For about six or seven weeks, the project reaches the part nobody applauds. The weak argument gets rewritten, the missing number gets found, and the final decision gets made with no audience left to impress.",
+        "turn": "Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale. The mountain will still be there tomorrow.",
+        "moves": [
+          "Give one long-delayed project a finish line and a two-hour block.",
+          "Cancel one obligation that looks productive but moves nothing forward."
+        ]
+      }
+    },
+    {
+      "caseId": "target-008",
+      "label": "merely imperfect line should not trigger a full rewrite",
+      "expectedClass": "known-weak",
+      "expectedScore": 2,
+      "ruleUnderTest": "proportional-editorial-restraint",
+      "planet": "venus",
+      "sign": "virgo",
+      "tier": "personal",
+      "article": {
+        "tagline": "Help without keeping score",
+        "hook": "What gets called picky is often taste getting clearer. Venus in Virgo turns attraction practical. Want what actually works, not what photographs well.",
+        "lived": "For about four weeks, affection, taste, and money all bend toward the useful: the gesture that actually helps over the grand one, the person who remembers how we take our coffee over the one who stages romance. This can make relationships feel complicated. Venus here reads love as attention, clocking what someone needs before they ask and quietly handling it.",
+        "turn": "Push practical love too far and it curdles: help hardens into control, and care shows up as a list of corrections. We start loving people by fixing them, or earning our keep by staying useful until there is nothing left over. Care lands best with no invoice attached. Try to be needed instead of loved and end up with neither.",
+        "moves": [
+          "Do one useful thing for someone without correcting how they receive it.",
+          "Before buying, name the daily problem the purchase will actually solve.",
+          "Ask what support would help instead of deciding for the other person."
+        ]
+      }
+    }
+  ]
+}

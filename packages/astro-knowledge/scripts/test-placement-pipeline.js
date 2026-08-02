@@ -56,8 +56,7 @@ async function main() {
       turn: e.turn,
       moves: e.moves,
       planet: e.planet,
-      sign: e.sign,
-      allowLegacySecondPerson: true
+      sign: e.sign
     });
     assert.strictEqual(r.score, 3, `${e.sourceId} should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
     assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} should have no findings`);
