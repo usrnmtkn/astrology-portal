@@ -36,12 +36,10 @@ import type { NatalChartDataTableRow } from "./components/charts/NatalChartDataT
 import {
   AspectGlyphs,
   DurationLabelText,
-  FriendPlacementTable,
   InlineGlyphIcon,
   PlanetPlacementRow,
   PlacementGlyphIcon,
   PlacementTableRow,
-  SynastryPlacementsComparison,
   dignitiesFor,
   friendPlacementDescription,
   placementPlanetOrder,
@@ -11441,6 +11439,18 @@ const NatalChartDataTable = lazy(() =>
 const SynastryWheel = lazy(() =>
   import("./components/charts/SynastryWheel").then((module) => ({
     default: module.SynastryWheel
+  }))
+);
+
+const FriendPlacementTable = lazy(() =>
+  import("./features/friends/FriendPlacementTables").then((module) => ({
+    default: module.FriendPlacementTable
+  }))
+);
+
+const SynastryPlacementsComparison = lazy(() =>
+  import("./features/friends/FriendPlacementTables").then((module) => ({
+    default: module.SynastryPlacementsComparison
   }))
 );
 
