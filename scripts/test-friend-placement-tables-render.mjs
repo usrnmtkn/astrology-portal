@@ -22,6 +22,9 @@ try {
   const { RelationshipApiSummary } = await server.ssrLoadModule(
     "/src/features/friends/RelationshipApiSummary.tsx"
   );
+  const { FriendCompositeTab } = await server.ssrLoadModule(
+    "/src/features/friends/FriendCompositeTab.tsx"
+  );
   const {
     completeNatalChartTableRows,
     natalChartTableRowFromSocial
@@ -103,6 +106,46 @@ try {
   assert.match(readySummaryHtml, /Relationship patterns/);
   assert.match(readySummaryHtml, /A steady relationship pattern/);
   assert.doesNotMatch(readySummaryHtml, /Overflow/);
+
+  const unavailableCompositeHtml = renderToStaticMarkup(React.createElement(FriendCompositeTab, {
+    aspectGroups: [],
+    compositeAvailable: false,
+    placementRows: [],
+    relationshipCompare: null,
+    relationshipCompareStatus: "idle"
+  }));
+  assert.match(unavailableCompositeHtml, /What a composite chart is/);
+  assert.match(unavailableCompositeHtml, /Composite chart needs both birth charts/);
+
+  const populatedCompositeHtml = renderToStaticMarkup(React.createElement(FriendCompositeTab, {
+    aspectGroups: [{
+      key: "gifts",
+      label: "Gifts",
+      aspects: [{
+        from: "Sun",
+        type: "trine",
+        to: "Moon",
+        orb: 1.2,
+        summary: "The relationship has an easy emotional rhythm."
+      }]
+    }],
+    compositeAvailable: true,
+    placementRows: [{
+      id: "Sun",
+      glyph: "☉",
+      label: "Sun",
+      sign: "Aries",
+      degree: 10,
+      house: 1,
+      retrograde: false,
+      description: "The relationship leads directly."
+    }],
+    relationshipCompare: null,
+    relationshipCompareStatus: "idle"
+  }));
+  assert.match(populatedCompositeHtml, /Composite placements/);
+  assert.match(populatedCompositeHtml, /Sun trine Moon/);
+  assert.match(populatedCompositeHtml, /The relationship has an easy emotional rhythm/);
 
   const socialTableRow = natalChartTableRowFromSocial({
     id: "Sun",
