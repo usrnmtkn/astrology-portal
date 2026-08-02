@@ -18922,14 +18922,27 @@ function ManualChartsPanel({
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
-  const selectedFriendTransits = selectedChart && !selectedChartIsEvent
-    ? dedupeSameBeatPersonalTransits(
-      rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
-      currentSky.generatedAt
-    ).slice(0, 8)
-    : [];
-  const selectedFriendHouseTransitCards = selectedChart?.natalChart && !selectedChartIsEvent
-    ? currentSkyHouseActivations(currentSky, selectedChart.natalChart)
+  const selectedFriendTransits = useMemo(() => (
+    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+      ? dedupeSameBeatPersonalTransits(
+          rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
+          currentSky.generatedAt
+        ).slice(0, 8)
+      : []
+  ), [
+    currentSky,
+    friendProfileWork.transits,
+    lifeAreaFocus,
+    selectedChart,
+    selectedChartIsEvent,
+    sunriseOrbDegrees
+  ]);
+  const selectedFriendHouseTransitCards = useMemo(() => {
+    if (!friendProfileWork.transits || !selectedChart?.natalChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return currentSkyHouseActivations(currentSky, selectedChart.natalChart)
       .slice(0, 4)
       .map((activation) => {
         const transit = {
@@ -18965,10 +18978,17 @@ function ManualChartsPanel({
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
         };
-      })
-    : [];
-  const selectedBondTransitCards = selectedChart && !selectedChartIsEvent
-    ? activeBondTransitCards(
+      });
+  }, [
+    currentSky,
+    friendProfileWork.transits,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedFriendTransits
+  ]);
+  const selectedBondTransitCards = useMemo(() => (
+    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+      ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
         profileTransits,
@@ -18976,10 +18996,21 @@ function ManualChartsPanel({
         selectedChart.pronouns,
         currentSky.generatedAt
       )
-    : [];
-  const selectedFriendTransitAspectLines = selectedChart && !selectedChartIsEvent
-    ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
-    : [];
+      : []
+  ), [
+    currentSky.generatedAt,
+    friendProfileWork.transits,
+    profileTransits,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedFriendTransits,
+    selectedSynastryContacts
+  ]);
+  const selectedFriendTransitAspectLines = useMemo(() => (
+    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+      ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
+      : []
+  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
   const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
   const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
   const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
