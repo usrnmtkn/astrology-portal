@@ -203,8 +203,18 @@ assert.doesNotMatch(
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /publishFriends\(nextFriends\);\s*void profileRequest;[\s\S]*void Promise\.all\(\[[\s\S]*listSocialFriendRequests[\s\S]*listSocialNotifications[\s\S]*listSocialInvitations/,
-  "Requests, notifications, and invitations must start only after the visible Friends list is published."
+  /publishFriends\(nextFriends\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
+  "Pending requests must start only after the visible Friends list is published."
+);
+assert.doesNotMatch(
+  socialCoreRefreshMatch.groups.body,
+  /listSocialNotifications|listSocialInvitations/,
+  "The core Friends refresh must not fetch Circle-only activity while Charts is active."
+);
+assert.match(
+  socialFriendsPanelSource,
+  /if \(!available \|\| activeView === "charts"\) \{\s*return;\s*\}[\s\S]*void refreshSocialActivity\(\)/,
+  "Notifications and invitation history must wait until a non-Charts Friends view is active."
 );
 assert.match(
   appSource,
