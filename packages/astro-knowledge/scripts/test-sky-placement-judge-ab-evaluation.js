@@ -33,7 +33,8 @@ async function main() {
 
   const fixtures = buildFixtures();
   assert.strictEqual(fixtures.length, 14);
-  assert.strictEqual(fixtures.filter((fixture) => fixture.expectedClass === "approved").length, 7);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.expectedClass === "historical-owner-approved-v1").length, 7);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.expectedOutcome === "positive").length, 7);
   assert.strictEqual(fixtures.filter((fixture) => fixture.expectedClass === "known-weak").length, 7);
   assert(fixtures.some((fixture) => fixture.article.hook.includes("banished want")));
   assert(fixtures.some((fixture) => fixture.article.hook.includes("career, productivity")));
@@ -65,7 +66,7 @@ async function main() {
   const calls = [];
   const requestFn = async ({ treatmentKey, treatment, fixture, prompt: requestPrompt }) => {
     calls.push({ treatmentKey, treatment, caseId: fixture.caseId, prompt: requestPrompt });
-    const score = fixture.expectedClass === "approved" ? 3 : 2;
+    const score = fixture.expectedOutcome === "positive" ? 3 : 2;
     return {
       latencyMs: treatmentKey === "baseline" ? 100 : 200,
       payload: {

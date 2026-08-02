@@ -39,7 +39,11 @@ const TIER_HINT = {
 // Gold standard trios from the SAME tier, topped up cross-tier when thin
 // (the social tier has no exemplar yet; generational is its closest register).
 function goldStandard(tier, n = 2) {
-  const all = spec.exemplars.filter((e) => e.canonical);
+  const all = spec.exemplars.filter((e) =>
+    e.canonical === true
+    && e.ownerApproved === true
+    && e.editorialStatus === "current_sky_owner_approved"
+  );
   const same = tier ? all.filter((e) => e.tier === tier) : [];
   const fallbackOrder = tier === "social" ? ["generational", "personal", "luminary"] : null;
   let pool = same;
@@ -61,6 +65,7 @@ const renderTrio = (e) => {
 
 function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
   const placementLabel = planet && sign ? ` for ${planet} in ${sign}` : "";
+  const gold = goldStandard(tier);
   return [
     `You are the editor of a modern astrology app. You are strict. Most drafts are "borderline" until proven otherwise.`,
     ``,
@@ -104,8 +109,10 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
     `OWNER-APPROVED BEAT EVIDENCE (judge movement and consequence; do not require or reward copied wording):`,
     ...(spec.ownerApprovedBeatEvidence || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()}: ${e.text}\n      EDITORIAL USE: ${e.use}`),
     ``,
-    `GOLD STANDARD for this register (these are 3s):`,
-    ...goldStandard(tier).map((e, i) => `  [${i + 1}] ${e.planet} in ${e.sign}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`),
+    `CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD for this register:`,
+    ...(gold.length
+      ? gold.map((e, i) => `  [${i + 1}] ${e.planet} in ${e.sign}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`)
+      : [`  None yet. Collective adaptation candidates are deliberately excluded until the owner approves their exact wording. Judge from the rubric and the approved beat evidence only.`]),
     ``,
     `ARTICLE TO SCORE:`,
     renderTrio(article),

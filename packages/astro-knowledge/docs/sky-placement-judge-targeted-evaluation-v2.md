@@ -1,6 +1,6 @@
 # Sky Placement judge targeted evaluation v2
 
-Status: blinded directional evaluation. No promotion capability and no runtime or governed-content mutation.
+Status: completed, then invalidated for provenance classification. No promotion capability and no runtime or governed-content mutation.
 
 ## Why v2 exists
 
@@ -57,4 +57,4 @@ The targeted run completed on 2026-08-02:
 - Model key status: sealed.
 - Promotion eligibility: false.
 
-The anonymous owner packet is ready in the untracked output directory. No model identity should be revealed until the new blind review is complete.
+The anonymous packet and sealed key remain in the untracked output directory, but this run is not promotion evidence: collective adaptations were incorrectly described as owner-approved gold. V3 corrects the three-state provenance model before a new 18-call run.
