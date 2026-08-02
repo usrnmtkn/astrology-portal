@@ -21,6 +21,8 @@ function auditBundle(value) {
 
   const seen = new Set();
   const materializedRows = [];
+  let currentJudge3 = 0;
+  let ownerEdited = 0;
   for (const candidate of value.candidates) {
     const key = `${candidate.planet}/${candidate.sign}`;
     if (seen.has(key)) fail(`duplicate candidate ${key}`);
@@ -28,7 +30,18 @@ function auditBundle(value) {
     if (!PLANETS.includes(candidate.planet) || !SIGNS.includes(candidate.sign)) fail(`invalid placement ${key}`);
     if (candidate.status !== "needs_review") fail(`${key} must remain needs_review`);
     if (candidate.promotionAuthorized !== false) fail(`${key} must explicitly deny promotion authorization`);
-    if (candidate.judgeResult?.score !== 3) fail(`${key} is not judge 3`);
+    if (candidate.ownerEdit) {
+      ownerEdited++;
+      if (candidate.ownerEdit.source !== "owner-verbatim") fail(`${key} owner edit must identify owner-verbatim provenance`);
+      if (candidate.ownerEdit.status !== "pending_owner_approval") fail(`${key} owner edit must remain pending owner approval`);
+      if (!Array.isArray(candidate.ownerEdit.slots) || candidate.ownerEdit.slots.length === 0) fail(`${key} owner edit must identify its slots`);
+      if (candidate.judgeResult?.status !== "stale_after_owner_edit" || candidate.judgeResult?.priorScore !== 3) {
+        fail(`${key} owner edit must preserve the prior judge result as stale provenance`);
+      }
+    } else {
+      if (candidate.judgeResult?.score !== 3) fail(`${key} is not judge 3`);
+      currentJudge3++;
+    }
 
     const lint = lintArticle({ ...candidate.article, planet: candidate.planet });
     if (lint.score !== 3 || lint.fails !== 0 || lint.warns !== 0) {
@@ -54,6 +67,8 @@ function auditBundle(value) {
     candidates: value.candidates.length,
     rows: materializedRows.length,
     lint3: value.candidates.length,
+    currentJudge3,
+    ownerEdited,
     reviewStatus: value.status,
     promotionAuthorized: value.promotionAuthorized
   };
@@ -62,7 +77,7 @@ function auditBundle(value) {
 if (require.main === module) {
   try {
     const result = auditBundle(JSON.parse(fs.readFileSync(bundlePath, "utf8")));
-    console.log(`Review bundle clean: ${result.candidates} candidates, ${result.rows} needs_review rows, ${result.lint3} lint-3 articles, promotionAuthorized=${result.promotionAuthorized}.`);
+    console.log(`Review bundle clean: ${result.candidates} candidates, ${result.rows} needs_review rows, ${result.lint3} lint-3 articles, ${result.currentJudge3} current judge-3 results, ${result.ownerEdited} owner-edited pending rejudge, promotionAuthorized=${result.promotionAuthorized}.`);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;

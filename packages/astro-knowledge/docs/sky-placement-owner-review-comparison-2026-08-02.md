@@ -19,7 +19,7 @@ The exact candidate payloads are frozen in `review/sky-placement-rewrite-pilot-v
 
 ### Recommendation: replace
 
-The candidate keeps the existing article's discipline and results focus, but replaces `war`, `grinding`, `scoreboard`, and repeated mountain imagery with ordinary evidence: a proposal, a budget, a delayed task, and an obligation that only looks productive. The shadow is more specific and the moves are less templated.
+The candidate keeps the existing article's discipline and results focus, but replaces `war` and `scoreboard` language with ordinary evidence: a proposal, a budget, a delayed task, and an obligation that only looks productive. The owner-edited turn keeps one sustained mountain image and makes the point at which determination becomes pointless grinding more explicit. The moves are less templated.
 
 ### Current approved baseline
 
@@ -45,13 +45,15 @@ The candidate keeps the existing article's discipline and results focus, but rep
 
 **Lived:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the same useful job after the novelty is gone. You may feel most alive when there is a clear finish line and a solid way to reach it.
 
-**Turn:** This can turn brutal when every hour has to justify itself. We skip the walk, delay the call back, and treat rest like a reward we have not earned because there is still more to finish. The people who love you are not reading your resume.
+**Turn — owner edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
 
 **Moves:**
 
 - Choose one long-delayed practical task and give it a two-hour block with a defined finish.
 - Write the next three steps for a goal that has been living only in your head.
 - Cancel one obligation that makes you look productive but does not move your real work forward.
+
+The owner-edited turn is copied verbatim from the review conversation. It passes the mechanical linter with score 3 and no findings. The saved AI judge score predates this edit and is not represented as a judgment of the new paragraph.
 
 ## Saturn in Capricorn
 

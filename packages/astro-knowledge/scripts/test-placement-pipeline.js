@@ -233,6 +233,8 @@ async function main() {
     candidates: 4,
     rows: 20,
     lint3: 4,
+    currentJudge3: 3,
+    ownerEdited: 1,
     reviewStatus: "needs_review",
     promotionAuthorized: false
   });
@@ -240,7 +242,7 @@ async function main() {
     () => auditBundle({ ...reviewBundle, promotionAuthorized: true }),
     /explicitly deny promotion authorization/
   );
-  console.log("OK  owner-review bundle freezes four lint-3 candidates as non-promotable needs_review rows");
+  console.log("OK  owner-review bundle freezes four lint-3 candidates, including owner-edit provenance, as non-promotable needs_review rows");
 
   // 9. A fully approved matrix makes the batch runner an idempotent no-op.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sky-placement-batch-"));
