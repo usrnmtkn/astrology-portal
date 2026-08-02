@@ -913,3 +913,32 @@
 .friend-placement-column-compact .friend-placement-row {
   border-right: 0;
 }
+
+/* FriendDetail is lazy-loaded after the global responsive stylesheet. Keep
+   the mobile one-column contract in this boundary so its desktop grid cannot
+   win merely because this CSS chunk arrives later. */
+@media (max-width: 800px) {
+  .app-shell.mode-friends .friend-profile-panel.friend-chart-page {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column,
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column {
+    order: 2;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
+    position: relative;
+    top: auto;
+    order: 1;
+  }
+}

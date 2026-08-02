@@ -179,6 +179,11 @@ assert.match(
   /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
   "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
 );
+assert.match(
+  appSource,
+  /\(friendProfileWork\.compatibility \|\| friendProfileWork\.synastry\) && selectedChart && !selectedChartIsEvent/,
+  "Compatibility and Synastry wheels must both receive their inspector aspect lines when active."
+);
 
 const verifiedAuthUserMatch = authSource.match(
   /export async function getVerifiedAuthUser[\s\S]*?\n\}/
