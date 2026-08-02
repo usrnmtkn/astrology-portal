@@ -2,8 +2,8 @@
 //
 // Offline contract test for the sky-placement generation pipeline. No API key:
 // the model seam is injected. Proves, before any real run:
-//   1. every embedded calibration exemplar lints 3 with 0 fails / 0 warns
-//   2. every canonical exemplar carries and passes all five article slots
+//   1. every collective adaptation candidate lints 3 but remains unapproved
+//   2. no candidate adaptation enters active generation/judge gold context
 //   3. generateArticle accepts a clean injected draft and materializes the
 //      five V3 hook rows with the right contentKeys
 //   4. a draft that trips the linter is retried with feedback, then accepted
@@ -27,6 +27,7 @@ const {
 const { buildJudgePrompt, TIER_OF } = require("./judge-placement-voice.js");
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
+const historicalPlacementFixtures = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const bannedConstructions = require(path.join("..", "voice", "banned-constructions.json")).bannedConstructions;
 const pointSignColors = require(path.join("..", "voice", "tldr-astro", "sign-colors-v2-points.json"));
 
@@ -45,10 +46,15 @@ async function main() {
   assert.strictEqual(pointSignColors.status, "approved", "owner-reviewed point/sign colors must be marked approved");
   assert.strictEqual(Object.keys(pointSignColors.entries).length, 48, "point/sign colors must complete all 48 Chiron/Node/Lilith pairs");
 
-  // 1. exemplars all lint clean
+  // 1. collective adaptations lint clean but remain explicitly unapproved.
   for (const e of spec.exemplars) {
-    assert.ok(e.tagline, `${e.sourceId} must include its approved tagline`);
-    assert.strictEqual(e.moves?.length, 3, `${e.sourceId} must include three approved moves`);
+    assert.strictEqual(e.editorialStatus, "collective_adaptation_candidate");
+    assert.strictEqual(e.reviewStatus, "needs_review");
+    assert.strictEqual(e.ownerApproved, false);
+    assert.strictEqual(e.promotionAuthorized, false);
+    assert.strictEqual(e.canonical, false);
+    assert.ok(e.tagline, `${e.sourceId} must include its candidate tagline`);
+    assert.strictEqual(e.moves?.length, 3, `${e.sourceId} must include three candidate moves`);
     const r = lintArticle({
       tagline: e.tagline,
       hook: e.hook,
@@ -58,10 +64,13 @@ async function main() {
       planet: e.planet,
       sign: e.sign
     });
-    assert.strictEqual(r.score, 3, `${e.sourceId} should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
-    assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} should have no findings`);
+    assert.strictEqual(r.score, 3, `${e.sourceId} candidate should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
+    assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} candidate should have no findings`);
   }
-  console.log(`OK  ${spec.exemplars.length} exemplars lint 3 with 0 findings`);
+  assert.strictEqual(historicalPlacementFixtures.editorialStatus, "historical_owner_approved");
+  assert.strictEqual(historicalPlacementFixtures.currentSkyCalibrationEligible, false);
+  assert.strictEqual(spec.exemplars.filter((e) => e.editorialStatus === "current_sky_owner_approved").length, 0);
+  console.log(`OK  ${spec.exemplars.length} collective adaptations lint 3 but remain needs_review; historical originals are inactive`);
 
   // 2. clean injected draft -> clean result + three hook rows
   const cleanRun = await generateArticle(
@@ -224,6 +233,9 @@ async function main() {
     assert.match(prompt, /duration, baseline rupture, concrete changes, relational reclassification, cost/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
     assert.ok(prompt.includes("never copy AC phrases, metaphors, or cadence"), "AC must remain a word-only reference lane");
+    assert.ok(prompt.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE EXEMPLARS"));
+    assert.ok(prompt.includes("None yet. Do not treat collective adaptation candidates as owner-approved voice evidence"));
+    assert.ok(!prompt.includes("Nobody claps for the thing we never show them"), "collective candidates must not enter the generation few-shot context");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
     assert.ok(prompt.includes("PLANET + SIGN MEANING LAYER"), `${planet} prompt must carry the approved authoring layer`);
   }
@@ -247,8 +259,9 @@ async function main() {
   );
   for (const tier of Object.keys(spec.planetTierRegister.hints)) {
     const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
-    assert.ok(jp.includes("GOLD STANDARD"), `judge prompt must include gold standard for tier ${tier}`);
-    assert.ok(/\[2\]/.test(jp), `tier ${tier} must get two gold exemplars (social falls back cross-tier)`);
+    assert.ok(jp.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD"), `judge prompt must label owner-approved gold explicitly for tier ${tier}`);
+    assert.ok(jp.includes("None yet. Collective adaptation candidates are deliberately excluded"), `judge prompt must disclose the empty approved-gold state for tier ${tier}`);
+    assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
     assert.ok(jp.includes("Generic plural \"people\" used as a substitute"), `judge prompt must reject people as a vague actor placeholder for tier ${tier}`);

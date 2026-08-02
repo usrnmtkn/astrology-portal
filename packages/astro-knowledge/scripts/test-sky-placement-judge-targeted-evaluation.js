@@ -5,6 +5,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { buildJudgePrompt } = require("./judge-placement-voice.js");
 const { lintArticle } = require("./lint-placement-voice.js");
 const { runEvaluation } = require("./run-sky-placement-judge-ab-evaluation.js");
 const {
@@ -24,27 +25,48 @@ function fullText(article) {
 }
 
 async function main() {
-  assert.strictEqual(activeSpec.id, "tldr-astro.voice.sky-placement.v3");
+  assert.strictEqual(activeSpec.id, "tldr-astro.voice.sky-placement.v4");
   for (const exemplar of activeSpec.exemplars) {
     assert.doesNotMatch(JSON.stringify(exemplar), secondPerson(), `${exemplar.sourceId} must be collective in every active field`);
     assert.strictEqual(lintArticle({ ...exemplar }).score, 3, `${exemplar.sourceId} must lint clean without a legacy exemption`);
+    assert.strictEqual(exemplar.editorialStatus, "collective_adaptation_candidate");
+    assert.strictEqual(exemplar.reviewStatus, "needs_review");
+    assert.strictEqual(exemplar.ownerApproved, false);
+    assert.strictEqual(exemplar.promotionAuthorized, false);
+    assert.strictEqual(exemplar.canonical, false);
   }
+  assert.strictEqual(activeSpec.exemplars.filter((exemplar) => exemplar.editorialStatus === "current_sky_owner_approved").length, 0);
   assert.strictEqual(historical.activeCalibration, false);
   assert.strictEqual(historical.generationEvidence, false);
   assert.strictEqual(historical.judgeGoldEvidence, false);
+  assert.strictEqual(historical.editorialStatus, "historical_owner_approved");
+  assert.strictEqual(historical.ownerApproved, true);
+  assert.strictEqual(historical.currentSkyCalibrationEligible, false);
   assert.strictEqual(historical.exemplars.length, activeSpec.exemplars.length);
   assert(historical.exemplars.some((exemplar) => secondPerson().test(JSON.stringify(exemplar))), "historical file must preserve the former perspective");
 
   const fixtures = buildTargetedFixtures();
-  assert.strictEqual(fixtureSet.fixtureSetId, "sky-placement-targeted-rules-v2");
-  assert.strictEqual(fixtures.length, 8);
-  assert.strictEqual(fixtures.filter((fixture) => fixture.expectedClass === "approved").length, 2);
-  assert.strictEqual(fixtures.filter((fixture) => fixture.expectedClass === "known-weak").length, 6);
+  assert.strictEqual(fixtureSet.fixtureSetId, "sky-placement-targeted-provenance-v3");
+  assert.strictEqual(fixtures.length, 9);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "positive_collective_control").length, 3);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "single_pronoun_failure").length, 2);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "domain_drift_failure").length, 1);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "natural_english_failure").length, 1);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "editorial_restraint_control").length, 1);
+  assert.strictEqual(fixtures.filter((fixture) => fixture.classification === "overwriting_failure").length, 1);
+  assert(fixtures.every((fixture) => fixture.ownerApproved === false));
+  assert(fixtures.every((fixture) => fixture.promotionAuthorized === false));
   assert.strictEqual(evaluationManifest.treatments.baseline.model, "gpt-5.6-terra");
   assert.strictEqual(evaluationManifest.treatments.baseline.reasoningEffort, "low");
   assert.strictEqual(evaluationManifest.treatments.candidate.model, "gpt-5.6-sol");
   assert.strictEqual(evaluationManifest.treatments.candidate.reasoningEffort, "xhigh");
   assert.strictEqual(evaluationManifest.promotionGate.thisRunPromotionEligible, false);
+  assert.strictEqual(evaluationManifest.evaluationSetVersion, "sky-placement-targeted-provenance-v3");
+
+  const noGoldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
+  assert.match(noGoldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
+  assert.match(noGoldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
+  assert.doesNotMatch(noGoldPrompt, /Feelings get translated into tasks/);
 
   for (const caseId of ["target-003", "target-004"]) {
     const fixture = fixtures.find((item) => item.caseId === caseId);
@@ -53,6 +75,7 @@ async function main() {
     const lint = lintArticle({ ...fixture.article, planet: fixture.planet, sign: fixture.sign });
     assert(lint.findings.some((finding) => finding.term === "second-person"), `${caseId} must fail the mechanical rule too`);
   }
+  assert.doesNotMatch(fullText(fixtures.find((fixture) => fixture.caseId === "target-009").article), secondPerson());
   assert(fixtures.some((fixture) => fixture.ruleUnderTest === "astrological-domain-drift"));
   assert(fixtures.some((fixture) => fixture.ruleUnderTest === "literal-english"));
   assert(fixtures.some((fixture) => fixture.ruleUnderTest === "one-close-restraint"));
@@ -87,7 +110,7 @@ async function main() {
     blindSeed: "targeted-test-seed",
     now: () => new Date("2026-08-02T14:00:00.000Z")
   });
-  assert.strictEqual(calls.length, 16);
+  assert.strictEqual(calls.length, 18);
   for (const fixture of fixtures) {
     const pair = calls.filter((call) => call.caseId === fixture.caseId);
     assert.strictEqual(pair.length, 2);
@@ -99,7 +122,7 @@ async function main() {
     + fs.readFileSync(path.join(outDir, "blind-owner-scorecard.json"), "utf8");
   assert.doesNotMatch(blind, /gpt-5\.6|\bterra\b|\bsol\b|reasoningEffort|expectedClass|sourceId|known-weak/i);
 
-  console.log("Targeted Sky Placement evaluation passed: conflict-free golds, historical originals isolated, two exact-pronoun controls, 16 paired calls, and no promotion path.");
+  console.log("Targeted Sky Placement evaluation passed: no unapproved golds, three provenance-labeled positive controls, two exact-pronoun failures, 18 paired calls, and no promotion path.");
 }
 
 main().catch((error) => {
