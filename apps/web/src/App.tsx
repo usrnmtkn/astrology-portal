@@ -210,7 +210,7 @@ import {
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
-import type { TemplateSlotValues } from "./services/templateInterpolation";
+import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
   compositeHouseContentKey,
@@ -439,7 +439,7 @@ type RenderedSynastryContact = {
 
 type FriendNatalAspectGroup = GiftLessonGroup<SkySnapshot["aspects"][number]>;
 
-type SurfaceProseLayer = "authored" | "fallback";
+type SurfaceProseLayer = "authored" | "generated" | "fallback";
 type NormalizedSurfaceStatus = "servable" | "partial" | "not-servable";
 
 type NormalizedSurfaceSection<Slot extends string = string> = {
@@ -711,7 +711,7 @@ type LazyContentRegistry = Pick<
   | "placementContentId"
   | "skyPlacementContentId"
   | "natalPlacementContentId"
->;
+> & Partial<Pick<typeof import("./content/skyRegistry"), "approvedExactSkyAspectCopy">>;
 
 type ContentFallback = {
   bundle: ContentBundle;
@@ -5019,12 +5019,100 @@ function generatedSkyAspectWritingSection(
   return {
     slot: "meaning",
     required: true,
-    layer: "authored",
+    layer: "generated",
     tier: "generated-sky-aspect-lint-v1",
     sourceKeys: [resolved.content.contentKey, resolved.pairSource],
     heading: resolved.content.headline || skyAspectDisplayTitle(aspect),
     body: resolved.body
   };
+}
+
+function approvedExactSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+): NormalizedSkyAspectSection | null {
+  const registry = contentRegistryFor("sky");
+
+  if (!registry) {
+    void loadContentRegistry("sky");
+    return null;
+  }
+
+  const copy = registry.approvedExactSkyAspectCopy?.(aspect.from, aspect.type, aspect.to);
+
+  if (!copy) {
+    return null;
+  }
+
+  const body = interpolateTemplateString(copy.body, skyAspectTemplateSlots(aspect, positions), {
+    contentKey: copy.contentId,
+    field: "body"
+  });
+  const paragraphs = readerFacingParagraphs([body]);
+
+  if (paragraphs.length === 0) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "approved-exact-sky-aspect-v1",
+    sourceKeys: [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`],
+    heading: skyAspectDisplayTitle(aspect),
+    body: paragraphs.join("\n\n")
+  };
+}
+
+function reviewedSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions: PlanetPosition[] | undefined,
+  scope: "sign-aware" | "generic"
+): NormalizedSkyAspectSection | null {
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
+      aspect: normalizeContentIdPart(aspect.type),
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
+    });
+
+    if (!rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
+      return null;
+    }
+
+    const isSignAware = rendered.contentKey.startsWith("fallback-hook/sky-aspect-sign/");
+    if ((scope === "sign-aware") !== isSignAware) {
+      return null;
+    }
+
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "reviewed-sky-aspect-phrasebook-v1",
+      sourceKeys: [rendered.contentKey],
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 function fallbackSkyAspectWritingSection(
@@ -5043,6 +5131,10 @@ function fallbackSkyAspectWritingSection(
       bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
     });
 
+    if (rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
+      return null;
+    }
+
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
     if (!body || !isReaderFacingCopy(body)) {
@@ -5053,10 +5145,8 @@ function fallbackSkyAspectWritingSection(
       slot: "meaning",
       required: true,
       layer: "fallback",
-      tier: rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")
-        ? "reviewed-sky-aspect-phrasebook-v1"
-        : "fallback-architecture-v3",
-      sourceKeys: [rendered.contentKey ?? rendered.templateKey],
+      tier: "fallback-architecture-v3",
+      sourceKeys: [rendered.templateKey],
       heading: rendered.headline || skyAspectDisplayTitle(aspect),
       body
     };
@@ -5088,9 +5178,28 @@ function normalizeSkyAspectSurface(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
-  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = generatedSection ? null : fallbackSkyAspectWritingSection(aspect, positions);
-  const sections = generatedSection ? [generatedSection] : fallbackSection ? [fallbackSection] : [];
+  const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
+  const authoredSection = signAwareSection ? null : approvedExactSkyAspectWritingSection(aspect, positions);
+  const reviewedSection = signAwareSection || authoredSection
+    ? null
+    : reviewedSkyAspectWritingSection(aspect, positions, "generic");
+  const generatedSection = signAwareSection || authoredSection || reviewedSection
+    ? null
+    : generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const fallbackSection = signAwareSection || authoredSection || reviewedSection || generatedSection
+    ? null
+    : fallbackSkyAspectWritingSection(aspect, positions);
+  const sections = signAwareSection
+    ? [signAwareSection]
+    : authoredSection
+      ? [authoredSection]
+      : reviewedSection
+        ? [reviewedSection]
+        : generatedSection
+          ? [generatedSection]
+          : fallbackSection
+            ? [fallbackSection]
+            : [];
 
   return {
     surface: "sky-aspect",

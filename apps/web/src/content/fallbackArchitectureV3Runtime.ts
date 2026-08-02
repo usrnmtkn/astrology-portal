@@ -291,13 +291,13 @@ function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhraseboo
   const rows = phrasebook.hookRows;
   const expectedFamilies = new Map([
     ["fallback-hook/sky-aspect-pair/", 30],
-    ["fallback-hook/sky-aspect-exact/", 3],
+    ["fallback-hook/sky-aspect-exact/", 4],
     ["fallback-hook/sky-placement-sign/", 36],
-    ["fallback-hook/sky-aspect-sign/", 72]
+    ["fallback-hook/sky-aspect-sign/", 78]
   ]);
 
-  if (rows.length !== 141 || rows.some((row) => row.review_status !== "reviewed")) {
-    throw new Error("Sky aspect phrasebook must contain exactly 141 reviewed rows.");
+  if (rows.length !== 148 || rows.some((row) => row.review_status !== "reviewed")) {
+    throw new Error("Sky aspect phrasebook must contain exactly 148 reviewed rows.");
   }
 
   for (const [prefix, expected] of expectedFamilies) {

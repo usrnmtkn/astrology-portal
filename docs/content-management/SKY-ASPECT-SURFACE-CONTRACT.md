@@ -28,19 +28,25 @@ aspect section should be redesigned**.
 Resolve each calculated Sky aspect in this order:
 
 ```text
-1. Exact approved generated write-up for the current planet/aspect/sign facts
-2. Exact or pair-specific approved Sky aspect phrasebook hook
-3. Approved general Sky aspect template assembled from fallback hooks/vocabulary
-4. SOURCE_GAP
+1. Owner-approved sign-specific Sky aspect copy for the current signs
+2. Owner-approved exact-aspect reader copy from the canonical transit corpus
+3. Approved exact or pair-specific Sky aspect phrasebook hook
+4. Explicitly approved generated write-up for the current planet/aspect/sign facts
+5. Approved general Sky aspect template assembled from fallback hooks/vocabulary
+6. SOURCE_GAP
 ```
 
-Generated content is an enhancement over the local approved content package.
-It is not a prerequisite for rendering the aspect list.
+Owner-approved sign-specific and exact-aspect copy is author-final and immutable. A generated
+row must never replace it, even when the generated row is more sign-specific,
+newer, or judge-scored. Generated content is an enhancement only when no
+approved exact or phrasebook unit exists, and it must be labeled as generated
+in application provenance rather than `authored`.
 
-The app should render approved local fallback copy immediately and replace it
-with an exact approved generated unit after hydration when one exists. A
-network request for generated content must not replace usable fallback cards
-with a loading-only or facts-only state.
+The app should render approved local copy immediately. Hydration may replace a
+general fallback only with a higher-ranked approved unit; it may never replace
+owner-approved exact or phrasebook copy with generated prose. A network
+request for generated content must not replace usable fallback cards with a
+loading-only or facts-only state.
 
 ## Content-key rule
 
@@ -108,14 +114,16 @@ Any Sky aspect resolver or UI change must verify all of the following:
 
 1. The canonical current-aspect matrix resolves in both Node and browser
    implementations.
-2. Exact approved generated copy wins over fallback copy.
-3. Pair/sign phrasebook hooks win over the general template.
-4. The general template is accepted when no specific phrasebook hook exists.
-5. Lilith, Chiron, and node combinations exercise the fallback path.
-6. The app contains no unapproved collapsed or facts-only aspect collection.
-7. Clicking a fallback-backed aspect opens a reader-facing detail article.
-8. Generated-content loading or failure leaves approved fallback cards visible.
-9. Typecheck, the production web build, and the content test suite pass.
+2. Owner-approved sign-specific copy wins over generic exact corpus copy for the matching signs.
+3. Owner-approved exact corpus copy wins over generic phrasebook, generated, and general fallback copy.
+4. Pair/exact phrasebook hooks win over approved generated copy and the general template.
+5. The general template is accepted when no approved specific unit exists.
+6. Generated sections are never labeled `authored` in application provenance.
+7. Lilith, Chiron, and node combinations exercise the fallback path.
+8. The app contains no unapproved collapsed or facts-only aspect collection.
+9. Clicking a fallback-backed aspect opens a reader-facing detail article.
+10. Generated-content loading or failure leaves approved fallback cards visible.
+11. Typecheck, the production web build, and the content test suite pass.
 
 The focused regression lives in:
 
