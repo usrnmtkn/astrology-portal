@@ -138,6 +138,16 @@ assert.match(
   "BlockedAccountsSettings must load only when its nested Settings page renders."
 );
 assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*(?:NatalAspectPatternsSection|NatalAspectPatternActivationsSection)[^}]*\}\s+from\s+"\.\/features\/you\/NatalAspectPatternsSection"/u,
+  "Natal aspect-pattern rendering must not remain a static application-shell dependency."
+);
+assert.equal(
+  [...appSource.matchAll(/import\("\.\/features\/you\/NatalAspectPatternsSection"\)/gu)].length,
+  2,
+  "Both natal aspect-pattern surfaces must load through their lazy feature boundary."
+);
+assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.relationship-explainer-card\s*\{/u,
   "Relationship explainer CSS must not remain in the eager Friends/profile stylesheet."
