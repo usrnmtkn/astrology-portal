@@ -25,6 +25,9 @@ try {
   const { FriendCompositeTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendCompositeTab.tsx"
   );
+  const { FriendSynastryTab } = await server.ssrLoadModule(
+    "/src/features/friends/FriendSynastryTab.tsx"
+  );
   const {
     completeNatalChartTableRows,
     natalChartTableRowFromSocial
@@ -146,6 +149,47 @@ try {
   assert.match(populatedCompositeHtml, /Composite placements/);
   assert.match(populatedCompositeHtml, /Sun trine Moon/);
   assert.match(populatedCompositeHtml, /The relationship has an easy emotional rhythm/);
+
+  const emptySynastryHtml = renderToStaticMarkup(React.createElement(FriendSynastryTab, {
+    contactGroups: [],
+    explainer: "Where Alex's planets meet yours and what happens when they do.",
+    friendName: "Alex",
+    innerIsSelf: true,
+    innerName: "You",
+    innerSky: null,
+    onOpenContact() {},
+    outerSky: null
+  }));
+  assert.match(emptySynastryHtml, /What synastry shows/);
+  assert.match(emptySynastryHtml, /Add both charts/);
+
+  const populatedSynastryHtml = renderToStaticMarkup(React.createElement(FriendSynastryTab, {
+    contactGroups: [{
+      key: "gifts",
+      label: "Gifts",
+      contacts: [{
+        id: "sun-trine-moon",
+        aspect: "trine",
+        orb: 1.2,
+        title: "Your Sun trine Alex's Moon",
+        subtitle: "Easy recognition",
+        description: "You recognize each other's rhythm quickly.",
+        yourPoint: { name: "Sun", glyph: "☉" },
+        friendPoint: { name: "Moon", glyph: "☽" }
+      }]
+    }],
+    explainer: "Where Alex's planets meet yours and what happens when they do.",
+    friendName: "Alex",
+    innerIsSelf: true,
+    innerName: "You",
+    innerSky: sky,
+    onOpenContact() {},
+    outerSky: sky
+  }));
+  assert.match(populatedSynastryHtml, /Your Sun trine Alex&#x27;s Moon/);
+  assert.match(populatedSynastryHtml, /You recognize each other&#x27;s rhythm quickly/);
+  assert.match(populatedSynastryHtml, /Easy recognition/);
+  assert.doesNotMatch(populatedSynastryHtml, /Add both charts/);
 
   const socialTableRow = natalChartTableRowFromSocial({
     id: "Sun",
