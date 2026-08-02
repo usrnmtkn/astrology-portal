@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 const { lintArticle, SLOTS } = require("./lint-placement-voice.js");
 const { generate } = require("./generate-sky-aspect-cards.js");
+const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
 
 const root = path.join(__dirname, "..");
 const repoRoot = path.resolve(root, "..", "..");
@@ -231,6 +232,7 @@ function buildPrompt(args) {
     `VOICE: ${spec.voiceDescription}`,
     `PERSON: ${spec.personNote}`,
     `REGISTER: this is a ${tier} placement - ${tierHint}. Pace: ${TITLE[planet]} spends ${pace} in a sign; the article must land that pace somewhere, usually in LIVED.`,
+    buildOwnerVocabularyPrompt({ surface: "planet-article", maxCore: 14, maxShared: 10, maxAcShared: 8, maxSdAdditions: 6 }),
     ``,
     `SOURCE MEANING (the boundary - do not add claims beyond this):`,
     meaning.tldr ? `  tldr: ${meaning.tldr}` : null,

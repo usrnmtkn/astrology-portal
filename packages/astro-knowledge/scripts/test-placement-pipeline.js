@@ -183,6 +183,9 @@ async function main() {
   for (const planet of PLANETS) {
     const prompt = buildPrompt({ planet, sign: "aries" });
     assert.ok(prompt.includes("SWAP TEST"), "prompt must carry the swap test");
+    assert.ok(prompt.includes("OWNER VOCABULARY PALETTE (menu, never quota)"), "placement article prompt must carry the owner vocabulary palette");
+    assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
+    assert.ok(prompt.includes("never copy AC phrases, metaphors, or cadence"), "AC must remain a word-only reference lane");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
     assert.ok(prompt.includes("PLANET + SIGN MEANING LAYER"), `${planet} prompt must carry the approved authoring layer`);
   }

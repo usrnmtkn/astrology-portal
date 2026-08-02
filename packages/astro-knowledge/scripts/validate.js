@@ -52,8 +52,8 @@ const entryShapes = {
   transit: {
     schemaFile: "transit.schema.json",
     required: ["id", "transiting", "aspect", "other", "base", "business", "shadow", "arcApplying", "arcSeparating", "voiceNeutral", "status"],
-    optional: ["tldr", "traditional", "modern", "cyclic", "composedFrom", "provenance"],
-    types: { id: "string", transiting: "string", aspect: "string", other: "string", base: "string", business: "string", shadow: "string", arcApplying: "string", arcSeparating: "string", tldr: "string", traditional: "string", modern: "string", cyclic: "object", composedFrom: "array:string", provenance: "object" }
+    optional: ["tldr", "traditional", "modern", "cyclic", "readerCopy", "composedFrom", "provenance"],
+    types: { id: "string", transiting: "string", aspect: "string", other: "string", base: "string", business: "string", shadow: "string", arcApplying: "string", arcSeparating: "string", tldr: "string", traditional: "string", modern: "string", cyclic: "object", readerCopy: "object", composedFrom: "array:string", provenance: "object" }
   },
   transitNatal: {
     schemaFile: "transit-natal.schema.json",
@@ -300,6 +300,22 @@ function validateEntryFile(filePath, kind, errors) {
     return;
   }
   validateObject(filePath, json, shape, errors);
+  if (kind === "transit" && json.readerCopy) {
+    const readerCopy = json.readerCopy;
+    for (const field of ["summary", "body", "approvedVia"]) {
+      if (typeof readerCopy[field] !== "string" || readerCopy[field].trim() === "") {
+        errors.push(`${rel(filePath)}: field readerCopy.${field} must be a non-empty string`);
+      }
+    }
+    for (const field of Object.keys(readerCopy)) {
+      if (!["summary", "body", "approvedVia"].includes(field)) {
+        errors.push(`${rel(filePath)}: unexpected field readerCopy.${field}`);
+      }
+    }
+    if (json.status !== "LIVE") {
+      errors.push(`${rel(filePath)}: readerCopy requires status LIVE`);
+    }
+  }
   const expectedName = `${json.id}.json`;
   if (json.id && path.basename(filePath) !== expectedName) {
     errors.push(`${rel(filePath)}: filename must equal id (${expectedName})`);
