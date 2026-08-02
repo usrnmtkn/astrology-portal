@@ -14096,7 +14096,6 @@ export function App() {
                     <ProfileView
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
-                      onUpdateProfile={setUserProfile}
                       targetDate={skyDate}
                       transitForm={transitForm}
                       transitItems={activeTransits}
@@ -14109,7 +14108,6 @@ export function App() {
                       personalTimingStatus={personalTimingStatus}
                       personalTransitGeneratedContent={personalTransitGeneratedContent}
                       transitsDrawn={transitsDrawn}
-                      selectedTransit={selectedTransit}
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
                       skyGeneratedAt={sky?.generatedAt ?? ""}
@@ -16931,7 +16929,6 @@ function ProfileView({
 }: {
   profile: UserProfile;
   profileHandle?: string | null;
-  onUpdateProfile: (profile: UserProfile) => void;
   targetDate: string;
   transitForm: TransitForm;
   transitItems: TransitItem[];
@@ -16944,7 +16941,6 @@ function ProfileView({
   personalTimingStatus: PersonalTimingStatus;
   personalTransitGeneratedContent: GeneratedContentMap;
   transitsDrawn: boolean;
-  selectedTransit: TransitItem;
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
   skyGeneratedAt: string;
