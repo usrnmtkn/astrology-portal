@@ -128,6 +128,16 @@ assert.match(
   /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
   "Friends charts must paint their account-scoped cache after authentication resolves."
 );
+assert.doesNotMatch(
+  appSource,
+  /mode === "friends" && userProfile && sky &&/,
+  "The Friends landing page must not wait for current-sky calculation before showing saved charts."
+);
+assert.match(
+  appSource,
+  /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
+  "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
+);
 
 const verifiedAuthUserMatch = authSource.match(
   /export async function getVerifiedAuthUser[\s\S]*?\n\}/
