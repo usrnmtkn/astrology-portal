@@ -148,6 +148,16 @@ assert.equal(
   "Both natal aspect-pattern surfaces must load through their lazy feature boundary."
 );
 assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*\bNatalChartDataTable\b[^}]*\}\s+from\s+"\.\/components\/charts\/NatalChartDataTable"/u,
+  "The natal chart data table must not remain a static application-shell dependency."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/NatalChartDataTable"\)/u,
+  "The natal chart data table must load only when a chart table surface renders."
+);
+assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.relationship-explainer-card\s*\{/u,
   "Relationship explainer CSS must not remain in the eager Friends/profile stylesheet."
