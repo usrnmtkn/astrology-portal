@@ -36,6 +36,7 @@ Route by surface and block type. Never blend. A natal page is never the transit 
 - Never use the word "leak" or "leaks" for emotion or expression. Use surfaces, shows, comes out, spills.
 - Cadence is full sentences with rhythm, not clipped fragments. Avoid strings of stacked imperatives or command-list sentences ("Send the message, define the terms, organize the facts"). Directness comes from complete thoughts with a subject, context, and consequence, not from chopping the line into instructions.
 - Concrete is not the same as lived. Do not line up a family example, a workplace example, and a relationship example as proof that a theme applies everywhere. That is an administrative inventory, even when every noun is specific. Build pressure, movement, and consequence inside one charged sequence. One scene that changes is better than three representative scenarios.
+- Name the actor. Do not use generic plural "people" as a placeholder when the sentence can name the caretaker, partner, family, workplace, institution, or group. This is not a global ban on the word; use it only when people collectively are the actual subject.
 
 ---
 

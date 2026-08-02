@@ -82,6 +82,7 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
     `  - Sign lore (rulership, modality, elements-as-labels, season history) anywhere in the body.`,
     `  - Coverage sentences that exist only to be complete.`,
     `  - FLAT INVENTORY: the lived beat must move from pressure to choice to consequence. If it merely lines up representative examples from work, family, relationships, or public life, score no higher than 2 even when the nouns are concrete. One charged sequence is voice; three peer scenarios are generated coverage.`,
+    `  - Generic plural "people" used as a substitute for a concrete actor, relationship, group, or institution. Judge the function, not the token: owner-approved sentences where people collectively are the real subject remain valid.`,
     `  - If a TAGLINE is present: it must be sharp and sendable, not a label ("Leo season begins" is a label; a claim or imperative is a tagline).`,
     `  - If MOVES are present: each must be a specific doable action that only fits this placement. "Journal about your feelings" or "trust the process" fails; the moves are held to the same swap test as the body.`,
     `  - Flag any sentence matching the CC/SD constructions in voice/banned-constructions.json; the tic list identifies copy that reads as CHANI or Spirit Daughter rather than the house voice. Owner-verbatim text is exempt. Treat nearby cases as a judged consideration, not an automatic fail: specific, falsifiable permission to do a nameable thing is house voice; generic affirmational permission is not.`,
