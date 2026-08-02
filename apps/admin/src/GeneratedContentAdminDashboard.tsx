@@ -549,6 +549,40 @@ function sourceSnapshotNumber(snapshot: Record<string, unknown> | null | undefin
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
+function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
+  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
+
+  return sourceType === "owner-resource-review"
+    || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state));
+}
+
+function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminReviewRecord {
+  return {
+    id: row.id,
+    source: row.provider ?? (sourceSnapshotString(row.source_snapshot, "sourceType") || "generated_interpretations"),
+    surface: row.surface,
+    status: row.status,
+    mode: row.mode,
+    title: normalizeText(row.headline) || titleFromKey(row.content_key),
+    subtitle: normalizeText(row.summary),
+    targetDate: row.target_date,
+    contentKey: row.content_key,
+    eventType: row.event_type,
+    summary: normalizeText(row.summary),
+    body: normalizeText(row.body),
+    sections: row.sections,
+    blockType: row.block_type,
+    facts: row.facts,
+    sourceSnapshot: row.source_snapshot,
+    reviewerNotes: row.reviewer_notes,
+    provider: row.provider,
+    model: row.model,
+    promptVersion: row.prompt_version,
+    updatedAt: row.updated_at,
+    rawGlobalRow: row
+  };
+}
+
 function objectRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -1536,6 +1570,16 @@ export function GeneratedContentAdminDashboard() {
     [hookCatalogItems, savedHookKeys]
   );
   const selectedRow = visibleRows.find((row) => row.id === selectedRowId) ?? null;
+  const reviewQueueRows = useMemo(() => {
+    const rowsByKey = new Map<string, AdminReviewRecord>();
+
+    visibleRows
+      .filter(generatedRowNeedsReviewQueue)
+      .forEach((row) => rowsByKey.set(row.content_key, reviewRecordFromGeneratedRow(row)));
+    reviewRows.forEach((row) => rowsByKey.set(row.contentKey || row.id, row));
+
+    return [...rowsByKey.values()];
+  }, [reviewRows, visibleRows]);
   const statusCounts = useMemo(() => {
     const counts: Record<GeneratedContentStatus | "all", number> = { all: visibleRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
     visibleRows.forEach((row) => counts[row.status] += 1);
@@ -1569,7 +1613,7 @@ export function GeneratedContentAdminDashboard() {
       && (categoryFilter === "all" || rowCategory === categoryFilter)
       && matchesAdminSearch(visibleRowSearchText(row), search);
   }), [visibleRows, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
-  const filteredReviewRows = useMemo(() => reviewRows.filter((row) => {
+  const filteredReviewRows = useMemo(() => reviewQueueRows.filter((row) => {
     const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType].join(" ").toLowerCase();
     return (reviewStatusFilter === "all" || row.status === reviewStatusFilter)
       && (contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
@@ -1586,7 +1630,7 @@ export function GeneratedContentAdminDashboard() {
       if (firstSequence !== secondSequence) return firstSequence - secondSequence;
     }
     return 0;
-  }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
+  }), [reviewQueueRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const skyVoiceNeedsReviewRows = useMemo(
     () => visibleRows.filter((row) => (
       ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
@@ -3287,7 +3331,7 @@ export function GeneratedContentAdminDashboard() {
           {contentStatuses.map((status) => (
             <button key={status} type="button" className={reviewStatusFilter === status ? "active" : ""} onClick={() => setReviewStatusFilter(status)}>
               <span>{contentStatusLabel(status)}</span>
-              <strong>{reviewRows.filter((row) => row.status === status).length}</strong>
+              <strong>{reviewQueueRows.filter((row) => row.status === status).length}</strong>
             </button>
           ))}
         </aside>
