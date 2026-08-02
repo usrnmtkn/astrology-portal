@@ -106,6 +106,11 @@ import {
   type FriendsMainView,
   type FriendsTab
 } from "./features/friends/friendsRouting";
+import {
+  defaultManualChartForm,
+  manualChartFormFromChart,
+  type ManualChartForm
+} from "./features/friends/manualChartForm";
 import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import {
@@ -403,18 +408,6 @@ type TransitForm = {
   currentLocation: string;
   currentLocationData: LocationInput | null;
   chartDate: string;
-};
-
-type ManualChartForm = {
-  chartType: ManualChartType;
-  displayName: string;
-  pronouns: PronounChoice;
-  relationshipType: string;
-  birthDate: string;
-  birthTime: string;
-  birthTimeUnknown: boolean;
-  birthPlace: string;
-  birthLocation: LocationInput | null;
 };
 
 type ChartOwnerContext = {
@@ -2559,18 +2552,6 @@ const defaultTransitForm: TransitForm = {
   chartDate: new Date().toISOString().slice(0, 10)
 };
 
-const defaultManualChartForm: ManualChartForm = {
-  chartType: "person",
-  displayName: "",
-  pronouns: defaultPronounChoice,
-  relationshipType: "friend",
-  birthDate: "",
-  birthTime: "12:00",
-  birthTimeUnknown: false,
-  birthPlace: "",
-  birthLocation: null
-};
-
 const chartFormCopy: Record<ManualChartType, {
   title: string;
   editTitle: string;
@@ -3419,24 +3400,6 @@ function formatProfileBirthDateLong(value: string) {
     year: "numeric",
     timeZone: "UTC"
   }).format(date);
-}
-
-function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
-  if (!chart) {
-    return defaultManualChartForm;
-  }
-
-  return {
-    chartType: chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person"),
-    displayName: chart.displayName,
-    pronouns: normalizePronounChoice(chart.pronouns),
-    relationshipType: normalizeRelationshipContextKey(chart.relationshipType),
-    birthDate: chart.birthDate,
-    birthTime: displayTimeToTwentyFourHour(chart.birthTime),
-    birthTimeUnknown: chart.birthTimeUnknown,
-    birthPlace: chart.birthPlace,
-    birthLocation: chart.birthLocation
-  };
 }
 
 function manualChartBigThree(chart: ManualChart) {

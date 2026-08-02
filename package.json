@@ -66,6 +66,7 @@
     "test:relationship-composite": "node --experimental-strip-types scripts/test-relationship-composite.mjs",
     "test:friends-routing": "node --experimental-strip-types scripts/test-friends-routing.mjs",
     "test:chart-time": "node --experimental-strip-types scripts/test-chart-time.mjs",
+    "test:manual-chart-form": "node scripts/test-manual-chart-form.mjs",
     "test:performance-contracts": "node scripts/test-app-startup-performance-contract.mjs && node scripts/generate-fallback-package-manifest.mjs --check && node scripts/test-deferred-fallback-runtime.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "content:materialize-moon-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs --planet=moon --status=LIVE",
