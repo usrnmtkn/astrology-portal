@@ -19,6 +19,7 @@ Content editors can continue updating and reviewing astrology copy independently
 - Incomplete chart repair runs after initial interaction and only for records actually missing natal or timezone data.
 - Manual-chart cache hydration, repair, form state, and create/update/delete persistence now live in a focused controller hook instead of the application shell.
 - Pure Friends chart-list rows, Big Three fallbacks, and comparison-picker options now live in the Friends chart model; obsolete birthday helpers were removed from the application shell.
+- Composite relationship API state, fallback handling, and stale-request cancellation now live in a focused Friends hook.
 
 ## 2. Startup and code-loading boundaries
 
@@ -68,4 +69,4 @@ The fallback manifest was regenerated after the concurrent astrology-content com
 
 ## Optional future work
 
-The stateful manual-chart controller and pure chart-list/comparison models have been extracted from `App.tsx`. A further nonessential step would be moving the remaining transit, synastry, and composite profile calculations into feature modules. That is a broader content-rendering refactor and is not required for the completed performance plan or current bundle budgets.
+The stateful manual-chart controller, pure chart-list/comparison models, and composite API lifecycle have been extracted from `App.tsx`. A further nonessential step would be moving the remaining local transit, synastry, and composite view-model calculations into feature modules. That is a broader content-rendering refactor and is not required for the completed performance plan or current bundle budgets.
