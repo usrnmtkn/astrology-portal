@@ -82,7 +82,7 @@ import {
   isLunarNodePoint,
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
-import { displayTimeToTwentyFourHour, twentyFourHourTimeToDisplay } from "./services/chartTime";
+import { twentyFourHourTimeToDisplay } from "./services/chartTime";
 import {
   formatSignupBirthDate,
   formatSignupBirthTime,
@@ -286,12 +286,17 @@ import {
 import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
-import { natalBigThreeFromSky, zodiacFromBirthDate } from "./services/chartProfile";
+import {
+  apiSettingsFromChartSettings,
+  apiSubjectFromUserChart,
+  natalBigThreeFromSky,
+  validChartBirthDate,
+  validChartBirthTime,
+  zodiacFromBirthDate
+} from "./services/chartProfile";
 import {
   getPersonalTiming,
   isTldrAstroApiConfigured,
-  type TldrAstroChartSettings,
-  type TldrAstroSubject,
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
 import {
@@ -2388,46 +2393,6 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
   };
 }
 
-function apiSettingsFromChartSettings(settings?: Partial<ChartSettings> | null): TldrAstroChartSettings {
-  const normalized = normalizeChartSettings(settings);
-
-  return {
-    houseSystem: "whole_sign" as const,
-    zodiac: "tropical" as const,
-    aspectProfile: normalized.aspects === "Tight" ? "tight" as const : "standard" as const
-  };
-}
-
-function apiSubjectFromUserChart(
-  profile: UserProfile,
-  chart: UserChart | undefined,
-  settings?: Partial<ChartSettings> | null
-): TldrAstroSubject | null {
-  const birthDate = validChartBirthDate(chart);
-  const birthTime = validChartBirthTime(chart);
-  const birthLocation = chart?.birthLocation?.timeZone
-    ? chart.birthLocation
-    : null;
-
-  if (!birthDate || !birthTime || !birthLocation) {
-    return null;
-  }
-
-  const timeKnown = birthTime !== "Time unknown";
-
-  return {
-    name: profile.name,
-    datetime: {
-      date: birthDate,
-      time: timeKnown ? displayTimeToTwentyFourHour(birthTime) : "12:00",
-      timeKnown,
-      timeZone: birthLocation.timeZone
-    },
-    location: birthLocation,
-    settings: apiSettingsFromChartSettings(settings)
-  };
-}
-
 function createBlankTransitForm(): TransitForm {
   return {
     ...defaultTransitForm,
@@ -2889,28 +2854,8 @@ function profileForAuthAccount(profile: UserProfile, account: AuthAccount): User
   };
 }
 
-function validChartBirthDate(chart?: UserChart) {
-  const value = chart?.birthDate?.trim() ?? "";
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return value;
-  }
-
-  const [, month = "", day = "", year = ""] = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) ?? [];
-
-  if (!month || !day || !year) {
-    return "";
-  }
-
-  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-}
-
 function validChartBirthCity(chart?: UserChart) {
   return chart?.birthCity && chart.birthCity !== "Birth city needed" ? chart.birthCity : "";
-}
-
-function validChartBirthTime(chart?: UserChart) {
-  return chart?.birthTime && chart.birthTime !== "Birth time needed" ? chart.birthTime : "";
 }
 
 function chartNameFromProfile(name: string) {

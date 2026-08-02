@@ -36,6 +36,10 @@ const friendChartModelSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/friendChartModel.ts"),
   "utf8"
 );
+const chartProfileSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/chartProfile.ts"),
+  "utf8"
+);
 const locationLabelsSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/utils/locationLabels.ts"),
   "utf8"
@@ -649,6 +653,16 @@ assert.match(
   friendChartModelSource,
   /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle[\s\S]*export function manualChartBigThree[\s\S]*export function buildFriendChartListItems[\s\S]*export function buildRelationshipComparisonOptions[\s\S]*export function apiSubjectFromManualChart[\s\S]*export function groupFriendNatalAspects/u,
   "The Friends chart model must own placement normalization, chart-list and comparison view models, API subjects, and natal aspect grouping."
+);
+assert.doesNotMatch(
+  appSource,
+  /function (?:apiSettingsFromChartSettings|apiSubjectFromUserChart|validChartBirthDate|validChartBirthTime)/u,
+  "Shared chart validation and API subject mapping must not remain embedded in the startup App module."
+);
+assert.match(
+  chartProfileSource,
+  /export function validChartBirthDate[\s\S]*export function validChartBirthTime[\s\S]*export function apiSettingsFromChartSettings[\s\S]*export function apiSubjectFromUserChart/u,
+  "The chart-profile service must own reusable birth-data validation and API subject mapping."
 );
 assert.doesNotMatch(
   appSource,
