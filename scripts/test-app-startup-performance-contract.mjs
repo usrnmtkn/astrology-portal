@@ -70,6 +70,7 @@ const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src
 const citySearchSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/CitySearchField.tsx"), "utf8");
 const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
 const memberSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/MemberSettingsView.tsx"), "utf8");
+const accountViewSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/account/AccountView.tsx"), "utf8");
 const settingsRoutingSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/settingsRouting.ts"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
@@ -255,6 +256,21 @@ assert.match(
   memberSettingsSource,
   /export function MemberSettingsView/u,
   "The deferred Settings module must own the member page renderer."
+);
+assert.doesNotMatch(
+  appSource,
+  /function AccountView/u,
+  "Account state and presentation must not remain embedded in the application shell."
+);
+assert.match(
+  appSource,
+  /const AccountView = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/MemberSettingsView"\)/u,
+  "The Account page must share the deferred authenticated Settings boundary."
+);
+assert.match(
+  accountViewSource,
+  /export function AccountView/u,
+  "The deferred Account module must own account state and presentation."
 );
 assert.doesNotMatch(
   appSource,

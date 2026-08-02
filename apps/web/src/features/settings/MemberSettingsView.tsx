@@ -19,6 +19,8 @@ import {
   type SettingsSubpage
 } from "./settingsRouting";
 
+export { AccountView } from "../account/AccountView";
+
 const BlockedAccountsSettings = lazy(() =>
   import("./BlockedAccountsSettings").then((module) => ({
     default: module.BlockedAccountsSettings
