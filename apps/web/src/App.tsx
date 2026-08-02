@@ -11407,6 +11407,10 @@ export function App() {
   }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   useEffect(() => {
+    if (mode === "friends") {
+      return;
+    }
+
     if (!userProfile || !remoteAccountId || !remoteProfileReady) {
       setPendingFriendRequestCount(0);
       return;
@@ -11437,7 +11441,7 @@ export function App() {
       window.removeEventListener("focus", refreshPendingFriendRequests);
       unsubscribeFromSocialChanges();
     };
-  }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
+  }, [mode, remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
