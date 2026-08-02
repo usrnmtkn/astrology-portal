@@ -66,7 +66,7 @@ Pre-edit judge summary: The GPT-5.6 draft distinguished Mars's drive from Capric
 
 **Tagline:** Build it without disappearing
 
-**Hook:** Your life is not a performance review. Saturn deals in limits, commitments, and the kind of work that proves itself over time; in Capricorn, it asks us to take the long route on purpose. This is the transit that turns ambition into a structure you can stand inside.
+**Hook — owner-directed edit:** Saturn in Capricorn proves that life is not a performance review. Saturn handles limits, standards, and the kind of work that holds its value over time; in Capricorn, it forces us to build from the ground up instead of chasing quick wins. This transit turns ambition into a structure we can actually stand inside.
 
 **Lived — owner-directed edit:** Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.
 
