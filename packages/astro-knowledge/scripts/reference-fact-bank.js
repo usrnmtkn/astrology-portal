@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { buildAcKnowledgeContext, queryAcReference } = require("./ac-reference-corpus.js");
 
 const bankPath = path.resolve(
   __dirname,
@@ -104,9 +105,11 @@ function buildReferenceFactContext(text, { limit = 12 } = {}) {
 
 module.exports = {
   bankPath,
+  buildAcKnowledgeContext,
   buildReferenceFactContext,
   checkReferenceClaim,
   flattenReferenceFacts,
+  queryAcReference,
   queryReferenceFacts,
   readBank
 };
