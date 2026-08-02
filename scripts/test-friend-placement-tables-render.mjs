@@ -31,6 +31,9 @@ try {
   const { FriendNatalTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendNatalTab.tsx"
   );
+  const { FriendTransitsTab } = await server.ssrLoadModule(
+    "/src/features/friends/FriendTransitsTab.tsx"
+  );
   const {
     completeNatalChartTableRows,
     natalChartTableRowFromSocial
@@ -252,6 +255,64 @@ try {
   assert.match(natalTabHtml, /Empty 2nd House in Taurus/);
   assert.match(natalTabHtml, /Alex&#x27;s Sun trine Moon/);
   assert.match(natalTabHtml, /Feeling and purpose cooperate naturally/);
+
+  const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+    bondTransits: [],
+    friendName: "Alex",
+    houseTransits: [],
+    onOpenBondTransit() {},
+    onOpenHouseTransit() {},
+    onOpenPersonalTransit() {},
+    patternItems: [],
+    patternTimingOverrides: {},
+    personalTransitGroups: []
+  }));
+  assert.match(emptyTransitsHtml, /No prioritized transits are active/);
+
+  const populatedTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+    bondTransits: [{
+      id: "bond-1",
+      headline: "A shared pressure point is active",
+      effectBody: "The connection feels more serious today.",
+      activationBody: "Patience reveals what needs attention."
+    }],
+    friendName: "Alex",
+    houseTransits: [{
+      id: "house-1",
+      transitPlanet: "Saturn",
+      title: "Saturn through Alex's 2nd house",
+      durationLabel: "Long cycle",
+      timingRange: "Aug 1–Oct 20",
+      rowSummary: "Resources require deliberate structure.",
+      termLabel: "Long-term",
+      keywords: ["Money", "Values"],
+      house: 2,
+      houseLabel: "2nd house"
+    }],
+    onOpenBondTransit() {},
+    onOpenHouseTransit() {},
+    onOpenPersonalTransit() {},
+    patternItems: [],
+    patternTimingOverrides: {},
+    personalTransitGroups: [{
+      key: "short",
+      label: "Short-term themes",
+      transits: [{
+        id: "transit-1",
+        title: "Mars trine Moon",
+        durationLabel: "A few days",
+        rangeLabel: "Aug 1–3",
+        timingLabel: "Active now",
+        summary: "Emotional momentum is easier to use.",
+        orb: "1°"
+      }]
+    }]
+  }));
+  assert.match(populatedTransitsHtml, /Between you two right now/);
+  assert.match(populatedTransitsHtml, /Saturn through Alex&#x27;s 2nd house/);
+  assert.match(populatedTransitsHtml, /Short-term themes/);
+  assert.match(populatedTransitsHtml, /Mars trine Moon/);
+  assert.doesNotMatch(populatedTransitsHtml, /No prioritized transits are active/);
 
   const socialTableRow = natalChartTableRowFromSocial({
     id: "Sun",
