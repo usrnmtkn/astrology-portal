@@ -567,8 +567,18 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const FriendsRoute = lazy\(\(\) =>\s*Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadFriendsWorkspaceShell\(\)/u,
+  /const loadFriendsExperience = \(\) => Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadFriendsWorkspaceShell\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*loadFriendsExperience\(\)/u,
   "The Friends route and consolidated landing workspace must load in parallel instead of forming a lazy-module waterfall."
+);
+assert.equal(
+  appSource.match(/onPointerEnter=\{preloadFriendsExperience\}/gu)?.length,
+  2,
+  "Both Friends navigation entries must preload the deferred route on pointer intent."
+);
+assert.equal(
+  appSource.match(/onFocus=\{preloadFriendsExperience\}/gu)?.length,
+  2,
+  "Both Friends navigation entries must preload the deferred route for keyboard users."
 );
 
 console.log("App startup performance contracts passed.");
