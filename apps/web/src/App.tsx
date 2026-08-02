@@ -11340,6 +11340,7 @@ export function App() {
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [relationshipContentRequested, setRelationshipContentRequested] = useState(false);
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -11374,6 +11375,9 @@ export function App() {
         ? current
         : request
     ));
+  }, []);
+  const requestRelationshipContent = useCallback(() => {
+    setRelationshipContentRequested(true);
   }, []);
 
   useEffect(() => {
@@ -11965,10 +11969,13 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadRelationships = mode === "friends";
+    const shouldLoadRelationships = mode === "friends" && relationshipContentRequested;
 
     if (!shouldLoadRelationships) {
       setRelationshipGeneratedContent(new Map());
+      if (mode !== "friends") {
+        setRelationshipContentRequested(false);
+      }
       return () => {
         cancelled = true;
       };
@@ -11990,7 +11997,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [generatedContentPreviewMode, mode, skyDate]);
+  }, [generatedContentPreviewMode, mode, relationshipContentRequested, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -14015,6 +14022,7 @@ export function App() {
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
                     allowCachedChartsWhileLoading={!isAuthConfigured || authAccountChecked}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
+                    onRelationshipContentRequest={requestRelationshipContent}
                     onOpenDetail={openSkyDetail}
                   />
                 </FriendsRoute>
@@ -17066,6 +17074,7 @@ function ManualChartsPanel({
   chartsReady,
   allowCachedChartsWhileLoading,
   onPendingRequestCountChange,
+  onRelationshipContentRequest,
   onOpenDetail
 }: {
   profile: UserProfile;
@@ -17081,6 +17090,7 @@ function ManualChartsPanel({
   chartsReady: boolean;
   allowCachedChartsWhileLoading: boolean;
   onPendingRequestCountChange: (count: number) => void;
+  onRelationshipContentRequest: () => void;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const initialCachedCharts = useMemo(
@@ -18017,6 +18027,12 @@ function ManualChartsPanel({
       updateFriendsTabUrl(nextTab, "replace");
     }
   }, [landingKey]);
+
+  useEffect(() => {
+    if (resolvedFriendsMainView === "profile" && selectedChart) {
+      onRelationshipContentRequest();
+    }
+  }, [onRelationshipContentRequest, resolvedFriendsMainView, selectedChart?.id]);
 
   useEffect(() => {
     function handlePopState() {

@@ -135,6 +135,21 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
+  /const shouldLoadRelationships = mode === "friends" && relationshipContentRequested;/,
+  "Friends relationship and composite content must wait until a chart profile requests it."
+);
+assert.doesNotMatch(
+  appSource,
+  /const shouldLoadRelationships = mode === "friends";$/m,
+  "Opening the Friends Circle or Charts landing view must not fetch all relationship content."
+);
+assert.match(
+  appSource,
+  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onRelationshipContentRequest\(\);/,
+  "Opening a Friends chart profile must request relationship content after the landing view is usable."
+);
+assert.match(
+  appSource,
   /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
   "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
 );
