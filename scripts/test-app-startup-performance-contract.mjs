@@ -590,13 +590,13 @@ assert.equal(
 );
 assert.doesNotMatch(
   appSource,
-  /function (?:apiSubjectFromManualChart|isSocialBigThreeRow|manualChartSubtitle|planetPositionFromSocialRow)/u,
+  /function (?:apiSubjectFromManualChart|groupFriendNatalAspects|isSocialBigThreeRow|manualChartSubtitle|planetPositionFromSocialRow)/u,
   "Friends-only chart normalization must not remain embedded in the startup App module."
 );
 assert.match(
   friendChartModelSource,
-  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle[\s\S]*export function apiSubjectFromManualChart/u,
-  "The Friends chart model must own social-placement normalization, chart-list subtitles, and API subject construction."
+  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle[\s\S]*export function apiSubjectFromManualChart[\s\S]*export function groupFriendNatalAspects/u,
+  "The Friends chart model must own social-placement normalization, chart-list subtitles, API subject construction, and natal aspect grouping."
 );
 assert.doesNotMatch(
   appSource,

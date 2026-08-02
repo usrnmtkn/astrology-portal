@@ -10,6 +10,8 @@ import type {
   TldrAstroChartSettings,
   TldrAstroSubject
 } from "../../services/tldrastroApi";
+import { groupAspectsByGiftLesson } from "../../services/aspectGiftLesson";
+import { uniqueDisplayableNatalAspects } from "../../services/natalAspectDisplay";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { compactCityLabel } from "../../utils/locationLabels";
 
@@ -100,4 +102,12 @@ export function apiSubjectFromManualChart(
     location: chart.birthLocation,
     settings
   };
+}
+
+export function groupFriendNatalAspects(aspects: SkySnapshot["aspects"]) {
+  return groupAspectsByGiftLesson(
+    uniqueDisplayableNatalAspects(aspects),
+    (aspect) => aspect.type,
+    (aspect) => aspect.orb
+  );
 }

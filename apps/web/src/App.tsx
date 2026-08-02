@@ -121,6 +121,7 @@ import {
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
 import {
   apiSubjectFromManualChart,
+  groupFriendNatalAspects,
   isSocialBigThreeRow,
   manualChartSubtitle,
   planetPositionFromSocialRow
@@ -213,10 +214,11 @@ import {
 import {
   aspectGiftOrLesson,
   groupAspectsByGiftLesson,
+  type AspectGiftLessonKey,
   type AspectGiftLessonGroup as GiftLessonGroup
 } from "./services/aspectGiftLesson";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
-import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
+import { uniqueDisplayableNatalAspects as uniqueNatalAspectRows } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
@@ -442,8 +444,6 @@ type RenderedSynastryContact = {
   body: string;
   templateKey?: string;
 };
-
-type FriendNatalAspectGroup = GiftLessonGroup<SkySnapshot["aspects"][number]>;
 
 type SurfaceProseLayer = "authored" | "generated" | "fallback";
 type NormalizedSurfaceStatus = "servable" | "partial" | "not-servable";
@@ -793,31 +793,6 @@ function loadContentRegistry(domain: ContentDomain) {
 
 function baseAspectContentId(planetA: string, aspect: string, planetB: string) {
   return `${normalizeContentIdPart(planetA)}-${normalizeContentIdPart(aspect)}-${normalizeContentIdPart(planetB)}`;
-}
-
-function canonicalAspectDisplayKey(aspect: SkySnapshot["aspects"][number]) {
-  const points = [normalizeContentIdPart(aspect.from), normalizeContentIdPart(aspect.to)].sort();
-
-  return `${points[0]}-${normalizeContentIdPart(aspect.type)}-${points[1]}`;
-}
-
-function uniqueNatalAspectRows(aspects: SkySnapshot["aspects"]) {
-  const seen = new Set<string>();
-
-  return aspects.filter((aspect) => {
-    if (!isDisplayableNatalAspect(aspect)) {
-      return false;
-    }
-
-    const key = canonicalAspectDisplayKey(aspect);
-
-    if (seen.has(key)) {
-      return false;
-    }
-
-    seen.add(key);
-    return true;
-  });
 }
 
 function basePlacementContentId(planet: string, sign: string) {
@@ -8353,16 +8328,8 @@ function renderReaderDirectedSynastryContact(
   }
 }
 
-function natalAspectGroupKey(aspect: string): FriendNatalAspectGroup["key"] {
+function natalAspectGroupKey(aspect: string): AspectGiftLessonKey {
   return aspectGiftOrLesson(aspect);
-}
-
-function groupFriendNatalAspects(aspects: SkySnapshot["aspects"]): FriendNatalAspectGroup[] {
-  return groupAspectsByGiftLesson(
-    uniqueNatalAspectRows(aspects),
-    (aspect) => aspect.type,
-    (aspect) => aspect.orb
-  );
 }
 
 function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: string; rangeLabel: string }) {
