@@ -6,6 +6,21 @@ export type SkyAspectCardArgs = {
   signB: string;
 };
 
+export type SkyAspectReviewPairSource = {
+  id: string;
+  planetA: string;
+  planetB: string;
+  status: "needs_review";
+  sourceText: string;
+  blend: string;
+  harmonious: string;
+  hard: string;
+  provenance: {
+    source: string;
+    reviewState: "needs_review";
+  };
+};
+
 export type SkyPlacementTopperArgs = {
   planet: string;
   sign: string;
@@ -99,6 +114,7 @@ export function generateCard(
     maxRetries?: number;
     withJudge?: boolean;
     judgeFeedback?: string;
+    allowReviewSources?: boolean;
     generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
     repairFn?: (text: string, reason: string) => Promise<string>;
     judgeFn?: (prompt: string) => Promise<string>;
@@ -117,7 +133,10 @@ export function generatePlacementTopper(
   }
 ): Promise<SkyAspectCardResult>;
 
-export function normalizeCardArgs(args: SkyAspectCardArgs): {
+export function normalizeCardArgs(
+  args: SkyAspectCardArgs,
+  options?: { allowReviewSources?: boolean }
+): {
   a: string;
   b: string;
   aspect: string;
@@ -127,6 +146,8 @@ export function normalizeCardArgs(args: SkyAspectCardArgs): {
   pairSource: string;
   reversed: boolean;
 };
+
+export function reviewPairSources(): Map<string, SkyAspectReviewPairSource>;
 
 export function closeBank(
   n?: number,
@@ -156,6 +177,7 @@ declare const generator: {
   normalizeCardArgs: typeof normalizeCardArgs;
   repairCard: typeof repairCard;
   repairPlacementTopper: typeof repairPlacementTopper;
+  reviewPairSources: typeof reviewPairSources;
 };
 
 export default generator;
