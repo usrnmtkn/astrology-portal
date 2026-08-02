@@ -6,6 +6,8 @@ Review the four GPT-5.6 candidates below against the current approved baseline. 
 
 No candidate has been written to the live content bank.
 
+The exact candidate payloads are frozen in `review/sky-placement-rewrite-pilot-v2-candidates.json`. The bundle is explicitly marked `needs_review` with `promotionAuthorized: false`; its audit materializes twenty review rows without approving or importing them.
+
 | Placement | Recommendation | Main improvement |
 | --- | --- | --- |
 | Mars in Capricorn | Replace | More observable work behavior; fewer battle, mountain, and punishment clichés |

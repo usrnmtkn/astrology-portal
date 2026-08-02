@@ -11,12 +11,16 @@
 //   6. source gaps (lilith, bad tokens) are skipped, not thrown
 //   7. the grid report accounts for all 168 cells: 7 authored, lilith unsourced
 //   8. the judge prompt builds for every tier, including the thin social tier
+//   9. the frozen owner-review bundle remains lint 3 and cannot self-authorize
 //
 //   node scripts/test-placement-pipeline.js
 
 const assert = require("assert");
+const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { lintArticle } = require("./lint-placement-voice.js");
+const { auditBundle } = require("./audit-sky-placement-review-bundle.js");
 const {
   PLANETS, SIGNS, generateArticle, buildPrompt, parseArticle, gridReport, runBatch
 } = require("./generate-sky-placement-articles.js");
@@ -220,9 +224,25 @@ async function main() {
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");
 
-  // 8. A fully approved matrix makes the batch runner an idempotent no-op.
-  const os = require("os");
-  const fs = require("fs");
+  // 8. The frozen owner-review bundle remains non-promotable and lint-clean.
+  const reviewBundle = JSON.parse(fs.readFileSync(
+    path.join(__dirname, "..", "review", "sky-placement-rewrite-pilot-v2-candidates.json"),
+    "utf8"
+  ));
+  assert.deepStrictEqual(auditBundle(reviewBundle), {
+    candidates: 4,
+    rows: 20,
+    lint3: 4,
+    reviewStatus: "needs_review",
+    promotionAuthorized: false
+  });
+  assert.throws(
+    () => auditBundle({ ...reviewBundle, promotionAuthorized: true }),
+    /explicitly deny promotion authorization/
+  );
+  console.log("OK  owner-review bundle freezes four lint-3 candidates as non-promotable needs_review rows");
+
+  // 9. A fully approved matrix makes the batch runner an idempotent no-op.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sky-placement-batch-"));
   const batch = await runBatch({
     outDir: dir, limit: 2,
