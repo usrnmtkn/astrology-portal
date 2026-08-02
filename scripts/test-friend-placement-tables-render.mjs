@@ -22,6 +22,10 @@ try {
   const { RelationshipApiSummary } = await server.ssrLoadModule(
     "/src/features/friends/RelationshipApiSummary.tsx"
   );
+  const {
+    completeNatalChartTableRows,
+    natalChartTableRowFromSocial
+  } = await server.ssrLoadModule("/src/components/charts/natalChartTableRows.ts");
   const friendHtml = renderToStaticMarkup(React.createElement(FriendPlacementTable, {
     title: "Alex's natal placements",
     rows: [{
@@ -99,6 +103,28 @@ try {
   assert.match(readySummaryHtml, /Relationship patterns/);
   assert.match(readySummaryHtml, /A steady relationship pattern/);
   assert.doesNotMatch(readySummaryHtml, /Overflow/);
+
+  const socialTableRow = natalChartTableRowFromSocial({
+    id: "Sun",
+    glyph: "☉",
+    label: "Sun",
+    sign: "Aries",
+    degree: 10.5,
+    house: 1,
+    retrograde: false
+  });
+  assert.equal(socialTableRow.degree, "10°30'");
+
+  const completeRows = completeNatalChartTableRows({ ascendant: "Aries" }, [socialTableRow]);
+  assert.equal(completeRows.length, 12);
+  assert.equal(completeRows[0].label, "Sun");
+  assert.deepEqual(
+    completeRows.slice(1, 3).map((row) => ({ house: row.house, label: row.label, sign: row.sign })),
+    [
+      { house: 2, label: "Empty house", sign: "Taurus" },
+      { house: 3, label: "Empty house", sign: "Gemini" }
+    ]
+  );
 } finally {
   await server.close();
 }

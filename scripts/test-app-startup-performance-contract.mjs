@@ -26,6 +26,10 @@ const friendPlacementTablesSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendPlacementTables.tsx"),
   "utf8"
 );
+const natalChartTableRowsSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/components/charts/natalChartTableRows.ts"),
+  "utf8"
+);
 const relationshipApiSummarySource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/RelationshipApiSummary.tsx"),
   "utf8"
@@ -355,6 +359,16 @@ assert.match(
   friendProfileWorkSource,
   /export function friendProfileWorkForTab/u,
   "Friends tab calculation policy must remain independently testable."
+);
+assert.doesNotMatch(
+  appSource,
+  /function completeNatalChartTableRows/u,
+  "Shared natal table data assembly must not remain owned by the application shell."
+);
+assert.match(
+  natalChartTableRowsSource,
+  /export function completeNatalChartTableRows/u,
+  "The chart data module must own empty-house completion and row sorting."
 );
 assert.doesNotMatch(
   friendsStylesSource,
