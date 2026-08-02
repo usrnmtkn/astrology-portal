@@ -13,6 +13,7 @@ const server = await createServer({
 try {
   const {
     defaultManualChartForm,
+    manualChartFormCopy,
     manualChartFormFromChart
   } = await server.ssrLoadModule("/src/features/friends/manualChartForm.ts");
 
@@ -28,6 +29,10 @@ try {
     birthPlace: "",
     birthLocation: null
   });
+  assert.equal(manualChartFormCopy.person.title, "Add chart");
+  assert.equal(manualChartFormCopy.person.editTitle, "Edit chart");
+  assert.equal(manualChartFormCopy.event.title, "Add event chart");
+  assert.equal(manualChartFormCopy.event.requiredMessage, "Add an event name, event date, and event place.");
 
   const birthLocation = {
     label: "New York, NY",
