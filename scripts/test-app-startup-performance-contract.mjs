@@ -341,6 +341,11 @@ assert.match(
   "Friends transit calculation must remain scoped to its active tab."
 );
 assert.match(
+  appSource,
+  /friendProfileWork\.natal && selectedChart\?\.natalChart/u,
+  "Friends natal row calculation must remain scoped to its active tab."
+);
+assert.match(
   friendProfileWorkSource,
   /export function friendProfileWorkForTab/u,
   "Friends tab calculation policy must remain independently testable."

@@ -21,11 +21,13 @@ assert.equal(parseFriendProfileTab("unknown"), "compatibility");
 assert.deepEqual(friendProfileWorkForTab("compatibility"), {
   compatibility: true,
   composite: false,
+  natal: false,
   synastry: false,
   synastryContacts: true,
   transits: false
 });
 assert.equal(friendProfileWorkForTab("natal").synastryContacts, false);
+assert.equal(friendProfileWorkForTab("natal").natal, true);
 assert.equal(friendProfileWorkForTab("synastry").synastry, true);
 assert.equal(friendProfileWorkForTab("composite").composite, true);
 assert.equal(friendProfileWorkForTab("transits").transits, true);

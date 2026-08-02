@@ -19011,64 +19011,102 @@ function ManualChartsPanel({
       ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
       : []
   ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
-  const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
-  const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
-  const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
-    ? selectedFriendBigThreeRows
-    : [
-      {
-        id: "Sun",
-        glyph: "☉",
-        label: "Sun",
-        sign: selectedFriendBigThree?.sun ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      },
-      {
-        id: "Moon",
-        glyph: "☽",
-        label: "Moon",
-        sign: selectedFriendBigThree?.moon ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      },
-      {
-        id: "Ascendant",
-        glyph: "↑",
-        label: "Ascendant",
-        sign: selectedFriendBigThree?.rising ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      }
-    ];
-  const selectedFriendNatalPlacementRows = selectedChartIsEvent
-    ? selectedFriendPlacementRows
-    : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
-  const selectedFriendNatalTableBaseRows = selectedFriendPlacementRows.map(natalChartTableRowFromSocial);
-  const selectedFriendNatalTableRows = selectedChart?.natalChart
-    ? completeNatalChartTableRows(selectedChart.natalChart, selectedFriendNatalTableBaseRows)
-    : [];
-  const selectedFriendNatalAspectGroups = selectedChart?.natalChart
-    ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
-    : [];
+  const selectedFriendPlacementRows = useMemo(() => (
+    friendProfileWork.natal && selectedChart?.natalChart
+      ? socialPlacementRows(selectedChart.natalChart)
+      : []
+  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  const selectedFriendBigThreeDisplayRows = useMemo<SocialPlacementRow[]>(() => {
+    if (!friendProfileWork.natal) {
+      return [];
+    }
+
+    const bigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
+
+    return bigThreeRows.length
+      ? bigThreeRows
+      : [
+          {
+            id: "Sun",
+            glyph: "☉",
+            label: "Sun",
+            sign: selectedFriendBigThree?.sun ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          },
+          {
+            id: "Moon",
+            glyph: "☽",
+            label: "Moon",
+            sign: selectedFriendBigThree?.moon ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          },
+          {
+            id: "Ascendant",
+            glyph: "↑",
+            label: "Ascendant",
+            sign: selectedFriendBigThree?.rising ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          }
+        ];
+  }, [friendProfileWork.natal, selectedFriendBigThree, selectedFriendPlacementRows]);
+  const selectedFriendNatalPlacementRows = useMemo(() => (
+    selectedChartIsEvent
+      ? selectedFriendPlacementRows
+      : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
+  ), [selectedChartIsEvent, selectedFriendPlacementRows]);
+  const selectedFriendNatalTableRows = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+      return [];
+    }
+
+    return completeNatalChartTableRows(
+      selectedChart.natalChart,
+      selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
+    );
+  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedFriendPlacementRows]);
+  const selectedFriendNatalAspectGroups = useMemo(() => (
+    friendProfileWork.natal && selectedChart?.natalChart
+      ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
+      : []
+  ), [friendProfileWork.natal, selectedChart?.natalChart]);
   const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
-  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns && selectedChart
-    ? natalAspectPatternReaderItemsForOwner(
-        selectedChart.natalChart ?? null,
-        selectedChart.displayName,
-        selectedChartIsEvent ? "chart" : "person",
-        selectedChart.pronouns
-      )
-    : [];
-  const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
+  const selectedFriendNatalAspectPatternItems = useMemo(() => (
+    showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
+      ? natalAspectPatternReaderItemsForOwner(
+          selectedChart.natalChart ?? null,
+          selectedChart.displayName,
+          selectedChartIsEvent ? "chart" : "person",
+          selectedChart.pronouns
+        )
+      : []
+  ), [
+    friendProfileWork.natal,
+    friendProfileWork.transits,
+    selectedChart,
+    selectedChartIsEvent,
+    showFriendNatalAspectPatterns
+  ]);
+  const selectedFriendNatalAspectPatternTimingOverrides = useMemo(() => (
+    friendProfileWork.transits
+      ? activationTimingOverridesForTransits(
+          selectedFriendNatalAspectPatternItems,
+          selectedFriendTransits,
+          currentSky.generatedAt
+        )
+      : {}
+  ), [
+    currentSky.generatedAt,
+    friendProfileWork.transits,
     selectedFriendNatalAspectPatternItems,
-    selectedFriendTransits,
-    currentSky.generatedAt
-  );
-  const selectedFriendNatalAspectPatternStatus = showFriendNatalAspectPatterns && selectedChart?.natalChart
+    selectedFriendTransits
+  ]);
+  const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedChart?.natalChart
     ? natalAspectPatternReaderStatus(
         showFriendNatalAspectPatterns,
         selectedChart.natalChart,
@@ -19076,15 +19114,20 @@ function ManualChartsPanel({
         selectedChart.natalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
       )
     : undefined;
-  const selectedFriendOccupiedHouses = new Set(
-    (selectedChart?.natalChart?.positions ?? [])
-      .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
-      .map((position) => position.house)
-      .filter((house): house is number => typeof house === "number")
-  );
-  const selectedFriendEmptyHouses = selectedChart?.natalChart && !selectedChartIsEvent
-    ? Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !selectedFriendOccupiedHouses.has(house))
-    : [];
+  const selectedFriendEmptyHouses = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    const occupiedHouses = new Set(
+      selectedChart.natalChart.positions
+        .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
+        .map((position) => position.house)
+        .filter((house): house is number => typeof house === "number")
+    );
+
+    return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
+  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedChartIsEvent]);
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;

@@ -3,6 +3,7 @@ import type { FriendProfileTab } from "./friendsRouting";
 export type FriendProfileWork = {
   compatibility: boolean;
   composite: boolean;
+  natal: boolean;
   synastry: boolean;
   synastryContacts: boolean;
   transits: boolean;
@@ -12,6 +13,7 @@ const friendProfileWorkByTab: Record<FriendProfileTab, FriendProfileWork> = {
   compatibility: {
     compatibility: true,
     composite: false,
+    natal: false,
     synastry: false,
     synastryContacts: true,
     transits: false
@@ -19,6 +21,7 @@ const friendProfileWorkByTab: Record<FriendProfileTab, FriendProfileWork> = {
   transits: {
     compatibility: false,
     composite: false,
+    natal: false,
     synastry: false,
     synastryContacts: true,
     transits: true
@@ -26,6 +29,7 @@ const friendProfileWorkByTab: Record<FriendProfileTab, FriendProfileWork> = {
   natal: {
     compatibility: false,
     composite: false,
+    natal: true,
     synastry: false,
     synastryContacts: false,
     transits: false
@@ -33,6 +37,7 @@ const friendProfileWorkByTab: Record<FriendProfileTab, FriendProfileWork> = {
   synastry: {
     compatibility: false,
     composite: false,
+    natal: false,
     synastry: true,
     synastryContacts: true,
     transits: false
@@ -40,6 +45,7 @@ const friendProfileWorkByTab: Record<FriendProfileTab, FriendProfileWork> = {
   composite: {
     compatibility: false,
     composite: true,
+    natal: false,
     synastry: false,
     synastryContacts: false,
     transits: false
