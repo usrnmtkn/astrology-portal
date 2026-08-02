@@ -544,6 +544,11 @@ function sourceSnapshotString(snapshot: Record<string, unknown> | null | undefin
   return typeof value === "string" ? value : "";
 }
 
+function sourceSnapshotNumber(snapshot: Record<string, unknown> | null | undefined, key: string) {
+  const value = snapshot?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
 function objectRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -1570,6 +1575,17 @@ export function GeneratedContentAdminDashboard() {
       && (contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
       && (tierFilter === "all" || tierForRow(row) === tierFilter)
       && matchesAdminSearch(haystack, query);
+  }).sort((first, second) => {
+    const firstPriority = sourceSnapshotNumber(first.sourceSnapshot, "reviewPriority");
+    const secondPriority = sourceSnapshotNumber(second.sourceSnapshot, "reviewPriority");
+    if (firstPriority !== null || secondPriority !== null) {
+      const priorityDifference = (firstPriority ?? Number.MAX_SAFE_INTEGER) - (secondPriority ?? Number.MAX_SAFE_INTEGER);
+      if (priorityDifference !== 0) return priorityDifference;
+      const firstSequence = sourceSnapshotNumber(first.sourceSnapshot, "reviewSequence") ?? Number.MAX_SAFE_INTEGER;
+      const secondSequence = sourceSnapshotNumber(second.sourceSnapshot, "reviewSequence") ?? Number.MAX_SAFE_INTEGER;
+      if (firstSequence !== secondSequence) return firstSequence - secondSequence;
+    }
+    return 0;
   }), [reviewRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
   const skyVoiceNeedsReviewRows = useMemo(
     () => visibleRows.filter((row) => (

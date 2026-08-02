@@ -310,11 +310,15 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   if ((row.blockType ?? row.block_type) === "sky_aspect") {
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
     const lint = sourceSnapshot?.skyAspectVoiceLint as { score?: number; fails?: number } | undefined;
+    const judge = sourceSnapshot?.skyAspectJudge as { recommendation?: string; approvalSource?: string } | undefined;
     const judgeScore = row.judgeScore ?? row.judge_score;
     const judgeGate = row.judgeGate ?? row.judge_gate;
+    const humanApprovalEligible = judgeGate === "human-review"
+      && judge?.recommendation === "approve"
+      && judge.approvalSource === "llm-advisory";
 
-    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || judgeGate !== "auto-publish") {
-      throw new Error("Sky-aspect cards can be published only after lint 3/0 and judge auto-publish.");
+    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || (judgeGate !== "auto-publish" && !humanApprovalEligible)) {
+      throw new Error("Sky-aspect cards can be published only after lint 3/0, judge score 3, and an approval recommendation.");
     }
   }
 }
