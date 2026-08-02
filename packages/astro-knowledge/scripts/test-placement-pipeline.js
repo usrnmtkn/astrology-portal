@@ -194,6 +194,8 @@ async function main() {
     assert.match(prompt, /No sentence from PLANET \+ SIGN MEANING LAYER may appear verbatim/);
     assert.match(prompt, /SCENE, NOT INVENTORY/);
     assert.match(prompt, /Build pressure -> choice -> consequence/);
+    assert.match(prompt, /owner-review-uranus-cancer-lived-2026-08-02/);
+    assert.match(prompt, /hidden rule, changed behavior, rupture, consequence/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
     assert.ok(prompt.includes("never copy AC phrases, metaphors, or cadence"), "AC must remain a word-only reference lane");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
@@ -223,6 +225,7 @@ async function main() {
     assert.ok(/\[2\]/.test(jp), `tier ${tier} must get two gold exemplars (social falls back cross-tier)`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
+    assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry owner-approved lived-beat evidence for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");
