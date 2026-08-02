@@ -25,6 +25,10 @@ const friendPlacementTablesSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendPlacementTables.tsx"),
   "utf8"
 );
+const relationshipApiSummarySource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/RelationshipApiSummary.tsx"),
+  "utf8"
+);
 const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/SettingsControls.tsx"), "utf8");
 const citySearchSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/CitySearchField.tsx"), "utf8");
 const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
@@ -287,6 +291,21 @@ assert.match(
   friendPlacementTablesSource,
   /export function SynastryPlacementsComparison/u,
   "The deferred Friends module must own the synastry placement comparison."
+);
+assert.doesNotMatch(
+  appSource,
+  /function RelationshipApiSummary/u,
+  "Relationship API presentation must not remain in the application shell."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/RelationshipApiSummary"\)/u,
+  "Relationship API presentation must load only when its Friends surface renders."
+);
+assert.match(
+  relationshipApiSummarySource,
+  /export function RelationshipApiSummary/u,
+  "The deferred Friends module must own relationship API presentation."
 );
 assert.doesNotMatch(
   friendsStylesSource,
