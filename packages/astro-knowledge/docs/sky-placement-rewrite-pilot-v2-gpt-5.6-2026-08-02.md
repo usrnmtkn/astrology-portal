@@ -120,13 +120,13 @@ Pre-edit judge summary: The draft was sharply Venus-in-Aries specific, cleared t
 
 These drafts are preserved for diagnosis, not owner approval or serving.
 
-### Uranus in Cancer — judge 2, hold
+### Uranus in Cancer — judge 2 before owner-directed lived edit, hold
 
 **Tagline:** Make home tell the truth
 
 **Hook:** Care that costs you your voice is not care. Uranus disrupts arrangements that have outlived their purpose; Cancer brings that disruption into the house rules, family roles, care work, and old habits that decide who gets protected. Uranus in Cancer asks what belonging would look like if nobody had to earn it by becoming indispensable.
 
-**Lived:** Uranus spends about seven years in a sign, so we have time to notice how deeply our ideas of home are built into work, money, and relationships. A family member stops being the automatic host; a workplace questions why one person remembers every birthday, emergency, and missing key; people build living arrangements that make room for chosen kin. The shift can look small at first: a locked bedroom door, a different dinner table, a new rule about who gets called in a crisis.
+**Lived — owner-directed edit:** Uranus spends about seven years in a sign, long enough to pry open the private rules nobody admits are rules. The person who has always held the family together stops answering every call; the spare room changes purpose; the emergency contact is no longer a blood relative. A family scatters, and another one forms around a spare key, a couch, and the people who actually show up. What looked like stability turns out to be obligation, and home changes shape because the old version asked one person to carry too much.
 
 **Turn:** The need to protect can turn into a private surveillance system: checking in until it becomes checking up, doing every task before anyone can disappoint you, keeping old hurts alive as proof that you were the one who cared. Then freedom gets confused with blowing up the whole home before anyone can leave you. Ask for the help you need before you turn your exhaustion into evidence.
 
@@ -136,7 +136,7 @@ These drafts are preserved for diagnosis, not owner approval or serving.
 - Make a written emergency plan with the people you live with so care does not depend on one person remembering everything.
 - Tell someone close one practical thing you need this week, without wrapping it in a favor you will repay.
 
-Hold reason: The image of blowing up the home before anyone can leave is specific, but the softer advice that follows weakens the close. The weakest sentence is: “Ask for the help you need before you turn your exhaustion into evidence.”
+Hold reason: The owner-directed lived revision replaces the flat inventory of household arrangements and passes the mechanical linter with score 3. The earlier judge did not evaluate this revision. The image of blowing up the home before anyone can leave remains specific, but the softer advice that follows still weakens the close. The weakest sentence remains: “Ask for the help you need before you turn your exhaustion into evidence.”
 
 ### Uranus in Pisces — judge 2, hold
 
