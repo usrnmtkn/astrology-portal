@@ -129,6 +129,7 @@ import {
 import { useManualChartsController } from "./features/friends/useManualChartsController";
 import { useRelationshipCompare } from "./features/friends/useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
+import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import {
@@ -295,8 +296,6 @@ import {
   zodiacFromBirthDate
 } from "./services/chartProfile";
 import {
-  getPersonalTiming,
-  isTldrAstroApiConfigured,
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
 import {
@@ -423,8 +422,6 @@ type TransitItem = {
   timingBonuses?: string[];
   isSlowGeneralWeather?: boolean;
 };
-
-type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 
 type FriendTimingContext = {
   age: number | null;
@@ -10393,8 +10390,6 @@ export function App() {
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
-  const [personalTiming, setPersonalTiming] = useState<PersonalTimingResponse | null>(null);
-  const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
   const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTransitGeneratedContent, setPersonalTransitGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -10444,6 +10439,50 @@ export function App() {
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
+  const primaryProfileChart = userProfile?.charts[0];
+  const personalTimingSettings = useMemo(
+    () => apiSettingsFromChartSettings(userProfile?.settings),
+    [userProfile?.settings]
+  );
+  const personalTimingSubject = useMemo(
+    () => userProfile
+      ? apiSubjectFromUserChart(userProfile, primaryProfileChart, userProfile.settings)
+      : null,
+    [
+      primaryProfileChart?.birthDate,
+      primaryProfileChart?.birthLocation?.label,
+      primaryProfileChart?.birthLocation?.latitude,
+      primaryProfileChart?.birthLocation?.longitude,
+      primaryProfileChart?.birthLocation?.timeZone,
+      primaryProfileChart?.birthTime,
+      userProfile?.name,
+      userProfile?.settings
+    ]
+  );
+  const personalTimingLocation = useMemo(
+    () => userProfile?.currentLocationData
+      ? withTimeZone(userProfile.currentLocationData)
+      : userProfile?.currentLocation
+        ? locationFromLabel(userProfile.currentLocation)
+        : null,
+    [
+      userProfile?.currentLocation,
+      userProfile?.currentLocationData?.label,
+      userProfile?.currentLocationData?.latitude,
+      userProfile?.currentLocationData?.longitude,
+      userProfile?.currentLocationData?.timeZone
+    ]
+  );
+  const {
+    response: personalTiming,
+    status: personalTimingStatus
+  } = usePersonalTiming({
+    enabled: isProfileMode,
+    natalSubject: personalTimingSubject,
+    settings: personalTimingSettings,
+    targetDate: skyDate,
+    targetLocation: personalTimingLocation
+  });
   const requestCalendarContent = useCallback((request: CalendarContentRequest) => {
     setCalendarContentRequest((current) => (
       current?.cacheKey === request.cacheKey
@@ -11726,76 +11765,6 @@ export function App() {
     activeSunriseOrbDegrees,
     showNatalAspectPatterns,
     showNatalAspectPatternActivation
-  ]);
-
-  useEffect(() => {
-    if (!isProfileMode || !userProfile || !isTldrAstroApiConfigured) {
-      setPersonalTiming(null);
-      setPersonalTimingStatus("idle");
-      return;
-    }
-
-    const primaryChart = userProfile.charts[0];
-    const natalSubject = apiSubjectFromUserChart(userProfile, primaryChart, userProfile.settings);
-    const currentLocation = userProfile.currentLocationData
-      ? withTimeZone(userProfile.currentLocationData)
-      : userProfile.currentLocation
-        ? locationFromLabel(userProfile.currentLocation)
-        : null;
-
-    if (!natalSubject || !natalSubject.datetime.timeKnown || !currentLocation) {
-      setPersonalTiming(null);
-      setPersonalTimingStatus("idle");
-      return;
-    }
-
-    let cancelled = false;
-    setPersonalTimingStatus("loading");
-
-    getPersonalTiming({
-      natalSubject,
-      targetDatetime: {
-        date: skyDate,
-        time: "12:00",
-        timeKnown: true,
-        timeZone: currentLocation.timeZone
-      },
-      targetLocation: currentLocation,
-      settings: apiSettingsFromChartSettings(userProfile.settings),
-      includeContentFacts: true,
-      maxTransits: 8
-    })
-      .then((response) => {
-        if (!cancelled) {
-          setPersonalTiming(response);
-          setPersonalTimingStatus("ready");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          console.warn("TLDR Astro personal timing API failed; using local transit rows.", error);
-          setPersonalTiming(null);
-          setPersonalTimingStatus("error");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    userProfile?.id,
-    userProfile?.name,
-    userProfile?.settings,
-    userProfile?.charts[0]?.birthDate,
-    userProfile?.charts[0]?.birthTime,
-    userProfile?.charts[0]?.birthCity,
-    userProfile?.charts[0]?.birthLocation?.label,
-    userProfile?.charts[0]?.birthLocation?.timeZone,
-    userProfile?.currentLocation,
-    userProfile?.currentLocationData?.label,
-    userProfile?.currentLocationData?.timeZone,
-    isProfileMode,
-    skyDate
   ]);
 
   useEffect(() => {

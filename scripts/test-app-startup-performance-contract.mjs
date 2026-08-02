@@ -96,6 +96,14 @@ const relationshipCompareHookSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/useRelationshipCompare.ts"),
   "utf8"
 );
+const personalTimingHookSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/you/usePersonalTiming.ts"),
+  "utf8"
+);
+const tldrAstroApiSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/tldrastroApi.ts"),
+  "utf8"
+);
 const friendProfileWorkSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/friendProfileWork.ts"),
   "utf8"
@@ -508,6 +516,26 @@ assert.match(
   relationshipCompareHookSource,
   /export function useRelationshipCompare[\s\S]*compareRelationship\([\s\S]*controller\.abort\(\)/u,
   "The relationship comparison hook must own request state and cancellation."
+);
+assert.match(
+  appSource,
+  /usePersonalTiming\(\{/u,
+  "The application shell must delegate personal-timing request state to its focused hook."
+);
+assert.doesNotMatch(
+  appSource,
+  /setPersonalTimingStatus|getPersonalTiming\(\{/u,
+  "The application shell must not re-embed personal-timing request state or cancellation."
+);
+assert.match(
+  tldrAstroApiSource,
+  /export function getPersonalTiming\([\s\S]*options\?: TldrAstroRequestOptions[\s\S]*postTldrAstro<PersonalTimingResponse>\("\/timing\/personal", request, options\)/u,
+  "Personal-timing API requests must accept cancellation options."
+);
+assert.match(
+  personalTimingHookSource,
+  /export function usePersonalTiming[\s\S]*const controller = new AbortController\(\);[\s\S]*getPersonalTiming\([\s\S]*signal: controller\.signal[\s\S]*controller\.abort\(\)/u,
+  "Leaving profile timing or changing its inputs must abort obsolete API work."
 );
 assert.match(
   appSource,
