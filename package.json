@@ -70,6 +70,8 @@
     "test:synastry-wheel": "node scripts/test-synastry-wheel-render.mjs",
     "test:friend-placement-tables": "node scripts/test-friend-placement-tables-render.mjs",
     "test:guest-settings": "node scripts/test-guest-settings-render.mjs",
+    "test:member-settings": "node scripts/test-member-settings-render.mjs",
+    "test:settings-routing": "node scripts/test-settings-routing.mjs",
     "test:performance-contracts": "node scripts/test-app-startup-performance-contract.mjs && node scripts/generate-fallback-package-manifest.mjs --check && node scripts/test-deferred-fallback-runtime.mjs",
     "content:materialize-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs",
     "content:materialize-moon-compatibility": "node scripts/materialize-compatibility-dashboard-rows.mjs --planet=moon --status=LIVE",
