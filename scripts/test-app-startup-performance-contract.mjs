@@ -28,6 +28,10 @@ const friendsWorkspaceShellSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceShell.tsx"),
   "utf8"
 );
+const friendChartModelSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/friendChartModel.ts"),
+  "utf8"
+);
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
 const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
@@ -579,6 +583,16 @@ assert.equal(
   appSource.match(/onFocus=\{preloadFriendsExperience\}/gu)?.length,
   2,
   "Both Friends navigation entries must preload the deferred route for keyboard users."
+);
+assert.doesNotMatch(
+  appSource,
+  /function (?:isSocialBigThreeRow|planetPositionFromSocialRow)/u,
+  "Friends-only chart normalization must not remain embedded in the startup App module."
+);
+assert.match(
+  friendChartModelSource,
+  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow/u,
+  "The Friends chart model must own social-placement filtering and normalization."
 );
 
 console.log("App startup performance contracts passed.");

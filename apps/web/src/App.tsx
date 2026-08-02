@@ -97,6 +97,8 @@ import {
 } from "./features/auth/signupModel";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import type { RelationshipCompareStatus } from "./features/friends/RelationshipApiSummary";
+import type { FriendNatalChartViewMode } from "./features/friends/FriendNatalViewControl";
 import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
@@ -117,6 +119,10 @@ import {
   type FriendsTab
 } from "./features/friends/friendsRouting";
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
+import {
+  isSocialBigThreeRow,
+  planetPositionFromSocialRow
+} from "./features/friends/friendChartModel";
 import {
   defaultManualChartForm,
   manualChartFormCopy,
@@ -412,9 +418,6 @@ type TransitItem = {
 };
 
 type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
-type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
-
-type NatalChartViewMode = "circle" | "table";
 
 type FriendTimingContext = {
   age: number | null;
@@ -3142,34 +3145,6 @@ function manualChartBigThree(chart: ManualChart) {
   }
 
   return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
-}
-
-const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
-
-function isSocialBigThreeRow(row: SocialPlacementRow) {
-  return socialBigThreeLabels.has(row.label);
-}
-
-function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot): PlanetPosition | null {
-  const existingPosition = sky.positions.find((position) => position.planet === row.label);
-
-  if (existingPosition) {
-    return existingPosition;
-  }
-
-  if (row.label !== "Ascendant") {
-    return null;
-  }
-
-  return {
-    planet: "Ascendant",
-    glyph: row.glyph || pointGlyph("Ascendant"),
-    sign: row.sign,
-    signGlyph: zodiacGlyphText(row.sign),
-    degree: row.degree,
-    house: row.house ?? 0,
-    motion: "direct"
-  };
 }
 
 function manualChartSubtitle(chart: ManualChart) {
@@ -17269,7 +17244,7 @@ function ManualChartsPanel({
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
-  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<NatalChartViewMode>("circle");
+  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
