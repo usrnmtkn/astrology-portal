@@ -336,6 +336,11 @@ assert.match(
   "Composite chart calculation must remain scoped to its active Friends tab."
 );
 assert.match(
+  appSource,
+  /friendProfileWork\.transits && selectedChart && !selectedChartIsEvent/u,
+  "Friends transit calculation must remain scoped to its active tab."
+);
+assert.match(
   friendProfileWorkSource,
   /export function friendProfileWorkForTab/u,
   "Friends tab calculation policy must remain independently testable."
