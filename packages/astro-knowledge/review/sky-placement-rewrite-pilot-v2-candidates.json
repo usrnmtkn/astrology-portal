@@ -72,6 +72,7 @@
         "date": "2026-08-02",
         "source": "owner-directed-review",
         "slots": [
+          "hook",
           "lived",
           "turn"
         ],
@@ -79,7 +80,7 @@
       },
       "article": {
         "tagline": "Build it without disappearing",
-        "hook": "Your life is not a performance review. Saturn deals in limits, commitments, and the kind of work that proves itself over time; in Capricorn, it asks us to take the long route on purpose. This is the transit that turns ambition into a structure you can stand inside.",
+        "hook": "Saturn in Capricorn proves that life is not a performance review. Saturn handles limits, standards, and the kind of work that holds its value over time; in Capricorn, it forces us to build from the ground up instead of chasing quick wins. This transit turns ambition into a structure we can actually stand inside.",
         "lived": "Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.",
         "turn": "But competence can become a hiding place. We finish one more chore instead of sitting down for the conversation, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.",
         "moves": [
@@ -99,7 +100,7 @@
         "priorVerdict": "in-voice",
         "why": "Clear Saturn function and Capricorn expression, with lived behavior, an observable shadow, and a sharp closing line.",
         "weakest": "Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment.",
-        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed lived and turn edits. The revision has not been rejudged."
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed hook, lived, and turn edits. The revision has not been rejudged."
       }
     },
     {
