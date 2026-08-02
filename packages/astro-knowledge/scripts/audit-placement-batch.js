@@ -127,6 +127,32 @@ function main() {
     }
   }
 
+  // Small pilots need a stricter pairwise check. With six or twelve cards, a
+  // phrase copied into two drafts is already visible; the 15% production-batch
+  // threshold and three-hit floor would miss it. Four-word runs reduce noise
+  // while still catching prompt leakage and same-planet boilerplate.
+  if (drafts.length <= 12) {
+    const fourGramWhere = new Map();
+    for (const d of drafts) {
+      const words = articleText(d.article).replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
+      const seen = new Set();
+      for (let i = 0; i + 3 < words.length; i++) {
+        const g = words.slice(i, i + 4);
+        if (g.filter((w) => !STOP.has(w)).length < 2) continue;
+        const key = g.join(" ");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (!fourGramWhere.has(key)) fourGramWhere.set(key, []);
+        fourGramWhere.get(key).push(d.file);
+      }
+    }
+    for (const [gram, files] of fourGramWhere) {
+      if (files.length < 2) continue;
+      console.log(`SHARED PILOT PHRASE "${gram}" in ${files.length}/${drafts.length}: ${files.map((f) => f.replace(".json", "")).join(", ")}`);
+      for (const f of files) flag(f, `pilot phrase "${gram}"`);
+    }
+  }
+
   // 2. hook openers (first 3 words)
   const openers = new Map();
   for (const d of drafts) {
