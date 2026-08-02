@@ -24,6 +24,10 @@ const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/rou
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
 const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 const friendsPageShellSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/FriendsPageShell.tsx"), "utf8");
+const skyDetailArticleSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"),
+  "utf8"
+);
 const friendsWorkspaceShellSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceShell.tsx"),
   "utf8"
@@ -562,6 +566,21 @@ assert.match(
   appSource,
   /const SignupView = lazy\(\(\) =>\s*import\("\.\/features\/auth\/SignupView"\)/u,
   "Signup and login presentation must stay behind a lazy application boundary."
+);
+assert.match(
+  appSource,
+  /const SkyDetailArticle = lazy\(\(\) =>\s*import\("\.\/features\/sky\/SkyDetailArticle"\)/u,
+  "Sky detail article presentation must load only when a reader opens an article."
+);
+assert.doesNotMatch(
+  appSource,
+  /function SkyDetailArticle/u,
+  "Sky detail article presentation must not remain embedded in the startup App module."
+);
+assert.match(
+  skyDetailArticleSource,
+  /export function SkyDetailArticle[\s\S]*article-related-aspects/u,
+  "The deferred Sky detail module must retain article and related-aspect presentation."
 );
 assert.doesNotMatch(
   appSource,
