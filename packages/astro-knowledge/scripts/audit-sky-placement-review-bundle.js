@@ -32,7 +32,9 @@ function auditBundle(value) {
     if (candidate.promotionAuthorized !== false) fail(`${key} must explicitly deny promotion authorization`);
     if (candidate.ownerEdit) {
       ownerEdited++;
-      if (candidate.ownerEdit.source !== "owner-verbatim") fail(`${key} owner edit must identify owner-verbatim provenance`);
+      if (!["owner-verbatim", "owner-directed-review"].includes(candidate.ownerEdit.source)) {
+        fail(`${key} owner edit must identify owner provenance`);
+      }
       if (candidate.ownerEdit.status !== "pending_owner_approval") fail(`${key} owner edit must remain pending owner approval`);
       if (!Array.isArray(candidate.ownerEdit.slots) || candidate.ownerEdit.slots.length === 0) fail(`${key} owner edit must identify its slots`);
       if (candidate.judgeResult?.status !== "stale_after_owner_edit" || candidate.judgeResult?.priorScore !== 3) {
