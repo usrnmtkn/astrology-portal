@@ -93,6 +93,7 @@ import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/f
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
 import type { FriendNatalAspectGroup as FriendNatalViewAspectGroup, FriendNatalEmptyHouseRow } from "./features/friends/FriendNatalTab";
+import type { FriendBondTransitView, FriendHouseTransitView, FriendPersonalTransitGroup } from "./features/friends/FriendTransitsTab";
 import {
   friendDetailRoutePath,
   friendsHashParts,
@@ -11291,6 +11292,12 @@ const FriendNatalTab = lazy(() =>
   }))
 );
 
+const FriendTransitsTab = lazy(() =>
+  import("./features/friends/FriendTransitsTab").then((module) => ({
+    default: module.FriendTransitsTab
+  }))
+);
+
 const FriendSynastryTab = lazy(() =>
   import("./features/friends/FriendSynastryTab").then((module) => ({
     default: module.FriendSynastryTab
@@ -18966,6 +18973,61 @@ function ManualChartsPanel({
       ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
       : []
   ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
+  const selectedBondTransitViewCards = useMemo<FriendBondTransitView[]>(() => (
+    selectedBondTransitCards.map((card) => ({
+      id: card.id,
+      headline: card.headline,
+      effectBody: card.effectBody,
+      activationBody: card.activationBody
+    }))
+  ), [selectedBondTransitCards]);
+  const selectedFriendHouseTransitViewCards = useMemo<FriendHouseTransitView[]>(() => (
+    selectedFriendHouseTransitCards.map((card) => ({
+      id: card.contentKey,
+      transitPlanet: card.transit.transitPlanet,
+      title: card.title,
+      durationLabel: card.durationLabel,
+      timingRange: card.timingRange,
+      rowSummary: card.rowSummary,
+      termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
+      keywords: houseLifeAreaKeywords(card.activation.house),
+      house: card.activation.house,
+      houseLabel: `${ordinalHouse(card.activation.house)} house`
+    }))
+  ), [selectedFriendHouseTransitCards]);
+  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => (
+    (["short", "long"] as const).flatMap((durationClass) => {
+      const transits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
+
+      if (transits.length === 0 || !selectedChart) {
+        return [];
+      }
+
+      return [{
+        key: durationClass,
+        label: durationClass === "short" ? "Short-term themes" : "Long-term themes",
+        transits: transits.map((transit) => {
+          const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+
+          return {
+            id: transit.id,
+            title: `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`,
+            durationLabel: timing.durationLabel,
+            rangeLabel: timing.rangeLabel,
+            timingLabel: timing.label,
+            summary: friendTransitSummary(
+              transit,
+              relationshipGeneratedContent,
+              selectedChart.displayName,
+              selectedChart.pronouns,
+              currentSky.generatedAt
+            ),
+            orb: transit.orb
+          };
+        })
+      }];
+    })
+  ), [currentSky.generatedAt, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
   const selectedFriendPlacementRows = useMemo(() => (
     friendProfileWork.natal && selectedChart?.natalChart
       ? socialPlacementRows(selectedChart.natalChart)
@@ -19325,6 +19387,13 @@ function ManualChartsPanel({
       }))
     });
   };
+  const openFriendHouseTransitById = (cardId: string) => {
+    const card = selectedFriendHouseTransitCards.find((candidate) => candidate.contentKey === cardId);
+
+    if (card) {
+      openFriendHouseTransitDetail(card);
+    }
+  };
   const openBondTransitDetail = (
     card: (typeof selectedBondTransitCards)[number]
   ) => {
@@ -19359,6 +19428,13 @@ function ManualChartsPanel({
         body: connection.body
       }))
     });
+  };
+  const openBondTransitById = (cardId: string) => {
+    const card = selectedBondTransitCards.find((candidate) => candidate.id === cardId);
+
+    if (card) {
+      openBondTransitDetail(card);
+    }
   };
   const openFriendSynastryContactDetail = (contactId: string) => {
     if (!selectedChart) {
@@ -19419,6 +19495,13 @@ function ManualChartsPanel({
         sourceKeys: section.sourceKeys
       }))
     });
+  };
+  const openFriendTransitById = (transitId: string) => {
+    const transit = selectedFriendTransits.find((candidate) => candidate.id === transitId);
+
+    if (transit) {
+      openFriendTransitDetail(transit);
+    }
   };
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
@@ -20421,156 +20504,17 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "transits" && (
-            <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${selectedChart.displayName} transits`}>
-              <div className="friend-profile-copy-column">
-                <NatalAspectPatternActivationsSection
-                  items={selectedFriendNatalAspectPatternItems}
-                  timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
-                />
-                {selectedBondTransitCards.length > 0 ? (
-                  <section className="friend-transit-group" aria-label="Between you two right now">
-                    <span className="eyebrow section-label friend-section-label">Between you two right now</span>
-                    <div className="updates-aspect-list friend-transit-list">
-                      {selectedBondTransitCards.map((card) => (
-                        <button
-                          aria-label={`Open full entry for ${card.headline}`}
-                          className="updates-aspect-row friend-transit-row"
-                          key={card.id}
-                          onClick={() => openBondTransitDetail(card)}
-                          type="button"
-                        >
-                          <span className="updates-aspect-row__content">
-                            <h3 className="updates-aspect-row__title">{card.headline}</h3>
-                            <p className="updates-aspect-row__description">{card.effectBody}</p>
-                            {card.activationBody ? (
-                              <p className="updates-aspect-row__description friend-bond-transit-activation">
-                                {card.activationBody}
-                              </p>
-                            ) : null}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-                {selectedFriendHouseTransitCards.length > 0 ? (
-                  <section className="friend-transit-group" aria-label="House transits">
-                    <span className="eyebrow section-label friend-section-label">House transits</span>
-                    <div className="updates-aspect-list friend-transit-list">
-                      {selectedFriendHouseTransitCards.map((card) => (
-                        <button
-                          className="updates-aspect-row updates-aspect-row--house"
-                          key={card.contentKey}
-                          onClick={() => openFriendHouseTransitDetail(card)}
-                          type="button"
-                        >
-                          <span className="updates-aspect-row__glyphs" aria-hidden="true">
-                            <span className="planet-glyph">{pointGlyph(card.transit.transitPlanet)}</span>
-                          </span>
-                          <span className="updates-aspect-row__content">
-                            <span className="updates-aspect-row__title">{card.title}</span>
-                            <span className="updates-aspect-row__meta-line">
-                              {card.durationLabel ? (
-                                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                                  <DurationLabelText label={card.durationLabel} />
-                                </span>
-                              ) : null}
-                              {card.timingRange ? <span>{card.timingRange}</span> : null}
-                            </span>
-                            {card.rowSummary ? (
-                              <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
-                            ) : null}
-                            <span className="house-transit-keywords" aria-label="House keywords">
-                              <span className="ui-pill house-transit-term-tag">
-                                {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
-                              </span>
-                              {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
-                                <span
-                                  className="ui-pill ui-pill--muted house-transit-keyword"
-                                  key={`${card.contentKey}-${keyword}`}
-                                >
-                                  {keyword}
-                                </span>
-                              ))}
-                            </span>
-                          </span>
-                          <span
-                            className="updates-aspect-row__meta"
-                            aria-label={`${ordinalHouse(card.activation.house)} house`}
-                          >
-                            <span className="updates-aspect-row__dot" aria-hidden="true" />
-                            <span className="updates-aspect-row__orb">{card.activation.house}</span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-                {(["short", "long"] as const).map((durationClass) => {
-                  const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
-
-                  if (durationTransits.length === 0) {
-                    return null;
-                  }
-
-                  return (
-                    <section
-                      className="friend-transit-group"
-                      aria-label={durationClass === "short" ? "Short-term themes" : "Long-term themes"}
-                      key={durationClass}
-                    >
-                      <span className="eyebrow section-label friend-section-label">
-                        {durationClass === "short" ? "Short-term themes" : "Long-term themes"}
-                      </span>
-                      <div className="updates-aspect-list friend-transit-list">
-                        {durationTransits.map((transit) => {
-                          const summary = friendTransitSummary(
-                            transit,
-                            relationshipGeneratedContent,
-                            selectedChart.displayName,
-                            selectedChart.pronouns,
-                            currentSky.generatedAt
-                          );
-                          const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
-
-                          return (
-                            <button
-                              aria-label={`Open full entry for ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`}
-                              className="updates-aspect-row friend-transit-row"
-                              key={transit.id}
-                              onClick={() => openFriendTransitDetail(transit)}
-                              type="button"
-                            >
-                              <span className="updates-aspect-row__content">
-                                <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
-                                <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-                                  <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                                    <DurationLabelText label={timing.durationLabel} />
-                                  </span>
-                                  <span>{timing.rangeLabel}</span>
-                                </span>
-                                <p className="updates-aspect-row__description transit-card-preview">{summary}</p>
-                              </span>
-                              <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
-                                <span className="updates-aspect-row__dot" aria-hidden="true" />
-                                <span className="updates-aspect-row__orb">{transit.orb}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  );
-                })}
-                {selectedFriendTransits.length === 0 && selectedFriendHouseTransitCards.length === 0 && (
-                  <article className="friends-logic-card">
-                    <span>Transits</span>
-                    <h3>No prioritized transits are active.</h3>
-                    <p>The sky is still moving, but no prioritized personalized transit is active for {selectedChart.displayName} in this window.</p>
-                  </article>
-                )}
-              </div>
-            </div>
+            <FriendTransitsTab
+              bondTransits={selectedBondTransitViewCards}
+              friendName={selectedChart.displayName}
+              houseTransits={selectedFriendHouseTransitViewCards}
+              onOpenBondTransit={openBondTransitById}
+              onOpenHouseTransit={openFriendHouseTransitById}
+              onOpenPersonalTransit={openFriendTransitById}
+              patternItems={selectedFriendNatalAspectPatternItems}
+              patternTimingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
+              personalTransitGroups={selectedFriendPersonalTransitGroups}
+            />
           )}
 
           {friendProfileTab === "synastry" && (
