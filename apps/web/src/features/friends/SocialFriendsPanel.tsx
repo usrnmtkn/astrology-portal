@@ -295,17 +295,17 @@ export function SocialFriendsPanel({
   }, [onFriendsChange]);
 
   const refreshSocialData = useCallback(async () => {
-    const [nextProfile, loadedFriends] = await Promise.all([
-      loadOwnSocialProfile(),
-      listSocialFriends()
-    ]);
+    const profileRequest = loadOwnSocialProfile()
+      .then(setProfile)
+      .catch(() => undefined);
+    const loadedFriends = await listSocialFriends();
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
       ? loadedFriends.filter((friend) => friend.userId !== pendingRemoval)
       : loadedFriends;
 
-    setProfile(nextProfile);
     publishFriends(nextFriends);
+    void profileRequest;
     void Promise.all([
       listSocialFriendRequests().then((nextRequests) => {
         setRequests(nextRequests);
