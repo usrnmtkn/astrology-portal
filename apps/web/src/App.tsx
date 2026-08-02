@@ -91,6 +91,20 @@ import {
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
+import {
+  friendDetailRoutePath,
+  friendsHashParts,
+  friendsRouteStateFromUrl,
+  initialFriendsTab,
+  isFriendsUrl,
+  parseFriendProfileTab,
+  storeFriendsTab,
+  updateFriendProfileUrl,
+  updateFriendsTabUrl,
+  type FriendProfileTab,
+  type FriendsMainView,
+  type FriendsTab
+} from "./features/friends/friendsRouting";
 import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import {
@@ -432,10 +446,7 @@ type TransitItem = {
 type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
-type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 type NatalChartViewMode = "circle" | "table";
-type FriendsMainView = "circle" | "charts" | "requests" | "profile";
-type FriendsTab = Exclude<FriendsMainView, "profile">;
 type SettingsSubpage = "root" | "blocked-accounts";
 
 type FriendTimingContext = {
@@ -2067,7 +2078,6 @@ const houseSignLabelStyleStorageKey = "tldrastro:houseSignLabelStyle";
 const journalPromptsStorageKey = "tldrastro:journalPrompts";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
-const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const synodicMonthDays = 29.530588;
@@ -2198,26 +2208,10 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
-const friendsTabs: FriendsTab[] = ["circle", "charts", "requests"];
 const settingsRouteChangeEvent = "tldr:settings-route-change";
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
-}
-
-function parseFriendsTab(value: string | null): FriendsTab {
-  return value === "charts" || value === "requests" || value === "circle" ? value : "circle";
-}
-
-function parseFriendProfileTab(value: string | null): FriendProfileTab {
-  return value === "compatibility" || value === "transits" || value === "synastry" || value === "composite" || value === "natal" ? value : "compatibility";
-}
-
-function friendsHashParts(hash: string) {
-  const cleanHash = hash.replace(/^#\/?/, "");
-  const [path = "", query = ""] = cleanHash.split("?");
-
-  return { path, params: new URLSearchParams(query) };
 }
 
 function settingsSubpageFromUrl(): SettingsSubpage {
@@ -2251,29 +2245,6 @@ function updateSettingsSubpageUrl(
   }
 }
 
-function friendsRouteStateFromUrl() {
-  try {
-    const url = new URL(window.location.href);
-    const { path, params } = friendsHashParts(url.hash);
-    const routeParams = url.pathname === "/friends" ? url.searchParams : path === "friends" ? params : null;
-
-    if (!routeParams) {
-      return null;
-    }
-
-    const chartId = routeParams.get("chart");
-
-    return {
-      tab: parseFriendsTab(routeParams.get("tab")),
-      chartId,
-      view: parseFriendProfileTab(routeParams.get("view")),
-      detail: routeParams.get("detail")
-    };
-  } catch {
-    return null;
-  }
-}
-
 function portalModeFromHashPath(path: string): PortalMode | null {
   switch (path) {
     case "sky":
@@ -2299,34 +2270,6 @@ function portalModeFromHashPath(path: string): PortalMode | null {
       }
 
       return null;
-  }
-}
-
-function friendsTabFromUrl(): FriendsTab {
-  try {
-    const url = new URL(window.location.href);
-    const searchTab = url.searchParams.get("tab");
-
-    if (friendsTabs.includes(searchTab as FriendsTab)) {
-      return parseFriendsTab(searchTab);
-    }
-
-    const { path, params } = friendsHashParts(url.hash);
-
-    return path === "friends" ? parseFriendsTab(params.get("tab")) : "circle";
-  } catch {
-    return "circle";
-  }
-}
-
-function isFriendsUrl() {
-  try {
-    const url = new URL(window.location.href);
-    const { path } = friendsHashParts(url.hash);
-
-    return url.pathname === "/friends" || path === "friends";
-  } catch {
-    return false;
   }
 }
 
@@ -2492,94 +2435,9 @@ function updateSkyDetailRouteUrl(routePath: string, mode: "push" | "replace" = "
   }
 }
 
-function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push") {
-  try {
-    const url = new URL(window.location.href);
-
-    if (url.pathname === "/friends") {
-      url.searchParams.set("tab", tab);
-      url.searchParams.delete("chart");
-      url.searchParams.delete("view");
-      url.searchParams.delete("detail");
-    } else {
-      const { path, params } = friendsHashParts(url.hash);
-      const nextParams = path === "friends" ? params : new URLSearchParams();
-      nextParams.set("tab", tab);
-      nextParams.delete("chart");
-      nextParams.delete("view");
-      nextParams.delete("detail");
-      url.hash = `friends?${nextParams.toString()}`;
-    }
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-  } catch {
-    // URL state is an enhancement; keep the tab usable if history is unavailable.
-  }
-}
-
-function updateFriendProfileUrl(chartId: string, view: FriendProfileTab = "natal", mode: "push" | "replace" = "push", detail?: string | null) {
-  try {
-    const url = new URL(window.location.href);
-
-    if (url.pathname === "/friends") {
-      url.searchParams.set("tab", "charts");
-      url.searchParams.set("chart", chartId);
-      url.searchParams.set("view", view);
-      if (detail) {
-        url.searchParams.set("detail", detail);
-      } else {
-        url.searchParams.delete("detail");
-      }
-    } else {
-      const nextParams = new URLSearchParams();
-      nextParams.set("tab", "charts");
-      nextParams.set("chart", chartId);
-      nextParams.set("view", view);
-      if (detail) {
-        nextParams.set("detail", detail);
-      }
-      url.hash = `friends?${nextParams.toString()}`;
-    }
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-  } catch {
-    // URL state is an enhancement; keep the friend profile usable if history is unavailable.
-  }
-}
-
-function friendDetailRoutePath(chartId: string, view: FriendProfileTab, detail: string) {
-  const params = new URLSearchParams();
-  params.set("tab", "charts");
-  params.set("chart", chartId);
-  params.set("view", view);
-  params.set("detail", detail);
-
-  return `friends?${params.toString()}`;
-}
-
 function storePortalMode(mode: PortalMode) {
   try {
     window.localStorage.setItem(portalModeStorageKey, mode);
-  } catch {
-    return;
-  }
-}
-
-function getStoredFriendsTab() {
-  try {
-    return parseFriendsTab(window.localStorage.getItem(friendsTabStorageKey));
-  } catch {
-    return "circle";
-  }
-}
-
-function initialFriendsTab(): FriendsTab {
-  return isFriendsUrl() ? friendsTabFromUrl() : getStoredFriendsTab();
-}
-
-function storeFriendsTab(tab: FriendsTab) {
-  try {
-    window.localStorage.setItem(friendsTabStorageKey, tab);
   } catch {
     return;
   }
