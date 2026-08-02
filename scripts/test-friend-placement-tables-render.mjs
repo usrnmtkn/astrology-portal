@@ -28,6 +28,9 @@ try {
   const { FriendSynastryTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendSynastryTab.tsx"
   );
+  const { FriendNatalTab } = await server.ssrLoadModule(
+    "/src/features/friends/FriendNatalTab.tsx"
+  );
   const {
     completeNatalChartTableRows,
     natalChartTableRowFromSocial
@@ -190,6 +193,65 @@ try {
   assert.match(populatedSynastryHtml, /You recognize each other&#x27;s rhythm quickly/);
   assert.match(populatedSynastryHtml, /Easy recognition/);
   assert.doesNotMatch(populatedSynastryHtml, /Add both charts/);
+
+  const natalTabHtml = renderToStaticMarkup(React.createElement(FriendNatalTab, {
+    aspectGroups: [{
+      key: "gifts",
+      label: "Gifts",
+      aspects: [{
+        id: "Sun-trine-Moon",
+        from: "Sun",
+        type: "trine",
+        to: "Moon",
+        orb: 1.2,
+        title: "Alex's Sun trine Moon",
+        summary: "Feeling and purpose cooperate naturally."
+      }]
+    }],
+    bigThreeRows: [{
+      id: "Sun",
+      glyph: "☉",
+      label: "Sun",
+      sign: "Aries",
+      degree: 10,
+      house: 1,
+      retrograde: false
+    }],
+    birthTimeUnknown: false,
+    emptyHouseRows: [{
+      house: 2,
+      glyph: "♉",
+      title: "Empty 2nd House in Taurus",
+      description: "Resources develop steadily.",
+      ariaLabel: "Read more about Empty 2nd House in Taurus"
+    }],
+    friendName: "Alex",
+    hasNatalChart: true,
+    isEventChart: false,
+    onOpenAspect() {},
+    onOpenEmptyHouse() {},
+    onOpenPattern() {},
+    onOpenPlacement() {},
+    patternItems: [],
+    patternStatus: undefined,
+    patternTitle: "Patterns in Alex's chart",
+    placementRows: [{
+      id: "Mercury",
+      glyph: "☿",
+      label: "Mercury",
+      sign: "Taurus",
+      degree: 4,
+      house: 2,
+      retrograde: false,
+      description: "Alex thinks deliberately."
+    }]
+  }));
+  assert.match(natalTabHtml, /Big three/);
+  assert.match(natalTabHtml, /Alex&#x27;s natal placements/);
+  assert.match(natalTabHtml, /Empty houses/);
+  assert.match(natalTabHtml, /Empty 2nd House in Taurus/);
+  assert.match(natalTabHtml, /Alex&#x27;s Sun trine Moon/);
+  assert.match(natalTabHtml, /Feeling and purpose cooperate naturally/);
 
   const socialTableRow = natalChartTableRowFromSocial({
     id: "Sun",
