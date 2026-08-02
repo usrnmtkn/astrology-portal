@@ -17,6 +17,8 @@ const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/ro
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
+const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
+const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -156,6 +158,26 @@ assert.match(
   appSource,
   /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/NatalChartDataTable"\)/u,
   "The natal chart data table must load only when a chart table surface renders."
+);
+assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*\bSynastryWheel\b[^}]*\}\s+from\s+"\.\/components\/charts\/Wheels"/u,
+  "The Friends-only synastry wheel must not remain a static application-shell dependency."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/SynastryWheel"\)/u,
+  "The synastry wheel must load only when a relationship chart surface renders."
+);
+assert.doesNotMatch(
+  wheelSource,
+  /export const SynastryWheel/u,
+  "The eager Sky wheel module must not contain the relationship renderer."
+);
+assert.match(
+  synastryWheelSource,
+  /export const SynastryWheel/u,
+  "The deferred relationship module must own the synastry renderer."
 );
 assert.doesNotMatch(
   friendsStylesSource,
