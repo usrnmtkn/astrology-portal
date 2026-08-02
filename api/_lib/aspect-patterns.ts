@@ -1,13 +1,13 @@
 import { createRequire } from "node:module";
 import type { SkySnapshot } from "../../apps/web/src/types.js";
 
-type AspectPatternDetectionResult = import("../../packages/astro-knowledge/engine/aspect-patterns").AspectPatternDetectionResult;
-type AuthoredAspectPatternActivationRecord = import("../../packages/astro-knowledge/engine/aspect-patterns").AuthoredAspectPatternActivationRecord;
-type AuthoredAspectPatternRecord = import("../../packages/astro-knowledge/engine/aspect-patterns").AuthoredAspectPatternRecord;
-type AspectType = import("../../packages/astro-knowledge/engine/aspect-patterns").AspectType;
-type NormalizedAspect = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedAspect;
-type NormalizedPlanet = import("../../packages/astro-knowledge/engine/aspect-patterns").NormalizedPlanet;
-type TransitToNatalActivationAspect = import("../../packages/astro-knowledge/engine/aspect-patterns").TransitToNatalActivationAspect;
+type AspectPatternDetectionResult = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AspectPatternDetectionResult;
+type AuthoredAspectPatternActivationRecord = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AuthoredAspectPatternActivationRecord;
+type AuthoredAspectPatternRecord = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AuthoredAspectPatternRecord;
+type AspectType = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").AspectType;
+type NormalizedAspect = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").NormalizedAspect;
+type NormalizedPlanet = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").NormalizedPlanet;
+type TransitToNatalActivationAspect = import("../../packages/astro-knowledge/engine/aspect-patterns/index.js").TransitToNatalActivationAspect;
 
 const require = createRequire(import.meta.url);
 const {
