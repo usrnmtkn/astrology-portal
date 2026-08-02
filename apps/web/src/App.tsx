@@ -11340,7 +11340,8 @@ export function App() {
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
-  const [friendProfileContentRequested, setFriendProfileContentRequested] = useState(false);
+  const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
+  const [friendRelationshipContentRequested, setFriendRelationshipContentRequested] = useState(false);
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -11376,8 +11377,13 @@ export function App() {
         : request
     ));
   }, []);
-  const requestFriendProfileContent = useCallback(() => {
-    setFriendProfileContentRequested(true);
+  const requestFriendProfileContent = useCallback((tab: FriendProfileTab) => {
+    if (tab === "natal") {
+      setFriendNatalContentRequested(true);
+      return;
+    }
+
+    setFriendRelationshipContentRequested(true);
   }, []);
 
   useEffect(() => {
@@ -11649,7 +11655,7 @@ export function App() {
     if (
       mode === "guest"
       || mode === "member"
-      || (mode === "friends" && !friendProfileContentRequested)
+      || (mode === "friends" && !friendRelationshipContentRequested)
     ) {
       return () => {
         cancelled = true;
@@ -11669,7 +11675,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendProfileContentRequested, mode]);
+  }, [friendRelationshipContentRequested, mode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11949,7 +11955,7 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
     const shouldLoadNatal = ["guest", "member", "profile"].includes(mode)
-      || (mode === "friends" && friendProfileContentRequested);
+      || (mode === "friends" && friendNatalContentRequested);
 
     if (!shouldLoadNatal) {
       setNatalGeneratedContent(new Map());
@@ -11974,16 +11980,17 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendProfileContentRequested, generatedContentPreviewMode, mode, skyDate]);
+  }, [friendNatalContentRequested, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadRelationships = mode === "friends" && friendProfileContentRequested;
+    const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;
 
     if (!shouldLoadRelationships) {
       setRelationshipGeneratedContent(new Map());
       if (mode !== "friends") {
-        setFriendProfileContentRequested(false);
+        setFriendNatalContentRequested(false);
+        setFriendRelationshipContentRequested(false);
       }
       return () => {
         cancelled = true;
@@ -12006,7 +12013,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendProfileContentRequested, generatedContentPreviewMode, mode, skyDate]);
+  }, [friendRelationshipContentRequested, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -17099,7 +17106,7 @@ function ManualChartsPanel({
   chartsReady: boolean;
   allowCachedChartsWhileLoading: boolean;
   onPendingRequestCountChange: (count: number) => void;
-  onFriendProfileContentRequest: () => void;
+  onFriendProfileContentRequest: (tab: FriendProfileTab) => void;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const initialCachedCharts = useMemo(
@@ -18039,9 +18046,9 @@ function ManualChartsPanel({
 
   useEffect(() => {
     if (resolvedFriendsMainView === "profile" && selectedChart) {
-      onFriendProfileContentRequest();
+      onFriendProfileContentRequest(friendProfileTab);
     }
-  }, [onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
+  }, [friendProfileTab, onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
 
   useEffect(() => {
     function handlePopState() {
