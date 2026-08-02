@@ -16,7 +16,9 @@ function fail(message) {
 function auditBundle(value) {
   if (value?.schema !== "tldrastro-sky-placement-review-bundle-v1") fail("unexpected review-bundle schema");
   if (value.status !== "needs_review") fail("bundle status must remain needs_review");
-  if (value.editorialStatus !== "needs_voice_pass") fail("bundle editorialStatus must remain needs_voice_pass");
+  if (!["needs_voice_pass", "voice_pass_draft"].includes(value.editorialStatus)) {
+    fail("bundle editorialStatus must be needs_voice_pass or voice_pass_draft");
+  }
   if (value.promotionAuthorized !== false) fail("bundle must explicitly deny promotion authorization");
   if (!Array.isArray(value.candidates) || value.candidates.length === 0) fail("bundle must contain candidates");
 
@@ -24,6 +26,7 @@ function auditBundle(value) {
   const materializedRows = [];
   let currentJudge3 = 0;
   let ownerEdited = 0;
+  let voicePassDrafts = 0;
   for (const candidate of value.candidates) {
     const key = `${candidate.planet}/${candidate.sign}`;
     if (seen.has(key)) fail(`duplicate candidate ${key}`);
@@ -32,7 +35,14 @@ function auditBundle(value) {
     if (candidate.status !== "needs_review") fail(`${key} must remain needs_review`);
     if (candidate.promotionAuthorized !== false) fail(`${key} must explicitly deny promotion authorization`);
     if (candidate.recommendedDecision !== "revise") fail(`${key} must remain revise until the voice pass is complete`);
-    if (candidate.ownerEdit) {
+    if (candidate.voicePass) {
+      voicePassDrafts++;
+      if (candidate.voicePass.source !== "owner-guided-offline-rewrite") fail(`${key} voice pass must identify owner-guided offline provenance`);
+      if (candidate.voicePass.status !== "pending_owner_review") fail(`${key} voice pass must remain pending owner review`);
+      if (candidate.judgeResult?.status !== "not_run_after_voice_pass" || ![2, 3].includes(candidate.judgeResult?.priorScore)) {
+        fail(`${key} voice pass must preserve the prior judge score without presenting it as current`);
+      }
+    } else if (candidate.ownerEdit) {
       ownerEdited++;
       if (!["owner-verbatim", "owner-directed-review"].includes(candidate.ownerEdit.source)) {
         fail(`${key} owner edit must identify owner provenance`);
@@ -73,6 +83,7 @@ function auditBundle(value) {
     lint3: value.candidates.length,
     currentJudge3,
     ownerEdited,
+    voicePassDrafts,
     reviewStatus: value.status,
     editorialStatus: value.editorialStatus,
     promotionAuthorized: value.promotionAuthorized
