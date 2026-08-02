@@ -15,14 +15,14 @@
 // Exit 1 lists the offending draft files; delete them and re-run --batch
 // (resumable) so only the flagged cells regenerate under the current prompt.
 //
-//   node scripts/audit-placement-batch.js [dir]
+//   node scripts/audit-placement-batch.js [directory-or-review-bundle.json]
 
 const fs = require("fs");
 const path = require("path");
 const { lintArticle } = require("./lint-placement-voice.js");
 
 const root = path.join(__dirname, "..");
-const dir = process.argv[2] || path.join(root, "out", "sky-placement-drafts");
+const target = process.argv[2] || path.join(root, "out", "sky-placement-drafts");
 
 // A phrase is "shared" if it appears in more than this fraction of drafts
 // (minimum absolute floor keeps tiny batches from tripping on coincidence).
@@ -51,7 +51,8 @@ const paceSources = [
   ...Object.values(spec.pace.labels),
   ...Object.entries(spec.pace.labels).map(([planet, label]) => `${planet} spends ${label} in a sign`),
   "two and a half days", "for about a month", "for about four weeks",
-  "six or seven weeks", "about eighteen months", "about twenty years"
+  "six or seven weeks", "about eighteen months", "about twenty years",
+  "roughly seven years", "uranus spends roughly seven years in a sign"
 ];
 for (const label of paceSources) {
   const w = label.toLowerCase().replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
@@ -68,15 +69,25 @@ const ALLOWED_SHARED = [
 const isAllowedShared = (key) => ALLOWED_SHARED_EXACT.has(key) || ALLOWED_SHARED.some((re) => re.test(key));
 
 function main() {
-  if (!fs.existsSync(dir)) {
-    console.error(`No batch directory at ${dir}`);
+  if (!fs.existsSync(target)) {
+    console.error(`No batch input at ${target}`);
     process.exit(2);
   }
   const drafts = [];
-  for (const f of fs.readdirSync(dir)) {
-    if (!f.endsWith(".json") || f === "_summary.json") continue;
-    const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
-    if (d.article) drafts.push({ file: f, cell: f.replace(".json", ""), article: d.article });
+  const inputIsFile = fs.statSync(target).isFile();
+  if (inputIsFile) {
+    const bundle = JSON.parse(fs.readFileSync(target, "utf8"));
+    for (const candidate of bundle.candidates || []) {
+      if (!candidate.article) continue;
+      const cell = `${candidate.planet}-${candidate.sign}`;
+      drafts.push({ file: `${cell}.json`, cell, article: candidate.article });
+    }
+  } else {
+    for (const f of fs.readdirSync(target)) {
+      if (!f.endsWith(".json") || f === "_summary.json") continue;
+      const d = JSON.parse(fs.readFileSync(path.join(target, f), "utf8"));
+      if (d.article) drafts.push({ file: f, cell: f.replace(".json", ""), article: d.article });
+    }
   }
   if (drafts.length < 2) {
     console.log(`Only ${drafts.length} draft(s); nothing to cross-compare.`);
@@ -213,10 +224,12 @@ function main() {
     console.log(`\nSameness audit clean across ${drafts.length} drafts.`);
     return;
   }
-  console.log(`\n${flagged.size}/${drafts.length} drafts flagged for regeneration. Delete and re-run --batch:`);
+  console.log(`\n${flagged.size}/${drafts.length} drafts flagged for revision:`);
   const files = [...flagged.keys()].sort();
   for (const f of files) console.log(`  ${f}  (${[...new Set(flagged.get(f))].slice(0, 3).join("; ")})`);
-  console.log(`\n  cd ${path.relative(process.cwd(), dir) || "."} && rm ${files.join(" ")}`);
+  if (!inputIsFile) {
+    console.log(`\n  Delete the flagged generated drafts from ${path.relative(process.cwd(), target) || "."} and rerun --batch.`);
+  }
   process.exit(1);
 }
 

@@ -243,6 +243,7 @@ async function main() {
     lint3: 4,
     currentJudge3: 0,
     ownerEdited: 4,
+    voicePassDrafts: 0,
     reviewStatus: "needs_review",
     editorialStatus: "needs_voice_pass",
     promotionAuthorized: false
