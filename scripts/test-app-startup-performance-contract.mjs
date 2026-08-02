@@ -19,6 +19,11 @@ const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/fea
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
 const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
+const placementRowsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/PlacementRows.tsx"), "utf8");
+const friendPlacementTablesSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendPlacementTables.tsx"),
+  "utf8"
+);
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -178,6 +183,31 @@ assert.match(
   synastryWheelSource,
   /export const SynastryWheel/u,
   "The deferred relationship module must own the synastry renderer."
+);
+assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*(?:FriendPlacementTable|SynastryPlacementsComparison)[^}]*\}\s+from\s+"\.\/components\/charts\/PlacementRows"/u,
+  "Friends-only placement tables must not remain static application-shell dependencies."
+);
+assert.equal(
+  [...appSource.matchAll(/import\("\.\/features\/friends\/FriendPlacementTables"\)/gu)].length,
+  2,
+  "Both Friends placement surfaces must load through their deferred feature boundary."
+);
+assert.doesNotMatch(
+  placementRowsSource,
+  /export function (?:FriendPlacementTable|SynastryPlacementsComparison)/u,
+  "The eager shared placement module must not contain Friends-only renderers."
+);
+assert.match(
+  friendPlacementTablesSource,
+  /export function FriendPlacementTable/u,
+  "The deferred Friends module must own the friend placement table."
+);
+assert.match(
+  friendPlacementTablesSource,
+  /export function SynastryPlacementsComparison/u,
+  "The deferred Friends module must own the synastry placement comparison."
 );
 assert.doesNotMatch(
   friendsStylesSource,
