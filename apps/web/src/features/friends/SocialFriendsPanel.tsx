@@ -295,12 +295,9 @@ export function SocialFriendsPanel({
   }, [onFriendsChange]);
 
   const refreshSocialData = useCallback(async () => {
-    const [nextProfile, nextRequests, loadedFriends, nextNotifications, nextInvitations] = await Promise.all([
+    const [nextProfile, loadedFriends] = await Promise.all([
       loadOwnSocialProfile(),
-      listSocialFriendRequests(),
-      listSocialFriends(),
-      listSocialNotifications(),
-      listSocialInvitations()
+      listSocialFriends()
     ]);
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
@@ -308,22 +305,20 @@ export function SocialFriendsPanel({
       : loadedFriends;
 
     setProfile(nextProfile);
-    setRequests(nextRequests);
-    setNotifications(nextNotifications);
-    setInvitations(nextInvitations);
     publishFriends(nextFriends);
-    onPendingRequestCountChange?.(
-      nextRequests.filter((request) => request.direction === "incoming").length
-    );
+    void Promise.all([
+      listSocialFriendRequests().then((nextRequests) => {
+        setRequests(nextRequests);
+        onPendingRequestCountChange?.(
+          nextRequests.filter((request) => request.direction === "incoming").length
+        );
+      }),
+      listSocialNotifications().then(setNotifications),
+      listSocialInvitations().then(setInvitations)
+    ]).catch(() => undefined);
 
     return nextFriends;
   }, [onPendingRequestCountChange, publishFriends]);
-
-  useEffect(() => {
-    if (activeView === "requests" && requestActivityCount === 0 && available === true) {
-      onSelectView("circle");
-    }
-  }, [activeView, available, onSelectView, requestActivityCount]);
 
   useEffect(() => {
     let cancelled = false;

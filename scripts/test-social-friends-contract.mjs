@@ -78,6 +78,11 @@ const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAut
 const phoneAuthValidationServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuthValidation.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
+const accountViewPath = path.join(repoRoot, "apps/web/src/features/account/AccountView.tsx");
+const memberSettingsViewPath = path.join(
+  repoRoot,
+  "apps/web/src/features/settings/MemberSettingsView.tsx"
+);
 const youPagePath = path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx");
 const socialFriendsPanelPath = path.join(repoRoot, "apps/web/src/features/friends/SocialFriendsPanel.tsx");
 const blockedAccountsSettingsPath = path.join(
@@ -114,6 +119,8 @@ const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
 const phoneAuthValidationService = fs.readFileSync(phoneAuthValidationServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
+const accountView = fs.readFileSync(accountViewPath, "utf8");
+const memberSettingsView = fs.readFileSync(memberSettingsViewPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
 const socialFriendsPanel = fs.readFileSync(socialFriendsPanelPath, "utf8");
 const blockedAccountsSettings = fs.readFileSync(blockedAccountsSettingsPath, "utf8");
@@ -293,22 +300,22 @@ assert.match(
   "The owner's derived natal projection must stay synchronized for accepted friends."
 );
 assert.match(
-  app,
+  accountView,
   /function AccountView[\s\S]*loadOwnSocialProfile\(\)[\s\S]*saveSocialHandle\(\{/,
   "The account page must load and save the member's social handle."
 );
 assert.match(
-  app,
+  accountView,
   /const handleDraftValid = socialHandleIsValid\(normalizedHandleDraft\)/,
   "Account handle editing must use the shared handle validation rules."
 );
 assert.match(
-  app,
+  accountView,
   /id="account-social-handle"/,
   "The account page must expose an accessible handle input."
 );
 assert.match(
-  app,
+  accountView,
   /Handle updated to @/,
   "Account handle editing must report a successful update."
 );
@@ -383,9 +390,9 @@ assert.match(
   "Accepted-friend removal must use a named confirmation dialog before revocation."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /saveSocialPrivacy[\s\S]*Private account[\s\S]*Hide your profile from Find Friends/,
-  "Account must expose and persist a private-discovery setting."
+  "Member settings must expose and persist a private-discovery setting."
 );
 assert.match(
   migration,
@@ -458,7 +465,7 @@ assert.match(
   "Settings must list and unblock accounts the member blocked."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /settings-group-label">Social[\s\S]*Private account[\s\S]*updateSettingsSubpageUrl\("blocked-accounts"\)[\s\S]*Review and manage people you have blocked/,
   "The Social Settings card must link to block management without listing blocked members."
 );
@@ -473,7 +480,7 @@ assert.doesNotMatch(
   "Blocked-account management must not remain on the Friends page."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /settingsSubpage === "blocked-accounts"[\s\S]*<BlockedAccountsSettings[\s\S]*onBack=/,
   "Signed-in Settings must route to the blocked-accounts subpage."
 );
@@ -488,12 +495,12 @@ assert.match(
   "The account endpoint must verify the session before deleting that exact authenticated user."
 );
 assert.match(
-  app,
+  accountView,
   /exportSocialAccountBundle\(\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
   "Account must provide a downloadable account-data export."
 );
 assert.match(
-  app,
+  accountView,
   /deleteConfirmation !== "DELETE"[\s\S]*deleteOwnAccount\(\)[\s\S]*Type <strong>DELETE<\/strong> to confirm/,
   "Account deletion must require explicit permanent-deletion confirmation."
 );

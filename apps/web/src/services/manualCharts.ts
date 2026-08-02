@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "./auth";
+import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
@@ -648,9 +648,9 @@ async function hasRemoteUser(userId: string) {
     return false;
   }
 
-  const { data } = await supabase.auth.getUser();
+  const user = await getVerifiedAuthUser(supabase);
 
-  return data.user?.id === userId;
+  return user?.id === userId;
 }
 
 async function listRemoteManualCharts(userId: string): Promise<ManualChart[]> {

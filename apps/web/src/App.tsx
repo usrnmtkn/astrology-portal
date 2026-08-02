@@ -14153,7 +14153,7 @@ export function App() {
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
-                    allowCachedChartsWhileLoading={!isAuthConfigured}
+                    allowCachedChartsWhileLoading={!isAuthConfigured || authAccountChecked}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
                     onOpenDetail={openSkyDetail}
                   />
@@ -17840,6 +17840,8 @@ function ManualChartsPanel({
     () => socialFriends.map(socialFriendToChart),
     [socialFriends]
   );
+  const socialFriendChartsRef = useRef(socialFriendCharts);
+  socialFriendChartsRef.current = socialFriendCharts;
   const allFriendCharts = useMemo(
     () => [...socialFriendCharts, ...charts],
     [charts, socialFriendCharts]
@@ -18872,8 +18874,7 @@ function ManualChartsPanel({
     if (!chartsReady) {
       const cachedCharts = listCachedManualCharts([
         chartOwnerUserId,
-        profile.id,
-        ...listLocalManualChartUserIds()
+        profile.id
       ]);
 
       if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
@@ -18893,8 +18894,7 @@ function ManualChartsPanel({
     if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
       const cachedCharts = listCachedManualCharts([
         chartOwnerUserId,
-        profile.id,
-        ...listLocalManualChartUserIds()
+        profile.id
       ]);
 
       if (cachedCharts.length > 0) {
@@ -18915,7 +18915,7 @@ function ManualChartsPanel({
           setSelectedChartId((currentId) => (
             currentId && (
               nextCharts.some((chart) => chart.id === currentId)
-              || socialFriendCharts.some((chart) => chart.id === currentId)
+              || socialFriendChartsRef.current.some((chart) => chart.id === currentId)
             )
               ? currentId
               : null
@@ -18938,7 +18938,7 @@ function ManualChartsPanel({
     return () => {
       cancelled = true;
     };
-  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id, socialFriendCharts]);
+  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
 
   useEffect(() => {
     if (!chartsReady || charts.length === 0) {
@@ -18952,73 +18952,79 @@ function ManualChartsPanel({
     }
 
     let cancelled = false;
+    const repairCharts = async () => {
+      const repairedCharts: ManualChart[] = [];
 
-    Promise.allSettled(chartsToRepair.map(async (chart) => {
-      const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
-      if (!birthLocation) {
-        return null;
-      }
-
-      if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
-        return null;
-      }
-
-      const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-      const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
-      const calculatedNatalChart = await getAstrodienstSky(
-        birthLocation,
-        birthDateTime
-      );
-      const natalChart = await natalSkyWithAspectPatternsForStorage(
-        calculatedNatalChart,
-        birthLocation,
-        birthDateTime,
-        !chart.birthTimeUnknown,
-        showFriendNatalAspectPatterns
-      );
-      const input: ManualChartInput = {
-        chartType: chart.chartType,
-        displayName: chart.displayName,
-        firstName: chart.firstName ?? null,
-        lastName: chart.lastName ?? null,
-        pronouns: chart.pronouns,
-        relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
-        birthDate: chart.birthDate,
-        birthTime: chart.birthTime,
-        birthTimeUnknown: chart.birthTimeUnknown,
-        birthPlace: chart.birthPlace,
-        birthLocation,
-        natalChart,
-        notes: chart.notes ?? null
-      };
-
-      return updateManualChart(chartOwnerUserId, chart.id, input);
-    }))
-      .then((results) => {
+      for (const chart of chartsToRepair) {
         if (cancelled) {
           return;
         }
 
-        const repairedCharts = results
-          .filter((result): result is PromiseFulfilledResult<ManualChart | null> => result.status === "fulfilled")
-          .map((result) => result.value)
-          .filter((chart): chart is ManualChart => Boolean(chart));
+        try {
+          const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
+          if (!birthLocation) {
+            continue;
+          }
 
-        if (repairedCharts.length === 0) {
-          return;
+          if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
+            continue;
+          }
+
+          const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+          const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
+          const calculatedNatalChart = await getAstrodienstSky(
+            birthLocation,
+            birthDateTime
+          );
+          const natalChart = await natalSkyWithAspectPatternsForStorage(
+            calculatedNatalChart,
+            birthLocation,
+            birthDateTime,
+            !chart.birthTimeUnknown,
+            showFriendNatalAspectPatterns
+          );
+          const input: ManualChartInput = {
+            chartType: chart.chartType,
+            displayName: chart.displayName,
+            firstName: chart.firstName ?? null,
+            lastName: chart.lastName ?? null,
+            pronouns: chart.pronouns,
+            relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+            birthDate: chart.birthDate,
+            birthTime: chart.birthTime,
+            birthTimeUnknown: chart.birthTimeUnknown,
+            birthPlace: chart.birthPlace,
+            birthLocation,
+            natalChart,
+            notes: chart.notes ?? null
+          };
+          const repairedChart = await updateManualChart(chartOwnerUserId, chart.id, input);
+
+          repairedCharts.push(repairedChart);
+        } catch {
+          // Keep incomplete charts usable while a background repair retries later.
         }
+      }
 
-        setCharts((currentCharts) => {
-          const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+      if (cancelled || repairedCharts.length === 0) {
+        return;
+      }
 
-          return currentCharts
-            .map((chart) => repairedById.get(chart.id) ?? chart)
-            .sort((first, second) => first.displayName.localeCompare(second.displayName));
-        });
+      setCharts((currentCharts) => {
+        const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+
+        return currentCharts
+          .map((chart) => repairedById.get(chart.id) ?? chart)
+          .sort((first, second) => first.displayName.localeCompare(second.displayName));
       });
+    };
+    const repairTimer = window.setTimeout(() => {
+      void repairCharts();
+    }, 1_500);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(repairTimer);
     };
   }, [chartOwnerUserId, charts, chartsReady]);
 
