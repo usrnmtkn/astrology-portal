@@ -135,8 +135,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const shouldLoadRelationships = mode === "friends" && relationshipContentRequested;/,
+  /const shouldLoadRelationships = mode === "friends" && friendProfileContentRequested;/,
   "Friends relationship and composite content must wait until a chart profile requests it."
+);
+assert.match(
+  appSource,
+  /const shouldLoadNatal = \["guest", "member", "profile"\]\.includes\(mode\)\s*\|\| \(mode === "friends" && friendProfileContentRequested\);/,
+  "Friends natal and You content must also wait until a chart profile requests it."
 );
 assert.doesNotMatch(
   appSource,
@@ -145,8 +150,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onRelationshipContentRequest\(\);/,
-  "Opening a Friends chart profile must request relationship content after the landing view is usable."
+  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onFriendProfileContentRequest\(\);/,
+  "Opening a Friends chart profile must request deferred natal and relationship content after the landing view is usable."
 );
 assert.match(
   appSource,
