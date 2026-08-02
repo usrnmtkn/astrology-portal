@@ -11,9 +11,9 @@ import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } fro
 import {
   NatalAspectPatternActivationsSection,
   NatalAspectPatternsSection,
-  resolvedNatalAspectPatternSectionLabel,
   type NatalAspectPatternsSectionStatus
 } from "./NatalAspectPatternsSection";
+import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 
