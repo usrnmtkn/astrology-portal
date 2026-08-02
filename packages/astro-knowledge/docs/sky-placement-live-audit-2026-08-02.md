@@ -128,3 +128,5 @@ Before rewriting the 35 Chiron/node placements, approve canonical point-through-
 - Run the cross-draft sameness audit on the whole wave.
 - Compare the draft with the current live copy and owner corpus before any row is replaced.
 - Promote only the individual write-ups the owner approves.
+
+The first six-card GPT-5.6 pilot and its prompt-leakage findings are documented in `sky-placement-rewrite-pilot-gpt-5.6-2026-08-02.md`.
