@@ -92,6 +92,7 @@ import type { RelationshipComparisonOption } from "./features/friends/Relationsh
 import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
+import type { FriendNatalAspectGroup as FriendNatalViewAspectGroup, FriendNatalEmptyHouseRow } from "./features/friends/FriendNatalTab";
 import {
   friendDetailRoutePath,
   friendsHashParts,
@@ -11284,9 +11285,9 @@ const SynastryWheel = lazy(() =>
   }))
 );
 
-const FriendPlacementTable = lazy(() =>
-  import("./features/friends/FriendPlacementTables").then((module) => ({
-    default: module.FriendPlacementTable
+const FriendNatalTab = lazy(() =>
+  import("./features/friends/FriendNatalTab").then((module) => ({
+    default: module.FriendNatalTab
   }))
 );
 
@@ -19082,6 +19083,57 @@ function ManualChartsPanel({
 
     return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
   }, [friendProfileWork.natal, selectedChart?.natalChart, selectedChartIsEvent]);
+  const selectedFriendEmptyHouseViewRows = useMemo<FriendNatalEmptyHouseRow[]>(() => {
+    const friendNatalChart = selectedChart?.natalChart;
+
+    if (!friendNatalChart || !selectedChart) {
+      return [];
+    }
+
+    return selectedFriendEmptyHouses.map((house) => {
+      const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
+      const title = emptyHouseTitle(house, friendNatalChart);
+
+      return {
+        house,
+        glyph: houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○",
+        title,
+        ariaLabel: `Read more about ${title}`,
+        description: emptyHouseCardDescription(
+          house,
+          friendNatalChart,
+          "friend",
+          selectedChart.displayName,
+          selectedChart.pronouns,
+          selectedFriendEmptyHouses
+        )
+      };
+    });
+  }, [selectedChart, selectedFriendEmptyHouses]);
+  const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
+    selectedFriendNatalAspectGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      aspects: group.aspects.map((aspect) => {
+        const normalized = normalizeNatalAspectSurface(aspect, {
+          ownerName: selectedChart?.displayName ?? "Friend",
+          ownerKind: selectedChartIsEvent ? "chart" : "person",
+          ownerPronouns: selectedChart?.pronouns
+        });
+        const renderedSection = normalized.sections[0];
+
+        return {
+          id: `${aspect.from}-${aspect.type}-${aspect.to}`,
+          from: aspect.from,
+          type: aspect.type,
+          to: aspect.to,
+          orb: aspect.orb,
+          title: renderedSection?.heading ?? `${selectedChart?.displayName ?? "Friend"}'s ${aspect.from} ${aspect.type} ${aspect.to}`,
+          summary: normalizedSurfacePreview(normalized)
+        };
+      })
+    }))
+  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedChartIsEvent, selectedFriendNatalAspectGroups]);
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;
@@ -19130,6 +19182,15 @@ function ManualChartsPanel({
       })),
       relatedAspects: article.relatedAspects
     });
+  };
+  const openFriendNatalAspectById = (aspectId: string) => {
+    const aspect = selectedFriendNatalAspectGroups
+      .flatMap((group) => group.aspects)
+      .find((candidate) => `${candidate.from}-${candidate.type}-${candidate.to}` === aspectId);
+
+    if (aspect) {
+      openFriendNatalAspectDetail(aspect);
+    }
   };
   const openFriendNatalAspectPatternDetail = (
     item: NatalAspectPatternReaderItem,
@@ -20340,142 +20401,23 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "natal" && (
-            <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
-              <div className="friend-profile-copy-column">
-                {selectedFriendNatalAspectPatternStatus && (
-                  <NatalAspectPatternsSection
-                    items={selectedFriendNatalAspectPatternItems}
-                    onOpenDetail={openFriendNatalAspectPatternDetail}
-                    status={selectedFriendNatalAspectPatternStatus}
-                    title={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
-                  />
-                )}
-                <span className="eyebrow section-label friend-section-label">Big three</span>
-                <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
-                  {selectedFriendBigThreeDisplayRows.map((row) => {
-                    const title = row.label === "Ascendant"
-                      ? `Ascendant in ${row.sign}`
-                      : placementTitleFromParts(row.label, row.sign, row.retrograde);
-                    const body = selectedChart.birthTimeUnknown && row.label === "Ascendant"
-                      ? ""
-                      : friendPlacementDescription(row.label, row.sign);
-                    const canOpenDetail = Boolean(selectedChart.natalChart && !row.sign.toLowerCase().includes("pending"));
-
-                    return (
-                      <PlacementTableRow
-                        asButton={canOpenDetail}
-                        description={body}
-                        dignity={dignitiesFor(row.label, row.sign, "they")}
-                        glyph={row.glyph}
-                        key={row.id}
-                        onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}
-                        pointName={row.label}
-                        retrograde={row.retrograde}
-                        sign={row.sign}
-                        title={title}
-                        variant="friend"
-                      />
-                    );
-                  })}
-                </div>
-                {selectedChart.natalChart && (
-                  <>
-                    <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}</span>
-                    <FriendPlacementTable
-                      title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
-                      rows={selectedFriendNatalPlacementRows}
-                      descriptionContext={selectedChartIsEvent ? "chart" : "person"}
-                      generatedContent={relationshipGeneratedContent}
-                      generatedContext="natal"
-                      onPlacementClick={openFriendNatalPlacementDetail}
-                      ownerName={selectedChart.displayName}
-                      showTitle={false}
-                    />
-                    {selectedFriendEmptyHouses.length > 0 && (
-                      <>
-                        <span className="eyebrow section-label friend-section-label">Empty houses</span>
-                        <div className="list you-list-card planet-placement-list" aria-label={`${selectedChart.displayName} empty houses`}>
-                          {selectedFriendEmptyHouses.map((house) => {
-                            const friendNatalChart = selectedChart.natalChart;
-
-                            if (!friendNatalChart) {
-                              return null;
-                            }
-
-                            const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
-
-                            return (
-                              <PlacementTableRow
-                                ariaLabel={`Read more about ${emptyHouseTitle(house, friendNatalChart)}`}
-                                asButton
-                                description={emptyHouseCardDescription(
-                                  house,
-                                  friendNatalChart,
-                                  "friend",
-                                  selectedChart.displayName,
-                                  selectedChart.pronouns,
-                                  selectedFriendEmptyHouses
-                                )}
-                                glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
-                                house={house}
-                                key={`friend-empty-house-${house}`}
-                                onClick={() => openFriendEmptyHouseDetail(house)}
-                                title={emptyHouseTitle(house, friendNatalChart)}
-                                variant="friend"
-                              />
-                            );
-                          })}
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
-                {selectedFriendNatalAspectGroups.length ? (
-                  <>
-                    {selectedFriendNatalAspectGroups.map((group) => (
-                      <AspectGiftLessonGroup
-                        ariaLabel={`${selectedChart.displayName} natal aspect ${group.label}`}
-                        key={group.key}
-                        label={group.label}
-                        listAriaLabel={`${selectedChart.displayName} natal ${group.label.toLowerCase()}`}
-                        listClassName="friend-aspect-list friend-natal-aspects-list"
-                      >
-                        {group.aspects.map((aspect) => {
-                          const normalized = normalizeNatalAspectSurface(aspect, {
-                            ownerName: selectedChart.displayName,
-                            ownerKind: selectedChartIsEvent ? "chart" : "person",
-                            ownerPronouns: selectedChart.pronouns
-                          });
-                          const renderedSection = normalized.sections[0];
-                          const rowSummary = normalizedSurfacePreview(normalized);
-                          const title = renderedSection?.heading ?? `${selectedChart.displayName}'s ${aspect.from} ${aspect.type} ${aspect.to}`;
-
-                          return (
-                            <button
-                              aria-label={`Open full entry for ${title}`}
-                              className="aspect-row aspect-row-button friend-aspect-row"
-                              key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                              onClick={() => openFriendNatalAspectDetail(aspect)}
-                              type="button"
-                            >
-                              <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                              <span className="aspect-row-copy">
-                                <h3>{title}</h3>
-                                {rowSummary ? <p>{rowSummary}</p> : null}
-                              </span>
-                              <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                                <span className="aspect-row-dot" aria-hidden="true" />
-                                <span>{wholeDegreeOrb(aspect.orb)}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </AspectGiftLessonGroup>
-                    ))}
-                  </>
-                ) : null}
-              </div>
-            </div>
+            <FriendNatalTab
+              aspectGroups={selectedFriendNatalAspectViewGroups}
+              bigThreeRows={selectedFriendBigThreeDisplayRows}
+              birthTimeUnknown={selectedChart.birthTimeUnknown}
+              emptyHouseRows={selectedFriendEmptyHouseViewRows}
+              friendName={selectedChart.displayName}
+              hasNatalChart={Boolean(selectedChart.natalChart)}
+              isEventChart={Boolean(selectedChartIsEvent)}
+              onOpenAspect={openFriendNatalAspectById}
+              onOpenEmptyHouse={openFriendEmptyHouseDetail}
+              onOpenPattern={openFriendNatalAspectPatternDetail}
+              onOpenPlacement={openFriendNatalPlacementDetail}
+              patternItems={selectedFriendNatalAspectPatternItems}
+              patternStatus={selectedFriendNatalAspectPatternStatus}
+              patternTitle={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
+              placementRows={selectedFriendNatalPlacementRows}
+            />
           )}
 
           {friendProfileTab === "transits" && (
