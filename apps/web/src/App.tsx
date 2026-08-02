@@ -171,16 +171,22 @@ import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from 
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
+  comparisonPointsFromSky,
   comparisonPointRole,
   natalElementBalance,
   normalizedAngle,
   relationshipCompositeSky,
+  synastryAspectOrbLimit,
+  synastryContactScore,
+  synastryContactSignalTier,
+  synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
   zodiacLongitude,
   zodiacSignForLongitude,
   zodiacSignGlyphs,
-  zodiacSigns
+  zodiacSigns,
+  type ComparisonPoint
 } from "./services/chartMath";
 import {
   readCachedSkySnapshot,
@@ -440,13 +446,6 @@ type FriendTimingContext = {
   lordOfYear: string;
   chartRuler?: string;
   activeNatalPlanetsInProfectedSign?: string[];
-};
-
-type ComparisonPoint = {
-  name: string;
-  glyph: string;
-  longitude: number;
-  role: string;
 };
 
 type SynastryContact = {
@@ -9636,122 +9635,6 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   return highlights.slice(0, 3);
 }
 
-const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
-const synastryAngles = new Set(["ascendant", "midheaven"]);
-const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
-
-function synastryPointKey(point: string) {
-  return normalizeContentIdPart(point);
-}
-
-function isSynastryPersonalOrAngle(point: string) {
-  const key = synastryPointKey(point);
-  return synastryPersonalPoints.has(key) || synastryAngles.has(key);
-}
-
-function isSameSocialOrOuterSynastryContact(firstPoint: string, secondPoint: string) {
-  const firstKey = synastryPointKey(firstPoint);
-  const secondKey = synastryPointKey(secondPoint);
-  return firstKey === secondKey && synastrySocialOuterPoints.has(firstKey);
-}
-
-function synastryAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
-  const baseLimits: Record<string, number> = {
-    conjunction: 4,
-    opposition: 3.5,
-    square: 3.5,
-    trine: 3,
-    sextile: 2.5
-  };
-  const baseLimit = baseLimits[aspect] ?? 3;
-  const firstIsPersonalOrAngle = isSynastryPersonalOrAngle(firstPoint);
-  const secondIsPersonalOrAngle = isSynastryPersonalOrAngle(secondPoint);
-
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return Math.min(baseLimit, 1.25);
-  }
-
-  if (firstIsPersonalOrAngle && secondIsPersonalOrAngle) {
-    return baseLimit + 0.5;
-  }
-
-  if (firstIsPersonalOrAngle || secondIsPersonalOrAngle) {
-    return baseLimit;
-  }
-
-  return Math.min(baseLimit, 2);
-}
-
-function synastryWheelAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
-  const listLimit = synastryAspectOrbLimit(aspect, firstPoint, secondPoint);
-
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return listLimit;
-  }
-
-  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
-    return Math.max(listLimit, 4.5);
-  }
-
-  return listLimit;
-}
-
-function synastryContactSignalTier(firstPoint: string, secondPoint: string) {
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return "background";
-  }
-
-  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
-    return "primary";
-  }
-
-  if ([firstPoint, secondPoint].includes("Saturn")) {
-    return "secondary";
-  }
-
-  return "background";
-}
-
-function synastryWheelAspectLines(profileNatalSky: SkySnapshot | null, chart: ManualChart): InterChartAspectLine[] {
-  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
-  const yourPoints = comparisonPointsFromSky(profileNatalSky);
-
-  return friendPoints
-    .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
-      const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryWheelAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      if (!aspect) {
-        return [];
-      }
-
-      return [{
-        id: `${chart.id}-wheel-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
-        fromLongitude: friendPoint.longitude,
-        toLongitude: yourPoint.longitude,
-        type: aspect.type,
-        orb: aspect.orbValue,
-        fromPointId: `outer:${friendPoint.name}`,
-        toPointId: `inner:${yourPoint.name}`,
-        score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue)
-      }];
-    }))
-    .sort((first, second) => second.score - first.score || first.orb - second.orb)
-    .slice(0, 18)
-    .map(({ id, fromLongitude, toLongitude, type, orb, fromPointId, toPointId }) => ({
-      id,
-      fromLongitude,
-      toLongitude,
-      type,
-      orb,
-      fromPointId,
-      toPointId
-    }));
-}
-
 function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot | null, transits: TransitItem[]): InterChartAspectLine[] {
   if (!natalSky) {
     return [];
@@ -9830,70 +9713,6 @@ function houseOverlayConcreteExamples(house: number) {
   };
 
   return examples[house] ?? houseLifeAreas[house] ?? "the concrete details of this house";
-}
-
-function synastryPointWeight(point: string) {
-  const weights: Record<string, number> = {
-    Sun: 18,
-    Moon: 22,
-    Ascendant: 22,
-    Midheaven: 14,
-    Venus: 18,
-    Mars: 18,
-    Saturn: 17,
-    Mercury: 13,
-    Jupiter: 12,
-    Pluto: 11,
-    Neptune: 9,
-    Uranus: 9,
-    "North Node": 20,
-    "True Node": 20
-  };
-
-  return weights[point] ?? 6;
-}
-
-function synastryAspectWeight(aspect: string) {
-  const weights: Record<string, number> = {
-    conjunction: 26,
-    opposition: 18,
-    square: 18,
-    trine: 14,
-    sextile: 10
-  };
-
-  return weights[aspect] ?? 6;
-}
-
-function synastryOrbWeight(orb: number) {
-  if (orb <= 0.5) return 30;
-  if (orb <= 1) return 24;
-  if (orb <= 2) return 16;
-  if (orb <= 3) return 10;
-  return 4;
-}
-
-function synastryContactScore(friendPoint: string, yourPoint: string, aspect: string, orb: number) {
-  const signalTier = synastryContactSignalTier(friendPoint, yourPoint);
-  const sameSocialOrOuterPoint = signalTier === "background" && isSameSocialOrOuterSynastryContact(friendPoint, yourPoint);
-  const personalPairBonus = ["Sun", "Moon", "Mercury", "Venus", "Mars"].includes(friendPoint)
-    && ["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant"].includes(yourPoint)
-    ? 12
-    : 0;
-  const saturnBondBonus = [friendPoint, yourPoint].includes("Saturn") && !sameSocialOrOuterPoint ? 5 : 0;
-  const angleBonus = [friendPoint, yourPoint].some((point) => ["Ascendant", "Midheaven"].includes(point)) ? 8 : 0;
-  const signalBonus = signalTier === "primary" ? 14 : signalTier === "secondary" ? 5 : 0;
-  const generationalContextPenalty = sameSocialOrOuterPoint ? 32 : 0;
-
-  return synastryOrbWeight(orb)
-    + synastryAspectWeight(aspect)
-    + synastryPointWeight(friendPoint)
-    + synastryPointWeight(yourPoint)
-    + personalPairBonus
-    + saturnBondBonus
-    + angleBonus
-    + signalBonus
-    - generationalContextPenalty;
 }
 
 function synastryAspectPhrase(aspect: string) {
@@ -10072,41 +9891,6 @@ function richSynastryContactContentKeys(
   return pairKeys.flatMap((pairKey) => (
     contextKeys.map((contextKey) => `fallback-hook/friends.synastry-contact/${pairKey}/${contextKey}`)
   ));
-}
-
-function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
-  if (!sky) {
-    return [];
-  }
-
-  const points = sky.positions
-    .filter((position) => position.planet !== "North Node" && position.planet !== "True Node")
-    .map((position) => ({
-      name: position.planet,
-      glyph: position.glyph,
-      longitude: zodiacLongitude(position),
-      role: comparisonPointRole(position.planet)
-    }));
-
-  if (typeof sky.ascendantLongitude === "number") {
-    points.push({
-      name: "Ascendant",
-      glyph: "Asc",
-      longitude: normalizedAngle(sky.ascendantLongitude),
-      role: comparisonPointRole("Ascendant")
-    });
-  }
-
-  if (typeof sky.midheavenLongitude === "number") {
-    points.push({
-      name: "Midheaven",
-      glyph: "MC",
-      longitude: normalizedAngle(sky.midheavenLongitude),
-      role: comparisonPointRole("Midheaven")
-    });
-  }
-
-  return points;
 }
 
 function synastryTone(aspect: string) {
