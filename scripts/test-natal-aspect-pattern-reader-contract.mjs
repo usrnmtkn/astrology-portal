@@ -12,6 +12,7 @@ function read(relativePath) {
 const app = read("apps/web/src/App.tsx");
 const page = read("apps/web/src/features/you/YouPage.tsx");
 const component = read("apps/web/src/features/you/NatalAspectPatternsSection.tsx");
+const labels = read("apps/web/src/features/you/natalAspectPatternLabels.ts");
 const chartPatternPill = read("apps/web/src/features/friends/ChartPatternPill.tsx");
 const friendChartsList = read("apps/web/src/features/friends/FriendChartsList.tsx");
 const socialFriendsPanel = read("apps/web/src/features/friends/SocialFriendsPanel.tsx");
@@ -122,10 +123,10 @@ assert.match(page, /natalAspectPatternDetailArticle/, "Full pattern copy must re
 assert.match(page, /bodyBeforeSections:\s*true,[\s\S]*body:\s*\[copy\.overview\]/, "The pattern detail reader must begin with the main write-up before its titled sections.");
 assert.match(page, /copy\.sections/, "The detail reader must consume resolved pattern sections.");
 assert.match(page, /resolvedNatalAspectPatternSectionLabel\(section\)/, "Reader labels should map section IDs to human labels.");
-assert.doesNotMatch(component, /replace\(\/_\/g, " "\)/, "Reader must never render a raw section id as a heading.");
+assert.doesNotMatch(labels, /replace\(\/_\/g, " "\)/, "Reader must never render a raw section id as a heading.");
 assert.match(page, /Boolean\(section\.body && section\.heading\)/, "Sections without an approved reader label must not render in the detail reader.");
 assert.match(component, /section\.id !== "timing" && activationSectionLabel\(section\.id\)/, "Activation sections without an approved reader label must not render at all.");
-assert.match(component, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
+assert.match(labels, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
 assert.match(types, /aspectPatterns\?: import\("@tldr\/astro-knowledge\/aspect-pattern-engine"\)\.AspectPatternDetectionResult/, "SkySnapshot must carry canonical aspect pattern data.");
 assert.match(styles, /natal-patterns-section/);
 assert.match(styles, /natal-pattern-card__details-button/);

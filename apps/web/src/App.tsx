@@ -111,11 +111,7 @@ import {
   manualChartFormFromChart,
   type ManualChartForm
 } from "./features/friends/manualChartForm";
-import {
-  NatalAspectPatternActivationsSection,
-  NatalAspectPatternsSection,
-  resolvedNatalAspectPatternSectionLabel
-} from "./features/you/NatalAspectPatternsSection";
+import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import {
   calendarEventGeneratedContentKeys,
@@ -11361,6 +11357,18 @@ const GeneratedContentAdminDashboard = lazy(() =>
 const YouPage = lazy(() =>
   import("./features/you/YouPage").then((module) => ({
     default: module.YouPage
+  }))
+);
+
+const NatalAspectPatternsSection = lazy(() =>
+  import("./features/you/NatalAspectPatternsSection").then((module) => ({
+    default: module.NatalAspectPatternsSection
+  }))
+);
+
+const NatalAspectPatternActivationsSection = lazy(() =>
+  import("./features/you/NatalAspectPatternsSection").then((module) => ({
+    default: module.NatalAspectPatternActivationsSection
   }))
 );
 
