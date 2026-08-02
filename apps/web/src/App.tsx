@@ -96,7 +96,6 @@ import {
   type SignupTimeParts
 } from "./features/auth/signupModel";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
-import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import type { RelationshipCompareStatus } from "./features/friends/RelationshipApiSummary";
 import type { FriendNatalChartViewMode } from "./features/friends/FriendNatalViewControl";
 import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
@@ -121,9 +120,11 @@ import {
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
 import {
   apiSubjectFromManualChart,
+  buildFriendChartListItems,
+  buildRelationshipComparisonOptions,
   groupFriendNatalAspects,
   isSocialBigThreeRow,
-  manualChartSubtitle,
+  manualChartBigThree,
   planetPositionFromSocialRow
 } from "./features/friends/friendChartModel";
 import { useManualChartsController } from "./features/friends/useManualChartsController";
@@ -235,7 +236,6 @@ import {
 } from "./services/generatedContentKeys";
 import {
   listLocalManualChartUserIds,
-  manualChartNeedsBirthTime,
   migrateLocalManualChartsToRemote
 } from "./services/manualCharts";
 import type { ManualChart } from "./services/manualCharts";
@@ -261,7 +261,6 @@ import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
   natalAspectPatternActivationEnabled,
-  natalAspectPatternPillSummary,
   natalAspectPatternReaderEnabled,
   natalAspectPatternReaderItems,
   natalAspectPatternReaderStatus,
@@ -287,6 +286,7 @@ import {
 import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
+import { natalBigThreeFromSky, zodiacFromBirthDate } from "./services/chartProfile";
 import {
   compareRelationship,
   getPersonalTiming,
@@ -2891,51 +2891,6 @@ function profileForAuthAccount(profile: UserProfile, account: AuthAccount): User
   };
 }
 
-function zodiacFromBirthDate(value: string) {
-  const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const slashMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  const monthValue = isoMatch?.[2] ?? slashMatch?.[1] ?? "";
-  const dayValue = isoMatch?.[3] ?? slashMatch?.[2] ?? "";
-  const month = Number(monthValue);
-  const day = Number(dayValue);
-
-  if (!month || !day) {
-    return "Gemini";
-  }
-
-  const signStarts = [
-    { sign: "Capricorn", month: 1, day: 1 },
-    { sign: "Aquarius", month: 1, day: 20 },
-    { sign: "Pisces", month: 2, day: 19 },
-    { sign: "Aries", month: 3, day: 21 },
-    { sign: "Taurus", month: 4, day: 20 },
-    { sign: "Gemini", month: 5, day: 21 },
-    { sign: "Cancer", month: 6, day: 21 },
-    { sign: "Leo", month: 7, day: 23 },
-    { sign: "Virgo", month: 8, day: 23 },
-    { sign: "Libra", month: 9, day: 23 },
-    { sign: "Scorpio", month: 10, day: 23 },
-    { sign: "Sagittarius", month: 11, day: 22 },
-    { sign: "Capricorn", month: 12, day: 22 }
-  ];
-
-  return signStarts.reduce((currentSign, item) => (
-    month > item.month || (month === item.month && day >= item.day) ? item.sign : currentSign
-  ), "Capricorn");
-}
-
-function planetSignFromSky(sky: SkySnapshot, planet: string) {
-  return sky.positions.find((position) => position.planet === planet)?.sign ?? "";
-}
-
-function natalBigThreeFromSky(sky: SkySnapshot, unknownBirthTime: boolean) {
-  return {
-    sun: planetSignFromSky(sky, "Sun") || sky.positions[0]?.sign || "Sun pending",
-    moon: planetSignFromSky(sky, "Moon") || "Moon pending",
-    rising: unknownBirthTime ? "Rising pending" : sky.ascendant
-  };
-}
-
 function validChartBirthDate(chart?: UserChart) {
   const value = chart?.birthDate?.trim() ?? "";
 
@@ -2970,73 +2925,6 @@ function formatProfileBirthDate(value: string) {
   const { month, day, year } = splitSignupBirthDate(value);
 
   return month && day && year ? `${month}/${day}/${year}` : value;
-}
-
-function manualChartBigThree(chart: ManualChart) {
-  if (!chart.natalChart) {
-    return {
-      sun: zodiacFromBirthDate(chart.birthDate),
-      moon: "Moon pending",
-      rising: chart.birthTimeUnknown ? "Rising pending" : "Rising pending"
-    };
-  }
-
-  return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
-}
-
-function nextManualChartBirthday(chart: ManualChart, currentDateValue: string) {
-  const [, rawYear = "", rawMonth = "", rawDay = ""] = chart.birthDate.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-  const currentDate = new Date(currentDateValue);
-
-  if (chart.chartType === "event" || !rawYear || Number.isNaN(currentDate.getTime())) {
-    return null;
-  }
-
-  const month = Number(rawMonth);
-  const day = Number(rawDay);
-  const currentDay = localDayStart(currentDate);
-  let birthday = new Date(currentDay.getFullYear(), month - 1, day);
-
-  if (birthday.getTime() < currentDay.getTime()) {
-    birthday = new Date(currentDay.getFullYear() + 1, month - 1, day);
-  }
-
-  const daysUntil = Math.round((birthday.getTime() - currentDay.getTime()) / 86_400_000);
-
-  return {
-    chart,
-    date: birthday,
-    daysUntil
-  };
-}
-
-function upcomingBirthdayChiclet(charts: ManualChart[], currentDateValue: string) {
-  const birthdays = charts.flatMap((chart) => {
-    const birthday = nextManualChartBirthday(chart, currentDateValue);
-
-    return birthday && birthday.daysUntil >= 0 && birthday.daysUntil < 35 ? [birthday] : [];
-  });
-
-  return birthdays.sort((first, second) => first.daysUntil - second.daysUntil)[0] ?? null;
-}
-
-function birthdayCountdownLabel(daysUntil: number) {
-  if (daysUntil === 0) {
-    return "today";
-  }
-
-  if (daysUntil === 1) {
-    return "tomorrow";
-  }
-
-  return `in ${daysUntil} days`;
-}
-
-function birthdayDateLabel(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric"
-  }).format(date);
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -16418,29 +16306,13 @@ function ManualChartsPanel({
     [natalGeneratedContent, relationshipGeneratedContent]
   );
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
-  const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
-    const selfInitials = profileInitials(profile.name, profile.email);
-    const selfOption: RelationshipComparisonOption = {
-      id: "self",
-      displayName: "You",
-      initials: selfInitials,
-      subtitle: profileNatalSky ? "Your birth chart" : "Birth chart pending",
-      natalChart: profileNatalSky,
-      isSelf: true
-    };
-    const chartOptions = allFriendCharts
-      .filter((chart) => chart.id !== selectedChart?.id && chart.chartType !== "event")
-      .map((chart) => ({
-        id: chart.id,
-        displayName: chart.displayName,
-        initials: profileInitials(chart.displayName, chart.displayName),
-        subtitle: manualChartSubtitle(chart),
-        natalChart: chart.natalChart ?? null,
-        isSelf: false
-      }));
-
-    return [selfOption, ...chartOptions];
-  }, [allFriendCharts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
+  const relationshipComparisonOptions = useMemo(() => buildRelationshipComparisonOptions({
+    allFriendCharts,
+    profileEmail: profile.email,
+    profileName: profile.name,
+    profileNatalSky,
+    selectedChartId: selectedChart?.id ?? null
+  }), [allFriendCharts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
   const selectedRelationshipComparison = relationshipComparisonOptions.find((option) => option.id === relationshipComparisonChartId) ?? relationshipComparisonOptions[0];
   const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
@@ -17412,22 +17284,11 @@ function ManualChartsPanel({
   ]);
   const isLoadingCharts = status === "loading";
   const friendChartListItems = useMemo(
-    () => charts.map((chart) => {
-      const bigThree = manualChartBigThree(chart);
-
-      return {
-        chart,
-        initials: profileInitials(chart.displayName, chart.displayName),
-        sun: bigThree.sun,
-        moon: bigThree.moon,
-        rising: bigThree.rising,
-        needsBirthTime: manualChartNeedsBirthTime(chart),
-        active: selectedChart?.id === chart.id,
-        patternSummary: showFriendNatalAspectPatterns && chart.chartType === "person"
-          ? natalAspectPatternPillSummary(chart.natalChart)
-          : null
-      };
-    }),
+    () => buildFriendChartListItems(
+      charts,
+      selectedChart?.id ?? null,
+      showFriendNatalAspectPatterns
+    ),
     [charts, selectedChart?.id, showFriendNatalAspectPatterns]
   );
   useEffect(() => {
