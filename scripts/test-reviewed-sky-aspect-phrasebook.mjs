@@ -66,16 +66,16 @@ for (const row of canonicalMatrix.aspects) {
   const nodeResult = renderNodeSkyAspectCard(facts);
   const browserResult = browserRenderer.renderSkyAspectCard(facts);
 
-  assert.ok(nodeResult.body, `${row.key} must resolve through reviewed or template fallback copy`);
-  assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node fallback copy diverged`);
+  assert.ok(nodeResult.body, `${row.key} must remain available to non-reader fallback tooling`);
+  assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node fallback tooling diverged`);
 }
 
 const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
-assert.match(appSource, /function fallbackSkyAspectWritingSection\(/u);
-assert.match(appSource, /rendered\.contentKey \?\? rendered\.templateKey/u);
-assert.match(appSource, /generatedSection \? null : fallbackSkyAspectWritingSection\(aspect, positions\)/u);
-assert.doesNotMatch(appSource, /All calculated aspects/u);
-assert.doesNotMatch(appSource, /Facts only/u);
+assert.doesNotMatch(appSource, /function (?:fallback|reviewed)SkyAspectWritingSection\(/u);
+assert.match(appSource, /const sections = generatedSection \? \[generatedSection\] : \[\]/u);
+assert.match(appSource, /All calculated aspects/u);
+assert.match(appSource, /Facts only/u);
+assert.match(appSource, /calculatedOnlyAspects/u);
 
 const runtimeSource = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3Runtime.ts", import.meta.url), "utf8");
 assert.match(runtimeSource, /source-rows\/sky-aspect-phrasebook-v1\.json/u);

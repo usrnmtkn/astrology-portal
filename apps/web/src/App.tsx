@@ -681,6 +681,7 @@ function skyDetailHasReaderFacingMainBody(detail: SkyDetail) {
 }
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
+type SkyAspectContentStatus = "idle" | "loading" | "ready";
 type CalendarContentStatus = "idle" | "loading" | "ready";
 type CalendarContentRequest = { cacheKey: string; contentKeys: string[] };
 type CalendarContentCacheEntry = {
@@ -5619,48 +5620,6 @@ function generatedSkyAspectWritingSection(
   };
 }
 
-function fallbackSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
-): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizeContentIdPart(aspect.type),
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")
-        ? "reviewed-sky-aspect-phrasebook-v1"
-        : "fallback-architecture-v3",
-      sourceKeys: [rendered.contentKey ?? rendered.templateKey],
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -5681,8 +5640,7 @@ function normalizeSkyAspectSurface(
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = generatedSection ? null : fallbackSkyAspectWritingSection(aspect, positions);
-  const sections = generatedSection ? [generatedSection] : fallbackSection ? [fallbackSection] : [];
+  const sections = generatedSection ? [generatedSection] : [];
 
   return {
     surface: "sky-aspect",
@@ -12333,6 +12291,7 @@ export function App() {
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
+  const [skyAspectContentStatus, setSkyAspectContentStatus] = useState<SkyAspectContentStatus>(initialCachedSky ? "loading" : "idle");
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
   const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
@@ -12797,12 +12756,14 @@ export function App() {
 
     if (!shouldLoadSkyGenerated || !sky) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
+      setSkyAspectContentStatus("idle");
       return () => {
         cancelled = true;
       };
     }
 
     if (mode === "calendar") {
+      setSkyAspectContentStatus("idle");
       setCalendarContentStatus("loading");
 
       if (!calendarContentRequest) {
@@ -12862,6 +12823,7 @@ export function App() {
     }
 
     setSkyGeneratedContent(normalizedSkySnapshotContent);
+    setSkyAspectContentStatus("loading");
 
     const aspectContentKeys = sky.aspects.flatMap((aspect) => {
       const firstSign = skyAspectPosition(aspect.from, sky.positions)?.sign;
@@ -12897,10 +12859,14 @@ export function App() {
       .then((content) => {
         if (!cancelled) {
           setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          setSkyAspectContentStatus("ready");
         }
       })
       .catch((error) => {
-        console.warn("Current Sky interpretations failed to load; approved fallback copy remains available.", error);
+        console.warn("Current Sky aspect interpretations failed to load; factual aspects remain available.", error);
+        if (!cancelled) {
+          setSkyAspectContentStatus("ready");
+        }
       });
 
     return () => {
@@ -14874,6 +14840,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={[]}
                       onOpenDetail={openSkyDetail}
                     />
@@ -14884,6 +14851,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={userLifeAreaFocus}
                       onOpenDetail={openSkyDetail}
                     />
@@ -16637,6 +16605,7 @@ function TodayView({
   aspects,
   generatedAt,
   generatedContent,
+  aspectContentStatus,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -16644,6 +16613,7 @@ function TodayView({
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  aspectContentStatus: SkyAspectContentStatus;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -16665,6 +16635,7 @@ function TodayView({
           positions={positions}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
+          contentStatus={aspectContentStatus}
           onOpenDetail={onOpenDetail}
         />
       )}
@@ -16688,18 +16659,31 @@ function ActiveAspects({
   positions,
   generatedAt,
   generatedContent,
+  contentStatus,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  contentStatus: SkyAspectContentStatus;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const aspectGroups = useMemo(
     () => groupAspectsByGiftLesson(aspects, (aspect) => aspect.type, (aspect) => aspect.orb),
     [aspects]
   );
+
+  if (contentStatus === "loading") {
+    return (
+      <SkyAspectsSection>
+        <div className="sky-aspect-content-loading" role="status" aria-label="Loading aspect write-ups">
+          <SkyLoadingCard compact />
+          <SkyLoadingCard compact />
+        </div>
+      </SkyAspectsSection>
+    );
+  }
 
   const visibleAspectGroups = aspectGroups
     .map((group) => ({
@@ -16712,6 +16696,12 @@ function ActiveAspects({
         .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
+  const editorialAspectIds = new Set(
+    visibleAspectGroups.flatMap((group) => group.aspects.map(({ aspect }) => aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`))
+  );
+  const calculatedOnlyAspects = aspects.filter((aspect) => (
+    !editorialAspectIds.has(aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`)
+  ));
 
   return (
     <SkyAspectsSection>
@@ -16754,6 +16744,43 @@ function ActiveAspects({
           })}
         </SkyAspectGroup>
       ))}
+      {calculatedOnlyAspects.length > 0 ? (
+        <details className="calculated-aspects-disclosure">
+          <summary>
+            <span>All calculated aspects ({calculatedOnlyAspects.length})</span>
+            <span className="calculated-aspects-disclosure__hint">Facts only</span>
+          </summary>
+          <div className="aspects-card aspect-row-card calculated-aspects-card">
+            <div className="aspect-row-list">
+              {calculatedOnlyAspects.map((aspect) => {
+                const first = skyAspectPosition(aspect.from, positions);
+                const second = skyAspectPosition(aspect.to, positions);
+                const exactDate = skyPlacementAspectExactDate(aspect, generatedAt, positions);
+
+                return (
+                  <div
+                    className="aspect-row aspect-row-static calculated-aspect-row"
+                    key={aspect.id ?? `${aspect.from}-${aspect.type}-${aspect.to}`}
+                  >
+                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                    <div className="aspect-row-copy">
+                      <h3>{`${aspect.from} ${aspect.type} ${aspect.to}`}</h3>
+                      <span className="calculated-aspect-row__facts">
+                        {first && second
+                          ? `${first.planet} in ${first.sign} · ${second.planet} in ${second.sign}`
+                          : `${aspect.from} · ${aspect.to}`}
+                      </span>
+                      <span className="calculated-aspect-row__facts">
+                        {`${wholeDegreeOrb(aspect.orb)} orb · Exact ${exactDate}`}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </details>
+      ) : null}
     </SkyAspectsSection>
   );
 }
