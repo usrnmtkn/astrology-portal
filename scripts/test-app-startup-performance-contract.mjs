@@ -29,6 +29,10 @@ const relationshipApiSummarySource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/RelationshipApiSummary.tsx"),
   "utf8"
 );
+const manualChartFormSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
+  "utf8"
+);
 const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/SettingsControls.tsx"), "utf8");
 const citySearchSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/CitySearchField.tsx"), "utf8");
 const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
@@ -306,6 +310,16 @@ assert.match(
   relationshipApiSummarySource,
   /export function RelationshipApiSummary/u,
   "The deferred Friends module must own relationship API presentation."
+);
+assert.doesNotMatch(
+  appSource,
+  /const chartFormCopy/u,
+  "Friends chart-form copy must not remain owned by the application shell."
+);
+assert.match(
+  manualChartFormSource,
+  /export const manualChartFormCopy/u,
+  "The Friends form model must own its chart-type copy."
 );
 assert.doesNotMatch(
   friendsStylesSource,
