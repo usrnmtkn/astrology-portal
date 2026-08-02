@@ -50,10 +50,10 @@ type AdminDashboardPage =
   | "aspectDiagnostics"
   | "users"
   | "releaseNotes";
-type AdminContentClass = "phrasebank" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
+type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
-type AdminContentRole = "authored-content" | "fallback-output" | "fallback-helper" | "source-material" | "legacy-generated" | "unknown";
-type AdminContentSystemFilter = "all" | "authored" | "fallback";
+type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "source-material" | "legacy-generated" | "unknown";
+type AdminContentSystemFilter = "all" | "authored" | "generated" | "fallback";
 type AdminReaderReadinessKey = "reader-ready" | "draft-held" | "reference-held" | "review-held" | "fallback-needed" | "needs-source-material";
 type AdminFallbackCompositionDiagnostic = {
   title: string;
@@ -293,6 +293,7 @@ const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "appro
 const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
   { key: "all", label: "All classes" },
   { key: "phrasebank", label: "Authored app copy" },
+  { key: "generated", label: "Generated prose" },
   { key: "fallback-hook", label: "Fallback hooks" },
   { key: "vocab", label: "Fallback source phrases" },
   { key: "reference", label: "Source material" },
@@ -343,6 +344,7 @@ const articlePointFilters: Array<{ key: AdminArticlePointFilter; label: string }
 const contentSystemFilters: Array<{ key: AdminContentSystemFilter; label: string }> = [
   { key: "all", label: "All content systems" },
   { key: "authored", label: "Authored copy" },
+  { key: "generated", label: "Generated prose" },
   { key: "fallback", label: "Fallback/supporting copy" }
 ];
 const compatibilitySections: Array<{ key: AdminCompatibilitySectionFilter; label: string; description: string }> = [
@@ -517,11 +519,22 @@ function draftIsTemplate(draft: AdminDraft) {
 }
 
 function contentSystemForRole(role: AdminContentRole): Exclude<AdminContentSystemFilter, "all"> {
-  return role === "authored-content" ? "authored" : "fallback";
+  if (role === "authored-content") return "authored";
+  if (role === "generated-content" || role === "legacy-generated") return "generated";
+  return "fallback";
 }
 
 function contentLevelForRole(role: AdminContentRole) {
-  return contentSystemForRole(role) === "authored" ? "source-grounded" : "madlib-fallback";
+  const system = contentSystemForRole(role);
+  if (system === "authored") return "source-grounded";
+  if (system === "generated") return "generated";
+  return "madlib-fallback";
+}
+
+function contentSystemLabel(system: Exclude<AdminContentSystemFilter, "all">) {
+  if (system === "authored") return "Authored";
+  if (system === "generated") return "Generated";
+  return "Fallback/supporting";
 }
 
 function sourceSnapshotForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
@@ -670,10 +683,12 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
     return "fallback-helper";
   }
 
+  const contentClass = contentClassForRow(row);
   if (sourceContentSystem === "authored") return "authored-content";
-  if (contentClassForRow(row) === "reference") return "source-material";
-  if (contentClassForRow(row) === "legacy" || (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider))) return "legacy-generated";
-  if (contentClassForRow(row) === "phrasebank") return "authored-content";
+  if (sourceContentSystem === "generated" || contentClass === "generated") return "generated-content";
+  if (contentClass === "reference") return "source-material";
+  if (contentClass === "legacy" || (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider))) return "legacy-generated";
+  if (contentClass === "phrasebank") return "authored-content";
   return "unknown";
 }
 
@@ -705,6 +720,11 @@ function contentRoleDetails(role: AdminContentRole) {
       return {
         label: "Authored content",
         detail: "Finished reader-facing copy. When this row is published, it can serve as authored app content."
+      };
+    case "generated-content":
+      return {
+        label: "Generated content",
+        detail: "AI-generated prose. A published row can serve only when the app has no higher-priority approved authored or reviewed package copy."
       };
     case "fallback-output":
       return {
@@ -1054,6 +1074,14 @@ function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): 
     sourceBucket === "source-material" ||
     eventType === "fallback-source"
   ) return "reference";
+  if (
+    sourceContentType === "sky-aspect-card" ||
+    sourceContentType === "sky-placement-card" ||
+    sourceContentType === "sky-placement-topper" ||
+    sourceSnapshotString(sourceSnapshot, "contentSystem").toLowerCase() === "generated" ||
+    /^sky-(?:aspect-card|placement-(?:card|topper))-v\d+$/i.test(promptVersion ?? "") ||
+    /^(?:collective-aspect-card|collective-placement-card|collective-placement-topper)$/i.test(eventType ?? "")
+  ) return "generated";
   if (contentKey.startsWith("compatibility.") || eventType === "friends.compatibility.planet-card") return "phrasebank";
   if (/REFERENCE_ONLY_NEVER_SERVE_VERBATIM|PARAPHRASE_PENDING|BLOCKLIST_MATCH/i.test(flags)) return "reference";
   if (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider)) return "legacy";
@@ -3638,16 +3666,16 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Reader behavior</p>
                 <h3>Content System</h3>
-                <p>Reader pages use saved authored copy when a valid row exists. If authored copy is missing for a section, the app falls back to the fallback system automatically.</p>
+                <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
               </div>
               <div className="admin-content-level-readout">
                 <span>System</span>
-                <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : "status-draft"}`}>
-                  {contentSystem === "authored" ? "Authored" : "Fallback/supporting"}
+                <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
+                  {contentSystemLabel(contentSystem)}
                 </strong>
               </div>
               <small className="admin-field-hint">
-                Authored is a boolean runtime outcome, not an override: authored present shows authored; authored absent shows fallback.
+                Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
               </small>
             </section>
           )}
@@ -3657,7 +3685,11 @@ export function GeneratedContentAdminDashboard() {
               <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>
-              {isPackageDraft && <small className="admin-field-hint">Derived from package review status when saved.</small>}
+              <small className="admin-field-hint">
+                {isPackageDraft
+                  ? "Derived from package review status when saved."
+                  : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
+              </small>
             </label>
             <label className="admin-metadata-field">
               <span>Surface</span>

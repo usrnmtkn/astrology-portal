@@ -66,6 +66,12 @@ exact authored unit
   -> SOURCE_GAP
 ```
 
+On the Sky aspect surface, approved sign-specific copy wins for its exact sign
+combination. Otherwise, an exact-aspect `readerCopy` with `status: "LIVE"` in
+the canonical transit corpus is the authored unit. Both must be selected before
+generic phrasebook, generated, or general fallback prose. A DRAFT transit
+record remains source material and is never promoted merely because the file exists.
+
 Do not add a generic sentence in React to make a missing card appear complete.
 The owning surface should omit the unavailable unit and log the source gap.
 

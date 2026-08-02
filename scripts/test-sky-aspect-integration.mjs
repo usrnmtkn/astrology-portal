@@ -75,6 +75,18 @@ assert.match(generationPrompt, /RANGE OF GOOD CLOSES/);
 assert.doesNotMatch(generationPrompt, /Standing out is real currency/);
 assert.doesNotMatch(generationPrompt, /a friend's big-hearted gesture/);
 
+const exactAspectPrompt = generator.buildPrompt({
+  a: "jupiter",
+  b: "neptune",
+  aspect: "trine",
+  signA: "leo",
+  signB: "aries"
+});
+assert.match(exactAspectPrompt, /EXACT ASPECT SOURCE \(primary/u);
+assert.match(exactAspectPrompt, /data\/transits\/jupiter-trine-neptune\.json/u);
+assert.match(exactAspectPrompt, /Imaginative ideas that turn out to have practical application/u);
+assert.match(exactAspectPrompt, /The ease lets excess and overreach and illusion and escapism go unchecked/u);
+
 const judgePrompt = buildJudgePrompt(cleanExample, { tier: "luminary" });
 for (const family of [
   "self_negotiation",
@@ -359,7 +371,8 @@ const reviewNodePrompt = generator.buildPrompt({
 }, { allowReviewSources: true });
 
 assert.match(reviewNodePrompt, /Lunar Nodes/);
-assert.match(reviewNodePrompt, /SOURCE MEANING/);
+assert.match(reviewNodePrompt, /EXACT ASPECT SOURCE/);
+assert.match(reviewNodePrompt, /PAIR SOURCE/);
 assert.match(reviewNodePrompt, /south node/i);
 assert.equal(
   generator.normalizeCardArgs({
