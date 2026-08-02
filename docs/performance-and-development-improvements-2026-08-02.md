@@ -20,6 +20,7 @@ Content editors can continue updating and reviewing astrology copy independently
 - Manual-chart cache hydration, repair, form state, and create/update/delete persistence now live in a focused controller hook instead of the application shell.
 - Pure Friends chart-list rows, Big Three fallbacks, and comparison-picker options now live in the Friends chart model; obsolete birthday helpers were removed from the application shell.
 - Composite relationship API state, fallback handling, and stale-request cancellation now live in a focused Friends hook.
+- Shared birth-date/time validation and API subject mapping now live in the chart-profile service instead of the application shell.
 
 ## 2. Startup and code-loading boundaries
 
