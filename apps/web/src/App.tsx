@@ -91,7 +91,7 @@ import {
 import { displayTimeToTwentyFourHour, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
-import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
+import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import {
   friendDetailRoutePath,
   friendsHashParts,
@@ -112,7 +112,6 @@ import {
   type ManualChartForm
 } from "./features/friends/manualChartForm";
 import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
-import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import {
   NatalAspectPatternActivationsSection,
   NatalAspectPatternsSection,
@@ -11417,6 +11416,12 @@ const FriendChartModal = lazy(() =>
 const FriendDetail = lazy(() =>
   import("./features/friends/FriendDetail").then((module) => ({
     default: module.FriendDetail
+  }))
+);
+
+const CompatibilityTab = lazy(() =>
+  import("./features/friends/CompatibilityTab").then((module) => ({
+    default: module.CompatibilityTab
   }))
 );
 
