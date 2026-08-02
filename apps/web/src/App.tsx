@@ -16366,10 +16366,16 @@ function ManualChartsPanel({
     selectedSynastryContacts
   ]);
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
-    friendProfileWork.synastry && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
       : []
-  ), [friendProfileWork.synastry, relationshipComparisonSky, selectedChart, selectedChartIsEvent]);
+  ), [
+    friendProfileWork.compatibility,
+    friendProfileWork.synastry,
+    relationshipComparisonSky,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
   const selectedCompositeSky = useMemo(() => (
     friendProfileWork.composite && selectedChart && !selectedChartIsEvent
       ? relationshipCompositeSky(relationshipComparisonSky, selectedChart)
