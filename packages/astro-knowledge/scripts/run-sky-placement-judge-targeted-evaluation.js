@@ -12,18 +12,34 @@ const {
 
 const root = path.join(__dirname, "..");
 const targetedManifest = JSON.parse(fs.readFileSync(
-  path.join(root, "config", "sky-placement-judge-targeted-evaluation-v2.json"),
+  path.join(root, "config", "sky-placement-judge-targeted-evaluation-v3.json"),
   "utf8"
 ));
 const fixtureSet = JSON.parse(fs.readFileSync(
+  path.join(root, "voice", "tldr-astro", "fixtures", "sky-placement-judge-targeted-v3.json"),
+  "utf8"
+));
+const articleSourceFixtureSet = JSON.parse(fs.readFileSync(
   path.join(root, "voice", "tldr-astro", "fixtures", "sky-placement-judge-targeted-v2.json"),
   "utf8"
 ));
 const evaluationManifest = { ...targetedManifest, pricing: baseManifest.pricing };
-const defaultOutDir = path.join(root, "out", "sky-placement-judge-targeted-v2");
+const defaultOutDir = path.join(root, "out", "sky-placement-judge-targeted-v3");
 
 function buildTargetedFixtures() {
-  return fixtureSet.fixtures.map((fixture) => JSON.parse(JSON.stringify(fixture)));
+  return fixtureSet.fixtures.map((fixture) => {
+    const source = fixture.sourceCaseId
+      ? articleSourceFixtureSet.fixtures.find((item) => item.caseId === fixture.sourceCaseId)
+      : null;
+    const article = fixture.article || source?.article;
+    const planet = fixture.planet || source?.planet;
+    const sign = fixture.sign || source?.sign;
+    const tier = fixture.tier || source?.tier;
+    if (!article || !planet || !sign || !tier) {
+      throw new Error(`Targeted fixture ${fixture.caseId} is missing resolved article context.`);
+    }
+    return JSON.parse(JSON.stringify({ ...fixture, planet, sign, tier, article }));
+  });
 }
 
 function parseArgs(argv = process.argv.slice(2)) {
@@ -47,8 +63,12 @@ function printPlan() {
     activeRuntime: evaluationManifest.runtime.activeReleaseId,
     runtimeChanged: false,
     fixtureCount: fixtures.length,
-    correctedGoldControls: fixtures.filter((fixture) => fixture.expectedClass === "approved").length,
-    targetedRuleControls: fixtures.filter((fixture) => fixture.expectedClass === "known-weak").length,
+    positiveCollectiveControls: fixtures.filter((fixture) => fixture.classification === "positive_collective_control").length,
+    singlePronounFailures: fixtures.filter((fixture) => fixture.classification === "single_pronoun_failure").length,
+    domainDriftFailures: fixtures.filter((fixture) => fixture.classification === "domain_drift_failure").length,
+    naturalEnglishFailures: fixtures.filter((fixture) => fixture.classification === "natural_english_failure").length,
+    editorialRestraintControls: fixtures.filter((fixture) => fixture.classification === "editorial_restraint_control").length,
+    overwritingFailures: fixtures.filter((fixture) => fixture.classification === "overwriting_failure").length,
     treatments: evaluationManifest.treatments,
     requestCount: fixtures.length * Object.keys(evaluationManifest.treatments).length,
     samplesPerFixture: evaluationManifest.samplesPerFixture,
@@ -61,6 +81,9 @@ async function main() {
   if (!options.authorizeLive) {
     printPlan();
     return;
+  }
+  if (evaluationManifest.liveRerunAllowed === false) {
+    throw new Error(`Evaluation ${evaluationManifest.evaluationId} may not be rerun.`);
   }
   assertLiveJudgeAuthorized({ calibration: true });
   const config = judgeConfig("sky-placement");

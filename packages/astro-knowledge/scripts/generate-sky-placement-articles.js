@@ -196,7 +196,11 @@ function normalizeArgs({ planet, sign }) {
 // few-shot: two exemplar trios, preferring the SAME tier so the register is
 // taught like-to-like, topped up from other tiers when the tier is thin.
 function fewShot(tier, n = 2) {
-  const all = spec.exemplars.filter((e) => e.canonical);
+  const all = spec.exemplars.filter((e) =>
+    e.canonical === true
+    && e.ownerApproved === true
+    && e.editorialStatus === "current_sky_owner_approved"
+  );
   const same = all.filter((e) => e.tier === tier);
   const pool = [...same, ...all.filter((e) => !same.includes(e))];
   return pool.slice(0, n);
@@ -288,8 +292,10 @@ function buildPrompt(args) {
     `OWNER-APPROVED BEAT EVIDENCE (match its movement, never its wording):`,
     ...(spec.ownerApprovedBeatEvidence || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()} movement: ${e.text}\n      WHY IT WORKS: ${e.use}`),
     ``,
-    `IN-VOICE EXEMPLARS (match this register and shape, do not copy any phrasing):`,
-    ...shots.map((e, i) => `  [${i + 1}] ${TITLE[e.planet]} in ${cap(e.sign)}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`),
+    `CURRENT SKY OWNER-APPROVED FULL-ARTICLE EXEMPLARS:`,
+    ...(shots.length
+      ? shots.map((e, i) => `  [${i + 1}] ${TITLE[e.planet]} in ${cap(e.sign)}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`)
+      : [`  None yet. Do not treat collective adaptation candidates as owner-approved voice evidence; use the rules and approved beat evidence.`]),
     ...extendedShapeExamples().map((l) => `  ${l}`),
     ``,
     `OUT OF VOICE (a weak draft - do NOT write like this: lore-led, listy, kumbaya close, generic moves):`,

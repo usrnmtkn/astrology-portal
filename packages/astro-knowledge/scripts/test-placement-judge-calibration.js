@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 //
-// Calibration for the placement-article LLM-as-judge. Run once the judge model
-// is wired (needs the generator's API key). It proves the judge is trustworthy
-// before it may be used as editorial advice:
+// Calibration contract for the placement-article LLM-as-judge. A live
+// promotion-grade run is blocked until at least one full Current Sky article
+// has explicit owner approval in the collective perspective.
 //
 //   - no owner-approved calibration trio may be rated off-voice (1)
 //   - no known-weak draft may be rated in-voice (3)
@@ -19,7 +19,17 @@ const path = require("path");
 const { judgeArticle, TIER_OF } = require("./judge-placement-voice.js");
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
 
-const goldExemplars = spec.exemplars.filter((e) => e.canonical);
+const goldExemplars = spec.exemplars.filter((e) =>
+  e.canonical === true
+  && e.ownerApproved === true
+  && e.editorialStatus === "current_sky_owner_approved"
+);
+const collectiveAdaptationControls = spec.exemplars.filter((e) =>
+  e.editorialStatus === "collective_adaptation_candidate"
+  && e.reviewStatus === "needs_review"
+  && e.ownerApproved === false
+  && e.promotionAuthorized === false
+);
 
 // Known-weak drafts covering this surface's real failure modes: the retired
 // kumbaya assembly, the sign-encyclopedia lead, the swap-anywhere generic, and
@@ -86,6 +96,9 @@ const knownWeak = [
 ];
 
 async function main() {
+  if (!goldExemplars.length) {
+    throw new Error("No current_sky_owner_approved full-article gold exists; live promotion calibration is intentionally blocked.");
+  }
   let goldOff = 0;
   let goldThree = 0;
   let goldSum = 0;
@@ -129,7 +142,7 @@ async function main() {
 
 if (require.main === module) {
   if (!process.argv.includes("--authorize-live")) {
-    console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
+    console.log(`Calibration contract verified: ${goldExemplars.length} current-sky owner-approved golds, ${collectiveAdaptationControls.length} needs-review collective controls, and ${knownWeak.length} weak controls. Live promotion calibration is blocked until collective wording is owner-approved.`);
   } else {
     main().catch((err) => {
       console.error(`Calibration could not run: ${err.message}`);
@@ -139,4 +152,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { goldExemplars, knownWeak, main };
+module.exports = { collectiveAdaptationControls, goldExemplars, knownWeak, main };

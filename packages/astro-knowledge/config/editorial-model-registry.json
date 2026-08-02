@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-08-02.3",
+  "registryVersion": "2026-08-02.4",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -120,9 +120,9 @@
         "provider": "openai",
         "model": "gpt-5.6-sol",
         "reasoningEffort": "xhigh",
-        "promptVersion": "sky-placement-voice-v3:conflict-free-collective-golds",
-        "rubricVersion": "sky-placement-voice-v3",
-        "evaluationSetVersion": "sky-placement-targeted-rules-v2",
+        "promptVersion": "sky-placement-voice-v4:provenance-separated-no-active-golds",
+        "rubricVersion": "sky-placement-voice-v4",
+        "evaluationSetVersion": "sky-placement-targeted-provenance-v3",
         "policyVersion": "editorial-judge-policy-v1",
         "notes": "Unpromoted Sky Placement evaluation treatment. Comparator is gpt-5.6-terra at low reasoning; active runtime remains gpt-4.1-mini. Pro mode and max reasoning remain excluded from this evaluation lane."
       },

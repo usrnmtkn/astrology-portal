@@ -1,21 +1,27 @@
 {
   "schemaVersion": 1,
-  "evaluationId": "sky-placement-judge-targeted-rules-v2",
+  "evaluationId": "sky-placement-judge-targeted-provenance-v3",
   "surface": "sky-placement",
-  "status": "completed-invalidated",
+  "status": "completed-directional",
   "liveRerunAllowed": false,
-  "supersededBy": "sky-placement-judge-targeted-provenance-v3",
-  "validityNote": "The 16-call results are retained but are not promotion evidence because collective adaptations were mislabeled as approved/gold when the run was built.",
   "promotionAuthorized": false,
   "runtime": {
     "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
     "unchanged": true
   },
-  "promptVersion": "sky-placement-voice-v3:conflict-free-collective-golds",
-  "rubricVersion": "sky-placement-voice-v3",
-  "evaluationSetVersion": "sky-placement-targeted-rules-v2",
+  "promptVersion": "sky-placement-voice-v4:provenance-separated-no-active-golds",
+  "rubricVersion": "sky-placement-voice-v4",
+  "evaluationSetVersion": "sky-placement-targeted-provenance-v3",
   "samplesPerFixture": 1,
   "blindedOwnerReview": true,
+  "completedRun": {
+    "date": "2026-08-02",
+    "fixtureCount": 9,
+    "requestCount": 18,
+    "combinedEstimatedCostUsd": 0.2995,
+    "ownerReviewStatus": "pending",
+    "modelKeyStatus": "sealed"
+  },
   "treatments": {
     "baseline": {
       "role": "baseline",
@@ -34,10 +40,10 @@
     }
   },
   "pricingSourceManifest": "config/sky-placement-judge-ab-evaluation-v1.json",
-  "fixtureSource": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
+  "fixtureSource": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v3.json",
   "promotionGate": {
     "thisRunPromotionEligible": false,
     "explicitOwnerAuthorizationRequired": true,
-    "note": "Directional targeted rerun only. It may inform a later promotion-grade calibration but cannot promote either treatment."
+    "note": "Directional provenance-corrected rerun only. No treatment can be promoted automatically."
   }
 }

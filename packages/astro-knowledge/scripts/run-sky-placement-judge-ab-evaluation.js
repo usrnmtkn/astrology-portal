@@ -5,7 +5,8 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { buildJudgePrompt, parseVerdict, TIER_OF } = require("./judge-placement-voice.js");
-const { goldExemplars, knownWeak } = require("./test-placement-judge-calibration.js");
+const { knownWeak } = require("./test-placement-judge-calibration.js");
+const historicalV1 = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const { assertLiveJudgeAuthorized, sha256 } = require("./editorial-judge-runtime.js");
 const { judgeConfig } = require("./generate-sky-aspect-cards.js");
 
@@ -40,9 +41,10 @@ function articleOf(value) {
 }
 
 function buildFixtures() {
-  const approved = goldExemplars.map((entry, index) => ({
+  const approved = historicalV1.exemplars.map((entry, index) => ({
     caseId: `case-${String(index + 1).padStart(3, "0")}`,
-    expectedClass: "approved",
+    expectedClass: "historical-owner-approved-v1",
+    expectedOutcome: "positive",
     sourceId: entry.sourceId,
     planet: entry.planet,
     sign: entry.sign,
@@ -52,6 +54,7 @@ function buildFixtures() {
   const weak = knownWeak.map((entry, index) => ({
     caseId: `case-${String(approved.length + index + 1).padStart(3, "0")}`,
     expectedClass: "known-weak",
+    expectedOutcome: "negative",
     sourceId: entry.label,
     planet: entry.planet,
     sign: entry.sign,
@@ -161,7 +164,7 @@ function automaticSummary(fixtures, results, treatmentKey) {
   let weakCount = 0;
   for (const result of relevant) {
     const fixture = fixtures.find((item) => item.caseId === result.caseId);
-    if (fixture.expectedClass === "approved") {
+    if (fixture.expectedOutcome === "positive") {
       approvedCount += 1;
       approvedScoreTotal += result.verdict.score;
       if (result.verdict.score < 3) approvedFalsePositives += 1;
