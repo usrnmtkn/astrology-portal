@@ -11208,12 +11208,6 @@ const FriendsPageShell = lazy(() =>
   }))
 );
 
-const FriendNatalViewControl = lazy(() =>
-  import("./features/friends/FriendNatalViewControl").then((module) => ({
-    default: module.FriendNatalViewControl
-  }))
-);
-
 const FriendCompositeTab = lazy(() =>
   import("./features/friends/FriendCompositeTab").then((module) => ({
     default: module.FriendCompositeTab
@@ -11274,12 +11268,6 @@ const FriendDetail = lazy(() =>
   }))
 );
 
-const NatalChartDataTable = lazy(() =>
-  import("./components/charts/NatalChartDataTable").then((module) => ({
-    default: module.NatalChartDataTable
-  }))
-);
-
 const SynastryWheel = lazy(() =>
   import("./components/charts/SynastryWheel").then((module) => ({
     default: module.SynastryWheel
@@ -11298,6 +11286,12 @@ const FriendTransitsTab = lazy(() =>
   }))
 );
 
+const FriendProfileChartRail = lazy(() =>
+  import("./features/friends/FriendDetail").then((module) => ({
+    default: module.FriendProfileChartRail
+  }))
+);
+
 const FriendSynastryTab = lazy(() =>
   import("./features/friends/FriendSynastryTab").then((module) => ({
     default: module.FriendSynastryTab
@@ -11313,12 +11307,6 @@ const CompatibilityTab = lazy(() =>
 const RelationshipChartFullscreen = lazy(() =>
   import("./features/friends/RelationshipChartFullscreen").then((module) => ({
     default: module.RelationshipChartFullscreen
-  }))
-);
-
-const RelationshipComparePicker = lazy(() =>
-  import("./features/friends/RelationshipComparePicker").then((module) => ({
-    default: module.RelationshipComparePicker
   }))
 );
 
@@ -20294,150 +20282,32 @@ function ManualChartsPanel({
           ariaLabel={`${selectedChart.displayName} chart profile`}
           avatarUrl={selectedSocialFriend?.avatarUrl}
           chartRail={(
-            <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
-              {friendProfileTab === "natal" && selectedChart.natalChart && (
-                <div className="friend-synastry-wheel-shell">
-                  <FriendNatalViewControl
-                    value={friendNatalChartViewMode}
-                    onChange={setFriendNatalChartViewMode}
-                    ariaLabel={`${selectedChart.displayName} natal chart display`}
-                  />
-                  {friendNatalChartViewMode === "table" ? (
-                    <NatalChartDataTable
-                      rows={selectedFriendNatalTableRows}
-                      title={`${selectedChart.displayName} natal placement table`}
-                    />
-                  ) : (
-                    <div className="chart-shell">
-                      <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                        <SkyWheel
-                          positions={selectedChart.natalChart.positions}
-                          aspects={selectedChart.natalChart.aspects}
-                          ascendant={selectedChart.natalChart.ascendant}
-                          ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                          midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                          showHouses
-                          houseSignLabelStyle={houseSignLabelStyle}
-                          variant="natal"
-                          aspectInspector
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              {friendProfileTab === "transits" && selectedChart.natalChart && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} transit chart wheel`}>
-                      <SkyWheel
-                        positions={selectedChart.natalChart.positions}
-                        aspects={[]}
-                        transitPositions={currentSky.positions}
-                        transitAspects={selectedFriendTransitAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        showHouses
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        variant="natal"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              {friendProfileTab === "compatibility" && selectedChart.natalChart && relationshipComparisonSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} compatibility chart wheel`}>
-                      <SynastryWheel
-                        outerPositions={selectedChart.natalChart.positions}
-                        innerPositions={relationshipComparisonSky?.positions ?? []}
-                        interAspects={selectedSynastryAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        innerAscendant={relationshipComparisonSky.ascendant}
-                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        aspectInspector
-                        outerLabel={selectedChart.displayName}
-                        innerLabel={relationshipComparisonName}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                      <SynastryWheel
-                        outerPositions={selectedChart.natalChart.positions}
-                        innerPositions={relationshipComparisonSky?.positions ?? []}
-                        interAspects={selectedSynastryAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        innerAscendant={relationshipComparisonSky.ascendant}
-                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        aspectInspector
-                        outerLabel={selectedChart.displayName}
-                        innerLabel={relationshipComparisonName}
-                      />
-                    </div>
-                  </div>
-                  <RelationshipComparePicker
-                    variant="synastry"
-                    outerName={selectedChart.displayName}
-                    outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-                    options={relationshipComparisonOptions}
-                    selectedId={selectedRelationshipComparison?.id ?? "self"}
-                    open={relationshipComparisonPickerOpen}
-                    onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                    onSelect={(id) => {
-                      setRelationshipComparisonChartId(id);
-                      setRelationshipComparisonPickerOpen(false);
-                    }}
-                  />
-                </div>
-              )}
-              {friendProfileTab === "composite" && selectedCompositeSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell chart-shell--composite-inspector">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
-                      <SkyWheel
-                        positions={selectedCompositeSky.positions}
-                        aspects={selectedCompositeSky.aspects}
-                        ascendant={selectedCompositeSky.ascendant}
-                        ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-                        midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-                        showHouses
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        variant="composite"
-                        aspectInspector
-                        aspectInspectorControls={(
-                          <RelationshipComparePicker
-                            variant="composite"
-                            options={relationshipComparisonOptions}
-                            selectedId={selectedRelationshipComparison?.id ?? "self"}
-                            open={relationshipComparisonPickerOpen}
-                            onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                            onSelect={(id) => {
-                              setRelationshipComparisonChartId(id);
-                              setRelationshipComparisonPickerOpen(false);
-                            }}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <FriendProfileChartRail
+              activeTab={friendProfileTab}
+              chartIsEvent={selectedChartIsEvent}
+              chartName={selectedChart.displayName}
+              comparisonIsSelf={relationshipComparisonIsSelf}
+              comparisonName={relationshipComparisonName}
+              comparisonOptions={relationshipComparisonOptions}
+              comparisonPickerOpen={relationshipComparisonPickerOpen}
+              comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
+              compositeSky={selectedCompositeSky}
+              currentSkyPositions={currentSky.positions}
+              houseSignLabelStyle={houseSignLabelStyle}
+              natalSky={selectedChart.natalChart ?? null}
+              natalTableRows={selectedFriendNatalTableRows}
+              natalViewMode={friendNatalChartViewMode}
+              onComparisonSelect={(id) => {
+                setRelationshipComparisonChartId(id);
+                setRelationshipComparisonPickerOpen(false);
+              }}
+              onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+              onNatalViewModeChange={setFriendNatalChartViewMode}
+              outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+              relationshipComparisonSky={relationshipComparisonSky}
+              synastryAspects={selectedSynastryAspectLines}
+              transitAspects={selectedFriendTransitAspectLines}
+            />
           )}
           className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`}
           initials={profileInitials(selectedChart.displayName, selectedChart.displayName)}

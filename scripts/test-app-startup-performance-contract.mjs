@@ -50,6 +50,10 @@ const friendTransitsTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendTransitsTab.tsx"),
   "utf8"
 );
+const friendProfileChartRailSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendProfileChartRail.tsx"),
+  "utf8"
+);
 const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
@@ -160,8 +164,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendNatalViewControl"\)/u,
-  "The Friends segmented control must load only when its route renders."
+  /const FriendProfileChartRail = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendDetail"\)/u,
+  "The Friends profile chart rail must share the deferred Friend Detail boundary."
+);
+assert.match(
+  friendProfileChartRailSource,
+  /import \{ FriendNatalViewControl/u,
+  "The deferred profile chart rail must own its segmented control."
 );
 assert.match(
   appSource,
@@ -272,9 +281,9 @@ assert.doesNotMatch(
   "The natal chart data table must not remain a static application-shell dependency."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/NatalChartDataTable"\)/u,
-  "The natal chart data table must load only when a chart table surface renders."
+  friendProfileChartRailSource,
+  /import \{ NatalChartDataTable \}/u,
+  "The deferred profile chart rail must own its natal table renderer."
 );
 assert.doesNotMatch(
   appSource,
@@ -350,6 +359,16 @@ assert.match(
   friendTransitsTabSource,
   /export function FriendTransitsTab/u,
   "The deferred Friends module must own transit presentation."
+);
+assert.doesNotMatch(
+  manualChartsPanelSource,
+  /friend-detail-chart-rail chart-layout__visual/u,
+  "Friends chart-rail presentation must not remain embedded in ManualChartsPanel."
+);
+assert.match(
+  friendProfileChartRailSource,
+  /export function FriendProfileChartRail/u,
+  "The deferred Friends module must own chart-rail presentation."
 );
 assert.doesNotMatch(
   appSource,

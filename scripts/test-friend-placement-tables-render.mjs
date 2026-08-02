@@ -34,6 +34,9 @@ try {
   const { FriendTransitsTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendTransitsTab.tsx"
   );
+  const { FriendProfileChartRail } = await server.ssrLoadModule(
+    "/src/features/friends/FriendProfileChartRail.tsx"
+  );
   const {
     completeNatalChartTableRows,
     natalChartTableRowFromSocial
@@ -92,6 +95,40 @@ try {
   assert.match(viewControlHtml, />Circle</);
   assert.match(viewControlHtml, />Table</);
   assert.match(viewControlHtml, /aria-selected="true"/);
+
+  const profileChartRailHtml = renderToStaticMarkup(React.createElement(FriendProfileChartRail, {
+    activeTab: "natal",
+    chartName: "Alex",
+    chartIsEvent: false,
+    comparisonIsSelf: true,
+    comparisonName: "You",
+    comparisonOptions: [],
+    comparisonPickerOpen: false,
+    comparisonSelectedId: "self",
+    compositeSky: null,
+    currentSkyPositions: [],
+    houseSignLabelStyle: "text",
+    natalSky: { ...sky, aspects: [], ascendantLongitude: 0, midheavenLongitude: 270 },
+    natalTableRows: [{
+      id: "Sun",
+      degree: "10°30'",
+      glyph: "☉",
+      house: 1,
+      label: "Sun",
+      sign: "Aries"
+    }],
+    natalViewMode: "table",
+    onComparisonSelect() {},
+    onComparisonToggle() {},
+    onNatalViewModeChange() {},
+    outerInitials: "A",
+    relationshipComparisonSky: null,
+    synastryAspects: [],
+    transitAspects: []
+  }));
+  assert.match(profileChartRailHtml, /aria-label="Relationship chart"/);
+  assert.match(profileChartRailHtml, /aria-label="Alex natal placement table"/);
+  assert.match(profileChartRailHtml, /10°30&#x27;/);
 
   const loadingSummaryHtml = renderToStaticMarkup(React.createElement(RelationshipApiSummary, {
     mode: "composite",
