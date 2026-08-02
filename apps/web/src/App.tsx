@@ -11417,6 +11417,18 @@ const SwitchControl = lazy(() =>
   }))
 );
 
+const CalculationMethodSettingsGroup = lazy(() =>
+  import("./components/SettingsControls").then((module) => ({
+    default: module.CalculationMethodSettingsGroup
+  }))
+);
+
+const GuestSettingsView = lazy(() =>
+  import("./features/settings/GuestSettingsView").then((module) => ({
+    default: module.GuestSettingsView
+  }))
+);
+
 const SkyRoute = lazy(() =>
   import("./routes/SkyRoute").then((module) => ({
     default: module.SkyRoute
@@ -14388,7 +14400,7 @@ export function App() {
                   ) : (
                     <GuestSettingsView
                       theme={theme}
-                      location={location}
+                      locationLabel={compactCityLabel(location.label)}
                       sunriseOrbEnabled={sunriseOrbEnabled}
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
@@ -16265,26 +16277,6 @@ function CalculationDiagnosticsPanel({
   );
 }
 
-function CalculationMethodSettingsGroup() {
-  return (
-    <section className="settings-group" aria-label="Calculation method">
-      <span className="settings-group-label">Calculation method</span>
-      <div className="settings-card">
-        <div className="settings-list">
-          <div className="settings-row">
-            <div className="settings-row-copy">
-              <span className="settings-row-title">Ephemeris</span>
-              <small className="settings-row-description">
-                Planetary positions are calculated with Swiss Ephemeris and independently verified against NASA/JPL.
-              </small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function CreateChartFlow({
   form,
   setForm,
@@ -17541,105 +17533,6 @@ function SettingsView({
               <div className="settings-row">
                 <span className="settings-row__label">House system</span>
                 <span className="settings-row__value">Whole Sign</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <CalculationMethodSettingsGroup />
-
-      </div>
-    </section>
-  );
-}
-
-function GuestSettingsView({
-  theme,
-  location,
-  sunriseOrbEnabled,
-  dyslexiaFriendlyFont,
-  onThemeChange,
-  onSunriseOrbChange,
-  onDyslexiaFontChange,
-  houseSignLabelStyle,
-  onHouseSignLabelStyleChange
-}: {
-  theme: UiTheme;
-  location: LocationInput;
-  sunriseOrbEnabled: boolean;
-  dyslexiaFriendlyFont: boolean;
-  onThemeChange: (theme: UiTheme) => void;
-  onSunriseOrbChange: (enabled: boolean) => void;
-  onDyslexiaFontChange: (enabled: boolean) => void;
-  houseSignLabelStyle: HouseSignLabelStyle;
-  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
-}) {
-  return (
-    <section className="settings-page page-shell--narrow guest-settings-page" aria-label="Settings">
-      <div className="settings-header">
-        <h1>settings.</h1>
-      </div>
-
-      <div className="settings-panel">
-        <section className="settings-group" aria-label="Personal settings">
-          <span className="settings-group-label">Account</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row">
-                <span className="settings-row__label">Current location</span>
-                <span className="settings-row__value">{compactCityLabel(location.label)}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Display settings">
-          <span className="settings-group-label">Display</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Theme</span>
-                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Gradient</span>
-                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle gradient background"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Dyslexia-friendly font</span>
-                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
-                </div>
-                <SwitchControl
-                  checked={dyslexiaFriendlyFont}
-                  label="Toggle dyslexia-friendly font"
-                  onChange={onDyslexiaFontChange}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Astrology settings">
-          <span className="settings-group-label">Astrology settings</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">House sign labels</span>
-                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
-                </div>
-                <HouseSignLabelToggle
-                  value={houseSignLabelStyle}
-                  onChange={onHouseSignLabelStyleChange}
-                />
               </div>
             </div>
           </div>

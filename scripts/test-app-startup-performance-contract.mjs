@@ -24,6 +24,8 @@ const friendPlacementTablesSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendPlacementTables.tsx"),
   "utf8"
 );
+const settingsControlsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/SettingsControls.tsx"), "utf8");
+const guestSettingsSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
 const authSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/auth.ts"), "utf8");
 const phoneAuthSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/phoneAuth.ts"), "utf8");
 const fallbackRuntimeSource = fs.readFileSync(
@@ -151,8 +153,28 @@ assert.doesNotMatch(
 );
 assert.equal(
   [...appSource.matchAll(/import\("\.\/components\/SettingsControls"\)/gu)].length,
-  3,
-  "All three Settings controls must load through their deferred route boundary."
+  4,
+  "All Settings controls must load through their deferred route boundary."
+);
+assert.doesNotMatch(
+  appSource,
+  /function GuestSettingsView/u,
+  "The guest Settings page must not remain in the application shell."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/settings\/GuestSettingsView"\)/u,
+  "The guest Settings page must load only when its route renders."
+);
+assert.match(
+  settingsControlsSource,
+  /export function CalculationMethodSettingsGroup/u,
+  "The deferred Settings controls module must own calculation-method presentation."
+);
+assert.match(
+  guestSettingsSource,
+  /export function GuestSettingsView/u,
+  "The deferred Settings module must own the guest page renderer."
 );
 assert.doesNotMatch(
   appSource,
