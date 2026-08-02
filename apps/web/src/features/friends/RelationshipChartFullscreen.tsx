@@ -1,6 +1,9 @@
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { ModalPortal } from "../../components/ModalPortal";
+import { SynastryWheel } from "../../components/charts/SynastryWheel";
+import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import type { SkySnapshot } from "../../types";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./RelationshipComparePicker";
 
 export type RelationshipChartFullscreenMode = "synastry" | "composite";
@@ -81,4 +84,107 @@ export function RelationshipChartFullscreen({
       </div>
     </ModalPortal>
   );
+}
+
+type WheelSky = Pick<
+  SkySnapshot,
+  "positions" | "aspects" | "ascendant" | "ascendantLongitude" | "midheavenLongitude"
+>;
+
+type FriendProfileChartFullscreenProps = {
+  chartName: string;
+  comparisonName: string;
+  comparisonOptions: RelationshipComparisonOption[];
+  comparisonPickerOpen: boolean;
+  comparisonSelectedId: string;
+  compositeSky: WheelSky | null;
+  houseSignLabelStyle: HouseSignLabelStyle;
+  mode: RelationshipChartFullscreenMode;
+  natalSky: WheelSky | null;
+  onClose: () => void;
+  onComparisonSelect: (id: string) => void;
+  onComparisonToggle: () => void;
+  outerInitials: string;
+  relationshipComparisonSky: WheelSky | null;
+  synastryAspects: InterChartAspectLine[];
+};
+
+export function FriendProfileChartFullscreen({
+  chartName,
+  comparisonName,
+  comparisonOptions,
+  comparisonPickerOpen,
+  comparisonSelectedId,
+  compositeSky,
+  houseSignLabelStyle,
+  mode,
+  natalSky,
+  onClose,
+  onComparisonSelect,
+  onComparisonToggle,
+  outerInitials,
+  relationshipComparisonSky,
+  synastryAspects
+}: FriendProfileChartFullscreenProps) {
+  if (mode === "synastry" && natalSky && relationshipComparisonSky) {
+    return (
+      <RelationshipChartFullscreen
+        comparisonOptions={comparisonOptions}
+        comparisonPickerOpen={comparisonPickerOpen}
+        comparisonSelectedId={comparisonSelectedId}
+        mode="synastry"
+        outerName={chartName}
+        outerInitials={outerInitials}
+        title={`${chartName} × ${comparisonName} · Synastry`}
+        onClose={onClose}
+        onComparisonSelect={onComparisonSelect}
+        onComparisonToggle={onComparisonToggle}
+      >
+        <SynastryWheel
+          outerPositions={natalSky.positions}
+          innerPositions={relationshipComparisonSky.positions}
+          interAspects={synastryAspects}
+          ascendant={natalSky.ascendant}
+          ascendantLongitude={natalSky.ascendantLongitude}
+          midheavenLongitude={natalSky.midheavenLongitude}
+          innerAscendant={relationshipComparisonSky.ascendant}
+          innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
+          innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
+          houseSignLabelStyle={houseSignLabelStyle}
+          aspectInspector
+          outerLabel={chartName}
+          innerLabel={comparisonName}
+        />
+      </RelationshipChartFullscreen>
+    );
+  }
+
+  if (mode === "composite" && compositeSky) {
+    return (
+      <RelationshipChartFullscreen
+        comparisonOptions={comparisonOptions}
+        comparisonPickerOpen={comparisonPickerOpen}
+        comparisonSelectedId={comparisonSelectedId}
+        mode="composite"
+        title={`${chartName} × ${comparisonName} · Composite`}
+        onClose={onClose}
+        onComparisonSelect={onComparisonSelect}
+        onComparisonToggle={onComparisonToggle}
+      >
+        <SkyWheel
+          positions={compositeSky.positions}
+          aspects={compositeSky.aspects}
+          ascendant={compositeSky.ascendant}
+          ascendantLongitude={compositeSky.ascendantLongitude}
+          midheavenLongitude={compositeSky.midheavenLongitude}
+          showHouses
+          houseSignLabelStyle={houseSignLabelStyle}
+          variant="composite"
+          aspectInspector
+        />
+      </RelationshipChartFullscreen>
+    );
+  }
+
+  return null;
 }
