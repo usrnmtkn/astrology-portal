@@ -170,7 +170,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/FriendsPageShell"\)/u,
+  /const loadFriendsPageShell = \(\) => import\("\.\/components\/FriendsPageShell"\)[\s\S]*const FriendsPageShell = lazy\(\(\) =>\s*loadFriendsPageShell\(\)/u,
   "The Friends page shell must load only when its route renders."
 );
 assert.match(
@@ -555,6 +555,11 @@ assert.match(
   signupViewSource,
   /export function SignupView[\s\S]*signInWithEmail[\s\S]*signUpWithEmail[\s\S]*Continue with Google/u,
   "The lazy signup module must retain email and provider authentication behavior."
+);
+assert.match(
+  appSource,
+  /const preloadFriendsLanding = \(\) => Promise\.all\(\[\s*loadFriendsPageShell\(\),\s*loadSocialFriendsPanel\(\),\s*loadFriendChartsList\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*preloadFriendsLanding\(\)/u,
+  "The Friends route, shell, social panel, and chart list must load in parallel instead of forming a lazy-module waterfall."
 );
 
 console.log("App startup performance contracts passed.");
