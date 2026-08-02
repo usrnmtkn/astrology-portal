@@ -56,7 +56,7 @@
     "lint:placement-voice": "node scripts/lint-placement-voice.js --exemplars",
     "test:placement-pipeline": "node scripts/test-placement-pipeline.js",
     "audit:placement-review": "node scripts/audit-sky-placement-review-bundle.js",
-    "audit:placement-voice-pass": "node scripts/audit-sky-placement-review-bundle.js review/sky-placement-voice-pass-v3-candidates.json",
+    "audit:placement-voice-pass": "node scripts/audit-sky-placement-review-bundle.js review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
     "test:placement-judge-calibration": "node scripts/test-placement-judge-calibration.js",
     "calibrate:placement-article-judge:live": "node scripts/test-placement-judge-calibration.js --authorize-live",
     "lint:article-voice": "node scripts/lint-article-voice.js --fixtures",

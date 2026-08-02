@@ -64,7 +64,8 @@ for (const label of paceSources) {
 }
 const ALLOWED_SHARED = [
   /^for about( \S+)?$/, /^over the next$/, /^the next few$/, /^next few weeks$/,
-  /^in a sign$/, /^a sign for$/, /^(a|and a) half (days?|weeks?)$/, /half days? here$/
+  /^in a sign$/, /^a sign for$/, /^(a|and a) half (days?|weeks?)$/, /half days? here$/,
+  /^long enough to$/
 ];
 const isAllowedShared = (key) => ALLOWED_SHARED_EXACT.has(key) || ALLOWED_SHARED.some((re) => re.test(key));
 
@@ -106,8 +107,10 @@ function main() {
   //    now-banned copy while the cross-draft checks stay quiet (mercury-aries
   //    survived three delete rounds this way with "unsent" in its lived beat).
   for (const d of drafts) {
-    const planet = d.cell.split("-").slice(0, -1).join("-") || d.cell.split("-")[0];
-    const r = lintArticle({ ...d.article, planet });
+    const parts = d.cell.split("-");
+    const sign = parts.at(-1);
+    const planet = parts.slice(0, -1).join("-") || parts[0];
+    const r = lintArticle({ ...d.article, planet, sign });
     if (r.fails > 0) {
       const what = r.findings.filter((x) => x.severity === "fail").map((x) => `${x.term}${x.match ? ` "${x.match}"` : ""}`).slice(0, 3).join("; ");
       console.log(`STALE VS CURRENT RULES ${d.cell}: ${what}`);
