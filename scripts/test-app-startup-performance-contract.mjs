@@ -84,6 +84,10 @@ const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
 );
+const manualChartsControllerSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/useManualChartsController.ts"),
+  "utf8"
+);
 const friendProfileWorkSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/friendProfileWork.ts"),
   "utf8"
@@ -471,6 +475,21 @@ assert.match(
   manualChartFormSource,
   /export const manualChartFormCopy/u,
   "The Friends form model must own its chart-type copy."
+);
+assert.match(
+  appSource,
+  /useManualChartsController\(\{/u,
+  "ManualChartsPanel must delegate chart loading and persistence to its focused controller hook."
+);
+assert.match(
+  manualChartsControllerSource,
+  /export function useManualChartsController/u,
+  "The Friends controller hook must own manual-chart loading and persistence."
+);
+assert.doesNotMatch(
+  manualChartsPanelSource,
+  /listManualCharts\(chartOwnerUserId\)|const chartsToRepair = charts\.filter/u,
+  "ManualChartsPanel must not re-embed chart loading or repair orchestration."
 );
 assert.match(
   appSource,

@@ -126,12 +126,7 @@ import {
   manualChartSubtitle,
   planetPositionFromSocialRow
 } from "./features/friends/friendChartModel";
-import {
-  defaultManualChartForm,
-  manualChartFormCopy,
-  manualChartFormFromChart,
-  type ManualChartForm
-} from "./features/friends/manualChartForm";
+import { useManualChartsController } from "./features/friends/useManualChartsController";
 import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
@@ -239,18 +234,11 @@ import {
   transitHouseContentKey
 } from "./services/generatedContentKeys";
 import {
-  createManualChart,
-  deleteManualChart,
-  listCachedManualCharts,
   listLocalManualChartUserIds,
-  listManualCharts,
   manualChartNeedsBirthTime,
-  manualChartNeedsNatalRepair,
-  migrateLocalManualChartsToRemote,
-  resolvedManualChartBirthLocationForRepair,
-  updateManualChart
+  migrateLocalManualChartsToRemote
 } from "./services/manualCharts";
-import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import type { ManualChart } from "./services/manualCharts";
 import {
   captureSocialInvitationFromUrl,
   clearPendingSocialInvitation,
@@ -10434,26 +10422,6 @@ async function getAstrodienstSky(
   return calculateSky(...args);
 }
 
-async function natalSkyWithAspectPatternsForStorage(
-  natalSky: SkySnapshot,
-  location: LocationInput,
-  date: Date,
-  timeKnown: boolean,
-  enabled: boolean
-) {
-  if (!enabled) {
-    return natalSky;
-  }
-
-  try {
-    const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
-    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
-  } catch (error) {
-    console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
-    return natalSky;
-  }
-}
-
 function FeatureLoadingFallback() {
   return <div className="feature-loading-fallback" aria-hidden="true" />;
 }
@@ -16387,17 +16355,38 @@ function ManualChartsPanel({
   onFriendProfileContentRequest: (tab: FriendProfileTab) => void;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const initialCachedCharts = useMemo(
-    () => listCachedManualCharts([chartOwnerUserId, profile.id]),
-    [chartOwnerUserId, profile.id]
-  );
-  const [charts, setCharts] = useState<ManualChart[]>(() => (
-    allowCachedChartsWhileLoading ? initialCachedCharts : []
-  ));
   const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
-  const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
-  const [editingChartId, setEditingChartId] = useState<string | null>(null);
-  const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
+  const socialFriendCharts = useMemo(
+    () => socialFriends.map(socialFriendToChart),
+    [socialFriends]
+  );
+  const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
+  const {
+    charts,
+    editingChartId,
+    form,
+    formCopy,
+    message,
+    selectedChartId,
+    setForm,
+    setSelectedChartId,
+    status,
+    addBirthTime: prepareBirthTimeEdit,
+    editChart: prepareChartEdit,
+    removeChart: deleteStoredChart,
+    resetForm,
+    saveChart,
+    updateChartType,
+    updateField
+  } = useManualChartsController({
+    allowCachedChartsWhileLoading,
+    chartOwnerUserId,
+    chartRefreshKey,
+    chartsReady,
+    profileId: profile.id,
+    showNatalAspectPatterns: showFriendNatalAspectPatterns,
+    socialFriendCharts
+  });
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
   const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
@@ -16409,18 +16398,6 @@ function ManualChartsPanel({
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">(
-    () => allowCachedChartsWhileLoading && initialCachedCharts.length > 0 ? "idle" : "loading"
-  );
-  const [message, setMessage] = useState("");
-  const chartsLoadedRef = useRef(false);
-  const chartOwnerUserIdRef = useRef(chartOwnerUserId);
-  const socialFriendCharts = useMemo(
-    () => socialFriends.map(socialFriendToChart),
-    [socialFriends]
-  );
-  const socialFriendChartsRef = useRef(socialFriendCharts);
-  socialFriendChartsRef.current = socialFriendCharts;
   const allFriendCharts = useMemo(
     () => [...socialFriendCharts, ...charts],
     [charts, socialFriendCharts]
@@ -16431,7 +16408,6 @@ function ManualChartsPanel({
     ? socialFriends.find((friend) => socialFriendToChart(friend).id === selectedChart.id) ?? null
     : null;
   const isEventForm = form.chartType === "event";
-  const formCopy = manualChartFormCopy[form.chartType];
   const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
   const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
@@ -16857,7 +16833,6 @@ function ManualChartsPanel({
       ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
       : []
   ), [friendProfileWork.natal, selectedChart?.natalChart]);
-  const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
@@ -17456,173 +17431,6 @@ function ManualChartsPanel({
     [charts, selectedChart?.id, showFriendNatalAspectPatterns]
   );
   useEffect(() => {
-    let cancelled = false;
-    const chartOwnerChanged = chartOwnerUserIdRef.current !== chartOwnerUserId;
-
-    if (chartOwnerChanged) {
-      chartOwnerUserIdRef.current = chartOwnerUserId;
-      chartsLoadedRef.current = false;
-      setSelectedChartId(null);
-    }
-
-    if (!chartsReady) {
-      const cachedCharts = listCachedManualCharts([
-        chartOwnerUserId,
-        profile.id
-      ]);
-
-      if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
-        chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
-        setStatus("idle");
-      } else {
-        setCharts([]);
-        setStatus("loading");
-      }
-
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
-      const cachedCharts = listCachedManualCharts([
-        chartOwnerUserId,
-        profile.id
-      ]);
-
-      if (cachedCharts.length > 0) {
-        chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
-        setStatus("idle");
-      }
-    }
-
-    if (!chartsLoadedRef.current) {
-      setStatus("loading");
-    }
-    listManualCharts(chartOwnerUserId)
-      .then((nextCharts) => {
-        if (!cancelled) {
-          chartsLoadedRef.current = true;
-          setCharts(nextCharts);
-          setSelectedChartId((currentId) => (
-            currentId && (
-              nextCharts.some((chart) => chart.id === currentId)
-              || socialFriendChartsRef.current.some((chart) => chart.id === currentId)
-            )
-              ? currentId
-              : null
-          ));
-          setMessage("");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          chartsLoadedRef.current = true;
-          setMessage(error instanceof Error ? error.message : "Could not load manual charts.");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setStatus("idle");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
-
-  useEffect(() => {
-    if (!chartsReady || charts.length === 0) {
-      return;
-    }
-
-    const chartsToRepair = charts.filter(manualChartNeedsNatalRepair);
-
-    if (chartsToRepair.length === 0) {
-      return;
-    }
-
-    let cancelled = false;
-    const repairCharts = async () => {
-      const repairedCharts: ManualChart[] = [];
-
-      for (const chart of chartsToRepair) {
-        if (cancelled) {
-          return;
-        }
-
-        try {
-          const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
-          if (!birthLocation) {
-            continue;
-          }
-
-          if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
-            continue;
-          }
-
-          const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-          const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
-          const calculatedNatalChart = await getAstrodienstSky(
-            birthLocation,
-            birthDateTime
-          );
-          const natalChart = await natalSkyWithAspectPatternsForStorage(
-            calculatedNatalChart,
-            birthLocation,
-            birthDateTime,
-            !chart.birthTimeUnknown,
-            showFriendNatalAspectPatterns
-          );
-          const input: ManualChartInput = {
-            chartType: chart.chartType,
-            displayName: chart.displayName,
-            firstName: chart.firstName ?? null,
-            lastName: chart.lastName ?? null,
-            pronouns: chart.pronouns,
-            relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
-            birthDate: chart.birthDate,
-            birthTime: chart.birthTime,
-            birthTimeUnknown: chart.birthTimeUnknown,
-            birthPlace: chart.birthPlace,
-            birthLocation,
-            natalChart,
-            notes: chart.notes ?? null
-          };
-          const repairedChart = await updateManualChart(chartOwnerUserId, chart.id, input);
-
-          repairedCharts.push(repairedChart);
-        } catch {
-          // Keep incomplete charts usable while a background repair retries later.
-        }
-      }
-
-      if (cancelled || repairedCharts.length === 0) {
-        return;
-      }
-
-      setCharts((currentCharts) => {
-        const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
-
-        return currentCharts
-          .map((chart) => repairedById.get(chart.id) ?? chart)
-          .sort((first, second) => first.displayName.localeCompare(second.displayName));
-      });
-    };
-    const repairTimer = window.setTimeout(() => {
-      void repairCharts();
-    }, 1_500);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(repairTimer);
-    };
-  }, [chartOwnerUserId, charts, chartsReady]);
-
-  useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
     setRelationshipComparisonChartId((currentId) => {
       if (currentId === "self") {
@@ -17697,12 +17505,6 @@ function ManualChartsPanel({
     };
   }, [openChartMenuId]);
 
-  function resetForm(nextMessage = "") {
-    setForm(defaultManualChartForm);
-    setEditingChartId(null);
-    setMessage(nextMessage);
-  }
-
   function openAddChartModal() {
     resetForm();
     setOpenChartMenuId(null);
@@ -17715,22 +17517,14 @@ function ManualChartsPanel({
   }
 
   function editChart(chart: ManualChart) {
-    setEditingChartId(chart.id);
-    setForm(manualChartFormFromChart(chart));
+    prepareChartEdit(chart);
     setOpenChartMenuId(null);
-    setMessage("");
     setFriendChartModalOpen(true);
   }
 
   function addBirthTime(chart: ManualChart) {
-    setEditingChartId(chart.id);
-    setForm({
-      ...manualChartFormFromChart(chart),
-      birthTime: "",
-      birthTimeUnknown: false
-    });
+    prepareBirthTimeEdit(chart);
     setOpenChartMenuId(null);
-    setMessage("");
     setFriendChartModalOpen(true);
   }
 
@@ -17756,135 +17550,37 @@ function ManualChartsPanel({
     }
   }
 
-  function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
-    setForm({ ...form, [key]: value });
-  }
-
-  function updateChartType(chartType: ManualChartType) {
-    setForm((currentForm) => ({
-      ...currentForm,
-      chartType,
-      pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
-      relationshipType: chartType === "event" ? "friend" : normalizeRelationshipContextKey(currentForm.relationshipType)
-    }));
-  }
-
   async function saveManualChart(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    const result = await saveChart(event);
 
-    const displayName = form.displayName.trim();
-    const birthDate = form.birthDate;
-    const birthPlace = form.birthPlace.trim();
-    const selectedBirthLocation = birthPlace && form.birthLocation?.label === birthPlace
-      ? form.birthLocation
-      : null;
-    const birthLocation = selectedBirthLocation ? withTimeZone(selectedBirthLocation) : null;
-
-    if (!displayName || !birthDate || !birthPlace || !birthLocation) {
-      setMessage(!birthLocation && birthPlace ? "Choose a city from the birth place suggestions. If it is already selected, timezone lookup is unavailable." : formCopy.requiredMessage);
+    if (!result) {
       return;
     }
 
-    if (!form.birthTimeUnknown && !form.birthTime) {
-      setMessage(formCopy.timeMessage);
-      return;
-    }
-
-    setStatus("saving");
-    setMessage("");
-
-    try {
-      const birthTimeForChart = form.birthTimeUnknown
-        ? "12:00 PM"
-        : twentyFourHourTimeToDisplay(form.birthTime);
-      const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
-      const calculatedNatalChart = await getAstrodienstSky(
-        birthLocation,
-        birthDateTime
-      );
-      const natalChart = await natalSkyWithAspectPatternsForStorage(
-        calculatedNatalChart,
-        birthLocation,
-        birthDateTime,
-        !form.birthTimeUnknown,
-        showFriendNatalAspectPatterns
-      );
-      const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
-      const input: ManualChartInput = {
-        chartType: form.chartType,
-        displayName,
-        firstName,
-        lastName: lastNameParts.join(" ") || null,
-        pronouns: form.chartType === "event" ? defaultPronounChoice : form.pronouns,
-        relationshipType: form.chartType === "event" ? null : normalizeRelationshipContextKey(form.relationshipType),
-        birthDate,
-        birthTime: form.birthTimeUnknown ? null : form.birthTime,
-        birthTimeUnknown: form.birthTimeUnknown,
-        birthPlace: birthLocation.label,
-        birthLocation,
-        natalChart,
-        notes: null
-      };
-      const savedChart = editingChartId
-        ? await updateManualChart(chartOwnerUserId, editingChartId, input)
-        : await createManualChart(chartOwnerUserId, input);
-
-      setCharts((currentCharts) => {
-        const nextCharts = editingChartId
-          ? currentCharts.map((chart) => chart.id === savedChart.id ? savedChart : chart)
-          : [...currentCharts, savedChart];
-
-        return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
-      });
-      setSelectedChartId(savedChart.id);
-      setFriendsMainView("profile");
-      setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
-      setRelationshipComparisonChartId("self");
-      setRelationshipComparisonPickerOpen(false);
-      updateFriendProfileUrl(savedChart.id, savedChart.chartType === "event" ? "natal" : "compatibility", "replace");
-      resetForm(editingChartId ? "Chart updated." : "Chart created.");
-      setFriendChartModalOpen(false);
-    } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : typeof error === "object" && error && "message" in error && typeof error.message === "string"
-          ? error.message
-          : "Could not save chart.";
-
-      setMessage(message);
-    } finally {
-      setStatus("idle");
-    }
+    const { chart: savedChart, wasEditing } = result;
+    setFriendsMainView("profile");
+    setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
+    setRelationshipComparisonChartId("self");
+    setRelationshipComparisonPickerOpen(false);
+    updateFriendProfileUrl(savedChart.id, savedChart.chartType === "event" ? "natal" : "compatibility", "replace");
+    resetForm(wasEditing ? "Chart updated." : "Chart created.");
+    setFriendChartModalOpen(false);
   }
 
   async function removeChart(chart: ManualChart) {
     setOpenChartMenuId(null);
-    setStatus("deleting");
-    setMessage("");
+    const deleted = await deleteStoredChart(chart);
 
-    try {
-      await deleteManualChart(chartOwnerUserId, chart.id);
-      setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
-      setRelationshipComparisonChartId((currentId) => currentId === chart.id ? "self" : currentId);
-      setRelationshipComparisonPickerOpen(false);
-      setSelectedChartId((currentId) => {
-        if (currentId === chart.id) {
-          selectFriendsTab("charts", "replace");
-          return null;
-        }
-
-        return currentId;
-      });
-      if (editingChartId === chart.id) {
-        resetForm();
-      }
-      setMessage("Chart deleted.");
-      setDeleteCandidateChart(null);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not delete chart.");
-    } finally {
-      setStatus("idle");
+    if (!deleted) {
+      return;
     }
+
+    setRelationshipComparisonChartId((currentId) => currentId === chart.id ? "self" : currentId);
+    setRelationshipComparisonPickerOpen(false);
+    if (selectedChartId === chart.id) {
+      selectFriendsTab("charts", "replace");
+    }
+    setDeleteCandidateChart(null);
   }
 
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
