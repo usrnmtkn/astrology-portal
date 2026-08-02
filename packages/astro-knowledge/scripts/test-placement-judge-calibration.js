@@ -24,7 +24,9 @@ const goldExemplars = spec.exemplars.filter((e) => e.canonical);
 // Known-weak drafts covering this surface's real failure modes: the retired
 // kumbaya assembly, the sign-encyclopedia lead, the swap-anywhere generic, and
 // the announcement hook with stacked endings, and the administrative example
-// inventory that sounds concrete while carrying no narrative movement.
+// inventory that sounds concrete while carrying no narrative movement, and
+// the polished abstraction / metaphor pile caught in the GPT-5.6 Thinking
+// review forwarded by the owner on 2026-08-02.
 const knownWeak = [
   {
     label: "retired kumbaya assembly",
@@ -63,6 +65,24 @@ const knownWeak = [
     lived: "Uranus spends about seven years in a sign. A family member stops being the automatic host; a workplace questions why one person remembers every birthday, emergency, and missing key; people build living arrangements that make room for chosen kin. We may notice new approaches to care in many areas of life.",
     turn: "The challenge comes when familiar roles become restrictive. Change can feel uncomfortable, but new arrangements can create more freedom.",
     moves: ["Discuss household responsibilities.", "Consider a new care arrangement.", "Make room for change at home."]
+  },
+  {
+    label: "polished abstraction and unnatural personification",
+    planet: "uranus", sign: "pisces",
+    tagline: "Make kindness practical",
+    hook: "Compassion can become a form of refusal. Uranus breaks with what has gone numb or false; in Pisces, the break moves through grief, imagination, mercy, and the stories used to make suffering seem inevitable. The disruption begins when feeling becomes impossible to keep private.",
+    lived: "Uranus spends roughly seven years in Pisces, long enough for private grief to become a public refusal. The person told to cope quietly builds the fund, names the policy, and turns the ache into work someone else can use. Compassion stops being a feeling performed at a safe distance. It becomes the interruption: money moved, a rule broken, a door held open that was designed to stay shut.",
+    turn: "The break goes sideways when refusing one cruel system becomes refusing every limit. We absorb each crisis, cancel our own plans, and call exhaustion proof that we care. Rescue becomes another kind of control: we decide who needs saving, break every boundary in the room, and disappear before anyone can ask what it cost. Compassion that destroys the person carrying it cannot change the system that made help necessary.",
+    moves: ["Turn one act of care into a structure with a written limit.", "Offer one concrete form of help and name what remains outside our hands.", "Make something from the grief before the algorithm turns it into another hour of watching."]
+  },
+  {
+    label: "metaphor pile and manufactured aphorism",
+    planet: "mars", sign: "capricorn",
+    tagline: "Finish what matters",
+    hook: "A plan is only a promise until someone does the work. Mars governs action, conflict, and the force that moves a decision forward; in Capricorn, that force accepts the deadline, the standard, and the long climb. Effort stops performing urgency and starts producing proof.",
+    lived: "Over the next six or seven weeks, the project reaches the part nobody applauds. The first idea has already spent its excitement; now the weak argument has to be rewritten, the missing number found, and the final decision made with no audience left to impress. Mars in Capricorn keeps returning because the work is not finished. Motivation becomes less of a feeling and more of a record.",
+    turn: "Tunnel vision sets in when the mountain is all anyone can see. The push gets so relentless that determination turns into sheer stubbornness, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.",
+    moves: ["Give one long-delayed project a finish line and a two-hour block.", "Write the three steps between the plan and the first visible result.", "Cancel one obligation that looks productive but moves nothing forward."]
   }
 ];
 

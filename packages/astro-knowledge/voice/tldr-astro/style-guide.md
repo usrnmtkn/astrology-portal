@@ -183,6 +183,16 @@ Core moves:
 - Anchor in the body and in behavior: the held breath, the second-guessing, the coping move and what it costs.
 - Direct "you" throughout. End on a line that is concise and undeniable.
 
+Current Sky is the exception to the general direct-address rule. Sky-to-sky placement and aspect copy describes shared weather and stays collective: use "we," "someone," or a concrete group or scene. Never use "you," "your," or "part of you." Second person belongs to transit-to-natal copy.
+
+For Current Sky placement articles, run a literal-English pass before approval:
+- Begin with recognizable pressure, behavior, or a decision before explaining the placement.
+- Every sentence must make literal sense on the first read. Do not make an arrangement, desire, structure, fear, plan, or feeling perform an unnatural human action.
+- Prefer plain observation over a phrase that merely sounds polished. A metaphor may sharpen the point, but it may not require decoding.
+- Name the exact cost in the turn, then stop at the strongest sentence. Do not add a dramatic image or a second aphorism after the point lands.
+- Preserve clear owner-written lines. Do not rewrite them merely to make the copy sound more polished.
+- Do not infer career from a sign alone. Taurus covers money, resources, possessions, food, housing, the body, comfort, values, and self-worth; job language needs support from another chart factor or the supplied source.
+
 ### Name the actual form of self-reduction
 
 Do not use vague shrink or shrinking shorthand when the behavior can be named precisely. Diagnose the move before writing the imperative:
