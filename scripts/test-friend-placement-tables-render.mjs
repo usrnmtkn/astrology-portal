@@ -19,6 +19,9 @@ try {
   const { FriendNatalViewControl } = await server.ssrLoadModule(
     "/src/features/friends/FriendNatalViewControl.tsx"
   );
+  const { RelationshipApiSummary } = await server.ssrLoadModule(
+    "/src/features/friends/RelationshipApiSummary.tsx"
+  );
   const friendHtml = renderToStaticMarkup(React.createElement(FriendPlacementTable, {
     title: "Alex's natal placements",
     rows: [{
@@ -73,6 +76,29 @@ try {
   assert.match(viewControlHtml, />Circle</);
   assert.match(viewControlHtml, />Table</);
   assert.match(viewControlHtml, /aria-selected="true"/);
+
+  const loadingSummaryHtml = renderToStaticMarkup(React.createElement(RelationshipApiSummary, {
+    mode: "composite",
+    response: null,
+    status: "loading"
+  }));
+  assert.match(loadingSummaryHtml, /aria-label="composite relationship summary"/);
+  assert.match(loadingSummaryHtml, /Calculating relationship pattern/);
+
+  const readySummaryHtml = renderToStaticMarkup(React.createElement(RelationshipApiSummary, {
+    mode: "synastry",
+    response: {
+      app: {
+        headline: "A steady relationship pattern",
+        summary: "The strongest contacts support trust and direct communication.",
+        keyFactors: ["Trust", "Candor", "Patience", "Warmth", "Overflow"]
+      }
+    },
+    status: "ready"
+  }));
+  assert.match(readySummaryHtml, /Relationship patterns/);
+  assert.match(readySummaryHtml, /A steady relationship pattern/);
+  assert.doesNotMatch(readySummaryHtml, /Overflow/);
 } finally {
   await server.close();
 }
