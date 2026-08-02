@@ -60,7 +60,7 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
-import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
+import { SkyWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -11435,6 +11435,12 @@ const FriendDetail = lazy(() =>
 const NatalChartDataTable = lazy(() =>
   import("./components/charts/NatalChartDataTable").then((module) => ({
     default: module.NatalChartDataTable
+  }))
+);
+
+const SynastryWheel = lazy(() =>
+  import("./components/charts/SynastryWheel").then((module) => ({
+    default: module.SynastryWheel
   }))
 );
 
