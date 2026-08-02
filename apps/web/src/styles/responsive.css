@@ -676,8 +676,10 @@
 
   .nav-pill {
     gap: 8px;
+    width: 100%;
+    min-width: 0;
     min-height: var(--top-control-height);
-    max-width: calc(100vw - var(--mobile-nav-reserved-width));
+    max-width: 100%;
     border-color: var(--nav-border);
     background: var(--nav-surface);
     box-shadow: var(--nav-rest-shadow);

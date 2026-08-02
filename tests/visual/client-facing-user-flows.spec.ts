@@ -1654,7 +1654,7 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await page.setViewportSize({ width: 320, height: 568 });
-    await seedClientState(page);
+    await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#sky");
 
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
