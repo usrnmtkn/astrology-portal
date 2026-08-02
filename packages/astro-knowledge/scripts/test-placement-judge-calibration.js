@@ -23,7 +23,8 @@ const goldExemplars = spec.exemplars.filter((e) => e.canonical);
 
 // Known-weak drafts covering this surface's real failure modes: the retired
 // kumbaya assembly, the sign-encyclopedia lead, the swap-anywhere generic, and
-// the announcement hook with stacked endings.
+// the announcement hook with stacked endings, and the administrative example
+// inventory that sounds concrete while carrying no narrative movement.
 const knownWeak = [
   {
     label: "retired kumbaya assembly",
@@ -54,6 +55,14 @@ const knownWeak = [
     hook: "It is time to get serious about your dreams.",
     lived: "Saturn in Pisces asks us to do the work of making our visions real. The lesson here is discipline in the service of imagination. Remember to stay grounded while you reach for what inspires you.",
     turn: "The trap is escapism, avoiding responsibility by drifting into fantasy. But limitations are really liberations in disguise. Do the work, honor your commitments, and your dreams will thank you for it."
+  },
+  {
+    label: "flat administrative inventory",
+    planet: "uranus", sign: "cancer",
+    hook: "Care patterns change under Uranus in Cancer. Uranus disrupts old arrangements, while Cancer brings attention to home, family, and belonging.",
+    lived: "Uranus spends about seven years in a sign. A family member stops being the automatic host; a workplace questions why one person remembers every birthday, emergency, and missing key; people build living arrangements that make room for chosen kin. We may notice new approaches to care in many areas of life.",
+    turn: "The challenge comes when familiar roles become restrictive. Change can feel uncomfortable, but new arrangements can create more freedom.",
+    moves: ["Discuss household responsibilities.", "Consider a new care arrangement.", "Make room for change at home."]
   }
 ];
 

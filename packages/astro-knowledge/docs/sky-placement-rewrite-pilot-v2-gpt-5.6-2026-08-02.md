@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft-only. No live Sky Placement row was changed. Four GPT-5.6 candidates cleared the mechanical and editorial gates, then received owner-directed line edits during review. The revised articles remain mechanically clean and await final owner approval; two Uranus candidates remain on hold.
+Draft-only. No live Sky Placement row was changed. Four GPT-5.6 candidates initially cleared the mechanical and editorial gates, then received owner-directed line edits during review. A later owner review identified a recurring flat example-inventory pattern across the batch. All six now require a voice pass before final owner approval.
 
 Nothing in this report is approved for serving until the owner approves the individual placement.
 
@@ -28,7 +28,7 @@ The local repairs addressed batch repetition or a watchlist phrase. They did not
 | Uranus in Cancer | 3 | Clean | 2 | Hold; closing advice loses specificity |
 | Uranus in Pisces | 3 | Clean | 2 | Hold; Uranus function fades into generic Pisces language |
 
-All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. A clean mechanical result is necessary but not sufficient: the two judge-2 Uranus drafts do not advance. After the pilot, the owner supplied a line review for all four advancing candidates. Those revisions remain lint 3, but every saved judge score belongs to the pre-edit draft.
+All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. Those checks did not catch the repeated example-inventory structure documented in `sky-placement-flatness-audit-2026-08-02.md`. A clean mechanical result is necessary but not sufficient. Every saved judge score also belongs to a pre-edit draft.
 
 ## What changed after V1
 
@@ -158,7 +158,7 @@ Hold reason: The shadow is observable, but it leans into generic Pisces/Neptune 
 
 ## Recommendation
 
-Do not publish the batch automatically. Read and approve Mars in Capricorn, Saturn in Capricorn, Neptune in Libra, and Venus in Aries individually against their current live versions. Keep both Uranus drafts out of the promotion set and give them another editorial pass only after the four stronger candidates are resolved.
+Do not publish the batch. Revise the flagged lived sections in all four previously advancing candidates, then rerun the mechanical and batch gates before returning them to owner review. Keep both Uranus drafts out of the promotion set until their lived and turn problems are resolved.
 
 The four side-by-side decisions are presented in `sky-placement-owner-review-comparison-2026-08-02.md`.
 

@@ -272,6 +272,7 @@ function buildPrompt(args) {
     `  - Do not stack closing aphorisms; one truth, one catch at most.`,
     `  - The shadow is observable behavior (what someone does), never an abstract warning.`,
     `  - No "the [sign] trap" framing, no "for everyone at once" wrapper, no coverage checklist. If a sentence exists only to satisfy coverage, cut it.`,
+    `  - SCENE, NOT INVENTORY: do not line up three peer examples from work, family, relationships, or public life to prove coverage. Concrete nouns do not make an administrative list feel lived. Build pressure -> choice -> consequence. One charged sequence beats three representative scenarios.`,
     `  - A directive is allowed only when it is specific ("Say what happened, say what you need"), never generic ("embrace the change").`,
     `  - The quoted directives above are explanations, not copy. Never repeat "Say what happened, say what you need" or any sentence from the rules or exemplars.`,
     `  - Do not open TURN with "The problem starts when" or "The trouble starts when". Those batch formulas are retired. Enter the shadow through placement-specific behavior instead.`,
