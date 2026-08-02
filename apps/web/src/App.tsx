@@ -17957,7 +17957,7 @@ function ProfileView({
   const natalChartTableRows = natalSky
     ? completeNatalChartTableRows(natalSky, natalChartTableBaseRows)
     : [];
-  const chartSettings = normalizeChartSettings(profile.settings);
+  const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
@@ -18763,7 +18763,7 @@ function ManualChartsPanel({
   const formCopy = manualChartFormCopy[form.chartType];
   const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
-  const chartSettings = normalizeChartSettings(profile.settings);
+  const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const friendGeneratedContent = useMemo(
