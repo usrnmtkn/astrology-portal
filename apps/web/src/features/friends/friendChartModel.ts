@@ -1,8 +1,15 @@
 import { pointGlyph, signGlyph } from "../../components/charts/chartAssets";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
-import { twentyFourHourTimeToDisplay } from "../../services/chartTime";
+import {
+  displayTimeToTwentyFourHour,
+  twentyFourHourTimeToDisplay
+} from "../../services/chartTime";
 import { isSocialFriendChart } from "../../services/socialFriends";
 import type { ManualChart } from "../../services/manualCharts";
+import type {
+  TldrAstroChartSettings,
+  TldrAstroSubject
+} from "../../services/tldrastroApi";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { compactCityLabel } from "../../utils/locationLabels";
 
@@ -70,4 +77,27 @@ export function manualChartSubtitle(chart: ManualChart) {
   ].join(" · ");
 
   return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
+}
+
+export function apiSubjectFromManualChart(
+  chart: ManualChart | null | undefined,
+  settings: TldrAstroChartSettings
+): TldrAstroSubject | null {
+  if (!chart?.birthDate || !chart.birthLocation?.timeZone) {
+    return null;
+  }
+
+  const timeKnown = !chart.birthTimeUnknown && Boolean(chart.birthTime);
+
+  return {
+    name: chart.displayName,
+    datetime: {
+      date: chart.birthDate,
+      time: timeKnown ? displayTimeToTwentyFourHour(chart.birthTime) : "12:00",
+      timeKnown,
+      timeZone: chart.birthLocation.timeZone
+    },
+    location: chart.birthLocation,
+    settings
+  };
 }
