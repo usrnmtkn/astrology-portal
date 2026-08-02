@@ -17,6 +17,7 @@
 const fs = require("fs");
 const path = require("path");
 const { lintCard } = require("./lint-sky-voice.js");
+const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
 
 const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
@@ -189,6 +190,12 @@ function loadPair(pairKey, { allowReviewSources = false } = {}) {
   return { path: p, value: readJson(p) };
 }
 
+function loadExactAspectSource({ a, aspect, b }) {
+  const p = path.join(root, "data", "transits", `${a}-${aspect}-${b}.json`);
+  if (!fs.existsSync(p)) return null;
+  return { path: p, value: readJson(p) };
+}
+
 function canonicalPlacementBody(value) {
   const body = normalizeToken(value);
   if (body === "true-node" || body === "node") return "north-node";
@@ -321,6 +328,7 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources 
     : { a: first, b: second, aspect: normalizedAspect, signA: firstSign, signB: secondSign };
   const pairKey = `${normalized.a}-${normalized.b}`;
   const pair = loadPair(pairKey, { allowReviewSources });
+  const exactAspect = loadExactAspectSource(normalized);
 
   if (!pair) {
     throw new SourceGapError(
@@ -345,6 +353,8 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources 
     pairKey,
     pair: pair.value,
     pairSource: path.relative(root, pair.path).replaceAll(path.sep, "/"),
+    exactAspect: exactAspect?.value ?? null,
+    exactAspectSource: exactAspect ? path.relative(root, exactAspect.path).replaceAll(path.sep, "/") : null,
     reversed
   };
 }
@@ -482,6 +492,7 @@ function buildPlacementTopperPrompt(args, { avoidTerms = [] } = {}) {
     `VOICE: ${spec.voiceDescription}`,
     `MODE: live aspect layer for an evergreen collective placement base.`,
     `PERSON: collective "we/our/us", never "you/your".`,
+    buildOwnerVocabularyPrompt({ surface: "sky-placement-topper", maxCore: 8, maxShared: 5, maxAcShared: 4, maxSdAdditions: 3 }),
     ``,
     `SOURCE MEANING (do not add claims beyond this):`,
     `  pair essence: ${normalized.pair.blend ?? ""}`,
@@ -555,6 +566,7 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
     `MODE: collective placement, not a natal reading and not a live aspect report.`,
     `PERSON: Use collective "we/our/us" throughout the body. Impersonal "you/your/you're" is allowed ONLY in the final truth-and-catch pair.`,
     `PACE TO STATE PLAINLY: ${normalized.pace}.`,
+    buildOwnerVocabularyPrompt({ surface: "sky-placement-card", maxCore: 10, maxShared: 7, maxAcShared: 5, maxSdAdditions: 4 }),
     ``,
     `SOURCE MEANING (reframe the natal "you" as collective "we"; do not add claims beyond this):`,
     `  core: ${sourceMeaning.tldr}`,
@@ -621,6 +633,7 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     { allowReviewSources }
   );
   const { pair } = normalized;
+  const exact = normalized.exactAspect;
   const field = ASPECT_FIELD[normalized.aspect];
   const meaning = { blend: pair.blend, active: pair[field], harmonious: pair.harmonious, hard: pair.hard, traditional: pair.traditional };
   const elements = [normalized.a, normalized.b, normalized.signA, normalized.signB].map((t) => `${cap(t)}=${elementOf(t) || "-"}`).join(", ");
@@ -632,8 +645,21 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     ``,
     `VOICE: ${spec.voiceDescription}`,
     `PERSON: ${spec.personNote}`,
+    buildOwnerVocabularyPrompt({ surface: "sky-aspect-card", maxCore: 12, maxShared: 8, maxAcShared: 6, maxSdAdditions: 5 }),
     ``,
-    `SOURCE MEANING (do not add claims beyond this):`,
+    `EXACT ASPECT SOURCE (primary; preserve this aspect's distinctions and do not flatten it into the pair group):`,
+    `  source: ${normalized.exactAspectSource ?? "No exact source exists; use the pair source only."}`,
+    `  modern: ${exact?.modern ?? exact?.base ?? ""}`,
+    `  cyclic phase: ${exact?.cyclic?.phase ?? ""}`,
+    `  cyclic meaning: ${exact?.cyclic?.meaning ?? ""}`,
+    `  waxing: ${exact?.cyclic?.waxing ?? ""}`,
+    `  waning: ${exact?.cyclic?.waning ?? ""}`,
+    `  business: ${exact?.business ?? ""}`,
+    `  shadow: ${exact?.shadow ?? ""}`,
+    `  applying arc: ${exact?.arcApplying ?? ""}`,
+    `  separating arc: ${exact?.arcSeparating ?? ""}`,
+    ``,
+    `PAIR SOURCE (secondary context only):`,
     `  pair essence (blend): ${meaning.blend ?? meaning.NOTE}`,
     `  this aspect (${field}): ${meaning.active ?? ""}`,
     `  gift face (harmonious): ${meaning.harmonious ?? ""}`,
@@ -718,7 +744,14 @@ function loadLocalEnv() {
 const { resolveActiveRelease, resolveCandidateRelease } = require("./editorial-model-registry.js");
 
 function registeredRelease(role, surface) {
-  const candidateReleaseId = String(process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID || "").trim();
+  const roleCandidateKey = role === "judge"
+    ? "EDITORIAL_JUDGE_CANDIDATE_RELEASE_ID"
+    : "EDITORIAL_GENERATION_CANDIDATE_RELEASE_ID";
+  const candidateReleaseId = String(
+    process.env[roleCandidateKey]
+    || process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID
+    || ""
+  ).trim();
   if (!candidateReleaseId) return resolveActiveRelease({ role, surface });
   const authorized = role === "judge"
     ? process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION === "1"
@@ -934,6 +967,10 @@ async function generate(prompt, options = {}) {
   return generateWithConfig(prompt, generationConfig(), options);
 }
 
+async function generateForSurface(prompt, surface, options = {}) {
+  return generateWithConfig(prompt, generationConfig(surface), options);
+}
+
 function judgeConfigForOptions(options = {}) {
   return judgeConfig(options.surface || "sky-aspect");
 }
@@ -1128,6 +1165,7 @@ async function generateCard(args, options = {}) {
       signB: normalized.signB,
       pairKey: normalized.pairKey,
       pairSource: normalized.pairSource,
+      exactAspectSource: normalized.exactAspectSource,
       pairStatus: normalized.pair.status ?? null
     },
     judgeMode: "collective-aspect-card",
@@ -1253,6 +1291,7 @@ module.exports = {
   buildPrompt,
   closeBank,
   generate,
+  generateForSurface,
   generateJudge,
   generateCard,
   generatePlacementCard,
