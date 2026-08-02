@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import {
+  comparisonPointsFromSky,
   relationshipCompositeSky,
-  relationshipMidpointLongitude
+  relationshipMidpointLongitude,
+  synastryAspectOrbLimit,
+  synastryContactScore,
+  synastryContactSignalTier,
+  synastryWheelAspectLines
 } from "../apps/web/src/services/chartMath.ts";
 
 function position(planet, longitude, glyph) {
@@ -105,5 +110,44 @@ assert.deepEqual(
 assert.equal(composite.dominantElement, "Fire", "Element ties must preserve Fire-first legacy ordering.");
 assert.equal(relationshipCompositeSky(null, { natalChart: friendSky }), null);
 assert.equal(relationshipCompositeSky(profileSky, { natalChart: null }), null);
+
+assert.equal(synastryAspectOrbLimit("conjunction", "Sun", "Moon"), 4.5);
+assert.equal(synastryAspectOrbLimit("conjunction", "Sun", "Jupiter"), 4);
+assert.equal(synastryAspectOrbLimit("conjunction", "Jupiter", "Saturn"), 2);
+assert.equal(synastryAspectOrbLimit("conjunction", "Jupiter", "Jupiter"), 1.25);
+assert.equal(synastryContactSignalTier("Sun", "Jupiter"), "primary");
+assert.equal(synastryContactSignalTier("Saturn", "Jupiter"), "secondary");
+assert.equal(synastryContactSignalTier("Jupiter", "Jupiter"), "background");
+assert.ok(
+  synastryContactScore("Sun", "Moon", "conjunction", 0.5)
+    > synastryContactScore("Jupiter", "Jupiter", "conjunction", 0.5),
+  "Personal contacts must outrank same-planet generational contacts."
+);
+
+const synastryProfileSky = sky({
+  positions: [position("Sun", 0, "☉"), position("Jupiter", 0, "♃")]
+});
+const synastryFriendSky = sky({
+  positions: [position("Sun", 4.4, "☉"), position("Jupiter", 1.5, "♃")]
+});
+const comparisonPoints = comparisonPointsFromSky(synastryProfileSky);
+const wheelLines = synastryWheelAspectLines(synastryProfileSky, {
+  id: "friend-1",
+  natalChart: synastryFriendSky
+});
+
+assert.deepEqual(comparisonPoints.map((point) => point.name), ["Sun", "Jupiter"]);
+assert.ok(
+  wheelLines.some((line) => (
+    line.fromPointId === "outer:Sun"
+      && line.toPointId === "inner:Sun"
+      && Math.abs(line.orb - 4.4) < 0.000001
+  )),
+  "The wheel must retain its wider personal-point display orb."
+);
+assert.ok(
+  !wheelLines.some((line) => line.fromPointId === "outer:Jupiter" && line.toPointId === "inner:Jupiter"),
+  "Same-planet generational contacts outside 1.25° must stay off the wheel."
+);
 
 console.log("Relationship composite calculation tests passed.");
