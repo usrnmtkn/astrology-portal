@@ -46,6 +46,10 @@ const friendNatalTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendNatalTab.tsx"),
   "utf8"
 );
+const friendTransitsTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendTransitsTab.tsx"),
+  "utf8"
+);
 const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
@@ -336,6 +340,16 @@ assert.match(
   friendNatalTabSource,
   /import \{ FriendPlacementTable \}/u,
   "The deferred Natal tab must own its placement table."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendTransitsTab"\)/u,
+  "Transit presentation must load only when its Friends tab renders."
+);
+assert.match(
+  friendTransitsTabSource,
+  /export function FriendTransitsTab/u,
+  "The deferred Friends module must own transit presentation."
 );
 assert.doesNotMatch(
   appSource,
