@@ -155,6 +155,11 @@ assert.match(
 );
 assert.match(
   appSource,
+  /\|\| \(mode === "friends" && !friendProfileContentRequested\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  "Bare Friends landing views must not download the deferred transit and relationship fallback bundle."
+);
+assert.match(
+  appSource,
   /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
   "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
 );
