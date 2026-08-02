@@ -33,11 +33,15 @@ assert.equal(groupAspectsByGiftLesson(
 ).length, 1);
 
 const appSource = await readFile(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
+const friendChartModelSource = await readFile(
+  new URL("../apps/web/src/features/friends/friendChartModel.ts", import.meta.url),
+  "utf8"
+);
 const youPageSource = await readFile(new URL("../apps/web/src/features/you/YouPage.tsx", import.meta.url), "utf8");
 
 assert.match(appSource, /selectedSynastryAspectGroups[\s\S]{0,240}?groupAspectsByGiftLesson/);
 assert.match(appSource, /selectedCompositeAspectGroups[\s\S]{0,240}?groupAspectsByGiftLesson/);
-assert.match(appSource, /groupFriendNatalAspects[\s\S]*?return groupAspectsByGiftLesson/);
+assert.match(friendChartModelSource, /groupFriendNatalAspects[\s\S]*?return groupAspectsByGiftLesson/);
 assert.match(appSource, /function ActiveAspects[\s\S]*?groupAspectsByGiftLesson/);
 assert.match(youPageSource, /natalAspectGroups\.map/);
 
