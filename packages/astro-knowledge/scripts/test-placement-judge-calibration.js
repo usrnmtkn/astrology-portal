@@ -23,10 +23,9 @@ const goldExemplars = spec.exemplars.filter((e) => e.canonical);
 
 // Known-weak drafts covering this surface's real failure modes: the retired
 // kumbaya assembly, the sign-encyclopedia lead, the swap-anywhere generic, and
-// the announcement hook with stacked endings, and the administrative example
-// inventory that sounds concrete while carrying no narrative movement, and
-// the polished abstraction / metaphor pile caught in the GPT-5.6 Thinking
-// review forwarded by the owner on 2026-08-02.
+// unsupported domain drift, unnatural personification, the administrative
+// example inventory that sounds concrete while carrying no narrative movement,
+// and the polished abstraction / metaphor pile caught in owner review.
 const knownWeak = [
   {
     label: "retired kumbaya assembly",
@@ -45,18 +44,18 @@ const knownWeak = [
     turn: "The challenge is resisting the change instead of flowing with it. Growth is rarely comfortable, but it is always worth it. Trust that everything is unfolding exactly as it should."
   },
   {
-    label: "announcement hook, stacked endings",
-    planet: "venus", sign: "aries",
-    hook: "Venus enters Aries, the sign of the pioneer.",
-    lived: "For about four weeks, love gets bolder and more direct. We chase what we want. Attraction moves fast here.",
-    turn: "The shadow is impatience in love. Desire is not devotion. Passion fades. Real love stays. Choose wisely."
+    label: "unnatural banished-want personification",
+    planet: "venus", sign: "virgo",
+    hook: "The banished want refuses to stay reasonable. Venus handles attraction, worth, and relationship; in Virgo, desire becomes exacting about what works and what does not.",
+    lived: "A plan gets revised, a boundary becomes specific, and affection is measured through the details that can actually be maintained. The placement notices what care costs and where the exchange has stopped being mutual.",
+    turn: "Discernment turns against itself when every preference has to justify its existence. The result is a life edited so thoroughly that nothing unplanned is allowed to matter."
   },
   {
-    label: "moralizing coach",
-    planet: "saturn", sign: "pisces",
-    hook: "It is time to get serious about your dreams.",
-    lived: "Saturn in Pisces asks us to do the work of making our visions real. The lesson here is discipline in the service of imagination. Remember to stay grounded while you reach for what inspires you.",
-    turn: "The trap is escapism, avoiding responsibility by drifting into fantasy. But limitations are really liberations in disguise. Do the work, honor your commitments, and your dreams will thank you for it."
+    label: "unsupported Chiron-in-Taurus work framing",
+    planet: "chiron", sign: "taurus",
+    hook: "Work exposes the old wound. Chiron in Taurus makes career, productivity, and professional success the center of the transit.",
+    lived: "The office becomes the proving ground. A promotion restores confidence, a better title repairs old insecurity, and steady output becomes evidence that the wound is finally healing.",
+    turn: "The trouble starts when the next achievement does not hold. Productivity cannot repair every injury, no matter how impressive the record becomes."
   },
   {
     label: "flat administrative inventory",
@@ -128,13 +127,16 @@ async function main() {
   console.log("Judge calibrated: separates good from bad by a wide margin, no control mis-rated.");
 }
 
-if (!process.argv.includes("--authorize-live")) {
-  console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
-  process.exit(0);
+if (require.main === module) {
+  if (!process.argv.includes("--authorize-live")) {
+    console.log(`Calibration contract verified: ${goldExemplars.length} approved examples and ${knownWeak.length} weak controls. Live judging was not run.`);
+  } else {
+    main().catch((err) => {
+      console.error(`Calibration could not run: ${err.message}`);
+      console.error("(This test needs the judge model wired - set the generator's API key.)");
+      process.exit(1);
+    });
+  }
 }
 
-main().catch((err) => {
-  console.error(`Calibration could not run: ${err.message}`);
-  console.error("(This test needs the judge model wired - set the generator's API key.)");
-  process.exit(1);
-});
+module.exports = { goldExemplars, knownWeak, main };
