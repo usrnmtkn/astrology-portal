@@ -16,6 +16,9 @@ try {
   const { FriendPlacementTable, SynastryPlacementsComparison } = await server.ssrLoadModule(
     "/src/features/friends/FriendPlacementTables.tsx"
   );
+  const { FriendNatalViewControl } = await server.ssrLoadModule(
+    "/src/features/friends/FriendNatalViewControl.tsx"
+  );
   const friendHtml = renderToStaticMarkup(React.createElement(FriendPlacementTable, {
     title: "Alex's natal placements",
     rows: [{
@@ -59,6 +62,17 @@ try {
   assert.match(synastryHtml, /aria-label="Alex placements"/);
   assert.match(synastryHtml, /aria-label="You placements"/);
   assert.match(synastryHtml, /aria-label="Sun in Aries, 10°30&#x27;, house 1"/);
+
+  const viewControlHtml = renderToStaticMarkup(React.createElement(FriendNatalViewControl, {
+    value: "circle",
+    onChange() {},
+    ariaLabel: "Alex natal chart display"
+  }));
+
+  assert.match(viewControlHtml, /aria-label="Alex natal chart display"/);
+  assert.match(viewControlHtml, />Circle</);
+  assert.match(viewControlHtml, />Table</);
+  assert.match(viewControlHtml, /aria-selected="true"/);
 } finally {
   await server.close();
 }

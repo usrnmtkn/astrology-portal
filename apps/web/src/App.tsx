@@ -26,12 +26,9 @@ import { Fragment, isValidElement, lazy, Suspense, useCallback, useEffect, useLa
 import type { FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
-import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
-import { SegmentedControl } from "./components/SegmentedControl";
 import { CitySearchField, CitySuggestions } from "./components/CitySearchField";
-import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
 import type { NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
   AspectGlyphs,
@@ -11355,6 +11352,24 @@ const FriendsRoute = lazy(() =>
   }))
 );
 
+const FriendsPageShell = lazy(() =>
+  import("./components/FriendsPageShell").then((module) => ({
+    default: module.FriendsPageShell
+  }))
+);
+
+const FriendNatalViewControl = lazy(() =>
+  import("./features/friends/FriendNatalViewControl").then((module) => ({
+    default: module.FriendNatalViewControl
+  }))
+);
+
+const AspectGiftLessonGroup = lazy(() =>
+  import("./components/charts/AspectGiftLessonGroup").then((module) => ({
+    default: module.AspectGiftLessonGroup
+  }))
+);
+
 const SettingsRoute = lazy(() =>
   import("./routes/SettingsRoute").then((module) => ({
     default: module.SettingsRoute
@@ -20113,16 +20128,10 @@ function ManualChartsPanel({
             <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
               {friendProfileTab === "natal" && selectedChart.natalChart && (
                 <div className="friend-synastry-wheel-shell">
-                  <SegmentedControl
+                  <FriendNatalViewControl
                     value={friendNatalChartViewMode}
-                    options={[
-                      { value: "circle", label: "Circle" },
-                      { value: "table", label: "Table" }
-                    ]}
                     onChange={setFriendNatalChartViewMode}
                     ariaLabel={`${selectedChart.displayName} natal chart display`}
-                    className="natal-chart-view-toggle"
-                    compact
                   />
                   {friendNatalChartViewMode === "table" ? (
                     <NatalChartDataTable
