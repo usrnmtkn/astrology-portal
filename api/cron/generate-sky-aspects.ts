@@ -8,7 +8,7 @@ import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonical
 loadLocalWebEnv();
 
 const { generateCard, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
-const supportedAspects = new Set(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
+const supportedAspects = new Set<string>(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
