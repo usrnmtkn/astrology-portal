@@ -106,6 +106,7 @@ const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
 const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes("phone-auth-"));
 const deferredSignupItem = javaScriptFiles.find((item) => item.file.includes("SignupView-"));
+const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.includes("FriendsWorkspaceShell-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const measurements = {
   appBootGzipBytes: sum(bootItems, "gzipBytes"),
@@ -113,6 +114,7 @@ const measurements = {
   readerBootGzipBytes: sum(readerBootItems, "gzipBytes"),
   readerInitialCssGzipBytes: sum(readerStyleItems, "gzipBytes"),
   largestJavaScriptGzipBytes: largestJavaScript?.gzipBytes ?? 0,
+  friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
   totalCssGzipBytes: sum(cssFiles, "gzipBytes"),
   totalJavaScriptGzipBytes: sum(javaScriptFiles, "gzipBytes")
@@ -140,12 +142,16 @@ if (deferredPhoneAuthItem && bootFiles.has(deferredPhoneAuthItem.file)) {
 if (deferredSignupItem && bootFiles.has(deferredSignupItem.file)) {
   failures.push("The signup experience re-entered the static App boot graph.");
 }
+if (deferredFriendsWorkspaceItem && bootFiles.has(deferredFriendsWorkspaceItem.file)) {
+  failures.push("The Friends workspace re-entered the static App boot graph.");
+}
 
 console.log("# Web bundle budget");
 console.log(`App JavaScript boot graph: ${formatBytes(measurements.appBootGzipBytes)} gzip across ${bootItems.length} files`);
 console.log(`Reader boot including awaited CSS: ${formatBytes(measurements.readerBootGzipBytes)} gzip across ${readerBootItems.length} files`);
 console.log(`Reader startup CSS: ${formatBytes(measurements.readerInitialCssGzipBytes)} gzip across ${readerStyleItems.length} files`);
 console.log(`App code chunk: ${formatBytes(measurements.appChunkGzipBytes)} gzip`);
+console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorkspaceChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
