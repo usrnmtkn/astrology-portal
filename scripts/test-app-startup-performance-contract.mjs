@@ -54,6 +54,10 @@ const friendProfileChartRailSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendProfileChartRail.tsx"),
   "utf8"
 );
+const relationshipChartFullscreenSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/RelationshipChartFullscreen.tsx"),
+  "utf8"
+);
 const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
@@ -291,9 +295,9 @@ assert.doesNotMatch(
   "The Friends-only synastry wheel must not remain a static application-shell dependency."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/SynastryWheel"\)/u,
-  "The synastry wheel must load only when a relationship chart surface renders."
+  relationshipChartFullscreenSource,
+  /import \{ SynastryWheel \}/u,
+  "The interaction-only fullscreen module must own its synastry wheel."
 );
 assert.doesNotMatch(
   wheelSource,
@@ -369,6 +373,16 @@ assert.match(
   friendProfileChartRailSource,
   /export function FriendProfileChartRail/u,
   "The deferred Friends module must own chart-rail presentation."
+);
+assert.match(
+  appSource,
+  /const FriendProfileChartFullscreen = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/RelationshipChartFullscreen"\)/u,
+  "Fullscreen relationship charts must load only when opened."
+);
+assert.match(
+  relationshipChartFullscreenSource,
+  /export function FriendProfileChartFullscreen/u,
+  "The deferred fullscreen module must own relationship chart composition."
 );
 assert.doesNotMatch(
   appSource,

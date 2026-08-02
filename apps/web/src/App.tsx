@@ -11268,12 +11268,6 @@ const FriendDetail = lazy(() =>
   }))
 );
 
-const SynastryWheel = lazy(() =>
-  import("./components/charts/SynastryWheel").then((module) => ({
-    default: module.SynastryWheel
-  }))
-);
-
 const FriendNatalTab = lazy(() =>
   import("./features/friends/FriendNatalTab").then((module) => ({
     default: module.FriendNatalTab
@@ -11304,9 +11298,9 @@ const CompatibilityTab = lazy(() =>
   }))
 );
 
-const RelationshipChartFullscreen = lazy(() =>
+const FriendProfileChartFullscreen = lazy(() =>
   import("./features/friends/RelationshipChartFullscreen").then((module) => ({
-    default: module.RelationshipChartFullscreen
+    default: module.FriendProfileChartFullscreen
   }))
 );
 
@@ -20210,71 +20204,29 @@ function ManualChartsPanel({
         </ModalPortal>
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
-        relationshipChartFullscreenMode === "synastry" && selectedChart.natalChart && relationshipComparisonSky ? (
-          <RelationshipChartFullscreen
-            comparisonOptions={relationshipComparisonOptions}
-            comparisonPickerOpen={relationshipComparisonPickerOpen}
-            comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-            mode="synastry"
-            outerName={selectedChart.displayName}
-            outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Synastry`}
-            onClose={() => {
-              setRelationshipComparisonPickerOpen(false);
-              setRelationshipChartFullscreenMode(null);
-            }}
-            onComparisonSelect={(id) => {
-              setRelationshipComparisonChartId(id);
-              setRelationshipComparisonPickerOpen(false);
-            }}
-            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-          >
-            <SynastryWheel
-              outerPositions={selectedChart.natalChart.positions}
-              innerPositions={relationshipComparisonSky.positions}
-              interAspects={selectedSynastryAspectLines}
-              ascendant={selectedChart.natalChart.ascendant}
-              ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-              midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-              innerAscendant={relationshipComparisonSky.ascendant}
-              innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-              innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-              houseSignLabelStyle={houseSignLabelStyle}
-              aspectInspector
-              outerLabel={selectedChart.displayName}
-              innerLabel={relationshipComparisonName}
-            />
-          </RelationshipChartFullscreen>
-        ) : relationshipChartFullscreenMode === "composite" && selectedCompositeSky ? (
-          <RelationshipChartFullscreen
+        <FriendProfileChartFullscreen
+          chartName={selectedChart.displayName}
+          comparisonName={relationshipComparisonName}
           comparisonOptions={relationshipComparisonOptions}
           comparisonPickerOpen={relationshipComparisonPickerOpen}
           comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-            mode="composite"
-            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Composite`}
-            onClose={() => {
-              setRelationshipComparisonPickerOpen(false);
-              setRelationshipChartFullscreenMode(null);
-            }}
-            onComparisonSelect={(id) => {
-              setRelationshipComparisonChartId(id);
-              setRelationshipComparisonPickerOpen(false);
-            }}
-            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-          >
-            <SkyWheel
-              positions={selectedCompositeSky.positions}
-              aspects={selectedCompositeSky.aspects}
-              ascendant={selectedCompositeSky.ascendant}
-              ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-              midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-              showHouses
-              houseSignLabelStyle={houseSignLabelStyle}
-              variant="composite"
-              aspectInspector
-            />
-          </RelationshipChartFullscreen>
-        ) : null
+          compositeSky={selectedCompositeSky}
+          houseSignLabelStyle={houseSignLabelStyle}
+          mode={relationshipChartFullscreenMode}
+          natalSky={selectedChart.natalChart ?? null}
+          onClose={() => {
+            setRelationshipComparisonPickerOpen(false);
+            setRelationshipChartFullscreenMode(null);
+          }}
+          onComparisonSelect={(id) => {
+            setRelationshipComparisonChartId(id);
+            setRelationshipComparisonPickerOpen(false);
+          }}
+          onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+          outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+          relationshipComparisonSky={relationshipComparisonSky}
+          synastryAspects={selectedSynastryAspectLines}
+        />
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
         <FriendDetail
