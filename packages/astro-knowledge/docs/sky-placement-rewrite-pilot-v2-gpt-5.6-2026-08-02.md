@@ -21,14 +21,14 @@ The local repairs addressed batch repetition or a watchlist phrase. They did not
 
 | Placement | Linter | Batch audit | Judge | Decision |
 | --- | ---: | --- | ---: | --- |
-| Mars in Capricorn | 3 | Clean | 3 | Advance to owner review |
+| Mars in Capricorn | 3 | Clean | 3 before owner edit | Owner-edited turn remains in review |
 | Saturn in Capricorn | 3 | Clean | 3 | Advance to owner review |
 | Neptune in Libra | 3 | Clean | 3 | Advance to owner review |
 | Venus in Aries | 3 | Clean | 3 | Advance to owner review |
 | Uranus in Cancer | 3 | Clean | 2 | Hold; closing advice loses specificity |
 | Uranus in Pisces | 3 | Clean | 2 | Hold; Uranus function fades into generic Pisces language |
 
-All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. A clean mechanical result is necessary but not sufficient: the two judge-2 Uranus drafts do not advance.
+All six candidates score 3 in the mechanical linter. The final six-card batch passes the small-pilot sameness audit. A clean mechanical result is necessary but not sufficient: the two judge-2 Uranus drafts do not advance. After the pilot, the owner replaced the Mars turn verbatim; that revision remains lint 3, but the saved judge score belongs to the pre-edit draft.
 
 ## What changed after V1
 
@@ -52,7 +52,7 @@ These changes remove prompt leakage while preserving legitimate shared facts suc
 
 **Lived:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the same useful job after the novelty is gone. You may feel most alive when there is a clear finish line and a solid way to reach it.
 
-**Turn:** This can turn brutal when every hour has to justify itself. We skip the walk, delay the call back, and treat rest like a reward we have not earned because there is still more to finish. The people who love you are not reading your resume.
+**Turn — owner edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
 
 **Moves:**
 
@@ -60,7 +60,7 @@ These changes remove prompt leakage while preserving legitimate shared facts suc
 - Write the next three steps for a goal that has been living only in your head.
 - Cancel one obligation that makes you look productive but does not move your real work forward.
 
-Judge summary: The draft distinguishes Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and an observable shadow. Its least distinctive sentence is: “You may feel most alive when there is a clear finish line and a solid way to reach it.”
+Pre-edit judge summary: The GPT-5.6 draft distinguished Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and an observable shadow. Its least distinctive sentence was: “You may feel most alive when there is a clear finish line and a solid way to reach it.” The owner-verbatim turn above was added afterward and has not been rejudged.
 
 ### Saturn in Capricorn — judge 3
 

@@ -24,11 +24,19 @@
       "promotionAuthorized": false,
       "recommendedDecision": "replace",
       "meaningSource": "data/placements/sign/mars-capricorn.json",
+      "ownerEdit": {
+        "date": "2026-08-02",
+        "source": "owner-verbatim",
+        "slots": [
+          "turn"
+        ],
+        "status": "pending_owner_approval"
+      },
       "article": {
         "tagline": "Finish what matters",
         "hook": "Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops spending force on noise and puts it toward the result. The work may be slow, but the aim gets sharper.",
         "lived": "Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the same useful job after the novelty is gone. You may feel most alive when there is a clear finish line and a solid way to reach it.",
-        "turn": "This can turn brutal when every hour has to justify itself. We skip the walk, delay the call back, and treat rest like a reward we have not earned because there is still more to finish. The people who love you are not reading your resume.",
+        "turn": "Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.",
         "moves": [
           "Choose one long-delayed practical task and give it a two-hour block with a defined finish.",
           "Write the next three steps for a goal that has been living only in your head.",
@@ -41,10 +49,12 @@
         "warns": 0
       },
       "judgeResult": {
-        "score": 3,
-        "verdict": "in-voice",
+        "status": "stale_after_owner_edit",
+        "priorScore": 3,
+        "priorVerdict": "in-voice",
         "why": "It cleanly distinguishes Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and a sharp observable shadow.",
-        "weakest": "You may feel most alive when there is a clear finish line and a solid way to reach it."
+        "weakest": "You may feel most alive when there is a clear finish line and a solid way to reach it.",
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner replaced the turn. The owner-verbatim revision is lint 3 but has not been rejudged."
       }
     },
     {
