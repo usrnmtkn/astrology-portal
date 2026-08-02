@@ -16,6 +16,7 @@ const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/w
 const calendarRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/CalendarRoute.tsx"), "utf8");
 const friendsRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/FriendsRoute.tsx"), "utf8");
 const friendDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"), "utf8");
+const friendsPageShellSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/FriendsPageShell.tsx"), "utf8");
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
 const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
@@ -113,6 +114,31 @@ assert.match(
   friendsRouteSource,
   /import "\.\.\/styles\/friends-compare-picker\.css";/u,
   "The lazy Friends route must own its comparison picker stylesheet."
+);
+assert.doesNotMatch(
+  appSource,
+  /import\s+\{[^}]*(?:FriendsPageShell|SegmentedControl|AspectGiftLessonGroup)[^}]*\}\s+from\s+"\.\/components/u,
+  "Friends-only shell renderers must not remain static application-shell dependencies."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/FriendsPageShell"\)/u,
+  "The Friends page shell must load only when its route renders."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendNatalViewControl"\)/u,
+  "The Friends segmented control must load only when its route renders."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/components\/charts\/AspectGiftLessonGroup"\)/u,
+  "The Friends aspect grouping renderer must load only when its route renders."
+);
+assert.match(
+  friendsPageShellSource,
+  /export function FriendsPageShell/u,
+  "The deferred Friends shell module must own its renderer."
 );
 assert.doesNotMatch(
   friendsStylesSource,
