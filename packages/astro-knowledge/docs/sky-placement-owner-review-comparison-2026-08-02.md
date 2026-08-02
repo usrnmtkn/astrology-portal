@@ -2,24 +2,26 @@
 
 ## Decision requested
 
-Review the four GPT-5.6 candidates below against the current approved baseline. The editorial recommendation is **replace** for all four, but each placement remains an independent owner decision.
+Review the four GPT-5.6 candidates below against the current approved baseline. After the owner identified a recurring flat example-inventory pattern, the editorial recommendation changed from **replace** to **revise** for all four. Each placement remains an independent owner decision.
 
 No candidate has been written to the live content bank.
 
-The exact candidate text is frozen in `review/sky-placement-rewrite-pilot-v2-candidates.json`. The bundle is explicitly marked `needs_review` with `promotionAuthorized: false`; its audit generates twenty rows for inspection without applying any live changes.
+The exact candidate text is frozen in `review/sky-placement-rewrite-pilot-v2-candidates.json`. The bundle is explicitly marked `needs_review`, `editorialStatus: needs_voice_pass`, and `promotionAuthorized: false`; its audit generates twenty rows for inspection without applying any live changes.
 
 | Placement | Recommendation | Main improvement |
 | --- | --- | --- |
-| Mars in Capricorn | Replace | More observable work behavior; fewer battle, mountain, and punishment clichés |
-| Saturn in Capricorn | Replace | Clearer Saturn/Capricorn distinction and a more specific cost of overwork |
-| Neptune in Libra | Replace | Stronger relational scenes and a sharper distinction between peace and avoidance |
-| Venus in Aries | Replace | Direct desire without conquest language; more useful and varied actions |
+| Mars in Capricorn | Revise | The lived section still lines up proposal, budget, and task as a generated work inventory |
+| Saturn in Capricorn | Revise | The hook is stronger; the lived section still uses a three-example coverage shape |
+| Neptune in Libra | Revise | The lived section repeats the meeting/project/couple administrative inventory |
+| Venus in Aries | Revise | The examples have heat, but the outfit/ticket/flirtation triad still exposes the generator's shape |
+
+The full six-card diagnosis is in `sky-placement-flatness-audit-2026-08-02.md`.
 
 ## Mars in Capricorn
 
-### Recommendation: replace
+### Recommendation: revise
 
-The candidate keeps the existing article's discipline and results focus, but replaces `war` and `scoreboard` language with ordinary evidence: a proposal, a budget, a delayed task, and an obligation that only looks productive. The owner-edited turn keeps one sustained mountain image and makes the point at which determination becomes pointless grinding more explicit. The moves are less templated.
+The candidate improves the baseline's `war` and `scoreboard` language, and the owner-edited turn makes the point at which determination becomes pointless grinding more explicit. The lived section still presents proposal, budget, and task as a generated work inventory. Keep the stronger hook and turn; rewrite the lived sequence before considering replacement.
 
 ### Current approved baseline
 
@@ -57,9 +59,9 @@ The owner-directed edits respond to the line review. The saved AI judge score pr
 
 ## Saturn in Capricorn
 
-### Recommendation: replace
+### Recommendation: revise
 
-The baseline understands endurance, but its `hustle`, contracts, meetings, calendars, and deadlines could describe generic career pressure. The candidate makes Saturn the function of limits and commitments and Capricorn the long route toward a durable result. Its shadow also shows exactly how competence becomes emotional distance.
+The refined hook is stronger than the baseline and makes Saturn the function of standards, duration, and accumulated value. Its shadow also shows how competence becomes emotional distance. The lived section still delivers training, budget, and private promise as peer examples instead of a consequence that develops under pressure.
 
 ### Current approved baseline
 
@@ -95,9 +97,9 @@ The baseline understands endurance, but its `hustle`, contracts, meetings, calen
 
 ## Neptune in Libra
 
-### Recommendation: replace
+### Recommendation: revise
 
-The candidate keeps the baseline's fairness theme but makes the relational mechanism much clearer: smoothing tone, editing needs, vague agreement, and unequal compromise. It also avoids instructing the reader to `pick a side` as if polarization were always the remedy for Neptune's blur.
+The candidate keeps the baseline's fairness theme and makes the relational mechanism clearer: smoothing tone, editing needs, vague agreement, and unequal compromise. The lived section still reproduces the meeting/project/couple coverage row. Preserve the sharper turn, but rebuild the lived paragraph around one agreement becoming beautiful enough to hide its cost.
 
 ### Current approved baseline
 
@@ -133,9 +135,9 @@ The candidate keeps the baseline's fairness theme but makes the relational mecha
 
 ## Venus in Aries
 
-### Recommendation: replace
+### Recommendation: revise
 
-The candidate preserves speed, appetite, and directness while removing the baseline's pursuit-as-conquest language: `chasing`, `prize`, and `demands a reaction`. It distinguishes attraction from winning and gives the reader actions across love, taste, creativity, and money, which better reflects Venus's full function.
+The candidate preserves speed, appetite, and directness while removing much of the baseline's pursuit-as-conquest language. It distinguishes attraction from winning, but the outfit/ticket/flirtation triad still exposes the generator's three-example shape. Rebuild that paragraph as desire becoming too visible to disguise.
 
 ### Current approved baseline
 
@@ -171,6 +173,6 @@ The candidate preserves speed, appetite, and directness while removing the basel
 
 ## Approval effect
 
-An approval means the five candidate slots for that placement may replace the five currently approved baseline slots in the governed content source, followed by the normal bundle rebuild and regression checks. Approval of one placement does not imply approval of the others.
+These versions are not at the approval gate. After the flagged lived sections are revised and rechecked, an owner approval would allow the five candidate slots for that placement to replace the five currently approved baseline slots, followed by the normal bundle rebuild and regression checks. Approval of one placement would not imply approval of the others.
 
 The two judge-2 Uranus drafts are deliberately absent from this decision. They remain documented as held candidates in `sky-placement-rewrite-pilot-v2-gpt-5.6-2026-08-02.md`.

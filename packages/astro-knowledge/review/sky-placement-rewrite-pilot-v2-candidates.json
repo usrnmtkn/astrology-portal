@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "created": "2026-08-02",
   "status": "needs_review",
+  "editorialStatus": "needs_voice_pass",
   "promotionAuthorized": false,
   "generation": {
     "model": "gpt-5.6-terra",
@@ -22,7 +23,7 @@
       "title": "Mars in Capricorn",
       "status": "needs_review",
       "promotionAuthorized": false,
-      "recommendedDecision": "replace",
+      "recommendedDecision": "revise",
       "meaningSource": "data/placements/sign/mars-capricorn.json",
       "ownerEdit": {
         "date": "2026-08-02",
@@ -66,7 +67,7 @@
       "title": "Saturn in Capricorn",
       "status": "needs_review",
       "promotionAuthorized": false,
-      "recommendedDecision": "replace",
+      "recommendedDecision": "revise",
       "meaningSource": "data/placements/sign/saturn-capricorn.json",
       "ownerEdit": {
         "date": "2026-08-02",
@@ -110,7 +111,7 @@
       "title": "Neptune in Libra",
       "status": "needs_review",
       "promotionAuthorized": false,
-      "recommendedDecision": "replace",
+      "recommendedDecision": "revise",
       "meaningSource": "data/placements/sign/neptune-libra.json",
       "ownerEdit": {
         "date": "2026-08-02",
@@ -153,7 +154,7 @@
       "title": "Venus in Aries",
       "status": "needs_review",
       "promotionAuthorized": false,
-      "recommendedDecision": "replace",
+      "recommendedDecision": "revise",
       "meaningSource": "data/placements/sign/venus-aries.json",
       "ownerEdit": {
         "date": "2026-08-02",

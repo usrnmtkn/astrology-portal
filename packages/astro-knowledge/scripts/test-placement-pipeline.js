@@ -192,6 +192,8 @@ async function main() {
     assert.match(prompt, /Never repeat "Say what happened, say what you need"/);
     assert.match(prompt, /Do not reuse a planet-function sentence such as "Uranus breaks stale patterns"/);
     assert.match(prompt, /No sentence from PLANET \+ SIGN MEANING LAYER may appear verbatim/);
+    assert.match(prompt, /SCENE, NOT INVENTORY/);
+    assert.match(prompt, /Build pressure -> choice -> consequence/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
     assert.ok(prompt.includes("never copy AC phrases, metaphors, or cadence"), "AC must remain a word-only reference lane");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
@@ -220,6 +222,7 @@ async function main() {
     assert.ok(jp.includes("GOLD STANDARD"), `judge prompt must include gold standard for tier ${tier}`);
     assert.ok(/\[2\]/.test(jp), `tier ${tier} must get two gold exemplars (social falls back cross-tier)`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
+    assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");
@@ -236,6 +239,7 @@ async function main() {
     currentJudge3: 0,
     ownerEdited: 4,
     reviewStatus: "needs_review",
+    editorialStatus: "needs_voice_pass",
     promotionAuthorized: false
   });
   assert.throws(

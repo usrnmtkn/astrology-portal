@@ -38,7 +38,7 @@
         "n": 2,
         "slot": "sky-placement-lived/{planet}/{sign}",
         "beat": "lived expression",
-        "does": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list.",
+        "does": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. Build movement from pressure to choice to consequence. Do not line up three representative examples from work, family, relationships, or public life as if completing a coverage checklist; concrete nouns do not rescue a flat inventory. One charged sequence beats three interchangeable scenarios. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list.",
         "example": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem."
       },
       {
@@ -163,6 +163,7 @@
   "humanJudgment": [
     "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
+    "Scene, not inventory: a lived paragraph needs pressure, movement, and consequence. Three parallel examples from different life categories read like generated coverage even when every noun is concrete. One charged sequence is better than a representative list.",
     "One close with bite. A directive is allowed when specific; motivational recap never.",
     "Vague 'things' as filler is off; idiomatic use ('handle the thing', 'get things done') is fine.",
     "'heal' language is earned only where the placement is literally about a wound (Chiron); elsewhere it is coaching register. Judge concern, not regex.",
