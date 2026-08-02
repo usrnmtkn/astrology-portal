@@ -160,4 +160,6 @@ Hold reason: The shadow is observable, but it leans into generic Pisces/Neptune 
 
 Do not publish the batch automatically. Read and approve Mars in Capricorn, Saturn in Capricorn, Neptune in Libra, and Venus in Aries individually against their current live versions. Keep both Uranus drafts out of the promotion set and give them another editorial pass only after the four stronger candidates are resolved.
 
+The four side-by-side decisions are presented in `sky-placement-owner-review-comparison-2026-08-02.md`.
+
 The baseline library audit is in `sky-placement-live-audit-2026-08-02.md`. The first pilot and the prompt-leakage diagnosis are in `sky-placement-rewrite-pilot-gpt-5.6-2026-08-02.md`.
