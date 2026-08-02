@@ -11209,12 +11209,16 @@ const CalendarRoute = lazy(() =>
 );
 
 const loadFriendsWorkspaceShell = () => import("./features/friends/FriendsWorkspaceShell");
+const loadFriendsExperience = () => Promise.all([
+  import("./routes/FriendsRoute"),
+  loadFriendsWorkspaceShell()
+]);
+const preloadFriendsExperience = () => {
+  void loadFriendsExperience();
+};
 
 const FriendsRoute = lazy(() =>
-  Promise.all([
-    import("./routes/FriendsRoute"),
-    loadFriendsWorkspaceShell()
-  ]).then(([module]) => ({ default: module.FriendsRoute }))
+  loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))
 );
 
 const FriendsWorkspaceShell = lazy(() =>
@@ -13696,7 +13700,9 @@ export function App() {
                     className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
                     type="button"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
+                    onFocus={preloadFriendsExperience}
                     onClick={navigateToFriends}
+                    onPointerEnter={preloadFriendsExperience}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
@@ -13854,7 +13860,9 @@ export function App() {
                     type="button"
                     role="menuitem"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
+                    onFocus={preloadFriendsExperience}
                     onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}
+                    onPointerEnter={preloadFriendsExperience}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
