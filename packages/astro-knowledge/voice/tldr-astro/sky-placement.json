@@ -170,6 +170,18 @@
     "A labeled 'The gift is X; the shadow is Y' seam reads as template and should be woven into behavior instead. A single 'The shadow is...' opener on a generational turn is allowed (see the Pluto exemplar). Judge concern, not regex."
   ],
 
+  "ownerApprovedBeatEvidence": [
+    {
+      "sourceId": "owner-review-uranus-cancer-lived-2026-08-02",
+      "slot": "lived",
+      "planet": "uranus",
+      "sign": "cancer",
+      "status": "owner-approved",
+      "text": "Uranus spends about seven years in a sign, long enough to pry open the private rules nobody admits are rules. The person who has always held the family together stops answering every call; the spare room changes purpose; the emergency contact is no longer a blood relative. A family scatters, and another one forms around a spare key, a couch, and the people who actually show up. What looked like stability turns out to be obligation, and home changes shape because the old version asked one person to carry too much.",
+      "use": "Voice and movement evidence for the lived beat: hidden rule, changed behavior, rupture, consequence. Do not copy its wording into another placement. This approves the paragraph only, not the surrounding Uranus-in-Cancer article."
+    }
+  ],
+
   "exemplars": [
     {
       "sourceId": "sky-placement-sun-leo",
