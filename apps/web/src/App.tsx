@@ -14074,7 +14074,7 @@ export function App() {
                   )}
                 </YouRoute>
               )}
-              {mode === "friends" && userProfile && sky && (
+              {mode === "friends" && userProfile && (
                 <FriendsRoute>
                   <ManualChartsPanel
                     profile={userProfile}
@@ -17144,7 +17144,7 @@ function ManualChartsPanel({
   onOpenDetail
 }: {
   profile: UserProfile;
-  currentSky: SkySnapshot;
+  currentSky: SkySnapshot | null;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
   natalGeneratedContent: GeneratedContentMap;
@@ -17417,7 +17417,7 @@ function ManualChartsPanel({
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendTransits = useMemo(() => (
-    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
           rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
           currentSky.generatedAt
@@ -17432,7 +17432,7 @@ function ManualChartsPanel({
     sunriseOrbDegrees
   ]);
   const selectedFriendHouseTransitCards = useMemo(() => {
-    if (!friendProfileWork.transits || !selectedChart?.natalChart || selectedChartIsEvent) {
+    if (!friendProfileWork.transits || !currentSky || !selectedChart?.natalChart || selectedChartIsEvent) {
       return [];
     }
 
@@ -17481,7 +17481,7 @@ function ManualChartsPanel({
     selectedFriendTransits
   ]);
   const selectedBondTransitCards = useMemo(() => (
-    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
       ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
@@ -17492,7 +17492,7 @@ function ManualChartsPanel({
       )
       : []
   ), [
-    currentSky.generatedAt,
+    currentSky?.generatedAt,
     friendProfileWork.transits,
     profileTransits,
     selectedChart,
@@ -17501,7 +17501,7 @@ function ManualChartsPanel({
     selectedSynastryContacts
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
-    friendProfileWork.transits && selectedChart && !selectedChartIsEvent
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
       ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
       : []
   ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
@@ -17527,8 +17527,12 @@ function ManualChartsPanel({
       houseLabel: `${ordinalHouse(card.activation.house)} house`
     }))
   ), [selectedFriendHouseTransitCards]);
-  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => (
-    (["short", "long"] as const).flatMap((durationClass) => {
+  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {
+    if (!currentSky) {
+      return [];
+    }
+
+    return (["short", "long"] as const).flatMap((durationClass) => {
       const transits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
 
       if (transits.length === 0 || !selectedChart) {
@@ -17558,8 +17562,8 @@ function ManualChartsPanel({
           };
         })
       }];
-    })
-  ), [currentSky.generatedAt, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
+    });
+  }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
   const selectedFriendPlacementRows = useMemo(() => (
     friendProfileWork.natal && selectedChart?.natalChart
       ? socialPlacementRows(selectedChart.natalChart)
@@ -17642,7 +17646,7 @@ function ManualChartsPanel({
     showFriendNatalAspectPatterns
   ]);
   const selectedFriendNatalAspectPatternTimingOverrides = useMemo(() => (
-    friendProfileWork.transits
+    friendProfileWork.transits && currentSky
       ? activationTimingOverridesForTransits(
           selectedFriendNatalAspectPatternItems,
           selectedFriendTransits,
@@ -17650,7 +17654,7 @@ function ManualChartsPanel({
         )
       : {}
   ), [
-    currentSky.generatedAt,
+    currentSky?.generatedAt,
     friendProfileWork.transits,
     selectedFriendNatalAspectPatternItems,
     selectedFriendTransits
@@ -17994,7 +17998,7 @@ function ManualChartsPanel({
     });
   };
   const openFriendTransitDetail = (transit: TransitItem) => {
-    if (!selectedChart) {
+    if (!currentSky || !selectedChart) {
       return;
     }
 
@@ -18798,7 +18802,7 @@ function ManualChartsPanel({
               comparisonPickerOpen={relationshipComparisonPickerOpen}
               comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
               compositeSky={selectedCompositeSky}
-              currentSkyPositions={currentSky.positions}
+              currentSkyPositions={currentSky?.positions ?? []}
               houseSignLabelStyle={houseSignLabelStyle}
               natalSky={selectedChart.natalChart ?? null}
               natalTableRows={selectedFriendNatalTableRows}

@@ -463,7 +463,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /friendProfileWork\.transits && selectedChart && !selectedChartIsEvent/u,
+  /friendProfileWork\.transits && currentSky && selectedChart && !selectedChartIsEvent/u,
   "Friends transit calculation must remain scoped to its active tab."
 );
 assert.match(
