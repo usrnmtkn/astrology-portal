@@ -7,6 +7,10 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const signupViewSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/auth/SignupView.tsx"),
+  "utf8"
+);
 const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
 const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
@@ -536,6 +540,21 @@ assert.doesNotMatch(
   fallbackRuntimeSource,
   /function createApp(?:Transit|Fallback)Renderer\([^)]*\) \{\s*const readerBundle = readerEligibleBundle/u,
   "Pre-filtered reader bundles must not be filtered again while constructing startup renderers."
+);
+assert.match(
+  appSource,
+  /const SignupView = lazy\(\(\) =>\s*import\("\.\/features\/auth\/SignupView"\)/u,
+  "Signup and login presentation must stay behind a lazy application boundary."
+);
+assert.doesNotMatch(
+  appSource,
+  /function SignupView|signInWithEmail|signUpWithEmail|isPhoneAuthEnabled/u,
+  "Signup forms and authentication provider code must not remain in the startup App module."
+);
+assert.match(
+  signupViewSource,
+  /export function SignupView[\s\S]*signInWithEmail[\s\S]*signUpWithEmail[\s\S]*Continue with Google/u,
+  "The lazy signup module must retain email and provider authentication behavior."
 );
 
 console.log("App startup performance contracts passed.");

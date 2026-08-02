@@ -79,6 +79,7 @@ const phoneAuthValidationServicePath = path.join(repoRoot, "apps/web/src/service
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
 const accountViewPath = path.join(repoRoot, "apps/web/src/features/account/AccountView.tsx");
+const signupViewPath = path.join(repoRoot, "apps/web/src/features/auth/SignupView.tsx");
 const memberSettingsViewPath = path.join(
   repoRoot,
   "apps/web/src/features/settings/MemberSettingsView.tsx"
@@ -120,6 +121,7 @@ const phoneAuthValidationService = fs.readFileSync(phoneAuthValidationServicePat
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
 const accountView = fs.readFileSync(accountViewPath, "utf8");
+const signupView = fs.readFileSync(signupViewPath, "utf8");
 const memberSettingsView = fs.readFileSync(memberSettingsViewPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
 const socialFriendsPanel = fs.readFileSync(socialFriendsPanelPath, "utf8");
@@ -840,13 +842,13 @@ assert.match(
   "Phone invitations require an OTP authentication path for the verified recipient."
 );
 assert.doesNotMatch(
-  app,
+  signupView,
   /Add your full name before continuing with phone/,
   "Sending a phone OTP must not require profile details before authentication."
 );
 assert.match(
-  app,
-  /savePendingSignupForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*createUserProfile\(form, "phone", account\)/,
+  `${signupView}\n${app}`,
+  /onSavePendingForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
   "Phone signup must defer profile details until code verification and preserve the phone provider."
 );
 assert.doesNotMatch(
@@ -870,7 +872,7 @@ assert.match(
   "Phone login must not create a new account, while signup must reuse the same validated E.164 number."
 );
 assert.match(
-  app,
+  signupView,
   /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(30\)[\s\S]*verificationCode\.length !== 6[\s\S]*maskPhoneNumber\(phoneOtpDestination\)[\s\S]*Send a new code in 0:/,
   "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
 );
@@ -885,7 +887,7 @@ assert.match(
   "Phone authentication must require an explicit environment feature flag."
 );
 assert.match(
-  app,
+  signupView,
   /\{isPhoneAuthEnabled && \([\s\S]*Continue with phone[\s\S]*\{isPhoneAuthEnabled && phoneAuthOpen && \(/,
   "The phone entry point and OTP form must stay hidden until the provider is enabled."
 );
