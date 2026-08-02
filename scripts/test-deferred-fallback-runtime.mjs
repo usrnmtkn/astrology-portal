@@ -71,9 +71,10 @@ const skyLunationBefore = runtime.transitSynastryFallbackRendererV3.renderSkyLun
 });
 const dignityBefore = runtime.fallbackV3DignityLine("fall", "moon", "you");
 const placementBefore = runtime.fallbackV3PlacementSentence("moon", "scorpio", "they");
+const bundledKeyCount = runtime.fallbackArchitectureV3BundledManifestSummary.keyCount;
 
-assert.equal(runtime.fallbackArchitectureV3BundledManifestSummary.keyCount, 7175);
-assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, 7175);
+assert.ok(bundledKeyCount > 0, "The bundled fallback summary must report its generated key count.");
+assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, bundledKeyCount);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);

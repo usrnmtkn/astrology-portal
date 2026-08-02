@@ -9,7 +9,10 @@ import {
 } from "../apps/web/src/utils/articleHeadings.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const skyDetailArticleSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"),
+  "utf8"
+);
 const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 
 const sections = dedupeArticleSectionHeadings([
@@ -50,7 +53,7 @@ assert.deepEqual(
 );
 
 assert.match(
-  appSource,
+  skyDetailArticleSource,
   /const generatedSections = dedupeArticleSectionHeadings\(rawGeneratedSections, detail\.title\);/u,
   "The shared Sky/Friends detail renderer must deduplicate its article headings."
 );
