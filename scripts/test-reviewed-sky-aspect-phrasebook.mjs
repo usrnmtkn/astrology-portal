@@ -133,8 +133,8 @@ for (const row of canonicalMatrix.aspects) {
   const nodeResult = renderNodeSkyAspectCard(facts);
   const browserResult = browserRenderer.renderSkyAspectCard(facts);
 
-  assert.ok(nodeResult.body, `${row.key} must resolve through reviewed or template fallback copy`);
-  assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node fallback copy diverged`);
+  assert.ok(nodeResult.body, `${row.key} must remain available to non-reader fallback tooling`);
+  assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node fallback tooling diverged`);
 }
 
 const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");

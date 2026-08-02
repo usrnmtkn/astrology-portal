@@ -7,8 +7,8 @@ import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonical
 
 loadLocalWebEnv();
 
-const { generateCard, normalizeCardArgs } = skyAspectGenerator;
-const supportedAspects = new Set(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
+const { generateCard, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
+const supportedAspects = new Set<string>(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
 const maxJudgeRegenerations = 2;
 type JudgeGate = "auto-publish" | "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
@@ -89,31 +89,6 @@ function contentKeyFor(facts: NonNullable<Awaited<ReturnType<typeof generateCard
   ].join(".");
 }
 
-async function promoteExistingCard(id: string) {
-  const key = serviceRoleKey();
-  const now = new Date().toISOString();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
-    method: "PATCH",
-    headers: {
-      apikey: key,
-      authorization: `Bearer ${key}`,
-      "content-type": "application/json",
-      prefer: "return=representation"
-    },
-    body: JSON.stringify({
-      status: "LIVE",
-      review_state: null,
-      reviewed_at: now,
-      published_at: now,
-      updated_at: now
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Sky-aspect calibrated promotion failed with ${response.status}.`);
-  }
-}
-
 async function existingCard(contentKey: string) {
   const params = new URLSearchParams({
     content_key: `eq.${contentKey}`,
@@ -153,14 +128,60 @@ async function existingCard(contentKey: string) {
   }
 
   if (row.judge_gate === "auto-publish" && row.judge_score === 3 && clean) {
-    if (judgeAutoPublishEnabled() && row.status !== "LIVE") {
-      await promoteExistingCard(row.id);
-      return { ...row, status: "LIVE", review_state: null };
-    }
     return row;
   }
 
   return null;
+}
+
+async function hasPendingOwnerAuthoredCard(contentKey: string) {
+  const params = new URLSearchParams({
+    content_key: `eq.${contentKey}`,
+    target_date: "is.null",
+    mode: "eq.feed",
+    status: "in.(DRAFT,REVIEWED)",
+    select: "source_snapshot",
+    limit: "1"
+  });
+  const key = serviceRoleKey();
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: { apikey: key, authorization: `Bearer ${key}` }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Owner-authored sky-aspect review lookup failed with ${response.status}.`);
+  }
+
+  const rows = await response.json() as Array<{ source_snapshot?: Record<string, unknown> }>;
+  return rows.some((row) => row.source_snapshot?.contentType === "owner-authored-sky-aspect");
+}
+
+async function approvedReviewPairKeys() {
+  const stagedPairKeys = [...reviewPairSources().keys()] as string[];
+
+  if (stagedPairKeys.length === 0) return new Set<string>();
+
+  const params = new URLSearchParams({
+    event_type: "eq.sky-aspect-pair-source",
+    status: "in.(LIVE,REVIEWED)",
+    lane: "eq.reference",
+    review_state: "is.null",
+    select: "source_snapshot",
+    limit: "100"
+  });
+  const key = serviceRoleKey();
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: { apikey: key, authorization: `Bearer ${key}` }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Approved sky-aspect pair-source lookup failed with ${response.status}.`);
+  }
+
+  const rows = await response.json() as Array<{ source_snapshot?: Record<string, unknown> }>;
+  return new Set(rows
+    .map((row) => row.source_snapshot?.pairKey)
+    .filter((pairKey): pairKey is string => typeof pairKey === "string" && stagedPairKeys.includes(pairKey)));
 }
 
 async function persistedCardId(contentKey: string) {
@@ -197,7 +218,7 @@ async function generateWithJudgeRouting(args: {
   aspect: string;
   signA: string;
   signB: string;
-}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
+}, options: { allowReviewSources?: boolean } = {}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
   let result: GeneratedCardResult | null = null;
   let feedback = "";
   let totalAttempts = 0;
@@ -215,6 +236,7 @@ async function generateWithJudgeRouting(args: {
   for (let pass = 0; pass <= maxJudgeRegenerations; pass += 1) {
     result = await generateCard(args, {
       withJudge: true,
+      allowReviewSources: options.allowReviewSources === true,
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     totalAttempts += result.attempts ?? 0;
@@ -286,12 +308,11 @@ async function saveRoutedCard({
   const key = serviceRoleKey();
   const clean = result.status === "clean" && result.lint?.score === 3 && result.lint.fails === 0;
   const gate = clean ? (routed.gate ?? "human-review") : "human-review";
-  const canAutoPublish = clean
-    && gate === "auto-publish"
+  const judgeEligibleForApproval = clean
     && result.judge?.score === 3
     && judgeAutoPublishEnabled();
-  const reviewState = canAutoPublish
-    ? null
+  const reviewState = judgeEligibleForApproval
+    ? "sky-owner-approval-required"
     : gate === "human-review"
       ? "sky-voice-needs-review"
       : "sky-judge-calibration-required";
@@ -355,7 +376,7 @@ async function saveRoutedCard({
         content_key: contentKey,
         surface: "sky",
         mode: "feed",
-        status: canAutoPublish ? "LIVE" : "DRAFT",
+        status: "DRAFT",
         lane: "serving",
         review_state: reviewState,
         event_type: "collective-aspect-card",
@@ -389,13 +410,13 @@ async function saveRoutedCard({
         summary: firstParagraph(result.text ?? ""),
         body: result.text ?? "",
         sections: {},
-        flags: canAutoPublish
-          ? []
+        flags: judgeEligibleForApproval
+          ? ["OWNER_REVIEW_REQUIRED"]
           : gate === "human-review"
             ? ["SKY_VOICE_REVIEW_REQUIRED"]
             : ["SKY_JUDGE_CALIBRATION_REQUIRED"],
-        reviewed_at: canAutoPublish ? new Date().toISOString() : null,
-        published_at: canAutoPublish ? new Date().toISOString() : null,
+        reviewed_at: null,
+        published_at: null,
         error: clean ? null : result.note
       })
     }
@@ -406,17 +427,19 @@ async function saveRoutedCard({
     throw new Error(`Sky-aspect review save failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
-  return { clean, contentKey, gate, canAutoPublish, saved: payload };
+  return { clean, contentKey, gate, canAutoPublish: false, judgeEligibleForApproval, saved: payload };
 }
 
 async function generateCurrentMatrix() {
   const sky = await currentSkyFacts(new Date());
+  const approvedReviewPairs = await approvedReviewPairKeys();
   const report = {
     generated: 0,
     cached: 0,
     clean: 0,
     needsReview: 0,
     autoPublished: 0,
+    ownerApprovalHeld: 0,
     calibrationHeld: 0,
     judgeRegenerated: 0,
     retried: 0,
@@ -461,17 +484,33 @@ async function generateCurrentMatrix() {
     };
     let normalized;
 
+    let allowReviewSources = false;
+
     try {
       normalized = normalizeCardArgs(args);
     } catch (error) {
-      report.skipped.push({
-        aspect: `${aspect.from} ${aspect.type} ${aspect.to}`,
-        reason: error instanceof Error && "code" in error ? String(error.code) : "source-gap"
-      });
-      continue;
+      try {
+        const staged = normalizeCardArgs(args, { allowReviewSources: true });
+        if (!approvedReviewPairs.has(staged.pairKey)) throw error;
+        normalized = staged;
+        allowReviewSources = true;
+      } catch {
+        report.skipped.push({
+          aspect: `${aspect.from} ${aspect.type} ${aspect.to}`,
+          reason: error instanceof Error && "code" in error ? String(error.code) : "source-gap"
+        });
+        continue;
+      }
     }
 
     const contentKey = contentKeyFor(normalized);
+    if (await hasPendingOwnerAuthoredCard(contentKey)) {
+      report.skipped.push({
+        aspect: `${aspect.from} ${aspect.type} ${aspect.to}`,
+        reason: "owner-authored-review-pending"
+      });
+      continue;
+    }
     const existing = await existingCard(contentKey);
 
     if (existing) {
@@ -480,7 +519,7 @@ async function generateCurrentMatrix() {
       continue;
     }
 
-    const routed = await generateWithJudgeRouting(args);
+    const routed = await generateWithJudgeRouting(args, { allowReviewSources });
     const { result } = routed;
 
     if (result.status === "skipped") {
@@ -498,9 +537,10 @@ async function generateCurrentMatrix() {
     const saved = await saveRoutedCard({ aspect, first, routed, second });
     report.generated += 1;
     report.clean += saved.clean ? 1 : 0;
-    report.autoPublished += saved.canAutoPublish ? 1 : 0;
+    report.autoPublished += 0;
     report.needsReview += saved.gate === "human-review" ? 1 : 0;
-    report.calibrationHeld += saved.gate === "auto-publish" && !saved.canAutoPublish ? 1 : 0;
+    report.ownerApprovalHeld += saved.judgeEligibleForApproval ? 1 : 0;
+    report.calibrationHeld += result.judge?.score === 3 && !saved.judgeEligibleForApproval ? 1 : 0;
     report.judgeRegenerated += routed.judgePasses > 1 ? 1 : 0;
     report.retried += routed.totalAttempts > routed.judgePasses ? 1 : 0;
     report.repairFired += routed.repair.fired;
@@ -513,8 +553,8 @@ async function generateCurrentMatrix() {
     report.lintRetryAvoidTermsFed += routed.lintRetryAvoidTerms.reduce((sum, terms) => sum + terms.length, 0);
     report.cards.push({
       contentKey,
-      status: saved.canAutoPublish
-        ? "live-auto-publish"
+      status: saved.judgeEligibleForApproval
+        ? "draft-owner-approval-required"
         : saved.gate === "auto-publish"
           ? "draft-calibration-held"
           : "needs-review",

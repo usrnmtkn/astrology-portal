@@ -3364,6 +3364,7 @@ function deterministicPlanetSentence(planet: string, sign: string) {
 function deterministicHouseTopics(house: string) {
   const key = ordinalHouseKey(house);
 
+  return deterministicHouseAreaByKey[key] ?? "the life area described by this house";
 }
 
 function deterministicShortPlanetAction(planet: string) {
