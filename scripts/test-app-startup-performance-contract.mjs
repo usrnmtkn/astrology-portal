@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
@@ -344,6 +345,11 @@ assert.match(
   appSource,
   /friendProfileWork\.natal && selectedChart\?\.natalChart/u,
   "Friends natal row calculation must remain scoped to its active tab."
+);
+assert.match(
+  manualChartsPanelSource,
+  /const chartSettings = useMemo\(\(\) => normalizeChartSettings\(profile\.settings\), \[profile\.settings\]\)/u,
+  "Friends calculation dependencies must reuse normalized chart settings across renders."
 );
 assert.match(
   friendProfileWorkSource,
