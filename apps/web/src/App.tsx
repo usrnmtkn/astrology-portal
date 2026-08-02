@@ -32,7 +32,7 @@ import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
-import { NatalChartDataTable, type NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
+import type { NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
 import {
   AspectGlyphs,
   DurationLabelText,
@@ -11429,6 +11429,12 @@ const FriendChartModal = lazy(() =>
 const FriendDetail = lazy(() =>
   import("./features/friends/FriendDetail").then((module) => ({
     default: module.FriendDetail
+  }))
+);
+
+const NatalChartDataTable = lazy(() =>
+  import("./components/charts/NatalChartDataTable").then((module) => ({
+    default: module.NatalChartDataTable
   }))
 );
 
