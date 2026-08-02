@@ -38,6 +38,10 @@ const friendCompositeTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendCompositeTab.tsx"),
   "utf8"
 );
+const friendSynastryTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendSynastryTab.tsx"),
+  "utf8"
+);
 const manualChartFormSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/manualChartForm.ts"),
   "utf8"
@@ -291,8 +295,8 @@ assert.doesNotMatch(
 );
 assert.equal(
   [...appSource.matchAll(/import\("\.\/features\/friends\/FriendPlacementTables"\)/gu)].length,
-  2,
-  "Both Friends placement surfaces must load through their deferred feature boundary."
+  1,
+  "The Friends natal placement table must load through its deferred feature boundary."
 );
 assert.doesNotMatch(
   placementRowsSource,
@@ -308,6 +312,16 @@ assert.match(
   friendPlacementTablesSource,
   /export function SynastryPlacementsComparison/u,
   "The deferred Friends module must own the synastry placement comparison."
+);
+assert.match(
+  appSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendSynastryTab"\)/u,
+  "Synastry presentation must load only when its Friends tab renders."
+);
+assert.match(
+  friendSynastryTabSource,
+  /import \{ SynastryPlacementsComparison \}/u,
+  "The deferred Synastry tab must own its placement comparison."
 );
 assert.doesNotMatch(
   appSource,

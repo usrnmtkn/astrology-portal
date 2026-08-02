@@ -91,6 +91,7 @@ import type { RelationshipChartFullscreenMode } from "./features/friends/Relatio
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
+import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
 import {
   friendDetailRoutePath,
   friendsHashParts,
@@ -11289,9 +11290,9 @@ const FriendPlacementTable = lazy(() =>
   }))
 );
 
-const SynastryPlacementsComparison = lazy(() =>
-  import("./features/friends/FriendPlacementTables").then((module) => ({
-    default: module.SynastryPlacementsComparison
+const FriendSynastryTab = lazy(() =>
+  import("./features/friends/FriendSynastryTab").then((module) => ({
+    default: module.FriendSynastryTab
   }))
 );
 
@@ -18750,6 +18751,26 @@ function ManualChartsPanel({
         )
       : []
   ), [friendProfileWork.synastry, selectedSynastryContacts]);
+  const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
+    selectedSynastryAspectGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      contacts: group.aspects.map((contact) => {
+        const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
+
+        return {
+          id: contact.id,
+          aspect: contact.aspect,
+          orb: contact.orb,
+          title: rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart?.displayName ?? "Friend"}'s ${contact.friendPoint.name}`,
+          subtitle: rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect),
+          description: rendered?.body ? textPreview(rendered.body) : "",
+          yourPoint: contact.yourPoint,
+          friendPoint: contact.friendPoint
+        };
+      })
+    }))
+  ), [selectedChart?.displayName, selectedSynastryAspectGroups]);
   const selectedCompatibilityCards = useMemo(() => {
     if (!friendProfileWork.compatibility || !selectedChart || selectedChartIsEvent) {
       return [];
@@ -19276,6 +19297,31 @@ function ManualChartsPanel({
         sourceTag: connection.headline,
         body: connection.body
       }))
+    });
+  };
+  const openFriendSynastryContactDetail = (contactId: string) => {
+    if (!selectedChart) {
+      return;
+    }
+
+    const contact = selectedSynastryContacts.find((candidate) => candidate.id === contactId);
+
+    if (!contact) {
+      return;
+    }
+
+    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+    const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
+    const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "synastry", `synastry-${contact.id}`),
+      glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
+      kicker: "Synastry",
+      title,
+      meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      body: rendered?.body ? [rendered.body] : [],
+      content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
     });
   };
   const openFriendTransitDetail = (transit: TransitItem) => {
@@ -20586,85 +20632,16 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "synastry" && (
-            <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
-              <div className="friend-profile-copy-column">
-                <article className="relationship-explainer-card relationship-explainer-card--synastry" aria-label="What synastry shows">
-                  <span className="relationship-explainer-card__glyph" aria-hidden="true">
-                    <img src={zodiacAssetHref("tool-synastry.svg") ?? ""} alt="" />
-                  </span>
-                  <span className="relationship-explainer-card__copy">
-                    <span className="relationship-explainer-card__kicker">What synastry shows</span>
-                    <p>
-                      Where {possessiveLabel(selectedChart.displayName)} planets meet {relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.
-                    </p>
-                  </span>
-                </article>
-                <SynastryPlacementsComparison
-                  outerName={selectedChart.displayName}
-                  outerSky={selectedChart.natalChart}
-                  innerName={relationshipComparisonName}
-                  innerSky={relationshipComparisonSky}
-                  innerIsSelf={relationshipComparisonIsSelf}
-                />
-                {selectedSynastryAspectGroups.map((group) => (
-                  <AspectGiftLessonGroup
-                    ariaLabel={`${selectedChart.displayName} synastry ${group.label}`}
-                    key={group.key}
-                    label={group.label}
-                    listAriaLabel={`${selectedChart.displayName} compatibility ${group.label.toLowerCase()}`}
-                    listClassName="friend-aspect-list"
-                  >
-                    {group.aspects.map((contact) => {
-                      const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
-                      const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
-                      const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
-                      const detailBody = rendered?.body ? [rendered.body] : [];
-                      const description = rendered?.body ? textPreview(rendered.body) : "";
-
-                      return (
-                        <button
-                          type="button"
-                          className="aspect-row aspect-row-button friend-aspect-row"
-                          key={contact.id}
-                          aria-label={`Open full entry for ${title}`}
-                          onClick={() => onOpenDetail({
-                            routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `synastry-${contact.id}`),
-                            glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
-                            kicker: "Synastry",
-                            title,
-                            meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
-                            body: detailBody,
-                            content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
-                          })}
-                        >
-                          <span className="aspect-row-glyphs" aria-hidden="true">
-                            <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
-                            <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
-                            <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
-                          </span>
-                          <span className="aspect-row-copy">
-                            <h3>{title}</h3>
-                            {description ? <p className="synastry-contact-description">{description}</p> : null}
-                            <span className="aspect-row-subtitle ui-pill ui-pill--muted">{subtitle}</span>
-                          </span>
-                          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
-                            <span className="aspect-row-dot" aria-hidden="true" />
-                            <span>{wholeDegreeOrb(contact.orb)}</span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </AspectGiftLessonGroup>
-                ))}
-                {selectedSynastryContacts.length === 0 && (
-                  <article className="friends-logic-card">
-                    <span>Interaspects</span>
-                    <h3>Add both charts.</h3>
-                    <p>Complete birth details for both people will reveal their strongest synastry contacts.</p>
-                  </article>
-                )}
-              </div>
-            </div>
+            <FriendSynastryTab
+              contactGroups={selectedSynastryViewGroups}
+              explainer={`Where ${possessiveLabel(selectedChart.displayName)} planets meet ${relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.`}
+              friendName={selectedChart.displayName}
+              innerIsSelf={relationshipComparisonIsSelf}
+              innerName={relationshipComparisonName}
+              innerSky={relationshipComparisonSky}
+              onOpenContact={openFriendSynastryContactDetail}
+              outerSky={selectedChart.natalChart}
+            />
           )}
 
           {friendProfileTab === "composite" && (
