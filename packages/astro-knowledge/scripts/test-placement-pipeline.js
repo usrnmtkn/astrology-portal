@@ -233,8 +233,8 @@ async function main() {
     candidates: 4,
     rows: 20,
     lint3: 4,
-    currentJudge3: 3,
-    ownerEdited: 1,
+    currentJudge3: 0,
+    ownerEdited: 4,
     reviewStatus: "needs_review",
     promotionAuthorized: false
   });

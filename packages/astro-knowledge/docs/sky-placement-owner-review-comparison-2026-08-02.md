@@ -6,7 +6,7 @@ Review the four GPT-5.6 candidates below against the current approved baseline. 
 
 No candidate has been written to the live content bank.
 
-The exact candidate payloads are frozen in `review/sky-placement-rewrite-pilot-v2-candidates.json`. The bundle is explicitly marked `needs_review` with `promotionAuthorized: false`; its audit materializes twenty review rows without approving or importing them.
+The exact candidate text is frozen in `review/sky-placement-rewrite-pilot-v2-candidates.json`. The bundle is explicitly marked `needs_review` with `promotionAuthorized: false`; its audit generates twenty rows for inspection without applying any live changes.
 
 | Placement | Recommendation | Main improvement |
 | --- | --- | --- |
@@ -41,11 +41,11 @@ The candidate keeps the existing article's discipline and results focus, but rep
 
 **Tagline:** Finish what matters
 
-**Hook:** Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops spending force on noise and puts it toward the result. The work may be slow, but the aim gets sharper.
+**Hook — owner-directed edit:** Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops wasting energy on distractions and puts that force into work we can measure. The work may be slow, but the aim gets sharper.
 
-**Lived:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the same useful job after the novelty is gone. You may feel most alive when there is a clear finish line and a solid way to reach it.
+**Lived — owner-directed edit:** Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the daily work after the novelty has worn off. You may feel most alive when there is a clear finish line and a solid way to reach it.
 
-**Turn — owner edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into a refusal to pivot, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
+**Turn — owner-directed edit:** Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into sheer stubbornness, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.
 
 **Moves:**
 
@@ -53,7 +53,7 @@ The candidate keeps the existing article's discipline and results focus, but rep
 - Write the next three steps for a goal that has been living only in your head.
 - Cancel one obligation that makes you look productive but does not move your real work forward.
 
-The owner-edited turn is copied verbatim from the review conversation. It passes the mechanical linter with score 3 and no findings. The saved AI judge score predates this edit and is not represented as a judgment of the new paragraph.
+The owner-directed edits respond to the line review. The saved AI judge score predates them and is not represented as a judgment of the revised article.
 
 ## Saturn in Capricorn
 
@@ -83,9 +83,9 @@ The baseline understands endurance, but its `hustle`, contracts, meetings, calen
 
 **Hook:** Your life is not a performance review. Saturn deals in limits, commitments, and the kind of work that proves itself over time; in Capricorn, it asks us to take the long route on purpose. This is the transit that turns ambition into a structure you can stand inside.
 
-**Lived:** Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for it, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.
+**Lived — owner-directed edit:** Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.
 
-**Turn:** But competence can become a hiding place. We answer affection with productivity, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.
+**Turn — owner-directed edit:** But competence can become a hiding place. We finish one more chore instead of sitting down for the conversation, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.
 
 **Moves:**
 
@@ -121,7 +121,7 @@ The candidate keeps the baseline's fairness theme but makes the relational mecha
 
 **Hook:** A relationship can look calm while one person disappears inside it. Neptune blurs edges between people, and in Libra it makes fairness, beauty, and mutual understanding feel like needs we cannot live without. This transit can make the ideal partnership, workplace, or public agreement feel close enough to reach for.
 
-**Lived:** Neptune stays in one sign for about fourteen years, giving this question time to shape a generation: what does a fair relationship actually ask of us? We may see it in the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, negotiate, and make room for another person.
+**Lived — owner-directed edit:** Neptune stays in one sign for about fourteen years, giving ideas about fairness and relationship time to shape a generation. That long shift shows up in ordinary rooms: the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, negotiate, and make room for another person.
 
 **Turn:** The blur arrives when keeping both sides comfortable becomes more important than telling the truth. We edit our needs into something harmless, agree to terms we do not understand, or call a beautiful compromise fair because nobody raised their voice. A relationship that needs your silence to stay peaceful is not peaceful.
 
@@ -129,7 +129,7 @@ The candidate keeps the baseline's fairness theme but makes the relational mecha
 
 - Name one decision you have been softening, then state your actual preference in a single sentence.
 - Before agreeing to a compromise, write down what each person is giving up and what each person is getting.
-- Make one shared space more beautiful with a choice everyone involved can plainly consent to.
+- Make one shared space more beautiful with a choice everyone involved explicitly agrees on.
 
 ## Venus in Aries
 
@@ -157,11 +157,11 @@ The candidate preserves speed, appetite, and directness while removing the basel
 
 **Tagline:** Want it out loud
 
-**Hook:** Attraction should not need a decoding key. Venus handles love, pleasure, taste, and money; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.
+**Hook — owner-directed edit:** Attraction should not require a translator. Venus handles love, pleasure, taste, and money; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.
 
-**Lived:** For about four weeks, we may dress for the plan we want, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.
+**Lived — owner-directed edit:** For about four weeks, we may wear the thing we usually save for a better invitation, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.
 
-**Turn:** The fast yes can become a performance of winning. We may chase the person who resists us, lose interest once they are available, or treat every difference in taste like a contest to win. Wanting the spark is real; confusing pursuit with love is how we burn through it.
+**Turn — owner-directed edit:** Chasing the thrill can make attraction feel like something to win. We may pursue the person who resists us, lose interest once they are available, or keep score over every difference in taste. Wanting the spark is real; confusing pursuit with love is how we burn through it.
 
 **Moves:**
 
