@@ -158,6 +158,7 @@ async function judgeCard(card, opts = {}) {
         registryOverride: false,
         evaluationSetVersion: "pattern-aspect-approved-gold-v1",
         policyVersion: "editorial-judge-policy-v1",
+        reasoningEffort: null,
         temperature: null,
         samples: 0,
         scores: [3],
