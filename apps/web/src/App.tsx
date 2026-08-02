@@ -120,6 +120,7 @@ import {
 } from "./features/friends/friendsRouting";
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
 import {
+  apiSubjectFromManualChart,
   isSocialBigThreeRow,
   manualChartSubtitle,
   planetPositionFromSocialRow
@@ -2543,34 +2544,6 @@ function apiSubjectFromUserChart(
     datetime: {
       date: birthDate,
       time: timeKnown ? displayTimeToTwentyFourHour(birthTime) : "12:00",
-      timeKnown,
-      timeZone: birthLocation.timeZone
-    },
-    location: birthLocation,
-    settings: apiSettingsFromChartSettings(settings)
-  };
-}
-
-function apiSubjectFromManualChart(
-  chart: ManualChart | null | undefined,
-  settings?: Partial<ChartSettings> | null
-): TldrAstroSubject | null {
-  if (!chart || !chart.birthDate || !chart.birthLocation) {
-    return null;
-  }
-
-  const birthLocation = chart.birthLocation.timeZone ? chart.birthLocation : null;
-  const timeKnown = !chart.birthTimeUnknown && Boolean(chart.birthTime);
-
-  if (!birthLocation) {
-    return null;
-  }
-
-  return {
-    name: chart.displayName,
-    datetime: {
-      date: chart.birthDate,
-      time: timeKnown ? displayTimeToTwentyFourHour(chart.birthTime) : "12:00",
       timeKnown,
       timeZone: birthLocation.timeZone
     },
@@ -18116,10 +18089,11 @@ function ManualChartsPanel({
       return;
     }
 
-    const personA = apiSubjectFromManualChart(selectedChart, profile.settings);
+    const relationshipApiSettings = apiSettingsFromChartSettings(profile.settings);
+    const personA = apiSubjectFromManualChart(selectedChart, relationshipApiSettings);
     const personB = relationshipComparisonChartId === "self"
       ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
-      : apiSubjectFromManualChart(relationshipComparisonManualChart, profile.settings);
+      : apiSubjectFromManualChart(relationshipComparisonManualChart, relationshipApiSettings);
 
     if (!personA || !personB) {
       setRelationshipCompare(null);
