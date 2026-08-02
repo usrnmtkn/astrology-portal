@@ -40,7 +40,7 @@ import {
   type SocialProfile
 } from "../../services/socialFriends";
 
-type SocialFriendsPanelProps = {
+export type SocialFriendsPanelProps = {
   activeView: FriendsTopLevelView;
   chartContent: ReactNode;
   chartCount: number;

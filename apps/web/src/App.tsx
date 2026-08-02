@@ -11208,25 +11208,18 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
-const loadFriendsPageShell = () => import("./components/FriendsPageShell");
-const loadSocialFriendsPanel = () => import("./features/friends/SocialFriendsPanel");
-const loadFriendChartsList = () => import("./features/friends/FriendChartsList");
-const preloadFriendsLanding = () => Promise.all([
-  loadFriendsPageShell(),
-  loadSocialFriendsPanel(),
-  loadFriendChartsList()
-]);
+const loadFriendsWorkspaceShell = () => import("./features/friends/FriendsWorkspaceShell");
 
 const FriendsRoute = lazy(() =>
   Promise.all([
     import("./routes/FriendsRoute"),
-    preloadFriendsLanding()
+    loadFriendsWorkspaceShell()
   ]).then(([module]) => ({ default: module.FriendsRoute }))
 );
 
-const FriendsPageShell = lazy(() =>
-  loadFriendsPageShell().then((module) => ({
-    default: module.FriendsPageShell
+const FriendsWorkspaceShell = lazy(() =>
+  loadFriendsWorkspaceShell().then((module) => ({
+    default: module.FriendsWorkspaceShell
   }))
 );
 
@@ -11275,18 +11268,6 @@ const AccountView = lazy(() =>
 const SkyRoute = lazy(() =>
   import("./routes/SkyRoute").then((module) => ({
     default: module.SkyRoute
-  }))
-);
-
-const FriendChartsList = lazy(() =>
-  loadFriendChartsList().then((module) => ({
-    default: module.FriendChartsList
-  }))
-);
-
-const SocialFriendsPanel = lazy(() =>
-  loadSocialFriendsPanel().then((module) => ({
-    default: module.SocialFriendsPanel
   }))
 );
 
@@ -18760,39 +18741,34 @@ function ManualChartsPanel({
 
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
-      <FriendsPageShell
+      <FriendsWorkspaceShell
         activeView={resolvedFriendsMainView}
-        beforeTabs={(
-          <SocialFriendsPanel
-            activeView={resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView}
-            chartContent={(
-              <FriendChartsList
-                charts={friendChartListItems}
-                embedded
-                isLoading={isLoadingCharts}
-                message={message}
-                openChartMenuId={openChartMenuId}
-                showMessage={!friendChartModalOpen}
-                onAddBirthTime={addBirthTime}
-                onAddChart={openAddChartModal}
-                onDeleteChart={requestDeleteChart}
-                onEditChart={editChart}
-                onOpenChart={openFriendProfile}
-                onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
-              />
-            )}
-            chartCount={friendChartListItems.length}
-            onAddChart={openAddChartModal}
-            onFriendsChange={setSocialFriends}
-            onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
-            onPendingRequestCountChange={onPendingRequestCountChange}
-            onSelectView={(view, historyMode) => selectFriendsTab(view, historyMode)}
-            showPatternPills={showFriendNatalAspectPatterns}
-          />
-        )}
+        chartListProps={{
+          charts: friendChartListItems,
+          isLoading: isLoadingCharts,
+          message,
+          openChartMenuId,
+          showMessage: !friendChartModalOpen,
+          onAddBirthTime: addBirthTime,
+          onAddChart: openAddChartModal,
+          onDeleteChart: requestDeleteChart,
+          onEditChart: editChart,
+          onOpenChart: openFriendProfile,
+          onToggleChartMenu: (chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)
+        }}
         detailVariant={friendProfileTab}
         isDetailView={isFriendDetailView}
         onBackToCharts={() => selectFriendsTab("charts")}
+        socialPanelProps={{
+          activeView: resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView,
+          chartCount: friendChartListItems.length,
+          onAddChart: openAddChartModal,
+          onFriendsChange: setSocialFriends,
+          onOpenFriend: (friend) => openFriendProfile(socialFriendToChart(friend)),
+          onPendingRequestCountChange,
+          onSelectView: (view, historyMode) => selectFriendsTab(view, historyMode),
+          showPatternPills: showFriendNatalAspectPatterns
+        }}
       >
 
       {friendChartModalOpen && (
@@ -19030,7 +19006,7 @@ function ManualChartsPanel({
           )}
         </FriendDetail>
       )}
-      </FriendsPageShell>
+      </FriendsWorkspaceShell>
     </Suspense>
   );
 }

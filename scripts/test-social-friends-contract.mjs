@@ -86,6 +86,10 @@ const memberSettingsViewPath = path.join(
 );
 const youPagePath = path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx");
 const socialFriendsPanelPath = path.join(repoRoot, "apps/web/src/features/friends/SocialFriendsPanel.tsx");
+const friendsWorkspaceShellPath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/FriendsWorkspaceShell.tsx"
+);
 const blockedAccountsSettingsPath = path.join(
   repoRoot,
   "apps/web/src/features/settings/BlockedAccountsSettings.tsx"
@@ -125,6 +129,7 @@ const signupView = fs.readFileSync(signupViewPath, "utf8");
 const memberSettingsView = fs.readFileSync(memberSettingsViewPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
 const socialFriendsPanel = fs.readFileSync(socialFriendsPanelPath, "utf8");
+const friendsWorkspaceShell = fs.readFileSync(friendsWorkspaceShellPath, "utf8");
 const blockedAccountsSettings = fs.readFileSync(blockedAccountsSettingsPath, "utf8");
 const friendsPageShell = fs.readFileSync(friendsPageShellPath, "utf8");
 const friendDetail = fs.readFileSync(friendDetailPath, "utf8");
@@ -577,8 +582,8 @@ assert.match(
   "The unified Friends panel must render directly under the page title."
 );
 assert.match(
-  app,
-  /beforeTabs=\{\([\s\S]*<SocialFriendsPanel[\s\S]*chartContent=\{\([\s\S]*<FriendChartsList[\s\S]*embedded[\s\S]*onSelectView=/,
+  `${friendsWorkspaceShell}\n${app}`,
+  /<SocialFriendsPanel[\s\S]*chartContent=\{<FriendChartsList[\s\S]*embedded[\s\S]*socialPanelProps=\{\{[\s\S]*onSelectView:/,
   "Circle, Charts, and Requests must be wired through one unified Friends panel."
 );
 assert.match(

@@ -16,7 +16,7 @@ export type FriendChartListItem = {
   patternSummary: NatalAspectPatternPillSummary | null;
 };
 
-type FriendChartsListProps = {
+export type FriendChartsListProps = {
   birthdayChiclet?: ReactNode;
   charts: FriendChartListItem[];
   isLoading: boolean;

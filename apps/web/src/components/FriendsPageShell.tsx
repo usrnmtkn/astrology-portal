@@ -4,6 +4,15 @@ import { ChevronLeft } from "lucide-react";
 export type FriendsPageView = "circle" | "charts" | "requests" | "profile";
 export type FriendsTopLevelView = Exclude<FriendsPageView, "profile">;
 
+export type FriendsPageShellProps = {
+  activeView: FriendsPageView;
+  beforeTabs?: ReactNode;
+  children: ReactNode;
+  detailVariant?: string;
+  isDetailView: boolean;
+  onBackToCharts: () => void;
+};
+
 export function FriendsPageShell({
   activeView,
   beforeTabs,
@@ -11,14 +20,7 @@ export function FriendsPageShell({
   detailVariant,
   isDetailView,
   onBackToCharts,
-}: {
-  activeView: FriendsPageView;
-  beforeTabs?: ReactNode;
-  children: ReactNode;
-  detailVariant?: string;
-  isDetailView: boolean;
-  onBackToCharts: () => void;
-}) {
+}: FriendsPageShellProps) {
   const shellClassName = [
     "friends-page page-shell manual-charts-pane",
     isDetailView ? "friend-detail-page" : "",
