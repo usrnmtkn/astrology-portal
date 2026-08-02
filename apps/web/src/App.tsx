@@ -121,6 +121,7 @@ import {
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
 import {
   isSocialBigThreeRow,
+  manualChartSubtitle,
   planetPositionFromSocialRow
 } from "./features/friends/friendChartModel";
 import {
@@ -310,6 +311,7 @@ import {
 } from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 import { dedupeArticleSectionHeadings } from "./utils/articleHeadings";
+import { compactCityLabel } from "./utils/locationLabels";
 
 type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
@@ -3119,22 +3121,6 @@ function formatProfileBirthDate(value: string) {
   return month && day && year ? `${month}/${day}/${year}` : value;
 }
 
-function formatProfileBirthDateLong(value: string) {
-  const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
-
-  if (!year || Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC"
-  }).format(date);
-}
-
 function manualChartBigThree(chart: ManualChart) {
   if (!chart.natalChart) {
     return {
@@ -3145,17 +3131,6 @@ function manualChartBigThree(chart: ManualChart) {
   }
 
   return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
-}
-
-function manualChartSubtitle(chart: ManualChart) {
-  if (isSocialFriendChart(chart)) {
-    return `${chart.notes ?? "Connected friend"} · Connected friend`;
-  }
-
-  const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-  const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
-
-  return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
 }
 
 function nextManualChartBirthday(chart: ManualChart, currentDateValue: string) {
@@ -3282,69 +3257,6 @@ function clearPendingSignupForm() {
 function profileFirstName(name: string, email: string) {
   const source = name.trim() || email.split("@")[0] || "Profile";
   return source.split(/\s+/).filter(Boolean)[0] ?? "Profile";
-}
-
-function compactCityLabel(city: string) {
-  const stateMap: Record<string, string> = {
-    Alabama: "AL",
-    Alaska: "AK",
-    Arizona: "AZ",
-    Arkansas: "AR",
-    California: "CA",
-    Colorado: "CO",
-    Connecticut: "CT",
-    Delaware: "DE",
-    Florida: "FL",
-    Georgia: "GA",
-    Hawaii: "HI",
-    Idaho: "ID",
-    Illinois: "IL",
-    Indiana: "IN",
-    Iowa: "IA",
-    Kansas: "KS",
-    Kentucky: "KY",
-    Louisiana: "LA",
-    Maine: "ME",
-    Maryland: "MD",
-    Massachusetts: "MA",
-    Michigan: "MI",
-    Minnesota: "MN",
-    Mississippi: "MS",
-    Missouri: "MO",
-    Montana: "MT",
-    Nebraska: "NE",
-    Nevada: "NV",
-    "New Hampshire": "NH",
-    "New Jersey": "NJ",
-    "New Mexico": "NM",
-    "New York": "NY",
-    "North Carolina": "NC",
-    "North Dakota": "ND",
-    Ohio: "OH",
-    Oklahoma: "OK",
-    Oregon: "OR",
-    Pennsylvania: "PA",
-    "Rhode Island": "RI",
-    "South Carolina": "SC",
-    "South Dakota": "SD",
-    Tennessee: "TN",
-    Texas: "TX",
-    Utah: "UT",
-    Vermont: "VT",
-    Virginia: "VA",
-    Washington: "WA",
-    "West Virginia": "WV",
-    Wisconsin: "WI",
-    Wyoming: "WY"
-  };
-  const withoutCountry = city.replace(/,\s*United States$/i, "").trim();
-
-  return withoutCountry
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part, index) => (index > 0 && stateMap[part] ? stateMap[part] : part))
-    .join(", ");
 }
 
 function readableNameList(names: string[]) {

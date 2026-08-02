@@ -32,6 +32,10 @@ const friendChartModelSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/friendChartModel.ts"),
   "utf8"
 );
+const locationLabelsSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/utils/locationLabels.ts"),
+  "utf8"
+);
 const friendChartModalSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendChartModal.tsx"), "utf8");
 const wheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/Wheels.tsx"), "utf8");
 const synastryWheelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/SynastryWheel.tsx"), "utf8");
@@ -586,13 +590,23 @@ assert.equal(
 );
 assert.doesNotMatch(
   appSource,
-  /function (?:isSocialBigThreeRow|planetPositionFromSocialRow)/u,
+  /function (?:isSocialBigThreeRow|manualChartSubtitle|planetPositionFromSocialRow)/u,
   "Friends-only chart normalization must not remain embedded in the startup App module."
 );
 assert.match(
   friendChartModelSource,
-  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow/u,
-  "The Friends chart model must own social-placement filtering and normalization."
+  /export function isSocialBigThreeRow[\s\S]*export function planetPositionFromSocialRow[\s\S]*export function manualChartSubtitle/u,
+  "The Friends chart model must own social-placement normalization and chart-list subtitles."
+);
+assert.doesNotMatch(
+  appSource,
+  /function compactCityLabel/u,
+  "Reusable location-label formatting must not remain embedded in the startup App module."
+);
+assert.match(
+  locationLabelsSource,
+  /export function compactCityLabel/u,
+  "The location-label utility must own compact city formatting."
 );
 
 console.log("App startup performance contracts passed.");
