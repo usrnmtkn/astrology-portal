@@ -10,12 +10,25 @@ import {
   parseFriendProfileTab,
   parseFriendsTab
 } from "../apps/web/src/features/friends/friendsRouting.ts";
+import { friendProfileWorkForTab } from "../apps/web/src/features/friends/friendProfileWork.ts";
 
 assert.equal(parseFriendsTab("charts"), "charts");
 assert.equal(parseFriendsTab("requests"), "requests");
 assert.equal(parseFriendsTab("unknown"), "circle");
 assert.equal(parseFriendProfileTab("synastry"), "synastry");
 assert.equal(parseFriendProfileTab("unknown"), "compatibility");
+
+assert.deepEqual(friendProfileWorkForTab("compatibility"), {
+  compatibility: true,
+  composite: false,
+  synastry: false,
+  synastryContacts: true,
+  transits: false
+});
+assert.equal(friendProfileWorkForTab("natal").synastryContacts, false);
+assert.equal(friendProfileWorkForTab("synastry").synastry, true);
+assert.equal(friendProfileWorkForTab("composite").composite, true);
+assert.equal(friendProfileWorkForTab("transits").transits, true);
 
 const hashParts = friendsHashParts("#/friends?tab=requests&chart=chart%201");
 assert.equal(hashParts.path, "friends");
