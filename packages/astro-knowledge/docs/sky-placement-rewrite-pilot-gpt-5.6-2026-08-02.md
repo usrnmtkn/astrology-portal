@@ -152,4 +152,4 @@ Judge note: the first lived sentence is broad coverage language that weakens an 
 
 ## Next gate
 
-Rerun all six with the tightened prompt and separate judging. The second pilot must score 3 individually and pass the stricter batch audit before any side-by-side approval decision.
+Completed in `sky-placement-rewrite-pilot-v2-gpt-5.6-2026-08-02.md`. The second pilot passes the mechanical and batch gates for all six drafts. Four placements also score 3 with the judge and advance to owner review; both Uranus drafts score 2 and remain on hold. No live rows changed.

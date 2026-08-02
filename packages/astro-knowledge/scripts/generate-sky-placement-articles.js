@@ -275,7 +275,7 @@ function buildPrompt(args) {
     `  - A directive is allowed only when it is specific ("Say what happened, say what you need"), never generic ("embrace the change").`,
     `  - The quoted directives above are explanations, not copy. Never repeat "Say what happened, say what you need" or any sentence from the rules or exemplars.`,
     `  - Do not open TURN with "The problem starts when" or "The trouble starts when". Those batch formulas are retired. Enter the shadow through placement-specific behavior instead.`,
-    `  - Rephrase the source layer into this exact combination. Do not reuse a planet-function sentence such as "Uranus breaks stale patterns" across signs.`,
+    `  - Rephrase the source layer into this exact combination. No sentence from PLANET + SIGN MEANING LAYER may appear verbatim, even when it already sounds polished. Do not reuse a planet-function sentence such as "Uranus breaks stale patterns" across signs.`,
     `  - SAMENESS IS THE ENEMY. The first batch failed because every card reached for the same objects and openers. Banned outright: "coffee order", "unsent", "overfilled calendar", "group chat", hooks starting "You catch yourself" or "You find yourself", and moves built on "Send the/one message". Invent evidence and moves that could ONLY belong to this placement. Vary the hook form: a claim, a scene, a question, an overheard line - not always second-person observation.`,
     ``,
     `IN-VOICE EXEMPLARS (match this register and shape, do not copy any phrasing):`,

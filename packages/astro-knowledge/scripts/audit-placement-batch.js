@@ -30,11 +30,15 @@ const SHARE_LIMIT = 0.15;
 const MIN_HITS = 3;
 
 function articleText(a) {
-  return [a.tagline, a.hook, a.lived, a.turn, ...(a.moves || [])]
+  return articleSegments(a)
     .filter(Boolean)
     .join(" ")
     .toLowerCase()
     .replace(/[‘’]/g, "'"); // keep contractions as one token
+}
+
+function articleSegments(a) {
+  return [a.tagline, a.hook, a.lived, a.turn, ...(a.moves || [])].filter(Boolean);
 }
 
 // Phrases that are legitimately shared across cards and never sameness:
@@ -45,13 +49,16 @@ const spec = JSON.parse(fs.readFileSync(path.join(root, "voice", "tldr-astro", "
 const ALLOWED_SHARED_EXACT = new Set();
 const paceSources = [
   ...Object.values(spec.pace.labels),
+  ...Object.entries(spec.pace.labels).map(([planet, label]) => `${planet} spends ${label} in a sign`),
   "two and a half days", "for about a month", "for about four weeks",
   "six or seven weeks", "about eighteen months", "about twenty years"
 ];
 for (const label of paceSources) {
-  const w = label.toLowerCase().split(/\s+/);
-  for (let i = 0; i + 2 < w.length + 1 && w.length >= 3; i++) {
-    if (i + 3 <= w.length) ALLOWED_SHARED_EXACT.add(w.slice(i, i + 3).join(" "));
+  const w = label.toLowerCase().replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
+  for (const size of [3, 4]) {
+    for (let i = 0; i + size <= w.length; i++) {
+      ALLOWED_SHARED_EXACT.add(w.slice(i, i + size).join(" "));
+    }
   }
 }
 const ALLOWED_SHARED = [
@@ -134,16 +141,19 @@ function main() {
   if (drafts.length <= 12) {
     const fourGramWhere = new Map();
     for (const d of drafts) {
-      const words = articleText(d.article).replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
       const seen = new Set();
-      for (let i = 0; i + 3 < words.length; i++) {
-        const g = words.slice(i, i + 4);
-        if (g.filter((w) => !STOP.has(w)).length < 2) continue;
-        const key = g.join(" ");
-        if (seen.has(key)) continue;
-        seen.add(key);
-        if (!fourGramWhere.has(key)) fourGramWhere.set(key, []);
-        fourGramWhere.get(key).push(d.file);
+      for (const segment of articleSegments(d.article)) {
+        const words = String(segment).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
+        for (let i = 0; i + 3 < words.length; i++) {
+          const g = words.slice(i, i + 4);
+          if (g.filter((w) => !STOP.has(w)).length < 2) continue;
+          const key = g.join(" ");
+          if (isAllowedShared(key)) continue;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          if (!fourGramWhere.has(key)) fourGramWhere.set(key, []);
+          fourGramWhere.get(key).push(d.file);
+        }
       }
     }
     for (const [gram, files] of fourGramWhere) {
