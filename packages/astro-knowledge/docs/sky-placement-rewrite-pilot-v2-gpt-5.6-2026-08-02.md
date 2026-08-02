@@ -126,7 +126,7 @@ These drafts are preserved for diagnosis, not owner approval or serving.
 
 **Hook:** Care that costs you your voice is not care. Uranus disrupts arrangements that have outlived their purpose; Cancer brings that disruption into the house rules, family roles, care work, and old habits that decide who gets protected. Uranus in Cancer asks what belonging would look like if nobody had to earn it by becoming indispensable.
 
-**Lived — owner-directed edit:** Uranus spends about seven years in a sign, long enough to pry open the private rules nobody admits are rules. The person who has always held the family together stops answering every call; the spare room changes purpose; the emergency contact is no longer a blood relative. A family scatters, and another one forms around a spare key, a couch, and the people who actually show up. What looked like stability turns out to be obligation, and home changes shape because the old version asked one person to carry too much.
+**Lived — owner-approved paragraph:** Uranus spends about seven years in a sign, long enough to pry open the private rules nobody admits are rules. The person who has always held the family together stops answering every call; the spare room changes purpose; the emergency contact is no longer a blood relative. A family scatters, and another one forms around a spare key, a couch, and the people who actually show up. What looked like stability turns out to be obligation, and home changes shape because the old version asked one person to carry too much.
 
 **Turn:** The need to protect can turn into a private surveillance system: checking in until it becomes checking up, doing every task before anyone can disappoint you, keeping old hurts alive as proof that you were the one who cared. Then freedom gets confused with blowing up the whole home before anyone can leave you. Ask for the help you need before you turn your exhaustion into evidence.
 
@@ -136,7 +136,7 @@ These drafts are preserved for diagnosis, not owner approval or serving.
 - Make a written emergency plan with the people you live with so care does not depend on one person remembering everything.
 - Tell someone close one practical thing you need this week, without wrapping it in a favor you will repay.
 
-Hold reason: The owner-directed lived revision replaces the flat inventory of household arrangements and passes the mechanical linter with score 3. The earlier judge did not evaluate this revision. The image of blowing up the home before anyone can leave remains specific, but the softer advice that follows still weakens the close. The weakest sentence remains: “Ask for the help you need before you turn your exhaustion into evidence.”
+Hold reason: The owner approved the revised lived paragraph as a better match for her writing. It replaces the flat inventory of household arrangements and passes the mechanical linter with score 3. The earlier judge did not evaluate this revision. The surrounding article remains held: the image of blowing up the home before anyone can leave is specific, but the softer advice that follows still weakens the close. The weakest sentence remains: “Ask for the help you need before you turn your exhaustion into evidence.”
 
 ### Uranus in Pisces — judge 2, hold
 

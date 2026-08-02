@@ -25,7 +25,7 @@ The result can be accurate and mechanically clean while still reading like gener
 | Saturn in Capricorn | Lived | Moderate | Training, budget, and private promise are more specific than generic coverage, but they still arrive as peer examples rather than a developing consequence. |
 | Neptune in Libra | Lived | High | Meeting, shared project, and couple reproduce the work/project/relationship coverage row almost exactly. |
 | Venus in Aries | Lived | Moderate | Outfit, ticket, and flirtation have more heat, but the same three-example generator shape remains visible. |
-| Uranus in Cancer | Lived | Corrected | The administrative family/workplace/chosen-family inventory was replaced with an owner-directed sequence about the unspoken family rule breaking. |
+| Uranus in Cancer | Lived | Owner-approved | The administrative family/workplace/chosen-family inventory was replaced with an approved sequence about the unspoken family rule breaking. This paragraph is now beat-level voice evidence for future generation and judging. |
 | Uranus in Cancer | Turn | High | The final advice still softens the strongest image and needs a separate pass. |
 | Uranus in Pisces | Lived | High | Mutual-aid spreadsheet, artist, and workplace policy form another public-life inventory. Uranus's disruptive mechanism needs to drive one sequence. |
 | Uranus in Pisces | Turn | High | The shadow remains generic Pisces/Neptune rescue and escape language; Uranus fades from the consequence. |
@@ -40,6 +40,8 @@ The placement system now carries the rule in four places:
 - the placement judge, with a score ceiling of 2 for flat inventories.
 
 The judge calibration set also includes the rejected Uranus-in-Cancer paragraph as a known-weak control. The placement-pipeline contract asserts that both generator and judge prompts carry the rule.
+
+The owner's approved replacement paragraph is stored separately in the voice specification as beat-level evidence. It teaches hidden rule → changed behavior → rupture → consequence without approving the unfinished article or licensing the generator to copy its wording.
 
 ## Release gate
 
