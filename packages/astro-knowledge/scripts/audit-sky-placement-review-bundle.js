@@ -16,6 +16,7 @@ function fail(message) {
 function auditBundle(value) {
   if (value?.schema !== "tldrastro-sky-placement-review-bundle-v1") fail("unexpected review-bundle schema");
   if (value.status !== "needs_review") fail("bundle status must remain needs_review");
+  if (value.editorialStatus !== "needs_voice_pass") fail("bundle editorialStatus must remain needs_voice_pass");
   if (value.promotionAuthorized !== false) fail("bundle must explicitly deny promotion authorization");
   if (!Array.isArray(value.candidates) || value.candidates.length === 0) fail("bundle must contain candidates");
 
@@ -30,6 +31,7 @@ function auditBundle(value) {
     if (!PLANETS.includes(candidate.planet) || !SIGNS.includes(candidate.sign)) fail(`invalid placement ${key}`);
     if (candidate.status !== "needs_review") fail(`${key} must remain needs_review`);
     if (candidate.promotionAuthorized !== false) fail(`${key} must explicitly deny promotion authorization`);
+    if (candidate.recommendedDecision !== "revise") fail(`${key} must remain revise until the voice pass is complete`);
     if (candidate.ownerEdit) {
       ownerEdited++;
       if (!["owner-verbatim", "owner-directed-review"].includes(candidate.ownerEdit.source)) {
@@ -72,6 +74,7 @@ function auditBundle(value) {
     currentJudge3,
     ownerEdited,
     reviewStatus: value.status,
+    editorialStatus: value.editorialStatus,
     promotionAuthorized: value.promotionAuthorized
   };
 }
@@ -79,7 +82,7 @@ function auditBundle(value) {
 if (require.main === module) {
   try {
     const result = auditBundle(JSON.parse(fs.readFileSync(bundlePath, "utf8")));
-    console.log(`Review bundle clean: ${result.candidates} candidates, ${result.rows} needs_review rows, ${result.lint3} lint-3 articles, ${result.currentJudge3} current judge-3 results, ${result.ownerEdited} owner-edited pending rejudge, promotionAuthorized=${result.promotionAuthorized}.`);
+    console.log(`Review bundle clean: ${result.candidates} candidates, ${result.rows} needs_review rows, ${result.lint3} lint-3 articles, ${result.currentJudge3} current judge-3 results, ${result.ownerEdited} owner-edited pending rejudge, editorialStatus=${result.editorialStatus}, promotionAuthorized=${result.promotionAuthorized}.`);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
