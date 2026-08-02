@@ -221,6 +221,34 @@ assert.match(
   /if \(!available \|\| activeView === "charts"\) \{\s*return;\s*\}[\s\S]*void refreshSocialActivity\(\)/,
   "Notifications and invitation history must wait until a non-Charts Friends view is active."
 );
+const globalPendingRequestEffectStart = appSource.lastIndexOf(
+  "useEffect(() => {",
+  appSource.indexOf("function refreshPendingFriendRequests")
+);
+const globalPendingRequestEffectEnd = appSource.indexOf(
+  "function openSkyDetail",
+  globalPendingRequestEffectStart
+);
+const globalPendingRequestEffect = appSource.slice(
+  globalPendingRequestEffectStart,
+  globalPendingRequestEffectEnd
+);
+
+assert.match(
+  globalPendingRequestEffect,
+  /if \(mode === "friends"\) \{\s*return;\s*\}/,
+  "The app-wide pending-request monitor must pause while the Friends panel owns request refresh."
+);
+assert.match(
+  globalPendingRequestEffect,
+  /\}, \[mode, remoteAccountId, remoteProfileReady, userProfile\?\.id\]\);/,
+  "The app-wide pending-request monitor must restart when navigation leaves Friends."
+);
+assert.match(
+  socialFriendsPanelSource,
+  /onPendingRequestCountChange\?\.\([\s\S]*request\.direction === "incoming"/,
+  "The Friends panel must keep publishing its pending-request count while the app-wide monitor is paused."
+);
 assert.match(
   appSource,
   /const repairTimer = window\.setTimeout\(\(\) => \{\s*void repairCharts\(\);\s*\}, 1_500\);/,
