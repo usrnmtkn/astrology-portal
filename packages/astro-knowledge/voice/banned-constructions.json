@@ -163,6 +163,18 @@
       "reason": "SD cadence formula.",
       "useInstead": "Name the actual step.",
       "source": "SD"
+    },
+    {
+      "pattern": "Right now, [planet] in [sign] is [aspect] [planet] in [sign], and for the collective,",
+      "reason": "The aspect fallback generator's fingerprint; stacks keyword lists into prose shape. Owner retired it Jul 31.",
+      "useInstead": "Open on the event or the recognizable behavior; name the placements inside the second sentence, per the Sun-opposite-Pluto exemplar.",
+      "source": "TLDR-fallback"
+    },
+    {
+      "pattern": "[keyword-list-as-prose: growth, belief, and where things expand get room to change]",
+      "reason": "Planet domain lists dumped raw into sentences; fallback tell.",
+      "useInstead": "Convert each keyword to one lived behavior or cut it.",
+      "source": "TLDR-fallback"
     }
   ]
 }
