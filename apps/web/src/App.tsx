@@ -18101,6 +18101,7 @@ function ManualChartsPanel({
     }
 
     let cancelled = false;
+    const controller = new AbortController();
     setRelationshipCompareStatus("loading");
 
     compareRelationship({
@@ -18109,6 +18110,8 @@ function ManualChartsPanel({
       relationshipContext: relationshipContextFromRole(selectedRelationshipContextType),
       settings: apiSettingsFromChartSettings(profile.settings),
       includeContentFacts: true
+    }, {
+      signal: controller.signal
     })
       .then((response) => {
         if (!cancelled) {
@@ -18126,6 +18129,7 @@ function ManualChartsPanel({
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [
     selectedChart?.id,
