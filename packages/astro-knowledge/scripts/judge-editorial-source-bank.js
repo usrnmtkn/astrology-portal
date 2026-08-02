@@ -13,8 +13,10 @@ const generalVoiceRoot = path.join(__dirname, "../voice");
 const { runJudgeSamples } = require("./editorial-judge-runtime.js");
 const {
   buildReferenceFactContext,
+  buildAcKnowledgeContext,
   checkReferenceClaim,
   flattenReferenceFacts,
+  queryAcReference,
   queryReferenceFacts
 } = require("./reference-fact-bank.js");
 
@@ -258,6 +260,7 @@ function findEntry(selector, bank = readJson(bankPath)) {
 module.exports = {
   bankPath,
   buildReferenceFactContext,
+  buildAcKnowledgeContext,
   buildJudgePrompt,
   checkReferenceClaim,
   findEntry,
@@ -267,6 +270,7 @@ module.exports = {
   lintBank,
   lintEntry,
   parseVerdict,
+  queryAcReference,
   queryReferenceFacts
 };
 
@@ -299,8 +303,12 @@ if (require.main === module) {
     const blocking = findings.some((finding) => finding.severity === "fail");
     console.log(JSON.stringify({ claim: selector, ok: !blocking, findings }, null, 2));
     process.exitCode = blocking ? 1 : 0;
+  } else if (mode === "--ac-query" && selector) {
+    console.log(JSON.stringify(queryAcReference(selector), null, 2));
+  } else if (mode === "--ac-context" && selector) {
+    console.log(buildAcKnowledgeContext(selector));
   } else {
-    console.error("usage: --lint | --dry-run <collection/id|content-key> | --judge <collection/id|content-key> | --facts <query> | --check-claim <claim>");
+    console.error("usage: --lint | --dry-run <collection/id|content-key> | --judge <collection/id|content-key> | --facts <query> | --check-claim <claim> | --ac-query <query> | --ac-context <query>");
     process.exitCode = 1;
   }
 }

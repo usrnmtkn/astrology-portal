@@ -218,6 +218,8 @@ Agents working in this repository must follow these rules:
 | Surface-specific judges | `scripts/judge-*-voice.js` |
 | Approved long-form examples | `voice/tldr-astro/fixtures/sky-article-longform/` |
 | Weak long-form controls | `voice/tldr-astro/fixtures/sky-article-longform/weak-controls/` |
+| Owner-led vocabulary bank and guide | `voice/tldr-astro/owner-vocabulary-bank.json`, `docs/editorial-ai/OWNER-STYLE-VOCABULARY-GUIDE-2026-08-01.md` |
+| AC non-serving reference lane | `reference/ac-reference-index.json`, `docs/editorial-ai/AC-REFERENCE-INTEGRATION-2026-08-01.md` |
 | Private fine-tuning scaffold | `private-model/` |
 | Operational judge documentation | `docs/editorial-intelligence.md` |
 
@@ -307,5 +309,7 @@ publication gate are implemented.
 The private fine-tuning dataset pipeline is also scaffolded, but the current
 long-form dataset is not large enough to train. Its validator requires at least
 50 approved training examples; the current verified export contains one
-training example and one evaluation example. Continue collecting diverse,
+training example and one evaluation example. The manifest also reports planet,
+sign, and article-variant coverage plus the recommended 75-example target, so
+row count cannot conceal a narrow corpus. Continue collecting diverse,
 owner-approved examples before paying for a training run.

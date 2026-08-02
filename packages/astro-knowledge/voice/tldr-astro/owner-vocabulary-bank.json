@@ -1,0 +1,3104 @@
+{
+  "schemaVersion": 1,
+  "id": "owner-vocabulary-bank-v1",
+  "authority": "owner-first",
+  "policies": {
+    "ownerWritingIsAuthority": true,
+    "ownerPhrasesOnly": true,
+    "sdContribution": "single-word lexical overlap plus a small neutral individual-word lane approved by the owner",
+    "acContribution": "single-word overlap and owner-review candidates only; no phrase or metaphor transfer",
+    "sdPhrasesForbidden": true,
+    "acPhrasesForbidden": true,
+    "sdFactsAndDatesForbidden": true,
+    "bannedConstructionsExcluded": true,
+    "generationUse": "menu, not quota",
+    "judgeUse": "supporting evidence only; preferred vocabulary never creates an automatic pass"
+  },
+  "sources": {
+    "owner": {
+      "documentCount": 47,
+      "totalWordCount": 190329,
+      "contentWordCount": 74737,
+      "manifestSha256": "4bbb88caedb26b88ee4385d3b16e4b8e712bc8b27d0323bdf03cc8ed6f427ef8",
+      "provenance": "47 owner-published Marie Satori article bodies"
+    },
+    "spiritDaughter": {
+      "documentCount": 43,
+      "totalWordCount": 60729,
+      "contentWordCount": 19057,
+      "manifestSha256": "96df82a462e5a4a89148003df71e3b5d7bfa4fa0c762a9f0ebcf1fa7dacefd8d",
+      "provenance": "curated Spirit Daughter editorial HTML: weekly forecasts plus transit, lunation, eclipse, cazimi, rising-sign, and Barbault references",
+      "restriction": "vocabulary analysis only; no facts, dates, phrases, or structural imitation"
+    },
+    "ac": {
+      "documentCount": 172,
+      "totalWordCount": 239405,
+      "contentWordCount": 93914,
+      "manifestSha256": "9c972a329ccd85c631d91cc710217fd6183cd4053a15d4aaadca58bbdab957e1",
+      "provenance": "curated AC reference articles selected from the owner-provided local mirror",
+      "restriction": "unverified reference testimony and individual-word analysis only; no runtime dates, facts, phrases, metaphors, or voice imitation"
+    }
+  },
+  "coreVocabulary": [
+    {
+      "term": "time",
+      "source": "owner",
+      "frequency": 574,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 76.8
+    },
+    {
+      "term": "feel",
+      "source": "owner",
+      "frequency": 506,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 67.7
+    },
+    {
+      "term": "emotional",
+      "source": "owner",
+      "frequency": 486,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 65.03
+    },
+    {
+      "term": "life",
+      "source": "owner",
+      "frequency": 429,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 57.4
+    },
+    {
+      "term": "need",
+      "source": "owner",
+      "frequency": 445,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 59.54
+    },
+    {
+      "term": "let",
+      "source": "owner",
+      "frequency": 414,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 55.39
+    },
+    {
+      "term": "self",
+      "source": "owner",
+      "frequency": 388,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 51.92
+    },
+    {
+      "term": "relationships",
+      "source": "owner",
+      "frequency": 353,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 47.23
+    },
+    {
+      "term": "work",
+      "source": "owner",
+      "frequency": 350,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 46.83
+    },
+    {
+      "term": "people",
+      "source": "owner",
+      "frequency": 319,
+      "articleCoverage": 44,
+      "coveragePercent": 93.6,
+      "per10kWords": 42.68
+    },
+    {
+      "term": "needs",
+      "source": "owner",
+      "frequency": 288,
+      "articleCoverage": 45,
+      "coveragePercent": 95.7,
+      "per10kWords": 38.54
+    },
+    {
+      "term": "worth",
+      "source": "owner",
+      "frequency": 258,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 34.52
+    },
+    {
+      "term": "real",
+      "source": "owner",
+      "frequency": 255,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 34.12
+    },
+    {
+      "term": "truth",
+      "source": "owner",
+      "frequency": 275,
+      "articleCoverage": 45,
+      "coveragePercent": 95.7,
+      "per10kWords": 36.8
+    },
+    {
+      "term": "home",
+      "source": "owner",
+      "frequency": 252,
+      "articleCoverage": 46,
+      "coveragePercent": 97.9,
+      "per10kWords": 33.72
+    },
+    {
+      "term": "love",
+      "source": "owner",
+      "frequency": 278,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 37.2
+    },
+    {
+      "term": "feels",
+      "source": "owner",
+      "frequency": 218,
+      "articleCoverage": 47,
+      "coveragePercent": 100,
+      "per10kWords": 29.17
+    },
+    {
+      "term": "asks",
+      "source": "owner",
+      "frequency": 294,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 39.34
+    },
+    {
+      "term": "patterns",
+      "source": "owner",
+      "frequency": 227,
+      "articleCoverage": 45,
+      "coveragePercent": 95.7,
+      "per10kWords": 30.37
+    },
+    {
+      "term": "moment",
+      "source": "owner",
+      "frequency": 228,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 30.51
+    },
+    {
+      "term": "old",
+      "source": "owner",
+      "frequency": 246,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 32.92
+    },
+    {
+      "term": "stop",
+      "source": "owner",
+      "frequency": 256,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 34.25
+    },
+    {
+      "term": "power",
+      "source": "owner",
+      "frequency": 209,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 27.96
+    },
+    {
+      "term": "daily",
+      "source": "owner",
+      "frequency": 186,
+      "articleCoverage": 45,
+      "coveragePercent": 95.7,
+      "per10kWords": 24.89
+    },
+    {
+      "term": "world",
+      "source": "owner",
+      "frequency": 220,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 29.44
+    },
+    {
+      "term": "brings",
+      "source": "owner",
+      "frequency": 196,
+      "articleCoverage": 42,
+      "coveragePercent": 89.4,
+      "per10kWords": 26.23
+    },
+    {
+      "term": "clarity",
+      "source": "owner",
+      "frequency": 196,
+      "articleCoverage": 42,
+      "coveragePercent": 89.4,
+      "per10kWords": 26.23
+    },
+    {
+      "term": "trust",
+      "source": "owner",
+      "frequency": 200,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 26.76
+    },
+    {
+      "term": "family",
+      "source": "owner",
+      "frequency": 178,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 23.82
+    },
+    {
+      "term": "see",
+      "source": "owner",
+      "frequency": 168,
+      "articleCoverage": 44,
+      "coveragePercent": 93.6,
+      "per10kWords": 22.48
+    },
+    {
+      "term": "creative",
+      "source": "owner",
+      "frequency": 172,
+      "articleCoverage": 42,
+      "coveragePercent": 89.4,
+      "per10kWords": 23.01
+    },
+    {
+      "term": "asking",
+      "source": "owner",
+      "frequency": 159,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 21.27
+    },
+    {
+      "term": "keep",
+      "source": "owner",
+      "frequency": 173,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 23.15
+    },
+    {
+      "term": "relationship",
+      "source": "owner",
+      "frequency": 168,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 22.48
+    },
+    {
+      "term": "care",
+      "source": "owner",
+      "frequency": 219,
+      "articleCoverage": 35,
+      "coveragePercent": 74.5,
+      "per10kWords": 29.3
+    },
+    {
+      "term": "communication",
+      "source": "owner",
+      "frequency": 143,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 19.13
+    },
+    {
+      "term": "start",
+      "source": "owner",
+      "frequency": 143,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 19.13
+    },
+    {
+      "term": "feeling",
+      "source": "owner",
+      "frequency": 155,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 20.74
+    },
+    {
+      "term": "resources",
+      "source": "owner",
+      "frequency": 145,
+      "articleCoverage": 42,
+      "coveragePercent": 89.4,
+      "per10kWords": 19.4
+    },
+    {
+      "term": "career",
+      "source": "owner",
+      "frequency": 138,
+      "articleCoverage": 43,
+      "coveragePercent": 91.5,
+      "per10kWords": 18.46
+    },
+    {
+      "term": "personal",
+      "source": "owner",
+      "frequency": 176,
+      "articleCoverage": 38,
+      "coveragePercent": 80.9,
+      "per10kWords": 23.55
+    },
+    {
+      "term": "ask",
+      "source": "owner",
+      "frequency": 154,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 20.61
+    },
+    {
+      "term": "space",
+      "source": "owner",
+      "frequency": 146,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 19.54
+    },
+    {
+      "term": "growth",
+      "source": "owner",
+      "frequency": 188,
+      "articleCoverage": 36,
+      "coveragePercent": 76.6,
+      "per10kWords": 25.15
+    },
+    {
+      "term": "focus",
+      "source": "owner",
+      "frequency": 165,
+      "articleCoverage": 38,
+      "coveragePercent": 80.9,
+      "per10kWords": 22.08
+    },
+    {
+      "term": "show",
+      "source": "owner",
+      "frequency": 141,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 18.87
+    },
+    {
+      "term": "boundaries",
+      "source": "owner",
+      "frequency": 144,
+      "articleCoverage": 40,
+      "coveragePercent": 85.1,
+      "per10kWords": 19.27
+    },
+    {
+      "term": "look",
+      "source": "owner",
+      "frequency": 147,
+      "articleCoverage": 39,
+      "coveragePercent": 83,
+      "per10kWords": 19.67
+    },
+    {
+      "term": "speak",
+      "source": "owner",
+      "frequency": 133,
+      "articleCoverage": 41,
+      "coveragePercent": 87.2,
+      "per10kWords": 17.8
+    },
+    {
+      "term": "change",
+      "source": "owner",
+      "frequency": 154,
+      "articleCoverage": 38,
+      "coveragePercent": 80.9,
+      "per10kWords": 20.61
+    }
+  ],
+  "sharedOwnerSdVocabulary": [
+    {
+      "term": "feel",
+      "source": "owner+SD",
+      "ownerFrequency": 506,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 180,
+      "sdArticleCoverage": 41,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "let",
+      "source": "owner+SD",
+      "ownerFrequency": 414,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 213,
+      "sdArticleCoverage": 41,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "life",
+      "source": "owner+SD",
+      "ownerFrequency": 429,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 188,
+      "sdArticleCoverage": 41,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "time",
+      "source": "owner+SD",
+      "ownerFrequency": 574,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 102,
+      "sdArticleCoverage": 39,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "enters",
+      "source": "owner+SD",
+      "ownerFrequency": 149,
+      "ownerArticleCoverage": 32,
+      "sdFrequency": 328,
+      "sdArticleCoverage": 35,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "moment",
+      "source": "owner+SD",
+      "ownerFrequency": 228,
+      "ownerArticleCoverage": 43,
+      "sdFrequency": 100,
+      "sdArticleCoverage": 34,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "work",
+      "source": "owner+SD",
+      "ownerFrequency": 350,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 75,
+      "sdArticleCoverage": 31,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "emotional",
+      "source": "owner+SD",
+      "ownerFrequency": 486,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 66,
+      "sdArticleCoverage": 28,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "need",
+      "source": "owner+SD",
+      "ownerFrequency": 445,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 61,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "trust",
+      "source": "owner+SD",
+      "ownerFrequency": 200,
+      "ownerArticleCoverage": 41,
+      "sdFrequency": 89,
+      "sdArticleCoverage": 35,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "release",
+      "source": "owner+SD",
+      "ownerFrequency": 163,
+      "ownerArticleCoverage": 33,
+      "sdFrequency": 123,
+      "sdArticleCoverage": 30,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "self",
+      "source": "owner+SD",
+      "ownerFrequency": 388,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 53,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "ready",
+      "source": "owner+SD",
+      "ownerFrequency": 99,
+      "ownerArticleCoverage": 40,
+      "sdFrequency": 106,
+      "sdArticleCoverage": 36,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "asks",
+      "source": "owner+SD",
+      "ownerFrequency": 294,
+      "ownerArticleCoverage": 40,
+      "sdFrequency": 55,
+      "sdArticleCoverage": 28,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "real",
+      "source": "owner+SD",
+      "ownerFrequency": 255,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 59,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "home",
+      "source": "owner+SD",
+      "ownerFrequency": 252,
+      "ownerArticleCoverage": 46,
+      "sdFrequency": 63,
+      "sdArticleCoverage": 28,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "moves",
+      "source": "owner+SD",
+      "ownerFrequency": 134,
+      "ownerArticleCoverage": 34,
+      "sdFrequency": 78,
+      "sdArticleCoverage": 35,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "asking",
+      "source": "owner+SD",
+      "ownerFrequency": 159,
+      "ownerArticleCoverage": 43,
+      "sdFrequency": 68,
+      "sdArticleCoverage": 32,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "love",
+      "source": "owner+SD",
+      "ownerFrequency": 278,
+      "ownerArticleCoverage": 43,
+      "sdFrequency": 63,
+      "sdArticleCoverage": 25,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "world",
+      "source": "owner+SD",
+      "ownerFrequency": 220,
+      "ownerArticleCoverage": 40,
+      "sdFrequency": 58,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "building",
+      "source": "owner+SD",
+      "ownerFrequency": 102,
+      "ownerArticleCoverage": 38,
+      "sdFrequency": 67,
+      "sdArticleCoverage": 36,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "space",
+      "source": "owner+SD",
+      "ownerFrequency": 146,
+      "ownerArticleCoverage": 41,
+      "sdFrequency": 58,
+      "sdArticleCoverage": 32,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "move",
+      "source": "owner+SD",
+      "ownerFrequency": 103,
+      "ownerArticleCoverage": 35,
+      "sdFrequency": 70,
+      "sdArticleCoverage": 34,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "people",
+      "source": "owner+SD",
+      "ownerFrequency": 319,
+      "ownerArticleCoverage": 44,
+      "sdFrequency": 42,
+      "sdArticleCoverage": 22,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "light",
+      "source": "owner+SD",
+      "ownerFrequency": 114,
+      "ownerArticleCoverage": 34,
+      "sdFrequency": 63,
+      "sdArticleCoverage": 30,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "look",
+      "source": "owner+SD",
+      "ownerFrequency": 147,
+      "ownerArticleCoverage": 39,
+      "sdFrequency": 49,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "truth",
+      "source": "owner+SD",
+      "ownerFrequency": 275,
+      "ownerArticleCoverage": 45,
+      "sdFrequency": 43,
+      "sdArticleCoverage": 22,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "action",
+      "source": "owner+SD",
+      "ownerFrequency": 92,
+      "ownerArticleCoverage": 28,
+      "sdFrequency": 75,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "attention",
+      "source": "owner+SD",
+      "ownerFrequency": 128,
+      "ownerArticleCoverage": 35,
+      "sdFrequency": 50,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "brings",
+      "source": "owner+SD",
+      "ownerFrequency": 196,
+      "ownerArticleCoverage": 42,
+      "sdFrequency": 40,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "vision",
+      "source": "owner+SD",
+      "ownerFrequency": 112,
+      "ownerArticleCoverage": 34,
+      "sdFrequency": 56,
+      "sdArticleCoverage": 29,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "shifts",
+      "source": "owner+SD",
+      "ownerFrequency": 104,
+      "ownerArticleCoverage": 31,
+      "sdFrequency": 55,
+      "sdArticleCoverage": 30,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "dreams",
+      "source": "owner+SD",
+      "ownerFrequency": 95,
+      "ownerArticleCoverage": 35,
+      "sdFrequency": 74,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "create",
+      "source": "owner+SD",
+      "ownerFrequency": 148,
+      "ownerArticleCoverage": 38,
+      "sdFrequency": 46,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "ask",
+      "source": "owner+SD",
+      "ownerFrequency": 154,
+      "ownerArticleCoverage": 40,
+      "sdFrequency": 42,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "relationships",
+      "source": "owner+SD",
+      "ownerFrequency": 353,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 37,
+      "sdArticleCoverage": 19,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "heart",
+      "source": "owner+SD",
+      "ownerFrequency": 78,
+      "ownerArticleCoverage": 25,
+      "sdFrequency": 91,
+      "sdArticleCoverage": 32,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "see",
+      "source": "owner+SD",
+      "ownerFrequency": 168,
+      "ownerArticleCoverage": 44,
+      "sdFrequency": 42,
+      "sdArticleCoverage": 25,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "fire",
+      "source": "owner+SD",
+      "ownerFrequency": 105,
+      "ownerArticleCoverage": 27,
+      "sdFrequency": 57,
+      "sdArticleCoverage": 32,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "moving",
+      "source": "owner+SD",
+      "ownerFrequency": 119,
+      "ownerArticleCoverage": 34,
+      "sdFrequency": 46,
+      "sdArticleCoverage": 28,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "start",
+      "source": "owner+SD",
+      "ownerFrequency": 143,
+      "ownerArticleCoverage": 43,
+      "sdFrequency": 44,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "power",
+      "source": "owner+SD",
+      "ownerFrequency": 209,
+      "ownerArticleCoverage": 43,
+      "sdFrequency": 42,
+      "sdArticleCoverage": 22,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "body",
+      "source": "owner+SD",
+      "ownerFrequency": 132,
+      "ownerArticleCoverage": 38,
+      "sdFrequency": 47,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "connection",
+      "source": "owner+SD",
+      "ownerFrequency": 144,
+      "ownerArticleCoverage": 39,
+      "sdFrequency": 39,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "feels",
+      "source": "owner+SD",
+      "ownerFrequency": 218,
+      "ownerArticleCoverage": 47,
+      "sdFrequency": 37,
+      "sdArticleCoverage": 22,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "forward",
+      "source": "owner+SD",
+      "ownerFrequency": 134,
+      "ownerArticleCoverage": 29,
+      "sdFrequency": 46,
+      "sdArticleCoverage": 25,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "show",
+      "source": "owner+SD",
+      "ownerFrequency": 141,
+      "ownerArticleCoverage": 41,
+      "sdFrequency": 38,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "deep",
+      "source": "owner+SD",
+      "ownerFrequency": 125,
+      "ownerArticleCoverage": 36,
+      "sdFrequency": 42,
+      "sdArticleCoverage": 26,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "old",
+      "source": "owner+SD",
+      "ownerFrequency": 246,
+      "ownerArticleCoverage": 41,
+      "sdFrequency": 36,
+      "sdArticleCoverage": 20,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "small",
+      "source": "owner+SD",
+      "ownerFrequency": 116,
+      "ownerArticleCoverage": 36,
+      "sdFrequency": 41,
+      "sdArticleCoverage": 27,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    }
+  ],
+  "sharedOwnerAcVocabulary": [
+    {
+      "term": "time",
+      "source": "owner+AC",
+      "ownerFrequency": 574,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 777,
+      "acArticleCoverage": 142,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "life",
+      "source": "owner+AC",
+      "ownerFrequency": 429,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 246,
+      "acArticleCoverage": 93,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "people",
+      "source": "owner+AC",
+      "ownerFrequency": 319,
+      "ownerArticleCoverage": 44,
+      "acFrequency": 266,
+      "acArticleCoverage": 94,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "self",
+      "source": "owner+AC",
+      "ownerFrequency": 388,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 184,
+      "acArticleCoverage": 56,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "need",
+      "source": "owner+AC",
+      "ownerFrequency": 445,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 147,
+      "acArticleCoverage": 77,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "work",
+      "source": "owner+AC",
+      "ownerFrequency": 350,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 178,
+      "acArticleCoverage": 79,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "power",
+      "source": "owner+AC",
+      "ownerFrequency": 209,
+      "ownerArticleCoverage": 43,
+      "acFrequency": 333,
+      "acArticleCoverage": 111,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "relationships",
+      "source": "owner+AC",
+      "ownerFrequency": 353,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 154,
+      "acArticleCoverage": 57,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "see",
+      "source": "owner+AC",
+      "ownerFrequency": 168,
+      "ownerArticleCoverage": 44,
+      "acFrequency": 328,
+      "acArticleCoverage": 126,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "world",
+      "source": "owner+AC",
+      "ownerFrequency": 220,
+      "ownerArticleCoverage": 40,
+      "acFrequency": 264,
+      "acArticleCoverage": 99,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "let",
+      "source": "owner+AC",
+      "ownerFrequency": 414,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 106,
+      "acArticleCoverage": 69,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "emotional",
+      "source": "owner+AC",
+      "ownerFrequency": 486,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 89,
+      "acArticleCoverage": 38,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "love",
+      "source": "owner+AC",
+      "ownerFrequency": 278,
+      "ownerArticleCoverage": 43,
+      "acFrequency": 105,
+      "acArticleCoverage": 48,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "real",
+      "source": "owner+AC",
+      "ownerFrequency": 255,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 90,
+      "acArticleCoverage": 48,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "enters",
+      "source": "owner+AC",
+      "ownerFrequency": 149,
+      "ownerArticleCoverage": 32,
+      "acFrequency": 277,
+      "acArticleCoverage": 83,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "look",
+      "source": "owner+AC",
+      "ownerFrequency": 147,
+      "ownerArticleCoverage": 39,
+      "acFrequency": 176,
+      "acArticleCoverage": 87,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "personal",
+      "source": "owner+AC",
+      "ownerFrequency": 176,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 151,
+      "acArticleCoverage": 60,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "feel",
+      "source": "owner+AC",
+      "ownerFrequency": 506,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 46,
+      "acArticleCoverage": 40,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "long",
+      "source": "owner+AC",
+      "ownerFrequency": 126,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 198,
+      "acArticleCoverage": 94,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "old",
+      "source": "owner+AC",
+      "ownerFrequency": 246,
+      "ownerArticleCoverage": 41,
+      "acFrequency": 87,
+      "acArticleCoverage": 55,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "relationship",
+      "source": "owner+AC",
+      "ownerFrequency": 168,
+      "ownerArticleCoverage": 40,
+      "acFrequency": 127,
+      "acArticleCoverage": 63,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "brings",
+      "source": "owner+AC",
+      "ownerFrequency": 196,
+      "ownerArticleCoverage": 42,
+      "acFrequency": 95,
+      "acArticleCoverage": 58,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "patterns",
+      "source": "owner+AC",
+      "ownerFrequency": 227,
+      "ownerArticleCoverage": 45,
+      "acFrequency": 77,
+      "acArticleCoverage": 43,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "find",
+      "source": "owner+AC",
+      "ownerFrequency": 124,
+      "ownerArticleCoverage": 37,
+      "acFrequency": 181,
+      "acArticleCoverage": 94,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "change",
+      "source": "owner+AC",
+      "ownerFrequency": 154,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 129,
+      "acArticleCoverage": 59,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "moment",
+      "source": "owner+AC",
+      "ownerFrequency": 228,
+      "ownerArticleCoverage": 43,
+      "acFrequency": 67,
+      "acArticleCoverage": 48,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "begins",
+      "source": "owner+AC",
+      "ownerFrequency": 133,
+      "ownerArticleCoverage": 31,
+      "acFrequency": 220,
+      "acArticleCoverage": 71,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "light",
+      "source": "owner+AC",
+      "ownerFrequency": 114,
+      "ownerArticleCoverage": 34,
+      "acFrequency": 193,
+      "acArticleCoverage": 87,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "last",
+      "source": "owner+AC",
+      "ownerFrequency": 105,
+      "ownerArticleCoverage": 28,
+      "acFrequency": 303,
+      "acArticleCoverage": 97,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "focus",
+      "source": "owner+AC",
+      "ownerFrequency": 165,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 104,
+      "acArticleCoverage": 48,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "place",
+      "source": "owner+AC",
+      "ownerFrequency": 79,
+      "ownerArticleCoverage": 35,
+      "acFrequency": 251,
+      "acArticleCoverage": 100,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "worth",
+      "source": "owner+AC",
+      "ownerFrequency": 258,
+      "ownerArticleCoverage": 47,
+      "acFrequency": 54,
+      "acArticleCoverage": 41,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "home",
+      "source": "owner+AC",
+      "ownerFrequency": 252,
+      "ownerArticleCoverage": 46,
+      "acFrequency": 57,
+      "acArticleCoverage": 37,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "past",
+      "source": "owner+AC",
+      "ownerFrequency": 188,
+      "ownerArticleCoverage": 34,
+      "acFrequency": 87,
+      "acArticleCoverage": 53,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "body",
+      "source": "owner+AC",
+      "ownerFrequency": 132,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 98,
+      "acArticleCoverage": 60,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "point",
+      "source": "owner+AC",
+      "ownerFrequency": 76,
+      "ownerArticleCoverage": 34,
+      "acFrequency": 206,
+      "acArticleCoverage": 94,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "deep",
+      "source": "owner+AC",
+      "ownerFrequency": 125,
+      "ownerArticleCoverage": 36,
+      "acFrequency": 108,
+      "acArticleCoverage": 67,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "always",
+      "source": "owner+AC",
+      "ownerFrequency": 101,
+      "ownerArticleCoverage": 35,
+      "acFrequency": 139,
+      "acArticleCoverage": 78,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "growth",
+      "source": "owner+AC",
+      "ownerFrequency": 188,
+      "ownerArticleCoverage": 36,
+      "acFrequency": 72,
+      "acArticleCoverage": 35,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "keep",
+      "source": "owner+AC",
+      "ownerFrequency": 173,
+      "ownerArticleCoverage": 40,
+      "acFrequency": 62,
+      "acArticleCoverage": 39,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "part",
+      "source": "owner+AC",
+      "ownerFrequency": 96,
+      "ownerArticleCoverage": 36,
+      "acFrequency": 131,
+      "acArticleCoverage": 75,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "know",
+      "source": "owner+AC",
+      "ownerFrequency": 142,
+      "ownerArticleCoverage": 39,
+      "acFrequency": 75,
+      "acArticleCoverage": 45,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "rather",
+      "source": "owner+AC",
+      "ownerFrequency": 149,
+      "ownerArticleCoverage": 32,
+      "acFrequency": 103,
+      "acArticleCoverage": 65,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "two",
+      "source": "owner+AC",
+      "ownerFrequency": 53,
+      "ownerArticleCoverage": 27,
+      "acFrequency": 400,
+      "acArticleCoverage": 105,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "instead",
+      "source": "owner+AC",
+      "ownerFrequency": 141,
+      "ownerArticleCoverage": 33,
+      "acFrequency": 98,
+      "acArticleCoverage": 71,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "space",
+      "source": "owner+AC",
+      "ownerFrequency": 146,
+      "ownerArticleCoverage": 41,
+      "acFrequency": 60,
+      "acArticleCoverage": 43,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "needs",
+      "source": "owner+AC",
+      "ownerFrequency": 288,
+      "ownerArticleCoverage": 45,
+      "acFrequency": 44,
+      "acArticleCoverage": 33,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "fire",
+      "source": "owner+AC",
+      "ownerFrequency": 105,
+      "ownerArticleCoverage": 27,
+      "acFrequency": 177,
+      "acArticleCoverage": 62,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "moves",
+      "source": "owner+AC",
+      "ownerFrequency": 134,
+      "ownerArticleCoverage": 34,
+      "acFrequency": 85,
+      "acArticleCoverage": 50,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    },
+    {
+      "term": "create",
+      "source": "owner+AC",
+      "ownerFrequency": 148,
+      "ownerArticleCoverage": 38,
+      "acFrequency": 59,
+      "acArticleCoverage": 42,
+      "use": "preferred lexical overlap; use naturally, never as a quota"
+    }
+  ],
+  "sdLexicalAdditions": [
+    {
+      "term": "arriving",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 1,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "flowing",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 10,
+      "sdArticleCoverage": 9,
+      "ownerFrequency": 2,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "landing",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 6,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 2,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "lighter",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 8,
+      "sdArticleCoverage": 7,
+      "ownerFrequency": 1,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "lifts",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 2,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "planting",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 10,
+      "sdArticleCoverage": 9,
+      "ownerFrequency": 1,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "warm",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 6,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 2,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "wide",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "all"
+      ],
+      "sdFrequency": 12,
+      "sdArticleCoverage": 11,
+      "ownerFrequency": 1,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "midnight",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "weekly"
+      ],
+      "sdFrequency": 6,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 1,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "tonight",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "weekly"
+      ],
+      "sdFrequency": 42,
+      "sdArticleCoverage": 24,
+      "ownerFrequency": 0,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    },
+    {
+      "term": "weekend",
+      "source": "SD",
+      "status": "allowed-individual-word",
+      "surfaces": [
+        "weekly"
+      ],
+      "sdFrequency": 9,
+      "sdArticleCoverage": 8,
+      "ownerFrequency": 2,
+      "use": "neutral word only; Marie's syntax, meaning, and rhythm remain authoritative"
+    }
+  ],
+  "ownerSignaturePhrases": [
+    {
+      "phrase": "keep the peace",
+      "source": "owner-only",
+      "frequency": 18,
+      "articleCoverage": 13,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "path forward",
+      "source": "owner-only",
+      "frequency": 26,
+      "articleCoverage": 11,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "home life",
+      "source": "owner-only",
+      "frequency": 21,
+      "articleCoverage": 13,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "old wounds",
+      "source": "owner-only",
+      "frequency": 23,
+      "articleCoverage": 11,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "stop pretending",
+      "source": "owner-only",
+      "frequency": 17,
+      "articleCoverage": 14,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "trying to earn",
+      "source": "owner-only",
+      "frequency": 15,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "emotional patterns",
+      "source": "owner-only",
+      "frequency": 19,
+      "articleCoverage": 11,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "professional life",
+      "source": "owner-only",
+      "frequency": 17,
+      "articleCoverage": 12,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "time to reflect",
+      "source": "owner-only",
+      "frequency": 16,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "focus shifts",
+      "source": "owner-only",
+      "frequency": 17,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "external validation",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 13,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "shines a light",
+      "source": "owner-only",
+      "frequency": 12,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "young to remember",
+      "source": "owner-only",
+      "frequency": 26,
+      "articleCoverage": 4,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "communication style",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 12,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "public image",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 11,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "social circles",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 11,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "need to prove",
+      "source": "owner-only",
+      "frequency": 10,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "unconscious patterns",
+      "source": "owner-only",
+      "frequency": 15,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "keeping the peace",
+      "source": "owner-only",
+      "frequency": 11,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "center stage",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "asks you to examine",
+      "source": "owner-only",
+      "frequency": 8,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "trying to perfect",
+      "source": "owner-only",
+      "frequency": 12,
+      "articleCoverage": 7,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "routines and health",
+      "source": "owner-only",
+      "frequency": 9,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "time to stop",
+      "source": "owner-only",
+      "frequency": 16,
+      "articleCoverage": 5,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "personal life",
+      "source": "owner-only",
+      "frequency": 12,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "emotional labor",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "left behind",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "stop apologizing",
+      "source": "owner-only",
+      "frequency": 13,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "course correction",
+      "source": "owner-only",
+      "frequency": 19,
+      "articleCoverage": 6,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "personal values",
+      "source": "owner-only",
+      "frequency": 14,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "material security",
+      "source": "owner-only",
+      "frequency": 11,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "trying to fix",
+      "source": "owner-only",
+      "frequency": 9,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "work and health",
+      "source": "owner-only",
+      "frequency": 10,
+      "articleCoverage": 7,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "left unsaid",
+      "source": "owner-only",
+      "frequency": 10,
+      "articleCoverage": 10,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "breaking point",
+      "source": "owner-only",
+      "frequency": 11,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "feel secure",
+      "source": "owner-only",
+      "frequency": 11,
+      "articleCoverage": 9,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "daily routines and health",
+      "source": "owner-only",
+      "frequency": 7,
+      "articleCoverage": 7,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "identity and self",
+      "source": "owner-only",
+      "frequency": 8,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "brings clarity",
+      "source": "owner-only",
+      "frequency": 12,
+      "articleCoverage": 8,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    },
+    {
+      "phrase": "creativity and self",
+      "source": "owner-only",
+      "frequency": 9,
+      "articleCoverage": 7,
+      "use": "rhythm/reference evidence; do not repeat mechanically"
+    }
+  ],
+  "surfaceVocabulary": {
+    "lunation-eclipse": {
+      "articleCount": 18,
+      "terms": [
+        {
+          "term": "lands",
+          "source": "owner",
+          "frequency": 40,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 2.28
+        },
+        {
+          "term": "belonging",
+          "source": "owner",
+          "frequency": 23,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.77
+        },
+        {
+          "term": "opposing",
+          "source": "owner",
+          "frequency": 24,
+          "articleCoverage": 9,
+          "liftVsOwnerCorpus": 2.63
+        },
+        {
+          "term": "changes",
+          "source": "owner",
+          "frequency": 33,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.59
+        },
+        {
+          "term": "job",
+          "source": "owner",
+          "frequency": 45,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.83
+        },
+        {
+          "term": "fear",
+          "source": "owner",
+          "frequency": 50,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.83
+        },
+        {
+          "term": "either",
+          "source": "owner",
+          "frequency": 20,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.68
+        },
+        {
+          "term": "release",
+          "source": "owner",
+          "frequency": 83,
+          "articleCoverage": 15,
+          "liftVsOwnerCorpus": 1.45
+        },
+        {
+          "term": "ready",
+          "source": "owner",
+          "frequency": 47,
+          "articleCoverage": 16,
+          "liftVsOwnerCorpus": 1.35
+        },
+        {
+          "term": "keep",
+          "source": "owner",
+          "frequency": 76,
+          "articleCoverage": 17,
+          "liftVsOwnerCorpus": 1.25
+        },
+        {
+          "term": "family",
+          "source": "owner",
+          "frequency": 73,
+          "articleCoverage": 18,
+          "liftVsOwnerCorpus": 1.17
+        },
+        {
+          "term": "hard",
+          "source": "owner",
+          "frequency": 26,
+          "articleCoverage": 15,
+          "liftVsOwnerCorpus": 1.4
+        },
+        {
+          "term": "trying",
+          "source": "owner",
+          "frequency": 78,
+          "articleCoverage": 16,
+          "liftVsOwnerCorpus": 1.31
+        },
+        {
+          "term": "health",
+          "source": "owner",
+          "frequency": 38,
+          "articleCoverage": 16,
+          "liftVsOwnerCorpus": 1.3
+        },
+        {
+          "term": "feel",
+          "source": "owner",
+          "frequency": 205,
+          "articleCoverage": 18,
+          "liftVsOwnerCorpus": 1.15
+        },
+        {
+          "term": "axis",
+          "source": "owner",
+          "frequency": 49,
+          "articleCoverage": 11,
+          "liftVsOwnerCorpus": 1.89
+        },
+        {
+          "term": "joy",
+          "source": "owner",
+          "frequency": 47,
+          "articleCoverage": 17,
+          "liftVsOwnerCorpus": 1.22
+        },
+        {
+          "term": "let",
+          "source": "owner",
+          "frequency": 165,
+          "articleCoverage": 18,
+          "liftVsOwnerCorpus": 1.14
+        },
+        {
+          "term": "asking",
+          "source": "owner",
+          "frequency": 67,
+          "articleCoverage": 17,
+          "liftVsOwnerCorpus": 1.2
+        },
+        {
+          "term": "showing",
+          "source": "owner",
+          "frequency": 55,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.57
+        }
+      ]
+    },
+    "overview": {
+      "articleCount": 4,
+      "terms": [
+        {
+          "term": "horizon",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "matches",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "roar",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "stem",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "refine",
+          "source": "owner",
+          "frequency": 26,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 6.26
+        },
+        {
+          "term": "boldness",
+          "source": "owner",
+          "frequency": 10,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 7.63
+        },
+        {
+          "term": "drives",
+          "source": "owner",
+          "frequency": 5,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 7.63
+        },
+        {
+          "term": "summer",
+          "source": "owner",
+          "frequency": 42,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 7.25
+        },
+        {
+          "term": "fiery",
+          "source": "owner",
+          "frequency": 10,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 5.38
+        },
+        {
+          "term": "motivations",
+          "source": "owner",
+          "frequency": 7,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 7.12
+        },
+        {
+          "term": "window",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 6.86
+        },
+        {
+          "term": "reevaluate",
+          "source": "owner",
+          "frequency": 9,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 6.34
+        },
+        {
+          "term": "culminating",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "delves",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "dives",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 6.1
+        },
+        {
+          "term": "empire",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "favorite",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 6.1
+        },
+        {
+          "term": "impulsiveness",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "impulsivity",
+          "source": "owner",
+          "frequency": 5,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.15
+        },
+        {
+          "term": "mid",
+          "source": "owner",
+          "frequency": 7,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 4.58
+        }
+      ]
+    },
+    "planet-article": {
+      "articleCount": 14,
+      "terms": [
+        {
+          "term": "return",
+          "source": "owner",
+          "frequency": 63,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.99
+        },
+        {
+          "term": "moving",
+          "source": "owner",
+          "frequency": 56,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.59
+        },
+        {
+          "term": "past",
+          "source": "owner",
+          "frequency": 95,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.71
+        },
+        {
+          "term": "shift",
+          "source": "owner",
+          "frequency": 67,
+          "articleCoverage": 11,
+          "liftVsOwnerCorpus": 1.81
+        },
+        {
+          "term": "money",
+          "source": "owner",
+          "frequency": 45,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.32
+        },
+        {
+          "term": "felt",
+          "source": "owner",
+          "frequency": 44,
+          "articleCoverage": 11,
+          "liftVsOwnerCorpus": 1.63
+        },
+        {
+          "term": "learned",
+          "source": "owner",
+          "frequency": 38,
+          "articleCoverage": 9,
+          "liftVsOwnerCorpus": 1.97
+        },
+        {
+          "term": "love",
+          "source": "owner",
+          "frequency": 112,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.36
+        },
+        {
+          "term": "kind",
+          "source": "owner",
+          "frequency": 41,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.47
+        },
+        {
+          "term": "time",
+          "source": "owner",
+          "frequency": 214,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.26
+        },
+        {
+          "term": "themes",
+          "source": "owner",
+          "frequency": 31,
+          "articleCoverage": 10,
+          "liftVsOwnerCorpus": 1.69
+        },
+        {
+          "term": "learning",
+          "source": "owner",
+          "frequency": 55,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.4
+        },
+        {
+          "term": "worth",
+          "source": "owner",
+          "frequency": 90,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.18
+        },
+        {
+          "term": "people",
+          "source": "owner",
+          "frequency": 111,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.17
+        },
+        {
+          "term": "ground",
+          "source": "owner",
+          "frequency": 23,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.36
+        },
+        {
+          "term": "moves",
+          "source": "owner",
+          "frequency": 54,
+          "articleCoverage": 12,
+          "liftVsOwnerCorpus": 1.36
+        },
+        {
+          "term": "inspiration",
+          "source": "owner",
+          "frequency": 14,
+          "articleCoverage": 8,
+          "liftVsOwnerCorpus": 1.97
+        },
+        {
+          "term": "create",
+          "source": "owner",
+          "frequency": 53,
+          "articleCoverage": 13,
+          "liftVsOwnerCorpus": 1.21
+        },
+        {
+          "term": "responsibilities",
+          "source": "owner",
+          "frequency": 19,
+          "articleCoverage": 9,
+          "liftVsOwnerCorpus": 1.73
+        },
+        {
+          "term": "feel",
+          "source": "owner",
+          "frequency": 167,
+          "articleCoverage": 14,
+          "liftVsOwnerCorpus": 1.11
+        }
+      ]
+    },
+    "season": {
+      "articleCount": 7,
+      "terms": [
+        {
+          "term": "high",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 5,
+          "liftVsOwnerCorpus": 3.18
+        },
+        {
+          "term": "puts",
+          "source": "owner",
+          "frequency": 7,
+          "articleCoverage": 5,
+          "liftVsOwnerCorpus": 3.09
+        },
+        {
+          "term": "sector",
+          "source": "owner",
+          "frequency": 34,
+          "articleCoverage": 5,
+          "liftVsOwnerCorpus": 2.95
+        },
+        {
+          "term": "ability",
+          "source": "owner",
+          "frequency": 25,
+          "articleCoverage": 6,
+          "liftVsOwnerCorpus": 2.41
+        },
+        {
+          "term": "fresh",
+          "source": "owner",
+          "frequency": 13,
+          "articleCoverage": 7,
+          "liftVsOwnerCorpus": 2.03
+        },
+        {
+          "term": "goes",
+          "source": "owner",
+          "frequency": 12,
+          "articleCoverage": 5,
+          "liftVsOwnerCorpus": 2.76
+        },
+        {
+          "term": "stand",
+          "source": "owner",
+          "frequency": 14,
+          "articleCoverage": 6,
+          "liftVsOwnerCorpus": 2.18
+        },
+        {
+          "term": "collaborative",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 4.24
+        },
+        {
+          "term": "lead",
+          "source": "owner",
+          "frequency": 20,
+          "articleCoverage": 6,
+          "liftVsOwnerCorpus": 2.12
+        },
+        {
+          "term": "contribute",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 3.97
+        },
+        {
+          "term": "deplete",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 3.97
+        },
+        {
+          "term": "eventually",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 3.97
+        },
+        {
+          "term": "examining",
+          "source": "owner",
+          "frequency": 9,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 3.97
+        },
+        {
+          "term": "slides",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 3.97
+        },
+        {
+          "term": "matter",
+          "source": "owner",
+          "frequency": 19,
+          "articleCoverage": 7,
+          "liftVsOwnerCorpus": 1.62
+        },
+        {
+          "term": "brings",
+          "source": "owner",
+          "frequency": 60,
+          "articleCoverage": 7,
+          "liftVsOwnerCorpus": 1.62
+        },
+        {
+          "term": "obligations",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 5,
+          "liftVsOwnerCorpus": 2.27
+        },
+        {
+          "term": "conversations",
+          "source": "owner",
+          "frequency": 33,
+          "articleCoverage": 7,
+          "liftVsOwnerCorpus": 1.62
+        },
+        {
+          "term": "show",
+          "source": "owner",
+          "frequency": 42,
+          "articleCoverage": 7,
+          "liftVsOwnerCorpus": 1.58
+        },
+        {
+          "term": "balance",
+          "source": "owner",
+          "frequency": 56,
+          "articleCoverage": 6,
+          "liftVsOwnerCorpus": 1.83
+        }
+      ]
+    },
+    "weekly": {
+      "articleCount": 4,
+      "terms": [
+        {
+          "term": "quarter",
+          "source": "owner",
+          "frequency": 31,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 18.35
+        },
+        {
+          "term": "adds",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 7.86
+        },
+        {
+          "term": "arc",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 13.76
+        },
+        {
+          "term": "distinguishing",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 13.76
+        },
+        {
+          "term": "outcome",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 8.16
+        },
+        {
+          "term": "accepting",
+          "source": "owner",
+          "frequency": 5,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 6.12
+        },
+        {
+          "term": "delivers",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 12.23
+        },
+        {
+          "term": "tests",
+          "source": "owner",
+          "frequency": 8,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 11.29
+        },
+        {
+          "term": "hands",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 7.34
+        },
+        {
+          "term": "whose",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 11.01
+        },
+        {
+          "term": "expose",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 10.01
+        },
+        {
+          "term": "refinement",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 10.01
+        },
+        {
+          "term": "improvement",
+          "source": "owner",
+          "frequency": 6,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 6.48
+        },
+        {
+          "term": "score",
+          "source": "owner",
+          "frequency": 3,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 9.17
+        },
+        {
+          "term": "putting",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 5.65
+        },
+        {
+          "term": "reveals",
+          "source": "owner",
+          "frequency": 19,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 4.2
+        },
+        {
+          "term": "gap",
+          "source": "owner",
+          "frequency": 5,
+          "articleCoverage": 4,
+          "liftVsOwnerCorpus": 4.17
+        },
+        {
+          "term": "treating",
+          "source": "owner",
+          "frequency": 7,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 5.35
+        },
+        {
+          "term": "disguised",
+          "source": "owner",
+          "frequency": 4,
+          "articleCoverage": 3,
+          "liftVsOwnerCorpus": 5.24
+        },
+        {
+          "term": "exhausting",
+          "source": "owner",
+          "frequency": 9,
+          "articleCoverage": 2,
+          "liftVsOwnerCorpus": 7.86
+        }
+      ]
+    }
+  },
+  "sdReviewCandidates": [
+    {
+      "term": "wonderful",
+      "source": "SD",
+      "sdFrequency": 14,
+      "sdArticleCoverage": 12,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "biggest",
+      "source": "SD",
+      "sdFrequency": 15,
+      "sdArticleCoverage": 11,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "gratitude",
+      "source": "SD",
+      "sdFrequency": 13,
+      "sdArticleCoverage": 8,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "circle",
+      "source": "SD",
+      "sdFrequency": 10,
+      "sdArticleCoverage": 9,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "waning",
+      "source": "SD",
+      "sdFrequency": 8,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "cook",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "headline",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "luck",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "optimistic",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "spends",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "honored",
+      "source": "SD",
+      "sdFrequency": 6,
+      "sdArticleCoverage": 6,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "eighteen",
+      "source": "SD",
+      "sdFrequency": 13,
+      "sdArticleCoverage": 4,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "longest",
+      "source": "SD",
+      "sdFrequency": 8,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "circling",
+      "source": "SD",
+      "sdFrequency": 6,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "magical",
+      "source": "SD",
+      "sdFrequency": 6,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "single",
+      "source": "SD",
+      "sdFrequency": 6,
+      "sdArticleCoverage": 5,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "lion",
+      "source": "SD",
+      "sdFrequency": 15,
+      "sdArticleCoverage": 3,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "letter",
+      "source": "SD",
+      "sdFrequency": 8,
+      "sdArticleCoverage": 4,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "nine",
+      "source": "SD",
+      "sdFrequency": 12,
+      "sdArticleCoverage": 3,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    },
+    {
+      "term": "eight",
+      "source": "SD",
+      "sdFrequency": 7,
+      "sdArticleCoverage": 3,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "do not auto-inject; approve only if it already feels natural in Marie's voice"
+    }
+  ],
+  "acReviewCandidates": [
+    {
+      "term": "thus",
+      "source": "AC",
+      "acFrequency": 372,
+      "acArticleCoverage": 106,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "although",
+      "source": "AC",
+      "acFrequency": 180,
+      "acArticleCoverage": 87,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "decan",
+      "source": "AC",
+      "acFrequency": 255,
+      "acArticleCoverage": 49,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "configuration",
+      "source": "AC",
+      "acFrequency": 130,
+      "acArticleCoverage": 61,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "red",
+      "source": "AC",
+      "acFrequency": 129,
+      "acArticleCoverage": 58,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "configurations",
+      "source": "AC",
+      "acFrequency": 107,
+      "acArticleCoverage": 45,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "pair",
+      "source": "AC",
+      "acFrequency": 98,
+      "acArticleCoverage": 47,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "number",
+      "source": "AC",
+      "acFrequency": 90,
+      "acArticleCoverage": 49,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "considered",
+      "source": "AC",
+      "acFrequency": 73,
+      "acArticleCoverage": 53,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "dragon",
+      "source": "AC",
+      "acFrequency": 106,
+      "acArticleCoverage": 41,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "indeed",
+      "source": "AC",
+      "acFrequency": 69,
+      "acArticleCoverage": 48,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "portion",
+      "source": "AC",
+      "acFrequency": 79,
+      "acArticleCoverage": 42,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "variety",
+      "source": "AC",
+      "acFrequency": 72,
+      "acArticleCoverage": 43,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "result",
+      "source": "AC",
+      "acFrequency": 66,
+      "acArticleCoverage": 44,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "history",
+      "source": "AC",
+      "acFrequency": 88,
+      "acArticleCoverage": 38,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "ongoing",
+      "source": "AC",
+      "acFrequency": 67,
+      "acArticleCoverage": 41,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "swift",
+      "source": "AC",
+      "acFrequency": 60,
+      "acArticleCoverage": 43,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "merely",
+      "source": "AC",
+      "acFrequency": 55,
+      "acArticleCoverage": 44,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "conjoin",
+      "source": "AC",
+      "acFrequency": 60,
+      "acArticleCoverage": 41,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "man",
+      "source": "AC",
+      "acFrequency": 70,
+      "acArticleCoverage": 36,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "occur",
+      "source": "AC",
+      "acFrequency": 64,
+      "acArticleCoverage": 37,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "certainly",
+      "source": "AC",
+      "acFrequency": 49,
+      "acArticleCoverage": 38,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "single",
+      "source": "AC",
+      "acFrequency": 49,
+      "acArticleCoverage": 37,
+      "ownerFrequency": 2,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "martial",
+      "source": "AC",
+      "acFrequency": 58,
+      "acArticleCoverage": 32,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "goat",
+      "source": "AC",
+      "acFrequency": 54,
+      "acArticleCoverage": 33,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "addition",
+      "source": "AC",
+      "acFrequency": 48,
+      "acArticleCoverage": 35,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "lion",
+      "source": "AC",
+      "acFrequency": 75,
+      "acArticleCoverage": 27,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "entirety",
+      "source": "AC",
+      "acFrequency": 43,
+      "acArticleCoverage": 35,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "archer",
+      "source": "AC",
+      "acFrequency": 45,
+      "acArticleCoverage": 32,
+      "ownerFrequency": 1,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    },
+    {
+      "term": "images",
+      "source": "AC",
+      "acFrequency": 48,
+      "acArticleCoverage": 30,
+      "ownerFrequency": 0,
+      "status": "owner-review-required",
+      "use": "individual-word review only; do not import AC phrases, metaphors, or cadence"
+    }
+  ],
+  "acCandidateAudit": {
+    "reviewedCount": 30,
+    "recommendation": "promote-none",
+    "automaticPromptEligible": [],
+    "rationale": "No AC-only candidate has enough owner-corpus evidence to become preferred vocabulary.",
+    "lanes": {
+      "technicalReferenceOnly": [
+        "configuration",
+        "configurations",
+        "conjoin",
+        "decan",
+        "martial"
+      ],
+      "symbolicTopicOnly": [
+        "archer",
+        "dragon",
+        "goat",
+        "lion"
+      ],
+      "ownerObservedRare": [
+        "considered",
+        "history",
+        "merely",
+        "number",
+        "occur",
+        "ongoing",
+        "pair",
+        "red",
+        "result",
+        "single",
+        "swift"
+      ],
+      "outsideRegisterUnobserved": [
+        "addition",
+        "although",
+        "certainly",
+        "entirety",
+        "images",
+        "indeed",
+        "man",
+        "portion",
+        "thus",
+        "variety"
+      ]
+    }
+  },
+  "rhythm": {
+    "owner": {
+      "sentenceCount": 14476,
+      "averageWords": 13,
+      "medianWords": 12,
+      "p90Words": 23,
+      "shortSentencePercent": 27.6,
+      "longSentencePercent": 7.9,
+      "definitions": {
+        "short": "2-7 words",
+        "long": "25+ words"
+      }
+    },
+    "spiritDaughterReference": {
+      "sentenceCount": 4729,
+      "averageWords": 12.8,
+      "medianWords": 11,
+      "p90Words": 25,
+      "shortSentencePercent": 34.2,
+      "longSentencePercent": 10,
+      "definitions": {
+        "short": "2-7 words",
+        "long": "25+ words"
+      }
+    },
+    "instruction": "Match Marie's distribution and variation; SD rhythm is comparison data, not a target."
+  },
+  "avoid": {
+    "sdBlockedWords": [
+      "download",
+      "downloads",
+      "frequency",
+      "manifestation",
+      "portal",
+      "transmission",
+      "vibration",
+      "vibrations"
+    ],
+    "sdConstructions": [
+      {
+        "pattern": "X is not Y. It is Z.",
+        "reason": "SD's most frequent construction (40+ instances in corpus); already a warn as not-X-but-Y.",
+        "useInstead": "State what it is without the negation setup.",
+        "source": "SD"
+      },
+      {
+        "pattern": "Welcome to another powerful week",
+        "reason": "SD verbatim weekly opener.",
+        "useInstead": "Open on what changes this week.",
+        "source": "SD"
+      },
+      {
+        "pattern": "Let's dive into what the stars have in store",
+        "reason": "SD verbatim transition.",
+        "useInstead": "No transition; start the first block.",
+        "source": "SD"
+      },
+      {
+        "pattern": "Here is to a week of [noun], [noun], and [phrase]",
+        "reason": "SD tricolon benediction.",
+        "useInstead": "One-sentence practical close.",
+        "source": "SD"
+      },
+      {
+        "pattern": "[Sign] reminds us that [lesson]",
+        "reason": "SD universal lesson-delivery sentence.",
+        "useInstead": "Deliver the lesson as an observation about behavior.",
+        "source": "SD"
+      },
+      {
+        "pattern": "[ritual-prop reflex: light a candle and name what you release]",
+        "reason": "SD ritual coda signature.",
+        "useInstead": "Only concrete actions that fit the surface.",
+        "source": "SD"
+      },
+      {
+        "pattern": "[nervous-system vocabulary: regulate, fight or flight, the real work starts in your nervous system]",
+        "reason": "SD register graft.",
+        "useInstead": "Name the feeling and the behavior.",
+        "source": "SD"
+      },
+      {
+        "pattern": "the version of you who already has it",
+        "reason": "SD future-self formula.",
+        "useInstead": "Name the concrete next step.",
+        "source": "SD"
+      },
+      {
+        "pattern": "You deserve to [feel good / shine]",
+        "reason": "SD affirmational permission; distinct from Marie's falsifiable permission lines.",
+        "useInstead": "Permission must be specific and falsifiable: allowed to do a nameable thing.",
+        "source": "SD"
+      },
+      {
+        "pattern": "[portal / transmission / light codes / frequency / highest timeline / downloads]",
+        "reason": "SD New Age register layer.",
+        "useInstead": "Outside the editorial frame; do not use.",
+        "source": "SD"
+      },
+      {
+        "pattern": "the universe is [saying yes / giving you a green light]",
+        "reason": "SD universe-as-agent.",
+        "useInstead": "Planets act; the universe does not speak.",
+        "source": "SD"
+      },
+      {
+        "pattern": "You just need to take the next inspired step",
+        "reason": "SD cadence formula.",
+        "useInstead": "Name the actual step.",
+        "source": "SD"
+      }
+    ]
+  }
+}
