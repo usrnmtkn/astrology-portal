@@ -11642,7 +11642,11 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
 
-    if (mode === "guest" || mode === "member") {
+    if (
+      mode === "guest"
+      || mode === "member"
+      || (mode === "friends" && !friendProfileContentRequested)
+    ) {
       return () => {
         cancelled = true;
       };
@@ -11661,7 +11665,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode]);
+  }, [friendProfileContentRequested, mode]);
 
   useEffect(() => {
     let cancelled = false;
