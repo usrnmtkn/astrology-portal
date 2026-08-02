@@ -88,6 +88,10 @@ const manualChartsControllerSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/useManualChartsController.ts"),
   "utf8"
 );
+const relationshipCompareHookSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/useRelationshipCompare.ts"),
+  "utf8"
+);
 const friendProfileWorkSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/friendProfileWork.ts"),
   "utf8"
@@ -490,6 +494,16 @@ assert.doesNotMatch(
   manualChartsPanelSource,
   /listManualCharts\(chartOwnerUserId\)|const chartsToRepair = charts\.filter/u,
   "ManualChartsPanel must not re-embed chart loading or repair orchestration."
+);
+assert.match(
+  appSource,
+  /useRelationshipCompare\(\{/u,
+  "ManualChartsPanel must delegate relationship request state to its focused hook."
+);
+assert.match(
+  relationshipCompareHookSource,
+  /export function useRelationshipCompare[\s\S]*compareRelationship\([\s\S]*controller\.abort\(\)/u,
+  "The relationship comparison hook must own request state and cancellation."
 );
 assert.match(
   appSource,
