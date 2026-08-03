@@ -145,15 +145,43 @@ async function main() {
     !ccSdFamily.findings.some((finding) => finding.term === "[Sign] reminds us that [lesson]"),
     "bracketed CC/SD pattern families must remain judge-only"
   );
-  const secondPersonSky = lintArticle({
+  for (const token of ["You", "Your", "Yours", "Yourself", "Yourselves"]) {
+    const secondPersonSky = lintArticle({
+      ...good,
+      hook: `${token} already know the argument. Mars in Scorpio does not raise its voice; it waits.`,
+      planet: "mars",
+      sign: "scorpio"
+    });
+    assert.ok(
+      secondPersonSky.findings.some((finding) => finding.severity === "fail" && finding.term === "second-person"),
+      `new Current Sky placement copy must reject ${token}`
+    );
+  }
+  for (const phrase of [
+    "The banished want refuses to stay reasonable.",
+    "The first idea has already spent its excitement.",
+    "The arrangement stopped telling the truth."
+  ]) {
+    const unnatural = lintArticle({
+      ...good,
+      hook: `${phrase} Mars in Scorpio does not raise its voice; it waits.`,
+      planet: "mars",
+      sign: "scorpio"
+    });
+    assert.ok(
+      unnatural.findings.some((finding) => finding.severity === "fail" && finding.source === "first-read-natural-english"),
+      `reviewed first-read failure must fail mechanically: ${phrase}`
+    );
+  }
+  const allowedCollective = lintArticle({
     ...good,
-    hook: "You already know the argument. Mars in Scorpio does not raise its voice; it waits.",
+    lived: "People push hard for the answer, and someone finally names the cost. We stop when the result no longer justifies the effort.",
     planet: "mars",
     sign: "scorpio"
   });
   assert.ok(
-    secondPersonSky.findings.some((finding) => finding.severity === "fail" && finding.term === "second-person"),
-    "new Current Sky placement copy must reject second person"
+    !allowedCollective.findings.some((finding) => /people|someone|\bwe\b/i.test(finding.term || "")),
+    "allowed collective language must not be a mechanical violation"
   );
   const performanceSky = lintArticle({
     ...good,
@@ -224,11 +252,11 @@ async function main() {
     assert.match(prompt, /No sentence from PLANET \+ SIGN MEANING LAYER may appear verbatim/);
     assert.match(prompt, /SCENE, NOT INVENTORY/);
     assert.match(prompt, /Build pressure -> choice -> consequence/);
-    assert.match(prompt, /generic plural "people" as a placeholder/);
+    assert.match(prompt, /ALLOWED COLLECTIVE LANGUAGE/);
     assert.match(prompt, /CURRENT SKY IS COLLECTIVE/);
-    assert.match(prompt, /LITERAL-ENGLISH PASS/);
+    assert.match(prompt, /FIRST-READ NATURAL ENGLISH RULE/);
     assert.match(prompt, /OBSERVATION BEFORE POLISH/);
-    assert.match(prompt, /NAME THE COST/);
+    assert.match(prompt, /STACKED ENDING RULE/);
     assert.match(prompt, /owner-review-uranus-cancer-lived-2026-08-02/);
     assert.match(prompt, /duration, baseline rupture, concrete changes, relational reclassification, cost/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
@@ -264,11 +292,12 @@ async function main() {
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
-    assert.ok(jp.includes("Generic plural \"people\" used as a substitute"), `judge prompt must reject people as a vague actor placeholder for tier ${tier}`);
+    assert.ok(jp.includes("ALLOWED COLLECTIVE LANGUAGE"), `judge prompt must protect valid collective language for tier ${tier}`);
     assert.ok(jp.includes("CURRENT SKY IS COLLECTIVE"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
-    assert.ok(jp.includes("LITERAL ENGLISH"), `judge prompt must run a literal-English review for tier ${tier}`);
+    assert.ok(jp.includes("FIRST-READ NATURAL ENGLISH RULE"), `judge prompt must run a first-read natural-English review for tier ${tier}`);
     assert.ok(jp.includes("OBSERVATION BEFORE POLISH"), `judge prompt must reject slogan-first hooks for tier ${tier}`);
-    assert.ok(jp.includes("NAME THE COST"), `judge prompt must reject dramatic or doubled turns for tier ${tier}`);
+    assert.ok(jp.includes("STACKED ENDING RULE"), `judge prompt must reject dramatic or doubled turns for tier ${tier}`);
+    assert.ok(jp.includes("Score 3 does not require flawless prose"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
     assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry owner-approved lived-beat evidence for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");

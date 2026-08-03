@@ -1,5 +1,5 @@
 {
-  "id": "tldr-astro.voice.sky-placement.v4",
+  "id": "tldr-astro.voice.sky-placement.v5",
   "surface": "sky",
   "mode": "placement-article",
   "purpose": "Output-level voice contract for the sky placement (planet-in-sign) articles on /#sky/placement. Implements apps/web/src/content/sky-writing/TLDR-Sky-Article-Spec.md as machine-usable rules. Applies to RENDERED article copy in the three slots (hook / lived / turn), not to source meaning in data/. Enforced by scripts/lint-placement-voice.js; taste enforced by scripts/judge-placement-voice.js.",
@@ -9,7 +9,7 @@
   "person": "collective-current-sky",
   "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,
-  "personNote": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', 'yours', or 'yourself'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
+  "personNote": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
 
   "exemplarStatePolicy": {
     "historical_owner_approved": "Original owner-approved copy preserved verbatim for provenance. Never supplied to the active Current Sky judge as positive evidence.",
@@ -111,6 +111,37 @@
 
   "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
 
+  "severityRules": {
+    "firstReadNaturalEnglish": {
+      "rule": "If a central sentence does not make literal sense in natural English, the article cannot receive a score of 2 or 3 unless the failure is isolated and the remaining article is strongly grounded.",
+      "scoreOneWhen": [
+        "the hook contains opaque or unnatural personification",
+        "the lived section remains generalized, abstract, or lacks a recognizable sequence"
+      ],
+      "mechanicalFailPatterns": [
+        "\\bthe banished want refuses to stay reasonable\\b",
+        "\\bthe first idea (?:has )?(?:already )?spent its excitement\\b",
+        "\\bthe arrangement stopped telling the truth\\b"
+      ],
+      "examples": [
+        "The banished want refuses to stay reasonable.",
+        "The first idea has spent its excitement.",
+        "The arrangement stopped telling the truth."
+      ]
+    },
+    "allowedCollectiveLanguage": {
+      "allowed": ["people", "someone", "we"],
+      "rule": "Do not flag these words merely because they are collective nouns or pronouns. Flag them only when they conceal a behavior that should be named more specifically."
+    },
+    "stackedEnding": {
+      "rule": "When the turn has already named the behavior and cost, any following slogan, metaphor, reassurance, or second conclusion should be marked for deletion.",
+      "usualEffect": "This usually lowers an otherwise strong article from 3 to 2. It does not require a full rewrite."
+    },
+    "scoreThreeTolerance": {
+      "rule": "Score 3 does not require flawless prose. A minor explanatory or slightly broad sentence is acceptable when the placement remains unmistakable, the lived section is concrete, the turn names a real behavior and consequence, every hard surface rule passes, and no central sentence fails natural English."
+    }
+  },
+
   "conditionalBans": [
     {
       "term": "steady",
@@ -171,10 +202,10 @@
     "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
     "Scene, not inventory: a lived paragraph needs pressure, movement, and consequence. Three parallel examples from different life categories read like generated coverage even when every noun is concrete. One charged sequence is better than a representative list.",
-    "Do not use generic plural 'people' as a placeholder when a specific actor, relationship, group, or institution can be named. This is a judgment rule, not a blind regex ban; existing owner-approved uses remain valid when 'people' is the actual subject.",
-    "Literal-English pass: read every sentence literally. An abstract noun may not perform an unnatural human action, and a metaphor may not require decoding. Conventional astrology language such as 'Mars governs action' is allowed; decorative personification is not.",
+    "Do not flag 'people', 'someone', or 'we' merely because they are collective language. Flag them only when they conceal a behavior that should be named more specifically.",
+    "First-read natural-English rule: read every sentence literally. An abstract noun may not perform an unnatural human action, and a metaphor may not require decoding. Conventional astrology language such as 'Mars governs action' is allowed. A central opaque sentence plus a generalized lived section is score 1; an isolated failure surrounded by strongly grounded writing may reach score 2, never 3.",
     "Observation before polish: hooks begin with recognizable pressure, behavior, or a decision before explaining the placement. A slogan that merely sounds sharp is not a lived premise.",
-    "Turns name the actual cost and stop there. Do not leave behavior for a dramatic image, a manufactured aphorism, or a second conclusion.",
+    "Turns name the actual cost and stop there. Once the behavior and cost have landed, mark any following slogan, metaphor, reassurance, or second conclusion for deletion. This usually lowers an otherwise strong article to score 2 and does not require a full rewrite.",
     "Do not infer employment or career from a sign alone. Taurus concerns money, resources, possessions, food, housing, the body, physical comfort, values, and self-worth; work language requires support from the planet, house, aspect, or supplied source.",
     "Preserve strong owner-written lines. Do not replace a clear sentence merely to make it sound more polished.",
     "One close with bite. A directive is allowed when specific; motivational recap never.",
