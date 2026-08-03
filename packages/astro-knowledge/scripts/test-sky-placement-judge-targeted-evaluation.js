@@ -18,6 +18,7 @@ const activeSpec = require(path.join("..", "voice", "tldr-astro", "sky-placement
 const historical = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const ownerReview = require(path.join("..", "review", "sky-placement-judge-targeted-v3-owner-review.json"));
 const uranusCancerApprovalCandidate = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-approval-candidate-v1.json"));
+const uranusCancerReviewCandidateV2 = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-review-candidate-v2.json"));
 const secondPerson = () => /\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
 
 function fullText(article) {
@@ -107,8 +108,21 @@ async function main() {
   assert.strictEqual(
     lintArticle({ ...uranusCancerApprovalCandidate.article, planet: "uranus", sign: "cancer" }).score,
     3,
-    "the pending exact-wording candidate must lint clean without becoming approved gold"
+    "the exact owner-approved calibration article must remain lint-clean"
   );
+  assert.strictEqual(uranusCancerReviewCandidateV2.editorialStatus, "collective_adaptation_candidate");
+  assert.strictEqual(uranusCancerReviewCandidateV2.reviewStatus, "needs_review");
+  assert.strictEqual(uranusCancerReviewCandidateV2.ownerApproved, false);
+  assert.strictEqual(uranusCancerReviewCandidateV2.promotionAuthorized, false);
+  assert.strictEqual(uranusCancerReviewCandidateV2.canonical, false);
+  assert.strictEqual(uranusCancerReviewCandidateV2.provenance.replacesApprovedCalibrationEvidence, false);
+  assert.strictEqual(uranusCancerReviewCandidateV2.provenance.frozenEvaluationPreserved, true);
+  assert.strictEqual(
+    lintArticle({ ...uranusCancerReviewCandidateV2.article, planet: "uranus", sign: "cancer" }).score,
+    3,
+    "the new editorial revision must lint clean without inheriting v1 approval"
+  );
+  assert.notDeepStrictEqual(uranusCancerReviewCandidateV2.article, uranusCancerApprovalCandidate.article);
 
   const goldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
   assert.match(goldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
