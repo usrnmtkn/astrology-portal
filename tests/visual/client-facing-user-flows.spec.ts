@@ -1641,6 +1641,21 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls.getByRole("button", { name: "Date" })).toBeVisible();
     await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeVisible();
 
+    await skyControls.getByRole("button", { name: /Portsmouth/ }).click();
+    await expect(skyControls).toBeVisible();
+    await expect(skyControls.getByRole("form", { name: "Change location" })).toBeVisible();
+    await expect(skyControls.getByLabel("City")).toBeVisible();
+    await expect(page.locator(".hero-city-picker--mobile")).toHaveCount(0);
+
+    await skyControls.getByRole("button", { name: "Back to Sky controls" }).click();
+    await expect(skyControls.getByRole("button", { name: "Today", exact: true })).toBeVisible();
+    await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeFocused();
+
+    await skyControls.getByRole("button", { name: /Portsmouth/ }).click();
+    await skyControls.getByLabel("City").fill("Boston, MA");
+    await skyControls.getByRole("button", { name: "Update" }).click();
+    await expect(skyControls.getByRole("button", { name: /Boston/ })).toBeVisible();
+
     await skyControls.getByRole("button", { name: "Tomorrow" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
 
