@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-writer-owner-preference-v1",
+  "surface": "sky-placement",
+  "status": "fixture-and-report-specification-only",
+  "billedCallsAuthorized": false,
+  "modelRegistryChangesAuthorized": false,
+  "promotionAuthorized": false,
+  "purpose": "Measure writer quality by blinded owner preference and editing burden; never reuse Terra judge calibration as proof of authorship quality.",
+  "treatments": {
+    "A": "existing candidate",
+    "B": "Marie Satori writer workflow candidate",
+    "C": "optional alternate writer model"
+  },
+  "blinding": {
+    "modelIdentityHidden": true,
+    "candidateOrderDeterministicFromSealedSeed": true,
+    "modelKeyWithheldUntilOwnerScoringComplete": true
+  },
+  "ownerQuestions": [
+    "Which version sounds most like me?",
+    "Which line gives it away?",
+    "Which version would need the least editing?"
+  ],
+  "metrics": [
+    "blind_owner_preference",
+    "owner_sentences_changed",
+    "abstract_to_concrete_corrections",
+    "unnecessary_rewrites",
+    "repeated_sentence_structures",
+    "owner_rejection_tags",
+    "time_to_exact_approval",
+    "first_read_natural_english",
+    "concrete_lived_behavior",
+    "surface_compliance",
+    "astrological_specificity",
+    "false_abstraction",
+    "final_approval_rate"
+  ],
+  "fixturePolicy": {
+    "positiveAuthority": ["owner_authored_final", "exact_owner_approved"],
+    "negativeAuthority": ["owner_rejected"],
+    "exposedV4V6CandidatesMayBeDirectionalFixtures": true,
+    "exposedV4V6CandidatesAreNotBlindHoldouts": true,
+    "sameSurfaceBlindHoldoutStatus": "unavailable_until_new_owner_work_is_frozen_before_prompt_exposure",
+    "minimumOwnerReviewBeforePaidComparison": "Owner approves fixture wording, expected distinctions, anonymous report format, and call budget."
+  },
+  "reportFields": [
+    "runId",
+    "fixtureVersion",
+    "anonymousCandidates",
+    "ownerVotes",
+    "editCounts",
+    "failureTagCounts",
+    "latency",
+    "tokenUsage",
+    "estimatedCost",
+    "sealedModelKey"
+  ]
+}

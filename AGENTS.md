@@ -9,6 +9,19 @@ selection, or content-package distribution, read
 Keep computed facts in the calculation layer, approved prose in content rows,
 and presentation in React/CSS.
 
+### Editorial writing and review
+
+For any request to write, rewrite, refine, compare, or approve TLDR Astro
+reader copy, invoke the repository skill at
+`.agents/skills/marie-satori-writer/SKILL.md` before drafting. Do not write from
+general repository context alone. The skill compiles a small governed evidence
+packet, separates owner-authored voice from unapproved candidates, runs the
+authorship gate before the Terra judge, and preserves approval provenance.
+
+A writer result remains `needs_review` unless the owner explicitly approves
+the complete exact wording. A judge score, positive direction, or preferred
+line never authorizes governed-content promotion.
+
 ### Sky aspect surface
 
 Before changing Sky aspect selection, fallback behavior, loading state, card

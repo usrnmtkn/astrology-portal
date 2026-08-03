@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "taxonomyId": "marie-satori-writing-failure-tags-v1",
+  "tags": {
+    "polished_but_flat": "Grammatical, smooth copy that lacks the owner's observed pressure and consequence.",
+    "abstract_hook": "A hook summarizes a concept instead of opening with recognizable behavior, pressure, a decision, or a contradiction.",
+    "abstract_consequence": "The cost is summarized instead of named in ordinary evidence.",
+    "requires_interpretation": "The reader must translate polished shorthand before the sentence makes concrete sense.",
+    "unnatural_personification": "An abstract noun performs an implausible human action.",
+    "behavior_missing": "The sentence names a topic or role without showing what happens.",
+    "generic_coverage_sentence": "A sentence exists to represent a category rather than advance the article's sequence.",
+    "explanatory_before_observable": "Astrology or explanation arrives before the lived premise.",
+    "administrative_move": "Advice reads like policy or task management and drops the article's pressure.",
+    "category_inventory": "Several peer examples substitute for one advancing scene.",
+    "repeated_beat": "A later sentence restates pressure or consequence already established.",
+    "stacked_ending": "The article continues after its strongest conclusion.",
+    "second_conclusion": "A slogan, metaphor, or lesson restates the ending.",
+    "unsupported_domain_drift": "The copy imports work, career, or another life domain without astrological support.",
+    "collective_second_person": "Current Sky copy uses prohibited second person.",
+    "generic_new_age": "Generic reassurance, blessing, or spiritualized filler replaces behavioral specificity.",
+    "swappable_astrology": "The wording could move to another planet or sign with minimal change.",
+    "overbalanced_structure": "The prose is symmetrically composed or coverage-driven at the expense of natural observation."
+  }
+}

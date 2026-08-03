@@ -1,0 +1,128 @@
+{
+  "schema": "tldrastro-sky-placement-review-bundle-v1",
+  "version": "7.0.0",
+  "created": "2026-08-02",
+  "status": "needs_review",
+  "editorialStatus": "writer_authorship_candidate",
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generation": {
+    "method": "governed-local-writer-authorship-pass",
+    "apiCalls": 0,
+    "sourceBundle": "review/sky-placement-voice-pass-v6-targeted-candidates.json",
+    "writerPolicy": "config/marie-satori-writer-policy-v1.json",
+    "voiceIndex": "voice/tldr-astro/marie-satori-writer/voice-index.json"
+  },
+  "preservedOutsideBundle": [
+    {
+      "candidateId": "sky-placement-v4-mars-capricorn",
+      "decision": "preserve_v4_intact_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-v4-venus-aries",
+      "decision": "preserve_v4_intact_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3",
+      "decision": "preserve_as_calibration_reference_only",
+      "productionApproved": false,
+      "generationEvidenceAuthorized": false,
+      "canonical": false
+    }
+  ],
+  "candidates": [
+    {
+      "candidateId": "sky-placement-v7-saturn-capricorn",
+      "supersedesCandidateId": "sky-placement-v6-saturn-capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "title": "Saturn in Capricorn",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "writer_authorship_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/saturn-capricorn.json",
+      "article": {
+        "tagline": "Build it without disappearing",
+        "hook": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference. Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+        "lived": "Over roughly two and a half years, a project can win praise while one person still sends corrections at midnight, covers a vacant role, and logs in on vacation. The first missed deadline shows what the praise concealed: nobody else knows the process, the budget depends on free overtime, and the work stops when that person does. Saturn reinforces what can survive a handoff. The rest was never a strong plan; it was one person's unpaid time.",
+        "turn": "Being needed can feel like proof of competence until every problem belongs to the same person. We answer messages during dinner, redo delegated work, and postpone rest so nobody sees the system fail. The organization calls that person indispensable instead of admitting the deadlines, knowledge, and recovery plan were never shared. A plan that cannot survive one person's absence was never fully built.",
+        "moves": [
+          "Document the task nobody else can complete before the next deadline forces a handoff.",
+          "Give one recurring responsibility to someone who can carry it without supervision.",
+          "Close the laptop at the agreed time and record what fails before asking the same person to cover it."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "preservedSlots": ["tagline", "hook"],
+        "centralContradiction": "A plan can look successful while its unpaid cost and operational knowledge remain concentrated in one person.",
+        "apiCalls": 0
+      }
+    },
+    {
+      "candidateId": "sky-placement-v7-neptune-libra",
+      "supersedesCandidateId": "sky-placement-v6-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "title": "Neptune in Libra",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "writer_authorship_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/neptune-libra.json",
+      "article": {
+        "tagline": "Stop calling silence peace",
+        "hook": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable. Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+        "lived": "Neptune stays in one sign for roughly fourteen years, long enough for a habit of avoiding disagreement to become normal. One person says yes to dinner, changes the time twice, and cancels an hour before because the real answer was no. Nobody argued, so the evening is still described as peaceful. After enough years, everyone knows which questions are safer not to ask, and decisions keep getting made around answers nobody gave.",
+        "turn": "The problem is not only the cancellation. It is the agreement that was never real. One person avoids discomfort in the moment; everyone else reorganizes later and learns not to trust the next yes. A plan is not shared when someone has to agree, cancel, and take the blame for being unreliable just to keep the peace.",
+        "moves": [
+          "Say no when the answer is no, before someone else arranges their time around a yes.",
+          "Ask for each person's first choice before negotiating a compromise.",
+          "Reopen one agreement that looks peaceful only because disagreement keeps arriving as cancellation."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "preservedSlots": ["tagline", "hook"],
+        "centralContradiction": "Avoiding one uncomfortable no creates a later cancellation that everyone else must absorb.",
+        "apiCalls": 0
+      }
+    },
+    {
+      "candidateId": "sky-placement-v7-uranus-pisces",
+      "supersedesCandidateId": "sky-placement-v6-uranus-pisces",
+      "planet": "uranus",
+      "sign": "pisces",
+      "title": "Uranus in Pisces",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "writer_authorship_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/uranus-pisces.json",
+      "article": {
+        "tagline": "Make kindness practical",
+        "hook": "People can care deeply and still leave the rule untouched. Uranus in Pisces exposes the gap between feeling bad about suffering and changing what keeps producing it. The problem becomes harder to dismiss when three rejection letters use the same language and lead to the same dead end.",
+        "lived": "Uranus spends roughly seven years in Pisces, long enough for separate complaints to expose a pattern. Someone spends months appealing the same denial and assumes the case is unusual. Then three families compare letters and find identical wording, identical delays, and identical reasons for rejection. The unanswered emails become evidence, and what was treated as private bad luck becomes a rule that can be named and challenged.",
+        "turn": "Once the harm becomes visible, every case can start to feel urgent. The same person who collected the complaints starts answering every message, explaining every form, and missing sleep because the system still refuses to help. A campaign repeats the original harm when one exhausted person becomes the only way through it. Changing the rule requires a structure that survives after the first organizer needs rest.",
+        "moves": [
+          "Compare three rejection letters before treating the problem as a private exception.",
+          "Put names, dates, and outcomes in one shared record so the proof does not live in one inbox.",
+          "Divide replies, meetings, and follow-up before the person who found the pattern becomes another unpaid system."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "preservedSlots": ["tagline"],
+        "centralContradiction": "A collective challenge can reproduce the same private burden when its evidence and response depend on one unpaid organizer.",
+        "apiCalls": 0
+      }
+    }
+  ]
+}

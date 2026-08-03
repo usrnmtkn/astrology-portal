@@ -219,6 +219,7 @@ Agents working in this repository must follow these rules:
 | Approved long-form examples | `voice/tldr-astro/fixtures/sky-article-longform/` |
 | Weak long-form controls | `voice/tldr-astro/fixtures/sky-article-longform/weak-controls/` |
 | Owner-led vocabulary bank and guide | `voice/tldr-astro/owner-vocabulary-bank.json`, `docs/editorial-ai/OWNER-STYLE-VOCABULARY-GUIDE-2026-08-01.md` |
+| Governed Marie Satori writer environment | `.agents/skills/marie-satori-writer/`, `voice/tldr-astro/marie-satori-writer/`, `docs/editorial-ai/MARIE-SATORI-WRITER-IMPLEMENTATION-2026-08-02.md` |
 | AC non-serving reference lane | `reference/ac-reference-index.json`, `docs/editorial-ai/AC-REFERENCE-INTEGRATION-2026-08-01.md` |
 | Private fine-tuning scaffold | `private-model/` |
 | Operational judge documentation | `docs/editorial-intelligence.md` |
