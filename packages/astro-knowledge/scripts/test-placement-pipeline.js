@@ -70,15 +70,7 @@ async function main() {
   assert.strictEqual(historicalPlacementFixtures.editorialStatus, "historical_owner_approved");
   assert.strictEqual(historicalPlacementFixtures.currentSkyCalibrationEligible, false);
   assert.strictEqual(spec.exemplars.filter((e) => e.editorialStatus === "current_sky_owner_approved").length, 0);
-  assert.strictEqual(spec.ownerApprovedCalibrationExamples.length, 1);
-  const approvedCalibration = spec.ownerApprovedCalibrationExamples[0];
-  assert.strictEqual(approvedCalibration.editorialStatus, "current_sky_owner_approved");
-  assert.strictEqual(approvedCalibration.reviewStatus, "approved");
-  assert.strictEqual(approvedCalibration.ownerApproved, true);
-  assert.strictEqual(approvedCalibration.promotionAuthorized, false);
-  assert.strictEqual(approvedCalibration.canonical, false);
-  assert.strictEqual(approvedCalibration.calibrationEligible, true);
-  assert.strictEqual(lintArticle({ ...approvedCalibration }).score, 3);
+  assert.strictEqual((spec.ownerApprovedCalibrationExamples || []).length, 0);
   console.log(`OK  ${spec.exemplars.length} collective adaptations lint 3 but remain needs_review; historical originals are inactive`);
 
   // 2. clean injected draft -> clean result + three hook rows
@@ -266,6 +258,7 @@ async function main() {
     assert.match(prompt, /FIRST-READ NATURAL ENGLISH RULE/);
     assert.match(prompt, /OBSERVATION BEFORE POLISH/);
     assert.match(prompt, /STACKED ENDING RULE/);
+    assert.match(prompt, /OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE/);
     assert.match(prompt, /owner-review-uranus-cancer-lived-2026-08-02/);
     assert.match(prompt, /duration, baseline rupture, concrete changes, relational reclassification, cost/);
     assert.ok(prompt.includes("Words shared by Marie and AC"), "placement article prompt must carry AC word-level overlap");
@@ -298,7 +291,7 @@ async function main() {
   for (const tier of Object.keys(spec.planetTierRegister.hints)) {
     const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
     assert.ok(jp.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD"), `judge prompt must label owner-approved gold explicitly for tier ${tier}`);
-    assert.ok(jp.includes("Home changes when one person has been carrying too much for too long"), `judge prompt must carry the exact approved calibration article for tier ${tier}`);
+    assert.ok(jp.includes("None yet. Collective adaptation candidates are deliberately excluded"), `judge prompt must disclose that no exact owner-approved gold exists for tier ${tier}`);
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
@@ -308,7 +301,8 @@ async function main() {
     assert.ok(jp.includes("OBSERVATION BEFORE POLISH"), `judge prompt must reject slogan-first hooks for tier ${tier}`);
     assert.ok(jp.includes("STACKED ENDING RULE"), `judge prompt must reject dramatic or doubled turns for tier ${tier}`);
     assert.ok(jp.includes("Score 3 does not require flawless prose"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
-    assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry owner-approved lived-beat evidence for tier ${tier}`);
+    assert.ok(jp.includes("OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE"), `judge prompt must label positive feedback without converting it to owner approval for tier ${tier}`);
+    assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry directional lived-beat feedback for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");

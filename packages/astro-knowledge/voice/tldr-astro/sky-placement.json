@@ -14,7 +14,7 @@
   "exemplarStatePolicy": {
     "historical_owner_approved": "Original owner-approved copy preserved verbatim for provenance. Never supplied to the active Current Sky judge as positive evidence.",
     "collective_adaptation_candidate": "A collective-language editorial adaptation. It may be a controlled rule-compliance test input, but remains needs_review, ownerApproved false, and promotionAuthorized false.",
-    "current_sky_owner_approved": "A collective version explicitly approved by the owner. Only this state is eligible for active positive calibration evidence. Calibration eligibility does not make the article canonical production copy or authorize governed content promotion."
+    "current_sky_owner_approved": "A collective version explicitly approved by the owner. Only this state is eligible for active positive calibration evidence. There are currently no full-article examples in this state. Calibration eligibility would not make an article canonical production copy or authorize governed content promotion."
   },
 
   "punctuation": {
@@ -214,40 +214,15 @@
     "A labeled 'The gift is X; the shadow is Y' seam reads as template and should be woven into behavior instead. A single 'The shadow is...' opener on a generational turn is allowed (see the Pluto exemplar). Judge concern, not regex."
   ],
 
-  "ownerApprovedBeatEvidence": [
+  "ownerReviewedBeatCandidates": [
     {
       "sourceId": "owner-review-uranus-cancer-lived-2026-08-02",
       "slot": "lived",
       "planet": "uranus",
       "sign": "cancer",
-      "status": "owner-approved",
+      "status": "positive-editorial-feedback-not-exact-wording-approval",
       "text": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
-      "use": "Voice and movement evidence for the lived beat: duration, baseline rupture, concrete changes, relational reclassification, cost. Specific physical changes beat broad metaphor; stay with the disruption instead of rushing into rebuilding. Do not copy its wording into another placement. This approves the paragraph only, not the surrounding Uranus-in-Cancer article."
-    }
-  ],
-
-  "ownerApprovedCalibrationExamples": [
-    {
-      "sourceId": "sky-placement-uranus-cancer-owner-approved-calibration-v1",
-      "editorialStatus": "current_sky_owner_approved",
-      "reviewStatus": "approved",
-      "ownerApproved": true,
-      "promotionAuthorized": false,
-      "canonical": false,
-      "calibrationEligible": true,
-      "planet": "uranus",
-      "sign": "cancer",
-      "tier": "generational",
-      "tagline": "Change who carries it",
-      "hook": "Home changes when one person has been carrying too much for too long. Uranus breaks old arrangements; in Cancer, those breaks show up in home, family roles, care, and belonging.",
-      "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
-      "turn": "Change becomes another burden when the same person has to organize every new arrangement. A new boundary changes little if the same exhausted person still has to explain it, enforce it, and reorganize the household around it.",
-      "moves": [
-        "Rewrite one household responsibility so the same person is no longer the automatic backup.",
-        "Name the emergency contact who actually shows up.",
-        "Give one room a purpose that fits how the household lives now."
-      ],
-      "approvalScope": "Exact article wording only; calibration evidence, not canonical production copy or governed content promotion authorization."
+      "use": "Directional voice feedback for the lived beat: duration, baseline rupture, concrete changes, relational reclassification, cost. Specific physical changes beat broad metaphor; stay with the disruption instead of rushing into rebuilding. Do not treat the wording as owner-approved gold and do not copy it into another placement."
     }
   ],
 
