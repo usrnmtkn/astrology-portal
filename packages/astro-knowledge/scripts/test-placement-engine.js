@@ -204,6 +204,8 @@ assert.equal(covered, 168);
 
 const prompt = generator.buildPlacementPrompt({ planet: "sun", sign: "leo" });
 assert.match(prompt, /collective sky placement card for Sun in Leo/i);
+assert.match(prompt, /OWNER VOCABULARY PALETTE \(menu, never quota\)/);
+assert.match(prompt, /Words shared by Marie and AC/);
 assert.match(prompt, /about a month; a season-sized chapter/i);
 assert.match(prompt, /The Sun in Leo: identity built through expression/i);
 assert.match(prompt, /impersonal "you\/your\/you're" is allowed ONLY in the final truth-and-catch pair/i);
@@ -226,6 +228,7 @@ const aspectPrompt = generator.buildPrompt({
   signA: "leo",
   signB: "aquarius"
 });
+assert.match(aspectPrompt, /Words shared by Marie and AC/);
 assert.doesNotMatch(aspectPrompt, /DELETE THE PRE-CLOSE APHORISM - less is more/);
 assert.doesNotMatch(aspectPrompt, /MAKE THE MIDDLE CONCRETE/);
 
@@ -300,6 +303,7 @@ const topperArgs = {
   baseText: sunGold.body
 };
 const topperPrompt = generator.buildPlacementTopperPrompt(topperArgs);
+assert.match(topperPrompt, /Words shared by Marie and AC/);
 assert.match(topperPrompt, /current-sky topper paragraph for Sun in Leo/i);
 assert.match(topperPrompt, /now conjunction Jupiter in Leo/i);
 assert.match(topperPrompt, /exactly one short paragraph/i);

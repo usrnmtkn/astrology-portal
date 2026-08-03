@@ -75,10 +75,21 @@ const readableInviteCodesMigrationPath = path.join(
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuth.ts");
+const phoneAuthValidationServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuthValidation.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
+const accountViewPath = path.join(repoRoot, "apps/web/src/features/account/AccountView.tsx");
+const signupViewPath = path.join(repoRoot, "apps/web/src/features/auth/SignupView.tsx");
+const memberSettingsViewPath = path.join(
+  repoRoot,
+  "apps/web/src/features/settings/MemberSettingsView.tsx"
+);
 const youPagePath = path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx");
 const socialFriendsPanelPath = path.join(repoRoot, "apps/web/src/features/friends/SocialFriendsPanel.tsx");
+const friendsWorkspaceShellPath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/FriendsWorkspaceShell.tsx"
+);
 const blockedAccountsSettingsPath = path.join(
   repoRoot,
   "apps/web/src/features/settings/BlockedAccountsSettings.tsx"
@@ -110,10 +121,15 @@ const readableInviteCodesMigration = fs.readFileSync(readableInviteCodesMigratio
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
+const phoneAuthValidationService = fs.readFileSync(phoneAuthValidationServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
+const accountView = fs.readFileSync(accountViewPath, "utf8");
+const signupView = fs.readFileSync(signupViewPath, "utf8");
+const memberSettingsView = fs.readFileSync(memberSettingsViewPath, "utf8");
 const youPage = fs.readFileSync(youPagePath, "utf8");
 const socialFriendsPanel = fs.readFileSync(socialFriendsPanelPath, "utf8");
+const friendsWorkspaceShell = fs.readFileSync(friendsWorkspaceShellPath, "utf8");
 const blockedAccountsSettings = fs.readFileSync(blockedAccountsSettingsPath, "utf8");
 const friendsPageShell = fs.readFileSync(friendsPageShellPath, "utf8");
 const friendDetail = fs.readFileSync(friendDetailPath, "utf8");
@@ -291,22 +307,22 @@ assert.match(
   "The owner's derived natal projection must stay synchronized for accepted friends."
 );
 assert.match(
-  app,
+  accountView,
   /function AccountView[\s\S]*loadOwnSocialProfile\(\)[\s\S]*saveSocialHandle\(\{/,
   "The account page must load and save the member's social handle."
 );
 assert.match(
-  app,
+  accountView,
   /const handleDraftValid = socialHandleIsValid\(normalizedHandleDraft\)/,
   "Account handle editing must use the shared handle validation rules."
 );
 assert.match(
-  app,
+  accountView,
   /id="account-social-handle"/,
   "The account page must expose an accessible handle input."
 );
 assert.match(
-  app,
+  accountView,
   /Handle updated to @/,
   "Account handle editing must report a successful update."
 );
@@ -381,9 +397,9 @@ assert.match(
   "Accepted-friend removal must use a named confirmation dialog before revocation."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /saveSocialPrivacy[\s\S]*Private account[\s\S]*Hide your profile from Find Friends/,
-  "Account must expose and persist a private-discovery setting."
+  "Member settings must expose and persist a private-discovery setting."
 );
 assert.match(
   migration,
@@ -456,7 +472,7 @@ assert.match(
   "Settings must list and unblock accounts the member blocked."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /settings-group-label">Social[\s\S]*Private account[\s\S]*updateSettingsSubpageUrl\("blocked-accounts"\)[\s\S]*Review and manage people you have blocked/,
   "The Social Settings card must link to block management without listing blocked members."
 );
@@ -471,7 +487,7 @@ assert.doesNotMatch(
   "Blocked-account management must not remain on the Friends page."
 );
 assert.match(
-  app,
+  memberSettingsView,
   /settingsSubpage === "blocked-accounts"[\s\S]*<BlockedAccountsSettings[\s\S]*onBack=/,
   "Signed-in Settings must route to the blocked-accounts subpage."
 );
@@ -486,12 +502,12 @@ assert.match(
   "The account endpoint must verify the session before deleting that exact authenticated user."
 );
 assert.match(
-  app,
+  accountView,
   /exportSocialAccountBundle\(\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
   "Account must provide a downloadable account-data export."
 );
 assert.match(
-  app,
+  accountView,
   /deleteConfirmation !== "DELETE"[\s\S]*deleteOwnAccount\(\)[\s\S]*Type <strong>DELETE<\/strong> to confirm/,
   "Account deletion must require explicit permanent-deletion confirmation."
 );
@@ -566,8 +582,8 @@ assert.match(
   "The unified Friends panel must render directly under the page title."
 );
 assert.match(
-  app,
-  /beforeTabs=\{\([\s\S]*<SocialFriendsPanel[\s\S]*chartContent=\{\([\s\S]*<FriendChartsList[\s\S]*embedded[\s\S]*onSelectView=/,
+  `${friendsWorkspaceShell}\n${app}`,
+  /<SocialFriendsPanel[\s\S]*chartContent=\{<FriendChartsList[\s\S]*embedded[\s\S]*socialPanelProps=\{\{[\s\S]*onSelectView:/,
   "Circle, Charts, and Requests must be wired through one unified Friends panel."
 );
 assert.match(
@@ -831,13 +847,13 @@ assert.match(
   "Phone invitations require an OTP authentication path for the verified recipient."
 );
 assert.doesNotMatch(
-  app,
+  signupView,
   /Add your full name before continuing with phone/,
   "Sending a phone OTP must not require profile details before authentication."
 );
 assert.match(
-  app,
-  /savePendingSignupForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*createUserProfile\(form, "phone", account\)/,
+  `${signupView}\n${app}`,
+  /onSavePendingForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
   "Phone signup must defer profile details until code verification and preserve the phone provider."
 );
 assert.doesNotMatch(
@@ -851,22 +867,22 @@ assert.match(
   "Disabled SMS providers must render actionable member-facing copy instead of a backend error."
 );
 assert.match(
-  phoneAuthService,
-  /libphonenumber-js\/max[\s\S]*new AsYouType\("US"\)[\s\S]*parsePhoneNumberFromString[\s\S]*parsedPhone\.isValid\(\)[\s\S]*parsedPhone\.country !== "US"[\s\S]*return parsedPhone\.number/,
-  "Phone input must use established metadata-backed formatting and strict US E.164 validation."
+  phoneAuthValidationService,
+  /libphonenumber-js\/min[\s\S]*parsePhoneNumberFromString[\s\S]*parsedPhone\.isValid\(\)[\s\S]*parsedPhone\.country !== "US"[\s\S]*return parsedPhone\.number/,
+  "Phone submission must use metadata-backed strict US E.164 validation."
 );
 assert.match(
   authService,
-  /shouldCreateUser = true[\s\S]*signInWithOtp\(\{[\s\S]*phone: normalizedPhone[\s\S]*options: \{[\s\S]*shouldCreateUser[\s\S]*verifyOtp\(\{[\s\S]*phone: normalizeUsPhoneNumber\(phone\)/,
+  /shouldCreateUser = true[\s\S]*signInWithOtp\(\{[\s\S]*phone: normalizedPhone[\s\S]*options: \{[\s\S]*shouldCreateUser[\s\S]*verifyOtp\(\{[\s\S]*phone: await normalizeUsPhoneNumber\(phone\)/,
   "Phone login must not create a new account, while signup must reuse the same validated E.164 number."
 );
 assert.match(
-  app,
+  signupView,
   /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(30\)[\s\S]*verificationCode\.length !== 6[\s\S]*maskPhoneNumber\(phoneOtpDestination\)[\s\S]*Send a new code in 0:/,
   "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
 );
 assert.doesNotMatch(
-  `${app}\n${phoneAuthService}`,
+  `${app}\n${phoneAuthService}\n${phoneAuthValidationService}`,
   /Australia|\+61/,
   "Phone signup must not advertise unsupported Australian phone numbers."
 );
@@ -876,7 +892,7 @@ assert.match(
   "Phone authentication must require an explicit environment feature flag."
 );
 assert.match(
-  app,
+  signupView,
   /\{isPhoneAuthEnabled && \([\s\S]*Continue with phone[\s\S]*\{isPhoneAuthEnabled && phoneAuthOpen && \(/,
   "The phone entry point and OTP form must stay hidden until the provider is enabled."
 );

@@ -19,6 +19,12 @@ variables remain supported.
 | Judging | `CONTENT_JUDGE_PROVIDER` | `OPENAI_JUDGE_MODEL`, `OPENAI_JUDGE_API_KEY` | `ANTHROPIC_JUDGE_MODEL`, `ANTHROPIC_JUDGE_API_KEY` |
 
 The older `OPENAI_MODEL` and `ANTHROPIC_MODEL` variables remain fallbacks.
+OpenAI reasoning models also use the role-specific
+`OPENAI_GENERATION_REASONING_EFFORT` and `OPENAI_JUDGE_REASONING_EFFORT`
+variables, with `OPENAI_REASONING_EFFORT` as a shared fallback. Registered
+releases may pin `reasoningEffort`. An unpinned GPT-5.6 environment override
+defaults to `none` so a model-name experiment cannot silently inherit the
+family's higher default reasoning cost.
 When these variables override a registered release, the audit record sets
 `registryOverride: true`; the experiment is not silently treated as promoted.
 
@@ -54,6 +60,20 @@ node scripts/manage-editorial-model-registry.js promote \
 Promotion moves the prior active release to the rollback slot and records the
 approver plus a SHA-256 of the calibration report. Rollback is also an explicit
 human-authorized action and uses the same environment gate.
+
+The current registry keeps `gpt-4.1-mini` active and stages GPT-5.6 candidates:
+Terra with reasoning `none` for generation, Terra with reasoning `low` for the
+routine judges, and Sol with reasoning `low` for the long-form judge. These are
+experiments, not production defaults. The protected workflow currently has a
+complete live calibration contract only for `judge:sky-article-longform`; the
+other candidates must not be promoted until equivalent surface-specific
+reports exist.
+
+Selecting a staged generation candidate is disabled unless an admin process
+sets both `EDITORIAL_MODEL_CANDIDATE_RELEASE_ID` and
+`TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION=1`. This authorization selects a
+candidate for evaluation only; it does not publish, promote, or change the
+active release.
 
 ### GitHub admin setup
 

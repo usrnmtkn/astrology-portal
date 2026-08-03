@@ -166,8 +166,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured\}/,
-  "Configured auth must not show stale local chart rows while remote chart migration/loading is unresolved."
+  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
+  "Configured auth must not show local chart rows until the signed-in account is resolved."
 );
 
 console.log(JSON.stringify({

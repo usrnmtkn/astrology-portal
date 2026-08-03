@@ -1,4 +1,4 @@
-export type WritingLayer = "source-grounded" | "madlib-fallback";
+export type WritingLayer = "source-grounded" | "generated" | "madlib-fallback";
 export type WritingSurfaceStatus = "normalized" | "partial" | "not-normalized";
 
 export type WritingSurfaceSource = {
@@ -22,6 +22,7 @@ export type WritingSurfaceMapItem = {
 
 export const writingLayerLabels: Record<WritingLayer, string> = {
   "source-grounded": "Source-grounded",
+  generated: "Generated",
   "madlib-fallback": "Madlib fallback"
 };
 
@@ -218,12 +219,13 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Sky",
     status: "normalized",
     requiredSlots: ["current aspect meaning"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizeSkyAspectSurface resolves source-grounded sky aspect prose first, then a source-based madlib fallback frame.",
-    risk: "Optional sign-context and condition-modifier prose has been removed from the detail body until it can be normalized into explicit optional slots.",
-    nextAction: "Add optional normalized slots for sign context and condition modifiers if those details should return.",
+    visibleLayerOrder: ["source-grounded", "generated", "madlib-fallback"],
+    currentRenderPath: "normalizeSkyAspectSurface resolves reviewed sign-specific copy first, then LIVE exact-aspect readerCopy, reviewed exact/pair package copy, approved generated prose, and finally the general fallback frame.",
+    risk: "Generated rows must retain generated provenance and must never outrank owner-approved exact or reviewed package copy.",
+    nextAction: "Keep the dashboard provenance labels and precedence regression aligned with the Sky aspect surface contract.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "data/transits", path: "packages/astro-knowledge/data/transits", role: "knowledge" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
       { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
       { label: "fallback-architecture-v3-dashboard-rows.json", path: "scripts/generated/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },

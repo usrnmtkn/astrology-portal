@@ -49,7 +49,19 @@ type TransitEntry = {
   base?: string;
   business?: string;
   shadow?: string;
+  readerCopy?: {
+    summary?: string;
+    body?: string;
+    approvedVia?: string;
+  };
   status?: string;
+};
+
+export type ApprovedExactSkyAspectCopy = {
+  body: string;
+  contentId: string;
+  sourceId: string;
+  summary: string;
 };
 
 type TransitNatalEntry = {
@@ -430,6 +442,7 @@ export function createDomainRegistry(bundleInput: unknown) {
   const aspectMap = normalizePrimitiveMap(bundle.primitives?.aspect);
   const signMap = normalizePrimitiveMap(bundle.primitives?.sign);
   const voiceBySourceAndVoice = new Map((bundle.voiceContent ?? []).map((item) => [`${item.sourceId}:${item.voiceId}`, item]));
+  const approvedExactSkyAspectCopyById = new Map<string, ApprovedExactSkyAspectCopy>();
   const knowledgeById = new Map<string, KnowledgeItem>();
   const legacyIdByAlias = new Map<string, string>();
   const retrogradeMeaningByPlanet = new Map<string, string>();
@@ -515,6 +528,23 @@ export function createDomainRegistry(bundleInput: unknown) {
 
     const sourceSummary = cleanText(transit.tldr) || cleanText(transit.modern) || cleanText(transit.base);
     const sourceBody = cleanText(transit.modern) || cleanText(transit.base) || cleanText(transit.tldr);
+    const readerSummary = cleanText(transit.readerCopy?.summary);
+    const readerBody = cleanText(transit.readerCopy?.body);
+    const readerApproved = transit.status === "LIVE";
+
+    if (readerApproved && readerBody) {
+      const exactCopy = {
+        body: readerBody,
+        contentId: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
+        sourceId: transit.id,
+        summary: readerSummary || readerBody
+      };
+      approvedExactSkyAspectCopyById.set(exactCopy.contentId, exactCopy);
+      approvedExactSkyAspectCopyById.set(
+        currentSkyAspectContentId(transit.other, transit.aspect, transit.transiting),
+        exactCopy
+      );
+    }
 
     const knowledgeItem: KnowledgeItem = {
       id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
@@ -901,7 +931,12 @@ export function createDomainRegistry(bundleInput: unknown) {
     return retrogradeMeaningByPlanet.get(normalizeIdPart(planet)) ?? null;
   }
 
+  function approvedExactSkyAspectCopy(planetA: string, aspect: string, planetB: string) {
+    return approvedExactSkyAspectCopyById.get(currentSkyAspectContentId(planetA, aspect, planetB)) ?? null;
+  }
+
   return {
+    approvedExactSkyAspectCopy,
     approvedVoiceOrKnowledgeFallback,
     retrogradePlanetMeaning,
     aspectContentId,

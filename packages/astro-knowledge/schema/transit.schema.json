@@ -13,6 +13,16 @@
     "traditional": { "type": "string" },
     "modern": { "type": "string" },
     "cyclic": { "type": "object" },
+    "readerCopy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "body", "approvedVia"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 },
+        "approvedVia": { "type": "string", "minLength": 1 }
+      }
+    },
     "base": { "type": "string" },
     "business": { "type": "string" },
     "shadow": { "type": "string" },
@@ -21,6 +31,6 @@
     "composedFrom": { "type": "array", "items": { "type": "string" } },
     "provenance": { "type": "object" },
     "voiceNeutral": { "const": true },
-    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "SOURCE_BACKED", "LIVE"] }
   }
 }

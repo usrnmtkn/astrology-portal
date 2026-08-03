@@ -24,6 +24,7 @@ function read(relativePath) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const skyDetailArticle = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts");
@@ -232,7 +233,7 @@ assert.match(
   "Planet-in-sign dates must use full month names before entering the canonical renderer."
 );
 assert.match(
-  app,
+  skyDetailArticle,
   /detail\.movesPresentation === "plain"[\s\S]*sky-placement-moves-lines[\s\S]*detail\.moves\.map\(\(move\) => <p key=\{move\}>\{move\}<\/p>\)/u,
   "Canonical Try this actions must render as plain lines instead of list items."
 );

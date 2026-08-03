@@ -16,9 +16,10 @@ import {
   type ServedFieldSurface
 } from "../content/servedFieldsContract";
 import {
-  fallbackArchitectureV3BundledManifest,
+  fallbackArchitectureV3BundledManifestSummary,
   fallbackArchitectureV3ManifestForBundle,
   fallbackArchitectureV3PackageVersion,
+  loadFallbackArchitectureV3BundledManifest,
   type FallbackArchitectureV3Bundle,
   type FallbackArchitectureV3PackageManifest,
   type HookRow,
@@ -931,13 +932,13 @@ function equalFallbackArchitectureV3MirrorMetadata(
     && first.keyCount === second.keyCount;
 }
 
-function fallbackArchitectureV3BundleManifestIfValid(
+async function fallbackArchitectureV3BundleManifestIfValid(
   bundle: FallbackArchitectureV3Bundle,
   metadata: FallbackArchitectureV3MirrorMetadata
-): FallbackArchitectureV3PackageManifest | null {
+): Promise<FallbackArchitectureV3PackageManifest | null> {
   const versionComparison = compareFallbackArchitectureV3PackageVersions(
     metadata.packageVersion,
-    fallbackArchitectureV3BundledManifest.packageVersion
+    fallbackArchitectureV3BundledManifestSummary.packageVersion
   );
 
   if (versionComparison === null || versionComparison < 0) {
@@ -945,14 +946,15 @@ function fallbackArchitectureV3BundleManifestIfValid(
   }
 
   const manifest = fallbackArchitectureV3ManifestForBundle(bundle, metadata.packageVersion);
-  const bundledKeys = new Set(fallbackArchitectureV3BundledManifest.keys);
+  const bundledManifest = await loadFallbackArchitectureV3BundledManifest();
+  const bundledKeys = new Set(bundledManifest.keys);
   const mirrorKeys = new Set(manifest.keys);
   const containsBundledManifest = [...bundledKeys].every((key) => mirrorKeys.has(key));
   const sameVersionMatchesBundled = versionComparison !== 0
     || (
-      manifest.contentHash === fallbackArchitectureV3BundledManifest.contentHash
-      && manifest.keyManifestHash === fallbackArchitectureV3BundledManifest.keyManifestHash
-      && manifest.keyCount === fallbackArchitectureV3BundledManifest.keyCount
+      manifest.contentHash === fallbackArchitectureV3BundledManifestSummary.contentHash
+      && manifest.keyManifestHash === fallbackArchitectureV3BundledManifestSummary.keyManifestHash
+      && manifest.keyCount === fallbackArchitectureV3BundledManifestSummary.keyCount
     );
 
   if (
@@ -988,7 +990,7 @@ export function clearCachedFallbackArchitectureV3Bundle() {
   }
 }
 
-export function readCachedFallbackArchitectureV3Bundle(): CachedFallbackArchitectureV3Bundle | null {
+export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFallbackArchitectureV3Bundle | null> {
   if (typeof window === "undefined") {
     return null;
   }
@@ -1017,9 +1019,9 @@ export function readCachedFallbackArchitectureV3Bundle(): CachedFallbackArchitec
 
     if (
       envelope?.schema !== fallbackArchitectureV3BundleCacheSchema
-      || envelope?.bundledPackageVersion !== fallbackArchitectureV3BundledManifest.packageVersion
-      || envelope?.bundledContentHash !== fallbackArchitectureV3BundledManifest.contentHash
-      || envelope?.bundledKeyManifestHash !== fallbackArchitectureV3BundledManifest.keyManifestHash
+      || envelope?.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion
+      || envelope?.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary.contentHash
+      || envelope?.bundledKeyManifestHash !== fallbackArchitectureV3BundledManifestSummary.keyManifestHash
       || envelope?.dashboardVersion !== version
       || !bundle?.transitLib
       || !bundle?.rowsFile
@@ -1035,7 +1037,7 @@ export function readCachedFallbackArchitectureV3Bundle(): CachedFallbackArchitec
       keyManifestHash: String(envelope.mirrorKeyManifestHash ?? ""),
       keyCount: Number(envelope.mirrorKeyCount)
     };
-    const mirror = fallbackArchitectureV3BundleManifestIfValid(bundle, mirrorMetadata);
+    const mirror = await fallbackArchitectureV3BundleManifestIfValid(bundle, mirrorMetadata);
 
     if (!mirror) {
       clearCachedFallbackArchitectureV3Bundle();
@@ -1066,9 +1068,9 @@ function cacheFallbackArchitectureV3Bundle(
     window.localStorage.setItem(fallbackArchitectureV3BundleVersionKey, String(version));
     window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify({
       schema: fallbackArchitectureV3BundleCacheSchema,
-      bundledPackageVersion: fallbackArchitectureV3BundledManifest.packageVersion,
-      bundledContentHash: fallbackArchitectureV3BundledManifest.contentHash,
-      bundledKeyManifestHash: fallbackArchitectureV3BundledManifest.keyManifestHash,
+      bundledPackageVersion: fallbackArchitectureV3BundledManifestSummary.packageVersion,
+      bundledContentHash: fallbackArchitectureV3BundledManifestSummary.contentHash,
+      bundledKeyManifestHash: fallbackArchitectureV3BundledManifestSummary.keyManifestHash,
       mirrorPackageVersion: mirror.packageVersion,
       mirrorContentHash: mirror.contentHash,
       mirrorKeyManifestHash: mirror.keyManifestHash,
@@ -1169,7 +1171,7 @@ function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null
 
 export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
-  const cached = readCachedFallbackArchitectureV3Bundle();
+  const cached = await readCachedFallbackArchitectureV3Bundle();
 
   if (!supabase) {
     return cached?.bundle ?? null;
@@ -1298,11 +1300,11 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     rowsFile: { hookRows, vocabularyRows },
     templatesFile: { templates }
   };
-  const mirror = fallbackArchitectureV3BundleManifestIfValid(candidateBundle, mirrorMetadata);
+  const mirror = await fallbackArchitectureV3BundleManifestIfValid(candidateBundle, mirrorMetadata);
 
   if (!mirror) {
     console.warn("Fallback architecture V3 dashboard package failed version, completeness, or hash validation; bundled package remains active.", {
-      installedPackage: fallbackArchitectureV3BundledManifest,
+      installedPackage: fallbackArchitectureV3BundledManifestSummary,
       mirrorPackage: mirrorMetadata
     });
     clearCachedFallbackArchitectureV3Bundle();

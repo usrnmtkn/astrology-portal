@@ -340,6 +340,12 @@ sentence, trace the surface call site to learn whether it:
 
 Do not infer precedence from the row's existence alone.
 
+The Sky aspect surface has a permanent author-final rule: approved sign-specific
+copy wins for the matching signs, followed by a `status: "LIVE"` exact-aspect
+`readerCopy` in `packages/astro-knowledge/data/transits`, reviewed generic
+phrasebook copy, approved generated prose, and the general fallback template.
+Generated prose is provenance layer `generated`, never `authored`.
+
 ## 10. Surface map
 
 ### You: natal

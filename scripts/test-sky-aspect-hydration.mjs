@@ -37,8 +37,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const currentSkyContentKeys = \[\.\.\.aspectContentKeys, \.\.\.placementContentKeys\];[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyAspectContentStatus\("ready"\)/u,
-  "The Sky page must hydrate only current aspect and placement keys before revealing the aspect hierarchy."
+  /const currentSkyContentKeys = \[\.\.\.aspectContentKeys, \.\.\.placementContentKeys\];[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
+  "The Sky page must hydrate only current aspect and placement keys, then merge live copy into the visible fallback cards."
 );
 assert.match(
   appSource,
@@ -50,10 +50,10 @@ assert.doesNotMatch(
   /loadLiveGeneratedContent\("sky"/u,
   "Neither Sky nor Calendar may scan the broad Sky content surface."
 );
-assert.match(
+assert.doesNotMatch(
   appSource,
-  /contentStatus === "loading"[\s\S]*?aria-label="Loading aspect write-ups"/u,
-  "The aspects section must reserve a loading state instead of briefly presenting every aspect as factual-only."
+  /SkyAspectContentStatus|contentStatus === "loading"[\s\S]*?aria-label="Loading aspect write-ups"/u,
+  "Major aspect cards must remain visible while live copy hydrates."
 );
 
 const targetDate = "2026-07-31";
@@ -148,7 +148,7 @@ const generatedContent = new Map([
   approvedContent({ first: "Sun", aspect: "opposition", second: "Pluto", firstSign: "Leo", secondSign: "Aquarius" })
 ]);
 
-const editorial = aspects.filter(([first, aspect, second]) => resolveSkyAspectGeneratedContent({
+const hydrated = aspects.filter(([first, aspect, second]) => resolveSkyAspectGeneratedContent({
   generatedContent,
   first,
   second,
@@ -158,11 +158,12 @@ const editorial = aspects.filter(([first, aspect, second]) => resolveSkyAspectGe
   targetDate
 }));
 
-assert.equal(editorial.length, 2, "Two approved current-aspect rows must render as editorial cards.");
-assert.equal(aspects.length - editorial.length, 19, "The remaining 19 calculated aspects must remain factual-only.");
+assert.equal(hydrated.length, 2, "Two approved current-aspect rows must replace their fallback card copy.");
+assert.equal(aspects.length - hydrated.length, 19, "The remaining 19 major aspects must keep their normal fallback cards.");
 
 console.log(JSON.stringify({
-  editorialCards: editorial.length,
-  factualCards: aspects.length - editorial.length,
+  hydratedCards: hydrated.length,
+  fallbackCards: aspects.length - hydrated.length,
+  totalMajorAspectCards: aspects.length,
   status: "PASS"
 }, null, 2));

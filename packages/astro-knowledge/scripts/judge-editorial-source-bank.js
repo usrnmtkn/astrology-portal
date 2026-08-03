@@ -11,6 +11,14 @@ const bankPath = path.join(
 const voiceRoot = path.join(__dirname, "../voice/tldr-astro");
 const generalVoiceRoot = path.join(__dirname, "../voice");
 const { runJudgeSamples } = require("./editorial-judge-runtime.js");
+const {
+  buildReferenceFactContext,
+  buildAcKnowledgeContext,
+  checkReferenceClaim,
+  flattenReferenceFacts,
+  queryAcReference,
+  queryReferenceFacts
+} = require("./reference-fact-bank.js");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -94,17 +102,39 @@ function lintEntry(entry) {
 
 function lintBank(bank = readJson(bankPath)) {
   const entries = flattenBank(bank);
+  const referenceFacts = flattenReferenceFacts(bank);
   const results = entries.map((entry) => ({
     contentKey: entry.contentKey,
     ...lintEntry(entry)
   }));
   const keys = entries.map((entry) => entry.contentKey);
   const duplicateKeys = keys.filter((key, index) => keys.indexOf(key) !== index);
+  const factKeys = referenceFacts.map((fact) => fact.factKey);
+  const duplicateFactKeys = factKeys.filter((key, index) => factKeys.indexOf(key) !== index);
+  const allowedFactStatuses = new Set([
+    "verified-reference",
+    "prohibited-error",
+    "blocked-unverified",
+    "quarantined-source-claim"
+  ]);
+  const factErrors = referenceFacts.flatMap((fact) => {
+    const errors = [];
+    if (!fact.id || !String(fact.statement || "").trim()) errors.push(`${fact.factKey}: missing id or statement`);
+    if (!allowedFactStatuses.has(fact.status)) errors.push(`${fact.factKey}: unsupported status ${fact.status}`);
+    if (!Array.isArray(fact.source_tags) || !fact.source_tags.length) errors.push(`${fact.factKey}: missing source tags`);
+    for (const source of [...(fact.conflictPatterns || []), ...(fact.reviewPatterns || [])]) {
+      try { new RegExp(source, "i"); } catch { errors.push(`${fact.factKey}: invalid claim-check regex ${source}`); }
+    }
+    return errors;
+  });
 
   return {
     entryCount: entries.length,
+    referenceFactCount: referenceFacts.length,
     errors: [
       ...new Set(duplicateKeys.map((key) => `duplicate content key: ${key}`)),
+      ...new Set(duplicateFactKeys.map((key) => `duplicate reference fact key: ${key}`)),
+      ...factErrors,
       ...results.flatMap((result) =>
         result.errors.map((message) => `${result.contentKey}: ${message}`)
       )
@@ -229,13 +259,19 @@ function findEntry(selector, bank = readJson(bankPath)) {
 
 module.exports = {
   bankPath,
+  buildReferenceFactContext,
+  buildAcKnowledgeContext,
   buildJudgePrompt,
+  checkReferenceClaim,
   findEntry,
   flattenBank,
+  flattenReferenceFacts,
   judgeEntry,
   lintBank,
   lintEntry,
-  parseVerdict
+  parseVerdict,
+  queryAcReference,
+  queryReferenceFacts
 };
 
 if (require.main === module) {
@@ -260,8 +296,19 @@ if (require.main === module) {
         console.error(error.message);
         process.exitCode = 1;
       });
+  } else if (mode === "--facts" && selector) {
+    console.log(JSON.stringify(queryReferenceFacts(selector), null, 2));
+  } else if (mode === "--check-claim" && selector) {
+    const findings = checkReferenceClaim(selector);
+    const blocking = findings.some((finding) => finding.severity === "fail");
+    console.log(JSON.stringify({ claim: selector, ok: !blocking, findings }, null, 2));
+    process.exitCode = blocking ? 1 : 0;
+  } else if (mode === "--ac-query" && selector) {
+    console.log(JSON.stringify(queryAcReference(selector), null, 2));
+  } else if (mode === "--ac-context" && selector) {
+    console.log(buildAcKnowledgeContext(selector));
   } else {
-    console.error("usage: --lint | --dry-run <collection/id|content-key> | --judge <collection/id|content-key>");
+    console.error("usage: --lint | --dry-run <collection/id|content-key> | --judge <collection/id|content-key> | --facts <query> | --check-claim <claim> | --ac-query <query> | --ac-context <query>");
     process.exitCode = 1;
   }
 }

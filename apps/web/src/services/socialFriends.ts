@@ -1,6 +1,6 @@
 import type { SkySnapshot } from "../types";
 import type { ManualChart } from "./manualCharts";
-import { getSupabaseClient } from "./auth";
+import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
 
 export type SocialProfile = {
   userId: string;
@@ -245,13 +245,13 @@ async function authenticatedClient() {
     throw new Error("Social friends require a signed-in account.");
   }
 
-  const { data, error } = await client.auth.getUser();
+  const user = await getVerifiedAuthUser(client);
 
-  if (error || !data.user) {
+  if (!user) {
     throw new Error("Sign in to use social friends.");
   }
 
-  return { client, user: data.user };
+  return { client, user };
 }
 
 function rowToProfile(row: SocialProfileRow): SocialProfile {

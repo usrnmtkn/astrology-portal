@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-judge-terra-rubric-v4",
+  "runId": "sky-placement-terra-rubric-2026-08-03T02-23-38-989Z",
+  "recordedAt": "2026-08-03T02:23:38.989Z",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending",
+  "rubricVersion": "sky-placement-voice-v5",
+  "fixtureSetVersion": "sky-placement-targeted-provenance-v3",
+  "runtime": {
+    "activeModel": "gpt-4.1-mini",
+    "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+    "changed": false
+  },
+  "promotion": {
+    "authorized": false,
+    "eligible": false,
+    "recommendedFromThisRun": false
+  },
+  "metrics": {
+    "calls": 9,
+    "totalInputTokens": 18988,
+    "totalOutputTokens": 2148,
+    "totalReasoningTokens": 1540,
+    "averageLatencyMs": 3630.67,
+    "estimatedCostUsd": 0.0732325,
+    "estimatedCostPerCallUsd": 0.00813694
+  },
+  "scores": [
+    { "caseId": "target-001", "previousTerra": 2, "model": 2, "effective": 2, "publicationGate": "pass" },
+    { "caseId": "target-002", "previousTerra": 3, "model": 3, "effective": 3, "publicationGate": "pass" },
+    { "caseId": "target-003", "previousTerra": 2, "model": 2, "effective": 2, "publicationGate": "blocked" },
+    { "caseId": "target-004", "previousTerra": 2, "model": 3, "effective": 2, "publicationGate": "blocked", "deterministicRule": "current-sky-second-person-caps-score-2" },
+    { "caseId": "target-005", "previousTerra": 1, "model": 1, "effective": 1, "publicationGate": "blocked" },
+    { "caseId": "target-006", "previousTerra": 2, "model": 1, "effective": 1, "publicationGate": "blocked", "deterministicRule": "first-read-natural-english-forces-score-1" },
+    { "caseId": "target-007", "previousTerra": 2, "model": 2, "effective": 2, "publicationGate": "pass" },
+    { "caseId": "target-008", "previousTerra": 2, "model": 3, "effective": 3, "publicationGate": "pass" },
+    { "caseId": "target-009", "previousTerra": 2, "model": 2, "effective": 2, "publicationGate": "pass" }
+  ],
+  "interpretation": {
+    "target006": "Now off-voice. Terra identifies the opaque hook and generalized lived section; the deterministic literal rule independently forces score 1.",
+    "target008": "Now in-voice. The single broad sentence is treated as minor because the rest remains concrete, placement-specific, and behaviorally grounded, as the new score-3 tolerance rule requires.",
+    "modelDecision": "Retain Terra-low as the preferred future routine judge over Sol-xhigh on cost and latency evidence, but do not alter the production registry from this directional run."
+  },
+  "adaptationProvenance": {
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "changedByThisRun": false
+  }
+}

@@ -15,6 +15,7 @@ const RELEASE_FIELDS = [
   "policyVersion"
 ];
 const PROVIDERS = new Set(["openai", "claude", "local"]);
+const REASONING_EFFORTS = new Set(["none", "low", "medium", "high", "xhigh", "max"]);
 
 const sha256 = (value) => crypto.createHash("sha256").update(String(value ?? "")).digest("hex");
 
@@ -33,6 +34,12 @@ function validateRelease(release, label = "release") {
   }
   if (!PROVIDERS.has(release.provider)) {
     throw new Error(`${label}.provider must be openai, claude, or local.`);
+  }
+  if (
+    release.reasoningEffort !== undefined
+    && !REASONING_EFFORTS.has(release.reasoningEffort)
+  ) {
+    throw new Error(`${label}.reasoningEffort must be none, low, medium, high, xhigh, or max.`);
   }
   return release;
 }
@@ -115,6 +122,9 @@ function stageCandidate(registry, laneId, release) {
 
 function validateCalibrationReport(report, candidateRelease) {
   if (!report || report.status !== "passed") throw new Error("Calibration report status must be 'passed'.");
+  if (report.reportKind !== "calibration" || report.promotionEligible !== true || Number(report.sampleCount) < 5) {
+    throw new Error("Only a promotion-eligible calibration report with at least five samples per fixture can promote a model.");
+  }
   if (report.disagreement) throw new Error("A calibration report with disagreement cannot promote a model.");
   const separation = Number(report.separation);
   const minimumSeparation = Number(report.minimumSeparation);
@@ -199,6 +209,7 @@ module.exports = {
   resolveActiveRelease,
   resolveCandidateRelease,
   resolveLane,
+  REASONING_EFFORTS,
   rollbackActive,
   sha256,
   stageCandidate,

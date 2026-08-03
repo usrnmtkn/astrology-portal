@@ -1,0 +1,53 @@
+{
+  "schema": "tldrastro-sky-article-review-import-v1",
+  "version": "1.0.0",
+  "review_status": "needs_review",
+  "engineFixture": "packages/astro-knowledge/review/engine-confirmed-2026-date-slots.json",
+  "note": "Staged import metadata only. Source Markdown remains byte-for-byte owner-authored and cannot become reader-serving through this manifest.",
+  "sources": [
+    {
+      "file": "TLDR-Article-Edition-Neptune-Aries-REVIEW.md",
+      "contentKey": "sky-article/neptune/aries/2026",
+      "sha256": "dd9846ce9b647eaf4e647c9b4141865182fc5236e7eefce69835244b095db5bf",
+      "bytes": 12027,
+      "slots": {
+        "entryDate": "neptuneAries.entryDate"
+      }
+    },
+    {
+      "file": "TLDR-Article-Edition-Uranus-Gemini-REVIEW.md",
+      "contentKey": "sky-article/uranus/gemini/2026",
+      "sha256": "acb76cbba5917212301d08d781505d540f19633892dc9138748ec5b8cb07d161",
+      "bytes": 13050,
+      "slots": {
+        "entryDate": "uranusGemini.entryDate",
+        "clearDate": "uranusGemini.shadowClearDate",
+        "exitDate": "uranusGemini.exitDate"
+      }
+    },
+    {
+      "file": "TLDR-Article-Edition-Jupiter-Leo-REVIEW.md",
+      "contentKey": "sky-article/jupiter/leo/2026",
+      "sha256": "282934256d34a7003b8b58477904cdb4c714adab776d2b9a79046d0ae5c143c9",
+      "bytes": 13071,
+      "slots": {
+        "entryDate": "jupiterLeo.entryDate",
+        "exitDate": "jupiterLeo.exitDate",
+        "jupiterCazimi": "jupiterLeo.cazimi"
+      }
+    },
+    {
+      "file": "TLDR-Article-Nodes-Aquarius-Leo-REVIEW.md",
+      "contentKey": "sky-article/nodes/aquarius-leo/2026",
+      "sha256": "fdb86f70814948f84d1e4a80ffec4e105830fa8a2eef2b9f85af3cca9f1c400a",
+      "bytes": 16794,
+      "slots": {
+        "entryDate": "nodesAquariusLeo.entryDate",
+        "exitDate": "nodesAquariusLeo.exitDate",
+        "firstEclipseDate": "nodesAquariusLeo.firstEclipseDate",
+        "oldAxisEclipses": "nodesAquariusLeo.oldAxisEclipses",
+        "virgoEclipseConflictResolution": "nodesAquariusLeo.conflictResolution"
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-judge-targeted-rules-v2",
+  "surface": "sky-placement",
+  "status": "completed-invalidated",
+  "liveRerunAllowed": false,
+  "supersededBy": "sky-placement-judge-targeted-provenance-v3",
+  "validityNote": "The 16-call results are retained but are not promotion evidence because collective adaptations were mislabeled as approved/gold when the run was built.",
+  "promotionAuthorized": false,
+  "runtime": {
+    "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+    "unchanged": true
+  },
+  "promptVersion": "sky-placement-voice-v3:conflict-free-collective-golds",
+  "rubricVersion": "sky-placement-voice-v3",
+  "evaluationSetVersion": "sky-placement-targeted-rules-v2",
+  "samplesPerFixture": 1,
+  "blindedOwnerReview": true,
+  "treatments": {
+    "baseline": {
+      "role": "baseline",
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "reasoningMode": "standard"
+    },
+    "candidate": {
+      "role": "candidate",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "reasoningMode": "standard",
+      "releaseId": "sky-placement-judge-openai-gpt-5.6-sol-candidate-v2"
+    }
+  },
+  "pricingSourceManifest": "config/sky-placement-judge-ab-evaluation-v1.json",
+  "fixtureSource": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
+  "promotionGate": {
+    "thisRunPromotionEligible": false,
+    "explicitOwnerAuthorizationRequired": true,
+    "note": "Directional targeted rerun only. It may inform a later promotion-grade calibration but cannot promote either treatment."
+  }
+}

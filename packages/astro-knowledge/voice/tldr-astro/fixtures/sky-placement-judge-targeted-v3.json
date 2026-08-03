@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "fixtureSetId": "sky-placement-targeted-provenance-v3",
+  "surface": "sky-placement",
+  "status": "frozen-evaluation",
+  "promotionAuthorized": false,
+  "articleSourceFixtureSet": "sky-placement-targeted-rules-v2",
+  "note": "Provenance-corrected 9-case/18-call set. A rule-compliant outcome is not owner approval. All collective adaptations remain needs_review and are excluded from active judge gold context.",
+  "fixtures": [
+    {
+      "caseId": "target-001",
+      "sourceCaseId": "target-001",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "collective-current-sky-positive-control",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Mechanical/editorial collective adaptation of historical owner-approved Sun-in-Leo copy; adapted wording has not been owner-approved."
+    },
+    {
+      "caseId": "target-002",
+      "sourceCaseId": "target-002",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "preserve-clear-owner-writing",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "The lived paragraph is owner-approved beat evidence; the assembled full article is a new candidate and is not owner-approved."
+    },
+    {
+      "caseId": "target-003",
+      "sourceCaseId": "target-003",
+      "classification": "single_pronoun_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-move",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false
+    },
+    {
+      "caseId": "target-004",
+      "sourceCaseId": "target-004",
+      "classification": "single_pronoun_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-hook",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false
+    },
+    {
+      "caseId": "target-005",
+      "sourceCaseId": "target-005",
+      "classification": "domain_drift_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "astrological-domain-drift",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false
+    },
+    {
+      "caseId": "target-006",
+      "sourceCaseId": "target-006",
+      "classification": "natural_english_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 1,
+      "ruleUnderTest": "literal-english",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false
+    },
+    {
+      "caseId": "target-007",
+      "sourceCaseId": "target-007",
+      "classification": "overwriting_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "one-close-restraint",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false
+    },
+    {
+      "caseId": "target-008",
+      "sourceCaseId": "target-008",
+      "classification": "editorial_restraint_control",
+      "expectedOutcome": "borderline",
+      "expectedScore": 2,
+      "ruleUnderTest": "proportional-editorial-restraint",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Test-only adaptation with one intentionally generic sentence; neither the adaptation nor the injected weakness is owner-approved."
+    },
+    {
+      "caseId": "target-009",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "collective-current-sky-positive-control",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Mechanical/editorial collective adaptation of historical owner-approved Moon-in-Scorpio copy; adapted wording has not been owner-approved.",
+      "planet": "moon",
+      "sign": "scorpio",
+      "tier": "luminary",
+      "article": {
+        "tagline": "Say the raw thing",
+        "hook": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
+        "lived": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
+        "turn": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
+        "moves": [
+          "Ask the direct question instead of testing whether someone notices the silence.",
+          "Write down the fact, the fear, and the story built between them.",
+          "Give the feeling one honest sentence before it turns into suspicion."
+        ]
+      }
+    }
+  ]
+}
