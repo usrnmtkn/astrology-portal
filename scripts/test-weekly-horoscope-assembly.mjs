@@ -269,6 +269,35 @@ try {
     "Retired sky positions must never leak into the Jul 29 per-rising card."
   );
 
+  const quarterMoonWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-quarter-moon-fixture",
+    natalSky,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-08-03T16:00:00Z")
+  });
+  assert.equal(quarterMoonWeek.weekStart, "2026-08-03");
+  assert.equal(quarterMoonWeek.weekEnd, "2026-08-09");
+  assert.notEqual(
+    quarterMoonWeek.weekType,
+    "lunation",
+    "A quarter Moon must not classify the personal write-up as a New/Full Moon week."
+  );
+  assert.equal(
+    quarterMoonWeek.macro,
+    undefined,
+    "A quarter Moon must not select a Full Moon macro article."
+  );
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Taurus Full Moon|Full Moon in Taurus/iu,
+    "The Aug 3-9 write-up must not relabel the Last Quarter Moon in Taurus as a Full Moon."
+  );
+
   const mondaySky = await ephemeris.getAstrodienstSky(
     location,
     new Date("2026-07-27T16:00:00Z")
