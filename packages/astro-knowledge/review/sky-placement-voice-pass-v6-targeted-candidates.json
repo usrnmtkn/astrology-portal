@@ -1,0 +1,136 @@
+{
+  "schema": "tldrastro-sky-placement-review-bundle-v1",
+  "version": "6.0.0",
+  "created": "2026-08-02",
+  "status": "needs_review",
+  "editorialStatus": "voice_pass_draft",
+  "promotionAuthorized": false,
+  "generation": {
+    "method": "owner-review-revisions-applied-offline",
+    "apiCalls": 0,
+    "sourceReview": "owner-attached-review-2026-08-02",
+    "vocabularyBank": "voice/tldr-astro/owner-vocabulary-bank.json"
+  },
+  "preservedOutsideBundle": [
+    {
+      "candidateId": "sky-placement-v4-mars-capricorn",
+      "decision": "preserve_v4_intact_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-v4-venus-aries",
+      "decision": "preserve_v4_intact_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3",
+      "decision": "preserve_as_calibration_reference_only",
+      "productionApproved": false,
+      "generationEvidenceAuthorized": false,
+      "canonical": false
+    }
+  ],
+  "candidates": [
+    {
+      "candidateId": "sky-placement-v6-saturn-capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "title": "Saturn in Capricorn",
+      "status": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/saturn-capricorn.json",
+      "voicePass": {
+        "date": "2026-08-02",
+        "source": "owner-guided-offline-rewrite",
+        "status": "pending_owner_review",
+        "reviewApplied": "Owner preferred the exact revised hook; full-article and production approval remain false.",
+        "ownerPreferredSlots": ["hook"]
+      },
+      "article": {
+        "tagline": "Build it without disappearing",
+        "hook": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference. Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+        "lived": "Over roughly two and a half years, the shortcut keeps sending us back to the same weak point. A plan can survive optimism, praise, and a good quarter; Saturn wants to know whether it can survive the bill, the delay, and the day nobody feels inspired. What holds gets reinforced. What was built to look successful has to come apart before it can carry a future.",
+        "turn": "Competence becomes a hiding place when work answers every question except the one being asked. We finish one more task instead of sitting down for the conversation, postpone rest until the next milestone, and raise the standard before the last achievement has time to register. Eventually every conversation starts to feel like another task. If one person has to be unavailable, overworked, or carrying everyone else to keep the plan running, the plan is not strong.",
+        "moves": [
+          "Give one long-term goal a weekly appointment and a stopping time.",
+          "Put one responsibility into someone else's hands without taking it back at the first discomfort.",
+          "Leave at the time already agreed on, even with work unfinished."
+        ]
+      },
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "judgeResult": {
+        "status": "not_run_after_voice_pass",
+        "priorScore": 2,
+        "note": "The prior score belongs to the V4 hook; this exact V6 article requires a new review."
+      }
+    },
+    {
+      "candidateId": "sky-placement-v6-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "title": "Neptune in Libra",
+      "status": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/neptune-libra.json",
+      "voicePass": {
+        "date": "2026-08-02",
+        "source": "owner-guided-offline-rewrite",
+        "status": "pending_owner_review",
+        "reviewApplied": "Applied the owner's preferred behavior-first hook from the attached review."
+      },
+      "article": {
+        "tagline": "Stop calling silence peace",
+        "hook": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable. Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+        "lived": "Neptune stays in one sign for roughly fourteen years, long enough for an ideal of fairness to become a social rule. We learn how to make the room look peaceful. We learn which need will ruin the atmosphere, which disagreement must be softened, and which compromise photographs better than it feels. By the time nobody remembers who chose it, everyone may be living around a decision that no longer works.",
+        "turn": "The blur turns dangerous when comfort matters more than consent. A need gets softened until it no longer sounds like the real need. An agreement gets praised because nobody raised a voice. Resentment shows up later in cancelled plans, cold politeness, and small refusals. Peace that requires one side to disappear is only quiet.",
+        "moves": [
+          "Name the preference that keeps getting softened.",
+          "Write what each side gives and receives before calling a compromise fair.",
+          "Change one shared space only after everyone involved gives a clear yes."
+        ]
+      },
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "judgeResult": {
+        "status": "not_run_after_voice_pass",
+        "priorScore": 2,
+        "note": "The prior score belongs to the V4 hook; this exact V6 article requires a new review."
+      }
+    },
+    {
+      "candidateId": "sky-placement-v6-uranus-pisces",
+      "planet": "uranus",
+      "sign": "pisces",
+      "title": "Uranus in Pisces",
+      "status": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/uranus-pisces.json",
+      "voicePass": {
+        "date": "2026-08-02",
+        "source": "owner-guided-offline-rewrite",
+        "status": "pending_owner_review",
+        "reviewApplied": "Replaced the elevated V5 draft with the attached private-denial-to-public-evidence sequence."
+      },
+      "article": {
+        "tagline": "Make kindness practical",
+        "hook": "People can care deeply and still leave the rule untouched. Uranus in Pisces exposes the gap between feeling bad about suffering and changing what keeps producing it. A private complaint becomes harder to dismiss when several people compare notes and realize the same harm keeps happening for the same reason.",
+        "lived": "Uranus spends roughly seven years in Pisces, long enough for separate complaints to become a pattern no one can dismiss. Someone spends months appealing the same denial, finds three other families caught behind the same rule, and turns a folder of unanswered emails into a public complaint. The change begins when people stop treating the damage as a private burden and start naming the rule behind it.",
+        "turn": "The same urgency can erase every limit. We take every call, absorb every crisis, cancel our own plans, and treat exhaustion as proof that we care. Rescue can become control when help is given without asking what is needed or what can actually be sustained. Compassion that destroys the person carrying it cannot last long enough to change the system.",
+        "moves": [
+          "Name one hardship people have been told to endure quietly and identify the rule keeping it in place.",
+          "Choose one form of help that can continue after the emergency passes.",
+          "Use one hour that would have gone to watching the crisis to write the letter that puts it on record."
+        ]
+      },
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "judgeResult": {
+        "status": "not_run_after_voice_pass",
+        "priorScore": 2,
+        "note": "The prior score belongs to the V4 draft; this exact V6 article requires a new review."
+      }
+    }
+  ]
+}
