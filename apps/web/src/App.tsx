@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode, Ref } from "react";
+import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
 import { ModalPortal } from "./components/ModalPortal";
@@ -12782,11 +12783,13 @@ export function App() {
                   type="button"
                   role="menuitem"
                   onClick={async () => {
-                    setSelectedSkyDetail(null);
-                    setUserProfile(null);
-                    setOwnSocialProfile(null);
-                    navigateToPortalMode("profile");
-                    setMenuOpen(false);
+                    flushSync(() => {
+                      setSelectedSkyDetail(null);
+                      setUserProfile(null);
+                      setOwnSocialProfile(null);
+                      navigateToPortalMode("profile");
+                      setMenuOpen(false);
+                    });
                     await signOutAuth();
                   }}
                 >
@@ -13144,9 +13147,11 @@ export function App() {
                     onPhoneChange={(phone) => setUserProfile({ ...userProfile, phone })}
                     onSocialProfileChange={setOwnSocialProfile}
                     onSignOut={async () => {
-                      setUserProfile(null);
-                      setOwnSocialProfile(null);
-                      navigateToPortalMode("profile");
+                      flushSync(() => {
+                        setUserProfile(null);
+                        setOwnSocialProfile(null);
+                        navigateToPortalMode("profile");
+                      });
                       await signOutAuth();
                     }}
                   />
