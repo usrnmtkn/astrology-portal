@@ -553,6 +553,12 @@ function YouUpdatesTab({
               <p className="weekly-horoscope__driver">
                 Based on {weeklyHoroscopeAssembly.horoscope.driverLabel}
               </p>
+              {weeklyHoroscopeAssembly.horoscope.timing ? (
+                <p className="weekly-horoscope__timing">
+                  <span>Current house pass</span>
+                  {weeklyHoroscopeAssembly.horoscope.timing}
+                </p>
+              ) : null}
               {weeklyHoroscopeAssembly.horoscope.body
                 .split(/\n{2,}/)
                 .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}

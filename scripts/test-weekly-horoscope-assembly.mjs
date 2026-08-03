@@ -72,7 +72,17 @@ try {
     title: "Chiron stations retrograde",
     planet: "Chiron",
     sign: "Taurus"
-  }, rows, "Gemini");
+  }, rows, "Gemini", {
+    planet: "Chiron",
+    glyph: "⚷",
+    sign: "Taurus",
+    signGlyph: "♉",
+    degree: 0,
+    house: 12,
+    motion: "retrograde",
+    transitStart: "2026-06-19T08:00:00.000Z",
+    transitEnd: "2026-09-17T12:00:00.000Z"
+  }, "America/New_York");
   assert.equal(
     personalizedChironStation.headline,
     "Chiron stations retrograde in your 12th house"
@@ -84,6 +94,10 @@ try {
   assert.match(
     personalizedChironStation.body,
     /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
+  );
+  assert.equal(
+    personalizedChironStation.timing,
+    "June 19, 2026 – September 17, 2026"
   );
 
   const lunationEvent = {
@@ -125,6 +139,8 @@ try {
   assert.match(youPage, />Aspect</u);
   assert.match(youPage, />Your horoscope</u);
   assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
+  assert.match(youPage, />Current house pass</u);
+  assert.match(youPage, /weeklyHoroscopeAssembly\.horoscope\.timing/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
   assert.match(weeklySource, /weeklyEphemerisCache/u);
@@ -326,6 +342,11 @@ try {
     quarterMoonWeek.horoscope.body,
     /Chiron in your 12th house brings quiet grief/u,
     "The station write-up must include the approved personalized transit-house layer."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.timing ?? "",
+    /^[A-Z][a-z]+ \d{1,2}, 2026 – [A-Z][a-z]+ \d{1,2}, 2026$/u,
+    "The station write-up must expose its current computed house-pass window."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
