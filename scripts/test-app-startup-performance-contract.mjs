@@ -125,10 +125,10 @@ const deferredFallbackSource = fs.readFileSync(
   "utf8"
 );
 const appImportIndex = mainSource.indexOf('const appModulePromise = import("./App")');
-const styleWaitIndex = mainSource.indexOf("await Promise.all([");
+const styleWaitIndex = mainSource.indexOf('await import("./styles.css")');
 
 assert.ok(appImportIndex >= 0, "Startup must create an App import promise.");
-assert.ok(styleWaitIndex >= 0, "Startup must await its stylesheet group.");
+assert.ok(styleWaitIndex >= 0, "Startup must await its reader stylesheet entry.");
 assert.ok(appImportIndex < styleWaitIndex, "The App download must start before startup waits for CSS.");
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
@@ -173,6 +173,16 @@ assert.doesNotMatch(
   readerStylesSource,
   /lunar-calendar\.css/u,
   "Calendar-only CSS must not remain in the reader startup stylesheet."
+);
+assert.match(
+  readerStylesSource,
+  /styles\/responsive\.css/u,
+  "Responsive rules must load from the deterministic reader stylesheet entry."
+);
+assert.match(
+  readerStylesSource,
+  /styles\/card-systems\.css/u,
+  "Shared card rules must load from the deterministic reader stylesheet entry."
 );
 assert.match(
   calendarRouteSource,
