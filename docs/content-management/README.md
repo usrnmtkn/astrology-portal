@@ -209,9 +209,17 @@ From the repository root:
   --format=esm \
   --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
 
+npm run build:fallback-manifest
+
 cd apps/web/src/content/fallbackArchitectureV3
 node admin/build-content-book.mjs
 ```
+
+The fallback manifest and summary are integrity indexes for the complete
+reader package. Any eligible source-row or template change can alter their key
+count or hashes. Never hand-edit these generated files. Rebuild them with the
+command above; `npm run test:content` and pull-request CI both reject stale
+manifests.
 
 When package behavior or serving content changes, bump `PACKAGE_VERSION` in
 `resolver/index.browser.ts` and update the assertions that pin that version.

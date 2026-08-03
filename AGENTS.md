@@ -9,6 +9,12 @@ selection, or content-package distribution, read
 Keep computed facts in the calculation layer, approved prose in content rows,
 and presentation in React/CSS.
 
+After changing fallback source rows or templates, run
+`npm run build:fallback-manifest` before validation or commit. The bundled
+manifest and summary are generated integrity indexes; never edit them by hand.
+`npm run test:content` must reject source changes whose generated manifest is
+stale.
+
 ### Editorial writing and review
 
 For any request to write, rewrite, refine, compare, or approve TLDR Astro
