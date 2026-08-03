@@ -1053,7 +1053,7 @@ export function SocialFriendsPanel({
     );
   }
 
-  if (available === null) {
+  if (available === null && activeView !== "charts") {
     return (
       <section className="friends-unified-panel" aria-label="Social friends">
         <div className="friends-unified-search-row">
@@ -1065,7 +1065,7 @@ export function SocialFriendsPanel({
             <button className={activeView === "circle" ? "active" : ""} type="button" disabled>
               Circle · 0
             </button>
-            <button className={activeView === "charts" ? "active" : ""} type="button" disabled>
+            <button type="button" disabled>
               Charts · {chartCount}
             </button>
           </span>
