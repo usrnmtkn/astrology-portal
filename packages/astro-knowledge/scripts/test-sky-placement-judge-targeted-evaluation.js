@@ -16,6 +16,7 @@ const {
 
 const activeSpec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
 const historical = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
+const ownerReview = require(path.join("..", "review", "sky-placement-judge-targeted-v3-owner-review.json"));
 const secondPerson = () => /\b(?:you|your|yours|yourself|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
 
 function fullText(article) {
@@ -62,6 +63,19 @@ async function main() {
   assert.strictEqual(evaluationManifest.treatments.candidate.reasoningEffort, "xhigh");
   assert.strictEqual(evaluationManifest.promotionGate.thisRunPromotionEligible, false);
   assert.strictEqual(evaluationManifest.evaluationSetVersion, "sky-placement-targeted-provenance-v3");
+  assert.deepStrictEqual(ownerReview.preferenceTotals, {
+    "gpt-5.6-sol": 4,
+    "gpt-5.6-terra": 4,
+    ties: 1
+  });
+  assert.strictEqual(ownerReview.modelMapping.A.model, "gpt-5.6-sol");
+  assert.strictEqual(ownerReview.modelMapping.B.model, "gpt-5.6-terra");
+  assert.strictEqual(ownerReview.decision.promotionRecommended, false);
+  assert.strictEqual(ownerReview.decision.activeRuntimeChanged, false);
+  assert.strictEqual(ownerReview.calibrationFollowUps[0].caseId, "target-006");
+  assert.strictEqual(ownerReview.calibrationFollowUps[0].automaticRubricChangeAuthorized, false);
+  assert.strictEqual(ownerReview.adaptationProvenance.ownerApproved, false);
+  assert.strictEqual(ownerReview.adaptationProvenance.promotionAuthorized, false);
 
   const noGoldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
   assert.match(noGoldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);

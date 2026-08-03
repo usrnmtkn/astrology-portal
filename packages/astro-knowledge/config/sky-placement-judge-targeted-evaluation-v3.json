@@ -19,8 +19,10 @@
     "fixtureCount": 9,
     "requestCount": 18,
     "combinedEstimatedCostUsd": 0.2995,
-    "ownerReviewStatus": "pending",
-    "modelKeyStatus": "sealed"
+    "ownerReviewStatus": "complete",
+    "modelKeyStatus": "revealed_after_blind_review",
+    "modelPreferenceResult": "tie_4_to_4_with_1_tie",
+    "promotionRecommended": false
   },
   "treatments": {
     "baseline": {

@@ -62,8 +62,23 @@ The provenance-corrected run completed on 2026-08-02:
 - 18 successful paired API calls.
 - Byte-identical prompts within every pair.
 - Combined estimated API cost: `$0.2995`.
-- Owner review: pending.
-- Model key: sealed.
+- Owner review: complete; A 4, B 4, tie 1.
+- Model key: revealed after blind scoring; A was Sol-xhigh and B was Terra-low.
 - Promotion eligibility: false.
 
-The manifest is now frozen with `liveRerunAllowed: false`. The anonymous packet may be reviewed without exposing either model identity.
+The manifest is frozen with `liveRerunAllowed: false`.
+
+## Owner result and operational comparison
+
+Sol-xhigh was preferred in targets 001, 004, 007, and 008. Terra-low was preferred in targets 003, 005, 006, and 009. Target 002 was a tie.
+
+| Model | Owner preferences | Average latency | Total cost | Per-call cost | Schema failures | Retries |
+|---|---:|---:|---:|---:|---:|---:|
+| GPT-5.6 Terra low | 4 | 3.47 s | $0.068479 | $0.007609 | 0 | 0 |
+| GPT-5.6 Sol xhigh | 4 | 8.60 s | $0.230988 | $0.025665 | 0 | 0 |
+
+Sol was approximately 2.5 times slower and 3.4 times more expensive without winning more owner preferences. The result does not justify promotion. The active runtime remains unchanged.
+
+Target 006 remains a severity-calibration follow-up: both judges detected the unnatural personification but scored the article borderline. No automatic rubric change is authorized; the owner must decide whether first-read unnatural English plus generalized supporting copy should force an off-voice score.
+
+All collective adaptations remain `needs_review`, `ownerApproved: false`, and `promotionAuthorized: false`.
