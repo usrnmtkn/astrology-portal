@@ -14,7 +14,7 @@
   "exemplarStatePolicy": {
     "historical_owner_approved": "Original owner-approved copy preserved verbatim for provenance. Never supplied to the active Current Sky judge as positive evidence.",
     "collective_adaptation_candidate": "A collective-language editorial adaptation. It may be a controlled rule-compliance test input, but remains needs_review, ownerApproved false, and promotionAuthorized false.",
-    "current_sky_owner_approved": "A collective version explicitly approved by the owner. Only this state is eligible for active positive calibration evidence. There are currently no full-article examples in this state. Calibration eligibility would not make an article canonical production copy or authorize governed content promotion."
+    "current_sky_owner_approved": "A collective version explicitly approved by the owner. Only this state is eligible for active positive judge-calibration evidence. Calibration eligibility does not make an article canonical production copy, authorize governed content promotion, or authorize generation evidence."
   },
 
   "punctuation": {
@@ -223,6 +223,33 @@
       "status": "positive-editorial-feedback-not-exact-wording-approval",
       "text": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
       "use": "Directional voice feedback for the lived beat: duration, baseline rupture, concrete changes, relational reclassification, cost. Specific physical changes beat broad metaphor; stay with the disruption instead of rushing into rebuilding. Do not treat the wording as owner-approved gold and do not copy it into another placement."
+    }
+  ],
+
+  "ownerApprovedCalibrationExamples": [
+    {
+      "sourceId": "sky-placement-uranus-cancer-owner-approved-calibration-v3",
+      "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3",
+      "editorialStatus": "current_sky_owner_approved",
+      "reviewStatus": "approved",
+      "ownerApproved": true,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "calibrationEligible": true,
+      "generationEvidenceAuthorized": false,
+      "planet": "uranus",
+      "sign": "cancer",
+      "tier": "generational",
+      "tagline": "Change who carries it",
+      "hook": "The person who remembers every birthday, keeps the spare key, and gets called when someone needs help may stop doing all of it. Uranus in Cancer changes the private rules around home and family, especially the ones that only worked because one person was always available.",
+      "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. A sibling stops hosting every holiday, a guest room turns into an office, and the emergency contact list gets rewritten because the person everyone relied on is no longer willing to be the only plan. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old arrangement demands more than anyone should give.",
+      "turn": "Everyone may agree that the old setup was unfair and still expect the same person to fix it. They make the schedule, explain the new boundary, remind everyone what changed, and take the complaints when someone else is inconvenienced. A family role has not changed if one person is still doing all the work required to change it.",
+      "moves": [
+        "Give one recurring responsibility to someone who will handle it without being reminded.",
+        "Update the emergency plan before the next emergency sends everyone back to the same person.",
+        "Change one room, routine, or family agreement that only works because one person keeps giving more than everyone else."
+      ],
+      "approvalScope": "Exact v3 article wording only; judge-calibration evidence, not generation evidence, canonical production copy, or governed content promotion authorization."
     }
   ],
 

@@ -49,14 +49,17 @@ try {
   assert.strictEqual(registry.lanes["generation:default"].candidate.model, "gpt-5.6-terra");
   assert.strictEqual(registry.lanes["generation:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["judge:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
-  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-4.1-mini");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.releaseId, "sky-placement-judge-openai-gpt-5.6-terra-v2");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.reasoningEffort, "xhigh");
-  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-4.1-mini");
   assert.strictEqual(registry.lanes["judge:sky-placement"].history[0].action, "promote");
-  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).action, "rollback");
-  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).approvedBy, "owner-provenance-correction");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).action, "promote");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).approvedBy, "owner");
   const placementPromotionReport = require(path.join("..", "review", "sky-placement-judge-terra-promotion-calibration-v1.json"));
+  const placementPromotionReportV2 = require(path.join("..", "review", "sky-placement-judge-terra-promotion-calibration-v2.json"));
   const placementPromotionInvalidation = require(path.join("..", "review", "sky-placement-judge-terra-promotion-provenance-invalidation-v1.json"));
   assert.strictEqual(placementPromotionInvalidation.promotionAuthorityValid, false);
   assert.strictEqual(placementPromotionInvalidation.promotionEligibleAfterProvenanceAudit, false);
@@ -64,6 +67,11 @@ try {
     registry.lanes["judge:sky-placement"].history[0].calibrationReportSha256,
     sha256(JSON.stringify(placementPromotionReport)),
     "the historical promotion entry must retain the exact technical report hash even after provenance invalidation"
+  );
+  assert.strictEqual(
+    registry.lanes["judge:sky-placement"].history.at(-1).calibrationReportSha256,
+    sha256(JSON.stringify(placementPromotionReportV2)),
+    "the active Terra v2 promotion must point to the valid owner-approved calibration report"
   );
   assert.strictEqual(registry.lanes[laneId].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes[laneId].candidate.reasoningEffort, "low");
@@ -188,8 +196,8 @@ try {
   assert.strictEqual(configured.releaseId, release.releaseId);
   assert.strictEqual(configured.registryOverride, false);
   const placementActive = judgeConfig("sky-placement");
-  assert.strictEqual(placementActive.model, "gpt-4.1-mini");
-  assert.strictEqual(placementActive.reasoningEffort, null);
+  assert.strictEqual(placementActive.model, "gpt-5.6-terra");
+  assert.strictEqual(placementActive.reasoningEffort, "low");
   assert.strictEqual(placementActive.registryState, "active");
   assert.strictEqual(placementActive.registryOverride, false, "generic OPENAI_MODEL must not override a surface-specific judge lane");
 

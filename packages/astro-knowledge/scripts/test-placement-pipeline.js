@@ -70,7 +70,16 @@ async function main() {
   assert.strictEqual(historicalPlacementFixtures.editorialStatus, "historical_owner_approved");
   assert.strictEqual(historicalPlacementFixtures.currentSkyCalibrationEligible, false);
   assert.strictEqual(spec.exemplars.filter((e) => e.editorialStatus === "current_sky_owner_approved").length, 0);
-  assert.strictEqual((spec.ownerApprovedCalibrationExamples || []).length, 0);
+  assert.strictEqual((spec.ownerApprovedCalibrationExamples || []).length, 1);
+  const approvedCalibrationV3 = spec.ownerApprovedCalibrationExamples[0];
+  assert.strictEqual(approvedCalibrationV3.editorialStatus, "current_sky_owner_approved");
+  assert.strictEqual(approvedCalibrationV3.reviewStatus, "approved");
+  assert.strictEqual(approvedCalibrationV3.ownerApproved, true);
+  assert.strictEqual(approvedCalibrationV3.promotionAuthorized, false);
+  assert.strictEqual(approvedCalibrationV3.canonical, false);
+  assert.strictEqual(approvedCalibrationV3.calibrationEligible, true);
+  assert.strictEqual(approvedCalibrationV3.generationEvidenceAuthorized, false);
+  assert.strictEqual(lintArticle({ ...approvedCalibrationV3 }).score, 3);
   console.log(`OK  ${spec.exemplars.length} collective adaptations lint 3 but remain needs_review; historical originals are inactive`);
 
   // 2. clean injected draft -> clean result + three hook rows
@@ -266,6 +275,7 @@ async function main() {
     assert.ok(prompt.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE EXEMPLARS"));
     assert.ok(prompt.includes("None yet. Do not treat collective adaptation candidates as owner-approved voice evidence"));
     assert.ok(!prompt.includes("Home changes when one person has been carrying too much for too long"), "calibration-only gold must not become generation few-shot evidence");
+    assert.ok(!prompt.includes("The person who remembers every birthday, keeps the spare key"), "v3 judge-calibration evidence must not become generation few-shot evidence");
     assert.ok(!prompt.includes("Nobody claps for the thing we never show them"), "collective candidates must not enter the generation few-shot context");
     assert.ok(prompt.includes(spec.pace.labels[planet]), `prompt must carry the ${planet} pace`);
     assert.ok(prompt.includes("PLANET + SIGN MEANING LAYER"), `${planet} prompt must carry the approved authoring layer`);
@@ -291,7 +301,7 @@ async function main() {
   for (const tier of Object.keys(spec.planetTierRegister.hints)) {
     const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
     assert.ok(jp.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD"), `judge prompt must label owner-approved gold explicitly for tier ${tier}`);
-    assert.ok(jp.includes("None yet. Collective adaptation candidates are deliberately excluded"), `judge prompt must disclose that no exact owner-approved gold exists for tier ${tier}`);
+    assert.ok(jp.includes("The person who remembers every birthday, keeps the spare key"), `judge prompt must carry exact approved v3 calibration evidence for tier ${tier}`);
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
     assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);

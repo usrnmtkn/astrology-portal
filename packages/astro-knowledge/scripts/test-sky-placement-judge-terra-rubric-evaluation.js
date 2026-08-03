@@ -19,8 +19,10 @@ async function main() {
   assert.strictEqual(evaluationManifest.treatment.model, "gpt-5.6-terra");
   assert.strictEqual(evaluationManifest.treatment.reasoningEffort, "low");
   assert.strictEqual(evaluationManifest.promotionGate.thisRunPromotionEligible, false);
-  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-4.1-mini");
-  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-4.1-mini");
+  assert.strictEqual(evaluationManifest.runtime.activeReleaseId, registry.lanes["judge:sky-placement"].rollback.releaseId);
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.notStrictEqual(registry.lanes["judge:sky-placement"].candidate.promotionAuthorized, true);
 
