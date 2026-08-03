@@ -11183,6 +11183,8 @@ export function App() {
 
     function closeMobileSkyControls(restoreFocus = true) {
       setMobileSkyControlsOpen(false);
+      setCityPickerOpen(false);
+      setCityPickerOpenedFromMobileControls(false);
       if (restoreFocus) {
         mobileDatePickerTriggerRef.current?.focus();
       }
@@ -12507,10 +12509,15 @@ export function App() {
   }
 
   function openMobileCityPicker() {
-    setMobileSkyControlsOpen(false);
     setDatePickerOpen(false);
     setCityPickerOpenedFromMobileControls(true);
     setCityPickerOpen(true);
+  }
+
+  function closeMobileCityPicker() {
+    setCityPickerOpen(false);
+    setCityPickerOpenedFromMobileControls(false);
+    window.requestAnimationFrame(() => cityPickerTriggerRef.current?.focus());
   }
 
   async function acceptSocialInvitation() {
@@ -12641,40 +12648,90 @@ export function App() {
               role="dialog"
               aria-label="Sky controls"
             >
-              <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
-                <button
-                  type="button"
-                  className={skyDate === todaySkyDate ? "active" : ""}
-                  onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+              {cityPickerOpenedFromMobileControls ? (
+                <form
+                  className="city-picker mobile-sky-controls__city-picker"
+                  ref={cityPickerRef}
+                  aria-label="Change location"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    applyManualLocation();
+                  }}
                 >
-                  Today
-                </button>
-                <button
-                  type="button"
-                  className={skyDate === tomorrowSkyDate ? "active" : ""}
-                  onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
-                >
-                  Tomorrow
-                </button>
-                <button
-                  type="button"
-                  className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
-                  ref={datePickerTriggerRef}
-                  onClick={openMobileDatePicker}
-                >
-                  Date
-                </button>
-              </div>
-              <span className="mobile-sky-controls__label">Location</span>
-              <button
-                type="button"
-                className="mobile-sky-controls__location"
-                ref={cityPickerTriggerRef}
-                onClick={openMobileCityPicker}
-              >
-                <MapPin size={18} aria-hidden="true" />
-                <span>{compactCityLabel(location.label)}</span>
-              </button>
+                  <div className="mobile-sky-controls__city-header">
+                    <button
+                      type="button"
+                      className="mobile-sky-controls__back"
+                      aria-label="Back to Sky controls"
+                      onClick={closeMobileCityPicker}
+                    >
+                      <ChevronLeft size={20} aria-hidden="true" />
+                    </button>
+                    <strong>Change location</strong>
+                    <span aria-hidden="true" />
+                  </div>
+                  <label>
+                    <span>City</span>
+                    <input
+                      ref={cityPickerInputRef}
+                      value={manualLocation}
+                      onChange={(event) => setManualLocation(event.target.value)}
+                      aria-label="City"
+                      placeholder="Search for a city"
+                      autoFocus
+                    />
+                  </label>
+                  <CitySuggestions
+                    suggestions={citySuggestions}
+                    status={citySearchStatus}
+                    mapboxEnabled={hasMapboxToken()}
+                    onSelect={applyCitySuggestion}
+                  />
+                  <div className="city-picker-actions">
+                    <button type="button" onClick={closeMobileCityPicker}>
+                      Cancel
+                    </button>
+                    <button type="submit">Update</button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
+                    <button
+                      type="button"
+                      className={skyDate === todaySkyDate ? "active" : ""}
+                      onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      className={skyDate === tomorrowSkyDate ? "active" : ""}
+                      onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
+                    >
+                      Tomorrow
+                    </button>
+                    <button
+                      type="button"
+                      className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
+                      ref={datePickerTriggerRef}
+                      onClick={openMobileDatePicker}
+                    >
+                      Date
+                    </button>
+                  </div>
+                  <span className="mobile-sky-controls__label">Location</span>
+                  <button
+                    type="button"
+                    className="mobile-sky-controls__location"
+                    ref={cityPickerTriggerRef}
+                    onClick={openMobileCityPicker}
+                  >
+                    <MapPin size={18} aria-hidden="true" />
+                    <span>{compactCityLabel(location.label)}</span>
+                  </button>
+                </>
+              )}
             </div>
           )}
           <button
@@ -12884,9 +12941,9 @@ export function App() {
                         }}
                       />
                     )}
-                    {cityPickerOpen && (
+                    {cityPickerOpen && !cityPickerOpenedFromMobileControls && (
                       <form
-                        className={`city-picker hero-city-picker${cityPickerOpenedFromMobileControls ? " hero-city-picker--mobile" : ""}`}
+                        className="city-picker hero-city-picker"
                         id="city-picker"
                         ref={cityPickerRef}
                         onSubmit={(event) => {

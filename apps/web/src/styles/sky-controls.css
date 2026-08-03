@@ -238,6 +238,39 @@ html[data-scrolled] .sky-header-date-button {
   white-space: nowrap;
 }
 
+.mobile-sky-controls__city-picker {
+  display: grid;
+  gap: var(--card-padding-sm);
+  min-width: 0;
+}
+
+.mobile-sky-controls__city-header {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-sky-controls__city-header strong {
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+  text-align: center;
+}
+
+.mobile-sky-controls__back {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
 .today-controls {
   display: flex;
   flex-wrap: wrap;
@@ -276,12 +309,14 @@ html[data-scrolled] .sky-header-date-button {
   padding: calc(var(--space-4) + var(--space-1) / 2);
 }
 
-.hero-city-picker label {
+.hero-city-picker label,
+.mobile-sky-controls__city-picker label {
   display: grid;
   gap: 8px;
 }
 
-.hero-city-picker label > span {
+.hero-city-picker label > span,
+.mobile-sky-controls__city-picker label > span {
   color: var(--muted);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
@@ -289,7 +324,9 @@ html[data-scrolled] .sky-header-date-button {
   text-transform: uppercase;
 }
 
-.hero-city-picker input {
+.hero-city-picker input,
+.mobile-sky-controls__city-picker input {
+  box-sizing: border-box;
   width: 100%;
   border: 1px solid var(--control-border);
   border-radius: var(--control-radius);
