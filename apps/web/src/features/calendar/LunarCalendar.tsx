@@ -1990,6 +1990,9 @@ export function LunarCalendar({
   const weeklyLeadDescription = weeklyLeadEvent?.event.type === "lunation"
     ? weeklyLunationArticleOpening(weeklyLeadEvent.event) || weeklyLeadEvent.description
     : weeklyLeadEvent?.description ?? weeklyLeadMoon?.body ?? "";
+  const weeklyLeadDateLabel = weeklyLeadEvent
+    ? formatSelectedDay(weeklyLeadEvent.day, zone)
+    : null;
   const weeklyEventCount = weeklyDayWriteups.reduce((total, writeup) => total + writeup.events.length, 0);
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
@@ -2712,6 +2715,13 @@ export function LunarCalendar({
             <h2 id="lunar-weekly-title">
               {weeklyLeadEvent?.title ?? weeklyLeadMoon?.headline ?? "Your week in the sky"}
             </h2>
+            {weeklyLeadDateLabel && (
+              <p className="lunar-weekly-hero__event-date">
+                <span>Main event</span>
+                <span aria-hidden="true">·</span>
+                <time dateTime={weeklyLeadEvent?.day.dateKey}>{weeklyLeadDateLabel}</time>
+              </p>
+            )}
             {weeklyLeadDescription && (
               <p className="lunar-weekly-hero__body">
                 {weeklyLeadDescription}

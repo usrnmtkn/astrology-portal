@@ -1385,6 +1385,13 @@ test.describe("client-facing user flow case studies", () => {
     await expect(weeklyView.locator(".lunar-weekly-hero__body")).toContainText(
       "Full Moons bring what has been building into clearer view."
     );
+    const weeklyLeadDate = weeklyView.locator(".lunar-weekly-hero__event-date");
+    await expect(weeklyLeadDate).toBeVisible();
+    await expect(weeklyLeadDate).toContainText("Main event");
+    await expect(weeklyLeadDate.locator("time")).toHaveText(
+      /^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), [A-Z][a-z]+ \d{1,2}$/
+    );
+    await expect(weeklyLeadDate.locator("time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
     await expect(weeklyView.locator(".lunar-weekly-event.event-lunation")).toHaveCount(0);
     const integrationDays = weeklyView.locator('[data-weekly-day-role="integration"]');
     expect(await integrationDays.count()).toBeGreaterThan(0);
