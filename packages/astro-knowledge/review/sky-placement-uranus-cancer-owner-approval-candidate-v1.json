@@ -4,18 +4,23 @@
   "surface": "sky-placement",
   "planet": "uranus",
   "sign": "cancer",
-  "editorialStatus": "collective_adaptation_candidate",
-  "reviewStatus": "needs_review",
-  "ownerApproved": false,
+  "editorialStatus": "current_sky_owner_approved",
+  "reviewStatus": "approved",
+  "ownerApproved": true,
   "promotionAuthorized": false,
   "canonical": false,
-  "approvalScope": "Exact wording only after a separate explicit owner approval. This candidate does not approve any other adaptation, authorize content promotion, or authorize a model change.",
+  "approvalScope": "Approval applies only to the exact text inside article. It does not approve another adaptation, authorize governed content promotion, make this canonical production copy, or authorize automatic model activation.",
+  "ownerApproval": {
+    "recordedAt": "2026-08-02",
+    "scope": "article",
+    "exactWordingOnly": true
+  },
   "provenance": {
     "createdFrom": "target-002",
     "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
     "frozenEvaluationPreserved": true,
     "ownerApprovedBeatEvidence": "owner-review-uranus-cancer-lived-2026-08-02",
-    "note": "The lived paragraph was already approved as beat evidence. The revised hook, turn, and final move remain pending exact-wording approval."
+    "note": "The lived paragraph was already approved as beat evidence. The owner subsequently approved this exact complete collective article for calibration only."
   },
   "article": {
     "tagline": "Change who carries it",

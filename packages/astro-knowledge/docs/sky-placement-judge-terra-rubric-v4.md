@@ -2,6 +2,8 @@
 
 Date: 2026-08-02 (America/New_York)
 
+> Subsequent status: after the owner approved one exact noncanonical collective calibration article, Terra-low passed the five-sample promotion gate and became active. See `sky-placement-judge-terra-promotion-2026-08-02.md`. The directional result below remains the record of the earlier one-sample rubric rerun.
+
 ## Decision
 
 Do not promote Sol-xhigh. The earlier targeted comparison produced identical classifications across the nine cases while Sol cost more and took longer. Terra-low remains the preferred future routine judge configuration, but this directional run did not change the production registry. The repository still names `gpt-4.1-mini` as the active Sky Placement judge.
