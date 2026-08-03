@@ -135,6 +135,12 @@ assert.ok(
 );
 
 assert.match(
+  socialFriendsPanelSource,
+  /if \(available === null && activeView !== "charts"\)/,
+  "The Charts landing view must render cached chart rows without waiting for social-profile availability."
+);
+
+assert.match(
   appSource,
   /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
   "Friends charts must paint their account-scoped cache after authentication resolves."

@@ -9,6 +9,7 @@ Content editors can continue updating and reviewing astrology copy independently
 ## 1. Friends and chart-detail loading
 
 - Saved chart rows hydrate from the account-scoped local cache before the remote list resolves.
+- The Charts landing view paints those cached rows immediately instead of hiding them behind the social-profile and friend-list request.
 - Visible friend rows no longer wait for own-profile hydration.
 - Notifications and invitation history wait until a Circle-oriented view needs them.
 - The app-wide request-count monitor pauses while the Friends panel owns the same work.
