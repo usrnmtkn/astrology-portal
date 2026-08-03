@@ -22,12 +22,31 @@ type WeeklyDayRoleContext = {
   isLastDay: boolean;
 };
 
+function isPrimaryLunation(event: LunarCalendarEvent) {
+  if (event.type !== "lunation" || event.primary === false) {
+    return false;
+  }
+
+  const title = event.title.toLowerCase();
+
+  return title.startsWith("new moon")
+    || title.startsWith("full moon")
+    || title.includes("solar eclipse")
+    || title.includes("lunar eclipse");
+}
+
+function roleEligibleEvents(events: LunarCalendarEvent[]) {
+  return events.filter((event) => event.type !== "lunation" || isPrimaryLunation(event));
+}
+
 function hasLunation(events: LunarCalendarEvent[]) {
-  return events.some((event) => event.type === "lunation");
+  return events.some(isPrimaryLunation);
 }
 
 function isPeakDay(events: LunarCalendarEvent[]) {
-  return hasLunation(events) || events.length >= 2;
+  const eligibleEvents = roleEligibleEvents(events);
+
+  return hasLunation(eligibleEvents) || eligibleEvents.length >= 2;
 }
 
 function isMoonIngressDay(day: LunarCalendarDay, previousDay: LunarCalendarDay | null) {
@@ -46,19 +65,21 @@ export function resolveWeeklyDayRole({
   nextSignificantEvents,
   isLastDay
 }: WeeklyDayRoleContext): WeeklyDayRole {
-  if (hasLunation(significantEvents)) {
+  const eligibleEvents = roleEligibleEvents(significantEvents);
+
+  if (hasLunation(eligibleEvents)) {
     return "lunation";
   }
 
-  if (significantEvents.some((event) => event.type === "station")) {
+  if (eligibleEvents.some((event) => event.type === "station")) {
     return "station";
   }
 
-  if (significantEvents.some((event) => event.type === "ingress" && event.planet === "Sun")) {
+  if (eligibleEvents.some((event) => event.type === "ingress" && event.planet === "Sun")) {
     return "season-opening";
   }
 
-  if (significantEvents.length > 0) {
+  if (eligibleEvents.length > 0) {
     return "major-event";
   }
 
@@ -121,6 +142,20 @@ export function weeklyMoonRoleOffset(role: WeeklyDayRole) {
   if (role === "weekly-handoff") return 2;
 
   return 0;
+}
+
+export function weeklyLeadLunationKind(title: string): "new-moon" | "full-moon" | null {
+  const normalizedTitle = title.toLowerCase();
+
+  if (normalizedTitle.includes("new moon") || normalizedTitle.includes("solar eclipse")) {
+    return "new-moon";
+  }
+
+  if (normalizedTitle.includes("full moon") || normalizedTitle.includes("lunar eclipse")) {
+    return "full-moon";
+  }
+
+  return null;
 }
 
 export function weeklyEventDescriptionFitsDateContext(description: string) {
