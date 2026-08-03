@@ -148,6 +148,26 @@ const expectedManifest = createPackageManifest({
     templates: latestEligible([...templates.templates, ...placementRows.templates], true)
   }
 }, PACKAGE_VERSION);
+const bundledManifest = readJson(`${packageDir}/bundled-manifest-v3.json`);
+const bundledManifestSummary = readJson(`${packageDir}/bundled-manifest-summary-v3.json`);
+const expectedManifestSummary = {
+  packageVersion: expectedManifest.packageVersion,
+  contentHash: expectedManifest.contentHash,
+  keyManifestHash: expectedManifest.keyManifestHash,
+  keyCount: expectedManifest.keyCount
+};
+
+assert.deepEqual(
+  bundledManifest,
+  expectedManifest,
+  "Bundled fallback manifest is stale. Run npm run build:fallback-manifest after changing source rows or templates."
+);
+assert.deepEqual(
+  bundledManifestSummary,
+  expectedManifestSummary,
+  "Bundled fallback manifest summary is stale. Run npm run build:fallback-manifest after changing source rows or templates."
+);
+
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-fallback-package-contract-"));
 const outputPath = path.join(tempDir, "mirror.json");
 
