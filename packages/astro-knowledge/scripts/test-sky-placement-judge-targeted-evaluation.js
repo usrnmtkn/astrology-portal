@@ -17,7 +17,7 @@ const {
 const activeSpec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
 const historical = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const ownerReview = require(path.join("..", "review", "sky-placement-judge-targeted-v3-owner-review.json"));
-const secondPerson = () => /\b(?:you|your|yours|yourself|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
+const secondPerson = () => /\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
 
 function fullText(article) {
   return [article.tagline, article.hook, article.lived, article.turn, ...(article.moves || [])]
@@ -26,7 +26,7 @@ function fullText(article) {
 }
 
 async function main() {
-  assert.strictEqual(activeSpec.id, "tldr-astro.voice.sky-placement.v4");
+  assert.strictEqual(activeSpec.id, "tldr-astro.voice.sky-placement.v5");
   for (const exemplar of activeSpec.exemplars) {
     assert.doesNotMatch(JSON.stringify(exemplar), secondPerson(), `${exemplar.sourceId} must be collective in every active field`);
     assert.strictEqual(lintArticle({ ...exemplar }).score, 3, `${exemplar.sourceId} must lint clean without a legacy exemption`);
@@ -81,6 +81,16 @@ async function main() {
   assert.match(noGoldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
   assert.match(noGoldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
   assert.doesNotMatch(noGoldPrompt, /Feelings get translated into tasks/);
+  assert.match(noGoldPrompt, /FIRST-READ NATURAL ENGLISH RULE/);
+  assert.match(noGoldPrompt, /The banished want refuses to stay reasonable/);
+  assert.match(noGoldPrompt, /ALLOWED COLLECTIVE LANGUAGE/);
+  assert.match(noGoldPrompt, /STACKED ENDING RULE/);
+  assert.match(noGoldPrompt, /Score 3 does not require flawless prose/);
+
+  const unnatural = fixtures.find((fixture) => fixture.caseId === "target-006");
+  const unnaturalLint = lintArticle({ ...unnatural.article, planet: unnatural.planet, sign: unnatural.sign });
+  assert.strictEqual(unnaturalLint.score, 1);
+  assert(unnaturalLint.findings.some((finding) => finding.source === "first-read-natural-english"));
 
   for (const caseId of ["target-003", "target-004"]) {
     const fixture = fixtures.find((item) => item.caseId === caseId);

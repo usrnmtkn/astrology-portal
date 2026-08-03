@@ -59,7 +59,7 @@ function lintArticle(article) {
   // file and never enter this active linter path. Transit-to-natal copy belongs
   // to a different surface and linter.
   if (!article?.allowLegacySecondPerson) {
-    const secondPerson = full.match(/\b(?:you|your|yours|yourself|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/i);
+    const secondPerson = full.match(/\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/i);
     if (secondPerson) {
       findings.push({
         severity: "fail",
@@ -99,6 +99,22 @@ function lintArticle(article) {
   }
 
   findings.push(...findBannedConstructions(full, bannedConstructions));
+
+  // Known first-read natural-English failures are deterministic. Broader
+  // personification families remain judge territory; only reviewed literals
+  // and their narrow grammatical variants belong here.
+  for (const pattern of spec.severityRules?.firstReadNaturalEnglish?.mechanicalFailPatterns || []) {
+    const m = full.match(new RegExp(pattern, "i"));
+    if (m) {
+      findings.push({
+        severity: "fail",
+        source: "first-read-natural-english",
+        term: "opaque-personification",
+        match: m[0],
+        reason: "central phrasing does not make literal sense on the first read"
+      });
+    }
+  }
 
   // -- surface bans from sky-placement.json
   for (const b of spec.outputBans.fail) {

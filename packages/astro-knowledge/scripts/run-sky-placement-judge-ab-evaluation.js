@@ -383,12 +383,16 @@ if (require.main === module) {
 }
 
 module.exports = {
+  atomicWrite,
   buildBlindArtifacts,
   buildFixtures,
   chooseBlindMapping,
+  defaultRequest,
   estimateCost,
   manifest,
+  normalizeResult,
   normalizeUsage,
   parseArgs,
+  renderArticle,
   runEvaluation
 };
