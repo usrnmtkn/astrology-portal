@@ -17,6 +17,7 @@ const {
 const activeSpec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
 const historical = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const ownerReview = require(path.join("..", "review", "sky-placement-judge-targeted-v3-owner-review.json"));
+const uranusCancerApprovalCandidate = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-approval-candidate-v1.json"));
 const secondPerson = () => /\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
 
 function fullText(article) {
@@ -76,6 +77,23 @@ async function main() {
   assert.strictEqual(ownerReview.calibrationFollowUps[0].automaticRubricChangeAuthorized, false);
   assert.strictEqual(ownerReview.adaptationProvenance.ownerApproved, false);
   assert.strictEqual(ownerReview.adaptationProvenance.promotionAuthorized, false);
+
+  const frozenTarget002 = fixtures.find((fixture) => fixture.caseId === "target-002");
+  assert.match(frozenTarget002.article.hook, /old arrangement asks one person/);
+  assert.match(frozenTarget002.article.turn, /carries the transition alone/);
+  assert.strictEqual(uranusCancerApprovalCandidate.editorialStatus, "collective_adaptation_candidate");
+  assert.strictEqual(uranusCancerApprovalCandidate.reviewStatus, "needs_review");
+  assert.strictEqual(uranusCancerApprovalCandidate.ownerApproved, false);
+  assert.strictEqual(uranusCancerApprovalCandidate.promotionAuthorized, false);
+  assert.strictEqual(uranusCancerApprovalCandidate.canonical, false);
+  assert.strictEqual(uranusCancerApprovalCandidate.provenance.frozenEvaluationPreserved, true);
+  assert.match(uranusCancerApprovalCandidate.article.hook, /one person has been carrying too much for too long/);
+  assert.match(uranusCancerApprovalCandidate.article.turn, /explain it, enforce it, and reorganize the household around it/);
+  assert.strictEqual(
+    lintArticle({ ...uranusCancerApprovalCandidate.article, planet: "uranus", sign: "cancer" }).score,
+    3,
+    "the pending exact-wording candidate must lint clean without becoming approved gold"
+  );
 
   const noGoldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
   assert.match(noGoldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);

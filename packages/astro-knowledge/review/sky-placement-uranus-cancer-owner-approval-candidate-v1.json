@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
+  "surface": "sky-placement",
+  "planet": "uranus",
+  "sign": "cancer",
+  "editorialStatus": "collective_adaptation_candidate",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "approvalScope": "Exact wording only after a separate explicit owner approval. This candidate does not approve any other adaptation, authorize content promotion, or authorize a model change.",
+  "provenance": {
+    "createdFrom": "target-002",
+    "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
+    "frozenEvaluationPreserved": true,
+    "ownerApprovedBeatEvidence": "owner-review-uranus-cancer-lived-2026-08-02",
+    "note": "The lived paragraph was already approved as beat evidence. The revised hook, turn, and final move remain pending exact-wording approval."
+  },
+  "article": {
+    "tagline": "Change who carries it",
+    "hook": "Home changes when one person has been carrying too much for too long. Uranus breaks old arrangements; in Cancer, those breaks show up in home, family roles, care, and belonging.",
+    "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
+    "turn": "Change becomes another burden when the same person has to organize every new arrangement. A new boundary changes little if the same exhausted person still has to explain it, enforce it, and reorganize the household around it.",
+    "moves": [
+      "Rewrite one household responsibility so the same person is no longer the automatic backup.",
+      "Name the emergency contact who actually shows up.",
+      "Give one room a purpose that fits how the household lives now."
+    ]
+  }
+}
