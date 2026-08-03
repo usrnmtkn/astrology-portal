@@ -4,11 +4,19 @@
   "surface": "sky-placement",
   "planet": "uranus",
   "sign": "cancer",
-  "editorialStatus": "collective_adaptation_candidate",
-  "reviewStatus": "needs_review",
-  "ownerApproved": false,
+  "editorialStatus": "current_sky_owner_approved",
+  "reviewStatus": "approved",
+  "ownerApproved": true,
   "promotionAuthorized": false,
   "canonical": false,
+  "ownerApproval": {
+    "recordedAt": "2026-08-02",
+    "scope": "article",
+    "exactWordingOnly": true,
+    "generationEvidenceAuthorized": false,
+    "governedContentPromotionAuthorized": false,
+    "automaticModelChangeAuthorized": false
+  },
   "provenance": {
     "preservesEarlierCandidates": [
       "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
@@ -18,7 +26,7 @@
     "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
     "frozenEvaluationPreserved": true,
     "promotionProvenanceInvalidation": "review/sky-placement-judge-terra-promotion-provenance-invalidation-v1.json",
-    "note": "Latest owner-directed editorial revision. V1, v2, and v3 remain distinct unapproved candidates. This exact v3 wording requires explicit owner approval before it may become calibration evidence."
+    "note": "The owner explicitly approved only the exact v3 article wording as collective Current Sky judge-calibration evidence. V1 and v2 remain distinct unapproved candidates."
   },
   "ownerReviewGuidance": [
     "Do not repeat the hook's central action or evidence in the lived paragraph; each beat must advance the sequence.",

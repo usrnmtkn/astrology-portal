@@ -40,7 +40,16 @@ async function main() {
     assert.strictEqual(exemplar.canonical, false);
   }
   assert.strictEqual(activeSpec.exemplars.filter((exemplar) => exemplar.editorialStatus === "current_sky_owner_approved").length, 0);
-  assert.strictEqual((activeSpec.ownerApprovedCalibrationExamples || []).length, 0);
+  assert.strictEqual((activeSpec.ownerApprovedCalibrationExamples || []).length, 1);
+  const approvedCalibrationV3 = activeSpec.ownerApprovedCalibrationExamples[0];
+  assert.strictEqual(approvedCalibrationV3.candidateId, "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3");
+  assert.strictEqual(approvedCalibrationV3.editorialStatus, "current_sky_owner_approved");
+  assert.strictEqual(approvedCalibrationV3.reviewStatus, "approved");
+  assert.strictEqual(approvedCalibrationV3.ownerApproved, true);
+  assert.strictEqual(approvedCalibrationV3.promotionAuthorized, false);
+  assert.strictEqual(approvedCalibrationV3.canonical, false);
+  assert.strictEqual(approvedCalibrationV3.calibrationEligible, true);
+  assert.strictEqual(approvedCalibrationV3.generationEvidenceAuthorized, false);
   assert.strictEqual(historical.activeCalibration, false);
   assert.strictEqual(historical.generationEvidence, false);
   assert.strictEqual(historical.judgeGoldEvidence, false);
@@ -112,9 +121,9 @@ async function main() {
   );
   assert.notDeepStrictEqual(uranusCancerReviewCandidateV2.article, uranusCancerApprovalCandidate.article);
   assert.strictEqual(uranusCancerReviewCandidateV3.candidateId, "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3");
-  assert.strictEqual(uranusCancerReviewCandidateV3.editorialStatus, "collective_adaptation_candidate");
-  assert.strictEqual(uranusCancerReviewCandidateV3.reviewStatus, "needs_review");
-  assert.strictEqual(uranusCancerReviewCandidateV3.ownerApproved, false);
+  assert.strictEqual(uranusCancerReviewCandidateV3.editorialStatus, "current_sky_owner_approved");
+  assert.strictEqual(uranusCancerReviewCandidateV3.reviewStatus, "approved");
+  assert.strictEqual(uranusCancerReviewCandidateV3.ownerApproved, true);
   assert.strictEqual(uranusCancerReviewCandidateV3.promotionAuthorized, false);
   assert.strictEqual(uranusCancerReviewCandidateV3.canonical, false);
   assert.deepStrictEqual(uranusCancerReviewCandidateV3.provenance.preservesEarlierCandidates, [
@@ -123,6 +132,13 @@ async function main() {
   ]);
   assert.strictEqual(uranusCancerReviewCandidateV3.provenance.replacesApprovedCalibrationEvidence, false);
   assert.strictEqual(uranusCancerReviewCandidateV3.provenance.frozenEvaluationPreserved, true);
+  assert.deepStrictEqual(uranusCancerReviewCandidateV3.article, {
+    tagline: approvedCalibrationV3.tagline,
+    hook: approvedCalibrationV3.hook,
+    lived: approvedCalibrationV3.lived,
+    turn: approvedCalibrationV3.turn,
+    moves: approvedCalibrationV3.moves
+  });
   assert.match(uranusCancerReviewCandidateV3.article.hook, /remembers every birthday, keeps the spare key/);
   assert.match(uranusCancerReviewCandidateV3.article.lived, /A sibling stops hosting every holiday/);
   assert.match(uranusCancerReviewCandidateV3.article.moves[1], /sends everyone back to the same person/);
@@ -136,8 +152,8 @@ async function main() {
 
   const goldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
   assert.match(goldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
-  assert.doesNotMatch(goldPrompt, /Home changes when one person has been carrying too much for too long/);
-  assert.match(goldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
+  assert.match(goldPrompt, /The person who remembers every birthday, keeps the spare key/);
+  assert.doesNotMatch(goldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
   assert.doesNotMatch(goldPrompt, /Feelings get translated into tasks/);
   assert.match(goldPrompt, /FIRST-READ NATURAL ENGLISH RULE/);
   assert.match(goldPrompt, /The banished want refuses to stay reasonable/);
