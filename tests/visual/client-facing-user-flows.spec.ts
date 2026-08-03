@@ -1697,6 +1697,20 @@ test.describe("client-facing user flow case studies", () => {
     expect(layout.headerControlsOverlap, "Narrow Sky header controls do not overlap").toBe(false);
     expect(layout.overflowingCardChildren, "Narrow Sky card contents stay inside their cards").toEqual([]);
     expect(layout.locationWraps, "Narrow Sky location stays on one line").toBe(false);
+
+    for (const width of [320, 390, 430]) {
+      await page.setViewportSize({ width, height: 844 });
+      const mobileRail = await page.locator(".detail-panel").boundingBox();
+      expect(mobileRail, `Sky content rail is rendered at ${width}px`).not.toBeNull();
+
+      if (mobileRail) {
+        const expectedRailLeft = (width - mobileRail.width) / 2;
+        expect(Math.abs(mobileRail.x - expectedRailLeft), `Sky content rail is centered at ${width}px`).toBeLessThanOrEqual(1);
+        expect(mobileRail.x, `Sky content rail starts inside ${width}px viewport`).toBeGreaterThanOrEqual(-1);
+        expect(mobileRail.x + mobileRail.width, `Sky content rail ends inside ${width}px viewport`).toBeLessThanOrEqual(width + 1);
+      }
+    }
+
     await expectNoHorizontalOverflow(page, "Narrow mobile Sky");
     await assertNoClientErrors();
   });
