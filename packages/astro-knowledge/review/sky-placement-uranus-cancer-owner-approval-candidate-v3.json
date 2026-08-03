@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3",
+  "surface": "sky-placement",
+  "planet": "uranus",
+  "sign": "cancer",
+  "editorialStatus": "collective_adaptation_candidate",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "provenance": {
+    "preservesEarlierCandidates": [
+      "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
+      "sky-placement-uranus-cancer-collective-owner-approval-candidate-v2"
+    ],
+    "replacesApprovedCalibrationEvidence": false,
+    "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
+    "frozenEvaluationPreserved": true,
+    "promotionProvenanceInvalidation": "review/sky-placement-judge-terra-promotion-provenance-invalidation-v1.json",
+    "note": "Latest owner-directed editorial revision. V1, v2, and v3 remain distinct unapproved candidates. This exact v3 wording requires explicit owner approval before it may become calibration evidence."
+  },
+  "ownerReviewGuidance": [
+    "Do not repeat the hook's central action or evidence in the lived paragraph; each beat must advance the sequence.",
+    "Replace category lists such as remembering, helping, hosting, and handling emergencies with ordinary evidence that shows who does what.",
+    "Moves should continue the article's pressure and consequence instead of switching into administrative household instructions.",
+    "Preserve the turn's direct contradiction: agreement that a role is unfair means little if the same person must do all the work required to change it."
+  ],
+  "article": {
+    "tagline": "Change who carries it",
+    "hook": "The person who remembers every birthday, keeps the spare key, and gets called when someone needs help may stop doing all of it. Uranus in Cancer changes the private rules around home and family, especially the ones that only worked because one person was always available.",
+    "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. A sibling stops hosting every holiday, a guest room turns into an office, and the emergency contact list gets rewritten because the person everyone relied on is no longer willing to be the only plan. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old arrangement demands more than anyone should give.",
+    "turn": "Everyone may agree that the old setup was unfair and still expect the same person to fix it. They make the schedule, explain the new boundary, remind everyone what changed, and take the complaints when someone else is inconvenienced. A family role has not changed if one person is still doing all the work required to change it.",
+    "moves": [
+      "Give one recurring responsibility to someone who will handle it without being reminded.",
+      "Update the emergency plan before the next emergency sends everyone back to the same person.",
+      "Change one room, routine, or family agreement that only works because one person keeps giving more than everyone else."
+    ]
+  }
+}

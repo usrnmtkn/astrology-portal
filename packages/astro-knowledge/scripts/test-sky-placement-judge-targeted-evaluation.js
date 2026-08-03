@@ -19,6 +19,7 @@ const historical = require(path.join("..", "voice", "tldr-astro", "fixtures", "s
 const ownerReview = require(path.join("..", "review", "sky-placement-judge-targeted-v3-owner-review.json"));
 const uranusCancerApprovalCandidate = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-approval-candidate-v1.json"));
 const uranusCancerReviewCandidateV2 = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-approval-candidate-v2.json"));
+const uranusCancerReviewCandidateV3 = require(path.join("..", "review", "sky-placement-uranus-cancer-owner-approval-candidate-v3.json"));
 const secondPerson = () => /\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/gi;
 
 function fullText(article) {
@@ -110,6 +111,28 @@ async function main() {
     "the new editorial revision must lint clean without inheriting v1 approval"
   );
   assert.notDeepStrictEqual(uranusCancerReviewCandidateV2.article, uranusCancerApprovalCandidate.article);
+  assert.strictEqual(uranusCancerReviewCandidateV3.candidateId, "sky-placement-uranus-cancer-collective-owner-approval-candidate-v3");
+  assert.strictEqual(uranusCancerReviewCandidateV3.editorialStatus, "collective_adaptation_candidate");
+  assert.strictEqual(uranusCancerReviewCandidateV3.reviewStatus, "needs_review");
+  assert.strictEqual(uranusCancerReviewCandidateV3.ownerApproved, false);
+  assert.strictEqual(uranusCancerReviewCandidateV3.promotionAuthorized, false);
+  assert.strictEqual(uranusCancerReviewCandidateV3.canonical, false);
+  assert.deepStrictEqual(uranusCancerReviewCandidateV3.provenance.preservesEarlierCandidates, [
+    "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
+    "sky-placement-uranus-cancer-collective-owner-approval-candidate-v2"
+  ]);
+  assert.strictEqual(uranusCancerReviewCandidateV3.provenance.replacesApprovedCalibrationEvidence, false);
+  assert.strictEqual(uranusCancerReviewCandidateV3.provenance.frozenEvaluationPreserved, true);
+  assert.match(uranusCancerReviewCandidateV3.article.hook, /remembers every birthday, keeps the spare key/);
+  assert.match(uranusCancerReviewCandidateV3.article.lived, /A sibling stops hosting every holiday/);
+  assert.match(uranusCancerReviewCandidateV3.article.moves[1], /sends everyone back to the same person/);
+  assert.match(uranusCancerReviewCandidateV3.article.turn, /A family role has not changed if one person is still doing all the work required to change it/);
+  assert.strictEqual(
+    lintArticle({ ...uranusCancerReviewCandidateV3.article, planet: "uranus", sign: "cancer" }).score,
+    3,
+    "the v3 editorial revision must lint clean without inheriting approval"
+  );
+  assert.notDeepStrictEqual(uranusCancerReviewCandidateV3.article, uranusCancerReviewCandidateV2.article);
 
   const goldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
   assert.match(goldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
