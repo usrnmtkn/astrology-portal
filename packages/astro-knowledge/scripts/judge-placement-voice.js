@@ -106,8 +106,8 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
     `  - If MOVES are present: each must be a specific doable action that only fits this placement. "Journal about your feelings" or "trust the process" fails; the moves are held to the same swap test as the body.`,
     `  - Flag any sentence matching the CC/SD constructions in voice/banned-constructions.json; the tic list identifies copy that reads as CHANI or Spirit Daughter rather than the house voice. Owner-verbatim text is exempt. Treat nearby cases as a judged consideration, not an automatic fail: specific, falsifiable permission to do a nameable thing is house voice; generic affirmational permission is not.`,
     ``,
-    `OWNER-APPROVED BEAT EVIDENCE (judge movement and consequence; do not require or reward copied wording):`,
-    ...(spec.ownerApprovedBeatEvidence || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()}: ${e.text}\n      EDITORIAL USE: ${e.use}`),
+    `OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE (positive feedback, not exact-wording approval or gold):`,
+    ...(spec.ownerReviewedBeatCandidates || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()}: ${e.text}\n      EDITORIAL USE: ${e.use}`),
     ``,
     `CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD for this register:`,
     ...(gold.length

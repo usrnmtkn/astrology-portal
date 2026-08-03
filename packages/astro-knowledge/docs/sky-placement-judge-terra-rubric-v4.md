@@ -2,7 +2,7 @@
 
 Date: 2026-08-02 (America/New_York)
 
-> Subsequent status: after the owner approved one exact noncanonical collective calibration article, Terra-low passed the five-sample promotion gate and became active. See `sky-placement-judge-terra-promotion-2026-08-02.md`. The directional result below remains the record of the earlier one-sample rubric rerun.
+> Subsequent status: Terra-low's technical five-sample evaluation separated the controls, but its positive example lacked valid exact-wording owner-approval provenance. The provisional activation was rolled back to `gpt-4.1-mini`; no replacement calibration has been authorized. See `sky-placement-judge-terra-promotion-2026-08-02.md`. The directional result below remains the record of the earlier one-sample rubric rerun.
 
 ## Decision
 
