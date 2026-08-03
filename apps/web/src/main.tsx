@@ -51,11 +51,7 @@ async function startApp() {
   const appModulePromise = import("./App");
 
   if (!isAdminContentPath()) {
-    await Promise.all([
-      import("./styles.css"),
-      import("./styles/responsive.css"),
-      import("./styles/card-systems.css")
-    ]);
+    await import("./styles.css");
   }
 
   const { App } = await appModulePromise;
