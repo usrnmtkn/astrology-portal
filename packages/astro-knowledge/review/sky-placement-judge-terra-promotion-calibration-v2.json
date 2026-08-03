@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-03T03:13:21.811Z",
+  "laneId": "judge:sky-placement",
+  "registryVersion": "2026-08-03.5",
+  "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending+owner-gold-v3",
+  "rubricVersion": "sky-placement-voice-v5",
+  "evaluationSetVersion": "sky-placement-owner-approved-v3+weak-v5",
+  "policyVersion": "editorial-judge-policy-v1",
+  "reportKind": "calibration",
+  "sampleCount": 5,
+  "promotionEligible": true,
+  "status": "passed",
+  "approvedMean": 3,
+  "weakMean": 1.2857142857142858,
+  "separation": 1.7142857142857142,
+  "minimumSeparation": 1.5,
+  "disagreement": false,
+  "approved": [
+    {
+      "id": "sky-placement-uranus-cancer-owner-approved-calibration-v3",
+      "sourceSha256": "6c0e99d173f4c916ff919d538f26669015be2ba15c7806a6f4f4fa902e7ddebf",
+      "score": 3,
+      "verdict": "in-voice",
+      "disagreement": false
+    }
+  ],
+  "weakControls": [
+    {
+      "id": "retired kumbaya assembly",
+      "sourceSha256": "3e0b8a6f2ff2534b11295c21040bd7453a8433939e7afc0671a9a5123f56193b",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "swap-anywhere generic",
+      "sourceSha256": "192f594db0fc6b453b2b78d09c22066ae80b01324d69f001b143e32b1d9b2651",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "unnatural banished-want personification",
+      "sourceSha256": "26b9a3fb6f43f05b1fdeaf8fd5ddd99869b13f5256b107b861285d912568f5d7",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "unsupported Chiron-in-Taurus work framing",
+      "sourceSha256": "e1ac0cb1fc60b35fd2eeb2511d6c71d279d643316fa515eed28fff1a68eb44d8",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "flat administrative inventory",
+      "sourceSha256": "59dfd968b22692719c4dd130cabf856e79d508e715cab0e26190df5af073c835",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "polished abstraction and unnatural personification",
+      "sourceSha256": "da7382b3aec9d15581e7f30ec841c7d8edc6a4e0ee80f9e1de613261df442031",
+      "score": 2,
+      "verdict": "borderline",
+      "disagreement": false
+    },
+    {
+      "id": "metaphor pile and manufactured aphorism",
+      "sourceSha256": "e7fb8c019eff927c3bf5ff58b86475999ba5c4d164091b7b9a30c8dac313e4a1",
+      "score": 2,
+      "verdict": "borderline",
+      "disagreement": false
+    }
+  ]
+}
