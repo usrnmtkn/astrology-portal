@@ -78,11 +78,7 @@ const javaScriptFiles = builtFiles.filter((item) => item.file.endsWith(".js"));
 const cssFiles = builtFiles.filter((item) => item.file.endsWith(".css"));
 const entryKey = Object.keys(manifest).find((key) => manifest[key]?.isEntry);
 const appKey = Object.keys(manifest).find((key) => manifest[key]?.name === "App");
-const readerStyleKeys = [
-  "src/styles.css",
-  "src/styles/responsive.css",
-  "src/styles/card-systems.css"
-];
+const readerStyleKeys = ["src/styles.css"];
 
 if (!entryKey || !appKey || readerStyleKeys.some((key) => !manifest[key])) {
   console.error("Vite manifest is missing the web entry, App module, or reader startup styles.");
