@@ -10,7 +10,9 @@ const {
   resolveActiveRelease,
   resolveCandidateRelease,
   rollbackActive,
+  sha256,
   stageCandidate,
+  validateCalibrationReport,
   validateRegistry,
   writeRegistry
 } = require("./editorial-model-registry.js");
@@ -47,8 +49,20 @@ try {
   assert.strictEqual(registry.lanes["generation:default"].candidate.model, "gpt-5.6-terra");
   assert.strictEqual(registry.lanes["generation:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["judge:sky-exact-aspect"].candidate.model, "gpt-5.6-sol");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.reasoningEffort, "xhigh");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-4.1-mini");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).action, "promote");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].history.at(-1).approvedBy, "owner");
+  const placementPromotionReport = require(path.join("..", "review", "sky-placement-judge-terra-promotion-calibration-v1.json"));
+  validateCalibrationReport(placementPromotionReport, registry.lanes["judge:sky-placement"].active);
+  assert.strictEqual(
+    registry.lanes["judge:sky-placement"].history.at(-1).calibrationReportSha256,
+    sha256(JSON.stringify(placementPromotionReport)),
+    "the active placement release must retain the exact passing report hash"
+  );
   assert.strictEqual(registry.lanes[laneId].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes[laneId].candidate.reasoningEffort, "low");
   const candidate = {
@@ -171,6 +185,11 @@ try {
   assert.strictEqual(configured.laneId, laneId);
   assert.strictEqual(configured.releaseId, release.releaseId);
   assert.strictEqual(configured.registryOverride, false);
+  const placementActive = judgeConfig("sky-placement");
+  assert.strictEqual(placementActive.model, "gpt-5.6-terra");
+  assert.strictEqual(placementActive.reasoningEffort, "low");
+  assert.strictEqual(placementActive.registryState, "active");
+  assert.strictEqual(placementActive.registryOverride, false, "generic OPENAI_MODEL must not override a surface-specific judge lane");
 
   process.env.OPENAI_JUDGE_MODEL = "temporary-evaluation-model";
   const overridden = judgeConfig("sky-article-longform");
