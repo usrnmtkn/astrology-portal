@@ -17,9 +17,9 @@ const {
 async function main() {
   const registry = readRegistry();
   const lane = registry.lanes["judge:sky-placement"];
-  assert.strictEqual(lane.active.model, "gpt-5.6-terra", "the later passing promotion calibration must activate Terra-low");
-  assert.strictEqual(lane.active.reasoningEffort, "low");
-  assert.strictEqual(manifest.runtime.activeReleaseId, lane.rollback.releaseId, "the archived experiment records the runtime that was active when it ran");
+  assert.strictEqual(lane.active.model, "gpt-4.1-mini", "invalid owner-approval provenance must roll the provisional Terra activation back");
+  assert.strictEqual(lane.rollback.model, "gpt-5.6-terra");
+  assert.strictEqual(manifest.runtime.activeReleaseId, lane.active.releaseId, "the archived experiment and restored runtime both use the original active release");
   assert.strictEqual(manifest.status, "completed-superseded");
   assert.strictEqual(manifest.liveRerunAllowed, false);
   assert.strictEqual(manifest.promotionAuthorized, false);

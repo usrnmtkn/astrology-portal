@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "candidateId": "sky-placement-uranus-cancer-collective-owner-review-candidate-v2",
+  "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v2",
   "surface": "sky-placement",
   "planet": "uranus",
   "sign": "cancer",
@@ -10,12 +10,12 @@
   "promotionAuthorized": false,
   "canonical": false,
   "provenance": {
-    "supersedesForReview": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
+    "preservesEarlierCandidate": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
     "replacesApprovedCalibrationEvidence": false,
     "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
     "frozenEvaluationPreserved": true,
     "activeCalibrationReport": "review/sky-placement-judge-terra-promotion-calibration-v1.json",
-    "note": "New owner-authored editorial revision. It does not replace the exact v1 calibration gold unless this wording receives separate explicit approval and a new calibration release is governed accordingly."
+    "note": "Latest owner-directed editorial revision. Neither v1 nor v2 is owner-approved. This exact v2 wording requires explicit owner approval before it may become calibration evidence."
   },
   "ownerReviewGuidance": [
     "Name observable behavior before reducing a person to a role such as the reliable person or the automatic backup.",
