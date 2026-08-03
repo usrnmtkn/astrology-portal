@@ -146,6 +146,26 @@ try {
   assert.notEqual(gatedStation.body, rows[0].body, "Needs-review station copy must stay out of reader view.");
   assert.equal(approvedStation.body, rows[0].body, "Approval must switch station copy without a code change.");
 
+  const personalizedChironStation = weekly.resolveWeeklyStationCopy({
+    ...stationEvent,
+    id: "station-chiron-retrograde-test",
+    title: "Chiron stations retrograde",
+    planet: "Chiron",
+    sign: "Taurus"
+  }, rows, "Gemini");
+  assert.equal(
+    personalizedChironStation.headline,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.equal(
+    personalizedChironStation.driverLabel,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
+  );
+
   const lunationEvent = {
     id: "new-moon-test",
     type: "lunation",
@@ -829,6 +849,16 @@ try {
     ].join("\n"),
     /Chiron stations retrograde/u,
     "A station outside the local Monday-Sunday boundary must stay outside the weekly reading."
+  );
+  assert.match(
+    personalizedChironStation.headline,
+    /Chiron stations retrograde in your 12th house/u,
+    "The station headline must name the house calculated from the event sign and rising sign."
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief/u,
+    "The station write-up must include the approved personalized transit-house layer."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
