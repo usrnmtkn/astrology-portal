@@ -19,7 +19,7 @@
   --color-ink-2: #4e5360;
   --color-gray-500: #6c7280;
   --color-muted: var(--color-gray-500);
-  --color-faint: #9aa0ae;
+  --color-faint: #707683;
   --color-soft: #d7dae3;
   --color-line: rgba(28, 32, 52, 0.09);
   --color-line-2: rgba(28, 32, 52, 0.055);
@@ -97,6 +97,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
+  --focus-ring: color-mix(in srgb, var(--ink) 76%, var(--surface));
   --danger: var(--color-danger);
   --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
@@ -164,6 +165,7 @@
   --shadow-hero: var(--elev-hero);
   --shadow-topbar-scrolled: var(--elev-topbar-scrolled);
   --shadow-mobile-panel: var(--elev-mobile-panel);
+  --shadow-popover: var(--shadow-floating);
   --shadow-overlay:
     0 24px 70px rgba(28, 32, 52, 0.12),
     0 4px 16px rgba(28, 32, 52, 0.06);
@@ -214,6 +216,7 @@
   --tracking-pill: 0.04em;
   --tracking-number: 0;
   --tracking-tiny: var(--tracking-label);
+  --tracking-code: 0.24em;
 
   --leading-display: 1.08;
   --leading-h1: 1.12;
@@ -225,6 +228,8 @@
   --leading-label: 1;
   --leading-pill: 1;
   --leading-tight: var(--leading-h1);
+  --leading-copy: var(--leading-description);
+  --leading-heading: var(--leading-title);
 
   --type-display-size: clamp(34px, 8vw, 42px);
   --type-h1-size: clamp(30px, 4vw, 46px);
@@ -389,6 +394,8 @@
   --article-meta-size: var(--type-meta-size);
   --article-label-size: var(--type-label-size);
   --text-body: var(--type-body-size);
+  --text-body-size: var(--text-body);
+  --text-body-lg-size: var(--type-title-size);
   --text-body-sm: var(--type-description-size);
   --text-row-value: var(--type-body-size);
   --text-description: var(--type-description-size);
@@ -671,6 +678,7 @@
   --friend-add-chart-close-dark-bg: color-mix(in srgb, var(--surface-2) 88%, var(--color-white) 12%);
   --moon-phase-light: var(--color-moon-phase-light);
   --moon-phase-shadow: var(--color-moon-phase-shadow);
+  --lunation: var(--color-moon-phase-light);
   --floating-button-bg: var(--surface);
   --floating-button-bg-hover: #e6e8ef;
   --floating-button-border: var(--nav-border);
@@ -721,6 +729,7 @@
   --modal-padding: var(--sp-4);
   --modal-width: var(--container-dialog);
   --chart-size: clamp(560px, 42vw, 700px);
+  --chart-wheel-size: var(--chart-size);
   --relationship-picker-width: var(--container-picker);
   --deferred-placeholder-height: 180px;
   --z-nav: 100;
@@ -834,7 +843,7 @@
   --color-ink: #eceef2;
   --color-ink-2: #aeb2bd;
   --color-muted: #888d99;
-  --color-faint: #696e7b;
+  --color-faint: #858a96;
   --color-soft: #363b47;
   --color-line: rgba(255, 255, 255, 0.08);
   --color-line-2: rgba(255, 255, 255, 0.05);

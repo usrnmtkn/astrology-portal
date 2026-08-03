@@ -88,7 +88,7 @@
 
 .add-chart-pronouns {
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--card-border);
   margin: 0;
   padding: calc(var(--space-4) + var(--space-1) / 2) 0 0;
 }
@@ -278,4 +278,3 @@
 .add-chart-submit:hover {
   opacity: 0.92;
 }
-
