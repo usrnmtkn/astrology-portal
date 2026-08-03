@@ -4,6 +4,7 @@ import {
   resolveWeeklyDayRole,
   weeklyEventDescriptionFitsDateContext,
   weeklyFallbackGuidanceSource,
+  weeklyLeadLunationKind,
   weeklyMoonRoleOffset
 } from "../apps/web/src/features/calendar/weeklyDayRole.ts";
 
@@ -52,6 +53,16 @@ assert.equal(resolveWeeklyDayRole({
 
 assert.equal(resolveWeeklyDayRole({
   ...base,
+  day: day("2026-08-04", "Aries"),
+  previousDay: day("2026-08-03", "Aries"),
+  significantEvents: [event("lunation", {
+    title: "Last Quarter Moon in Aries",
+    primary: false
+  })]
+}), "full-day-moon", "A quarter phase must not interrupt a consecutive Moon-in-sign write-up.");
+
+assert.equal(resolveWeeklyDayRole({
+  ...base,
   significantEvents: [event("station", { title: "Mercury stations direct" })]
 }), "station");
 
@@ -95,6 +106,7 @@ assert.equal(preferredWeeklyGuidanceSource("integration"), "phase");
 assert.equal(preferredWeeklyGuidanceSource("preparation"), "phase");
 assert.equal(preferredWeeklyGuidanceSource("station"), "event");
 assert.equal(preferredWeeklyGuidanceSource("moon-ingress"), "moon");
+assert.equal(preferredWeeklyGuidanceSource("full-day-moon"), "moon");
 assert.equal(
   weeklyFallbackGuidanceSource("integration", false),
   "moon",
@@ -113,6 +125,15 @@ assert.equal(
 assert.equal(weeklyMoonRoleOffset("moon-ingress"), 0);
 assert.equal(weeklyMoonRoleOffset("full-day-moon"), 1);
 assert.equal(weeklyMoonRoleOffset("weekly-handoff"), 2);
+assert.equal(weeklyLeadLunationKind("New Moon in Leo"), "new-moon");
+assert.equal(weeklyLeadLunationKind("Solar Eclipse in Leo"), "new-moon");
+assert.equal(weeklyLeadLunationKind("Full Moon in Aquarius"), "full-moon");
+assert.equal(weeklyLeadLunationKind("Lunar Eclipse in Aquarius"), "full-moon");
+assert.equal(
+  weeklyLeadLunationKind("Last Quarter Moon in Taurus"),
+  null,
+  "Quarter moons must not borrow Full Moon copy in the weekly hero"
+);
 assert.equal(weeklyEventDescriptionFitsDateContext("Today, the Sun is trine Neptune."), false);
 assert.equal(weeklyEventDescriptionFitsDateContext("On Monday, the Sun is trine Neptune."), true);
 
