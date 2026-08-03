@@ -1,0 +1,11 @@
+{
+  "releaseId": "sky-placement-judge-openai-gpt-5.6-sol-candidate-v2",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "xhigh",
+  "promptVersion": "sky-placement-voice-v4:provenance-separated-no-active-golds",
+  "rubricVersion": "sky-placement-voice-v4",
+  "evaluationSetVersion": "sky-placement-targeted-provenance-v3",
+  "policyVersion": "editorial-judge-policy-v1",
+  "notes": "Unpromoted future experiment. The completed comparison did not justify routine use; no promotion is authorized. Pro mode and max reasoning remain excluded from this lane."
+}

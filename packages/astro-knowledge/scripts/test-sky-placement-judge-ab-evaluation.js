@@ -17,8 +17,9 @@ const {
 async function main() {
   const registry = readRegistry();
   const lane = registry.lanes["judge:sky-placement"];
-  assert.strictEqual(lane.active.model, "gpt-4.1-mini", "the experiment must not replace the active runtime");
-  assert.strictEqual(manifest.runtime.activeReleaseId, lane.active.releaseId);
+  assert.strictEqual(lane.active.model, "gpt-5.6-terra", "the later passing promotion calibration must activate Terra-low");
+  assert.strictEqual(lane.active.reasoningEffort, "low");
+  assert.strictEqual(manifest.runtime.activeReleaseId, lane.rollback.releaseId, "the archived experiment records the runtime that was active when it ran");
   assert.strictEqual(manifest.status, "completed-superseded");
   assert.strictEqual(manifest.liveRerunAllowed, false);
   assert.strictEqual(manifest.promotionAuthorized, false);

@@ -39,8 +39,8 @@ const TIER_HINT = {
 // Gold standard trios from the SAME tier, topped up cross-tier when thin
 // (the social tier has no exemplar yet; generational is its closest register).
 function goldStandard(tier, n = 2) {
-  const all = spec.exemplars.filter((e) =>
-    e.canonical === true
+  const all = (spec.ownerApprovedCalibrationExamples || []).filter((e) =>
+    e.calibrationEligible === true
     && e.ownerApproved === true
     && e.editorialStatus === "current_sky_owner_approved"
   );

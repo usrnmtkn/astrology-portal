@@ -38,6 +38,14 @@ async function main() {
     assert.strictEqual(exemplar.canonical, false);
   }
   assert.strictEqual(activeSpec.exemplars.filter((exemplar) => exemplar.editorialStatus === "current_sky_owner_approved").length, 0);
+  assert.strictEqual(activeSpec.ownerApprovedCalibrationExamples.length, 1);
+  const approvedCalibration = activeSpec.ownerApprovedCalibrationExamples[0];
+  assert.strictEqual(approvedCalibration.editorialStatus, "current_sky_owner_approved");
+  assert.strictEqual(approvedCalibration.reviewStatus, "approved");
+  assert.strictEqual(approvedCalibration.ownerApproved, true);
+  assert.strictEqual(approvedCalibration.promotionAuthorized, false);
+  assert.strictEqual(approvedCalibration.canonical, false);
+  assert.strictEqual(approvedCalibration.calibrationEligible, true);
   assert.strictEqual(historical.activeCalibration, false);
   assert.strictEqual(historical.generationEvidence, false);
   assert.strictEqual(historical.judgeGoldEvidence, false);
@@ -81,12 +89,19 @@ async function main() {
   const frozenTarget002 = fixtures.find((fixture) => fixture.caseId === "target-002");
   assert.match(frozenTarget002.article.hook, /old arrangement asks one person/);
   assert.match(frozenTarget002.article.turn, /carries the transition alone/);
-  assert.strictEqual(uranusCancerApprovalCandidate.editorialStatus, "collective_adaptation_candidate");
-  assert.strictEqual(uranusCancerApprovalCandidate.reviewStatus, "needs_review");
-  assert.strictEqual(uranusCancerApprovalCandidate.ownerApproved, false);
+  assert.strictEqual(uranusCancerApprovalCandidate.editorialStatus, "current_sky_owner_approved");
+  assert.strictEqual(uranusCancerApprovalCandidate.reviewStatus, "approved");
+  assert.strictEqual(uranusCancerApprovalCandidate.ownerApproved, true);
   assert.strictEqual(uranusCancerApprovalCandidate.promotionAuthorized, false);
   assert.strictEqual(uranusCancerApprovalCandidate.canonical, false);
   assert.strictEqual(uranusCancerApprovalCandidate.provenance.frozenEvaluationPreserved, true);
+  assert.deepStrictEqual(uranusCancerApprovalCandidate.article, {
+    tagline: approvedCalibration.tagline,
+    hook: approvedCalibration.hook,
+    lived: approvedCalibration.lived,
+    turn: approvedCalibration.turn,
+    moves: approvedCalibration.moves
+  });
   assert.match(uranusCancerApprovalCandidate.article.hook, /one person has been carrying too much for too long/);
   assert.match(uranusCancerApprovalCandidate.article.turn, /explain it, enforce it, and reorganize the household around it/);
   assert.strictEqual(
@@ -95,15 +110,16 @@ async function main() {
     "the pending exact-wording candidate must lint clean without becoming approved gold"
   );
 
-  const noGoldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
-  assert.match(noGoldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
-  assert.match(noGoldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
-  assert.doesNotMatch(noGoldPrompt, /Feelings get translated into tasks/);
-  assert.match(noGoldPrompt, /FIRST-READ NATURAL ENGLISH RULE/);
-  assert.match(noGoldPrompt, /The banished want refuses to stay reasonable/);
-  assert.match(noGoldPrompt, /ALLOWED COLLECTIVE LANGUAGE/);
-  assert.match(noGoldPrompt, /STACKED ENDING RULE/);
-  assert.match(noGoldPrompt, /Score 3 does not require flawless prose/);
+  const goldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
+  assert.match(goldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
+  assert.match(goldPrompt, /Home changes when one person has been carrying too much for too long/);
+  assert.doesNotMatch(goldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
+  assert.doesNotMatch(goldPrompt, /Feelings get translated into tasks/);
+  assert.match(goldPrompt, /FIRST-READ NATURAL ENGLISH RULE/);
+  assert.match(goldPrompt, /The banished want refuses to stay reasonable/);
+  assert.match(goldPrompt, /ALLOWED COLLECTIVE LANGUAGE/);
+  assert.match(goldPrompt, /STACKED ENDING RULE/);
+  assert.match(goldPrompt, /Score 3 does not require flawless prose/);
 
   const unnatural = fixtures.find((fixture) => fixture.caseId === "target-006");
   const unnaturalLint = lintArticle({ ...unnatural.article, planet: unnatural.planet, sign: unnatural.sign });

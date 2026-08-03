@@ -15,12 +15,15 @@
 //
 //   node scripts/test-placement-judge-calibration.js
 
+const fs = require("fs");
 const path = require("path");
 const { judgeArticle, TIER_OF } = require("./judge-placement-voice.js");
+const { sha256 } = require("./editorial-judge-runtime.js");
+const { judgeConfig } = require("./generate-sky-aspect-cards.js");
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));
 
-const goldExemplars = spec.exemplars.filter((e) =>
-  e.canonical === true
+const goldExemplars = (spec.ownerApprovedCalibrationExamples || []).filter((e) =>
+  e.calibrationEligible === true
   && e.ownerApproved === true
   && e.editorialStatus === "current_sky_owner_approved"
 );
@@ -95,15 +98,43 @@ const knownWeak = [
   }
 ];
 
-async function main() {
+function articleOf(value) {
+  return {
+    ...(value.tagline ? { tagline: value.tagline } : {}),
+    hook: value.hook,
+    lived: value.lived,
+    turn: value.turn,
+    ...(Array.isArray(value.moves) ? { moves: value.moves } : {})
+  };
+}
+
+function sampleRecord(value, result) {
+  return {
+    id: value.sourceId || value.label,
+    sourceSha256: sha256(JSON.stringify(articleOf(value))),
+    score: result.score,
+    verdict: result.verdict || "",
+    disagreement: Boolean(result.disagreement)
+  };
+}
+
+async function main({ reportPath = "" } = {}) {
   if (!goldExemplars.length) {
     throw new Error("No current_sky_owner_approved full-article gold exists; live promotion calibration is intentionally blocked.");
+  }
+  const config = judgeConfig("sky-placement");
+  if (config.registryState !== "candidate" || config.registryOverride) {
+    throw new Error(
+      `Promotion calibration must use the staged candidate release without a provider, model, or reasoning override (state=${config.registryState}, model=${config.model}, override=${config.registryOverride}).`
+    );
   }
   let goldOff = 0;
   let goldThree = 0;
   let goldSum = 0;
   let weakSum = 0;
   let weakFails = 0;
+  const approved = [];
+  const weakControls = [];
 
   for (const e of goldExemplars) {
     // median of 5 samples for a stable read (self-consistency)
@@ -114,6 +145,7 @@ async function main() {
     if (r.score === 1) goldOff++;
     if (r.score === 3) goldThree++;
     goldSum += r.score;
+    approved.push(sampleRecord(e, r));
     console.log(`${r.score === 3 ? "OK " : r.score === 2 ? "~  " : "!! "} exemplar ${e.sourceId} -> ${r.score} (${r.verdict})`);
   }
   for (const draft of knownWeak) {
@@ -124,6 +156,7 @@ async function main() {
     const ok = r.score <= 2;
     if (!ok) weakFails++;
     weakSum += r.score;
+    weakControls.push(sampleRecord(draft, r));
     console.log(`${ok ? "OK " : "!! "} known-weak (${draft.label}) -> ${r.score} (${r.verdict})  ${r.why || ""}`);
   }
 
@@ -131,25 +164,62 @@ async function main() {
   const goldMean = goldSum / N;
   const weakMean = weakSum / knownWeak.length;
   const separation = goldMean - weakMean;
-  const pass = goldOff === 0 && weakFails === 0 && separation >= 1.5;
+  const disagreement = [...approved, ...weakControls].some((result) => result.disagreement);
+  const pass = goldOff === 0 && weakFails === 0 && separation >= 1.5 && !disagreement;
+  const report = {
+    schemaVersion: 1,
+    recordedAt: new Date().toISOString(),
+    laneId: config.laneId,
+    registryVersion: config.registryVersion,
+    releaseId: config.releaseId,
+    provider: config.provider,
+    model: config.model,
+    reasoningEffort: config.reasoningEffort ?? null,
+    promptVersion: config.promptVersion,
+    rubricVersion: config.rubricVersion,
+    evaluationSetVersion: config.evaluationSetVersion,
+    policyVersion: config.policyVersion,
+    reportKind: "calibration",
+    sampleCount: 5,
+    promotionEligible: pass,
+    status: pass ? "passed" : "failed",
+    approvedMean: goldMean,
+    weakMean,
+    separation,
+    minimumSeparation: 1.5,
+    disagreement,
+    approved,
+    weakControls
+  };
+  if (reportPath) {
+    const resolved = path.resolve(reportPath);
+    fs.mkdirSync(path.dirname(resolved), { recursive: true });
+    fs.writeFileSync(resolved, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    console.log(`Calibration report: ${resolved}`);
+  }
   console.log(`\nexemplar mean ${goldMean.toFixed(2)} (${goldThree}/${N} at 3, ${goldOff} off-voice), weak mean ${weakMean.toFixed(2)} (${weakFails} passed as 3), separation ${separation.toFixed(2)} (need >= 1.50).`);
   if (!pass) {
-    console.error("Judge is NOT calibrated: it does not separate good from bad by a clear margin, or it mis-rated a control.");
-    process.exit(1);
+    throw new Error(`Judge is NOT calibrated: separation or control checks failed${disagreement ? ", or five-sample disagreement was present" : ""}.`);
   }
   console.log("Judge calibrated: separates good from bad by a wide margin, no control mis-rated.");
+  return report;
 }
 
 if (require.main === module) {
   if (!process.argv.includes("--authorize-live")) {
-    console.log(`Calibration contract verified: ${goldExemplars.length} current-sky owner-approved golds, ${collectiveAdaptationControls.length} needs-review collective controls, and ${knownWeak.length} weak controls. Live promotion calibration is blocked until collective wording is owner-approved.`);
+    console.log(`Calibration contract verified: ${goldExemplars.length} current-sky owner-approved golds, ${collectiveAdaptationControls.length} needs-review collective controls, and ${knownWeak.length} weak controls.`);
   } else {
-    main().catch((err) => {
+    const reportIndex = process.argv.indexOf("--report");
+    const reportPath = reportIndex >= 0 ? process.argv[reportIndex + 1] : "";
+    if (reportIndex >= 0 && !reportPath) {
+      console.error("--report requires a file path.");
+      process.exitCode = 1;
+    } else main({ reportPath }).catch((err) => {
       console.error(`Calibration could not run: ${err.message}`);
       console.error("(This test needs the judge model wired - set the generator's API key.)");
-      process.exit(1);
+      process.exitCode = 1;
     });
   }
 }
 
-module.exports = { collectiveAdaptationControls, goldExemplars, knownWeak, main };
+module.exports = { articleOf, collectiveAdaptationControls, goldExemplars, knownWeak, main, sampleRecord };

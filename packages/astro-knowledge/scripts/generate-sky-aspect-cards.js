@@ -828,7 +828,7 @@ function modelConfig(role = "generation", surface = "default") {
 
   if (provider === "openai") {
     const configuredModel = isJudge
-      ? (process.env.OPENAI_JUDGE_MODEL || process.env.OPENAI_MODEL)
+      ? process.env.OPENAI_JUDGE_MODEL
       : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
     const model = configuredModel || registryModel || "gpt-4.1-mini";
     const reasoningEffort = openAiReasoningEffort({ isJudge, model, release });

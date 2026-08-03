@@ -19,7 +19,9 @@ async function main() {
   assert.strictEqual(evaluationManifest.treatment.model, "gpt-5.6-terra");
   assert.strictEqual(evaluationManifest.treatment.reasoningEffort, "low");
   assert.strictEqual(evaluationManifest.promotionGate.thisRunPromotionEligible, false);
-  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-4.1-mini");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-5.6-terra");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
+  assert.strictEqual(registry.lanes["judge:sky-placement"].rollback.model, "gpt-4.1-mini");
   assert.strictEqual(registry.lanes["judge:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.notStrictEqual(registry.lanes["judge:sky-placement"].candidate.promotionAuthorized, true);
 
@@ -70,7 +72,7 @@ async function main() {
   assert.strictEqual(run.results.find((result) => result.caseId === "target-006").effective.score, 1);
   assert(fs.existsSync(path.join(outDir, "terra-review.md")));
   assert(fs.existsSync(path.join(outDir, "results.json")));
-  console.log("Terra-low rubric rerun contract passed: nine calls, target-006 severity and target-008 proportional tolerance change as intended, and no runtime promotion path exists.");
+  console.log("Terra-low rubric rerun contract passed: nine directional calls changed target-006 severity and target-008 proportional tolerance; later activation remains governed by the separate promotion report.");
 }
 
 main().catch((error) => {
