@@ -12777,7 +12777,19 @@ export function App() {
                 <span>Settings</span>
               </button>
               {userProfile ? (
-                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { setSelectedSkyDetail(null); await signOutAuth(); setUserProfile(null); navigateToPortalMode("profile"); setMenuOpen(false); }}>
+                <button
+                  className="site-menu-signout"
+                  type="button"
+                  role="menuitem"
+                  onClick={async () => {
+                    setSelectedSkyDetail(null);
+                    setUserProfile(null);
+                    setOwnSocialProfile(null);
+                    navigateToPortalMode("profile");
+                    setMenuOpen(false);
+                    await signOutAuth();
+                  }}
+                >
                   <LogOut size={20} aria-hidden="true" />
                   <span>Sign out</span>
                 </button>
@@ -13132,10 +13144,10 @@ export function App() {
                     onPhoneChange={(phone) => setUserProfile({ ...userProfile, phone })}
                     onSocialProfileChange={setOwnSocialProfile}
                     onSignOut={async () => {
-                      await signOutAuth();
                       setUserProfile(null);
                       setOwnSocialProfile(null);
                       navigateToPortalMode("profile");
+                      await signOutAuth();
                     }}
                   />
                 </Suspense>
