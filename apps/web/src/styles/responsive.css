@@ -917,12 +917,6 @@
     margin-top: 0;
   }
 
-  .hero-city-picker--mobile {
-    left: var(--mobile-control-inset);
-    right: var(--mobile-control-inset);
-    width: auto;
-  }
-
   .page-shell,
   .page-shell--narrow,
   .portal-grid.page-shell,
