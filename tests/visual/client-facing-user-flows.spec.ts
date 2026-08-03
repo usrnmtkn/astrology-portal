@@ -1650,6 +1650,24 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("constrained Sky header shows one brand mark", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 1000, height: 844 });
+    await seedClientState(page);
+    await expectClientRouteLoads(page, "/#sky");
+
+    const header = page.locator(".topbar");
+    const primaryNavigation = page.getByRole("navigation", { name: "Primary navigation" });
+
+    await expect(header.getByRole("button", { name: "Home", exact: true })).toBeVisible();
+    await expect(header.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+    await expect(primaryNavigation, "Constrained header moves primary navigation into the menu").toBeHidden();
+    await expect(primaryNavigation.getByRole("button", { name: "Sky", exact: true })).toBeHidden();
+    await expect(header.getByRole("button", { name: "Open menu" })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
   test("narrow mobile sky cards and header stay inside their rails", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
