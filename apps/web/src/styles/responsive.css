@@ -387,6 +387,13 @@
   }
 }
 
+/* Responsive: constrained header navigation */
+@media (max-width: 1080px) {
+  .site-nav {
+    display: none;
+  }
+}
+
 /* Responsive: tablet nav collapse */
 @media (max-width: 820px) {
   .nav-pill {
@@ -413,10 +420,6 @@
     box-shadow: var(--shadow-topbar-scrolled);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-  }
-
-  .site-nav {
-    display: none;
   }
 
   .mode-guest .today-hero,
