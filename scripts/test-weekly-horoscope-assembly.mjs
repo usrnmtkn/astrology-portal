@@ -66,6 +66,26 @@ try {
   assert.notEqual(gatedStation.body, rows[0].body, "Needs-review station copy must stay out of reader view.");
   assert.equal(approvedStation.body, rows[0].body, "Approval must switch station copy without a code change.");
 
+  const personalizedChironStation = weekly.resolveWeeklyStationCopy({
+    ...stationEvent,
+    id: "station-chiron-retrograde-test",
+    title: "Chiron stations retrograde",
+    planet: "Chiron",
+    sign: "Taurus"
+  }, rows, "Gemini");
+  assert.equal(
+    personalizedChironStation.headline,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.equal(
+    personalizedChironStation.driverLabel,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
+  );
+
   const lunationEvent = {
     id: "new-moon-test",
     type: "lunation",
@@ -267,6 +287,45 @@ try {
     readerText,
     /\b(?:Saturn(?: Rx)? in Pisces|Uranus in Taurus|Jupiter in Cancer)\b/u,
     "Retired sky positions must never leak into the Jul 29 per-rising card."
+  );
+
+  const quarterMoonWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-quarter-moon-fixture",
+    natalSky,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-08-03T16:00:00Z")
+  });
+  assert.equal(quarterMoonWeek.weekStart, "2026-08-03");
+  assert.equal(quarterMoonWeek.weekEnd, "2026-08-09");
+  assert.notEqual(
+    quarterMoonWeek.weekType,
+    "lunation",
+    "A quarter Moon must not classify the personal write-up as a New/Full Moon week."
+  );
+  assert.equal(
+    quarterMoonWeek.macro,
+    undefined,
+    "A quarter Moon must not select a Full Moon macro article."
+  );
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Taurus Full Moon|Full Moon in Taurus/iu,
+    "The Aug 3-9 write-up must not relabel the Last Quarter Moon in Taurus as a Full Moon."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.headline,
+    /Chiron stations retrograde in your 12th house/u,
+    "The station headline must name the house calculated from the event sign and rising sign."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.body,
+    /Chiron in your 12th house brings quiet grief/u,
+    "The station write-up must include the approved personalized transit-house layer."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
