@@ -351,7 +351,6 @@ try {
     /^[A-Z][a-z]+ \d{1,2}, 2026 – [A-Z][a-z]+ \d{1,2}, 2026$/u,
     "The station write-up must expose its current computed house-pass window."
   );
-
   const mondaySky = await ephemeris.getAstrodienstSky(
     location,
     new Date("2026-07-27T16:00:00Z")
