@@ -310,6 +310,20 @@ function wholeSignHouse(sign: string, risingSign: string) {
   return signIndex < 0 || risingIndex < 0 ? null : ((signIndex - risingIndex + 12) % 12) + 1;
 }
 
+function ordinalHouse(house: number) {
+  const remainder = house % 100;
+  const suffix = remainder >= 11 && remainder <= 13
+    ? "th"
+    : house % 10 === 1
+      ? "st"
+      : house % 10 === 2
+        ? "nd"
+        : house % 10 === 3
+          ? "rd"
+          : "th";
+  return `${house}${suffix}`;
+}
+
 function weeklyEphemerisCacheKey(location: LocationInput, window: WeeklyWindow) {
   return [
     window.weekStart,
@@ -472,37 +486,61 @@ function approvedSourceRow(contentKey: string, rows = sourceRows) {
   return rows.find((row) => row.contentKey === contentKey && isReaderEligible(row));
 }
 
-function renderStation(event: LunarCalendarEvent, rows = sourceRows) {
+function renderStation(event: LunarCalendarEvent, risingSign?: string, rows = sourceRows) {
   const planet = normalizeId(event.planet ?? "");
   const direction = event.direction === "retrograde" ? "rx" : "direct";
   const authored = approvedSourceRow(`authored/station/${planet}/${direction}`, rows);
-
-  if (authored) {
-    return {
+  const station = authored
+    ? {
       headline: authored.headline,
+      driverLabel: event.title,
       body: authored.body,
       source: "station" as const
+    }
+    : (() => {
+      const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
+        planet,
+        sign: normalizeId(event.sign ?? ""),
+        window: event.direction === "retrograde" ? "Beginning today" : "Turning direct today"
+      });
+      return {
+        headline: rendered.headline,
+        driverLabel: event.title,
+        body: rendered.body,
+        source: "station" as const
+      };
+    })();
+  const sign = normalizeId(event.sign ?? "");
+  const house = risingSign && sign ? wholeSignHouse(sign, risingSign) : null;
+
+  if (!house) return station;
+
+  try {
+    const houseLayer = transitSynastryFallbackRendererV3.renderTransitHouse({
+      planet,
+      house,
+      sign,
+      isRetrograde: event.direction === "retrograde"
+    });
+    const driverLabel = `${event.title} in your ${ordinalHouse(house)} house`;
+    return {
+      headline: `${station.headline} in your ${ordinalHouse(house)} house`,
+      driverLabel,
+      body: `${station.body}\n\n${houseLayer.body}`,
+      source: station.source
     };
+  } catch (error) {
+    if (!(error instanceof SourceGapError)) throw error;
+    return station;
   }
-
-  const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
-    planet,
-    sign: normalizeId(event.sign ?? ""),
-    window: event.direction === "retrograde" ? "Beginning today" : "Turning direct today"
-  });
-
-  return {
-    headline: rendered.headline,
-    body: rendered.body,
-    source: "station" as const
-  };
 }
 
 export function resolveWeeklyStationCopy(
   event: LunarCalendarEvent,
-  rows: WeeklySourceRow[] = sourceRows
+  rows: WeeklySourceRow[] = sourceRows,
+  risingSign?: string
 ) {
-  return renderStation(event, rows);
+  return renderStation(event, risingSign, rows);
 }
 
 function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky: SkySnapshot) {
@@ -1185,12 +1223,12 @@ export async function buildWeeklyHoroscope({
             sortTime: event.startsAt
           });
         } else {
-          const rendered = renderStation(event, rows);
+          const rendered = renderStation(event, risingSign, rows);
           candidates.push({
             dateKey: event.dateKey,
             dayLabel: eventDayLabel(event.dateKey),
             headline: rendered.headline,
-            driverLabel: event.title,
+            driverLabel: rendered.driverLabel,
             body: weeklyVoice(rendered.body),
             tag: event.direction === "retrograde" ? "Stations retrograde" : "Stations direct",
             accented: false,
